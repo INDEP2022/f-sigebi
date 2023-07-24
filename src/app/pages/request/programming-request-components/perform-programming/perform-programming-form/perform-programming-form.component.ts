@@ -1621,6 +1621,7 @@ export class PerformProgrammingFormComponent
           const idTransferent = this.transferentId;
           config.initialState = {
             idTransferent,
+            delegation: this.delegationId,
             typeTransportable: 'warehouse',
             callback: async (warehouse: number) => {
               if (warehouse) {
@@ -1936,6 +1937,7 @@ export class PerformProgrammingFormComponent
         if (this.warehouseId > 0)
           this.performForm.get('storeId').setValue(this.warehouseId);
         const task = JSON.parse(localStorage.getItem('Task'));
+
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
           this.programmingGoodService
@@ -1951,14 +1953,43 @@ export class PerformProgrammingFormComponent
                 this.performForm
                   .get('regionalDelegationNumber')
                   .setValue(this.delegation);
-                this.getProgrammingData();
-                this.formLoading = false;
-                this.newTransferent = false;
+                if (this.warehouseId > 0) {
+                  const updateWarehouseGood = await this.updateWarehouseGood();
+                  if (updateWarehouseGood) {
+                    this.getProgrammingData();
+                    this.formLoading = false;
+                    this.newTransferent = false;
+                  }
+                } else {
+                  this.getProgrammingData();
+                  this.formLoading = false;
+                  this.newTransferent = false;
+                }
               },
               error: error => {},
             });
         }
       }
+    });
+  }
+
+  updateWarehouseGood() {
+    return new Promise((resolve, reject) => {
+      this.goodsTranportables.getElements().then(data => {
+        data.map((good: IGood) => {
+          const object = {
+            id: good.id,
+            goodId: good.goodId,
+            storeId: this.warehouseId,
+          };
+          this.goodService.updateByBody(object).subscribe({
+            next: response => {
+              resolve(true);
+            },
+            error: error => {},
+          });
+        });
+      });
     });
   }
 
@@ -2102,8 +2133,18 @@ export class PerformProgrammingFormComponent
                   this.performForm
                     .get('regionalDelegationNumber')
                     .setValue(this.delegation);
-                  this.generateTaskAceptProgramming(folio);
-                  this.loading = false;
+
+                  if (this.warehouseId > 0) {
+                    const updateWarehouseGood =
+                      await this.updateWarehouseGood();
+                    if (updateWarehouseGood) {
+                      this.generateTaskAceptProgramming(folio);
+                      this.loading = false;
+                    }
+                  } else {
+                    this.generateTaskAceptProgramming(folio);
+                    this.loading = false;
+                  }
                 },
                 error: error => {},
               });
@@ -2288,6 +2329,7 @@ export class PerformProgrammingFormComponent
     const downloadLink = document.createElement('a');
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
+    downloadLink.download = 'Bienes_Programables.xlsx';
     downloadLink.click();
     this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
