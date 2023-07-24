@@ -124,6 +124,7 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
     };
     this.strategyService.getZCenterOperationRegional1(model, params).subscribe({
       next: (resp: any) => {
+        console.log(resp);
         if (resp.message[0] !== null) {
           this.data.load(resp.data.registros);
           this.data.refresh();
