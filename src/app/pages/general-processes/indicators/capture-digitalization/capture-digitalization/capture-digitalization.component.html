@@ -60,6 +60,7 @@
                     label="Tipo Volante">
                     <select class="form-control" formControlName="typeSteering">
                       <option *ngFor="let type of flyerTypes" [value]="type">
+                        &nbsp;&nbsp;
                         {{ type }}
                       </option>
                     </select>
@@ -91,6 +92,7 @@
                       [searchOnInit]="true"
                       [showTooltip]="true"
                       termMaxLength="50"
+                      value="id"
                       [labelTemplate]="userLabel"
                       [optionTemplate]="userOption">
                     </ngx-select>
@@ -107,17 +109,35 @@
               </div>
               <div class="row mt-4">
                 <div class="col-md-6">
-                  <form-field [control]="formCapture.get('cvCoors')">
+                  <!-- <form-field [control]="formCapture.get('cvCoors')">
+                    <ngx-select [form]="formCapture" control="cvCoors" (fetchItems)="getDelegations($event)"
+                      [showTooltip]="true" [data]="delegations" bindLabel="description" label="Coor. Regional"
+                      value="id" [multiple]="true"></ngx-select>
+                  </form-field> -->
+                  <form-field
+                    [control]="formCapture.get('cvCoors')"
+                    label="Coor. Regional">
                     <ngx-select
+                      label="Usuario"
                       [form]="formCapture"
-                      control="cvCoors"
-                      (fetchItems)="getDelegations($event)"
-                      [showTooltip]="true"
-                      [data]="delegations"
+                      [data]="delegations$"
+                      (fetchItems)="getDels($event)"
                       bindLabel="description"
-                      label="Coor. Regional"
+                      control="cvCoors"
+                      [searchOnInit]="true"
+                      [showTooltip]="true"
+                      termMaxLength="50"
                       value="id"
-                      [multiple]="true"></ngx-select>
+                      [multiple]="true">
+                    </ngx-select>
+                    <ng-template #userLabel let-item="item">
+                      {{ item.id + ' - ' + item.description }}
+                    </ng-template>
+                    <ng-template #userOption let-item="item">
+                      <div [title]="item.id + '-' + item.description">
+                        {{ item.id + ' - ' + item.description }}
+                      </div>
+                    </ng-template>
                   </form-field>
                 </div>
                 <div class="col-md-6">

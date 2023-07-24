@@ -44,7 +44,7 @@ export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.to === 1;
+        data.row.cumplio == 1;
       });
     },
   },

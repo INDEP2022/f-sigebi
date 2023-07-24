@@ -13,6 +13,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import {
   ICaptureDigFilter,
   Info,
@@ -72,6 +73,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   authority = new DefaultSelect();
   transference = new DefaultSelect();
   users$ = new DefaultSelect<ISegUsers>();
+  delegations$ = new DefaultSelect<IDelegation>();
   dictNumber: string | number = undefined;
   maxDate = new Date();
   from: string = '';
@@ -188,7 +190,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.formCapture.reset();
     this.capturasDig = [];
     this.nombreUser = '';
-    this.dataFactCapt.refresh();
+    this.dataFactCapt = new LocalDataSource();
   }
 
   getEvent() {
@@ -214,19 +216,37 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       file1: [null, [Validators.required]],
     });
   }
-  getDelegations(params: ListParams) {
-    this.delegationService.getAll(params).subscribe({
-      next: res => {
-        this.delegations = new DefaultSelect(res.data, res.count);
-        const name = this.formCapture.get('cvCoors').value;
-        const data = res.data.filter(m => m.id == name);
-        console.log(data);
-      },
+  getDelegations(params: FilterParams) {
+    // this.delegationService.getAll(params).subscribe({
+    //   next: res => {
+    //     this.delegations = new DefaultSelect(res.data, res.count);
+    //     const name = this.formCapture.get('cvCoors').value;
+    //     const data = res.data.filter(m => m.id == name);
+    //     console.log(data[0]);
+    //     this.formCapture.get('cvCoors').patchValue(data[0]);
+    //   },
 
-      error: () => {
-        this.delegations = new DefaultSelect([], 0);
-      },
-    });
+    //   error: () => {
+    //     this.delegations = new DefaultSelect([], 0);
+    //   },
+    // });
+    return this.delegationService.getAll(params.getParams()).pipe(
+      catchError(error => {
+        this.delegations$ = new DefaultSelect([], 0, true);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        if (response.count > 0) {
+          const name = this.formCapture.get('cvCoors').value;
+          const data = response.data.filter(m => {
+            return m.id;
+          });
+          console.log(data[0]);
+          this.formCapture.get('cvCoors').patchValue(data[0]);
+        }
+        this.delegations$ = new DefaultSelect(response.data, response.count);
+      })
+    );
   }
 
   getSubjects(params: ListParams) {
@@ -307,6 +327,14 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
   //     });
   //   });
   // }
+  getDels($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    const area = this.formCapture.controls['cvCoors'].value;
+    params.search = $params.text;
+    this.getDelegations(params).subscribe();
+  }
 
   getUsers($params: ListParams) {
     let params = new FilterParams();
@@ -411,18 +439,22 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       this.formCapture.controls['fecEnd'].value,
       'yyyy-MM-dd'
     );
-    const cvCoorsId: number[] = this.idDelegation.map(p => p);
-    console.log(cvCoorsId);
+    const cvCoorsId: number[] = [];
+
+    // this.delegations.forEach(p => {
+    //   cvCoorsId.push(p.id);
+    // });
+    // const cvCoorsId: number[] = this.idDelegation.map(opcion => opcion.delegationId);
     this.search = {
       cvCoors: cvCoorsId,
       cveJobExternal: this.formCapture.value.cveJobExternal,
-      user: this.nombreUser,
+      user: this.formCapture.value.user,
       typeSteering: this.formCapture.value.typeSteering,
       fecStart: this.from,
       fecEnd: this.to,
-      noTransfere: Number(this.formCapture.value.noTransfere),
-      noStation: Number(this.formCapture.value.noStation),
-      noAuthorityts: Number(this.formCapture.value.noStation),
+      noTransfere: this.formCapture.value.noTransfere,
+      noStation: this.formCapture.value.noStation,
+      noAuthorityts: this.formCapture.value.noStation,
     };
     this.documentsService
       .getDocCaptureFind(this.search, this.params.getValue())
@@ -440,9 +472,9 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           this.P_T_CUMP = cumple.length;
           this.P_T_NO_CUMP = noCumple.length;
           this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
-          console.log(this.P_CUMP, this.P_T_NO_CUMP, this.P_T_CUMP);
           this.dataFactCapt.load(data.result);
           this.totalItemsCaptura = data.count;
+          console.log(this.totalItemsCaptura);
           this.dataFactCapt.refresh();
           // this.P_T_NO_CUMP = data.info.total_no_cumplio;
           // this.P_T_CUMP = data.info.total_cumplio;
