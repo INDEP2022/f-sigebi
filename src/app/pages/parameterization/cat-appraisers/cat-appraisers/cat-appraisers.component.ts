@@ -50,6 +50,7 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
@@ -60,6 +61,7 @@ export class CatAppraisersComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getProficient();
         }
       });

@@ -57,6 +57,7 @@
                 dateInputFormat: 'YYYY-MM-DD',
                 displayOneMonthRange: true
               }"
+              (bsValueChange)="validateDate($event)"
               bsDatepicker />
           </form-field>
         </div>
@@ -66,6 +67,7 @@
               type="text"
               formControlName="endDate"
               class="form-control"
+              [minDate]="minDate"
               [bsConfig]="{
                 dateInputFormat: 'YYYY-MM-DD',
                 displayOneMonthRange: true
@@ -80,6 +82,10 @@
             <input
               class="form-control"
               formControlName="daysLimNumber"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
               type="number" />
           </form-field>
         </div>

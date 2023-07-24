@@ -10,7 +10,7 @@ export const SIAB_COLUMNS = {
     sort: false,
   },*/
   typeDescription: {
-    title: 'Descripción del tipo',
+    title: 'Descripción del Tipo',
     type: 'string',
     sort: false,
   },
@@ -21,7 +21,7 @@ export const SIAB_COLUMNS = {
     sort: false,
   },*/
   subtypeDescription: {
-    title: 'Descripción del subtipo',
+    title: 'Descripción del Subtipo',
     type: 'string',
     sort: false,
   } /*

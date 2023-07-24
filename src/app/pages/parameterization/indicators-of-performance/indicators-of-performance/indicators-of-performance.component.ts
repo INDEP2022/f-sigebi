@@ -193,7 +193,9 @@ export class IndicatorsOfPerformanceComponent
       },
       error: error => {
         this.loading = false;
-        console.log(error);
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems = 0;
       },
     });
   }
@@ -219,6 +221,7 @@ export class IndicatorsOfPerformanceComponent
         this.loading = false;
         this.data2.load([]);
         this.data2.refresh();
+        this.totalItems2 = 0;
       },
     });
   }

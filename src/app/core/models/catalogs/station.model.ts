@@ -7,7 +7,7 @@ export interface IStation {
   creationDate?: Date;
   editionUser?: string;
   modificationDate?: Date;
-  keyState: number | null;
+  keyState: string;
   version: number | null;
   status: number | null;
   nameAndId?: string;

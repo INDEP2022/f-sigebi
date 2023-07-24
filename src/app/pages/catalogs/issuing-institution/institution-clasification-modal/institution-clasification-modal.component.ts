@@ -16,7 +16,7 @@ export class InstitutionClasificationModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Clasificación de instituciones';
+  title: string = 'Clasificación de Institución';
   edit: boolean = false;
 
   instituteForm: ModelForm<IInstitutionClassification>;

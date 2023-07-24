@@ -68,6 +68,7 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getSiabClasifications();
         }
       });
@@ -85,12 +86,17 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
     this.siabClasificationService.getAll(params).subscribe({
       next: response => {
         this.clasifications = response.data;
-        this.data.load(this.clasifications);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
