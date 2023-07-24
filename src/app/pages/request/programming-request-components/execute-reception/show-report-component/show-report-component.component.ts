@@ -324,6 +324,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                 next: response => {
                   this.loadingButton = false;
                   this.msjCheck = true;
+
                   this.alert(
                     'success',
                     'Correcto',
@@ -380,7 +381,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
               .subscribe({
                 next: response => {
                   this.loadingButton = false;
-                  this.msjCheck = false;
+                  this.msjCheck = true;
                   this.alert(
                     'success',
                     'Correcto',
