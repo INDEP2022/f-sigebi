@@ -30,4 +30,9 @@ export class ThirdPartyService extends HttpService {
   create(model: IThirdParty) {
     return this.post(ThirdPartyEndpoints.ThirdParty, model);
   }
+
+  remove(id: string | number) {
+    const route = `${ThirdPartyEndpoints.ThirdParty}/id/${id}`;
+    return this.delete(route);
+  }
 }

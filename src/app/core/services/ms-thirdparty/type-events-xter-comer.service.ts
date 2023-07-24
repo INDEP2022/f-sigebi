@@ -41,4 +41,9 @@ export class TypeEventXterComerService extends HttpService {
   create(model: ITypeEventXtercomer) {
     return this.post(ThirdPartyEndpoints.TypeEventsXterComer, model);
   }
+
+  remove(data: any) {
+    const route = `${ThirdPartyEndpoints.TypeEventsXterComer}`;
+    return this.delete(route, data);
+  }
 }
