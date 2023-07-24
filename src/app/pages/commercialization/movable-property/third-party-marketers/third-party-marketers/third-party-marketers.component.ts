@@ -78,7 +78,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...THIRD_COLUMNS },
@@ -90,7 +90,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -103,7 +103,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -132,7 +132,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               nameReason: () => (searchFilter = SearchFilter.ILIKE),
               calculationRoutine: () => (searchFilter = SearchFilter.EQ),
             };
-            search[filter.field]();
+            search[filter.field];
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -179,7 +179,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               description: () => (searchFilter = SearchFilter.ILIKE),
             };
 
-            // search[filter.field]();
+            search[filter.field];
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -231,7 +231,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               finalAmount: () => (searchFilter = SearchFilter.EQ),
             };
 
-            // search[filter.field]();
+            search[filter.field];
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -247,14 +247,14 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
           });
           this.params = this.pageFilter(this.params);
           //Su respectivo metodo de busqueda de datos
-          this.getThirdPartyAll();
+          this.getAmount(this.thirPartys);
         }
       });
     this.params
       .pipe(
         skip(1),
         tap(() => {
-          this.getTypeEvent(this.thirPartys);
+          this.getAmount(this.thirPartys);
         }),
         takeUntil(this.$unSubscribe)
       )
@@ -273,10 +273,13 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.thirdPartyList.load(response.data);
+        this.thirdPartyList.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
       error: error => {
+        this.thirdPartyList.load([]);
+        this.thirdPartyList.refresh();
         this.loading = false;
         console.log(error);
       },
@@ -284,9 +287,31 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-    this.totalItems2 = 0;
-    // this.typeEventList = [];
-    this.thirPartys = event.data;
+    if (event.data == this.thirPartys) {
+      this.thirPartys = null;
+      this.totalItems2 = 0;
+      this.totalItems3 = 0;
+
+      this.typeEventList.load([]);
+      this.typeEventList.refresh;
+
+      this.amountList.load([]);
+      this.amountList.refresh();
+    } else {
+      this.totalItems2 = 0;
+      this.totalItems3 = 0;
+      // this.typeEventList = [];
+      this.thirPartys = event.data;
+      this.rowsSelectedGetAmount(this.thirPartys);
+      this.rowsSelectedGetTypeEvent(this.thirPartys);
+    }
+  }
+
+  rowsSelectedGetTypeEvent(event: any) {
+    this.totalItems3 = 0;
+    // this.amountList = [];
+    this.typeEvents = event.data;
+
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getTypeEvent(this.thirPartys));
@@ -298,21 +323,21 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters2,
     };
-    this.typeEventXterComerService.getById(thirdParty.id).subscribe({
+    params['filter.thirdPartyId'] = `$eq:${thirdParty.id}`;
+    this.typeEventXterComerService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        let result = response.data.map(async (item: any) => {
-          const description = await this.getDescript();
-          item['description'] = description;
-        });
 
-        Promise.all(result).then(resp => {
-          this.typeEventList.load(response.data);
-          this.totalItems2 = response.count;
-          this.loading2 = false;
-        });
+        // Promise.all(result).then(resp => {
+        this.typeEventList.load(response.data);
+        this.typeEventList.refresh;
+        this.totalItems2 = response.count;
+        this.loading2 = false;
+        // });
       },
       error: error => {
+        this.typeEventList.load([]);
+        this.typeEventList.refresh;
         this.totalItems2 = 0;
         this.loading2 = false;
       },
@@ -341,29 +366,35 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     });
   }
 
-  rowsSelected2(event: any) {
+  rowsSelectedGetAmount(event: any) {
     this.totalItems3 = 0;
     // this.amountList = [];
     this.typeEvents = event.data;
+
     this.params3
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAmount(this.typeEvents));
+      .subscribe(() => this.getAmount(this.thirPartys));
   }
 
-  getAmount(typeEvent?: ITypeEventXtercomer) {
+  getAmount(IThirdParty?: IThirdParty) {
     this.loading3 = true;
     let params = {
       ...this.params3.getValue(),
       ...this.columnFilters3,
     };
-    this.comiXThirdService.getById(typeEvent.thirdPartyId).subscribe({
+    if (!IThirdParty) return;
+    params['filter.idThirdParty'] = `$eq:${IThirdParty.id}`;
+    this.comiXThirdService.getById(IThirdParty.id).subscribe({
       next: response => {
         console.log(response);
         this.amountList.load(response.data);
+        this.amountList.refresh;
         this.totalItems3 = response.count;
         this.loading3 = false;
       },
       error: error => {
+        this.amountList.load([]);
+        this.amountList.refresh;
         this.totalItems2 = 0;
         this.loading3 = false;
       },
@@ -385,9 +416,11 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   openForm2(typeEvents?: ITypeEventXtercomer) {
+    const thirPartys = this.thirPartys;
     let config: ModalOptions = {
       initialState: {
         typeEvents,
+        thirPartys,
         callback: (next: boolean) => {
           if (next) this.getThirdPartyAll();
         },
@@ -399,9 +432,11 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   openForm3(amounts?: IComiXThird) {
+    const thirPartys = this.thirPartys;
     let config: ModalOptions = {
       initialState: {
         amounts,
+        thirPartys,
         callback: (next: boolean) => {
           if (next) this.getThirdPartyAll();
         },
@@ -410,5 +445,83 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(AmountThirdModalComponent, config);
+  }
+  questionDelete1($event: any) {
+    console.log($event);
+    this.alertQuestion(
+      'question',
+      '¿Desea Eliminar el Tercero Comercializador?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.thirdPartyService.remove($event.id).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'El Tercero Comercializador se Eliminó Correctamente',
+              ''
+            );
+            this.getThirdPartyAll();
+          },
+          error: error => {
+            this.alert(
+              'error',
+              'Ocurrió un Error al Eliminar el Tercero Comercializador',
+              ''
+            );
+          },
+        });
+      }
+    });
+  }
+  questionDelete2($event: any) {
+    console.log($event);
+    this.alertQuestion(
+      'question',
+      '¿Desea Eliminar el Tipo De Evento?',
+      ''
+    ).then(question => {
+      let obj = {
+        thirdPartyId: $event.thirdPartyId,
+        typeEventId: $event.typeEventId,
+      };
+      if (question.isConfirmed) {
+        this.typeEventXterComerService.remove(obj).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'El Tipo De Evento se Eliminó Correctamente',
+              ''
+            );
+            this.rowsSelectedGetTypeEvent(this.thirPartys);
+          },
+          error: error => {
+            this.alert(
+              'error',
+              'Ocurrió un Error al Eliminar el Tipo De Evento',
+              ''
+            );
+          },
+        });
+      }
+    });
+  }
+  questionDelete3($event: any) {
+    console.log($event);
+    this.alertQuestion('question', '¿Desea Eliminar el Monto?', '').then(
+      question => {
+        if (question.isConfirmed) {
+          this.comiXThirdService.remove($event.id).subscribe({
+            next: response => {
+              this.alert('success', 'El Monto se Eliminó Correctamente', '');
+              this.rowsSelectedGetAmount(this.thirPartys);
+            },
+            error: error => {
+              this.alert('error', 'Ocurrió un Error al Eliminar el Monto', '');
+            },
+          });
+        }
+      }
+    );
   }
 }
