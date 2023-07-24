@@ -144,6 +144,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       bases: [null],
       evet: [null],
       startTime: [null],
+      celebrates: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());

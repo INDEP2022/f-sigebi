@@ -78,9 +78,7 @@
                   </form-field> -->
                 </div>
                 <div class="col-md-6">
-                  <form-field
-                    [control]="formCapture.get('user')"
-                    label="Usuario">
+                  <form-field [control]="formCapture.get('user')">
                     <ngx-select
                       label="Usuario"
                       [form]="formCapture"
@@ -114,11 +112,9 @@
                       [showTooltip]="true" [data]="delegations" bindLabel="description" label="Coor. Regional"
                       value="id" [multiple]="true"></ngx-select>
                   </form-field> -->
-                  <form-field
-                    [control]="formCapture.get('cvCoors')"
-                    label="Coor. Regional">
+                  <form-field [control]="formCapture.get('cvCoors')">
                     <ngx-select
-                      label="Usuario"
+                      label="Coor. Regional"
                       [form]="formCapture"
                       [data]="delegations$"
                       (fetchItems)="getDels($event)"
