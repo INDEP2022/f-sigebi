@@ -13,12 +13,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { CUSTOMERS_LIST_COLUMNS } from '../customers-black-list/customers-list-columns';
 
 @Component({
-  selector: 'app-customers-white-list',
-  templateUrl: './customers-white-list.component.html',
+  selector: 'app-customers-all-list.component',
+  templateUrl: './customers-all-list.component.html',
   styles: [],
 })
-export class CustomersWhiteListComponent extends BasePage implements OnInit {
-  title: string = 'Clientes Sin Problemas';
+export class CustomersAllListComponent extends BasePage implements OnInit {
+  title: string = 'Todos los Clientes';
   customers: IRepresentative[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -55,6 +55,12 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
               case 'reasonName':
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'paternalSurname':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'maternalSurname':
+                searchFilter = SearchFilter.ILIKE;
+                break;
               case 'rfc':
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -83,14 +89,14 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getCustomers());
   }
 
-  //Tabla de lista blanca de clientes
+  //Tabla con todos los clientes
   getCustomers() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.customerService.getAllClientsWhiteList(params).subscribe({
+    this.customerService.getAllClients(params).subscribe({
       next: response => {
         this.customers = response.data;
         this.data.load(response.data);
@@ -104,10 +110,7 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
 
   //Exportar lista blanca de clientes
   exportClientsWhiteList(): void {
-    this.excelService.exportAsExcelFile(
-      this.customers,
-      'ClientesEnListaBlanca'
-    );
+    this.excelService.exportAsExcelFile(this.customers, 'TodosLosClientes');
   }
 
   close() {
