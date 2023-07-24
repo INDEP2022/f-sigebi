@@ -1661,9 +1661,11 @@ export class GoodsProcessValidationExtdomComponent
     if (this.selectedGoods.length > 0) {
       this.executionType = this.registerType;
     }
-    // -- Verificamos si en el bloque existen registros para liberar
-    if (this.goodsValid.length > 0) {
-      this.executionType = this.registerExistType;
+    if (this.executionType == 'X') {
+      // -- Verificamos si en el bloque existen registros para liberar
+      if (this.goodsValid.length > 0) {
+        this.executionType = this.registerExistType;
+      }
     }
     if (this.executionType == 'X') {
       this.alert('warning', 'No Existen Cambios para Ejecutar', '');
@@ -2065,6 +2067,7 @@ export class GoodsProcessValidationExtdomComponent
             .subscribe({
               next: data => {
                 console.log('UPDATE GESTION TRAMITE DATA ', data);
+                this.closeApplyReserved();
                 this.openModalMail();
               },
               error: error => {
