@@ -1,15 +1,19 @@
 import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COLUMNS = {
-  usuariotpvto: {
+  username: {
     title: 'Usuario',
     sort: false,
   },
-  nombre: {
+  segUsers: {
     title: 'Nombre',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.name : '';
+    },
     sort: false,
   },
-  fecha_registro: {
+  registrationDate: {
     title: 'Fecha',
     sort: false,
     valuePrepareFunction: (value: string) => {
@@ -17,6 +21,10 @@ export const COLUMNS = {
         return '';
       }
       return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
 };

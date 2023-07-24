@@ -146,7 +146,6 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.handleSuccess();
     this.parameterModService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
