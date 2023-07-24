@@ -32,9 +32,9 @@ export class OpinionComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   blkcontrol: IBlkcontrol = {
-    totalcumplido: 20,
-    totalNocumplido: 10,
-    porcentajeCunplido: 70,
+    totalcumplido: 0,
+    totalNocumplido: 0,
+    porcentajeCunplido: 0,
   };
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
