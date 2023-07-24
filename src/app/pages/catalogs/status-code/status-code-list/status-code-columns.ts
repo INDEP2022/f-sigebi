@@ -7,7 +7,7 @@ export const STATUSCODE_COLUMS = {
     // width: '25px'
   },
   descCode: {
-    title: 'Descripción código',
+    title: 'Descripción Código',
     type: 'string',
     sort: false,
   },

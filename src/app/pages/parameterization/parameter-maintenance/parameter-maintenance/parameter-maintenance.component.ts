@@ -119,7 +119,7 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        //this.onLoadToast('error', err.error.message, '');
         this.loading = false;
         this.data.load([]);
         this.data.refresh();

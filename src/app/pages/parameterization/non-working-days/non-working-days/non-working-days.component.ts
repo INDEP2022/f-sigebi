@@ -22,6 +22,8 @@ import { NONWORKINGDAYS_COLUMNS } from './non-working-days-columns';
 export class NonWorkingDaysComponent extends BasePage implements OnInit {
   calendar: ICalendar[] = [];
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+  totalItems1: number = 0;
   columnFilters: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -47,8 +49,8 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = `filter.${filter.field}`;
             let searchFilter = SearchFilter.ILIKE;
+            let field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
                 filter.search = this.returnParseDate(filter.search);
@@ -97,7 +99,12 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         this.totalItems = response.count || 0;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
   private getCalendar() {
@@ -111,7 +118,12 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
   openForm(calendar?: ICalendar) {

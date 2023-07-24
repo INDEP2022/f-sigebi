@@ -49,18 +49,11 @@ export class TypeDoctoFormComponent extends BasePage implements OnInit {
       ],
       version: [
         null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       status: [
         null,
-        Validators.compose([
-          Validators.required,
-          ,
-          Validators.pattern(STRING_PATTERN),
-        ]),
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
     });
     if (this.typeDocto != null) {
