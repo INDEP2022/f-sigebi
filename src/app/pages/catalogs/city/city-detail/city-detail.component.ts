@@ -99,10 +99,14 @@ export class CityDetailComponent extends BasePage implements OnInit {
 
   getDelegations(params: ListParams) {
     if (this.selectedState.id) params['filter.id'] = this.selectedState.id;
-
     this.delegationService.getAll(params).subscribe({
       next: data => {
         this.delegations = new DefaultSelect(data.data, data.count);
+        console.log('DL', data);
+      },
+      error: err => {
+        this.alert('error', 'Error', '');
+        this.loading = false;
       },
     });
   }

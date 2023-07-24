@@ -96,6 +96,12 @@ export class IndicatorDeadlinesFormComponent
     this.edit ? this.update() : this.create();
   }
   create() {
+    if (
+      this.indicatorDeadlinesModalForm.controls['formula'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.indicatorDeadlineService
       .create(this.indicatorDeadlinesModalForm.value)

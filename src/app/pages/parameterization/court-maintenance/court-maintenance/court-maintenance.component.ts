@@ -225,6 +225,8 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         this.loading = true;
         this.courtServ.create(this.form.value).subscribe({
           next: data => {
+            console.log(data);
+
             this.alert('success', 'Juzgado', 'Guardado Correctamente');
             this.form.patchValue(data);
             this.form.get('id').disable();

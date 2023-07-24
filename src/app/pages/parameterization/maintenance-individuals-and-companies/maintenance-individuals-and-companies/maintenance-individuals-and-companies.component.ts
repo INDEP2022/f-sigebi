@@ -4,7 +4,6 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  CURP_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
   RFC_PATTERN,
@@ -25,6 +24,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   edit: boolean = false;
   title: string = 'MANTENIMIENTO DE PERSONAS FÍSICAS Y MORALES';
   dataPerson: any;
+  value: string;
   constructor(
     private readonly fb: FormBuilder,
     private readonly personService: PersonService,
@@ -73,7 +73,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
       ],
       observations: [null, [Validators.required, Validators.maxLength(100)]],
       rfc: [null, [Validators.pattern(RFC_PATTERN)]],
-      curp: [null, [Validators.pattern(CURP_PATTERN)]],
+      curp: [null, [Validators.pattern(STRING_PATTERN)]],
       curriculumV: [null],
       curriculum: ['N'],
       typePerson: [null, [Validators.required]],
@@ -142,6 +142,38 @@ export class MaintenanceIndividualsAndCompaniesComponent
           },
         });
       } else {
+        if (this.value === 'M') {
+          if (
+            this.form.controls['personName'].value.trim() === '' &&
+            this.form.controls['name'].value.trim() === '' &&
+            this.form.controls['street'].value.trim() === '' &&
+            this.form.controls['streetNumber'].value.trim() === '' &&
+            this.form.controls['apartmentNumber'].value.trim() === '' &&
+            this.form.controls['suburb'].value.trim() === '' &&
+            this.form.controls['observations'].value.trim() === '' &&
+            this.form.controls['profile'].value.trim() === '' &&
+            this.form.controls['manager'].value.trim() === '' &&
+            this.form.controls['numberDeep'].value.trim() === ''
+          ) {
+            this.alert('warning', 'No se puede guardar campos vacíos', '');
+            return;
+          } else if (this.value !== 'M') {
+            if (
+              this.form.controls['personName'].value.trim() === '' &&
+              this.form.controls['name'].value.trim() === '' &&
+              this.form.controls['street'].value.trim() === '' &&
+              this.form.controls['streetNumber'].value.trim() === '' &&
+              this.form.controls['apartmentNumber'].value.trim() === '' &&
+              this.form.controls['suburb'].value.trim() === '' &&
+              this.form.controls['observations'].value.trim() === '' &&
+              this.form.controls['profile'].value.trim() === ''
+            ) {
+              this.alert('warning', 'No se puede guardar campos vacíos', '');
+              return;
+            }
+          }
+        }
+        console.log();
         this.personService.create(this.form.value).subscribe({
           next: () => {
             this.handleSuccess();

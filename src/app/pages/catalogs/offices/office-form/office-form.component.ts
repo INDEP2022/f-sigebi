@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import {
   PHONE_PATTERN,
-  RFC_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
 
@@ -66,7 +65,7 @@ export class OfficeFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.maxLength(20),
-          Validators.pattern(RFC_PATTERN),
+          Validators.pattern(STRING_PATTERN),
         ],
       ],
       phone: [
@@ -107,7 +106,18 @@ export class OfficeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
+    if (
+      this.officeForm.controls['name'].value.trim() === '' &&
+      this.officeForm.controls['street'].value.trim() === '' &&
+      this.officeForm.controls['colony'].value.trim() === '' &&
+      this.officeForm.controls['municipalDelegate'].value.trim() === '' &&
+      this.officeForm.controls['rfc'].value.trim() === '' &&
+      this.officeForm.controls['fax'].value.trim() === '' &&
+      this.officeForm.controls['typeOffice'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.officeService.create(this.officeForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

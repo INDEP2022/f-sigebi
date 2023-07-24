@@ -7,22 +7,14 @@
       <div class="row">
         <div class="col-md-12">
           <form-field [control]="officeForm.get('name')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="name"
-              pattern="^[^\s].*" />
+            <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
           <form-field [control]="officeForm.get('street')" label="Calle">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="street"
-              pattern="^[^\s].*" />
+            <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -55,11 +47,7 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field [control]="officeForm.get('colony')" label="Colonia">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="colony"
-              pattern="^[^\s].*" />
+            <input type="text" class="form-control" formControlName="colony" />
           </form-field>
         </div>
 
@@ -70,8 +58,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="municipalDelegate"
-              pattern="^[^\s].*" />
+              formControlName="municipalDelegate" />
           </form-field>
         </div>
 
@@ -92,11 +79,7 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field [control]="officeForm.get('rfc')" label="RFC">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="rfc"
-              pattern="^[^\s].*" />
+            <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
 
@@ -104,11 +87,7 @@
           <form-field
             [control]="officeForm.get('phone')"
             label="Tel&eacute;fono">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="phone"
-              pattern="^[^\s].*" />
+            <input type="number" class="form-control" formControlName="phone" />
           </form-field>
         </div>
 
@@ -117,10 +96,9 @@
             [control]="officeForm.get('phoneTwo')"
             label="Segundo Tel&eacute;fono">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="phoneTwo"
-              pattern="^[^\s].*" />
+              formControlName="phoneTwo" />
           </form-field>
         </div>
       </div>
@@ -128,11 +106,7 @@
       <div class="row pt-5">
         <div class="col-md-6">
           <form-field [control]="officeForm.get('fax')" label="Fax">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="fax"
-              pattern="^[^\s].*" />
+            <input type="text" class="form-control" formControlName="fax" />
           </form-field>
         </div>
 
@@ -141,8 +115,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeOffice"
-              pattern="^[^\s].*" />
+              formControlName="typeOffice" />
           </form-field>
         </div>
       </div>
@@ -151,10 +124,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="officeForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

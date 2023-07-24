@@ -72,7 +72,7 @@ export const COLUMNS = {
     sort: false,
   },
   keyEntFed: {
-    title: 'Ent.Federativa',
+    title: 'Ent. Federativa',
     sort: false,
   },
   observations: {
