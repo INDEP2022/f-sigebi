@@ -83,6 +83,16 @@ export const dataRequest = [
     process: 'similar-good-notify-transferor',
     status: 'backlog',
   },
+  {
+    task: 'BIENES SIMILARES: Notificar a Transferente, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    description: '',
+    requestNumber: 56820,
+    taskNumber: 3405,
+    instanceNumber: 820170,
+    created: 'tester_nsbxt',
+    process: 'similar-good-notify-transferor',
+    status: 'backlog',
+  },
   /*{
     task: 'RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: 1896',
     requestNumber: 1896,

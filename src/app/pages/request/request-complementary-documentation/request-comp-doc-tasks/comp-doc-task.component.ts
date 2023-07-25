@@ -9,6 +9,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract guidelines: boolean;
   protected abstract docRequest: boolean;
   protected abstract expRequest: boolean;
+  protected abstract selectGoodForEyeVisit: boolean;
   protected abstract viewSelectedGoods: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
@@ -50,6 +51,7 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.saveRequest = true;
           this.dictumValidate = false;
           this.notifyReport = false;
+          this.selectGoodForEyeVisit = false;
 
           this.turnReq = true;
           this.createReport = false;
@@ -59,6 +61,7 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.regDocForm = true;
           this.selectGoods = true;
           this.expRequest = true;
+          this.selectGoodForEyeVisit = false;
         }
 
         break;
@@ -74,6 +77,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
@@ -92,6 +96,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -110,6 +115,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -128,34 +134,42 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = true;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
         this.rejectReq = true;
 
         break;
-      case 'similar-good-register-documentation':
+      case 'BSRegistroSolicitudes':
+        //registro del formulario
         this.regDocForm = true;
         this.regDocView = false;
+        //buscar solicitudes de bienes
         this.searchRequestSimGoods = true;
+        //seleccionar bienes
         this.selectGoods = true;
         this.viewSelectedGoods = false;
         this.guidelines = false;
         this.docRequest = false;
+        //expedientes
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'similar-good-notify-transferor':
+      case 'BSNotificarTransferente':
         this.regDocForm = false;
+        //ver registro
         this.regDocView = true;
         this.searchRequestSimGoods = false;
         this.selectGoods = false;
+        //visualizar los bienes seleccioandos
         this.viewSelectedGoods = true;
         this.guidelines = false;
         this.docRequest = true;
@@ -163,23 +177,25 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = true;
+        this.selectGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'similar-good-notify-transferor':
+      case 'BSVisitaOcular':
         this.regDocForm = false;
         this.regDocView = true;
         this.searchRequestSimGoods = false;
         this.selectGoods = false;
-        this.viewSelectedGoods = true;
+        this.viewSelectedGoods = false;
         this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
-        this.notifyReport = true;
+        this.notifyReport = false;
+        this.selectGoodForEyeVisit = true;
 
         this.turnReq = true;
         this.createReport = false;

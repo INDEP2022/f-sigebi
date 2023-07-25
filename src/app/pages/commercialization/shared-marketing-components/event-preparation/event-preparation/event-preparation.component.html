@@ -73,7 +73,7 @@
               [comerLotsListParams]="comerLotsListParams"
               [parameters]="parameters"></commer-packages-lots
           ></tab>
-          <tab>
+          <tab (selectTab)="viewCustomers()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -84,7 +84,9 @@
                 </div>
               </div>
             </ng-template>
-            <commer-event-customers></commer-event-customers
+            <commer-event-customers
+              [eventForm]="eventForm"
+              [params]="comerCustomersListParams"></commer-event-customers
           ></tab>
           <tab>
             <ng-template tabHeading>

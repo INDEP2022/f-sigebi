@@ -12,4 +12,6 @@ export enum DocumentsEndpoints {
   CapDigiralizationTmp = 'cap-digitalization-tmp',
   IndicatorRec = 'application/get-data-ind-rec-doc',
   SeqDocument = 'application/getSeqDocument',
+  postdocument = 'application/insertDocument',
+  postPup = 'application/pupFolEscMas',
 }
