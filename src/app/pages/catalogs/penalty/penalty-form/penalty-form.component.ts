@@ -43,7 +43,11 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       equivalentDays: [
         null,
