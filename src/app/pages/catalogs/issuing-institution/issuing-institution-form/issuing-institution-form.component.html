@@ -87,8 +87,8 @@
               type="number"
               class="form-control"
               maxlength="5"
-              min="1"
-              [defaultValue]="1"
+              min="0"
+              [defaultValue]="0"
               oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
               formControlName="zipCode" />
           </form-field>
@@ -163,7 +163,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!issuingInstitutionForm.valid"
+          [disabled]="issuingInstitutionForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>
