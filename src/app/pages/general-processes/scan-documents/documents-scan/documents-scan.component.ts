@@ -53,6 +53,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   noDocumentsFound: boolean = false;
   noFoliosFound: boolean = false;
   registerUser: string = INVALID_USER;
+  pGoodFatherNumber: number;
   get controls() {
     return this.form.controls;
   }
@@ -73,6 +74,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
   processNumber: number = null; //no_tramite
+  tipoConv: number;
   paramsDepositaryAppointment: any = {
     P_NB: null,
     P_FOLIO: null,
@@ -80,6 +82,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   };
   P_NO_TRAMITE: number = null;
   P_GEST_OK: number = null;
+  P_VOLANTE: number = null;
+  P_EXPEDIENTE: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -122,6 +126,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.origin2 = params['origin2'] ?? null;
           this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
           this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+          this.P_VOLANTE = params['P_VOLANTE'] ?? null;
+          this.P_EXPEDIENTE = params['P_EXPEDIENTE'] ?? null;
         }
         if (
           this.origin == 'FACTGENSOLICDIGIT' &&
@@ -130,6 +136,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
           this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
           this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
+        }
+        if (this.origin == 'FCONVBIENHIJOS') {
+          this.tipoConv = params['tipoConv'] ?? null;
         }
       });
     this.settings = {
@@ -591,12 +600,24 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
             origin: this.origin2 ? this.origin2 : null,
             P_NO_TRAMITE: this.P_NO_TRAMITE,
             P_GEST_OK: this.P_GEST_OK,
+            P_VOLANTE: this.P_VOLANTE,
+            P_EXPEDIENTE: this.P_EXPEDIENTE,
           },
         }
       );
     }
     if (this.origin == 'FCONVBIENHIJOS') {
-      this.router.navigate([`pages/administrative-processes/derivation-goods`]);
+      this.router.navigate(
+        [`pages/administrative-processes/derivation-goods`],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            expedientNumber: this.expedientNumber,
+            tipoConv: this.tipoConv,
+            pGoodFatherNumber: this.pGoodFatherNumber,
+          },
+        }
+      );
     }
   }
 }

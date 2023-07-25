@@ -618,12 +618,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
         next: () => {
-          this.alert(
-            'success',
-            'Notificación',
-            'Se envio el correo electrónico a los usuarios correctamente'
-          );
-
           this.createTaskNotification();
           this.createTaskExecuteProgramming();
           this.createTaskFormalize();

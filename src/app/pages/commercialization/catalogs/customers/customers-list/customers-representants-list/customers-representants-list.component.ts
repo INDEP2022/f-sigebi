@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -6,10 +5,10 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
 import { IRepresentative } from 'src/app/core/models/catalogs/representative-model';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
-import { MassiveClientService } from 'src/app/core/services/ms-massiveclient/massiveclient.service';
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { RepresentativesModalComponent } from '../../representatives-modal/representatives-modal.component';
 import { REPRESENTATIVES_COLUMNS } from '../representatives-columns';
+import { CustomersExportRepresentantsListComponent } from './customers-export-representants-list/customers-export-representants-list.component';
 
 @Component({
   selector: 'app-customers-representants-list',
@@ -42,10 +41,8 @@ export class CustomersRepresentantsListComponent
   override data: LocalDataSource = new LocalDataSource();
   agentId: number;
   constructor(
-    private datePipe: DatePipe,
     private modalService: BsModalService,
-    private customerService: CustomerService,
-    private massiveClientService: MassiveClientService
+    private customerService: CustomerService
   ) {
     super();
     this.settings.columns = REPRESENTATIVES_COLUMNS;
@@ -60,6 +57,7 @@ export class CustomersRepresentantsListComponent
   }
 
   override getData() {
+    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -92,28 +90,27 @@ export class CustomersRepresentantsListComponent
   }
 
   //Exportar representates
-  exportAllRepresentative(): void {
-    // this.excelService.exportAsExcelFile(
-    //   this.representative,
-    //   'Todos los representantes'
-    // );
-    this.massiveClientService.exportAgents().subscribe({
-      next: (data: any) => {
-        if (data.file.base64) {
-          this.downloadFile(
-            data.file.base64,
-            `representantes${new Date().getTime()}`
-          );
-        } else {
-          this.alert('warning', 'No es Posible Exportar Representates', '');
-        }
-        this.downloading = false;
-      },
-      error: error => {
-        this.downloading = false;
-        this.errorGet(error);
-      },
-    });
+  exportAllRepresentative() {
+    if (!this.client) {
+      this.alert(
+        'warning',
+        'Selecciona Primero un Cliente Para Exportar su Representante',
+        ''
+      );
+    } else {
+      const agentId = this.client.agentId.id;
+      const modalConfig = MODAL_CONFIG;
+      modalConfig.initialState = {
+        agentId,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      };
+      this.modalService.show(
+        CustomersExportRepresentantsListComponent,
+        modalConfig
+      );
+    }
   }
 
   downloadFile(base64: any, fileName: any) {

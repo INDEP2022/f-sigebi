@@ -1,4 +1,5 @@
 export enum NotificationEndpoints {
+  BasePath = `notification`,
   //getAll
   Notification = `notification`,
   //new GetAll

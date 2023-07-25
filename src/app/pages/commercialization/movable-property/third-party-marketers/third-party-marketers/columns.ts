@@ -45,12 +45,15 @@ export const TYPE_EVENT_THIRD_COLUMNS = {
   typeEventId: {
     title: 'Tipo de Evento',
     sort: false,
-    width: '40%',
+    width: '20%',
   },
   description: {
     title: 'Descripción',
     sort: false,
-    width: '40%',
+    width: '80%',
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.eventDetail ? row.eventDetail.description : null;
+    },
   },
 };
 
