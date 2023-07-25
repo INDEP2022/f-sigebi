@@ -2507,8 +2507,8 @@ export class JuridicalRulingGComponent
         ) {
           this.onLoadToast(
             'warning',
-            `El numerario no está conciliado`,
-            `Nro. Bien: ${_g.id}`
+            `El numerario no esta conciliado`,
+            `No. Bien: ${_g.id}`
           );
           return;
         }
