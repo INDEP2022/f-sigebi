@@ -1,52 +1,50 @@
 import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
-import { CopyParametersComponent } from './copyParameters/copyParameters.component';
+import { TextAreaRenderComponent } from 'src/app/shared/render-components/text-area-render/text-area-render.component';
 
 export const COLUMNS = {
-  button: {
-    title: 'Copiar Parámetros',
-    type: 'custom',
-    sort: false,
-    filter: false,
-    renderComponent: CopyParametersComponent,
-  },
+  // button: {
+  //   title: 'Copiar Parámetros',
+  //   type: 'custom',
+  //   sort: false,
+  //   filter: false,
+  //   renderComponent: CopyParametersComponent,
+  // },
   id: {
     title: 'Concepto',
     type: 'string',
     sort: false,
+    editable: false,
   },
   description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    editor: {
+      type: 'custom',
+      component: TextAreaRenderComponent,
+    },
   },
   address: {
     title: 'Dirección',
     type: 'string',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: IConcept) => {
-    //   if (row.address) {
-    //     switch (row.address) {
-    //       case 'M':
-    //         return 'MUEBLES';
-    //       case 'I':
-    //         return 'INMUEBLES';
-    //       case 'C':
-    //         return 'GENERAL';
-    //       case 'V':
-    //         return 'VIGILANCIA';
-    //       case 'S':
-    //         return 'SEGUROS';
-    //       case 'J':
-    //         return 'JURIDICO';
-    //       case 'A':
-    //         return 'ADMINISTRACIÓN';
-    //       default:
-    //         return null;
-    //     }
-    //   } else {
-    //     return null;
-    //   }
-    // },
+    class: 'w-md',
+    editor: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '', title: 'SELECCIONAR' },
+          { value: 'MUEBLES', title: 'MUEBLES' },
+          { value: 'INMUEBLES', title: 'INMUEBLES' },
+          { value: 'GENERAL', title: 'GENERAL' },
+          { value: 'VIGILANCIA', title: 'VIGILANCIA' },
+          { value: 'SEGUROS', title: 'SEGUROS' },
+          { value: 'JURIDICO', title: 'JURIDICO' },
+          { value: 'ADMINISTRACIÓN', title: 'ADMINISTRACIÓN' },
+        ],
+      },
+    },
   },
   automatic: {
     title: 'Automático',
@@ -59,6 +57,10 @@ export const COLUMNS = {
         checked: row.automatic === 'S' || row.automatic === true ? true : false,
         disabled: true,
       };
+    },
+    editor: {
+      type: 'custom',
+      component: CheckboxDisabledElementComponent,
     },
   },
   routineCalculation: {
@@ -77,6 +79,10 @@ export const COLUMNS = {
         checked: row.numerary === 'S' || row.numerary === true ? true : false,
         disabled: true,
       };
+    },
+    editor: {
+      type: 'custom',
+      component: CheckboxDisabledElementComponent,
     },
   },
 };

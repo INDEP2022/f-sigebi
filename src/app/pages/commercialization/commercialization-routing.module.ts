@@ -173,7 +173,7 @@ const routes: Routes = [
           './shared-marketing-components/unreconciled-payment/unreconciled-payment.module'
         )
       ).UnreconciledPaymentModule,
-    data: { title: 'Pagos no Conciliados' },
+    data: { title: 'Pagos no Conciliados', screen: 'FCOMER113' },
   },
   {
     path: 'payment-dispersion-monitor',
