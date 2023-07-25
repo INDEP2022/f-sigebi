@@ -754,6 +754,8 @@ export class RegistrationOfRequestsComponent
       /* valida campos */
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
+        /* actualizamos el campo  fileNumber (expediente) de bienes*/
+
         /* abre modal del elegir usuario */
         this.cambiarTipoUsuario(this.requestData);
       }
