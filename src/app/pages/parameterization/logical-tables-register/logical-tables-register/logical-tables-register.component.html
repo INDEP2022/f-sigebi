@@ -2,18 +2,24 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">Definici&oacute;n de tablas l&oacute;gicas</h5>
-      <div class="col-md-5 buttons">
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
         <div>
           <button
-            (click)="openForm()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-  </div>
-  <div body>
     <div class="row">
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">

@@ -12,7 +12,9 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeProceeding" />
+              formControlName="typeProceeding"
+              required
+              pattern="^[^\s].*" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -25,7 +27,7 @@
               [data]="categories"
               (fetchItems)="getCategories($event)"
               (change)="categoriesChange($event)"
-              label="Categoría inicial">
+              label="Categoría Inicial">
             </ngx-select>
           </form-field>
         </div>
@@ -41,7 +43,7 @@
               [data]="categories"
               (fetchItems)="getCategories($event)"
               (change)="categoriesChange($event)"
-              label="Categoría final">
+              label="Categoría Final">
             </ngx-select>
           </form-field>
         </div>

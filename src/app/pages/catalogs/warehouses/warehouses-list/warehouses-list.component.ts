@@ -226,7 +226,7 @@ export class WarehousesListComponent extends BasePage implements OnInit {
         this.getWarehouses();
         this.alert(
           'success',
-          'Categoria para almacen',
+          'Categoria para Almacen',
           'Borrada Correctamente'
         );
       },

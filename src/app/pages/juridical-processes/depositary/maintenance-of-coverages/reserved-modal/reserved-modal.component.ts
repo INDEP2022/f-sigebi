@@ -45,7 +45,7 @@ export class ReservedModalComponent extends BasePage implements OnInit {
 
   async apply() {
     try {
-      debugger;
+      //debugger;
       const notifiUpdated = await this.updateNotification();
       const fileStatusUpdated = await this.updateFileStatus();
       this.event.emit(this.form.get('reserved').value);

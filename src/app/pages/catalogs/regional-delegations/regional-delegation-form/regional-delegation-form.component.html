@@ -29,7 +29,7 @@
               [searchable]="true"
               label="Id Zona Geogr&aacute;fica"
               control="idGeographicZona"
-              (change)="fillSelectZone()">
+              (change)="fillSelectZone($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -81,7 +81,7 @@
               bindLabel="nameCity"
               label="Ciudad"
               control="city"
-              (change)="fillSelectCity()">
+              (change)="fillSelectCity($event)">
             </ngx-select>
           </form-field>
         </div>

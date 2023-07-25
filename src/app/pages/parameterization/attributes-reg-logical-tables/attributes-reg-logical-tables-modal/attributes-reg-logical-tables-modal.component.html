@@ -12,10 +12,14 @@
             <input
               type="number"
               class="form-control"
-              formControlName="keyAtrib" />
+              formControlName="keyAtrib"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-8">
           <form-field
             [control]="tdescAtribForm.get('descriptionAtrib')"
             label="Descripci&oacute;n">
@@ -50,7 +54,11 @@
             <input
               type="number"
               class="form-control"
-              formControlName="longMax" />
+              formControlName="longMax"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -60,7 +68,11 @@
             <input
               type="number"
               class="form-control"
-              formControlName="longMin" />
+              formControlName="longMin"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

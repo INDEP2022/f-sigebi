@@ -1,6 +1,6 @@
 export const APPRAISALINSTITUTIONS_COLUMNS = {
   id: {
-    title: 'No.Valuador',
+    title: 'No. Valuador',
     sort: false,
   },
   description: {
@@ -12,11 +12,11 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     sort: false,
   },
   noExterior: {
-    title: 'No.Exterior',
+    title: 'No. Exterior',
     sort: false,
   },
   noInterior: {
-    title: 'No.Interior',
+    title: 'No. Interior',
     sort: false,
   },
   codepostal: {
@@ -45,15 +45,15 @@ export const APPRAISALINSTITUTIONS_COLUMNS = {
     type: 'string',
   },
   curp: {
-    title: 'CURP',
+    title: 'C.U.R.P.',
     sort: false,
   },
   tel: {
-    title: 'Telefono',
+    title: 'Teléfono',
     sort: false,
   },
   rfc: {
-    title: 'RFC',
+    title: 'R.F.C.',
     sort: false,
   },
 };

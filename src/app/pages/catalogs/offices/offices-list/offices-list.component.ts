@@ -78,9 +78,6 @@ export class OfficesListComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -129,7 +126,7 @@ export class OfficesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      'Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(office.id);

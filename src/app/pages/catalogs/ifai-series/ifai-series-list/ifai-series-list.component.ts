@@ -47,13 +47,28 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'code' ||
-            filter.field == 'typeProcedure' ||
-            filter.field == 'description' ||
-            filter.field == 'status' ||
-            filter.field == 'registryNumber'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'code':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'typeProcedure':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.typeProcedure`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'registryNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

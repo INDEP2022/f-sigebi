@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form *ngIf="penaltyForm" [formGroup]="penaltyForm" class="form-material">
+    <form [formGroup]="penaltyForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
           <form-field
@@ -12,8 +12,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="serviceType"
-              oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)" />
+              formControlName="serviceType" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -24,11 +23,11 @@
               type="number"
               class="form-control"
               formControlName="penaltyPercentage"
-              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2)" />
+              min="1" />
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 pt-4">
           <form-field
             [control]="penaltyForm.get('equivalentDays')"
             label="D&iacute;as Equivalentes">
@@ -36,30 +35,27 @@
               type="number"
               class="form-control"
               formControlName="equivalentDays"
-              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5)" />
+              min="1" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 pt-4">
           <form-field
             [control]="penaltyForm.get('contractNumber')"
             label="N&uacute;mero Contrato">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="contractNumber"
-              oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
+              min="1" />
           </form-field>
         </div>
       </div>
     </form>
   </div>
-  <div footer *ngIf="penaltyForm">
+  <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="penaltyForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

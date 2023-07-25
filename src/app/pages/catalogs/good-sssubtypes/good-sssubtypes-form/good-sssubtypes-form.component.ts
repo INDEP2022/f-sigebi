@@ -56,7 +56,11 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       numSubType: [
         null,
@@ -71,14 +75,6 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       numRegister: [null],
-      numClasifAlterna: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(2),
-        ],
-      ],
       numClasifGoods: [
         null,
         [
@@ -219,7 +215,7 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
     this.goodSssubtypeForm.controls['numSsubType'].setValue('');
     /*console.log(this.idSubType, this.clasification.subtypeId);
     if (this.idSubType != this.clasification.subtypeId) {
-      
+
       this.siabClasificationform.controls['ssubtypeId'].setValue(null);
       this.siabClasificationform.controls['sssubtypeId'].setValue(null);
     }*/
@@ -269,13 +265,22 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.goodSssubtypeForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
-    this.goodSssubtypeService
-      .create(this.goodSssubtypeForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.goodSssubtypeService.create(this.goodSssubtypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.loading = false;
+        this.alert(
+          'error',
+          'Ya existe un registro con los mismos identificadores',
+          ''
+        );
+      },
+    });
   }
 
   update() {

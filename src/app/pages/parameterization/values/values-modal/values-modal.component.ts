@@ -36,7 +36,10 @@ export class ValuesModalComponent extends BasePage implements OnInit {
       value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       table: [null],
       numRegister: [null],
-      abbreviation: [null],
+      abbreviation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     console.log(this.tvalTable);
     if (this.tvalTable != null) {
@@ -54,7 +57,14 @@ export class ValuesModalComponent extends BasePage implements OnInit {
     this.edit ? this.update() : this.create();
   }
   create(): void {
-    this.loading = true;
+    if (
+      this.valuesForm.controls['otKey'].value.trim() === '' ||
+      this.valuesForm.controls['value'].value.trim() === '' ||
+      this.valuesForm.controls['abbreviation'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.valuesForm.controls['table'].setValue(this.value.nmtabla);
 
     this.tvalTableService

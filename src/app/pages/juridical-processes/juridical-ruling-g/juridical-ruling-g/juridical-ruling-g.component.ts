@@ -1423,32 +1423,8 @@ export class JuridicalRulingGComponent
             ? this.dictamen.id
             : this.dictNumber;
           const V_NO_EXPEDIENT = this.expedientesForm.get('noExpediente').value;
-          // DELETE DOCUMENTOS_DICTAMEN_X_BIEN_M
-          // for (let i = 0; i < this.goodsValid.length; i++) {
-          //   let obj = {
-          //     expedientNumber: this.expedientesForm.get('noExpediente').value,
-          //     stateNumber: this.goodsValid[i].id,
-          //     typeDictum: V_TIPO_DICTA,
-          //   };
-          //   const getDocs: any = await this.getDeleteDocsDictXGoodM2(obj);
-          //   if (getDocs != null) {
-          //     for (let e = 0; e < getDocs.length; e++) {
-          //       let obj1 = {
-          //         expedientNumber: getDocs[e].expedientNumber,
-          //         stateNumber: getDocs[e].stateNumber,
-          //         key: getDocs[e].key,
-          //         typeDictum: getDocs[e].typeDictum,
-          //       };
-          //       await this.deleteDocsDictXGoodM(obj1);
-          //     }
-          //   }
-          // }
-          // // DELETE DICTAMINACION_X_BIEN1
-          // await this.deleteDictaXGood1(
-          //   V_NO_OF_DICTA,
-          //   V_TIPO_DICTA,
-          //   V_NO_EXPEDIENT
-          // );
+          if (this.dictamen.folioUniversal)
+            await this.getFolioUniversalDelete(this.dictamen.folioUniversal);
           // // DELETE OFICIO_DICTAMEN_TEXTOS
           // await this.deleteOficioDictamenTextos(V_NO_OF_DICTA, V_TIPO_DICTA);
           // // DELETE COPIAS_OFICIO_DICTAMEN
@@ -1458,10 +1434,6 @@ export class JuridicalRulingGComponent
           // // DELETE DICTAMINACIONES
           // await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
 
-          // this.dictationService.deletePupDeleteDictum(object).subscribe({
-          //   next: (value: any) => {},
-          //   error: (err: any) => {},
-          // });
           this.dictationService.deletePupDeleteDictum(object).subscribe({
             next: (value: any) => {
               this.buttonApr = true;
@@ -1610,40 +1582,8 @@ export class JuridicalRulingGComponent
             : this.dictNumber;
           const V_NO_EXPEDIENT = this.expedientesForm.get('noExpediente').value;
 
-          // DELETE DOCUMENTOS_DICTAMEN_X_BIEN_M
-          // for (let i = 0; i < this.goodsValid.length; i++) {
-          //   let obj = {
-          //     expedientNumber: this.expedientesForm.get('noExpediente').value,
-          //     stateNumber: this.goodsValid[i].id,
-          //     typeDictum: V_TIPO_DICTA,
-          //   };
-          //   const getDocs: any = await this.getDeleteDocsDictXGoodM2(obj);
-          //   if (getDocs != null) {
-          //     for (let e = 0; e < getDocs.length; e++) {
-          //       let obj1 = {
-          //         expedientNumber: getDocs[e].expedientNumber,
-          //         stateNumber: getDocs[e].stateNumber,
-          //         key: getDocs[e].key.key,
-          //         typeDictum: getDocs[e].typeDictum,
-          //       };
-          //       await this.deleteDocsDictXGoodM(obj1);
-          //     }
-          //   }
-          // }
-          // // DELETE DICTAMINACION_X_BIEN1
-          // await this.deleteDictaXGood1(
-          //   V_NO_OF_DICTA,
-          //   V_TIPO_DICTA,
-          //   V_NO_EXPEDIENT
-          // );
-          // // DELETE OFICIO_DICTAMEN_TEXTOS
-          // await this.deleteOficioDictamenTextos(V_NO_OF_DICTA, V_TIPO_DICTA);
-          // // DELETE COPIAS_OFICIO_DICTAMEN
-          // await this.deleteCopyOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
-          // // DELETE OFICIO_DICTAMEN
-          // await this.deleteOficioDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
-          // // DELETE DICTAMINACIONES
-          // await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
+          if (this.dictamen.folioUniversal)
+            await this.getFolioUniversalDelete(this.dictamen.folioUniversal);
 
           this.dictationService.deletePupDeleteDictum(object).subscribe({
             next: (value: any) => {
@@ -1678,6 +1618,19 @@ export class JuridicalRulingGComponent
     }
 
     // this.btnDeleteDictation();
+  }
+
+  getFolioUniversalDelete(folioUniversal: any) {
+    return new Promise((resolve, reject) => {
+      this.documentService.remove(folioUniversal).subscribe({
+        next: (resp: any) => {
+          resolve(resp);
+        },
+        error: error => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   // DELETE OFICIO_DICTAMEN_TEXTOS
@@ -2330,7 +2283,7 @@ export class JuridicalRulingGComponent
     } else {
       this.alert(
         'warning',
-        'Necesitas un número de expedientes con oficio.',
+        'Necesitas un Número de Expediente con Oficio.',
         ''
       );
       return; // Si 'documents' está vacío, detiene la ejecución aquí

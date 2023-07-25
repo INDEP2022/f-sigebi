@@ -64,6 +64,10 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.form.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.siseProcessService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),

@@ -37,7 +37,11 @@ export class ResponseRepuveFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
     });
     if (this.responseRepuve != null) {
@@ -60,6 +64,11 @@ export class ResponseRepuveFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.form.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
+
     this.loading = true;
     this.responseRepuveService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),

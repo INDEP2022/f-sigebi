@@ -1,4 +1,9 @@
 export const CAT_DOC_REQUIRE_COLUMNS = {
+  numRegister: {
+    title: 'No. Registro',
+    type: 'number',
+    sort: false,
+  },
   id: {
     title: 'Clave del Documento',
     type: 'number',

@@ -117,13 +117,18 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
       next: response => {
         this.totalItems = response.count;
         this.departments = response.data;
-        this.data.load(this.departments);
+        this.data.load(response.data);
         //console.log(this.data);
         this.data.refresh();
         //console.log(this.departments);
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 

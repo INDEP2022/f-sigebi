@@ -80,7 +80,7 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'name':
                 searchFilter = SearchFilter.ILIKE;

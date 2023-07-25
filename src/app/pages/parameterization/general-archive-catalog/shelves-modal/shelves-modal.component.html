@@ -29,12 +29,19 @@
         </div>
         <div class="col-md-3">
           <form-field label="No. Estante" [control]="shelvesForm.get('id')">
-            <input type="number" class="form-control" formControlName="id" />
+            <input
+              type="number"
+              class="form-control"
+              maxlength="5"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+              formControlName="id" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md">
+      <div class="row pt-4">
+        <div class="col-md-12">
           <form-field
             label="Descripción"
             [control]="shelvesForm.get('description')">
@@ -45,7 +52,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <div class="row pt-4">
         <div class="col-md-4">
           <form-field label="Status" [control]="shelvesForm.get('status')">
             <input type="text" class="form-control" formControlName="status" />
@@ -59,6 +66,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="shelvesForm.invalid"
+          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

@@ -79,12 +79,16 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.clarificationForm.controls['clarification'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.clarificationService.create(this.clarificationForm.value).subscribe(
       data => this.handleSuccess(),
       error => {
         this.loading = false;
-        this.onLoadToast('error', 'ERROR', error.error.message);
+        this.alert('error', 'ERROR', error.error.message);
       }
     );
   }

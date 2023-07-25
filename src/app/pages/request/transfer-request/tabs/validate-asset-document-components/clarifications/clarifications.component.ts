@@ -643,7 +643,7 @@ export class ClarificationsComponent
   updateStatusTable(body: any) {
     this.assetsArray.getElements().then(data => {
       data.map((item: any) => {
-        debugger;
+        //debugger;
         if (item.id === body.id) {
           item.processStatus = body.processStatus;
           item.goodStatus = body.goodStatus;

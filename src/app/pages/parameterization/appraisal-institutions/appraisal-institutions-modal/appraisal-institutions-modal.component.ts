@@ -29,7 +29,7 @@ export class AppraisalInstitutionsModalComponent
 {
   appraisers: IAppraisers;
   appraisersForm: ModelForm<IAppraisers>;
-  title: string = 'Institución valuadora';
+  title: string = 'Institución Valuadora';
   edit: boolean = false;
   entfedSelect = new DefaultSelect<IEntfed>();
   municipalitySelect = new DefaultSelect<IMunicipality>();
@@ -151,23 +151,47 @@ export class AppraisalInstitutionsModalComponent
     this.edit ? this.update() : this.create();
   }
   create() {
-    this.loading = true;
-    this.appraisersService.create(this.appraisersForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.appraisersForm.controls['description'].value.trim() == '' ||
+      this.appraisersForm.controls['represent'].value.trim() == '' ||
+      (this.appraisersForm.controls['description'].value.trim() == '' &&
+        this.appraisersForm.controls['represent'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.appraisersService
+        .create(this.appraisersForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   update() {
-    this.loading = true;
-    this.appraisersService
-      .update(
-        this.appraisersForm.controls['id'].value,
-        this.appraisersForm.value
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.appraisersForm.controls['description'].value.trim() == '' ||
+      this.appraisersForm.controls['represent'].value.trim() == '' ||
+      (this.appraisersForm.controls['description'].value.trim() == '' &&
+        this.appraisersForm.controls['represent'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.appraisersService
+        .update(
+          this.appraisersForm.controls['id'].value,
+          this.appraisersForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   /*handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';

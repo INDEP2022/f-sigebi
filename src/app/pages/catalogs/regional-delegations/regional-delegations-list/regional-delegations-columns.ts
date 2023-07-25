@@ -17,11 +17,15 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
   //   sort: false,
   // },
   zoneGeographic: {
-    title: 'Zona geográfica',
+    title: 'Zona Geográfica',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IZoneGeographic) => {
-      return value.description;
+      if (value) {
+        return value.description;
+      } else {
+        return null;
+      }
     },
     filterFunction(cell?: any, search?: string): boolean {
       let column = cell.description;
@@ -43,7 +47,7 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     sort: false,
   },
   officeAddress: {
-    title: 'Domicilio oficina',
+    title: 'Domicilio Oficina',
     type: 'string',
     sort: false,
   },
