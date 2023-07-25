@@ -5,6 +5,26 @@
   <div body>
     <form class="form-material" [formGroup]="amountForm">
       <div class="row">
+        <!-- <div class="col-md-4">
+          <form-field label="ID" [control]="amountForm.get('idComiXThird')">
+            <input [readonly]="edit" type="text" class="form-control" formControlName="idComiXThird" />
+          </form-field>
+        </div> -->
+        <div class="col-md-4">
+          <form-field [control]="amountForm.get('idThirdParty')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="amountForm"
+              control="idThirdParty"
+              [data]="thirdPartySelect"
+              value="id"
+              bindLabel="id"
+              label="ID Tercero Comercializador"
+              (fetchItems)="getThirdPartyAll($event)">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="idThirdParty" /> -->
+          </form-field>
+        </div>
         <div class="col-md-4">
           <form-field [control]="amountForm.get('idThirdParty')">
             <ngx-select
@@ -25,7 +45,9 @@
             label="Monto inicial"
             [control]="amountForm.get('startingAmount')">
             <input
-              type="text"
+              [max-length]="10"
+              pattern="^[0-9]+"
+              type="number"
               class="form-control"
               formControlName="startingAmount" />
           </form-field>
@@ -35,7 +57,9 @@
             label="PCT Comisión"
             [control]="amountForm.get('pctCommission')">
             <input
-              type="text"
+              [max-length]="5"
+              pattern="^[0-9]+"
+              type="number"
               class="form-control"
               formControlName="pctCommission" />
           </form-field>
@@ -45,7 +69,9 @@
             label="Monto Final"
             [control]="amountForm.get('finalAmount')">
             <input
-              type="text"
+              [max-length]="10"
+              pattern="^[0-9]+"
+              type="number"
               class="form-control"
               formControlName="finalAmount" />
           </form-field>
