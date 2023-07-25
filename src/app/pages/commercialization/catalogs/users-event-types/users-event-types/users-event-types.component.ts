@@ -169,18 +169,15 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
       '¿Desea Eliminar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log(parameter);
         let data = {
-          idTpevent: parameter.id_tpevento,
-          username: parameter.usuariotpvto,
+          idTpevent: parameter.idTpevent,
+          username: parameter.username,
         };
         this.userTpeeventsService.remove(data).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert(
-                'success',
-                'Usuario por Tipo de Evento',
-                'Borrado Correctamente'
-              );
+              this.alert('success', 'Borrado Correctamente', '');
               this.getValuesAll(
                 new ListParams(),
                 this.teventsForm.controls['event'].value
