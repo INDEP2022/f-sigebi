@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { getUser } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -13,6 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS } from './columns';
 
+import { Router } from '@angular/router';
 import { IGood } from 'src/app/core/models/good/good.model';
 
 @Component({
@@ -34,6 +36,9 @@ export class NoticeAbandonmentForSecuringComponent
   form: FormGroup;
   period: boolean = false;
   searching: boolean = false;
+  selectedRows: any;
+  selectedRow: any;
+  selectedGood: IGood;
 
   get goodId() {
     return this.form.get('goodId');
@@ -58,7 +63,8 @@ export class NoticeAbandonmentForSecuringComponent
     private fb: FormBuilder,
     private goodService: GoodService,
     private notificationService: NotificationService,
-    private goodTypesService: GoodTypeService
+    private goodTypesService: GoodTypeService,
+    private router: Router
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -96,7 +102,7 @@ export class NoticeAbandonmentForSecuringComponent
       .subscribe();
   }
 
-  getGoods() {
+  getGoodsxnotification() {
     const params = this.params.getValue();
     console.log(params);
     this.filterParams.getValue().removeAllFilters();
@@ -105,7 +111,7 @@ export class NoticeAbandonmentForSecuringComponent
     if (this.form.value.goodId) {
       this.filterParams
         .getValue()
-        .addFilter('goodId', this.form.value.goodId, SearchFilter.EQ);
+        .addFilter('numberProperty', this.form.value.goodId, SearchFilter.EQ);
     }
     // if (this.form.value.quantity) {
     //   this.filterParams
@@ -138,8 +144,10 @@ export class NoticeAbandonmentForSecuringComponent
     this.loading = true;
     this.loadingText = 'Cargando';
 
-    this.goodService
-      .getAll(this.filterParams.getValue().getParams())
+    this.notificationService
+      .getNotificationxPropertyFilter({
+        numberProperty: this.form.value.goodId,
+      })
       .subscribe({
         next: response => {
           console.log('Goods Response: ', response);
@@ -237,12 +245,81 @@ export class NoticeAbandonmentForSecuringComponent
 
   search() {
     if (this.goodId.value != null) {
-      this.getGoods();
+      this.getGoodsxnotification();
     } else {
       this.message('info', 'Error', 'Debe llenar algun filtro.');
     }
   }
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+  public onUserRowSelect(event: any) {
+    if (event.selected.length == 1) {
+      this.selectedRow = event.selected[0];
+    }
+  }
+  accept() {
+    console.log(this.selectedGood.status);
+    let validateParams = {
+      status: this.selectedGood.status,
+      notifyDate: this.selectedRow.notificationDate,
+      complianceLeaveDate: this.selectedRow.periodEndDate,
+      judicialDate: this.selectedRow.abandonmentExpirationDate,
+      goodsID: this.selectedGood.id,
+      user: getUser(),
+      screen: 'FACTJURNOTABANASE',
+    };
+    console.log('validateParams: ', validateParams);
+    //count AE status of data
+    let count = 0;
+    for (let i = 0; i < this.data.length; i++) {
+      if (this.data[i].statusNotified == 'AE') {
+        count++;
+      }
+    }
+    if (count == 3) {
+      this.notificationService.validateGoodStatus(this.data).subscribe({
+        next: response => {
+          console.log('response: ', response);
+          //redireccion
+          if (
+            this.selectedRow.definitiveSuspension == '0' &&
+            this.selectedRow.statusNotified == 'AE'
+          ) {
+            this.onLoadToast(
+              'success',
+              'Exito',
+              'Se ha validado correctamente.'
+            );
+            this.router.navigate([
+              'pages',
+              'juridical',
+              'depositary',
+              'abandonment-monitor-for-securing',
+            ]);
+          } else if (this.selectedRow.definitiveSuspension == '1') {
+            this.onLoadToast(
+              'error',
+              'Error',
+              'El Proceso ha sido Suspendido Temporalmente, favor de verificar.'
+            );
+          }
+        },
+        error: err => {
+          console.log('err: ', err);
+          this.onLoadToast('error', 'Error', err.message);
+        },
+      });
+    } else if (count < 3) {
+      this.message(
+        'info',
+        'Error',
+        'Deben haber 3 notificaciones de aseguramiento para ir a Confirmación de Abandonos.'
+      );
+    }
+  }
+
+  onSelectedGood(event: any) {
+    this.selectedGood = event;
   }
 }
