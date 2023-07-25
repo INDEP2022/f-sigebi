@@ -125,7 +125,7 @@ export interface ICustomersPenalties {
 }
 
 export interface IHistoryCustomersPenalties {
-  data: any;
+  // data: any;
   customerId: number;
   batchId: number;
   penaltyId: number;
@@ -139,10 +139,10 @@ export interface IHistoryCustomersPenalties {
   flag: number;
   recordNumber: number;
   usrPenalize: string;
-  usrfree: null;
+  usrfree: string;
   penalizesDate: string;
-  releasesDate: null;
-  causefree: null;
-  nbOrigin: null;
-  penalty: null;
+  releasesDate: string;
+  causefree: string;
+  nbOrigin: string;
+  // penalty: string;
 }

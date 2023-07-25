@@ -1,13 +1,4 @@
-import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
-
 export const COLUMNS = {
-  clientId: {
-    title: 'Clave Cliente',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return cell.id;
-    },
-  },
   typeProcess: {
     title: 'Tipo de Penalización',
     sort: false,
@@ -26,34 +17,34 @@ export const COLUMNS = {
   startDate: {
     title: 'Fecha Inicial',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   const parts = cell.split('-');
+    //   const year = parts[0];
+    //   const month = parts[1];
+    //   const day = parts[2];
+    //   const formattedDate = `${day}/${month}/${year}`;
+    //   return formattedDate;
+    // },
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomDateDayFilterComponent,
+    // },
   },
   endDate: {
     title: 'Fecha Final',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   const parts = cell.split('-');
+    //   const year = parts[0];
+    //   const month = parts[1];
+    //   const day = parts[2];
+    //   const formattedDate = `${day}/${month}/${year}`;
+    //   return formattedDate;
+    // },
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomDateDayFilterComponent,
+    // },
   },
   refeOfficeOther: {
     title: 'Referencia/Oficio/Otros',
@@ -66,18 +57,18 @@ export const COLUMNS = {
   penaltiDate: {
     title: 'Fecha Penaliza',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   const parts = cell.split('-');
+    //   const year = parts[0];
+    //   const month = parts[1];
+    //   const day = parts[2];
 
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },
+    //   const formattedDate = `${day}/${month}/${year}`;
+    //   return formattedDate;
+    // },
+    // filter: {
+    //   type: 'custom',
+    //   component: CustomDateDayFilterComponent,
+    // },
   },
 };

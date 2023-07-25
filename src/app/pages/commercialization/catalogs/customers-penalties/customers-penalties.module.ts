@@ -19,6 +19,7 @@ import { CustomersPenaltiesExportAllComponent } from './customer-penalties-expor
 import { CustomersPenaltiesExportHistoricComponent } from './customer-penalties-export-historic/customer-penalties-export-historic.component';
 import { CustomerPenaltiesModalComponent } from './customer-penalties-modal/customer-penalties-modal.component';
 import { CustomersPenaltiesComponent } from './customers-penalties/customers-penalties.component';
+import { CustomersExportHistoryCustomersPenaltiesListComponent } from './customers-penalties/history-customers-penalties/customers-export-HistoryCustomersPenalties-list/customers-export-HistoryCustomersPenalties-list.component';
 import { HistoryCustomersPenaltiesComponent } from './customers-penalties/history-customers-penalties/history-customers-penalties.component';
 
 @NgModule({
@@ -28,6 +29,7 @@ import { HistoryCustomersPenaltiesComponent } from './customers-penalties/histor
     CustomersPenaltiesExportAllComponent,
     CustomersPenaltiesExportHistoricComponent,
     HistoryCustomersPenaltiesComponent,
+    CustomersExportHistoryCustomersPenaltiesListComponent,
   ],
   imports: [
     CommonModule,
