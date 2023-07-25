@@ -14,7 +14,10 @@ import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { ITask } from 'src/app/core/models/ms-task/task-model';
-import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import {
+  IReceipt,
+  IRecepitGuard,
+} from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -89,6 +92,8 @@ export class FormalizeProgrammingFormComponent
   selectGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
   receiptData: IReceipt;
+  receiptGuardData: IRecepitGuard;
+  receiptWarehouseData: IRecepitGuard;
   goodIdSelect: any;
   goodIdSelectGuard: string | number;
   programmingId: number = 0;
@@ -249,6 +254,11 @@ export class FormalizeProgrammingFormComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getReceipts());
 
+    this.getReceiptsGuard();
+    /*this.paramsReceipts
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => ); */
+
     this.paramsProceeding
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getProccedings());
@@ -289,6 +299,46 @@ export class FormalizeProgrammingFormComponent
       error: error => {
         this.receipts = new LocalDataSource();
       },
+    });
+  }
+
+  getReceiptsGuard() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    this.receptionGoodService.getReceptions(params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response);
+        //this.receiptGuardGood = response.data[0];
+
+        const filterWarehouse = response.data.map((item: any) => {
+          if (item.typeReceipt == 'ALMACEN') return item;
+        });
+
+        const infoWarehouse = filterWarehouse.filter((item: IRecepitGuard) => {
+          return item;
+        });
+        console.log('infoWarehouse', infoWarehouse);
+        this.receiptWarehouseData = infoWarehouse[0];
+        this.receipts.load(infoWarehouse);
+        //this.receiptWarehouseGood = infoWarehouse[0];
+        //this.receiptWarehouse.load(infoWarehouse);
+
+        const filterGuard = response.data.map((item: any) => {
+          if (item.typeReceipt == 'RESGUARDO') return item;
+        });
+        if (filterGuard) {
+          const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
+            return item;
+          });
+
+          console.log('infoGuard', infoGuard);
+          this.receiptGuardData = infoGuard[0];
+          this.receipts.load(infoGuard);
+          //this.receiptGuardGood = infoGuard[0];
+          //this.receiptGuards.load(infoGuard);
+        }
+      },
+      error: error => {},
     });
   }
 
@@ -595,7 +645,15 @@ export class FormalizeProgrammingFormComponent
   }
 
   generateMinute(proceeding: IProceedings) {
-    if (this.receiptData.statusReceipt == 'CERRADO') {
+    console.log('receipts', this.receiptData);
+    console.log('receipts guard', this.receiptGuardData);
+    console.log('receipts warehouse', this.receiptWarehouseData);
+
+    if (
+      this.receiptData?.statusReceipt == 'CERRADO' ||
+      this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
+      this.receiptWarehouseData?.statusReceiptGuard == 'CERRADO'
+    ) {
       if (this.proceeding.value[0].observationProceedings) {
         this.proceedingService.updateProceeding(proceeding).subscribe({
           next: () => {
@@ -697,6 +755,7 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.idProgramming'] = this.programmingId;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         const proceeding = response.data[0];
         //const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
         const keyDoc: number = this.programming.id;
@@ -1032,7 +1091,7 @@ export class FormalizeProgrammingFormComponent
               }
             },
           });
-        //const nomFun1 = proceeding.
+        //const nomFun1 = proceeding. */
       },
       error: error => {},
     });
