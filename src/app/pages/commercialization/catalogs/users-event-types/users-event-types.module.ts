@@ -9,10 +9,11 @@ import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event
 //Routing
 import { UsersEventTypesRoutingModule } from './users-event-types-routing.module';
 //Components
+import { UsersEventTypesFormsComponent } from './users-event-types-forms/users-event-types-forms.component';
 import { UsersEventTypesComponent } from './users-event-types/users-event-types.component';
 
 @NgModule({
-  declarations: [UsersEventTypesComponent],
+  declarations: [UsersEventTypesComponent, UsersEventTypesFormsComponent],
   imports: [
     CommonModule,
     UsersEventTypesRoutingModule,

@@ -42,10 +42,28 @@ export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
     sort: false,
     type: 'custom',
     renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.cumplio = data.toggle ? '1' : '0';
-      });
+    // onComponentInitFunction(instance: any) {
+    //   instance.toggle.subscribe((data: any) => {
+    //     data.row.cumplio = data.toggle ? '1' : '0';
+    //   });
+    // },
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case '0':
+            value = false;
+            return value;
+            break;
+          case '1':
+            value = true;
+            return value;
+            break;
+          default:
+            value = 'S/N';
+            return value;
+            break;
+        }
+      }
     },
   },
 };
