@@ -190,6 +190,9 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.formCapture.reset();
     this.capturasDig = [];
     this.nombreUser = '';
+    this.P_T_CUMP = 0;
+    this.P_T_NO_CUMP = 0;
+    this.P_CUMP = 0;
     this.dataFactCapt = new LocalDataSource();
   }
 
@@ -367,7 +370,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
 
   Generar() {
     this.loading = true;
-    if (this.formCapture.value.user == null) {
+    if (this.formCapture.value.user == null && this.capturasDig.length == 0) {
       this.alert(
         'info',
         'Debe seleccionar un usuario para generar reporte',
@@ -390,6 +393,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
+          this.loading = false;
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
           let config = {
@@ -405,6 +409,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           };
           this.modalService.show(PreviewDocumentsComponent, config);
         } else {
+          this.loading = false;
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
           let config = {
@@ -440,7 +445,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       'yyyy-MM-dd'
     );
     const cvCoorsId: number[] = [];
-
     // this.delegations.forEach(p => {
     //   cvCoorsId.push(p.id);
     // });
@@ -475,6 +479,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           this.dataFactCapt.load(data.result);
           this.totalItemsCaptura = data.count;
           console.log(this.totalItemsCaptura);
+          this.loading = false;
           this.dataFactCapt.refresh();
           // this.P_T_NO_CUMP = data.info.total_no_cumplio;
           // this.P_T_CUMP = data.info.total_cumplio;
@@ -492,7 +497,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
 
   exportToExcel() {
     this.isLoading = true;
-    if (this.dataFactCapt == null) {
+    if (this.capturasDig.length == 0) {
       this.alert('info', 'No hay información para descargar', '');
       return;
     }

@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
   ListParams,
   SearchFilter,
@@ -10,7 +14,9 @@ import {
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAccountMovement } from 'src/app/core/models/ms-account-movements/account-movement.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { StrategyProcessService } from 'src/app/core/services/ms-strategy/strategy-process.service';
@@ -50,17 +56,29 @@ export class ImplementationReportsInvoicesComponent
   cantidad: any;
   status: boolean = false;
   report: any;
+  descripcion: any;
   lnu_folio: number;
   t_reportes: string;
   expediente: number;
-
+  zone: any;
+  factura: any;
+  iddelegation: any;
+  idsubdelegation: any;
+  datos: any;
+  loadingDoc: boolean = false;
+  no_report: any;
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
     private authService: AuthService,
     private strategyProcessService: StrategyProcessService,
     private detailProceeDelRecService: DetailProceeDelRecService,
-    private documentsDictumStatetMService: DocumentsDictumStatetMService
+    private documentsDictumStatetMService: DocumentsDictumStatetMService,
+    private departamentService: DepartamentService,
+    private jasperService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
+    private router: Router
   ) {
     super();
     this.settings.columns = IMPLEMENTATION_COLUMNS;
@@ -148,6 +166,7 @@ export class ImplementationReportsInvoicesComponent
     });
     this.proceduralHistoryForm = this.fb.group({
       delegation: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
     });
   }
   validNoInvoice(No: string | number) {
@@ -202,6 +221,11 @@ export class ImplementationReportsInvoicesComponent
     }
     this.getAmount(this.selectedRow.no_reporte);
   }
+  seleccionarSubDelegacion(subdelegacion: any) {
+    this.descripcion = subdelegacion.description;
+    let iddelegation = this.proceduralHistoryForm.value.delegation;
+    this.departament(iddelegation, this.descripcion);
+  }
 
   DelegationI() {
     this.data1 = [];
@@ -213,10 +237,12 @@ export class ImplementationReportsInvoicesComponent
     let token = this.authService.decodeToken();
     model.userinsert = token.name.toUpperCase();
     console.log('Token: ', token.name.toUpperCase());
-    let iddelegation = this.proceduralHistoryForm.value.delegation;
-    console.log('Delegacion', iddelegation);
+    this.iddelegation = this.proceduralHistoryForm.value.delegation;
+    this.idsubdelegation = this.proceduralHistoryForm.value.subdelegation;
+    console.log('Delegacion', this.iddelegation);
+    console.log('subdelegacion ', this.idsubdelegation);
     this.strategyProcessService
-      .getByDelegation(iddelegation, params)
+      .getByDelegation(this.iddelegation, params)
       .subscribe({
         next: response => {
           let lista = [];
@@ -227,8 +253,7 @@ export class ImplementationReportsInvoicesComponent
 
             const Capture = new Date(response.data[i].fec_captura);
             const formattedfecCapture = this.formatDate(Capture);
-
-            console.log('fecha: ', response.data[i].fec_autoriza);
+            console.log('prueba: ', response.data[0]);
             let dataForm = {
               cveReport: response.data[i].cve_reporte,
               status: response.data[i].estatus,
@@ -237,15 +262,24 @@ export class ImplementationReportsInvoicesComponent
               observations: response.data[i].observaciones,
               no_reporte: response.data[i].no_reporte,
               no_formato: response.data[i].no_formato,
+              delegation: this.iddelegation,
+              subdelegation: this.idsubdelegation,
             };
             this.disponible = 'S';
-            console.log('pppp ', response.data[i].cve_reporte);
             this.data1.push(dataForm);
             this.data.load(this.data1);
             this.data.refresh();
           }
         },
       });
+  }
+
+  departament(id: number, description: string) {
+    this.departamentService.getbyDelegation(id, description).subscribe({
+      next: response => {
+        this.zone = response.data[0].id;
+      },
+    });
   }
 
   formatDate(date: Date): string {
@@ -277,7 +311,11 @@ export class ImplementationReportsInvoicesComponent
         quantity: this.cantidad,
         no_report: this.selectedRow.no_reporte,
         no_formato: this.selectedRow.no_formato,
+        delegation: this.selectedRow.delegation,
+        subdelegation: this.selectedRow.subdelegation,
+        zona: this.zone,
       };
+      console.log('Prueba: ', dataForm);
       this.data2.push(dataForm);
       this.strategy.load(this.data2);
     }
@@ -292,36 +330,157 @@ export class ImplementationReportsInvoicesComponent
       return;
     }
   }
-
-  Application() {
+  /*
+    Application() {
+      console.log('Data 2 ', this.data2);
+      for (let i = 0; i < this.data2.length; i++) {
+        if (this.data2[i].cveReport != null) {
+          this.report = this.data2[i].no_report;
+          this.detailProceeDelRecService.getReport(this.report).subscribe({
+            next: response => {
+              this.expediente = response.data[0].max;
+              console.log("expediente ", this.expediente);
+            },
+          });
+          this.expediente = this.expediente;
+          this.t_reportes = this.data2[i].cveReport + ' ' + this.data2[i].quantity;
+        }
+        this.documentsDictumStatetMService.getSeqDocument().subscribe({
+          next: response => {
+            this.lnu_folio = response.data;
+          },
+        });
+        this.factura = this.invoiceDetailsForm.get('invoice').value;
+        const item = {
+          fileNumber: this.expediente,
+          reports: 'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
+          fractureId: this.factura,
+          delegationNumber: this.data2[i].delegation,
+          subDelegationNumber: this.data2[i].subdelegation,
+          departamentNumber: this.data2[i].zona,
+        };
+        console.log("PRUEBA:  -> ", item)
+        //this.documentsTypeService.postDocument().subscribe({});
+      }
+    }
+  */
+  async Application() {
     console.log('Data 2 ', this.data2);
     for (let i = 0; i < this.data2.length; i++) {
       if (this.data2[i].cveReport != null) {
-        this.report = this.data2[i].cveReport;
-        this.detailProceeDelRecService.getReport(this.report).subscribe({
+        this.report = this.data2[i].no_report;
+        try {
+          const response = await this.detailProceeDelRecService
+            .getReport(this.report)
+            .toPromise();
+          this.expediente = response.data[0].max;
+          console.log('expediente ', this.expediente);
+          this.factura = this.invoiceDetailsForm.get('invoice').value;
+          this.t_reportes =
+            this.data2[i].cveReport + ' ' + this.data2[i].quantity;
+          const item = {
+            fileNumber: this.expediente,
+            reports:
+              'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
+            fractureId: this.factura,
+            delegationNumber: this.data2[i].delegation,
+            subDelegationNumber: this.data2[i].subdelegation,
+            departamentNumber: this.data2[i].zona,
+          };
+          this.no_report = this.data2[i].no_report;
+          console.log('PRUEBA:  -> ', this.no_report);
+          this.datos = item;
+          this.documentsDictumStatetMService.postDocument(item).subscribe({
+            next: response => {
+              console.log('Succefull1: ', response);
+              this.PupFolEscMas(this.datos);
+            },
+          });
+        } catch (error) {
+          console.error('Error al obtener el reporte:', error);
+        }
+      }
+    }
+  }
+
+  PupFolEscMas(datos: any) {
+    this.documentsDictumStatetMService.getSeqDocument().subscribe({
+      next: response => {
+        this.lnu_folio = response;
+        const item = {
+          fileNumber: datos.fileNumber,
+          folioUniversal: this.lnu_folio,
+          reports: datos.reports,
+          reportNumber: this.no_report,
+          fractureId: datos.fractureId,
+          delegationNumber: datos.delegationNumber,
+          subDelegationNumber: datos.subDelegationNumber,
+          departamentNumber: datos.departamentNumber,
+        };
+        console.log('Prueba: ', item);
+        this.invoiceDetailsForm.patchValue({
+          scanFolio: this.lnu_folio,
+        });
+        this.documentsDictumStatetMService.postPupFol(item).subscribe({
           next: response => {
-            this.expediente = response.data.max;
+            console.log('Succefull2: ', response);
+            this.proccesReport();
           },
         });
-        this.t_reportes =
-          this.t_reportes + this.data2[i].cveReport + this.data2[i].quantity;
-      } else {
-        return;
-      }
-      this.documentsDictumStatetMService.getSeqDocument().subscribe({
-        next: response => {
-          this.lnu_folio = response.data;
-        },
-      });
-      const item = {
-        FOLIO_UNIVERSAL: this.lnu_folio,
-        NO_EXPEDIENTE: this.expediente,
-        CVE_SEPARADOR: '60',
-        CVE_TIPO_DOCUMENTO: 'ESTIMP',
-        NATURALEZA_DOCUMENTO: 'ORIGINAL',
-        DESCRIPCION_DOCUMENTO: 'FACTURA',
-      };
-      //this.documentsTypeService.postDocument().subscribe({});
+      },
+    });
+  }
+
+  proccesReport() {
+    if (this.lnu_folio) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.lnu_folio })
+          .pipe(
+            tap(response => {
+              this.alert(
+                'success',
+                'Generado correctamente',
+                'Generado correctamente con folio: ' + this.lnu_folio
+              );
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe tener el folio en pantalla para poder reimprimir'
+      );
     }
+  }
+
+  goToScan() {
+    localStorage.setItem('numberExpedient', this.lnu_folio.toString());
+
+    this.router.navigate([`/pages/general-processes/scan-documents`], {
+      queryParams: {
+        origin:
+          '/pages/administrative-processes/services/implementation-reports-invoices',
+        folio: this.lnu_folio,
+      },
+    });
   }
 }
