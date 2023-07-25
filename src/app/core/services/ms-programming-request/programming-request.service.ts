@@ -91,4 +91,10 @@ export class ProgrammingRequestService {
     });
     return httpParams;
   }
+
+  reportProgrammingGoods(programmingId: number, status: string) {
+    return this.http.get<IListResponse<IGoodProgramming>>(
+      `${environment.API_URL}programminggood/api/v1/programmed-good/goods-excel/${status}/${programmingId}`
+    );
+  }
 }

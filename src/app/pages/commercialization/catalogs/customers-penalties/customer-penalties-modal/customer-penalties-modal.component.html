@@ -1,0 +1,142 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de Penalización"
+            [control]="form.get('typeProcess')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="typeProcess"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Evento" [control]="form.get('event')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="event"
+              min="0"
+              oninput="if(this.value.length > 7) this.value = this.value.slice(0, 7);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Clave Evento" [control]="form.get('eventKey')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="eventKey"
+              maxlength="60" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Lote" [control]="form.get('lotId')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lotId"
+              min="0"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-3">
+          <form-field label="Fecha Inicial" [control]="form.get('startDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field label="Fecha Final" [control]="form.get('endDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="endDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Referencia/Oficio/Otros"
+            [control]="form.get('refeOfficeOther')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="refeOfficeOther"
+              maxlength="200" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            label="Usuario Penaliza"
+            [control]="form.get('userPenalty')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userPenalty"
+              maxlength="30" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-2">
+          <form-field
+            label="Fecha Penaliza"
+            [control]="form.get('penaltiDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penaltiDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

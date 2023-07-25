@@ -5,6 +5,12 @@
   <div body>
     <form class="form-material" [formGroup]="shiftForm">
       <div class="row">
+        <!-- <div class="col-md-12 mt-4">
+          <form-field label="No. Tipo" [control]="shiftForm.get('shiftNumber')">
+            <input type="text" class="form-control" maxlength="80" formControlName="shiftNumber"
+              [disabled]="shiftForm.get('shiftNumber').value == null" />
+          </form-field>
+        </div> -->
         <div class="col-md-12 mt-4">
           <form-field
             label="Descripción"
@@ -14,6 +20,17 @@
               class="form-control"
               maxlength="80"
               formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-12 mt-4">
+          <form-field
+            label="Número de Registro"
+            [control]="shiftForm.get('registryNumber')">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="80"
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>

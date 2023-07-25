@@ -171,13 +171,13 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     return this.get(NumeraryEndpoints.CloseNumerary, params);
   }
 
-  updateNumeraryRequestNumeEnc(model: IRequestNumeraryEnc, id:string) {
+  updateNumeraryRequestNumeEnc(model: IRequestNumeraryEnc, id: string) {
     const route = `${NumeraryEndpoints.RequestEnc}/${id}`;
     return this.put<IRequestNumeraryEnc>(route, model);
   }
 
-  updateMasiveReqNumEnc(model: IMassiveReqNumEnc){
-    return this.post('requests-nume-enc/update-masive', model)
+  updateMasiveReqNumEnc(model: IMassiveReqNumEnc) {
+    return this.post('requests-nume-enc/update-masive', model);
   }
 
   getSolNumerary(model: any, params?: ListParams) {
@@ -212,7 +212,7 @@ export class NumeraryService extends HttpService implements ICrudMethods<any> {
     return this.post('application/pup-associate-good-func', body);
   }
 
-  reqNumEnc(params:string){
-    return this.get('application/reqNumEnc',params)
+  reqNumEnc(params: string) {
+    return this.get('application/reqNumEnc', params);
   }
 }

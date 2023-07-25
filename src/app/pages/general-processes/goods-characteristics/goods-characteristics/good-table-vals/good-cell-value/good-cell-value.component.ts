@@ -15,10 +15,6 @@ export class GoodCharacteristicCellValueComponent
     super(service);
   }
 
-  get disabledTable() {
-    return this.service.disabledTable;
-  }
-
   ngOnInit() {
     // console.log(this.value);
   }

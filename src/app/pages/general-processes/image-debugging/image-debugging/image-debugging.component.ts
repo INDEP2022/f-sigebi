@@ -66,7 +66,7 @@ import {
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
 import { AllExpedientComponent } from '../all-expedient/all-expedient/all-expedient.component';
 import { GoodsPhotoService } from '../services/image-debugging-service';
-import { IMAGE_DEBUGGING_COLUMNS } from './image-debugging-columns';
+import { PHOTOGRAPHY_COLUMNS } from './image-debugging-columns';
 @Component({
   selector: 'app-image-debugging',
   templateUrl: './image-debugging.component.html',
@@ -324,7 +324,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     this.params.value.limit = 1;
     this.settings = {
       ...this.settings,
-      columns: IMAGE_DEBUGGING_COLUMNS,
+      columns: PHOTOGRAPHY_COLUMNS,
       edit: {
         editButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
       },
@@ -423,13 +423,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   private disabledFotos() {
     if (this.staticTabs) {
-      this.staticTabs.tabs[2].disabled = true;
+      this.staticTabs.tabs[1].disabled = true;
     }
   }
 
   private enabledFotos() {
     if (this.staticTabs) {
-      this.staticTabs.tabs[2].disabled = false;
+      this.staticTabs.tabs[1].disabled = false;
     }
   }
 
@@ -1020,7 +1020,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       if (response && response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;
         this.staticTabs.tabs[1].active = true;
-        this.staticTabs.tabs[2].disabled = false;
+        // this.staticTabs.tabs[2].disabled = false;
         let item = response.data[0];
         this.totalItems = response.count ?? 0;
         if (item) {
@@ -1419,6 +1419,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   searchExp(id: number | string) {
     if (!id) return;
+
     this.params.getValue().page = 1;
     this.loading = true;
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe({

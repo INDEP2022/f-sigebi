@@ -82,18 +82,21 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     this.loading = true;
     const user = this.authService.decodeToken();
     const deleRegionalId = user.delegacionreg;
-    this.params.getValue()['filter.regionalDelegation'] = deleRegionalId;
-    this.userProcessService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.filterUsersProg(response.data);
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        this.alert('warning', 'Usuarios no encontrados', '');
-        this.totalItems = 0;
-      },
-    });
+    this.params.getValue()['filter.delegationreg'] = deleRegionalId;
+    this.userProcessService
+      .getAllUsersWithRolDistint(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.filterUsersProg(response.data);
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.alert('warning', 'Usuarios no encontrados', '');
+          this.totalItems = 0;
+        },
+      });
   }
 
   //Filtrar los usuarios que ya estén programados
@@ -112,7 +115,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
           this.totalItems = this.totalItems - data.count;
           this.usersData.load(filter);
-          this.totalItems = this.usersData.count();
+          //this.totalItems = this.usersData.count();
           this.loading = false;
         },
         error: error => {
@@ -123,7 +126,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   userProgramming(data: any) {
     this.usersData.load(data);
-    this.totalItems = this.usersData.count();
+
     this.loading = false;
   }
 
