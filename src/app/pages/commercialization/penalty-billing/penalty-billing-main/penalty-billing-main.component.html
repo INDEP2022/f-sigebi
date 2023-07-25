@@ -56,11 +56,11 @@
                   [optionTemplate]="lotDesc">
                 </ngx-select>
                 <ng-template #lotE let-item="item">
-                  {{ item.idLot }} - {{ item.description }}
+                  {{ item.lotPublic }} - {{ item.description }}
                 </ng-template>
                 <ng-template #lotDesc let-item="item">
-                  <div [title]="item.idLot + '-' + item.description">
-                    {{ item.idLot }} - {{ item.description }}
+                  <div [title]="item.lotPublic + '-' + item.description">
+                    {{ item.lotPublic }} - {{ item.description }}
                   </div>
                 </ng-template>
               </form-field>
@@ -132,27 +132,28 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('transferenceNumber')">
+              <form-field [control]="billingForm.get('cvman')">
                 <ngx-select
                   (fetchItems)="getTransferentData($event)"
                   label="Transferente"
                   [data]="dataTransferent"
                   [form]="billingForm"
-                  value="id"
-                  bindLabel="id"
-                  [control]="'transferenceNumber'"
+                  value="cvman"
+                  bindLabel="nameTransferent"
+                  [control]="'cvman'"
                   [searchOnInit]="true"
                   [searchable]="true"
                   termMaxLength="30"
+                  (change)="selectedTrans($event)"
                   [labelTemplate]="trans"
                   [optionTemplate]="transDesc">
                 </ngx-select>
                 <ng-template #trans let-item="item">
-                  {{ item.id }} - {{ item.nameTransferent }}
+                  {{ item.cvman }} - {{ item.nameTransferent }}
                 </ng-template>
                 <ng-template #transDesc let-item="item">
-                  <div [title]="item.id">
-                    {{ item.id }} - {{ item.nameTransferent }}
+                  <div [title]="item.cvman">
+                    {{ item.cvman }} - {{ item.nameTransferent }}
                   </div>
                 </ng-template>
               </form-field>
@@ -283,7 +284,9 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('municipality')">
+              <form-field
+                [control]="billingForm.get('municipality')"
+                label="Municipio Delegación">
                 <input
                   type="text"
                   formControlName="municipality"
@@ -292,7 +295,7 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('state')">
+              <form-field [control]="billingForm.get('state')" label="Estado">
                 <input
                   type="text"
                   formControlName="state"
@@ -349,7 +352,7 @@
                 [disabled]="!billingForm.valid"
                 [btnSmall]="true"
                 [loading]="loading"
-                (confirm)="(null)"></confirm-button>
+                (confirm)="saveData()"></confirm-button>
             </div>
             <div class="col-12">
               <button
