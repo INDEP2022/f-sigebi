@@ -3,7 +3,10 @@ import { map } from 'rxjs';
 import { ComerConceptEndpoints } from 'src/app/common/constants/endpoints/ms-comerconcept';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
-import { IConcept } from '../../models/ms-comer-concepts/concepts';
+import {
+  IConcept,
+  IConceptCopy,
+} from '../../models/ms-comer-concepts/concepts';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +36,21 @@ export class ConceptsService extends HttpService {
     );
   }
 
+  edit(body: IConcept) {
+    return this.put(ComerConceptEndpoints.ConceptsUpdate, body);
+  }
+
+  create(body: IConcept) {
+    if (body.id || body.id === '') {
+      delete body.id;
+    }
+    return this.post(ComerConceptEndpoints.ConceptsCreate, body);
+  }
+
+  remove(body: IConcept) {
+    return this.delete(ComerConceptEndpoints.ConceptsDelete + '/' + body.id);
+  }
+
   private getAddress(address: string) {
     switch (address) {
       case 'M':
@@ -53,13 +71,10 @@ export class ConceptsService extends HttpService {
         return null;
     }
   }
-  copyParameters(body: IConcept) {
-    return this.post<IListResponseMessage<IConcept>>(
+  copyParameters(body: { id: string; address: string; concept: string }) {
+    return this.post<IListResponseMessage<IConceptCopy>>(
       ComerConceptEndpoints.ConceptsParametersCopy,
-      {
-        id: body.id,
-        address: body.address,
-      }
+      body
     );
   }
 }

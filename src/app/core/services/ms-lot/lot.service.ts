@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class LotService extends HttpService {
   }
 
   getLotbyEvent(id: string | number, params?: ListParams) {
-    const route = `${LotEndpoints.ComerLot}?filter.eventId=${id}`;
+    const route = `${LotEndpoints.ComerLot}?filter.idEvent=${id}`;
     return this.get(route, params);
   }
 
@@ -85,5 +85,9 @@ export class LotService extends HttpService {
   }
   getGlobalGoodEventLot(idLot: number) {
     return this.get(`${LotEndpoints.ComerLot}?filter.idLot=${idLot}`);
+  }
+
+  getLotbyEvent_(params?: _Params) {
+    return this.get(LotEndpoints.ComerLot, params);
   }
 }

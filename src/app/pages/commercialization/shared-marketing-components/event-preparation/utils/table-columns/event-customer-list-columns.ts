@@ -1,5 +1,5 @@
 export const PREPARE_EVENT_CUSTOMER_LIST_COLUMNS = {
-  idcliente: {
+  id: {
     title: 'ID Cliente',
     sort: false,
   },
@@ -23,19 +23,19 @@ export const PREPARE_EVENT_CUSTOMER_LIST_COLUMNS = {
     title: 'Colonia',
     sort: false,
   },
-  vendedor: {
+  sellerId: {
     title: 'ID Vendedor',
     sort: false,
   },
-  delegacion: {
+  delegation: {
     title: 'Delegación',
     sort: false,
   },
-  cp: {
+  zipCode: {
     title: 'C.P.',
     sort: false,
   },
-  pais: {
+  country: {
     title: 'Pais',
     sort: false,
   },
@@ -43,15 +43,15 @@ export const PREPARE_EVENT_CUSTOMER_LIST_COLUMNS = {
     title: 'Fax',
     sort: false,
   },
-  telefono: {
+  phone: {
     title: 'Teléfono',
     sort: false,
   },
-  correo: {
-    title: 'Delegación',
+  mailWeb: {
+    title: 'Correo',
     sort: false,
   },
-  estado: {
+  state: {
     title: 'Estado',
     sort: false,
   },
