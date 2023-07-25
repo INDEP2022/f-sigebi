@@ -408,6 +408,54 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           },
         });
     }
+
+    if (this.typeDoc == 107) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 107,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
+
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
   }
 
   updateReceiptGuard(docName: string) {

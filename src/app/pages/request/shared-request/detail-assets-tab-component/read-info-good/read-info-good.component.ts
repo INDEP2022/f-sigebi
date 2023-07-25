@@ -479,7 +479,7 @@ export class ReadInfoGoodComponent
         good.goodId = this.goodData.goodId;
         good.userModification = user.username;
         good.modificationDate = new Date().toISOString();
-        debugger;
+        //debugger;
         this.goodService.update(good).subscribe({
           next: resp => {
             const body: any = {};

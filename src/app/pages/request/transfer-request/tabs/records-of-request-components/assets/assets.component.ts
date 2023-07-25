@@ -164,10 +164,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   getMenaje(id: number) {
     return new Promise((resolve, reject) => {
-      this.menageService.getById(id).subscribe({
+      const params = new ListParams();
+      params['filter.noGoodMenaje'] = `$eq:${id}`;
+      this.menageService.getAll(params).subscribe({
         next: (resp: any) => {
-          if (resp) {
-            resolve(resp['noGood']);
+          if (resp.data) {
+            resolve(resp.data[0]['noGood']);
           } else {
             resolve('');
           }
@@ -534,6 +536,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Error al crear el menaje ${error.error.message}`
           );
           console.log(error.error.message);
+          this.isSaveMenaje = false;
           reject(false);
         },
       });
@@ -805,7 +808,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   matchLevelFraction(res: any) {
-    debugger;
+    //debugger;
     switch (Number(res.level)) {
       case 5:
         this.getLevel4(new ListParams(), res.id);

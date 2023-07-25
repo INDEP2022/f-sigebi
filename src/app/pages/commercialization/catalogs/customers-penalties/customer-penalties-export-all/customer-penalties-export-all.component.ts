@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -8,7 +8,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './customers-list-columns';
@@ -29,13 +28,10 @@ export class CustomersPenaltiesExportAllComponent
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
-  tableData: any[] = [];
 
   constructor(
-    private modalService: BsModalService,
-    private customerService: CustomerService,
-    private excelService: ExcelService,
     private clientPenaltyService: ClientPenaltyService,
+    private excelService: ExcelService,
     private modalRef: BsModalRef
   ) {
     super();
@@ -118,26 +114,16 @@ export class CustomersPenaltiesExportAllComponent
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
+        this.totalItems = response.count || 0;
         this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
 
-  // all(customersPenalties?: ICustomersPenalties) {
-  //   console.log('Exportar Todos');
-  //   const modalConfig = MODAL_CONFIG;
-  //   modalConfig.initialState = {
-  //     customersPenalties,
-  //     callback: (next: boolean) => {
-  //       if (next) this.getCustomers();
-  //     },
-  //   };
-  //   this.modalService.show(CustomersPenaltiesExportAllComponent, modalConfig);
-  // }
+  //Exportar todos los clientes con penalizaciones
   exportClientsPenalize(): void {
     this.excelService.exportAsExcelFile(
       this.customersPenalties,
