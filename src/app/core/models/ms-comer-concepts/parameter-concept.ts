@@ -9,6 +9,18 @@ export interface IParameterConcept {
   parameterFk: ParameterFk;
 }
 
+export interface IParameterConceptCreate extends IParameterConceptUpdate {
+  creationDate: string;
+  creationUser: string;
+}
+
+export interface IParameterConceptUpdate {
+  conceptId: string;
+  parameter: string;
+  value: string;
+  address: string;
+}
+
 export interface ParameterFk {
   parameter: string;
   value: string;
