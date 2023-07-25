@@ -7,11 +7,7 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('id')" label="C&oacute;digo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="id"
-              maxlength="2" />
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -35,7 +31,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description"
+              pattern="^\S.*$" />
           </form-field>
         </div>
       </div>

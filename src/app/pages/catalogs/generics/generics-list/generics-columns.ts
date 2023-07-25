@@ -5,7 +5,7 @@ export const GENERICS_COLUMNS = {
     sort: false,
   },
   keyId: {
-    title: 'Identificador clave',
+    title: 'Identificador Clave',
     type: 'number',
     sort: false,
   },

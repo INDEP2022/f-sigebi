@@ -64,7 +64,7 @@ export class IssuingInstitutionListComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         add: false,
         position: 'right',
       },
@@ -115,10 +115,8 @@ export class IssuingInstitutionListComponent
               delete this.columnFilters[field];
             }
           });
-
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getInstitutionClassification());
+          this.params = this.pageFilter(this.params);
+          this.getInstitutionClassification();
         }
       });
     this.params
@@ -212,6 +210,12 @@ export class IssuingInstitutionListComponent
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'numClasif':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'zipCode':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -250,17 +254,17 @@ export class IssuingInstitutionListComponent
         next: response => {
           console.log(response);
           this.issuingInstitutionList = response.data;
-          this.data1.load(this.issuingInstitutionList);
+          this.data1.load(response.data);
           this.data1.refresh();
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
         error: error => {
           //(this.showNullRegister1(), (this.loading2 = false)),
-          /*this.loading2 = false;
+          this.loading2 = false;
           this.data1.load([]);
-          this.data1.refresh();*/
-          this.showNullRegister1();
+          this.data1.refresh();
+          //this.showNullRegister1();
         },
       });
   }

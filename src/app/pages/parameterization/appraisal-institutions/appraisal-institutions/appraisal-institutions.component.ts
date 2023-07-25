@@ -50,9 +50,19 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'codepostal':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -106,7 +116,11 @@ export class AppraisalInstitutionsComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.appraisersService.remove(appraisers.id).subscribe({
           next: () => {
-            this.alert('success', 'Institución valuadora', 'Borrado');
+            this.alert(
+              'success',
+              'Institución Valuadora',
+              'Borrada Correctamente'
+            );
             this.getValuesAll();
           },
           error: err => this.onLoadToast('error', err.error.message, ''),

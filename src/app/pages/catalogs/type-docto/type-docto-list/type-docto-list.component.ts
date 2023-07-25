@@ -57,6 +57,7 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -107,7 +108,7 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.typeDoctoService.remove(typeDocto.id).subscribe({
           next: response => {
-            this.alert('success', 'Tipo docto', 'Borrado Correctamente');
+            this.alert('success', 'Tipo Siniestro', 'Borrado Correctamente');
             this.getExample();
           },
           error: err => {

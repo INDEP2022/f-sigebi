@@ -37,13 +37,22 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.documentsForDictumForm = this.fb.group({
+      numRegister: [null, [Validators.required, Validators.maxLength(8)]],
       id: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(8),
+        ],
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       typeDictum: [null, [Validators.required]],
     });
@@ -62,6 +71,13 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.documentsForDictumForm.controls['id'].value.trim() === '' ||
+      this.documentsForDictumForm.controls['description'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.documentsForDictumService
       .create(this.documentsForDictumForm.value)
@@ -82,7 +98,7 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

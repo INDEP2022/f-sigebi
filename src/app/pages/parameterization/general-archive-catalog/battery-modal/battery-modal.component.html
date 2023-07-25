@@ -16,16 +16,20 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md">
+        <!--<div class="col-md">
           <form-field
             label="No. Bateria"
             [control]="batteryForm.get('idBattery')">
             <input
               type="number"
               class="form-control"
+              maxlength="5"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
               formControlName="idBattery" />
           </form-field>
-        </div>
+        </div>-->
         <div class="col-md">
           <form-field label="Status" [control]="batteryForm.get('status')">
             <input type="text" class="form-control" formControlName="status" />
@@ -51,6 +55,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
+          [disabled]="batteryForm.invalid"
+          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

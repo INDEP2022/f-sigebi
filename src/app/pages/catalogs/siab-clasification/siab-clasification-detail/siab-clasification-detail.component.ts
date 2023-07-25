@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
@@ -25,11 +26,13 @@ export class SiabClasificationDetailComponent
   extends BasePage
   implements OnInit
 {
-  siabClasificationform: FormGroup;
+  siabClasificationform: ModelForm<ISiabClasification>;
+
+  //siabClasificationform: FormGroup;
   title: string = 'Clasificación SIAB';
   edit: boolean = false;
   siabClasification: ISiabClasification;
-  clasification: any;
+  clasification: ISiabClasification;
   types = new DefaultSelect<IGoodType>();
   subTypes = new DefaultSelect<IGoodSubType>();
   ssubTypes = new DefaultSelect<IGoodSsubType>();
@@ -56,57 +59,59 @@ export class SiabClasificationDetailComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    if (this.siabClasification != null) {
-      this.edit = true;
-      this.siabClasificationform.patchValue(this.siabClasification);
-    }
   }
 
   prepareForm() {
     this.siabClasificationform = this.fb.group({
-      id: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeId: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      id: [null],
+      typeId: [null, [Validators.required]],
       typeDescription: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      subtypeId: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      subtypeId: [null, [Validators.required]],
       subtypeDescription: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
+        Validators.maxLength(100),
       ],
-      ssubtypeId: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      ssubtypeId: [null, [Validators.required]],
       ssubtypeDescription: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      sssubtypeId: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      sssubtypeId: [null, [Validators.required]],
       sssubtypeDescription: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      creationUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      editionUser: [null, [Validators.pattern(STRING_PATTERN)]],
-      version: [null, [Validators.pattern(STRING_PATTERN)]],
+      creationUser: [null],
+      creationDate: [null],
+      editionUser: [null],
+      editionDate: [null],
+      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
 
     if (this.clasification != null) {
       this.edit = true;
       this.createForm = false;
-      console.log(this.clasification);
-      this.siabClasificationform.patchValue(this.clasification);
+      console.log(this.clasification.subtypeId, this.clasification.typeId);
+      //this.siabClasificationform.patchValue(this.clasification);
+      this.siabClasificationform.controls['subtypeDescription'].setValue(
+        this.clasification.subtypeDescription
+      );
       this.getTypesUpdate(new ListParams(), this.clasification.typeId);
       this.getSubtypesUpdate(
         new ListParams(),
@@ -149,7 +154,7 @@ export class SiabClasificationDetailComponent
     });
   }
 
-  getTypesUpdate(params: ListParams, value: string) {
+  getTypesUpdate(params: ListParams, value: string | number) {
     if (value) {
       console.log(value);
       params['filter.id'] = `$eq:${value}`;
@@ -178,14 +183,14 @@ export class SiabClasificationDetailComponent
         this.siabClasificationform.controls['subtypeId'].enable();
         this.getSubtypes(new ListParams());
       }
-      if (this.createForm === false) {
+      /*if (this.createForm === false) {
         if (this.idType != this.clasification.typeId) {
           console.log(this.idType, this.clasification.typeId);
           this.siabClasificationform.controls['subtypeId'].setValue(null);
           this.siabClasificationform.controls['ssubtypeId'].setValue(null);
           this.siabClasificationform.controls['sssubtypeId'].setValue(null);
         }
-      }
+      }*/
     }
     //console.log(data.id);
   }
@@ -205,7 +210,11 @@ export class SiabClasificationDetailComponent
       },
     });
   }
-  getSubtypesUpdate(params: ListParams, value: string, valueType: string) {
+  getSubtypesUpdate(
+    params: ListParams,
+    value: string | number,
+    valueType: string | number
+  ) {
     if (value && valueType) {
       console.log(value);
       params['filter.id'] = `$eq:${value}`;
@@ -260,7 +269,11 @@ export class SiabClasificationDetailComponent
     });
   }
 
-  getSsubtypesUpdate(params: ListParams, value: string, valuesubType: string) {
+  getSsubtypesUpdate(
+    params: ListParams,
+    value: string | number,
+    valuesubType: string | number
+  ) {
     if (value && valuesubType) {
       console.log(value);
       params['filter.id'] = `$eq:${value}`;
@@ -316,8 +329,8 @@ export class SiabClasificationDetailComponent
 
   getSssubtypesUpdate(
     params: ListParams,
-    value: string,
-    valuessubType: string
+    value: string | number,
+    valuessubType: string | number
   ) {
     if (value && valuessubType) {
       console.log(value);
@@ -345,26 +358,80 @@ export class SiabClasificationDetailComponent
   }
 
   create() {
-    this.loading = true;
-    this.sIABClasificationService
-      .create(this.siabClasificationform.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.siabClasificationform.controls['typeDescription'].value.trim() ==
+        '' ||
+      this.siabClasificationform.controls['subtypeDescription'].value.trim() ==
+        '' ||
+      this.siabClasificationform.controls['ssubtypeDescription'].value.trim() ==
+        '' ||
+      this.siabClasificationform.controls[
+        'sssubtypeDescription'
+      ].value.trim() == '' ||
+      (this.siabClasificationform.controls['typeDescription'].value.trim() ==
+        '' &&
+        this.siabClasificationform.controls[
+          'subtypeDescription'
+        ].value.trim() == '' &&
+        this.siabClasificationform.controls[
+          'ssubtypeDescription'
+        ].value.trim() == '' &&
+        this.siabClasificationform.controls[
+          'sssubtypeDescription'
+        ].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.sIABClasificationService
+        .create(this.siabClasificationform.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.sIABClasificationService
-      .updateCatalogSiabClasification(
-        this.clasification.id,
-        this.siabClasificationform.value
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.siabClasificationform.controls['typeDescription'].value.trim() ==
+        '' ||
+      this.siabClasificationform.controls['subtypeDescription'].value.trim() ==
+        '' ||
+      this.siabClasificationform.controls['ssubtypeDescription'].value.trim() ==
+        '' ||
+      this.siabClasificationform.controls[
+        'sssubtypeDescription'
+      ].value.trim() == '' ||
+      (this.siabClasificationform.controls['typeDescription'].value.trim() ==
+        '' &&
+        this.siabClasificationform.controls[
+          'subtypeDescription'
+        ].value.trim() == '' &&
+        this.siabClasificationform.controls[
+          'ssubtypeDescription'
+        ].value.trim() == '' &&
+        this.siabClasificationform.controls[
+          'sssubtypeDescription'
+        ].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.sIABClasificationService
+        .updateCatalogSiabClasification(
+          this.clasification.id,
+          this.siabClasificationform.value
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

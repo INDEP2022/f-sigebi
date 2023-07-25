@@ -42,8 +42,8 @@ export class UnitCostDetService extends HttpService {
     return this.post(UnitCostDetEndpoints.UnitCost, model);
   }
 
-  remove(id: string | number) {
-    const route = `${UnitCostDetEndpoints.UnitCost}/${id}`;
-    return this.delete(route);
+  remove(body: any) {
+    const route = `${UnitCostDetEndpoints.UnitCost}`;
+    return this.delete(route, body);
   }
 }

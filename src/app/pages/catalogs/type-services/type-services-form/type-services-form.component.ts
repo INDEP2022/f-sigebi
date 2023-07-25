@@ -14,7 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class TypeServicesFormComponent extends BasePage implements OnInit {
   typeServiceForm: ModelForm<ITypeService>;
-  title: string = 'Tipo de Servicios';
+  title: string = 'Tipo de Servicio';
   edit: boolean = false;
   typeService: ITypeService;
   constructor(

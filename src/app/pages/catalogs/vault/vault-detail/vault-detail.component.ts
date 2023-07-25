@@ -15,6 +15,7 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 
@@ -83,8 +84,22 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.vaultForm = this.fb.group({
       idSafe: [null, []],
       manager: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      ubication: [null, [Validators.required]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(90),
+        ],
+      ],
+      ubication: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(90),
+        ],
+      ],
       municipalityCode: [null, []],
       localityCode: [null, []],
       stateCode: [null, []],
@@ -237,6 +252,13 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.vaultForm.controls['ubication'].value.trim() === '' ||
+      this.vaultForm.controls['description'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.safeService.create2(this.vaultForm.value).subscribe({
       next: data => this.handleSuccess(),

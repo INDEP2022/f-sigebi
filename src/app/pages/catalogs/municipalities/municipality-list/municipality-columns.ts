@@ -26,6 +26,15 @@ export const MUNICIPALITIES_COLUMNS = {
       return value.descCondition;
     },
 
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     sort: false,
   },
   version: {

@@ -3,5 +3,5 @@ export interface IDocumentsForDictum {
   key?: string;
   description: string;
   typeDictum: string;
-  //numRegister: number;
+  numRegister: number;
 }

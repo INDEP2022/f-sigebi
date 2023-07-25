@@ -5,28 +5,31 @@
   <div body>
     <form [formGroup]="typeDoctoForm" class="form-material">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field [control]="typeDoctoForm.get('id')" label="Identificador">
             <input
               type="number"
               class="form-control"
               formControlName="id"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
 
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <form-field
             [control]="typeDoctoForm.get('description')"
             label="Descripci&oacute;n">
             <textarea
-              rows="1"
+              rows="2"
               class="form-control"
               formControlName="description"></textarea>
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="pt-4 col-md-6">
           <form-field
             [control]="typeDoctoForm.get('version')"
             label="Versi&oacute;n">
@@ -34,17 +37,23 @@
               type="number"
               class="form-control"
               formControlName="version"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="pt-4 col-md-6">
           <form-field [control]="typeDoctoForm.get('status')" label="Estatus">
             <input
               type="number"
               class="form-control"
               formControlName="status"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

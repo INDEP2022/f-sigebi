@@ -9,7 +9,7 @@ export const DEPARTMENT_COLUMNS = {
   },
 
   dsarea: {
-    title: 'DsArea',
+    title: 'Ds. Area',
     type: 'string',
     sort: false,
   },

@@ -90,6 +90,7 @@ export class CatalogOfDocumentTypesComponent
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getPagination();
         }
       });

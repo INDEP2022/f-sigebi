@@ -66,7 +66,7 @@ export class MaintenanceDocumentValidatorsModalComponent
         null,
         [
           Validators.required,
-          Validators.maxLength(400),
+          Validators.maxLength(700),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
@@ -116,7 +116,7 @@ export class MaintenanceDocumentValidatorsModalComponent
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', 'VALIDADOR DE ACTA', `${message} Correctamente`);
+    this.alert('success', 'Validador de Acta', `${message} Correctamente`);
     // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

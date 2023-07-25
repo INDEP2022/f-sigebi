@@ -5,15 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field [control]="form.get('description')" label="Descripción">
-            <input
+            <textarea
               type="text"
               class="form-control"
               maxlength="200"
-              formControlName="description" />
+              rows="3"
+              formControlName="description"></textarea>
           </form-field>
         </div>
+      </div>
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field [control]="form.get('flag')" label="Bandera">
             <input
