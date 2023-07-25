@@ -805,7 +805,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   matchLevelFraction(res: any) {
-    debugger;
+    //debugger;
     switch (Number(res.level)) {
       case 5:
         this.getLevel4(new ListParams(), res.id);

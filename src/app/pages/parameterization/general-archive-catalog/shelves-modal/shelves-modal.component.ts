@@ -106,22 +106,47 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    console.log(this.shelvesForm.value);
-    this.shelvessService.create(this.shelvesForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.shelvesForm.controls['description'].value.trim() == '' ||
+      this.shelvesForm.controls['status'].value.trim() == '' ||
+      (this.shelvesForm.controls['description'].value.trim() == '' &&
+        this.shelvesForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.shelvesForm.value);
+      this.shelvessService.create(this.shelvesForm.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.alert('warning', 'El Numero de Estante ya se Registro', ``);
+        },
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.shelvessService
-      .update(this.shelves.id, this.shelvesForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.shelvesForm.controls['description'].value.trim() == '' ||
+      this.shelvesForm.controls['status'].value.trim() == '' ||
+      (this.shelvesForm.controls['description'].value.trim() == '' &&
+        this.shelvesForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.shelvessService
+        .update(this.shelves.id, this.shelvesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

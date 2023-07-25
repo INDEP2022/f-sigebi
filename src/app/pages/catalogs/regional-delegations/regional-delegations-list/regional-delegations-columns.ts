@@ -21,7 +21,11 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IZoneGeographic) => {
-      return value.description;
+      if (value) {
+        return value.description;
+      } else {
+        return null;
+      }
     },
     filterFunction(cell?: any, search?: string): boolean {
       let column = cell.description;

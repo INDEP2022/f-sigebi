@@ -40,7 +40,7 @@ export class DomicileFormComponent extends BasePage implements OnInit {
     this.domicilieService.getById(this.item.addressId).subscribe({
       next: response => {
         this.domicileInfo = response;
-        this.getStateInfo(this.domicileInfo.cveState);
+        this.getStateInfo(this.domicileInfo?.cveState);
         this.showInfoMuncipality();
       },
       error: error => {},
@@ -66,10 +66,9 @@ export class DomicileFormComponent extends BasePage implements OnInit {
   } */
 
   showInfoMuncipality() {
-    this.paramsState.getValue()['filter.stateKey'] =
-      this.item.domicilio.statusKey;
+    this.paramsState.getValue()['filter.stateKey'] = this.domicileInfo.cveState;
     this.paramsState.getValue()['filter.municipalityKey'] =
-      this.item.domicilio.municipalityKey;
+      this.domicileInfo.cveMunicipality;
     this.municipalityService
       .getAllMunipalitiesByFilter(this.paramsState.getValue())
       .subscribe({

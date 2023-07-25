@@ -98,21 +98,33 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
   }
 
   create() {
-    this.loading = true;
-    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.goodTypeService
-      .update(this.goodType.id, this.goodTypeForm.value)
-      .subscribe({
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService.create(this.goodTypeForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService
+        .update(this.goodType.id, this.goodTypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

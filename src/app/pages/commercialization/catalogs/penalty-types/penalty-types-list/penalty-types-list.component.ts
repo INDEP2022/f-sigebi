@@ -68,6 +68,7 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getData();
         }
       });
@@ -103,7 +104,11 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
+      if (next) {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getData());
+      }
     });
   }
 
@@ -115,7 +120,7 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.removePenalty(penaltyType.id);
@@ -126,19 +131,17 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
   removePenalty(id: number): void {
     this.tpenaltyService.remove(id).subscribe({
       next: data => {
-        this.onLoadToast(
-          'success',
-          'Tipo Penalización',
-          `Registro Eliminado Correctamente`
-        );
+        this.alert('success', 'Eliminado Correctamente', '');
         this.loading = false;
-        this.getData();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getData());
       },
       error: error => {
-        this.onLoadToast(
+        this.alert(
           'error',
           'Tipo Penalización',
-          `Error al conectar con el servidor`
+          'Error al conectar con el servidor'
         );
         this.loading = false;
         console.log(error);

@@ -1,7 +1,7 @@
 export const STATUSCODE_COLUMS = {
   id: {
     title: 'Registro',
-    type: 'number',
+    type: 'string',
     sort: false,
     //editable: false,
     // width: '25px'
