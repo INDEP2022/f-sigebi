@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ThirdPartyEndpoints } from 'src/app/common/constants/endpoints/ms-third-party-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IThirdParty } from '../../models/ms-thirdparty/third-party.model';
 
@@ -34,5 +34,11 @@ export class ThirdPartyService extends HttpService {
   remove(id: string | number) {
     const route = `${ThirdPartyEndpoints.ThirdParty}/id/${id}`;
     return this.delete(route);
+  }
+  getAllFindItemV2(params?: _Params): Observable<IListResponse<IThirdParty>> {
+    return this.get<IListResponse<IThirdParty>>(
+      ThirdPartyEndpoints.FindItemV2,
+      params
+    );
   }
 }
