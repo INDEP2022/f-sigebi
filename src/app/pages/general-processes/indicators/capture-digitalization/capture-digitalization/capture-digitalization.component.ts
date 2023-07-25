@@ -220,19 +220,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     });
   }
   getDelegations(params: FilterParams) {
-    // this.delegationService.getAll(params).subscribe({
-    //   next: res => {
-    //     this.delegations = new DefaultSelect(res.data, res.count);
-    //     const name = this.formCapture.get('cvCoors').value;
-    //     const data = res.data.filter(m => m.id == name);
-    //     console.log(data[0]);
-    //     this.formCapture.get('cvCoors').patchValue(data[0]);
-    //   },
-
-    //   error: () => {
-    //     this.delegations = new DefaultSelect([], 0);
-    //   },
-    // });
     return this.delegationService.getAll(params.getParams()).pipe(
       catchError(error => {
         this.delegations$ = new DefaultSelect([], 0, true);
@@ -242,9 +229,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         if (response.count > 0) {
           const name = this.formCapture.get('cvCoors').value;
           const data = response.data.filter(m => {
-            return m.id;
+            return m.id == name;
           });
-          console.log(data[0]);
           this.formCapture.get('cvCoors').patchValue(data[0]);
         }
         this.delegations$ = new DefaultSelect(response.data, response.count);
@@ -370,12 +356,16 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
 
   Generar() {
     this.loading = true;
-    if (this.formCapture.value.user == null && this.capturasDig.length == 0) {
+    if (this.formCapture.value.user == null) {
       this.alert(
         'info',
         'Debe seleccionar un usuario para generar reporte',
         ''
       );
+      return;
+    }
+    if (this.capturasDig.length == 0) {
+      this.alert('info', 'No hay información para generar reporte', '');
       return;
     }
 
@@ -385,12 +375,10 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       P_CUMP: this.P_CUMP,
       P_USR: this.formCapture.value.user,
     };
-
     console.log('params', params);
-
     this.siabService
-      .fetchReport('RINDICA_0001', params)
-      // .fetchReportBlank('blank')
+      // .fetchReport('RINDICA_0001', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           this.loading = false;
@@ -427,11 +415,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         }
       });
   }
-  getTotalDelegation() {
-    for (let item of this.formCapture.value.cvCoors) {
-      this.idDelegation.push(parseInt(item));
-    }
-  }
 
   find() {
     this.loading = true;
@@ -444,21 +427,17 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       this.formCapture.controls['fecEnd'].value,
       'yyyy-MM-dd'
     );
-    const cvCoorsId: number[] = [];
-    // this.delegations.forEach(p => {
-    //   cvCoorsId.push(p.id);
-    // });
-    // const cvCoorsId: number[] = this.idDelegation.map(opcion => opcion.delegationId);
+
     this.search = {
-      cvCoors: cvCoorsId,
+      cvCoors: this.idDelegation,
       cveJobExternal: this.formCapture.value.cveJobExternal,
       user: this.formCapture.value.user,
       typeSteering: this.formCapture.value.typeSteering,
       fecStart: this.from,
       fecEnd: this.to,
-      noTransfere: this.formCapture.value.noTransfere,
-      noStation: this.formCapture.value.noStation,
-      noAuthorityts: this.formCapture.value.noStation,
+      noTransfere: Number(this.formCapture.value.noTransfere),
+      noStation: Number(this.formCapture.value.noStation),
+      noAuthorityts: Number(this.formCapture.value.noStation),
     };
     this.documentsService
       .getDocCaptureFind(this.search, this.params.getValue())
@@ -466,7 +445,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         next: data => {
           this.loading = false;
           this.capturasDig = data.result;
-          console.log(this.capturasDig);
           let noCumple = data.result.filter(
             (elemento: any) => elemento.cumplio == 0
           );
@@ -475,13 +453,12 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           );
           this.P_T_CUMP = cumple.length;
           this.P_T_NO_CUMP = noCumple.length;
-          this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
-          this.dataFactCapt.load(data.result);
-          this.totalItemsCaptura = data.count;
-          console.log(this.totalItemsCaptura);
-          this.loading = false;
+          this.P_T_NO_CUMP = data.info.total_no_cumplio;
+          this.P_CUMP = (this.P_T_CUMP / data.info.total_cumplio) * 100;
+          this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
-          // this.P_T_NO_CUMP = data.info.total_no_cumplio;
+          this.totalItemsCaptura = data.info.total_cumplio;
+          this.loading = false;
           // this.P_T_CUMP = data.info.total_cumplio;
           // this.P_CUMP = data.info.porcen_cumplidos;
         },
@@ -499,6 +476,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.isLoading = true;
     if (this.capturasDig.length == 0) {
       this.alert('info', 'No hay información para descargar', '');
+      this.isLoading = false;
       return;
     }
     const filename: string = this.userName + '-CapturaYdigita';
@@ -506,9 +484,16 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.loading = false;
     this.excelService.export(this.capturasDig, { filename });
   }
-
-  onItemsSelected() {
-    console.log(this.selectedItems);
+  updateSelectedIds(event: any) {
+    if (this.formCapture && this.formCapture.get('cvCoors')) {
+      this.idDelegation = this.formCapture.get('cvCoors').value;
+    }
   }
+  selectData(event: any) {
+    this.formCapture.get('user').setValue(event.data.urecepcion);
+    console.log(this.formCapture.value.user);
+    // this.formCapture.value.user = event.user
+  }
+
   goBack() {}
 }
