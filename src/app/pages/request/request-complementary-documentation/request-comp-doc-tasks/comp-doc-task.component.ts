@@ -14,6 +14,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract docRequest: boolean;
   protected abstract expRequest: boolean;
   protected abstract selectGoodForEyeVisit: boolean;
+  protected abstract validateGoodForEyeVisit: boolean;
   protected abstract viewSelectedGoods: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
@@ -31,13 +32,26 @@ export abstract class CompDocTasksComponent extends BasePage {
     super();
   }
 
-  titleView(affair: number) {
+  titleView(affair: number, process: string) {
     if (affair == 13) {
       this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
     } else if (affair == 10) {
       this.title = `Devolución: Registro de documentación complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
+    } else if (affair == 33) {
+      if (process == 'BSRegistroSolicitudes') {
+        this.title = `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
+      }
+      if (process == 'BSNotificarTransferente') {
+        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
+      }
+      if (process == 'BSVisitaOcular') {
+        this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+      }
+      if (process == 'BSValidarVisitaOcular') {
+        this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+      }
     }
   }
 
@@ -58,6 +72,7 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.dictumValidate = false;
           this.notifyReport = false;
           this.selectGoodForEyeVisit = false;
+          this.validateGoodForEyeVisit = false;
 
           this.turnReq = true;
           this.createReport = false;
@@ -68,6 +83,7 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.selectGoods = true;
           this.expRequest = true;
           this.selectGoodForEyeVisit = false;
+          this.validateGoodForEyeVisit = false;
         }
 
         break;
@@ -84,6 +100,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.notifyReport = false;
         this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
@@ -103,6 +120,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.notifyReport = false;
         this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -122,6 +140,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.notifyReport = false;
         this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -141,6 +160,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = true;
         this.notifyReport = false;
         this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -164,6 +184,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.notifyReport = false;
         this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
@@ -184,6 +205,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.notifyReport = true;
         this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
@@ -202,6 +224,26 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.dictumValidate = false;
         this.notifyReport = false;
         this.selectGoodForEyeVisit = true;
+        this.validateGoodForEyeVisit = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+      case 'BSValidarVisitaOcular':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = false;
+        this.viewSelectedGoods = false;
+        this.guidelines = false;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+        this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = true;
 
         this.turnReq = true;
         this.createReport = false;
@@ -234,9 +276,9 @@ export abstract class CompDocTasksComponent extends BasePage {
       text: 'Usted va a transferir una solicitud que no es comercio exterior a un TE',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonColor: '#9B2348',
+      cancelButtonColor: '#B28D5C',
+      confirmButtonText: 'Aceptar',
     }).then(result => {
       if (result.isConfirmed) {
         this.onLoadToast('success', 'Solicitud turnada con éxito', '');
