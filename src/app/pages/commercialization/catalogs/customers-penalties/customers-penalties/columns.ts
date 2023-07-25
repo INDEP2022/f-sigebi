@@ -2,17 +2,15 @@ import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/f
 
 export const COLUMNS = {
   typeProcess: {
-    //
     title: 'Tipo de Penalización',
     sort: false,
   },
-  event: {
-    title: 'Evento',
-    sort: false,
-  },
-  eventKey: {
+  eventId: {
     title: 'Clave Evento',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return cell.id;
+    },
   },
   publicLot: {
     title: 'Lote',
@@ -85,10 +83,6 @@ export const COLUMNS2 = {
     sort: false,
   },
   eventId: {
-    title: 'Evento',
-    sort: false,
-  },
-  eventKey: {
     title: 'Clave Evento',
     sort: false,
   },

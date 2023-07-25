@@ -122,7 +122,11 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
     this.revisionReasonService.remove(id).subscribe({
       next: () => {
         this.getExample(),
-          this.alert('success', 'Motivo de Revisión', 'Borrado Correctamente');
+          this.alert(
+            'success',
+            'Motivo para Estatus REV',
+            'Borrado Correctamente'
+          );
       },
       error: error => {
         this.alert(

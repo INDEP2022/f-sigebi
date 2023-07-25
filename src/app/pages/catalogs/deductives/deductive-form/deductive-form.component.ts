@@ -7,7 +7,6 @@ import { DeductiveService } from 'src/app/core/services/catalogs/deductive.servi
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   NUMBERS_PATTERN,
-  PERCENTAGE_NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -47,15 +46,27 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
       ],
       weightedDeduction: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       startingRankPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       finalRankPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       contractNumber: [
         null,
@@ -67,7 +78,11 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
       ],
       version: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       status: [null, [Validators.required]],
     });

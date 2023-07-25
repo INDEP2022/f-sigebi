@@ -37,6 +37,11 @@
           </form-field>
         </div>
         <div class="col-md-3">
+          <form-field label="Estado" [control]="lockerForm.get('status')">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <!--<div class="col-md-3">
           <form-field label="No. Casillero" [control]="lockerForm.get('id')">
             <input
               type="number"
@@ -47,7 +52,7 @@
               oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
               formControlName="id" />
           </form-field>
-        </div>
+        </div>-->
       </div>
       <div class="row pt-4">
         <div class="col-md">
@@ -61,13 +66,13 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4">
+      <!--<div class="row pt-4">
         <div class="col-md-4">
           <form-field label="Estado" [control]="lockerForm.get('status')">
             <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
-      </div>
+      </div>-->
     </form>
   </div>
   <div footer>

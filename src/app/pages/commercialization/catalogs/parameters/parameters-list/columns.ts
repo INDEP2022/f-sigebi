@@ -15,6 +15,8 @@ export const COLUMNS = {
     title: 'Dirección',
     type: 'html',
     valuePrepareFunction: (value: string) => {
+      if (value == 'I')
+        return '<strong><span class="badge badge-pill badge-success">Inmuebles</span></strong>';
       if (value == 'M')
         return '<strong><span class="badge badge-pill badge-success">Muebles</span></strong>';
       if (value == 'C')
@@ -28,6 +30,7 @@ export const COLUMNS = {
       config: {
         selectText: 'Seleccionar',
         list: [
+          { value: 'I', title: 'Inmuebles' },
           { value: 'M', title: 'Muebles' },
           { value: 'C', title: 'Comercial' },
           { value: 'D', title: 'Conciliación' },
@@ -36,8 +39,12 @@ export const COLUMNS = {
     },
     sort: false,
   },
-  typeEventId: {
+  comerTpevents: {
     title: 'Tipo de Evento',
+
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.description : '';
+    },
   },
 };
