@@ -44,6 +44,7 @@ export class RequestCompDocTasksComponent
   viewSelectedGoods: boolean = false;
   dictumValidate: boolean = false;
   notifyReport: boolean = false;
+  selectGoodForEyeVisit: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -172,6 +173,12 @@ export class RequestCompDocTasksComponent
       if (question.isConfirmed) {
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else if (this.process == 'BSRegistroSolicitudes') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else if (this.process == 'BSNotificarTransferente') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else if (this.process == 'BSVisitaOcular') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
@@ -236,5 +243,15 @@ export class RequestCompDocTasksComponent
     });
   }
 
-  openNotifyReport() {}
+  openNotifyReport(context?: Partial<CreateReportComponent>) {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+      } //this.getCities();
+    });
+  }
 }

@@ -241,6 +241,33 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'Notification_Taxpayer',
   },
+  {
+    title:
+      'BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: 56820',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSRegistroSolicitudes',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Notificar a Transferente, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSNotificarTransferente',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Programar Visita Ocular, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSVisitaOcular',
+  },
 ];
 
 //AP_Amparo
@@ -482,6 +509,30 @@ export class RequestListComponent extends BasePage implements OnInit {
       case 'Notification_Taxpayer':
         //En el caso que sea recibir la notificación del contibuyente resarcimiento (especie)
         this.router.navigate(['pages/request/notification-request-delivery/']);
+        break;
+      case 'BSRegistroSolicitudes':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSNotificarTransferente':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSVisitaOcular':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
         break;
       default:
         break;
