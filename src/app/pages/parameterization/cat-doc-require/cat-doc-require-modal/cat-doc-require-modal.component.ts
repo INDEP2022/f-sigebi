@@ -37,6 +37,7 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.documentsForDictumForm = this.fb.group({
+      numRegister: [null, [Validators.required, Validators.maxLength(8)]],
       id: [
         null,
         [

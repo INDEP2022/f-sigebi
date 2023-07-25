@@ -49,7 +49,7 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id'
+            filter.field == 'id' || filter.field == 'flag'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -116,7 +116,7 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Conclusión de registro',
+          'Conclusión de Siniestro',
           'Borrado Correctamente'
         ),
           this.getExample();

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import {
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
@@ -52,12 +53,37 @@ export class OfficeFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      noExt: [null, [Validators.required, Validators.maxLength(10)]],
-      noInt: [null, [Validators.required, Validators.maxLength(10)]],
-      colony: [null, [Validators.required, Validators.maxLength(100)]],
+      noExt: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      noInt: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      colony: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       municipalDelegate: [
         null,
-        [Validators.required, Validators.maxLength(60)],
+        [
+          Validators.required,
+          Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       postalCode: [null, [Validators.required, Validators.maxLength(5)]],
       rfc: [
@@ -80,8 +106,18 @@ export class OfficeFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(20), Validators.pattern(PHONE_PATTERN)],
       ],
-      fax: [null, [Validators.maxLength(20)]],
-      typeOffice: [null, [Validators.required, Validators.maxLength(1)]],
+      fax: [
+        null,
+        [Validators.maxLength(50), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      typeOffice: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
     if (this.office != null) {
       this.edit = true;
@@ -107,12 +143,12 @@ export class OfficeFormComponent extends BasePage implements OnInit {
 
   create() {
     if (
-      this.officeForm.controls['name'].value.trim() === '' &&
-      this.officeForm.controls['street'].value.trim() === '' &&
-      this.officeForm.controls['colony'].value.trim() === '' &&
-      this.officeForm.controls['municipalDelegate'].value.trim() === '' &&
-      this.officeForm.controls['rfc'].value.trim() === '' &&
-      this.officeForm.controls['fax'].value.trim() === '' &&
+      this.officeForm.controls['name'].value.trim() === '' ||
+      this.officeForm.controls['street'].value.trim() === '' ||
+      this.officeForm.controls['colony'].value.trim() === '' ||
+      this.officeForm.controls['municipalDelegate'].value.trim() === '' ||
+      this.officeForm.controls['rfc'].value.trim() === '' ||
+      this.officeForm.controls['fax'].value.trim() === '' ||
       this.officeForm.controls['typeOffice'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

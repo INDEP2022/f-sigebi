@@ -6,6 +6,7 @@ import { IClaimConclusion } from 'src/app/core/models/catalogs/claim-conclusion.
 import { ClaimConclusionService } from 'src/app/core/services/catalogs/claim-conclusion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { POSITVE_NUMBERS_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-claim-conclusion-form',
@@ -14,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   ClaimConclusionForm: ModelForm<IClaimConclusion>;
-  title: string = 'Conclusión de siniestros';
+  title: string = 'Conclusión de Siniestro';
   edit: boolean = false;
   claimConclusion: IClaimConclusion;
   constructor(
@@ -43,7 +44,7 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
       flag: [
         null,
         [
-          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
           Validators.required,
           Validators.maxLength(20),
         ],

@@ -15,7 +15,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class PenaltyFormComponent extends BasePage implements OnInit {
   penaltyForm: ModelForm<IPenalty>;
-  title: string = 'PENALIZACIÓN';
+  title: string = 'Penalización';
   edit: boolean = false;
   penalty: IPenalty;
   constructor(

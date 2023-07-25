@@ -32,7 +32,14 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.indicatedForm = this.fb.group({
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
+      ],
       curp: [null, [Validators.required, Validators.pattern(CURP_PATTERN)]],
     });
 
@@ -47,6 +54,10 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.indicatedForm.controls['name'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.indicatedService.create(this.indicatedForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -69,7 +80,7 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', 'INDICIADO', `${message} Correctamente`);
+    this.onLoadToast('success', 'Indiciado', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

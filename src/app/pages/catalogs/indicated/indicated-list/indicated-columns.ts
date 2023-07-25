@@ -1,6 +1,6 @@
 export const INDICATED_COLUMNS = {
   id: {
-    title: 'Número indiciado',
+    title: 'Número Indiciado',
     type: 'number',
     sort: false,
   },
