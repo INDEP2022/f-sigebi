@@ -1684,8 +1684,9 @@ export class GoodsProcessValidationExtdomComponent
       return;
     } else if (this.executionType == this.registerType) {
       this.confirmMessageValidFolio(
-        'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
-        ''
+        // 'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
+        'Exiten nuevos bienes, aplicar el cambio de proceso a ASEG:_EXTDOM',
+        '¿Desea continuar con el proceso?'
       );
     } else if (this.executionType == this.registerExistType) {
       this.confirmMessageValidFolio(
@@ -2008,14 +2009,6 @@ export class GoodsProcessValidationExtdomComponent
       this.alert('warning', 'Se Requiere un Folio de Escaneo', '');
       return;
     }
-    if (this.P_NO_TRAMITE == null) {
-      this.alert(
-        'warning',
-        'Es Necesario Abrir la Pantalla Actual desde Otra Pantalla para Realizar este Proceso',
-        ''
-      );
-      return;
-    }
     this.loadingProcess = true;
     const params = new FilterParams();
     params.addFilter('id', this.universalFolio);
@@ -2080,28 +2073,33 @@ export class GoodsProcessValidationExtdomComponent
       .subscribe({
         next: data => {
           console.log('UPDATE NOTIFICATION ', data);
-          // GESTION TRAMITE UPDATE
-          let body: Partial<IProceduremanagement> = {
-            id: this.P_NO_TRAMITE,
-            status: 'FNI',
-          };
-          this.svGoodsProcessValidationExtdomService
-            .updateProcedureManagement(this.P_NO_TRAMITE, body)
-            .subscribe({
-              next: data => {
-                console.log('UPDATE GESTION TRAMITE DATA ', data);
-                this.closeApplyReserved();
-                this.openModalMail();
-              },
-              error: error => {
-                console.log(error);
-                this.alert(
-                  'error',
-                  'Ocurrió un Error al Actualizar el Estatus del Trámite',
-                  ''
-                );
-              },
-            });
+          if (this.P_NO_TRAMITE == null) {
+            this.closeApplyReserved();
+            this.openModalMail();
+          } else {
+            // GESTION TRAMITE UPDATE
+            let body: Partial<IProceduremanagement> = {
+              id: this.P_NO_TRAMITE,
+              status: 'FNI',
+            };
+            this.svGoodsProcessValidationExtdomService
+              .updateProcedureManagement(this.P_NO_TRAMITE, body)
+              .subscribe({
+                next: data => {
+                  console.log('UPDATE GESTION TRAMITE DATA ', data);
+                  this.closeApplyReserved();
+                  this.openModalMail();
+                },
+                error: error => {
+                  console.log(error);
+                  this.alert(
+                    'error',
+                    'Ocurrió un Error al Actualizar el Estatus del Trámite',
+                    ''
+                  );
+                },
+              });
+          }
         },
         error: error => {
           console.log(error);
@@ -2272,9 +2270,9 @@ export class GoodsProcessValidationExtdomComponent
     if (event == true) {
       if (this.formScan.get('scanningFoli').value && this.universalFolio) {
         this.alertQuestion(
-          'info',
-          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Amparo. ¿Deseas continuar?',
-          '',
+          'question',
+          'Abrir Escaneo y Digitalizacion de Documentos',
+          '¿Deseas continuar?',
           'Aceptar',
           'Cancelar'
         ).then(res => {
