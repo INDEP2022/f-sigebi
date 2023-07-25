@@ -13,7 +13,7 @@
               type="number"
               class="form-control"
               formControlName="satTypeJob"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -24,9 +24,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeDocSae"
-              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);"
-              pattern="^(?!\s*$).+" />
+              formControlName="typeDocSae" />
           </form-field>
         </div>
       </div>
@@ -38,7 +36,7 @@
               type="number"
               class="form-control"
               formControlName="type"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
           </form-field>
         </div>
@@ -48,10 +46,10 @@
             [control]="docCompensationForm.get('idTypeDocSat')"
             label="Doc Resarcimiento SAT">
             <input
-              type="string"
+              type="number"
               class="form-control"
               formControlName="idTypeDocSat"
-              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+              min="1" />
           </form-field>
         </div>
 
@@ -63,7 +61,7 @@
               type="number"
               class="form-control"
               formControlName="idTypeDocSatXml"
-              min="0"
+              min="1"
               oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
           </form-field>
         </div>
@@ -75,10 +73,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="docCompensationForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

@@ -47,7 +47,10 @@ export class DeductivesListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id'
+            filter.field == 'id' ||
+            filter.field == 'startingRankPercentage' ||
+            filter.field == 'finalRankPercentage' ||
+            filter.field == 'version'
               ? // filter.field == 'contractNumber' ||
                 // filter.field == 'weightedDeduction' ||
                 // filter.field == 'startingRankPercentage' ||

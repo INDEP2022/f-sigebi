@@ -45,7 +45,11 @@ export class DeductivesVerificationFormComponent
       ],
       percentagePena: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(DOUBLE_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       verificationType: [
         null,

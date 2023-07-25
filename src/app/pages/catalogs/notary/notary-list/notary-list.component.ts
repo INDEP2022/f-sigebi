@@ -58,6 +58,9 @@ export class NotaryListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'notaryNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.LIKE;
                 break;
@@ -86,7 +89,7 @@ export class NotaryListComponent extends BasePage implements OnInit {
     this.notaryService.getAll(params).subscribe({
       next: response => {
         this.columns = response.data;
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;

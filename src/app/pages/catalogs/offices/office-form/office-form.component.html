@@ -21,12 +21,7 @@
           <form-field
             [control]="officeForm.get('noExt')"
             label="No&#46; Exterior">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noExt"
-              min="1"
-              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+            <input type="text" class="form-control" formControlName="noExt" />
           </form-field>
         </div>
 
@@ -34,12 +29,7 @@
           <form-field
             [control]="officeForm.get('noInt')"
             label="No&#46; Interior">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="noInt"
-              min="1"
-              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+            <input type="text" class="form-control" formControlName="noInt" />
           </form-field>
         </div>
       </div>
@@ -65,11 +55,9 @@
             [control]="officeForm.get('postalCode')"
             label="Codigo Postal">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="postalCode"
-              min="1"
-              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
+              formControlName="postalCode" />
           </form-field>
         </div>
         <div class="row pt-5">
@@ -83,10 +71,7 @@
             <form-field
               [control]="officeForm.get('phone')"
               label="Tel&eacute;fono">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="phone" />
+              <input type="text" class="form-control" formControlName="phone" />
             </form-field>
           </div>
 
@@ -95,23 +80,24 @@
               [control]="officeForm.get('phoneTwo')"
               label="Segundo Tel&eacute;fono">
               <input
-                type="number"
+                type="text"
                 class="form-control"
                 formControlName="phoneTwo" />
             </form-field>
           </div>
-          <form-field [control]="officeForm.get('fax')" label="Fax">
-            <input type="text" class="form-control" formControlName="fax" />
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field [control]="officeForm.get('typeOffice')" label="Tipo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeOffice" />
-          </form-field>
+          <div class="col-md-4">
+            <form-field [control]="officeForm.get('fax')" label="Fax">
+              <input type="text" class="form-control" formControlName="fax" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="officeForm.get('typeOffice')" label="Tipo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="typeOffice" />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>

@@ -44,7 +44,11 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
       ],
       idTypeDocSat: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       idTypeDocSatXml: [
         null,
@@ -116,6 +120,10 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.docCompensationForm.controls['typeDocSae'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.docCompensationService
       .create(this.docCompensationForm.value)

@@ -17,7 +17,7 @@ export class InstitutionClassificationDetailComponent
   implements OnInit
 {
   officeForm: ModelForm<IInstitutionClassification>;
-  title: string = 'Clasificación de institución';
+  title: string = 'Clasificación de Institución';
   edit: boolean = false;
   form: IInstitutionClassification;
   institution: any;
@@ -70,6 +70,10 @@ export class InstitutionClassificationDetailComponent
   }
 
   create() {
+    if (this.officeForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.institutionService.create(this.officeForm.value).subscribe({
       next: data => this.handleSuccess(),

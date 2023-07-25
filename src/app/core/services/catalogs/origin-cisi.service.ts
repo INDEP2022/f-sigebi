@@ -11,6 +11,7 @@ import { IOriginCisi } from '../../models/catalogs/origin-cisi.model';
 })
 export class OiriginCisiService implements ICrudMethods<IOriginCisi> {
   private readonly route: string = ENDPOINT_LINKS.OriginCisi;
+  private readonly route1: string = ENDPOINT_LINKS.OriginCisiPC;
   constructor(private originCisiRepository: Repository<IOriginCisi>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IOriginCisi>> {
@@ -22,14 +23,14 @@ export class OiriginCisiService implements ICrudMethods<IOriginCisi> {
   }
 
   create(model: IOriginCisi): Observable<IOriginCisi> {
-    return this.originCisiRepository.create(this.route, model);
+    return this.originCisiRepository.create(this.route1, model);
   }
 
   update(id: string | number, model: IOriginCisi): Observable<Object> {
-    return this.originCisiRepository.update(this.route, id, model);
+    return this.originCisiRepository.update(this.route1, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.originCisiRepository.remove(this.route, id);
+    return this.originCisiRepository.remove(this.route1, id);
   }
 }
