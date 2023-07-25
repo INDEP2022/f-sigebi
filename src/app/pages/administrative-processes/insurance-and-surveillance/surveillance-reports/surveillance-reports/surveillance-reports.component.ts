@@ -51,6 +51,7 @@ export class SurveillanceReportsComponent extends BasePage implements OnInit {
   dataSelect = new DefaultSelect<any>(this.DATA, this.DATA.length);
   contracts = new DefaultSelect<any>();
   users = new DefaultSelect<any>();
+  anioActual = new Date().getFullYear();
 
   constructor(
     private fb: FormBuilder,
@@ -75,10 +76,21 @@ export class SurveillanceReportsComponent extends BasePage implements OnInit {
       providerSign: [null, Validators.required],
       reports: [null, Validators.required],
       reportSae: [null, Validators.required],
-      year: [null, Validators.required],
-      month: [null, Validators.required],
+      year: [null, [Validators.required, this.validarAnioActual.bind(this)]],
+      month: [
+        null,
+        [Validators.required, Validators.pattern('^(0?[1-9]|1[0-2])$')],
+      ],
       post: [null],
     });
+  }
+
+  validarAnioActual(control: any) {
+    const añoIngresado = parseInt(control.value, 10);
+    if (añoIngresado > this.anioActual) {
+      return { añoFuturo: true };
+    }
+    return null;
   }
 
   getUsers(params: ListParams) {
