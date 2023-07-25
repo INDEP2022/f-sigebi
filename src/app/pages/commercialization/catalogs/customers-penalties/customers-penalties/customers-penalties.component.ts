@@ -10,6 +10,7 @@ import {
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CustomersPenaltiesExportAllComponent } from '../customer-penalties-export-all/customer-penalties-export-all.component';
 import { CustomerPenaltiesModalComponent } from '../customer-penalties-modal/customer-penalties-modal.component';
 import { COLUMNS } from './columns';
 
@@ -119,7 +120,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     if (dateString === '') {
       return '';
     }
-
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -129,7 +129,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     this.penalties = event.data;
-    console.log(this.penalties);
   }
 
   getDeductives() {
@@ -141,7 +140,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
-        console.log(this.customersPenalties);
         this.totalItems = response.count || 0;
         this.data.load(response.data);
         this.data.refresh();
@@ -162,16 +160,15 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
   }
 
-  all() {
-    console.log('Exportar Todos');
-  }
-
-  penalized() {
-    console.log('Exportar Penalizados');
-  }
-
-  historic() {
-    console.log('Exportar Histórico');
+  all(customersPenalties?: ICustomersPenalties) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      customersPenalties,
+      callback: (next: boolean) => {
+        if (next) this.getDeductives();
+      },
+    };
+    this.modalService.show(CustomersPenaltiesExportAllComponent, modalConfig);
   }
 
   showDeleteAlert(customersPenalties: ICustomersPenalties) {
@@ -182,7 +179,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(customersPenalties.id);
-        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
