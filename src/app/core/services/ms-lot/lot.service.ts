@@ -13,7 +13,7 @@ export class LotService extends HttpService {
   }
 
   getLotbyEvent(id: string | number, params?: ListParams) {
-    const route = `${LotEndpoints.ComerLot}?filter.eventId=${id}`;
+    const route = `${LotEndpoints.ComerLot}?filter.idEvent=${id}`;
     return this.get(route, params);
   }
 
