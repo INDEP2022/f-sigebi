@@ -310,9 +310,9 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
               'No puede registrar Estrategias de Administración para meses anteriores a Diciembre del año pasado',
               ''
             );
+          } else {
+            this.alert('error', 'El año no puede ser menor al anterior', '');
           }
-        } else {
-          this.alert('error', 'El año no puede ser menor al anterior', '');
         }
       }
     } else {
@@ -343,15 +343,15 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
       userInsertId: this.performanceIndicatorForm.get('user').value,
     };
 
-    let param2 = {
+    /*let param2 = {
       yearEvaluateId: '2008',
       monthEvaluateId: 1,
       delegationNumberId: 6,
       userInsertId: 'ROGARCIA',
-    };
+    };*/
     //console.log(this.performanceIndicatorForm);
     //console.log('param-> ', param);
-    this.strategyServiceService.getStrategiesAdmin(param2).subscribe({
+    this.strategyServiceService.getStrategiesAdmin(param).subscribe({
       next: res => {
         console.log('data rec ', res);
         console.log(res.extraDevAmongNumber);
