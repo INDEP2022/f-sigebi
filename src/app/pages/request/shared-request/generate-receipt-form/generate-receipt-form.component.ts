@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -71,7 +71,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       seal: [null],
       nameReceipt: [null],
       observation: [null],
-      chargeReceipt: [null, [Validators.maxLength(15)]],
+      chargeReceipt: [null],
       electronicSignatureEnt: [null],
       electronicSignatureReceipt: [null],
     });

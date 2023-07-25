@@ -96,6 +96,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('idTypeDoc', this.idTypeDoc);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -417,7 +418,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   );
                 },
                 error: error => {
-                  this.msjCheck = true;
+                  //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
                     'error',
@@ -444,7 +445,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
                   );
                 },
                 error: error => {
-                  this.msjCheck = true;
+                  //this.msjCheck = true;
                   this.loadingButton = false;
                   this.alertInfo(
                     'error',
@@ -495,7 +496,12 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   close() {
-    this.modalRef.hide();
+    if (this.showTDR) {
+      this.modalRef.content.callback(true);
+      this.modalRef.hide();
+    } else {
+      this.modalRef.hide();
+    }
   }
 
   openMessage2(): void {
@@ -510,7 +516,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         }
 
         if (
-          this.idTypeDoc == 103 ||
           this.idTypeDoc == 106 ||
           this.idTypeDoc == 107 ||
           this.idTypeDoc == 108 ||
