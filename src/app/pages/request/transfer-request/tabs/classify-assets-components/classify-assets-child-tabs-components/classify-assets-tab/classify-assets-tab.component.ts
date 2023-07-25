@@ -892,10 +892,13 @@ export class ClassifyAssetsTabComponent
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);
     }
+    //modificar el campo duplicidad en caso de estar nulo
+    goods.duplicity = goods.duplicity == null ? 'N' : goods.duplicity;
 
     //se modifica el estadus del bien
     goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
     let goodResult: any = null;
+
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
