@@ -38,7 +38,7 @@ export class NoticeAbandonmentForSecuringComponent
   searching: boolean = false;
   selectedRows: any;
   selectedRow: any;
-  selectedGood: import('c:/proyectos/f-sigebi/src/app/core/models/ms-good/good').IGood;
+  selectedGood: IGood;
 
   get goodId() {
     return this.form.get('goodId');
