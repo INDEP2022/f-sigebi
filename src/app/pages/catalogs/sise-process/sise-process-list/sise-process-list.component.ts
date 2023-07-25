@@ -47,7 +47,7 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' || filter.field == 'description'
+            filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -109,7 +109,7 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.siseProcessService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Proceso sise', 'Borrado Correctamente');
+        this.alert('success', 'Proceso SISE', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

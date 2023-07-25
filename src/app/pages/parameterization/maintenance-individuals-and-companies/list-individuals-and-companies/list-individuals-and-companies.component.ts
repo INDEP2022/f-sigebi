@@ -74,6 +74,78 @@ export class ListIndividualsAndCompaniesComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'personName':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'manager':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'rfc':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'curp':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'street':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'apartmentNumber':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'streetNumber':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'phone':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'zipCode':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'suburb':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'delegation':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'keyEntFed':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'curriculum':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'keyOperation':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'numberDeep':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'observations':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'profile':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}`;
                 break;
@@ -111,7 +183,6 @@ export class ListIndividualsAndCompaniesComponent
       },
       error: err => {
         this.loading = false;
-        this.onLoadToast('error', err.error.message, '');
       },
     });
   }
@@ -128,8 +199,8 @@ export class ListIndividualsAndCompaniesComponent
             this.getPersons();
             this.alert(
               'success',
-              'Lista mantenimiento de personas físicas y morales',
-              'Ha sido eliminada'
+              'Mantenimiento de Personas Físicas y Morales',
+              'Borrado Correctamente'
             );
           },
           error: err => this.onLoadToast('error', err.error.message, ''),

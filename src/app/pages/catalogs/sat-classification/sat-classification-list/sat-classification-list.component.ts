@@ -62,6 +62,9 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
               case 'nombre_clasificacion':
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -130,7 +133,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.satClassificationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Sat clasificación', 'Borrado Correctamente');
+        this.alert('success', 'SAT Clasificación', 'Borrado Correctamente');
         this.getSatClasifications();
       },
       error: err => {
