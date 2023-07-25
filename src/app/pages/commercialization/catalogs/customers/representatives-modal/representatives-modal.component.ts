@@ -39,6 +39,7 @@ export class RepresentativesModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.representativeForm);
   }
 
   private prepareForm() {
