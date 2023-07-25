@@ -60,13 +60,11 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     let form = {
-      id: this.datePipe.transform(
-        this.nonWorkingDaysForm.controls['idDate'].value,
-        'yyyy-MM-dd'
-      ),
+      id: this.nonWorkingDaysForm.controls['idDate'].value,
       idDate: this.nonWorkingDaysForm.controls['idDate'].value,
       description: this.nonWorkingDaysForm.controls['description'].value,
     };
+    console.log('objeto a guardar ', form);
     this.calendarService.create(form).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
