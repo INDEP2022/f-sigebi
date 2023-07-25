@@ -23,7 +23,7 @@ export class RegisterKeyOneModalComponent extends BasePage implements OnInit {
   idCve: ITable;
   selectTabla: string;
 
-  title: string = 'Registro de claves para tablas logicas con una clavee';
+  title: string = 'Registro de claves para tablas logicas con una clave';
   edit: boolean = false;
 
   _id: any;

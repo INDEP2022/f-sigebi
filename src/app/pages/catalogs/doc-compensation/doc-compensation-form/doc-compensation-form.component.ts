@@ -40,14 +40,18 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.required]],
       satTypeJob: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(4),
+        ],
       ],
       idTypeDocSat: [
         null,
         [
           Validators.required,
           Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(4),
         ],
       ],
       idTypeDocSatXml: [

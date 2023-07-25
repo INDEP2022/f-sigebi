@@ -15,10 +15,9 @@
             [control]="notaryForm.get('notaryNumber')"
             label="N&uacute;mero Notaria">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="notaryNumber"
-              min="1" />
+              formControlName="notaryNumber" />
           </form-field>
         </div>
       </div>
@@ -61,11 +60,7 @@
           <form-field
             [control]="notaryForm.get('phone')"
             label="Tel&eacute;fono">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="phone"
-              min="1" />
+            <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">

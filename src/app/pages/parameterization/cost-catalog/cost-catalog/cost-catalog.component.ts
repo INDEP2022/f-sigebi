@@ -150,7 +150,11 @@ export class CostCatalogComponent extends BasePage implements OnInit {
         this.serviceCatService.delete(drawer.code).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert('success', 'Catálogo de costo', 'Borrado');
+              this.alert(
+                'success',
+                'Catálogo de Costo',
+                'Borrado Correctamente'
+              );
               this.getCostCatalog();
             }
           },

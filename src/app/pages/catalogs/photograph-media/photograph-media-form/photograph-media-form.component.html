@@ -16,7 +16,10 @@
           <form-field
             [control]="photographMediaForm.get('status')"
             label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
+            <select class="form-control" required formControlName="status">
+              <option value="0">Inactivo</option>
+              <option value="1">Activo</option>
+            </select>
           </form-field>
         </div>
       </div>

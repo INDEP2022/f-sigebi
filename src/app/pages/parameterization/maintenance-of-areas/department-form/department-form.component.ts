@@ -25,7 +25,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class DepartmentFormComponent extends BasePage implements OnInit {
   departmentForm: ModelForm<IDepartment>;
   department: IDepartment;
-  title: string = 'MANTENIMIENTO DE AREAS';
+  title: string = 'Mantenimiento de Areas';
   edit: boolean = false;
 
   idDelegation: IDelegation;
@@ -33,7 +33,6 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
-
   phaseEdo: number;
 
   get delegation() {
@@ -59,7 +58,14 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.departmentForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
       numDelegation: [null, []],
       numSubDelegation: [null, []],
       dsarea: [
@@ -197,7 +203,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.alert('error', 'No esta registrada ninguna Subdelegación', '');
       },
     });
   }
@@ -232,6 +238,13 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.departmentForm.controls['description'].value.trim() === '' ||
+      this.departmentForm.controls['dsarea'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.departmentService.create(this.departmentForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),

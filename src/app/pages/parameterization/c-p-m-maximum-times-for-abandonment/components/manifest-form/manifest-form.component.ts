@@ -37,31 +37,31 @@ export class ManifestFormComponent extends BasePage implements OnInit {
       editionUser: [null],
       maxAsseguranceTime: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       maxExtensionTime: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       maxFractionTime: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       maxLimitTime1: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       maxLimitTime2: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       maxLimitTime3: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       maxStatementTime: [
         0,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
       ],
       modificationDate: [null],
       noRegister: [null],
