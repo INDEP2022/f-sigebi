@@ -20,11 +20,11 @@ export const COLUMNS = {
     sort: false,
   },
   insideNumber: {
-    title: 'No interior',
+    title: 'No. Interior',
     sort: false,
   },
   outNumber: {
-    title: 'No exterior',
+    title: 'No. Exterior',
     sort: false,
   },
   phone: {
