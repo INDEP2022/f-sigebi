@@ -185,7 +185,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsTransportableGoods"
                   [source]="goodsTranportables"
-                  (edit)="showGood($event.data)">
+                  (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
               <app-pagination
@@ -202,7 +202,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingGuardGoods"
                   [source]="goodsGuards"
-                  (edit)="showGood($event.data)">
+                  (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
             </tab>
@@ -216,7 +216,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingWarehouseGoods"
                   [source]="goodsWarehouse"
-                  (edit)="showGood($event.data)">
+                  (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
               <app-pagination

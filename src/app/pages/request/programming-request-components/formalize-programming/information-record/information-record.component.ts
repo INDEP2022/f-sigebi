@@ -196,6 +196,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     console.log('this.infoForm.value', this.infoForm.value);
     this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
       next: response => {
+        console.log('this.proceeding', this.proceeding);
         this.loading = false;
         this.close();
         this.modalRef.content.callback(this.proceeding, this.tranType);
