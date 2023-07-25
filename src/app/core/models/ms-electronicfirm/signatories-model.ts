@@ -28,3 +28,19 @@ export interface ISignatories {
   nameSignatore?: string;
   chargeSignatore?: string;
 }
+
+export interface IComerDocumentsXML {
+  documensxmltid: number;
+  consecutivenumber: number;
+  referenceid: number;
+  documentid: number;
+  creationdate: Date;
+  title: string;
+  screenkey: string;
+  reportkey: string;
+  description: string;
+  user: string;
+  name: string;
+  denomination: string;
+  firmdate: Date;
+}
