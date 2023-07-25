@@ -19,7 +19,7 @@ export class CustomerPenaltiesModalComponent
 
   form: FormGroup = new FormGroup({});
   customersPenalties: ICustomersPenalties;
-  penalty: any; //IPenalty
+  penalty: any;
   penalties: ICustomersPenalties;
   today: Date;
 
@@ -36,7 +36,6 @@ export class CustomerPenaltiesModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log(this.penalties);
   }
 
   private prepareForm() {
@@ -67,15 +66,20 @@ export class CustomerPenaltiesModalComponent
 
   update() {
     this.loading = true;
+    console.log(this.customersPenalties.clientId.id);
     this.clientPenaltyService
-      .updateCustomers(this.customersPenalties.clientId.id, this.form.value)
+      .updateCustomers(this.form.value)
+      // .updateCustomers(this.customersPenalties.clientId.id, this.form.value)
       .subscribe({
-        next: data => this.handleSuccess(),
+        next: data => {
+          this.handleSuccess(), this.modalRef.hide();
+        },
         error: (error: any) => {
-          this.alert('warning', `${error.error.message}`, '');
-          this.loading = false;
+          this.alert('warning', `No es Posible Actualizar el Cliente`, '');
+          this.modalRef.hide();
         },
       });
+    this.modalRef.hide();
   }
 
   create() {
@@ -88,11 +92,7 @@ export class CustomerPenaltiesModalComponent
           this.modalRef.hide();
         },
         error: error => {
-          this.alert(
-            'warning',
-            `No es Posible Crear el Cliente: ${error.error.message}`,
-            ''
-          );
+          this.alert('warning', `No es Posible Crear el Cliente`, '');
           this.loading = false;
         },
       });
