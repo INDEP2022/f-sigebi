@@ -375,12 +375,10 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       P_CUMP: this.P_CUMP,
       P_USR: this.formCapture.value.user,
     };
-
     console.log('params', params);
-
     this.siabService
-      .fetchReport('RINDICA_0001', params)
-      // .fetchReportBlank('blank')
+      // .fetchReport('RINDICA_0001', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           this.loading = false;
@@ -429,6 +427,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       this.formCapture.controls['fecEnd'].value,
       'yyyy-MM-dd'
     );
+
     this.search = {
       cvCoors: this.idDelegation,
       cveJobExternal: this.formCapture.value.cveJobExternal,
@@ -436,9 +435,9 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       typeSteering: this.formCapture.value.typeSteering,
       fecStart: this.from,
       fecEnd: this.to,
-      noTransfere: this.formCapture.value.noTransfere.id,
-      noStation: this.formCapture.value.noStation.id,
-      noAuthorityts: this.formCapture.value.noStation.id,
+      noTransfere: Number(this.formCapture.value.noTransfere),
+      noStation: Number(this.formCapture.value.noStation),
+      noAuthorityts: Number(this.formCapture.value.noStation),
     };
     this.documentsService
       .getDocCaptureFind(this.search, this.params.getValue())
@@ -446,7 +445,6 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
         next: data => {
           this.loading = false;
           this.capturasDig = data.result;
-          console.log(this.capturasDig);
           let noCumple = data.result.filter(
             (elemento: any) => elemento.cumplio == 0
           );
@@ -454,14 +452,13 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
             (elemento: any) => elemento.cumplio == 1
           );
           this.P_T_CUMP = cumple.length;
-          this.P_T_NO_CUMP = noCumple.length;
+          // this.P_T_NO_CUMP = noCumple.length;
+          this.P_T_NO_CUMP = data.info.total_no_cumplio;
           this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
           this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
-          this.totalItemsCaptura = data.result.length;
-          console.log(this.totalItemsCaptura);
+          this.totalItemsCaptura = this.P_T_NO_CUMP;
           this.loading = false;
-          // this.P_T_NO_CUMP = data.info.total_no_cumplio;
           // this.P_T_CUMP = data.info.total_cumplio;
           // this.P_CUMP = data.info.porcen_cumplidos;
         },
@@ -479,6 +476,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.isLoading = true;
     if (this.capturasDig.length == 0) {
       this.alert('info', 'No hay información para descargar', '');
+      this.isLoading = false;
       return;
     }
     const filename: string = this.userName + '-CapturaYdigita';
@@ -492,7 +490,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     }
   }
   selectData(event: any) {
-    this.formCapture.get('user').patchValue(event.user);
+    this.formCapture.get('user').setValue(event.data.urecepcion);
+    console.log(this.formCapture.value.user);
     // this.formCapture.value.user = event.user
   }
 
