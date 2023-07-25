@@ -31,7 +31,7 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STATUSCODE_COLUMS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.hideSubHeader = false;
     this.settings.actions.add = false;
   }
@@ -51,6 +51,9 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'order':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -112,7 +115,7 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -125,18 +128,18 @@ export class StatusCodeListComponent extends BasePage implements OnInit {
     const data = {
       id: id,
     };
-    this.statusCodeService.remove2(data).subscribe(
-      res => {
-        this.alert('success', 'Código de estado', 'Borrado Correctamente');
+    this.statusCodeService.remove2(data).subscribe({
+      next: res => {
+        this.alert('success', 'Código de Estado', 'Borrado Correctamente');
         this.getExample();
       },
-      err => {
+      error: err => {
         this.alert(
           'warning',
           'Código de Estado',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
-      }
-    );
+      },
+    });
   }
 }

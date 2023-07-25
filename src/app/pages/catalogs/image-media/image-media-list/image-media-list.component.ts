@@ -122,7 +122,7 @@ export class ImageMediaListComponent extends BasePage implements OnInit {
     this.imageMediaService.remove(id).subscribe({
       next: () => {
         this.getExample(),
-          this.alert('success', 'Medio imágen', 'Borrado Correctamente');
+          this.alert('success', 'Medio Imágen', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

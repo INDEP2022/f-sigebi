@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'No.Perito',
+    title: 'No. Perito',
     type: 'string',
     sort: false,
   },

@@ -6,7 +6,7 @@ import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
-  PERCENTAGE_NUMBERS_PATTERN,
+  NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -46,27 +46,43 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
       ],
       weightedDeduction: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       startingRankPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       finalRankPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       contractNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(50),
         ],
       ],
       version: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       status: [null, [Validators.required]],
     });
@@ -84,6 +100,10 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.deductiveForm.controls['serviceType'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.deductiveService.create(this.deductiveForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -102,7 +122,7 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;

@@ -23,7 +23,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class AmountThirdModalComponent extends BasePage implements OnInit {
-  title: string = 'Montos';
+  title: string = 'Monto';
   edit: boolean = false;
 
   amountForm: ModelForm<IComiXThird>;
@@ -41,6 +41,7 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.thirPartys);
     this.prepareForm();
   }
 
@@ -69,6 +70,11 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
         finalAmount: this.amounts.finalAmount,
       });
       this.amountForm.controls['idThirdParty'].setValue(this.thirdParty.id);
+      if (this.thirPartys != null) {
+        this.amountForm.patchValue({
+          idThirdParty: this.thirPartys.id,
+        });
+      }
     } else {
       if (this.thirPartys != null) {
         this.amountForm.patchValue({
@@ -98,6 +104,29 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
+    let startingAmount = this.amountForm.value.startingAmount
+      .toString()
+      .padStart(10, '0');
+    if (startingAmount.length > 10) {
+      startingAmount = startingAmount.toString().slice(0, 10);
+      this.amountForm.value.startingAmount = Number(startingAmount);
+    }
+
+    let finalAmount = this.amountForm.value.finalAmount
+      .toString()
+      .padStart(10, '0');
+    if (finalAmount.length > 10) {
+      finalAmount = finalAmount.toString().slice(0, 10);
+      this.amountForm.value.finalAmount = Number(finalAmount);
+    }
+
+    let pctCommission = this.amountForm.value.pctCommission
+      .toString()
+      .padStart(5, '0');
+    if (pctCommission.length > 5) {
+      pctCommission = pctCommission.toString().slice(0, 5);
+      this.amountForm.value.pctCommission = Number(pctCommission);
+    }
     this.comiXThirdService.create(this.amountForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => this.handleError(),
@@ -106,14 +135,14 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, this.title);
+    this.alert('success', `Monto ${message} Correctamente`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, this.title);
+    this.alert('error', `Error al Intentar ${message} el Monto`, '');
   }
 
   getThirdPartyAll(lparams: ListParams) {

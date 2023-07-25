@@ -58,7 +58,7 @@ export class CatRelationshipOpinionComponent
   totalItems3: number = 0;
 
   settings2;
-  settings3;
+  settings3 = { ...this.settings };
 
   loading1 = this.loading;
   loading2 = this.loading;
@@ -90,9 +90,16 @@ export class CatRelationshipOpinionComponent
       actions: false,
       columns: { ...AFFAIR_TYPE_COLUMNS },
     };
-    this.settings3 = {
+
+    this.settings3.columns = DICTA_COLUMNS;
+    this.settings3.actions.delete = true;
+    this.settings3.actions.edit = true;
+    this.settings3.actions.add = false;
+    this.settings3.hideSubHeader = false;
+
+    /*this.settings3 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -100,7 +107,7 @@ export class CatRelationshipOpinionComponent
         position: 'right',
       },
       columns: { ...DICTA_COLUMNS },
-    };
+    };*/
   }
 
   //Caga las columnas de búsqueda de asuntos
@@ -300,42 +307,40 @@ export class CatRelationshipOpinionComponent
 
   report() {
     let params = {
-      //PN_DEVOLUCION: this.data,
+      //PN_DEVOLUCION: this.data, FCATADBRELASDIC
     };
-    this.siabService
-      .fetchReport('FCATADBRELASDIC', params)
-      .subscribe(response => {
-        if (response !== null) {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true, //ignora el click fuera del modal
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        } else {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true, //ignora el click fuera del modal
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        }
-      });
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
   }
 }

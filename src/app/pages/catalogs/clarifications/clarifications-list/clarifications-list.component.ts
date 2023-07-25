@@ -99,7 +99,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
       response => {
         this.clarifications = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.clarifications);
+        this.data.load(response.data);
         this.loading = false;
       },
       error => (this.loading = false)

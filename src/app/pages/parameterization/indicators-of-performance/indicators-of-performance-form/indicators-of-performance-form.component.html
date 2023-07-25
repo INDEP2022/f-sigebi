@@ -1,0 +1,154 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Permiso de Perfil
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('indicatorNumber')"
+            label="No. Indicador">
+            <input
+              class="form-control"
+              formControlName="indicatorNumber"
+              type="number"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('contractZoneKey')">
+            <ngx-select
+              (fetchItems)="getZoneContracts($event)"
+              [data]="zoneContracts"
+              [form]="form"
+              value="id"
+              bindLabel="description"
+              label="Zona Contrato"
+              control="contractZoneKey">
+            </ngx-select>
+          </form-field>
+          <!--<form-field
+            label="Zona Contrato"
+            [control]="form.get('contractZoneKey')">
+            <input
+              class="form-control"
+              formControlName="contractZoneKey"
+              type="number"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1" 
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+          </form-field>-->
+        </div>
+
+        <div class="pt-4 col-md-6">
+          <form-field [control]="form.get('initialDate')" label="Inicio">
+            <input
+              type="text"
+              formControlName="initialDate"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              (bsValueChange)="validateDate($event)"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="pt-4 col-md-6">
+          <form-field [control]="form.get('endDate')" label="Fin">
+            <input
+              type="text"
+              formControlName="endDate"
+              class="form-control"
+              [minDate]="minDate"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="pt-4 col-md-6">
+          <form-field
+            label="D&iacute;as L&iacute;mite"
+            [control]="form.get('daysLimNumber')">
+            <input
+              class="form-control"
+              formControlName="daysLimNumber"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="pt-4 col-md-6">
+          <form-field
+            label="Hora L&iacute;mite"
+            [control]="form.get('hoursLimNumber')">
+            <input
+              type="text"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              formControlName="hoursLimNumber"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="pt-4 col-md-6">
+          <form-field
+            label="Fecha Ind&#46; Page"
+            [control]="form.get('initialDDate')">
+            <ng-select
+              formControlName="initialDDate"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="FRECEPCION">Fec. Recepción/Escaneo</ng-option>
+              <ng-option value="FINICIA">Fecha de Inicio</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="pt-4 col-md-6">
+          <form-field
+            label="Fecha Ind&#46; Término"
+            [control]="form.get('endDDate')">
+            <ng-select
+              formControlName="endDDate"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="FFINALIZA">Fec. Término/Desahogo</ng-option>
+              <ng-option value="FESCANEO">Fecha de Escaneo</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -238,7 +238,8 @@ export class RegistrationHelper extends BasePage {
         for (let i = 0; i < goods.data.length; i++) {
           const good = goods.data[i];
 
-          if (good.addressId == null && good.idGoodProperty == null) {
+          if (good.addressId == null) {
+            // || good.idGoodProperty == null Henry, idGoodProperty debe ir nulo cuando son volantarias, revisar cuando vienen con menaje
             sinDireccion = true;
             this.message(
               'error',
@@ -324,57 +325,58 @@ export class RegistrationHelper extends BasePage {
           /* Tipo Inmueble */
           if (Number(good.goodTypeId) === 1) {
             existBienInm = true;
-            if (good.idGoodProperty === null) {
+            /*if (good.idGoodProperty === null) { //Henry idGoodProperty
               this.message(
                 'error',
                 `Error en el bien ${good.goodDescription}`,
                 'El id del bien inmueble no puede estar nulo, favor de complementar'
               );
               break;
-            } else {
-              const realEstate: any = await this.getGoodRealEstate(good.id); //
-              if (realEstate.publicDeed === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Escritura Pública en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.forProblems === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Problematicas en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.problemDesc === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Descripción de Problemática en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.pubRegProperty === null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Registro Público de Propiedad en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              } else if (realEstate.propertyType == null) {
-                tipoRelInmueble = true;
-                this.message(
-                  'error',
-                  `Error en el bien ${good.goodDescription}`,
-                  'El campo Tipo de Inmueble en Bien Inmueble esta vacio, favor de complementar'
-                );
-                break;
-              }
+            } */
+            // else {
+            const realEstate: any = await this.getGoodRealEstate(good.id); //
+            if (realEstate.publicDeed === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'error',
+                `Error en el bien ${good.goodDescription}`,
+                'El campo Escritura Pública en Bien Inmueble esta vacio, favor de complementar'
+              );
+              break;
+            } else if (realEstate.forProblems === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'error',
+                `Error en el bien ${good.goodDescription}`,
+                'El campo Problematicas en Bien Inmueble esta vacio, favor de complementar'
+              );
+              break;
+            } else if (realEstate.problemDesc === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'error',
+                `Error en el bien ${good.goodDescription}`,
+                'El campo Descripción de Problemática en Bien Inmueble esta vacio, favor de complementar'
+              );
+              break;
+            } else if (realEstate.pubRegProperty === null) {
+              tipoRelInmueble = true;
+              this.message(
+                'error',
+                `Error en el bien ${good.goodDescription}`,
+                'El campo Registro Público de Propiedad en Bien Inmueble esta vacio, favor de complementar'
+              );
+              break;
+            } else if (realEstate.propertyType == null) {
+              tipoRelInmueble = true;
+              this.message(
+                'error',
+                `Error en el bien ${good.goodDescription}`,
+                'El campo Tipo de Inmueble en Bien Inmueble esta vacio, favor de complementar'
+              );
+              break;
             }
+            // }
           } else if (Number(good.goodTypeId) === 2) {
             /**## Tipo Vehiculos ##*/
             // if (good.fitCircular === null) {

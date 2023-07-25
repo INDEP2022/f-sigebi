@@ -50,26 +50,54 @@ export class IssuingInstitutionFormComponent
 
   private prepareForm(): void {
     this.issuingInstitutionForm = this.fb.group({
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      manager: [null, [Validators.required]],
-      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      calle: [null, [Validators.pattern(STRING_PATTERN)]],
+      manager: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
+      street: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
+      ],
+      calle: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+      ],
       numInside: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       numExterior: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      cologne: [null, [Validators.required]],
+      cologne: [null, [Validators.required, Validators.maxLength(60)]],
       zipCode: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      delegMunic: [null, []],
-      phone: [null, [Validators.required]],
+      delegMunic: [null, [Validators.maxLength(60)]],
+      phone: [null, [Validators.required, Validators.maxLength(20)]],
       numClasif: [null, [Validators.required]],
       numCity: [null, [Validators.required]],
       numRegister: [null, []],

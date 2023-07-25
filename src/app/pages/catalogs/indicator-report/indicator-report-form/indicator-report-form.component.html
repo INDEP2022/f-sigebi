@@ -43,7 +43,10 @@
               type="number"
               class="form-control"
               formControlName="contractualPenalty"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <div class="pt-4 col-md-4">
@@ -51,10 +54,13 @@
             [control]="form.get('contractNumber')"
             label="No. de Contrato">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="contractNumber"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <!--
@@ -94,7 +100,10 @@
               type="number"
               class="form-control"
               formControlName="version"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

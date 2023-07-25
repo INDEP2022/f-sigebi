@@ -6,15 +6,33 @@
     <form class="form-material" [formGroup]="transferorsStateForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field label="No." [control]="transferorsStateForm.get('id')">
-            <input type="number" class="form-control" formControlName="id" />
+          <form-field
+            label="Nombre Transferente"
+            [control]="transferorsStateForm.get('nameTransferent')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="nameTransferent" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             label="Clave"
-            [control]="transferorsStateForm.get('keyCode')">
-            <input type="text" class="form-control" formControlName="keyCode" />
+            [control]="transferorsStateForm.get('keyTransferent')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyTransferent" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Tipo de Transferente"
+            [control]="transferorsStateForm.get('typeTransferent')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeTransferent" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -24,9 +42,35 @@
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            label="Version"
+            [control]="transferorsStateForm.get('version')">
+            <input type="text" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Estado"
+            [control]="transferorsStateForm.get('status')">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
         <div class="col-md-3">
           <form-field label="Tipo" [control]="transferorsStateForm.get('type')">
             <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Fecha de Operación"
+            [control]="transferorsStateForm.get('dateBegOperation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateBegOperation" />
           </form-field>
         </div>
       </div>

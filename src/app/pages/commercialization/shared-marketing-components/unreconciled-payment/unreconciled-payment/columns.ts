@@ -11,8 +11,8 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  moveNumber: {
-    title: 'No.Movto.',
+  movementNumber: {
+    title: 'No. Movto.',
     width: '15%',
     type: 'string',
     sort: false,
@@ -35,7 +35,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  bank: {
+  bankKey: {
     title: 'Banco',
     width: '15%',
     type: 'string',

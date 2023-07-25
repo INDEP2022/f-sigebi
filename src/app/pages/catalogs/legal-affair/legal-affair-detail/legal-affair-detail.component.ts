@@ -36,7 +36,11 @@ export class LegalAffairDetailComponent extends BasePage implements OnInit {
       id: [null, []],
       legalAffair: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       status: [null, []],
     });
@@ -55,6 +59,10 @@ export class LegalAffairDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.legalAffairForm.controls['legalAffair'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.legalAffairService.create(this.legalAffairForm.value).subscribe({
       next: data => this.handleSuccess(),

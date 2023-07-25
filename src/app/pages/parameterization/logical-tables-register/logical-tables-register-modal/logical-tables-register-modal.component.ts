@@ -37,7 +37,14 @@ export class LogicalTablesRegisterModalComponent
   private prepareForm() {
     this.tablesForm = this.fb.group({
       table: [null, []],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
       actionType: [null, [Validators.required]],
       tableType: [null, [Validators.required]],
       description: [
@@ -65,6 +72,13 @@ export class LogicalTablesRegisterModalComponent
   }
 
   create() {
+    if (
+      this.tablesForm.controls['name'].value.trim() === '' ||
+      this.tablesForm.controls['description'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.dinamicTablesService.create2(this.tablesForm.value).subscribe({
       next: data => this.handleSuccess(),

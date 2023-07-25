@@ -104,7 +104,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
 
         this.bankServ.update(id, data).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Se ha actualizado correctamente', '');
+            this.alert('success', 'Registro Actualizado Correctamente', '');
             this.close();
           },
           error: err => {
@@ -115,7 +115,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       } else {
         this.bankServ.create(data).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Se ha creado correctamente', '');
+            this.alert('success', 'Registro Creado Correctamente', '');
             this.close();
           },
           error: err => {
@@ -125,7 +125,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
         });
       }
     } else {
-      this.onLoadToast('warning', 'Debe de llenar los campos requeridos', '');
+      this.alert('warning', 'Debe de llenar los campos requeridos', '');
     }
   }
   getRowSelec(data: string) {
