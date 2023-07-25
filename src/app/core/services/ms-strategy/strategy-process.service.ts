@@ -44,7 +44,7 @@ export class StrategyProcessService extends HttpService {
   }
 
   getByNoReport(id: number) {
-    const route = `${StrategyEndpoints.StrategyAmount}?filter.reportNumber=$eq:${id}`;
+    const route = `${StrategyEndpoints.StrategyAmount}/${id}`;
     return this.get(route);
   }
 }

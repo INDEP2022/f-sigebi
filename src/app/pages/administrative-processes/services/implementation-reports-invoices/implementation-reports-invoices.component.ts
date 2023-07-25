@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   ListParams,
   SearchFilter,
@@ -36,13 +37,15 @@ export class ImplementationReportsInvoicesComponent
   extends BasePage
   implements OnInit
 {
-  settings2 = { ...this.settings, actions: false };
+  @ViewChild('mySmartTable') mySmartTable: any;
+  settings2 = { ...this.settings, ...TABLE_SETTINGS, actions: false };
   invoiceDetailsForm: ModelForm<any>;
   delegationForm: ModelForm<any>;
-  data1: any[] = [];
-  data2: any[] = [];
+  dataany: any[] = [];
+  box: any[] = [];
   columnFilters: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsFac = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   billId: boolean | null = null;
   estado: boolean | null = null;
@@ -51,13 +54,14 @@ export class ImplementationReportsInvoicesComponent
   strategy = new LocalDataSource();
   proceduralHistoryForm: ModelForm<any>;
   statusDict: any;
-  selectedRow: any;
+  selectedRow: any = null;
+  deleteselectedRow: any;
   disponible: string;
   cantidad: any;
   status: boolean = false;
   report: any;
   descripcion: any;
-  lnu_folio: number;
+  lnu_folio: number = null;
   t_reportes: string;
   expediente: number;
   zone: any;
@@ -67,6 +71,11 @@ export class ImplementationReportsInvoicesComponent
   datos: any;
   loadingDoc: boolean = false;
   no_report: any;
+  bool: boolean = true;
+  flagsol: boolean = false;
+  totalValue: number = 0;
+  contador: number = 0;
+  folioScan: number;
   constructor(
     private fb: FormBuilder,
     private msInvoiceService: MsInvoiceService,
@@ -82,7 +91,6 @@ export class ImplementationReportsInvoicesComponent
   ) {
     super();
     this.settings.columns = IMPLEMENTATION_COLUMNS;
-    this.settings.actions = false;
     this.settings.rowClassFunction = (row: { data: { status: any } }) =>
       row.data.status != null
         ? row.data.status === 'AUTORIZADA'
@@ -91,6 +99,7 @@ export class ImplementationReportsInvoicesComponent
         : '';
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: false,
       columns: { ...IMPLEMENTATION_COLUMNS },
     };
@@ -111,8 +120,8 @@ export class ImplementationReportsInvoicesComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filters.field) {
-              case 'cveReport':
-                searchFilter = SearchFilter.EQ;
+              case 'cve_reporte':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'status':
                 searchFilter = SearchFilter.ILIKE;
@@ -127,7 +136,7 @@ export class ImplementationReportsInvoicesComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
             }
             if (filter.search !== '') {
@@ -144,6 +153,7 @@ export class ImplementationReportsInvoicesComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.DelegationI());
   }
+
   private prepareForm() {
     this.invoiceDetailsForm = this.fb.group({
       invoice: [null, Validators.required],
@@ -167,6 +177,7 @@ export class ImplementationReportsInvoicesComponent
     this.proceduralHistoryForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
+      total: [null],
     });
   }
   validNoInvoice(No: string | number) {
@@ -221,6 +232,10 @@ export class ImplementationReportsInvoicesComponent
     }
     this.getAmount(this.selectedRow.no_reporte);
   }
+
+  deleteRowSelect(event: any) {
+    this.deleteselectedRow = event.data;
+  }
   seleccionarSubDelegacion(subdelegacion: any) {
     this.descripcion = subdelegacion.description;
     let iddelegation = this.proceduralHistoryForm.value.delegation;
@@ -228,7 +243,7 @@ export class ImplementationReportsInvoicesComponent
   }
 
   DelegationI() {
-    this.data1 = [];
+    this.dataany = [];
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -266,8 +281,8 @@ export class ImplementationReportsInvoicesComponent
               subdelegation: this.idsubdelegation,
             };
             this.disponible = 'S';
-            this.data1.push(dataForm);
-            this.data.load(this.data1);
+            this.dataany.push(dataForm);
+            this.data.load(this.dataany);
             this.data.refresh();
           }
         },
@@ -293,13 +308,15 @@ export class ImplementationReportsInvoicesComponent
     console.log('id ', id);
     this.strategyProcessService.getByNoReport(id).subscribe({
       next: response => {
-        console.log('prueba: ', response.data[0].totalAmount);
-        this.cantidad = response.data[0].totalAmount;
+        console.log('prueba: ', response.data[0].sum);
+        this.cantidad = response.data[0].sum;
       },
     });
   }
 
   addSelect() {
+    console.log('Selected Row: ->', this.selectedRow);
+    this.box = this.box;
     if (this.selectedRow == null) {
       this.onLoadToast('error', 'Debe seleccionar un registro');
       return;
@@ -316,18 +333,37 @@ export class ImplementationReportsInvoicesComponent
         zona: this.zone,
       };
       console.log('Prueba: ', dataForm);
-      this.data2.push(dataForm);
-      this.strategy.load(this.data2);
+      this.box.push(dataForm);
+      this.strategy.load(this.box);
+      this.selectedRow = null;
+      this.clearSelection();
+      this.countFacture();
+      this.flagsol = true;
+      this.countRowTotal();
+      this.status = false;
     }
   }
 
+  clearSelection() {
+    const selectedRows = this.mySmartTable.grid.getSelectedRows();
+    selectedRows.forEach((row: any) => {
+      row.isSelected = false;
+    });
+  }
+
   removeSelect() {
-    if (this.statusDict == 'DICTAMINADO') {
-      this.onLoadToast(
-        'error',
-        'El bien ya esta Dictaminado... Imposible borrar'
-      );
+    if (this.deleteselectedRow == null) {
+      this.onLoadToast('error', 'Debe seleccionar un registro');
       return;
+    } else {
+      console.log('selected Row: ', this.deleteselectedRow);
+      this.strategy.remove(this.deleteselectedRow);
+      this.strategy.remove(this.box);
+      this.contador = 0;
+      this.countRowTotal();
+      this.clearSelection();
+      this.countFacture();
+      this.box = [];
     }
   }
   /*
@@ -364,84 +400,86 @@ export class ImplementationReportsInvoicesComponent
       }
     }
   */
-  async Application() {
-    console.log('Data 2 ', this.data2);
-    for (let i = 0; i < this.data2.length; i++) {
-      if (this.data2[i].cveReport != null) {
-        this.report = this.data2[i].no_report;
-        try {
-          const response = await this.detailProceeDelRecService
-            .getReport(this.report)
-            .toPromise();
-          this.expediente = response.data[0].max;
-          console.log('expediente ', this.expediente);
-          this.factura = this.invoiceDetailsForm.get('invoice').value;
-          this.t_reportes =
-            this.data2[i].cveReport + ' ' + this.data2[i].quantity;
-          const item = {
-            fileNumber: this.expediente,
-            reports:
-              'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
-            fractureId: this.factura,
-            delegationNumber: this.data2[i].delegation,
-            subDelegationNumber: this.data2[i].subdelegation,
-            departamentNumber: this.data2[i].zona,
-          };
-          this.no_report = this.data2[i].no_report;
-          console.log('PRUEBA:  -> ', this.no_report);
-          this.datos = item;
-          this.documentsDictumStatetMService.postDocument(item).subscribe({
-            next: response => {
-              console.log('Succefull1: ', response);
-              this.PupFolEscMas(this.datos);
-            },
-          });
-        } catch (error) {
-          console.error('Error al obtener el reporte:', error);
-        }
-      }
-    }
-  }
-
-  PupFolEscMas(datos: any) {
+  ObtenerFolio() {
     this.documentsDictumStatetMService.getSeqDocument().subscribe({
       next: response => {
         this.lnu_folio = response;
-        const item = {
-          fileNumber: datos.fileNumber,
-          folioUniversal: this.lnu_folio,
-          reports: datos.reports,
-          reportNumber: this.no_report,
-          fractureId: datos.fractureId,
-          delegationNumber: datos.delegationNumber,
-          subDelegationNumber: datos.subDelegationNumber,
-          departamentNumber: datos.departamentNumber,
-        };
-        console.log('Prueba: ', item);
-        this.invoiceDetailsForm.patchValue({
-          scanFolio: this.lnu_folio,
-        });
-        this.documentsDictumStatetMService.postPupFol(item).subscribe({
-          next: response => {
-            console.log('Succefull2: ', response);
-            this.proccesReport();
-          },
-        });
       },
     });
   }
 
+  async Application() {
+    console.log('Data 2 ', this.box);
+    this.ObtenerFolio();
+    for (let i = 0; i < this.box.length; i++) {
+      this.bool = false;
+      let cantidad = this.invoiceDetailsForm.get('quantity').value;
+      console.log('Cantidad: ', cantidad);
+      if (this.box[i].cveReport != null) {
+        if (cantidad > this.totalValue) {
+          this.report = this.box[i].no_report;
+          try {
+            const response = await this.detailProceeDelRecService
+              .getReport(this.report)
+              .toPromise();
+            this.expediente = response.data[0].max;
+            this.factura = this.invoiceDetailsForm.get('invoice').value;
+            this.t_reportes =
+              this.box[i].cveReport + ' ' + this.box[i].quantity;
+            const item = {
+              fileNumber: this.expediente,
+              reports:
+                'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
+              fractureId: this.factura,
+              delegationNumber: this.box[i].delegation,
+              subDelegationNumber: this.box[i].subdelegation,
+              departamentNumber: this.box[i].zona,
+              reportNumber: this.box[i].no_report,
+              folioUniversal: this.lnu_folio,
+            };
+            console.log('PRUEBA:  -> ', this.no_report);
+
+            this.documentsDictumStatetMService.postPupFol(item).subscribe({
+              next: response => {
+                console.log('Succefull2: ', response);
+                this.invoiceDetailsForm.patchValue({
+                  scanFolio: response.message,
+                });
+                this.folioScan = response.message;
+                console.log('folio ', this.folioScan);
+              },
+            });
+          } catch (error) {
+            console.error('Error al obtener el reporte:', error);
+            this.bool = true;
+          }
+        } else {
+          this.alert(
+            'error',
+            'La cantidad no puede ser menor que el total el Total',
+            ''
+          );
+          return;
+        }
+      }
+    }
+    console.log('BOOL: ', this.bool);
+    if (!this.bool) {
+      this.proccesReport();
+    }
+  }
+
   proccesReport() {
-    if (this.lnu_folio) {
+    if (this.folioScan) {
       const msg = setTimeout(() => {
         this.jasperService
-          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.lnu_folio })
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.folioScan })
           .pipe(
             tap(response => {
               this.alert(
                 'success',
                 'Generado correctamente',
-                'Generado correctamente con folio: ' + this.lnu_folio
+                'Generado correctamente con folio: ' + this.folioScan
               );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
@@ -473,14 +511,60 @@ export class ImplementationReportsInvoicesComponent
   }
 
   goToScan() {
-    localStorage.setItem('numberExpedient', this.lnu_folio.toString());
-
+    localStorage.setItem('numberExpedient', this.folioScan.toString());
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
         origin:
           '/pages/administrative-processes/services/implementation-reports-invoices',
-        folio: this.lnu_folio,
+        folio: this.folioScan,
       },
     });
+  }
+  openScannerPage() {
+    if (this.invoiceDetailsForm.get('scanFolio').value) {
+      this.alertQuestion(
+        'info',
+        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.router.navigate([`/pages/general-processes/scan-documents`], {
+            queryParams: {
+              origin: 'FREPIMPFAC_0001',
+              folio: this.folioScan,
+            },
+          });
+        }
+      });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+        ''
+      );
+    }
+  }
+
+  countRowTotal() {
+    this.totalValue = 0;
+    for (let i = 0; i < this.box.length; i++) {
+      this.totalValue += Number(this.box[i].quantity);
+    }
+    this.totalValue = this.roundPercentage(this.totalValue);
+    console.log('LONGITUD: ', this.box.length);
+  }
+
+  roundPercentage(percentage: number): number {
+    return parseFloat(percentage.toFixed(1));
+  }
+
+  countFacture() {
+    this.contador = 0;
+    for (let i = 0; i < this.box.length; i++) {
+      this.contador++;
+    }
   }
 }
