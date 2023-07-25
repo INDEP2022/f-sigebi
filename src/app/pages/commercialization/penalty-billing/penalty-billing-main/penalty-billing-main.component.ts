@@ -265,11 +265,16 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     });
   }
 
+  selectedTrans(data: any) {
+    this.billingForm.get('descriptionCvman').patchValue(data.nameTransferent);
+    this.billingForm.get('transferenceNumber').patchValue(data.id);
+  }
+
   setDataClient(data: any) {
     this.billingForm.get('street').patchValue(data.street);
-    this.billingForm.get('colonia').patchValue(data.colonia);
+    this.billingForm.get('colonia').patchValue(data.colony);
     this.billingForm.get('rfc').patchValue(data.rfc);
-    this.billingForm.get('municipality').patchValue(data.municipalityId);
+    this.billingForm.get('municipality').patchValue(data.city);
     this.billingForm.get('state').patchValue(data.state);
     this.billingForm.get('zipCode').patchValue(data.zipCode);
   }
@@ -381,6 +386,33 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     }
   }
 
+  async saveData() {
+    this.loading = true;
+    const { id, eventId } = this.billingForm.value;
+
+    if (!id) {
+      const idValue = await this.getIdMax(Number(eventId));
+      console.log(idValue);
+      this.billingForm.get('id').patchValue(idValue);
+    }
+
+    this.billingForm.get('invoiceStatusId').patchValue('PREF');
+    return;
+    this.comerInvoice.create(this.billingForm.value).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  getIdMax(eventId: number) {
+    return firstValueFrom(
+      this.comerInvoice.getMaxFacturaId(eventId).pipe(
+        map(resp => resp.id_factura),
+        catchError(() => of(1))
+      )
+    );
+  }
+
   private prepareForm(): void {
     this.billingForm = this.fb.group({
       eventId: [null, Validators.required],
@@ -404,7 +436,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       rfc: [null, Validators.required],
       zipCode: [null, Validators.required],
       tpEvent: [null],
-      goodNumber: [null, Validators.required],
+      goodNumber: [null],
       amount: [null],
       temporaryImagenFile: [null],
       serie: [null],
@@ -416,12 +448,12 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       total: [null],
       transferenceNumber: [null],
       process: [null],
-      invoiceCauseId: [null, Validators.required],
+      invoiceCauseId: [null],
       invoiceFolioId: [null],
       attached: [null],
       userAuthorize: [null],
-      id: [null, Validators.required],
-      invoiceTpId: [null, Validators.required],
+      id: [null],
+      invoiceTpId: ['P', Validators.required],
       voucherType: [null],
       any: [null],
     });
@@ -463,7 +495,44 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     );
   }
 
-  deleteFolios() {}
+  deleteFolios() {
+    const { id, eventId } = this.billingForm.value;
+
+    if (!id) {
+      this.alert('error', 'Error', 'Debe existir folio de facturación');
+      return;
+    }
+    if (!eventId) {
+      this.alert('error', 'Error', 'Debe seleccionar un evento');
+      return;
+    }
+
+    let aux = 0;
+    aux = 1;
+
+    if (aux == 1) {
+      this.changeProcess('EF', 'FOL');
+    }
+
+    this.comerInvoice.deleteFolio({ eventId, invoiceId: id }).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  changeProcess(process: string, status: string) {
+    const { invoiceStatusId } = this.billingForm.value;
+    let aux_status: string;
+    if (status == 'NULL') {
+      aux_status = null;
+    } else {
+      aux_status = status;
+    }
+
+    if (invoiceStatusId) {
+      this.billingForm.get('process').patchValue(process);
+    }
+  }
 
   openPrevInvoice() {
     let config: ModalOptions = {
@@ -483,9 +552,59 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   }
 
   getImage() {
+    const { id, eventId } = this.billingForm.value;
+
+    if (!id) {
+      this.alert('error', 'Error', 'Debe existir folio de facturación');
+      return;
+    }
+    if (!eventId) {
+      this.alert('error', 'Error', 'Debe seleccionar un evento');
+      return;
+    }
+
+    let valida: number = 0;
+    let borra: string;
+    valida = 1;
+    if (valida == 1) {
+      this.archiv();
+      this.createImg();
+      this.obtImg(null);
+    }
+
     const filename = 'Invoice_000_exported';
     FileSaver.saveAs(this.imagenurl, filename + '.jpg');
   }
+
+  changeStatusImg() {
+    const { eventId, id } = this.billingForm.value;
+    const body = {
+      pStatus: 'SEG',
+      pProcess: 'AR',
+      pEvent: eventId,
+      idFact: id,
+    };
+    this.comerInvoice.updateStatusImg(body).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  obtImg(img: string) {}
+
+  archiv() {
+    const { invoiceStatusId, temporaryImagenFile, eventId, id } =
+      this.billingForm.value;
+    if (invoiceStatusId == 'FOL' && !temporaryImagenFile) {
+      this.billingForm
+        .get('temporaryImagenFile')
+        .patchValue(`C:\IMTMPSIAB\TMP_${eventId}_${id}.BMP`);
+    }
+    this.changeProcess('AR', 'FOL');
+    //lip comit silencioso guardar datos
+  }
+
+  createImg() {}
 
   openFolioModal() {
     let config: ModalOptions = {
