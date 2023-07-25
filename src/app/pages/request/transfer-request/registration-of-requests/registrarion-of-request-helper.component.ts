@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -14,9 +15,28 @@ export class RegistrationHelper extends BasePage {
     private goodService: GoodService,
     private fractionService: FractionService,
     private goodEstateService: RealStateService,
-    private wcontentService: WContentService
+    private wcontentService: WContentService,
+    private goodProcessService: GoodProcessService
   ) {
     super();
+  }
+
+  updateExpedient(requestId: number, recordId: number) {
+    return new Promise((resolve, reject) => {
+      debugger;
+      this.goodProcessService.updateFileNumber(requestId, recordId).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'No se pudo actualizar el expdiente de los bienes'
+          );
+          reject('No se pudo actualizar el expdiente de los bienes');
+        },
+      });
+    });
   }
 
   getGoodQuantity(requestId: number, newLimit?: number) {

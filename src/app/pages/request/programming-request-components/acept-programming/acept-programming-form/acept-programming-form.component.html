@@ -89,13 +89,17 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
-            <span class="fs-4"> {{ programming?.startDate }} </span>
+            <span class="fs-4">
+              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+            </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
-            <span class="fs-4"> {{ programming?.endDate }}</span>
+            <span class="fs-4">
+              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+            >
           </div>
         </div>
       </div>
@@ -181,7 +185,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsTransportableGoods"
                   [source]="goodsTranportables"
-                  (edit)="showGood($event.data)">
+                  (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
               <app-pagination
@@ -198,7 +202,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingGuardGoods"
                   [source]="goodsGuards"
-                  (edit)="showGood($event.data)">
+                  (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
             </tab>
@@ -212,7 +216,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingWarehouseGoods"
                   [source]="goodsWarehouse"
-                  (edit)="showGood($event.data)">
+                  (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
               <app-pagination

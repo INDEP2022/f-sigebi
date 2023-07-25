@@ -1834,13 +1834,13 @@ export class GoodsProcessValidationExtdomComponent
     } else if (this.executionType == this.registerType) {
       this.confirmMessageValidFolio(
         // 'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
-        'Existen nuevos bienes, aplicar el cambio de proceso a ASEG_EXTDOM',
-        '¿Desea continuar con el proceso?'
+        'Existen Nuevos Bienes',
+        'Aplicar el Cambio de Proceso a ASEG_EXTDOM. ¿Desea Continuar con el Proceso?'
       );
     } else if (this.executionType == this.registerExistType) {
       this.confirmMessageValidFolio(
-        'Se identificó que existen bienes para Liberar, se aplicara el cambio. ¿Quiere continuar con el proceso?',
-        'para Liberación'
+        'Se Identificó que Existen Bienes para Liberar',
+        'Se Aplicará el Cambio para Liberación. ¿Quiere Continuar con el Proceso?'
       );
     }
   }
