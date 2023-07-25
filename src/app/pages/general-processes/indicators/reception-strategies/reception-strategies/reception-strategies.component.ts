@@ -225,14 +225,61 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
       const model = {
         no_indicador: this.global.numberIndicator,
       };
-      params.limit = 999999999;
+      //params.limit = 999999999;
       this.strategyService
         .getZCenterOperationRegional1(model, params)
         .subscribe({
           next: (resp: any) => {
             console.log(resp);
             if (resp.message[0] !== null) {
-              res(resp.data.registros);
+              /// FEC_MAXIMA,FECHA_RECEP,CUMPLIO'
+              const data: any[] = resp.data.registros.map((elemt: any) => {
+                return {
+                  EXPEDIENTE: elemt.proceedings,
+                  BIEN: elemt.id,
+                  ESTATUS: elemt.statusGood,
+                  CVE_ACTA: elemt.keyCodeMinutesReception,
+                  REGIONAL: elemt.coordinationRegional,
+                  USUARIO: elemt.usrActrecep,
+                  FEC_ESTRA: elemt.estgiaRecepFecCapture
+                    ? elemt.estgiaRecepFecCapture
+                        .split('T')[0]
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '',
+                  FEC_INI_PROG: elemt.programmingRecepFecIni
+                    ? elemt.programmingRecepFecIni
+                        .split('T')[0]
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '',
+                  FEC_FIN_PROG: elemt.programmingRecepFecFin
+                    ? elemt.programmingRecepFecFin
+                        .split('T')[0]
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '',
+                  FEC_MAXIMA: elemt.programmingRecepFecClosing
+                    ? elemt.programmingRecepFecClosing
+                        .split('T')[0]
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '',
+                  FECHA_RECEP: elemt.receptionPhysicalDate
+                    ? elemt.receptionPhysicalDate
+                        .split('T')[0]
+                        .split('-')
+                        .reverse()
+                        .join('/')
+                    : '',
+                  CUMPLIO: elemt.cumplio,
+                };
+              });
+              res(data);
             } else {
               res([]);
             }

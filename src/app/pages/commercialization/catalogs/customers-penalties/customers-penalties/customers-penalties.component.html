@@ -14,7 +14,7 @@
           </button>
         </div>
         <app-columns-select [(settings)]="settings"> </app-columns-select>
-        <div class="mr-1">
+        <div>
           <div class="btn-group col-md-2" dropdown>
             <button
               id="button-basic"
@@ -22,7 +22,7 @@
               type="button"
               class="btn btn-success active btn-sm"
               aria-controls="dropdown-basic">
-              Exportar <i class="bx bx-download float-icon"></i>
+              Opciones <span class="caret"></span>
             </button>
             <ul
               id="dropdown-basic"
@@ -31,13 +31,10 @@
               role="menu"
               aria-labelledby="button-basic">
               <li role="menuitem">
-                <a class="dropdown-item" (click)="all()">Todos</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" (click)="penalized()">Penalizados</a>
-              </li>
-              <li role="menuitem">
-                <a class="dropdown-item" (click)="historic()">Histórico</a>
+                <a class="dropdown-item" (click)="openAllCustomersPenalties()"
+                  >Descargar Penalizados
+                  <i class="bx bx-download float-icon"></i
+                ></a>
               </li>
             </ul>
           </div>

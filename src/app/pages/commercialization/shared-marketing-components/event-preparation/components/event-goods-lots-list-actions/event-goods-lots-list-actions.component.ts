@@ -25,6 +25,7 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import Swal from 'sweetalert2';
 import { EventPreparationService } from '../../event-preparation.service';
@@ -498,4 +499,130 @@ export class EventGoodsLotsListActionsComponent
   }
 
   // ? Clientes desde Tabla Tercero
+
+  async onLoadCustomersFroThird() {
+    const ask = await this.alertQuestion(
+      'question',
+      'Eliga una opción',
+      '',
+      'Lotificación',
+      'Cliente'
+    );
+    const { isConfirmed, dismiss } = ask;
+    if (isConfirmed) {
+      this.lotifyThirdTable();
+      return;
+    }
+
+    if (dismiss == Swal.DismissReason.cancel) {
+      this.customersTc();
+      return;
+    }
+  }
+
+  /**LOTIFICA_TABLATC */
+  lotifyThirdTable() {
+    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    console.warn('LOTIFICA_TABLATC');
+  }
+
+  /**CLIENTES_TC */
+  customersTc() {
+    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    console.warn('CLIENTES_TC');
+  }
+
+  // ? ---------------- Valida Bienes
+  onValidGoods() {
+    const { statusVtaId } = this.controls;
+    const invalidStatuses = ['SOLV', 'VALV', 'VEN', 'CONC', 'CNE', 'DES'];
+    if (invalidStatuses.includes(statusVtaId.value)) {
+      this.alert(
+        'error',
+        'Error',
+        `No puede eliminar bienes de este evento estatus de la venta: ${statusVtaId.value}`
+      );
+      return;
+    }
+    this.callRev();
+  }
+
+  /**PUP_LLAMA_REV */
+  callRev() {
+    const { eventTpId } = this.controls;
+    // PARAMETROS A ENVIAR A LA PANTALLA
+    const ESTATUS = this.reverseType();
+    const ID_EVENTO = eventTpId.value;
+    const P_DIRECCION = this.parameters.pDirection;
+    // TODO: LLAMAR A LA PANTALLA FMMOTCAMBIOREV
+  }
+
+  /**TIPO_REVERSA */
+  reverseType() {
+    const { eventTpId } = this.controls;
+    return [6, 10].includes(Number(eventTpId.value)) ? 'PRE' : 'CPV';
+  }
+
+  // ? --------------- Generar Oficio Avalúo
+  onGenerateOffice() {
+    const { eventTpId, tpsolavalId } = this.controls;
+    if (Number(eventTpId.value) != 10) {
+      this.alert(
+        'error',
+        'Error',
+        'No puede solicitar avalúo para este tipo de evento'
+      );
+      return;
+    }
+    if (!tpsolavalId.value) {
+      this.alert('error', 'Error', 'No ha seleccionado un tipo de solicitud');
+      return;
+    }
+    // TODO: PREGUNTAR POR EL LLAMADO A ESTO: "http://172.20.230.57/Pantallas/Avaluos/SolicitudAvaluo.aspx?"
+  }
+
+  // ?------------------------- Verifica Mandato
+  onVerifyMandate() {
+    this.checkLotTransf().subscribe();
+  }
+
+  /**REVISA_TRANSF_X_LOTE */
+  checkLotTransf() {
+    this.loader.load = true;
+    const { id } = this.controls;
+    const eventId = id.value;
+    const pLote = this.lotSelected?.id ?? null;
+    return this.lotService.checkTransXLot({ eventId, pLote }).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', ' Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(resp => {
+        this.loader.load = false;
+        this.validateTrasXLoteResponse(resp);
+      })
+    );
+  }
+
+  validateTrasXLoteResponse(resp: string | { data: string }) {
+    if (typeof resp != 'string') {
+      this.alert(
+        'success',
+        'Los Bienes de los Lotes pertenecen a un solo Mandato, Prueba Completada',
+        ''
+      );
+      return;
+    }
+    const message = resp;
+    const splitedMsg = message.split(' ');
+    const lot = splitedMsg[2];
+    this.alert(
+      'warning',
+      `El Lote ${
+        lot ?? ''
+      }  tiene Bienes de diferente Mandato, presione el botón Actualizar Mandato`,
+      ''
+    );
+  }
 }

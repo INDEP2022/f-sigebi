@@ -52,7 +52,11 @@ export class DocumentsDictumStatetMService extends HttpService {
     return this.post(route, null);
   }
 
-  /*postDocument(model: IInventoryQuery): Observable<IListResponse<TypesDocuments>> {
-    return this.requestRepository.create(this.route, model);
-  }*/
+  postDocument(data: any) {
+    return this.post(DocumentsEndpoints.postdocument, data);
+  }
+
+  postPupFol(data: any) {
+    return this.post(DocumentsEndpoints.postPup, data);
+  }
 }

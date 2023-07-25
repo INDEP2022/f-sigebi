@@ -277,7 +277,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
         }
       });
   }
-
   save() {
     if (this.queryMode) {
       this.printPdf();
