@@ -15,6 +15,8 @@ import { PenaltiesTypeSharedComponent } from 'src/app/@standalone/shared-forms/p
 //Routing
 import { CustomersPenaltiesRoutingModule } from './customers-penalties-routing.module';
 //Components
+import { CustomersPenaltiesExportAllComponent } from './customer-penalties-export-all/customer-penalties-export-all.component';
+import { CustomersPenaltiesExportHistoricComponent } from './customer-penalties-export-historic/customer-penalties-export-historic.component';
 import { CustomerPenaltiesModalComponent } from './customer-penalties-modal/customer-penalties-modal.component';
 import { CustomersPenaltiesComponent } from './customers-penalties/customers-penalties.component';
 import { HistoryCustomersPenaltiesComponent } from './customers-penalties/history-customers-penalties/history-customers-penalties.component';
@@ -23,6 +25,8 @@ import { HistoryCustomersPenaltiesComponent } from './customers-penalties/histor
   declarations: [
     CustomersPenaltiesComponent,
     CustomerPenaltiesModalComponent,
+    CustomersPenaltiesExportAllComponent,
+    CustomersPenaltiesExportHistoricComponent,
     HistoryCustomersPenaltiesComponent,
   ],
   imports: [
