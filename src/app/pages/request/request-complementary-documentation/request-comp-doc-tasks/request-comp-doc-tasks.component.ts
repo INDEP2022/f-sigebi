@@ -11,7 +11,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -71,7 +74,10 @@ export class RequestCompDocTasksComponent
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
+  //private rejectedService = inject(RejectedGoodService)
+
   /*  */
+
   constructor(
     private location: Location,
     private route: ActivatedRoute,
@@ -169,7 +175,7 @@ export class RequestCompDocTasksComponent
       `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
       '',
       'Turnar'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
@@ -178,7 +184,10 @@ export class RequestCompDocTasksComponent
         } else if (this.process == 'BSNotificarTransferente') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'BSVisitaOcular') {
-          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+          const turn = await this.turnEyeVisitor();
+          if (turn == true) {
+            this.turnResquestMessage(this.requestId);
+          }
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
@@ -252,6 +261,60 @@ export class RequestCompDocTasksComponent
     modalRef.content.refresh.subscribe(next => {
       if (next) {
       } //this.getCities();
+    });
+  }
+
+  async turnEyeVisitor() {
+    return new Promise(async (resolve, reject) => {
+      console.log('verificando vienes oculares');
+      let end = true;
+      let count = 0;
+      let _page: number = 1;
+      let _limit: number = 100;
+      let countLimit: number = 100;
+      let params = new ListParams();
+      params['filter.applicationId'] = `$eq:${56817}`; //this.requestId
+      params.limit = _limit;
+      let turnRequest: boolean = true;
+      do {
+        params.page = 1;
+        const GRDResult: any = await this.getGoodResDev(params);
+        const error: any = await this.verifyEyesVisit(GRDResult.data);
+        if (error > 0) {
+          end = false;
+          turnRequest = false;
+          this.onLoadToast(
+            'error',
+            'Es necesario establecer fechas/horas inicio y fin de la visita ocular'
+          );
+        }
+        if (GRDResult.count >= countLimit) {
+          _page = 2;
+          countLimit = countLimit + 100;
+        } else {
+          end = false;
+        }
+      } while (end);
+
+      resolve(turnRequest);
+    });
+  }
+
+  verifyEyesVisit(data: any) {
+    return new Promise((resolve, reject) => {
+      let count = 0;
+      data.map((item: any) => {
+        if (item.codeStore != null) {
+          if (
+            item.resultFinal != 'Y' ||
+            item.startVisitDate == null ||
+            item.endVisitDate == null
+          ) {
+            count++;
+          }
+        }
+      });
+      resolve(count);
     });
   }
 }

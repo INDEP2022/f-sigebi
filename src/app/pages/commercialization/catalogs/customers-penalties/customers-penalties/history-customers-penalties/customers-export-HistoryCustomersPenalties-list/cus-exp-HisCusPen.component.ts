@@ -7,36 +7,36 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { IRepresentative } from 'src/app/core/models/catalogs/representative-model';
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
+import { IHistoryCustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
+import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CUSTOMERS_LIST_COLUMNS } from '../../../customers-black-list/customers-list-columns';
+import { COLUMNS2 } from '../../columns';
 
 @Component({
-  selector: 'app-customers-export-representants-list.component',
-  templateUrl: './customers-export-representants-list.component.html',
-  styles: [],
+  selector: 'app-customers-export-HistoryCustomersPenalties-list.component',
+  templateUrl: './cus-exp-HisCusPen.component.html',
+  styles: [], //
 })
-export class CustomersExportRepresentantsListComponent
+export class CustomersExportHistoryCustomersPenaltiesListComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Todos los Representantes del Cliente';
-  customers: IRepresentative[] = [];
-  agentId: number;
+  title: string = 'Histórico de Penalizaciones del Cliente';
+  customersPenalties: IHistoryCustomersPenalties[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
+  clientId: number;
 
   constructor(
-    private customerService: CustomerService,
+    private clientPenaltyService: ClientPenaltyService,
     private excelService: ExcelService,
     private modalRef: BsModalRef
   ) {
     super();
-    this.settings.columns = CUSTOMERS_LIST_COLUMNS;
+    this.settings.columns = COLUMNS2;
     this.settings.hideSubHeader = false;
     this.settings.actions = false;
   }
@@ -53,7 +53,7 @@ export class CustomersExportRepresentantsListComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id':
+              case 'processType':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'reasonName':
@@ -85,28 +85,29 @@ export class CustomersExportRepresentantsListComponent
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getRepresentats();
+          this.getData();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRepresentats());
+      .subscribe(() => this.getData());
   }
 
   //Tabla con todos los clientes
-  getRepresentats() {
+  getData() {
     this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.customerService
-      .getRepresentativeByClients(this.agentId, params)
+    this.clientPenaltyService
+      .getByIdComerPenaltyHis(this.clientId, params)
       .subscribe({
         next: response => {
-          this.data.load([response]);
+          this.customersPenalties = response.data;
+          this.data.load(response.data);
           this.data.refresh();
-          this.totalItems = 1;
+          this.totalItems = response.data.length;
           this.loading = false;
         },
         error: error => (this.loading = false),
@@ -116,7 +117,7 @@ export class CustomersExportRepresentantsListComponent
   //Exportar lista blanca de clientes
   exportClientsWhiteList(): void {
     this.excelService.exportAsExcelFile(
-      this.customers,
+      this.customersPenalties,
       'TodosLosRepresentantesDelCliente'
     );
   }
