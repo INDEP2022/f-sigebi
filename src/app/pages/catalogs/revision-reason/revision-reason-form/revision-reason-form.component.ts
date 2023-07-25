@@ -116,14 +116,14 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
 
   create() {
     if (
-      this.revisionReasonForm.controls['initialStatus'].value.trim() === '' &&
-      this.revisionReasonForm.controls['goodType'].value.trim() === '' &&
+      this.revisionReasonForm.controls['initialStatus'].value.trim() === '' ||
+      this.revisionReasonForm.controls['goodType'].value.trim() === '' ||
       this.revisionReasonForm.controls['descriptionCause'].value.trim() ===
-        '' &&
-      this.revisionReasonForm.controls['statusRev'].value.trim() === '' &&
-      this.revisionReasonForm.controls['managerArea'].value.trim() === '' &&
-      this.revisionReasonForm.controls['statusPurpose'].value.trim() === '' &&
-      this.revisionReasonForm.controls['parameter'].value.trim() === '' &&
+        '' ||
+      this.revisionReasonForm.controls['statusRev'].value.trim() === '' ||
+      this.revisionReasonForm.controls['managerArea'].value.trim() === '' ||
+      this.revisionReasonForm.controls['statusPurpose'].value.trim() === '' ||
+      this.revisionReasonForm.controls['parameter'].value.trim() === '' ||
       this.revisionReasonForm.controls['screen'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

@@ -62,14 +62,7 @@ export class MaintenanceDocumentValidatorsModalComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      scriptVal: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(700),
-          Validators.pattern(STRING_PATTERN),
-        ],
-      ],
+      scriptVal: [null, [Validators.required, Validators.maxLength(2000)]],
       numRegister: [null],
     });
     if (this.validatorsProceedings != null) {
@@ -91,6 +84,16 @@ export class MaintenanceDocumentValidatorsModalComponent
     this.edit ? this.update() : this.create();
   }
   create() {
+    if (
+      this.validatorsProceedingsForm.controls[
+        'proceedingsType'
+      ].value.trim() === '' ||
+      this.validatorsProceedingsForm.controls['descVal'].value.trim() === '' ||
+      this.validatorsProceedingsForm.controls['scriptVal'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.validatorsProceedingsService
       .create(this.validatorsProceedingsForm.value)
