@@ -17,6 +17,7 @@ import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/cli
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CustomersPenaltiesExportHistoricComponent } from '../../customer-penalties-export-historic/customer-penalties-export-historic.component';
 import { COLUMNS2 } from '../columns';
+import { CustomersExportHistoryCustomersPenaltiesListComponent } from './customers-export-HistoryCustomersPenalties-list/cus-exp-HisCusPen.component';
 
 @Component({
   selector: 'app-history-customers-penalties',
@@ -27,7 +28,6 @@ export class HistoryCustomersPenaltiesComponent
   extends BasePage
   implements OnInit
 {
-  uno: any;
   customersPenalties: IHistoryCustomersPenalties[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -40,7 +40,6 @@ export class HistoryCustomersPenaltiesComponent
   }
   set penalties(value: ICustomersPenalties) {
     this._penalties = value;
-    this.uno = this._penalties;
     this.getData();
   }
   downloading: boolean = false;
@@ -80,13 +79,10 @@ export class HistoryCustomersPenaltiesComponent
               case 'processType':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'event':
+              case 'eventId':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'eventKey':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'batchId':
+              case 'batchPublic':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'initialDate':
@@ -105,7 +101,7 @@ export class HistoryCustomersPenaltiesComponent
                   filter.search = '';
                 }
                 break;
-              case 'reasonPenalty':
+              case 'referenceJobOther':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'causefree':
@@ -139,6 +135,7 @@ export class HistoryCustomersPenaltiesComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -174,6 +171,14 @@ export class HistoryCustomersPenaltiesComponent
       ...this.columnFilters,
     };
     if (this.penalties) {
+      if (!this.penalties.clientId.id) {
+        this.alert(
+          'warning',
+          'Cliente no Tiene un Histórico de Penalización',
+          ''
+        );
+        return;
+      }
       this.clientId = this.penalties.clientId.id;
       this.loading = true;
       this.clientPenaltyService
@@ -182,10 +187,8 @@ export class HistoryCustomersPenaltiesComponent
           next: response => {
             this.customersPenalties = response.data;
             this.data2.load(response.data);
-            console.log(this.data2);
             this.data2.refresh();
             this.totalItems = response.data.length;
-            console.log(this.totalItems);
             this.loading = false;
           },
           error: error => {
@@ -200,7 +203,35 @@ export class HistoryCustomersPenaltiesComponent
     }
   }
 
-  openForm(iHistoryCustomersPenalties?: IHistoryCustomersPenalties) {
+  //Exportar Historico de Penalizaciones
+  exportAllHistoryCustomersPenalties() {
+    if (!this.penalties) {
+      this.alert(
+        'warning',
+        'Selecciona Primero un Cliente Para Exportar su Histórico de Penalizaciones',
+        ''
+      );
+    } else {
+      //Modal de exportación pendiente de crear
+      const clientId = this.penalties.clientId.id;
+      const modalConfig = MODAL_CONFIG;
+      modalConfig.initialState = {
+        clientId,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      };
+      this.modalService.show(
+        CustomersExportHistoryCustomersPenaltiesListComponent,
+        modalConfig
+      );
+    }
+  }
+
+  openFormHistoryCustomersPenalties(
+    iHistoryCustomersPenalties?: IHistoryCustomersPenalties
+  ) {
+    console.log(iHistoryCustomersPenalties);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       iHistoryCustomersPenalties,
@@ -211,13 +242,6 @@ export class HistoryCustomersPenaltiesComponent
     this.modalService.show(
       CustomersPenaltiesExportHistoricComponent,
       modalConfig
-    );
-  }
-
-  all(): void {
-    this.excelService.exportAsExcelFile(
-      this.customersPenalties,
-      'PenalizacionesDeCliente'
     );
   }
 }
