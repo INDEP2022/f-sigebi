@@ -45,13 +45,15 @@ export class ProrrateoGoodSurveillanceModalComponent
     this.prepareForm();
     this.newOrEdit;
     if (this.newOrEdit) {
+      const start = this.data.shortDate;
+      const formattedstart = this.formatDate(start);
       this.form.patchValue({
-        noGood: this.data.goodId,
+        noGood: this.data.goodNumberId,
         description: this.data.description,
         sumAssured: this.data.additionInsured,
         premiumAmount: this.data.amountCousin,
         location: this.data.location,
-        shortDate: this.data.shortDate,
+        shortDate: formattedstart,
         statusGood: this.data.statusGood,
         factorCostDaily: this.data.factorCostDaily,
         amountNoteCredit: this.data.amountNoteCredit,
@@ -69,6 +71,23 @@ export class ProrrateoGoodSurveillanceModalComponent
   close() {
     this.modal.hide();
   }
+
+  formatDate(inputDate: string): string {
+    if (!inputDate) {
+      return '';
+    }
+    const dateParts = inputDate.split('-');
+    if (dateParts.length !== 3) {
+      return '';
+    }
+
+    const day = dateParts[2];
+    const month = dateParts[1];
+    const year = dateParts[0];
+
+    return `${year}/${month}/${day}`;
+  }
+
   getUsers($params: ListParams) {
     let params = new FilterParams();
     params.page = $params.page;
@@ -114,7 +133,7 @@ export class ProrrateoGoodSurveillanceModalComponent
   putGood() {
     this.newOrEdit = true;
     const model = {} as IPolicyXBien;
-    model.goodNumberId = this.data.goodId;
+    model.goodNumberId = this.data.goodNumberId;
     model.id = this.id;
     model.additionInsured = this.form.get('sumAssured').value;
     model.amountCousin = this.form.get('premiumAmount').value;
@@ -131,7 +150,11 @@ export class ProrrateoGoodSurveillanceModalComponent
         this.onLoadToast('success', 'Bien actualizado con exito', '');
       },
       error: error => {
-        this.onLoadToast('error', error.error.message, '');
+        this.onLoadToast(
+          'error',
+          'Ha ocurrido un error, por favor intentelo de nuevo',
+          ''
+        );
       },
     });
   }
@@ -162,7 +185,11 @@ export class ProrrateoGoodSurveillanceModalComponent
         this.onLoadToast('success', 'Bien creado con exito', '');
       },
       error: error => {
-        this.onLoadToast('error', error.error.message, '');
+        this.onLoadToast(
+          'error',
+          'Ha ocurrido un error, por favor intentelo de nuevo',
+          ''
+        );
       },
     });
   }

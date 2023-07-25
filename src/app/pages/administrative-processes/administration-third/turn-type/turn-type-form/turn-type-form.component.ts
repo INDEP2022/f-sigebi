@@ -15,7 +15,7 @@ export class TurnTypeFormComponent extends BasePage implements OnInit {
   shiftForm: ModelForm<IStrategyShift>;
   shift: IStrategyShift;
 
-  title: string = 'Turno/Tipo';
+  title: string = 'Turno y Tipo';
   edit: boolean = false;
 
   constructor(
@@ -32,7 +32,9 @@ export class TurnTypeFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.shiftForm = this.fb.group({
+      // shiftNumber: [null],
       description: [null, [Validators.required]],
+      registryNumber: [null],
     });
 
     if (this.shift != null) {

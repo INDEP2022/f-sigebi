@@ -58,37 +58,37 @@ export class BulkUploadComponent extends BasePage implements OnInit {
     noDataMessage: 'No se encontraron registros',
     mode: 'external', // ventana externa
     columns: {
-      CLASIFICADOR: {
+      noClasifGood: {
         title: 'Clasificador',
         width: '10%',
         sort: false,
       },
-      DESCRIPCION: {
+      description: {
         title: 'Descripción',
         width: '20%',
         sort: false,
       },
-      CANTIDAD: {
+      quantity: {
         title: 'Cantidad',
         width: '10%',
         sort: false,
       },
-      UNIDAD: {
+      unit: {
         title: 'Unidad',
         width: '10%',
         sort: false,
       },
-      TIPO: {
+      type: {
         title: 'Tipo',
         width: '10%',
         sort: false,
       },
-      MATERIAL: {
+      material: {
         title: 'Material',
         width: '10%',
         sort: false,
       },
-      EDOFISICO: {
+      edoPhisical: {
         title: 'Edo. Físico',
         width: '10%',
         sort: false,
@@ -214,7 +214,20 @@ export class BulkUploadComponent extends BasePage implements OnInit {
 
     this.ids = this.excelService.getData(binaryExcel);
     console.log('TESREADER', this.ids);
-    this.data.load(this.ids);
+    const mappedData: any = [];
+    for (let i = 0; i < this.ids.length; i++) {
+      mappedData.push({
+        noClasifGood: this.ids[i].CLASIFICADOR,
+        quantity: this.ids[i].CANTIDAD,
+        description: this.ids[i].DESCRIPCION,
+        unit: this.ids[i].UNIDAD ?? null,
+        type: this.ids[i].TIPO ?? null,
+        material: this.ids[i].MATERIAL ?? null,
+        edoPhisical: this.ids[i].EDOFISICO ?? null,
+      });
+    }
+    this.data.load(mappedData);
+    this.data.refresh();
     this.loadGood(this.ids);
     this.totalItems = this.ids.length;
     /*END POINT http://sigebimstest.indep.gob.mx/goodprocess/api/v1/update-good-status/curSearchGood?page=1&limit=10&filter.no_clasif_bien=$eq:1349 */
@@ -335,6 +348,10 @@ export class BulkUploadComponent extends BasePage implements OnInit {
         const datas = res;
         this.data1.load(datas['errors']);
         this.data1.refresh();
+        datas[''];
+
+        this.data.load(datas['success']);
+        this.data.refresh();
         this.alert('success', 'Bienes Cargados Correctamente', '');
       },
       err => {

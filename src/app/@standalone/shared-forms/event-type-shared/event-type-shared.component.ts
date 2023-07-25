@@ -45,6 +45,7 @@ export class EventTypeSharedComponent extends BasePage implements OnInit {
         },
       ]);
     }
+    this.getEvents(new ListParams());
   }
 
   getEvents(params: ListParams) {
@@ -69,7 +70,7 @@ export class EventTypeSharedComponent extends BasePage implements OnInit {
 
   onEventsChange(type: any) {
     this.form.updateValueAndValidity();
-    this.events = new DefaultSelect();
+    // this.events = new DefaultSelect();
     this.emitTevents.emit(type);
   }
 

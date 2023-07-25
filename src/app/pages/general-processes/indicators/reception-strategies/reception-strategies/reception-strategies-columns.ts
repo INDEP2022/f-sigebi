@@ -21,7 +21,7 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
     title: 'Coordinación Regional',
     sort: false,
   },
-  userNameruleOrigin: {
+  usrActrecep: {
     title: 'Usuario',
     sort: false,
   },
@@ -61,7 +61,16 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
+  cumplio: {
+    title: 'Cumplio',
+    sort: false,
+    /* valuePrepareFunction: (text: string) => {
+      return text === 'S' ? 'SI' : 'NO';
+    } */
+  },
 };
+
+///cumplio
 function getData() {
   const data = [];
   const el = {

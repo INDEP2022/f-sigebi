@@ -574,7 +574,11 @@ export class GoodsProcessValidationExtdomComponent
           Validators.pattern(NUM_POSITIVE),
         ],
       ], //* VOLANTE
-      receiptDate: [null, [Validators.required, Validators.maxLength(11)]], //* FECHA DE RECEPCION
+      receiptDate: [
+        { value: '', disabled: true },
+        ,
+        [Validators.required, Validators.maxLength(11)],
+      ], //* FECHA DE RECEPCION
       expedientTransferenceNumber: [
         '',
         [(Validators.maxLength(400), Validators.pattern(STRING_PATTERN))],
@@ -583,7 +587,11 @@ export class GoodsProcessValidationExtdomComponent
         '',
         [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(35)],
       ], //* CLAVE OFICIO EXTERNO
-      externalOfficeDate: [null, [Validators.maxLength(11)]], //* FECHA OFICIO EXTERNO
+      externalOfficeDate: [
+        { value: '', disabled: true },
+        ,
+        [Validators.maxLength(11)],
+      ], //* FECHA OFICIO EXTERNO
       externalRemitter: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
@@ -701,6 +709,10 @@ export class GoodsProcessValidationExtdomComponent
             this.loading = false;
           },
         });
+    } else {
+      if (this.P_EXPEDIENTE != null && this.P_VOLANTE != null) {
+        this.getNotificationData();
+      }
     }
   }
 
@@ -1661,17 +1673,20 @@ export class GoodsProcessValidationExtdomComponent
     if (this.selectedGoods.length > 0) {
       this.executionType = this.registerType;
     }
-    // -- Verificamos si en el bloque existen registros para liberar
-    if (this.goodsValid.length > 0) {
-      this.executionType = this.registerExistType;
+    if (this.executionType == 'X') {
+      // -- Verificamos si en el bloque existen registros para liberar
+      if (this.goodsValid.length > 0) {
+        this.executionType = this.registerExistType;
+      }
     }
     if (this.executionType == 'X') {
       this.alert('warning', 'No Existen Cambios para Ejecutar', '');
       return;
     } else if (this.executionType == this.registerType) {
       this.confirmMessageValidFolio(
-        'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
-        ''
+        // 'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
+        'Exiten nuevos bienes, aplicar el cambio de proceso a ASEG:_EXTDOM',
+        '¿Desea continuar con el proceso?'
       );
     } else if (this.executionType == this.registerExistType) {
       this.confirmMessageValidFolio(
@@ -2032,6 +2047,9 @@ export class GoodsProcessValidationExtdomComponent
   closeApplyReserved() {
     this.showReservedForm = false;
   }
+  cleanReserved() {
+    this.formReserved.get('reserved').reset();
+  }
   applyReserved() {
     if (this.formReserved.invalid) {
       this.alert('warning', 'Complete el Campo Correctamente', '');
@@ -2055,27 +2073,33 @@ export class GoodsProcessValidationExtdomComponent
       .subscribe({
         next: data => {
           console.log('UPDATE NOTIFICATION ', data);
-          // GESTION TRAMITE UPDATE
-          let body: Partial<IProceduremanagement> = {
-            id: this.P_NO_TRAMITE,
-            status: 'FNI',
-          };
-          this.svGoodsProcessValidationExtdomService
-            .updateProcedureManagement(this.P_NO_TRAMITE, body)
-            .subscribe({
-              next: data => {
-                console.log('UPDATE GESTION TRAMITE DATA ', data);
-                this.openModalMail();
-              },
-              error: error => {
-                console.log(error);
-                this.alert(
-                  'error',
-                  'Ocurrió un Error al Actualizar el Estatus del Trámite',
-                  ''
-                );
-              },
-            });
+          if (this.P_NO_TRAMITE == null) {
+            this.closeApplyReserved();
+            this.openModalMail();
+          } else {
+            // GESTION TRAMITE UPDATE
+            let body: Partial<IProceduremanagement> = {
+              id: this.P_NO_TRAMITE,
+              status: 'FNI',
+            };
+            this.svGoodsProcessValidationExtdomService
+              .updateProcedureManagement(this.P_NO_TRAMITE, body)
+              .subscribe({
+                next: data => {
+                  console.log('UPDATE GESTION TRAMITE DATA ', data);
+                  this.closeApplyReserved();
+                  this.openModalMail();
+                },
+                error: error => {
+                  console.log(error);
+                  this.alert(
+                    'error',
+                    'Ocurrió un Error al Actualizar el Estatus del Trámite',
+                    ''
+                  );
+                },
+              });
+          }
         },
         error: error => {
           console.log(error);
@@ -2146,8 +2170,8 @@ export class GoodsProcessValidationExtdomComponent
   async confirmScanRequest() {
     const response = await this.alertQuestion(
       'question',
-      'Aviso',
-      'Se Generará un Nuevo folio de Escaneo para el Amparo, ¿Deseas Continuar?'
+      'Se Generará un Nuevo folio de Escaneo para el Amparo',
+      '¿Deseas Continuar?'
     );
 
     if (!response.isConfirmed) {
@@ -2207,8 +2231,8 @@ export class GoodsProcessValidationExtdomComponent
       catchError(error => {
         this.onLoadToast(
           'error',
-          'Error',
-          'Ocurrió un Error al Generar la Solicitud'
+          'Ocurrió un Error al Generar la Solicitud',
+          ''
         );
         return throwError(() => error);
       })
@@ -2246,9 +2270,9 @@ export class GoodsProcessValidationExtdomComponent
     if (event == true) {
       if (this.formScan.get('scanningFoli').value && this.universalFolio) {
         this.alertQuestion(
-          'info',
-          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Amparo. ¿Deseas continuar?',
-          '',
+          'question',
+          'Abrir Escaneo y Digitalizacion de Documentos',
+          '¿Deseas continuar?',
           'Aceptar',
           'Cancelar'
         ).then(res => {
@@ -2261,8 +2285,12 @@ export class GoodsProcessValidationExtdomComponent
                 origin2: this.origin ? this.origin : null,
                 P_NO_TRAMITE: this.P_NO_TRAMITE,
                 P_GEST_OK: this.P_GEST_OK,
-                P_VOLANTE: this.P_VOLANTE,
-                P_EXPEDIENTE: this.P_EXPEDIENTE,
+                P_VOLANTE: this.P_VOLANTE
+                  ? this.P_VOLANTE
+                  : this.notificationData.wheelNumber,
+                P_EXPEDIENTE: this.P_EXPEDIENTE
+                  ? this.P_EXPEDIENTE
+                  : this.notificationData.expedientNumber,
               },
             });
           }

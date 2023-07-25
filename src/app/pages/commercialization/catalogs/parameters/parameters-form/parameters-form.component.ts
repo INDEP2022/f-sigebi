@@ -22,13 +22,15 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ParametersFormComponent extends BasePage implements OnInit {
-  title: string = 'Parámetro comercialización';
+  title: string = 'Parámetro Comercialización';
   edit: boolean = false;
   form: ModelForm<IParameter>;
   parameter: IParameter;
   typeEvents = new DefaultSelect<IComerTpEvent>();
   parameters = new DefaultSelect<IParameters>();
   tipo = new DefaultSelect();
+  addressList = new DefaultSelect<any>();
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -42,6 +44,12 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.addressList = new DefaultSelect([
+      { value: 'I', description: 'Inmuebles' },
+      { value: 'M', description: 'Muebles' },
+      { value: 'C', description: 'Comercial' },
+      { value: 'D', description: 'Conciliación' },
+    ]);
     this.getTypeEvent(new ListParams());
   }
 
@@ -83,10 +91,12 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
     if (this.parameter != null) {
       this.edit = true;
+      console.log(this.parameter);
       this.form.patchValue(this.parameter);
       this.form.get('parameter').disable();
       this.form.get('value').disable();
       this.form.get('address').disable();
+      this.getTypeEvent(new ListParams(), this.form.get('typeEventId').value);
     }
 
     /*if (!this.edit) {
@@ -97,7 +107,10 @@ export class ParametersFormComponent extends BasePage implements OnInit {
     this.getParameters(new ListParams());
   }
 
-  getTypeEvent(params: ListParams) {
+  getTypeEvent(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
     this.comerTpEventosService.getAllComerTpEvent(params).subscribe({
       next: data => {
         console.log(data);
@@ -133,7 +146,6 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.handleSuccess();
     this.parameterModService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),

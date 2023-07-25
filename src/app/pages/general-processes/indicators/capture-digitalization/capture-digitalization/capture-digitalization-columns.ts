@@ -2,7 +2,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 
 export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
   coordinacion_regional: {
-    title: 'Regional',
+    title: 'Coord. Regional',
     sort: false,
   },
   cve_oficio_externo: {
@@ -40,11 +40,30 @@ export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
   cumplio: {
     title: 'Cumplió',
     sort: false,
+    type: 'custom',
     renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    // onComponentInitFunction(instance: any) {
+    //   instance.toggle.subscribe((data: any) => {
+    //     data.row.cumplio = data.toggle ? '1' : '0';
+    //   });
+    // },
+    valuePrepareFunction: (value: any) => {
+      if (value !== null) {
+        switch (value) {
+          case '0':
+            value = false;
+            return value;
+            break;
+          case '1':
+            value = true;
+            return value;
+            break;
+          default:
+            value = 'S/N';
+            return value;
+            break;
+        }
+      }
     },
   },
 };
