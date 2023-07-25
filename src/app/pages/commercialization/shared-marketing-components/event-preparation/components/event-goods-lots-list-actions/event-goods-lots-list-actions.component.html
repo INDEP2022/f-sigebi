@@ -49,18 +49,28 @@
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">
+  <button
+    type="button"
+    class="dropdown-item"
+    (click)="onLoadCustomersFroThird()">
     Lotificar / Cargar Clientes desde Tabla Tercero
   </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Valida Bienes</button>
+  <button type="button" class="dropdown-item" (click)="onValidGoods()">
+    Valida Bienes
+  </button>
 </li>
 <li role="menuitem">
-  <button type="button" class="dropdown-item">Genera Oficio Avalúo</button>
+  <button type="button" class="dropdown-item" (click)="onGenerateOffice()">
+    Genera Oficio Avalúo
+  </button>
 </li>
 <li role="menuitem">
-  <button type="bulotifyGoodsChangetton" class="dropdown-item">
+  <button
+    type="bulotifyGoodsChangetton"
+    class="dropdown-item"
+    (click)="onVerifyMandate()">
     Verifica Mandado
   </button>
 </li>
