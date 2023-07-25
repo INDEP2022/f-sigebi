@@ -197,6 +197,21 @@
           <app-select-goods [idRequest]="requestId"></app-select-goods>
         </tab>
         <tab
+          *ngIf="selectGoodForEyeVisit"
+          heading="Seleccionar Bienes"
+          id="selectGoodsEyeVisitTab">
+          <app-select-good-eye-visit
+            [idRequest]="requestId"></app-select-good-eye-visit>
+        </tab>
+        <tab
+          *ngIf="validateGoodForEyeVisit"
+          heading="Validar Resultado Visitas"
+          id="validateGoodsEyeVisitTab">
+          <app-validate-eye-visit>
+            [idRequest]="requestId"></app-validate-eye-visit
+          >
+        </tab>
+        <tab
           *ngIf="viewSelectedGoods"
           heading="Listado de Bienes"
           id="goodsListTab">

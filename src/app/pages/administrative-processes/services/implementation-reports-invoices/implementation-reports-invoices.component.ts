@@ -74,12 +74,10 @@ export class ImplementationReportsInvoicesComponent
   bool: boolean = true;
   flagsol: boolean = false;
   totalValue: number = 0;
-  contador: number = 0;
   folioScan: number;
+  contador: number;
   constructor(
     private fb: FormBuilder,
-    private msInvoiceService: MsInvoiceService,
-    private authService: AuthService,
     private strategyProcessService: StrategyProcessService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private documentsDictumStatetMService: DocumentsDictumStatetMService,
@@ -87,7 +85,9 @@ export class ImplementationReportsInvoicesComponent
     private jasperService: SiabService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private msInvoiceService: MsInvoiceService
   ) {
     super();
     this.settings.columns = IMPLEMENTATION_COLUMNS;
@@ -232,14 +232,14 @@ export class ImplementationReportsInvoicesComponent
     }
     this.getAmount(this.selectedRow.no_reporte);
   }
-
-  deleteRowSelect(event: any) {
-    this.deleteselectedRow = event.data;
-  }
   seleccionarSubDelegacion(subdelegacion: any) {
     this.descripcion = subdelegacion.description;
     let iddelegation = this.proceduralHistoryForm.value.delegation;
     this.departament(iddelegation, this.descripcion);
+  }
+
+  deleteRowSelect(event: any) {
+    this.deleteselectedRow = event.data;
   }
 
   DelegationI() {
@@ -566,5 +566,33 @@ export class ImplementationReportsInvoicesComponent
     for (let i = 0; i < this.box.length; i++) {
       this.contador++;
     }
+  }
+
+  PupFolEscMas(datos: any) {
+    this.documentsDictumStatetMService.getSeqDocument().subscribe({
+      next: response => {
+        this.lnu_folio = response;
+        const item = {
+          fileNumber: datos.fileNumber,
+          folioUniversal: this.lnu_folio,
+          reports: datos.reports,
+          reportNumber: this.no_report,
+          fractureId: datos.fractureId,
+          delegationNumber: datos.delegationNumber,
+          subDelegationNumber: datos.subDelegationNumber,
+          departamentNumber: datos.departamentNumber,
+        };
+        console.log('Prueba: ', item);
+        this.invoiceDetailsForm.patchValue({
+          scanFolio: this.lnu_folio,
+        });
+        this.documentsDictumStatetMService.postPupFol(item).subscribe({
+          next: response => {
+            console.log('Succefull2: ', response);
+            this.proccesReport();
+          },
+        });
+      },
+    });
   }
 }

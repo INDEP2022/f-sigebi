@@ -16,13 +16,17 @@ export const COLUMNS_GOODS_LIST_EXTDOM = {
 
       return value ? value : '';
     },
+    onComponentInitFunction: (instance: any) => {
+      instance.pClass = 'text-white';
+      instance.spanClass = 'text-white';
+    },
   },
   unit: { title: 'Unidad', sort: false },
   quantity: { title: 'Cantidad', sort: false },
   status: { title: 'Estatus', sort: false },
   extDomProcess: { title: 'Proceso', sort: false },
   seleccion: {
-    title: '',
+    title: 'Selección',
     sort: false,
     type: 'custom',
     showAlways: true,
@@ -50,13 +54,17 @@ export const COLUMNS_GOODS_LIST_EXTDOM_2 = {
 
       return value ? value : '';
     },
+    onComponentInitFunction: (instance: any) => {
+      instance.pClass = 'text-white';
+      instance.spanClass = 'text-white';
+    },
   },
   unit: { title: 'Unidad', sort: false },
   quantity: { title: 'Cantidad', sort: false },
   status: { title: 'Estatus', sort: false },
   extDomProcess: { title: 'Proceso', sort: false },
   seleccion: {
-    title: '',
+    title: 'Selección',
     sort: false,
     type: 'custom',
     showAlways: true,
@@ -83,13 +91,17 @@ export const COLUMNS_GOODS_LIST_EXTDOM_3 = {
 
       return value ? value : '';
     },
+    onComponentInitFunction: (instance: any) => {
+      instance.pClass = 'text-white';
+      instance.spanClass = 'text-white';
+    },
   },
   unit: { title: 'Unidad', sort: false },
   quantity: { title: 'Cantidad', sort: false },
   status: { title: 'Estatus', sort: false },
   extDomProcess: { title: 'Proceso', sort: false },
   seleccion: {
-    title: '',
+    title: 'Selección',
     sort: false,
     type: 'custom',
     showAlways: true,
@@ -116,13 +128,17 @@ export const COLUMNS_GOODS_LIST_EXTDOM_4 = {
 
       return value ? value : '';
     },
+    onComponentInitFunction: (instance: any) => {
+      instance.pClass = 'text-white';
+      instance.spanClass = 'text-white';
+    },
   },
   unit: { title: 'Unidad', sort: false },
   quantity: { title: 'Cantidad', sort: false },
   status: { title: 'Estatus', sort: false },
   extDomProcess: { title: 'Proceso', sort: false },
   seleccion: {
-    title: '',
+    title: 'Selección',
     sort: false,
     type: 'custom',
     showAlways: true,

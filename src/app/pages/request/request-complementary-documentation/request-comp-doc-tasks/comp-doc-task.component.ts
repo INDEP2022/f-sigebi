@@ -1,5 +1,9 @@
+import { inject } from '@angular/core';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
+import Swal from 'sweetalert2';
 
 export abstract class CompDocTasksComponent extends BasePage {
   protected abstract regDocForm: boolean;
@@ -9,6 +13,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract guidelines: boolean;
   protected abstract docRequest: boolean;
   protected abstract expRequest: boolean;
+  protected abstract selectGoodForEyeVisit: boolean;
+  protected abstract validateGoodForEyeVisit: boolean;
   protected abstract viewSelectedGoods: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
@@ -20,17 +26,32 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract complementaryDoc: boolean;
   protected abstract requestInfo: IRequest;
 
+  private rejectedService = inject(RejectedGoodService);
+
   constructor() {
     super();
   }
 
-  titleView(affair: number) {
+  titleView(affair: number, process: string) {
     if (affair == 13) {
       this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
     } else if (affair == 10) {
       this.title = `Devolución: Registro de documentación complementaria, No. Solicitud ${this.requestInfo.id}`;
       this.complementaryDoc = true;
+    } else if (affair == 33) {
+      if (process == 'BSRegistroSolicitudes') {
+        this.title = `BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: ${this.requestInfo.id}`;
+      }
+      if (process == 'BSNotificarTransferente') {
+        this.title = `BIENES SIMILARES: Notificar a Transferente, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV `;
+      }
+      if (process == 'BSVisitaOcular') {
+        this.title = `BIENES SIMILARES: Programar Visita Ocular, No. Solicitud:  ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+      }
+      if (process == 'BSValidarVisitaOcular') {
+        this.title = `BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: ${this.requestInfo.id}, Contribuyente USARIO CARGIA, PAMA 159743CV`;
+      }
     }
   }
 
@@ -50,6 +71,8 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.saveRequest = true;
           this.dictumValidate = false;
           this.notifyReport = false;
+          this.selectGoodForEyeVisit = false;
+          this.validateGoodForEyeVisit = false;
 
           this.turnReq = true;
           this.createReport = false;
@@ -59,6 +82,8 @@ export abstract class CompDocTasksComponent extends BasePage {
           this.regDocForm = true;
           this.selectGoods = true;
           this.expRequest = true;
+          this.selectGoodForEyeVisit = false;
+          this.validateGoodForEyeVisit = false;
         }
 
         break;
@@ -74,6 +99,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
@@ -92,6 +119,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -110,6 +139,8 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
@@ -128,34 +159,44 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = true;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = true;
         this.rejectReq = true;
 
         break;
-      case 'similar-good-register-documentation':
+      case 'BSRegistroSolicitudes':
+        //registro del formulario
         this.regDocForm = true;
         this.regDocView = false;
+        //buscar solicitudes de bienes
         this.searchRequestSimGoods = true;
+        //seleccionar bienes
         this.selectGoods = true;
         this.viewSelectedGoods = false;
         this.guidelines = false;
         this.docRequest = false;
+        //expedientes
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'similar-good-notify-transferor':
+      case 'BSNotificarTransferente':
         this.regDocForm = false;
+        //ver registro
         this.regDocView = true;
         this.searchRequestSimGoods = false;
         this.selectGoods = false;
+        //visualizar los bienes seleccioandos
         this.viewSelectedGoods = true;
         this.guidelines = false;
         this.docRequest = true;
@@ -163,23 +204,46 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.dictumValidate = false;
         this.notifyReport = true;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = false;
 
         this.turnReq = true;
         this.createReport = false;
         this.rejectReq = false;
         break;
-      case 'similar-good-notify-transferor':
+      case 'BSVisitaOcular':
         this.regDocForm = false;
         this.regDocView = true;
         this.searchRequestSimGoods = false;
         this.selectGoods = false;
-        this.viewSelectedGoods = true;
+        this.viewSelectedGoods = false;
         this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
         this.dictumValidate = false;
-        this.notifyReport = true;
+        this.notifyReport = false;
+        this.selectGoodForEyeVisit = true;
+        this.validateGoodForEyeVisit = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
+        break;
+      case 'BSValidarVisitaOcular':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = false;
+        this.viewSelectedGoods = false;
+        this.guidelines = false;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+        this.notifyReport = false;
+        this.selectGoodForEyeVisit = false;
+        this.validateGoodForEyeVisit = true;
 
         this.turnReq = true;
         this.createReport = false;
@@ -189,5 +253,36 @@ export abstract class CompDocTasksComponent extends BasePage {
       default:
         break;
     }
+  }
+
+  getGoodResDev(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.rejectedService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(
+            'error no se pudo obtener los bienes de la tabla good-res-dev'
+          );
+        },
+      });
+    });
+  }
+
+  turnResquestMessage(requestId: number) {
+    Swal.fire({
+      title: `Desea turnar la solicitud con el folio: ${requestId}`,
+      text: 'Usted va a transferir una solicitud que no es comercio exterior a un TE',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#9B2348',
+      cancelButtonColor: '#B28D5C',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+      }
+    });
   }
 }
