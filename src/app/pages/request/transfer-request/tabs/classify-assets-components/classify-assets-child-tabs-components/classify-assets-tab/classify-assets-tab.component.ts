@@ -884,10 +884,10 @@ export class ClassifyAssetsTabComponent
       return;
     }
 
-    if (!goods.idGoodProperty) {
-      goods.idGoodProperty =
-        Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
-    }
+    // if (!goods.idGoodProperty) {
+    //   goods.idGoodProperty =
+    //     Number(goods.goodTypeId) === 1 ? Number(goods.id) : null;
+    // }
 
     if (goods.fractionId.id) {
       goods.fractionId = Number(goods.fractionId.id);

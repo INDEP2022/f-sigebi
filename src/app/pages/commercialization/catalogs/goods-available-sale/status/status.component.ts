@@ -10,6 +10,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { StatusDispService } from 'src/app/core/services/ms-status-disp/status-disp.service';
 import { BasePage } from 'src/app/core/shared';
 import { data } from './data';
 import { GoodsAvailableSaleFormComponent } from './goods-available-sale-form/goods-available-sale-form.component';
@@ -33,7 +34,8 @@ export class StatusComponent extends BasePage implements OnInit {
 
   constructor(
     private goodService: GoodService,
-    private BsModalService: BsModalService
+    private BsModalService: BsModalService,
+    private statusDispService: StatusDispService
   ) {
     /*super();
     this.service = this.goodService;
@@ -66,34 +68,20 @@ export class StatusComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'id':
+              case 'idStatus':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'warehouseDetails':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.description`;
-                break;
-              case 'batchDetails':
-                searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.description`;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'status':
+              case 'idTypeEvent':
                 searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-            /*filter.field == 'id' ||
-              filter.field == 'warehuseDetails' ||
-              filter.field == 'batchDetails' ||
-            filter.field == 'description' ||
-            filter.field == 'status'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -115,7 +103,7 @@ export class StatusComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodService.getAll(params).subscribe({
+    this.statusDispService.getAllTypeUser(params).subscribe({
       next: response => {
         //this.racks = response.data;
         this.totalItems = response.count || 0;
@@ -127,59 +115,62 @@ export class StatusComponent extends BasePage implements OnInit {
     });
   }
 
-  onSaveConfirm(event: any) {
-    event.confirm.resolve();
-    this.goodService.update(event.newData).subscribe();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
-  }
+  // onSaveConfirm(event: any) {
+  //   event.confirm.resolve();
+  //   this.goodService.update(event.newData).subscribe();
+  //   this.onLoadToast('success', 'Elemento Actualizado', '');
+  // }
 
-  onAddConfirm(event: any) {
-    event.confirm.resolve();
-    this.goodService.create(event.newData).subscribe();
-    this.onLoadToast('success', 'Elemento Creado', '');
-  }
+  // onAddConfirm(event: any) {
+  //   event.confirm.resolve();
+  //   this.goodService.create(event.newData).subscribe();
+  //   this.onLoadToast('success', 'Elemento Creado', '');
+  // }
 
   showDeleteAlert(event: any) {
-    const body = {
-      id: event.id,
-      goodId: event.goodId,
-    };
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(body);
+        let data = {
+          idStatus: event.idStatus,
+          idDirection: event.idDirection,
+          idTypeEvent: event.idTypeEvent,
+        };
+        this.delete(data);
       }
     });
   }
 
   delete(body: Object) {
-    this.goodService.removeGood(body).subscribe({
+    this.statusDispService.remove(body).subscribe({
       next: () => {
-        this.alert('success', 'Delegación Regional', 'Borrado');
-        // this.getAllEventTypes();
+        this.alert('success', 'Borrado Correctamente', '');
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getExample());
       },
       error: error => {
         this.alert(
           'warning',
-          'Delegación Regional',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          'Estatus Disponibles para Comercializar',
+          'No se Puede Eliminar el Objeto Debido a una Relación con otra Tabla.'
         );
       },
     });
   }
 
-  selectRow(row: any) {
-    this.selectedRow = row;
-    this.rowSelected = true;
-  }
+  // selectRow(row: any) {
+  //   this.selectedRow = row;
+  //   this.rowSelected = true;
+  // }
 
-  openForm(rack?: any) {
+  openForm(goodsAvailable?: any) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      rack,
+      goodsAvailable,
       callback: (next: boolean) => {
         if (next) this.getExample();
       },
