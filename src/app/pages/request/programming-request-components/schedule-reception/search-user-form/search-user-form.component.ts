@@ -41,10 +41,11 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      selectMode: 'multi',
       actions: false,
       columns: {
         ...USER_COLUMNS,
-        name: {
+        /*name: {
           title: 'Selección usuario',
           sort: false,
           type: 'custom',
@@ -53,7 +54,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onUserChange(instance),
-        },
+        },*/
       },
     };
   }
@@ -124,6 +125,10 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
       });
   }
 
+  userSelect(info: any) {
+    this.userInfo = info.selected;
+  }
+
   userProgramming(data: any) {
     this.usersData.load(data);
 
@@ -142,22 +147,32 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   confirm() {
     if (this.userInfo.length > 0) {
-      let count: number = 0;
-      this.userInfo.map(info => {
-        let user: Object = {
-          programmingId: this.idProgramming,
-          user: info.firstName,
-          email: info.email,
-          version: 1,
-        };
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea agregar los usuarios a la programación?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          let count: number = 0;
+          this.userInfo.map(info => {
+            let user: Object = {
+              programmingId: this.idProgramming,
+              user: info.firstName,
+              email: info.email,
+              version: 1,
+            };
 
-        this.programmingService.createUsersProgramming(user).subscribe(data => {
-          count = count + 1;
-          if (count == 1) {
-            this.modalRef.content.callback(true);
-            this.modalRef.hide();
-          }
-        });
+            this.programmingService
+              .createUsersProgramming(user)
+              .subscribe(data => {
+                count = count + 1;
+                if (count == 1) {
+                  this.modalRef.content.callback(true);
+                  this.modalRef.hide();
+                }
+              });
+          });
+        }
       });
     } else {
       this.onLoadToast(
