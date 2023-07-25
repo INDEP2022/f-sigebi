@@ -6,6 +6,18 @@
       app-card {
         .card {
           box-shadow: 0 0 !important;
+          .card-block {
+            padding: 20px 20px 0px !important;
+          }
+        }
+      }
+      .notAdd {
+        ng2-smart-table {
+          .ng2-smart-actions-title-add {
+            a {
+              display: none;
+            }
+          }
         }
       }
     }
