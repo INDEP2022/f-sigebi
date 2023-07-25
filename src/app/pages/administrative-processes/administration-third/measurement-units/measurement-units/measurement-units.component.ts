@@ -32,7 +32,6 @@ export class MeasurementUnitsComponent extends BasePage implements OnInit {
   //filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   dataSelect: IUnits;
   form: FormGroup = new FormGroup({});
-  newOrEdit: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -187,10 +186,6 @@ export class MeasurementUnitsComponent extends BasePage implements OnInit {
       description: ['', Validators.required],
       registryNumber: ['', Validators.required],
     });
-
-    if ((this.newOrEdit = true)) {
-      this.form.controls['unit'].disable();
-    }
   }
 
   onRowSelect(event: IUnits) {

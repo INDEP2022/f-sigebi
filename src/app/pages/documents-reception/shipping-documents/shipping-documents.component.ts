@@ -32,6 +32,8 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { TmpNotificationService } from 'src/app/core/services/ms-notification/tmp-notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
@@ -69,6 +71,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   officeNumber: string = null;
   officeKey: string = null;
   queryMode: boolean = null;
+  loadingDoc: boolean = false;
+  selectedRow: any = null;
 
   get formControls() {
     return this.documentsForm.controls;
@@ -88,7 +92,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     private goodParameterService: GoodParametersService,
     private securityService: SecurityService,
     private jwtHelper: JwtHelperService,
-    private tmpNotificationService: TmpNotificationService
+    private tmpNotificationService: TmpNotificationService,
+    private jasperService: SiabService
   ) {
     super();
     this.settings = {
@@ -240,9 +245,39 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   printPdf() {
-    const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPOFIVOLANTE.pdf?NO_OFICIO=${this.officeNumber}`;
-    window.open(url, `${this.officeKey}.pdf`);
+    /*const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPOFIVOLANTE.pdf?NO_OFICIO=${this.officeNumber}`;
+    window.open(url, `${this.officeKey}.pdf`);*/
+
+    let params = {
+      PARAMFORM: 'NO',
+      PNO_OFICIO: this.officeNumber,
+      PTEXTO_OFICIO: this.officeKey,
+    };
+
+    this.jasperService
+
+      .fetchReport('RGEROFPOFIVOLANTE', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          // this.onLoadToast('success', '', 'Reporte generado');
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
+
   save() {
     if (this.queryMode) {
       this.printPdf();
@@ -261,16 +296,18 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       );
       return;
     }
-    this.getDepartmentById().subscribe({
+    let idDepart = this.jwtHelper.decodeToken().department;
+    console.log('idDepart ', idDepart);
+    this.getDepartmentById(Number(idDepart)).subscribe({
       next: (department: any) => this.setOfficeKey(department),
     });
-
     for (let i = 0; i < this.selectedNotifications.length; i++) {
       this.saveNotification(this.selectedNotifications[i]);
     }
   }
 
   setOfficeKey(department: IDepartment) {
+    debugger;
     const { dsarea, lastOffice } = department;
     const last = Number(lastOffice ?? 0) + 1;
     const year = new Date().getFullYear();
@@ -284,18 +321,21 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.departmentService.update2(department).subscribe();
   }
 
-  getDepartmentById() {
-    const token = this.jwtHelper.decodeToken();
+  getDeparmentById(id: number) {
+    debugger;
+    return this.departmentService.getById(id);
+  }
+
+  getDepartmentById(id: number) {
     return this.getPhaseEdo().pipe(
       map((res: any) => res.stagecreated as number),
       switchMap(phaseEdo =>
-        this.getLoogedUser(token.preferred_username).pipe(
+        this.getDeparmentById(id).pipe(
           map(res => {
-            const info = res.data[0];
             return {
-              id: Number(info.departament),
-              numDelegation: Number(info.delegation),
-              numSubDelegation: Number(info.subdelegation),
+              id: Number(id),
+              numDelegation: Number(res.numDelegation),
+              numSubDelegation: Number(res.numSubDelegation),
               phaseEdo,
             };
           })
@@ -320,6 +360,56 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
         this.incrementLastOffice(department);
         this.queryMode = true;
         this.alert('success', 'Oficio Enviado Correctamente', '');
+      },
+    });
+  }
+
+  saveEo() {
+    let notification = {
+      wheelNumber: this.selectedRow.wheelNumber,
+      proceedingsNumber: 'null',
+      cveManagement: this.selectedRow.cveManagement,
+      managementNumber: 'null',
+      sender: this.selectedRow.sender,
+      delRemNumber: this.selectedRow.delRemNumber,
+      depRemNumber: this.selectedRow.depRemNumber,
+      addressee: this.selectedRow.addressee,
+      city: this.selectedRow.city,
+      text1: this.selectedRow.text1,
+      text2: this.selectedRow.text2,
+      statusOf: 'null',
+      insertUser: this.selectedRow.insertUser,
+      areaUser: this.selectedRow.areaUser,
+      deleUser: this.selectedRow.deleUser,
+      insertDate: this.selectedRow.insertDate,
+      jobType: this.selectedRow.jobType,
+      nomPersExt: this.selectedRow.nomPersExt,
+      refersTo: this.selectedRow.refersTo,
+      jobBy: this.selectedRow.jobBy,
+      recordNumber: this.selectedRow.recordNumber,
+      armedKeyNumber: this.selectedRow.armedKeyNumber,
+      desSenderpa: this.selectedRow.desSenderpa,
+      text3: this.selectedRow.text3,
+      insertHcDate: this.selectedRow.insertHcDate,
+      projectDate: this.selectedRow.projectDate,
+      inventoryNumber: this.selectedRow.inventoryNumber,
+      sheetsNumber: this.selectedRow.sheetsNumber,
+      description: this.selectedRow.description,
+      problematiclegal: this.selectedRow.problematiclegal,
+      goodNumber: this.selectedRow.goodNumber,
+      portfolio: this.selectedRow.portfolio,
+      batch: this.selectedRow.batch,
+      event: this.selectedRow.event,
+      invoiceUniversal: this.selectedRow.invoiceUniversal,
+      invoiceUniversalassoc: this.selectedRow.invoiceUniversalassoc,
+      id: this.selectedRow.id,
+    };
+    this.notificationService.create(notification).subscribe({
+      next: res => {
+        this.alert('success', 'Registro agregado correctamente', '');
+      },
+      error: err => {
+        this.alert('error', err.mensaje, '');
       },
     });
   }
@@ -532,5 +622,10 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', 'No se logro guardar notificación');
       },
     });
+  }
+
+  selectRow(row: any) {
+    this.selectedRow = row;
+    console.log('this.selectedRow -> ', this.selectedRow);
   }
 }
