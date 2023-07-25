@@ -870,16 +870,21 @@ export class GoodsProcessValidationExtdomComponent
         error: error => {
           console.log(error);
           this.loading = false;
-          localStorage.removeItem('e_aseg');
-          localStorage.removeItem('v_aseg');
-          // Para crear
-          localStorage.removeItem(this.localStorage_selectedGoods);
-          localStorage.removeItem(this.localStorage_goodData3);
-          localStorage.removeItem(this.localStorage_totalGoods3);
-          // Para liberar
-          localStorage.removeItem(this.localStorage_selectedGoods2);
-          localStorage.removeItem(this.localStorage_goodData4);
-          localStorage.removeItem(this.localStorage_totalGoods4);
+          this.alert(
+            'error',
+            'No se Encontraron Registros',
+            'Intente Nuevamente con otro Expediente y/o Volante'
+          );
+          // localStorage.removeItem('e_aseg');
+          // localStorage.removeItem('v_aseg');
+          // // Para crear
+          // localStorage.removeItem(this.localStorage_selectedGoods);
+          // localStorage.removeItem(this.localStorage_goodData3);
+          // localStorage.removeItem(this.localStorage_totalGoods3);
+          // // Para liberar
+          // localStorage.removeItem(this.localStorage_selectedGoods2);
+          // localStorage.removeItem(this.localStorage_goodData4);
+          // localStorage.removeItem(this.localStorage_totalGoods4);
         },
       });
   }
@@ -1229,48 +1234,84 @@ export class GoodsProcessValidationExtdomComponent
       );
       return;
     }
-    this.loadingGoods = true; // Iniciar loading de tabla bienes
-    this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
-    this.selectedGoods.forEach((data: IGood | any, count: number) => {
-      // VALIDAR QUE NO EXISTA YA EN LA TABLA A PROCESAR
-      const index3: number = this.goodData3.findIndex(
-        (_good: IGood) => _good.goodId == data.goodId
+    if (this.universalFolio == null) {
+      this.alert(
+        'warning',
+        'No se puede Continuar con el Proceso',
+        'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
       );
-      console.log('INDICE 3 ADD SELECT ', index3);
-      if (index3 == -1) {
-        this.goodData3.push({ ...data, register_type: this.registerType }); // Agregar registro a la data
-        this.totalGoods3++; // Aumentar si se agrego registro
-        // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
-        const index2: number = this.goodData.findIndex(
-          (_good: IGood) => _good.goodId == data.goodId
-        );
-        if (index2 > -1) {
-          this.goodData[index2].disponible = this.blockLabel; // Cambiar a no disponible
-          this.goodData[index2].seleccion = 0; // Quitar el check del registro
+      return;
+    }
+    this.loadingProcess = true;
+    const params = new FilterParams();
+    params.addFilter('id', this.universalFolio);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loadingProcess = false;
+        console.log(resp);
+
+        this.loadingGoods = true; // Iniciar loading de tabla bienes
+        this.loadingGoods3 = true; // Iniciar loading de tabla a procesar
+        this.selectedGoods.forEach((data: IGood | any, count: number) => {
+          // VALIDAR QUE NO EXISTA YA EN LA TABLA A PROCESAR
+          const index3: number = this.goodData3.findIndex(
+            (_good: IGood) => _good.goodId == data.goodId
+          );
+          console.log('INDICE 3 ADD SELECT ', index3);
+          if (index3 == -1) {
+            this.goodData3.push({ ...data, register_type: this.registerType }); // Agregar registro a la data
+            this.totalGoods3++; // Aumentar si se agrego registro
+            // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+            const index2: number = this.goodData.findIndex(
+              (_good: IGood) => _good.goodId == data.goodId
+            );
+            if (index2 > -1) {
+              this.goodData[index2].disponible = this.blockLabel; // Cambiar a no disponible
+              this.goodData[index2].seleccion = 0; // Quitar el check del registro
+            }
+          }
+        });
+        this.afterAddSelect();
+        // setTimeout(() => {
+        //   localStorage.setItem(
+        //     this.localStorage_selectedGoods,
+        //     JSON.stringify(this.selectedGoods)
+        //   );
+        //   localStorage.setItem(
+        //     this.localStorage_goodData3,
+        //     JSON.stringify(this.goodData3)
+        //   );
+        //   localStorage.setItem(
+        //     this.localStorage_totalGoods3,
+        //     JSON.stringify(this.totalGoods3)
+        //   );
+        //   // Update data table bienes
+        //   this.dataTable.load(this.goodData);
+        //   this.dataTable.refresh();
+        //   this.loadingGoods = false; // Detener loading de tabla bienes
+        //   this.loadingGoods3 = false; // Detener loading de tabla a procesar
+        //   this.updatePaginatedTable3();
+        // }, 500);
+      },
+      error: error => {
+        this.loadingProcess = false;
+        console.log(error);
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un error al validar los Documentos relacionados al Folio Universal',
+            ''
+          );
+        } else {
+          this.alert(
+            'warning',
+            'No se puede Continuar con el Proceso',
+            'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
+          );
         }
-      }
+      },
     });
-    this.afterAddSelect();
-    // setTimeout(() => {
-    //   localStorage.setItem(
-    //     this.localStorage_selectedGoods,
-    //     JSON.stringify(this.selectedGoods)
-    //   );
-    //   localStorage.setItem(
-    //     this.localStorage_goodData3,
-    //     JSON.stringify(this.goodData3)
-    //   );
-    //   localStorage.setItem(
-    //     this.localStorage_totalGoods3,
-    //     JSON.stringify(this.totalGoods3)
-    //   );
-    //   // Update data table bienes
-    //   this.dataTable.load(this.goodData);
-    //   this.dataTable.refresh();
-    //   this.loadingGoods = false; // Detener loading de tabla bienes
-    //   this.loadingGoods3 = false; // Detener loading de tabla a procesar
-    //   this.updatePaginatedTable3();
-    // }, 500);
   }
 
   afterAddSelect() {
@@ -1391,26 +1432,59 @@ export class GoodsProcessValidationExtdomComponent
     if (this.goodData.length == 0) {
       this.alert(
         'warning',
-        'Se Requiere por lo Menos un Bien de la Tabla ' +
-          this.nameTable1 +
-          ' para Continuar',
-        ''
+        'Sin Bienes Para Continuar',
+        'Se Requiere por lo Menos un Bien de la Tabla ' + this.nameTable1
       );
       return;
     }
     let confirm = await this.alertQuestion(
       'question',
-      '¿Quiere Agregar TODOS los Bienes de la Tabla ' +
+      'Agregar TODOS los Bienes',
+      'Se van a Agregar TODOS los Bienes de ' +
         this.nameTable1 +
-        ' a la Tabla ' +
+        ' a ' +
         this.nameTable2 +
-        '?',
-      ''
+        '. ¿Deseas continuar?'
     );
     if (confirm.isConfirmed == false) {
       return;
     }
-    this.startLoopGoods();
+    if (this.universalFolio == null) {
+      this.alert(
+        'warning',
+        'No se puede Continuar con el Proceso',
+        'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
+      );
+      return;
+    }
+    this.loadingProcess = true;
+    const params = new FilterParams();
+    params.addFilter('id', this.universalFolio);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loadingProcess = false;
+        console.log(resp);
+        this.startLoopGoods();
+      },
+      error: error => {
+        this.loadingProcess = false;
+        console.log(error);
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un error al validar los Documentos relacionados al Folio Universal',
+            ''
+          );
+        } else {
+          this.alert(
+            'warning',
+            'No se puede Continuar con el Proceso',
+            'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
+          );
+        }
+      },
+    });
   }
 
   async removeAll() {
@@ -1418,15 +1492,17 @@ export class GoodsProcessValidationExtdomComponent
     if (this.goodData3.length == 0) {
       this.alert(
         'warning',
-        'La Tabla ' + this.nameTable2 + ' NO Tiene Bienes para Continuar',
-        ''
+        'Sin Bienes Para Continuar',
+        'La Tabla ' + this.nameTable2 + ' NO Tiene Bienes'
       );
       return;
     }
     let confirm = await this.alertQuestion(
       'question',
-      '¿Quiere Eliminar TODOS los Bienes de la Tabla ' + this.nameTable2 + '?',
-      ''
+      'Eliminar los Bienes',
+      'Se van a Eliminar TODOS los Bienes de la Tabla ' +
+        this.nameTable2 +
+        '. ¿Deseas continuar?'
     );
     if (confirm.isConfirmed == false) {
       return;
@@ -1460,54 +1536,92 @@ export class GoodsProcessValidationExtdomComponent
       );
       return;
     }
-    this.loadingGoods2 = true; // Iniciar loading de tabla bienes
-    this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
-    this.goodsValid.forEach((data: IGood | any, count: number) => {
-      // VALIDAR QUE NO EXISTA YA EN LA TABLA A PROCESAR
-      const index3: number = this.goodData4.findIndex(
-        (_good: IGood) => _good.goodId == data.goodId
+    if (this.universalFolio == null) {
+      this.alert(
+        'warning',
+        'No se puede Continuar con el Proceso',
+        'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
       );
-      console.log('INDICE 3 ADD SELECT ', index3);
-      if (index3 == -1) {
-        this.goodData4.push({ ...data, register_type: this.registerExistType }); // Agregar registro a la data
-        this.totalGoods4++; // Aumentar si se agrego registro
-        // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
-        const index2: number = this.goodData2.findIndex(
-          (_good: IGood) => _good.goodId == data.goodId
-        );
-        if (index2 > -1) {
-          this.goodData2[index2].disponible = this.blockLabel; // Cambiar a no disponible
-          this.goodData2[index2].seleccion = 0; // Quitar el check del registro
+      return;
+    }
+    this.loadingProcess = true;
+    const params = new FilterParams();
+    params.addFilter('id', this.universalFolio);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loadingProcess = false;
+        console.log(resp);
+        this.loadingGoods2 = true; // Iniciar loading de tabla bienes
+        this.loadingGoods4 = true; // Iniciar loading de tabla a procesar
+        this.goodsValid.forEach((data: IGood | any, count: number) => {
+          // VALIDAR QUE NO EXISTA YA EN LA TABLA A PROCESAR
+          const index3: number = this.goodData4.findIndex(
+            (_good: IGood) => _good.goodId == data.goodId
+          );
+          console.log('INDICE 3 ADD SELECT ', index3);
+          if (index3 == -1) {
+            this.goodData4.push({
+              ...data,
+              register_type: this.registerExistType,
+            }); // Agregar registro a la data
+            this.totalGoods4++; // Aumentar si se agrego registro
+            // VALIDAR CON LA DATA DEL ENDPOINT IGUAL
+            const index2: number = this.goodData2.findIndex(
+              (_good: IGood) => _good.goodId == data.goodId
+            );
+            if (index2 > -1) {
+              this.goodData2[index2].disponible = this.blockLabel; // Cambiar a no disponible
+              this.goodData2[index2].seleccion = 0; // Quitar el check del registro
+            }
+          }
+        });
+        setTimeout(() => {
+          console.log(
+            ' LISTADOS ###### ',
+            this.goodsValid,
+            this.goodData4,
+            this.totalGoods4,
+            this.goodData2
+          );
+          // localStorage.setItem(
+          //   this.localStorage_selectedGoods2,
+          //   JSON.stringify(this.goodsValid)
+          // );
+          // localStorage.setItem(
+          //   this.localStorage_goodData4,
+          //   JSON.stringify(this.goodData4)
+          // );
+          // localStorage.setItem(
+          //   this.localStorage_totalGoods4,
+          //   JSON.stringify(this.totalGoods4)
+          // );
+          // Update data table bienes
+          this.dataTable2.load(this.goodData2);
+          this.dataTable2.refresh();
+          this.loadingGoods2 = false; // Detener loading de tabla bienes
+          this.loadingGoods4 = false; // Detener loading de tabla a procesar
+          this.updatePaginatedTable4();
+        }, 500);
+      },
+      error: error => {
+        this.loadingProcess = false;
+        console.log(error);
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un error al validar los Documentos relacionados al Folio Universal',
+            ''
+          );
+        } else {
+          this.alert(
+            'warning',
+            'No se puede Continuar con el Proceso',
+            'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
+          );
         }
-      }
+      },
     });
-    setTimeout(() => {
-      console.log(
-        ' LISTADOS ###### ',
-        this.goodsValid,
-        this.goodData4,
-        this.totalGoods4,
-        this.goodData2
-      );
-      // localStorage.setItem(
-      //   this.localStorage_selectedGoods2,
-      //   JSON.stringify(this.goodsValid)
-      // );
-      // localStorage.setItem(
-      //   this.localStorage_goodData4,
-      //   JSON.stringify(this.goodData4)
-      // );
-      // localStorage.setItem(
-      //   this.localStorage_totalGoods4,
-      //   JSON.stringify(this.totalGoods4)
-      // );
-      // Update data table bienes
-      this.dataTable2.load(this.goodData2);
-      this.dataTable2.refresh();
-      this.loadingGoods2 = false; // Detener loading de tabla bienes
-      this.loadingGoods4 = false; // Detener loading de tabla a procesar
-      this.updatePaginatedTable4();
-    }, 500);
   }
 
   removeSelectFree() {
@@ -1607,26 +1721,59 @@ export class GoodsProcessValidationExtdomComponent
     if (this.goodData2.length == 0) {
       this.alert(
         'warning',
-        'Se Requiere por lo Menos un Bien de la Tabla ' +
-          this.nameTable3 +
-          ' para Continuar',
-        ''
+        'Sin Bienes Para Continuar',
+        'Se Requiere por lo Menos un Bien de la Tabla ' + this.nameTable3
       );
       return;
     }
     let confirm = await this.alertQuestion(
       'question',
-      '¿Quiere Agregar TODOS los Bienes de la Tabla ' +
+      'Agregar TODOS los Bienes',
+      'Se van a Agregar TODOS los Bienes de ' +
         this.nameTable3 +
-        ' a la Tabla ' +
+        ' a ' +
         this.nameTable4 +
-        '?',
-      ''
+        '. ¿Deseas continuar?'
     );
     if (confirm.isConfirmed == false) {
       return;
     }
-    this.startLoopGoodsFree();
+    if (this.universalFolio == null) {
+      this.alert(
+        'warning',
+        'No se puede Continuar con el Proceso',
+        'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
+      );
+      return;
+    }
+    this.loadingProcess = true;
+    const params = new FilterParams();
+    params.addFilter('id', this.universalFolio);
+    params.addFilter('scanStatus', 'ESCANEADO');
+    this.documentsService.getAllFilter(params.getParams()).subscribe({
+      next: resp => {
+        this.loadingProcess = false;
+        console.log(resp);
+        this.startLoopGoodsFree();
+      },
+      error: error => {
+        this.loadingProcess = false;
+        console.log(error);
+        if (error.status >= 500) {
+          this.alert(
+            'error',
+            'Ocurrió un error al validar los Documentos relacionados al Folio Universal',
+            ''
+          );
+        } else {
+          this.alert(
+            'warning',
+            'No se puede Continuar con el Proceso',
+            'Se Requiere un Folio de Escaneo con Documentos Previamente Cargados'
+          );
+        }
+      },
+    });
   }
 
   async removeAllFree() {
@@ -1634,15 +1781,17 @@ export class GoodsProcessValidationExtdomComponent
     if (this.goodData4.length == 0) {
       this.alert(
         'warning',
-        'La Tabla ' + this.nameTable4 + ' NO Tiene Bienes para Continuar',
-        ''
+        'Sin Bienes Para Continuar',
+        'La Tabla ' + this.nameTable4 + ' NO Tiene Bienes'
       );
       return;
     }
     let confirm = await this.alertQuestion(
       'question',
-      '¿Quiere Eliminar TODOS los Bienes de la Tabla ' + this.nameTable4 + '?',
-      ''
+      'Eliminar los Bienes',
+      'Se van a Eliminar TODOS los Bienes de la Tabla ' +
+        this.nameTable4 +
+        '. ¿Deseas continuar?'
     );
     if (confirm.isConfirmed == false) {
       return;
@@ -1685,7 +1834,7 @@ export class GoodsProcessValidationExtdomComponent
     } else if (this.executionType == this.registerType) {
       this.confirmMessageValidFolio(
         // 'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
-        'Exiten nuevos bienes, aplicar el cambio de proceso a ASEG:_EXTDOM',
+        'Existen nuevos bienes, aplicar el cambio de proceso a ASEG_EXTDOM',
         '¿Desea continuar con el proceso?'
       );
     } else if (this.executionType == this.registerExistType) {
@@ -1723,8 +1872,8 @@ export class GoodsProcessValidationExtdomComponent
         this.loadingProcess = false;
         this.alert(
           'warning',
-          'El Folio Universal no Existe, NO se Han Agregado Imágenes o NO Corresponde a "Admisión de Demanda de Extinción de Dominio"',
-          ''
+          'El Folio Universal no Existe',
+          'NO se Han Agregado Imágenes o NO Corresponde a "Admisión de Demanda de Extinción de Dominio"'
         );
       } else {
         if (this.executionType == this.registerType) {
@@ -2052,17 +2201,17 @@ export class GoodsProcessValidationExtdomComponent
   }
   applyReserved() {
     if (this.formReserved.invalid) {
-      this.alert('warning', 'Complete el Campo Correctamente', '');
+      this.alert('warning', 'Complete el Campo Reservado Correctamente', '');
       return;
     }
-    if (this.P_NO_TRAMITE == null) {
-      this.alert(
-        'warning',
-        'Se Requiere un Número de Trámite para Continuar con este Proceso',
-        ''
-      );
-      return;
-    }
+    // if (this.P_NO_TRAMITE == null) {
+    //   this.alert(
+    //     'warning',
+    //     'Se Requiere un Número de Trámite para Continuar con este Proceso',
+    //     ''
+    //   );
+    //   return;
+    // }
     let bodyNotification: Partial<INotification> = {
       dictumKey: 'CONOCIMIENTO',
       wheelNumber: this.notificationData.wheelNumber,
@@ -2170,7 +2319,7 @@ export class GoodsProcessValidationExtdomComponent
   async confirmScanRequest() {
     const response = await this.alertQuestion(
       'question',
-      'Se Generará un Nuevo folio de Escaneo para el Amparo',
+      'Se Generará un Nuevo Folio de Escaneo para el Amparo',
       '¿Deseas Continuar?'
     );
 
