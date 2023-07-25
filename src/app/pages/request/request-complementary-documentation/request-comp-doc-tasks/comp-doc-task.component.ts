@@ -1,5 +1,9 @@
+import { inject } from '@angular/core';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
+import Swal from 'sweetalert2';
 
 export abstract class CompDocTasksComponent extends BasePage {
   protected abstract regDocForm: boolean;
@@ -20,6 +24,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract title: string;
   protected abstract complementaryDoc: boolean;
   protected abstract requestInfo: IRequest;
+
+  private rejectedService = inject(RejectedGoodService);
 
   constructor() {
     super();
@@ -205,5 +211,36 @@ export abstract class CompDocTasksComponent extends BasePage {
       default:
         break;
     }
+  }
+
+  getGoodResDev(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      this.rejectedService.getAll(params).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(
+            'error no se pudo obtener los bienes de la tabla good-res-dev'
+          );
+        },
+      });
+    });
+  }
+
+  turnResquestMessage(requestId: number) {
+    Swal.fire({
+      title: `Desea turnar la solicitud con el folio: ${requestId}`,
+      text: 'Usted va a transferir una solicitud que no es comercio exterior a un TE',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+      }
+    });
   }
 }
