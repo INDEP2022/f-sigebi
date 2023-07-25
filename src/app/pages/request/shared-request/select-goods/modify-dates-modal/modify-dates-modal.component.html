@@ -1,0 +1,57 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <h6 class="mb-5">Periodo de la visita ocular</h6>
+    <br /><br />
+    <form class="form-material pt-0 mt-n5" [formGroup]="dateForm">
+      <div class="col-md-6">
+        <form-field
+          [control]="dateForm.get('startDate')"
+          label="Fecha Hora Inicio">
+          <input
+            type="text"
+            placeholder=""
+            class="form-control"
+            formControlName="startDate"
+            bsDatepicker
+            [bsConfig]="{ isAnimated: true }"
+            [bsConfig]="{ dateInputFormat: 'MM/DD/YYYY, h:mm:ss a' }" />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="dateForm.get('endDate')" label="Fecha Hora Fin">
+          <input
+            type="text"
+            placeholder=""
+            class="form-control"
+            formControlName="endDate"
+            bsDatepicker
+            [bsConfig]="{ isAnimated: true }"
+            [bsConfig]="{ dateInputFormat: 'MM/DD/YYYY, h:mm:ss a' }" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

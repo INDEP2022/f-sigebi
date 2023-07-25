@@ -83,29 +83,61 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    console.log(this.saveValuesForm.value);
-    this.saveValueService.create(this.saveValuesForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.loading = false;
-        this.onLoadToast(
-          'warning',
-          'La CVE Guarda Valor ya fue registrada',
-          ``
-        );
-      },
-    });
+    if (
+      this.saveValuesForm.controls['id'].value.trim() == '' ||
+      this.saveValuesForm.controls['description'].value.trim() == '' ||
+      this.saveValuesForm.controls['location'].value.trim() == '' ||
+      this.saveValuesForm.controls['responsible'].value.trim() == '' ||
+      (this.saveValuesForm.controls['id'].value.trim() == '' &&
+        this.saveValuesForm.controls['description'].value.trim() == '' &&
+        this.saveValuesForm.controls['location'].value.trim() == '' &&
+        this.saveValuesForm.controls['responsible'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.saveValuesForm.value);
+      this.saveValueService
+        .create(this.saveValuesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.loading = false;
+            this.onLoadToast(
+              'warning',
+              'La CVE Guarda Valor ya Fue Registrada',
+              ``
+            );
+          },
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.saveValueService
-      .update(this.saveValues.id, this.saveValuesForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.saveValuesForm.controls['id'].value.trim() == '' ||
+      this.saveValuesForm.controls['description'].value.trim() == '' ||
+      this.saveValuesForm.controls['location'].value.trim() == '' ||
+      this.saveValuesForm.controls['responsible'].value.trim() == '' ||
+      (this.saveValuesForm.controls['id'].value.trim() == '' &&
+        this.saveValuesForm.controls['description'].value.trim() == '' &&
+        this.saveValuesForm.controls['location'].value.trim() == '' &&
+        this.saveValuesForm.controls['responsible'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.saveValueService
+        .update(this.saveValues.id, this.saveValuesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

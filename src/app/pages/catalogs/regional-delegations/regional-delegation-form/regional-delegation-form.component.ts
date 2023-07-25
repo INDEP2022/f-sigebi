@@ -113,11 +113,12 @@ export class RegionalDelegationFormComponent
       return;
     } else {
       this.loading = true;
-      this.regionalDelegationForm
+      /*this.regionalDelegationForm
         .get('idGeographicZona')
-        .setValue(this.regionalDelegationForm.get('idGeographicZona').value.id);
+        .setValue(this.regionalDelegationForm.get('idGeographicZona').value.id);*/
+      //console.log(this.regionalDelegationForm.getRawValue());
       this.regionalDelegationService
-        .create(this.regionalDelegationForm.value)
+        .create(this.regionalDelegationForm.getRawValue())
         .subscribe({
           next: data => this.handleSuccess(),
           error: error => (this.loading = false),
@@ -164,14 +165,14 @@ export class RegionalDelegationFormComponent
   //Data
 
   getGeoZone(param: ListParams) {
-    this.serviceGeoZone.getAll(param).subscribe(
-      res => {
+    this.serviceGeoZone.getAll(param).subscribe({
+      next: res => {
         this.selectGeoZone = new DefaultSelect(res.data, res.count);
       },
-      error => {
+      error: err => {
         this.selectGeoZone = new DefaultSelect();
-      }
-    );
+      },
+    });
   }
 
   fillSelectZone(event: any) {

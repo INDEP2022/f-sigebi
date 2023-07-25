@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DetailIndParameterService } from 'src/app/core/services/catalogs/detail-ind-parameter.service';
@@ -42,9 +42,9 @@ export class IndicatorsOfPerformanceFormComponent
   prepareForm() {
     this.form = this.fb.group({
       indicatorNumber: [null],
-      endDate: [null],
-      contractZoneKey: [null],
-      initialDate: [null],
+      endDate: [null, [Validators.required]],
+      contractZoneKey: [null, [Validators.required]],
+      initialDate: [null, [Validators.required]],
       daysHolNumber: [null],
       daysLimNumber: [null],
       hoursLimNumber: [null],
@@ -130,7 +130,11 @@ export class IndicatorsOfPerformanceFormComponent
     this.detailIndParameterService.create(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
-        this.alert('warning', 'La clave zona contrato ya se registró', ``);
+        this.alert(
+          'warning',
+          'Valor Invalido',
+          `La Clave Zona Contrato ya se registró`
+        );
         this.loading = false;
       },
     });
