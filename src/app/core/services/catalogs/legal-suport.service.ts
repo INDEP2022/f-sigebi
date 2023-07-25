@@ -14,7 +14,7 @@ export class LegalSupportService implements ICrudMethods<ILegalSupport> {
   constructor(private legalSupportRepository: Repository<ILegalSupport>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ILegalSupport>> {
-    return this.legalSupportRepository.getAllPaginated(this.route, params);
+    return this.legalSupportRepository.getAll(this.route, params);
   }
 
   getById(id: string | number): Observable<ILegalSupport> {

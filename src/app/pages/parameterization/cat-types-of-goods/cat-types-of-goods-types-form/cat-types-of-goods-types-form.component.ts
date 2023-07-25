@@ -36,7 +36,11 @@ export class CatTypesOfGoodsTypesFormComponent
       id: [null],
       nameGoodType: [
         '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       maxAsseguranceTime: [null],
       maxFractionTime: [null],
