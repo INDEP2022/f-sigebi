@@ -2,39 +2,40 @@
   <div class="w-100" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
       <h5 class="modal-title">Lista ministerios públicos</h5>
-      <div class="buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-        <button class="btn btn-primary active btn-sm ml-3" (click)="close()">
-          Cerrar
-        </button>
-      </div>
     </div>
   </div>
 
-  <div body class="p-2">
+  <div body>
     <div class="row">
-      <div class="form-material col-md-8">
-        <search-bar
-          [filterParams]="params"
-          [filterField]="searchFilter"></search-bar>
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
-    <div class="row pt-4">
+    <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng-scrollbar [track]="'all'" style="min-height: 300px">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="dataMinPub.data"
-              (edit)="formDataMin($event.data)"
-              (delete)="deleteMin($event.data)">
-            </ng2-smart-table>
-          </ng-scrollbar>
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="deleteMin($event.data)">
+          </ng2-smart-table>
         </div>
       </div>
     </div>
-    <app-pagination [filterParams]="params" [totalItems]="dataMinPub.count">
+    <app-pagination [params]="params1" [totalItems]="totalItems">
     </app-pagination>
   </div>
 </app-modal>
