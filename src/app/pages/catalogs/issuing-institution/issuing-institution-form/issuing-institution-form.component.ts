@@ -193,26 +193,66 @@ export class IssuingInstitutionFormComponent
   }
 
   create() {
-    this.loading = true;
-    this.issuingInstitutionService
-      .create(this.issuingInstitutionForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.issuingInstitutionForm.controls['name'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['description'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['manager'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['street'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['cologne'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['phone'].value.trim() == '' ||
+      (this.issuingInstitutionForm.controls['name'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['description'].value.trim() ==
+          '' &&
+        this.issuingInstitutionForm.controls['manager'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['street'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['cologne'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['phone'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.issuingInstitutionService
+        .create(this.issuingInstitutionForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.issuingInstitutionService
-      .update2(
-        this.issuingInstitution.id,
-        this.issuingInstitutionForm.getRawValue()
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.issuingInstitutionForm.controls['name'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['description'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['manager'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['street'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['cologne'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['phone'].value.trim() == '' ||
+      (this.issuingInstitutionForm.controls['name'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['description'].value.trim() ==
+          '' &&
+        this.issuingInstitutionForm.controls['manager'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['street'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['cologne'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['phone'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.issuingInstitutionService
+        .update2(
+          this.issuingInstitution.id,
+          this.issuingInstitutionForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
