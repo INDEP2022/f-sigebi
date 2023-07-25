@@ -55,6 +55,7 @@ export const COLUMNS = {
     title: 'Fecha de creación',
     type: 'string',
     sort: false,
+    editable: false,
     valuePrepareFunction: (cell: any, row: IParameterConcept) => {
       return row.creationDate
         ? formatForIsoDate(row.creationDate, 'string')
@@ -65,5 +66,6 @@ export const COLUMNS = {
     title: 'Usuario de creación',
     type: 'string',
     sort: false,
+    editable: false,
   },
 };
