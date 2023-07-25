@@ -147,7 +147,11 @@ export class ThirdPartyModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, this.title);
+    this.alert(
+      'success',
+      `Tercero Comercializador ${message} Correctamente`,
+      ''
+    );
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -155,7 +159,11 @@ export class ThirdPartyModalComponent extends BasePage implements OnInit {
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, this.title);
+    this.alert(
+      'error',
+      `Error al Intentar ${message} el Tercero Comercializador`,
+      ''
+    );
     this.loading = false;
   }
 }

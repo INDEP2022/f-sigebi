@@ -8,10 +8,11 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Routing
 import { GoodsAvailableSaleRoutingModule } from './goods-available-sale-routing.module';
+import { GoodsAvailableSaleFormComponent } from './status/goods-available-sale-form/goods-available-sale-form.component';
 import { StatusComponent } from './status/status.component';
 
 @NgModule({
-  declarations: [StatusComponent],
+  declarations: [StatusComponent, GoodsAvailableSaleFormComponent],
   imports: [
     CommonModule,
     GoodsAvailableSaleRoutingModule,
