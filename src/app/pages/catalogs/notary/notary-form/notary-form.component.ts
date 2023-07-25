@@ -103,12 +103,12 @@ export class NotaryFormComponent extends BasePage implements OnInit {
 
   create() {
     if (
-      this.notaryForm.controls['name'].value.trim() === '' &&
-      this.notaryForm.controls['notaryNumber'].value.trim() === '' &&
-      this.notaryForm.controls['phone'].value.trim() === '' &&
-      this.notaryForm.controls['domicile'].value.trim() === '' &&
-      this.notaryForm.controls['ubication'].value.trim() === '' &&
-      this.notaryForm.controls['phone'].value.trim() === '' &&
+      this.notaryForm.controls['name'].value.trim() === '' ||
+      this.notaryForm.controls['notaryNumber'].value.trim() === '' ||
+      this.notaryForm.controls['phone'].value.trim() === '' ||
+      this.notaryForm.controls['domicile'].value.trim() === '' ||
+      this.notaryForm.controls['ubication'].value.trim() === '' ||
+      this.notaryForm.controls['phone'].value.trim() === '' ||
       this.notaryForm.controls['email'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

@@ -180,7 +180,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.alert('error', 'No esta registrada ninguna Subdelegación', '');
       },
     });
   }
@@ -217,7 +217,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         next: response => {
           console.log(response);
           this.departments = response.data;
-          this.data.load(this.departments);
+          this.data.load(response.data);
           this.data.refresh();
           this.totalItems = response.count | 0;
           this.loading = false;
@@ -256,7 +256,11 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
     this.departmentService.removeByBody(obj).subscribe({
       next: () => {
         this.getDepartmentByIds();
-        this.alert('success', '', 'Borrado');
+        this.alert(
+          'success',
+          'Mantenimiento de Areas',
+          'Borrado Correctamente'
+        );
       },
       error: error => {
         this.alert(
@@ -272,7 +276,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(department);

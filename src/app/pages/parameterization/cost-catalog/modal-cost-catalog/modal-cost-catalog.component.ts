@@ -16,7 +16,7 @@ import { CostCatalogService } from '../cost-catalog.service';
   styles: [],
 })
 export class ModalCostCatalogComponent extends BasePage implements OnInit {
-  title: string = 'Catálogo de costo';
+  title: string = 'Catálogo de Costo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: IServiceCat;
@@ -103,6 +103,14 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.form.controls['code'].value.trim() === '' ||
+      this.form.controls['description'].value.trim() === '' ||
+      this.form.controls['subaccount'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.form.get('cost').value === 'COSTO' ? 'COSTO' : 'GASTO';
     this.isChecked === true

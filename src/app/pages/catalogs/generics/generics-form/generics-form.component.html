@@ -11,8 +11,7 @@
               type="text"
               class="form-control"
               formControlName="name"
-              id="inputName"
-              pattern="^[^\s].*" />
+              id="inputName" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
@@ -20,11 +19,10 @@
             [control]="genericsForm.get('keyId')"
             label="Identificador clave">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="keyId"
-              id="inputKeyId"
-              min="1" />
+              id="inputKeyId" />
           </form-field>
         </div>
       </div>
@@ -36,8 +34,7 @@
             <textarea
               rows="2"
               class="form-control pt-3"
-              formControlName="description"
-              pattern="^[^\s].*">
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
@@ -45,11 +42,7 @@
           <form-field
             [control]="genericsForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              min="1"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>

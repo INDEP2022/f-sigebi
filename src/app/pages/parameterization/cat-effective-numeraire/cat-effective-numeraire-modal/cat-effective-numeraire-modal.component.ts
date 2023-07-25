@@ -22,7 +22,7 @@ export class CatEffectiveNumeraireModalComponent
 {
   numeraryCategoriesForm: ModelForm<INumeraryCategories>;
   numeraryCategories: INumeraryCategories;
-  title: string = 'Categoría para Numerario de Efectivo';
+  title: string = 'Categoría para Numerario Efectivo';
   edit: boolean = false;
 
   constructor(

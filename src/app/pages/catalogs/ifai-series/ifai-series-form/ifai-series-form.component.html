@@ -1,28 +1,31 @@
-<app-modal>
+<app-modal style="display: center">
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="ifaiSerieForm">
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
           <form-field
             [control]="ifaiSerieForm.get('code')"
             label="C&oacute;digo">
             <input type="text" class="form-control" formControlName="code" />
           </form-field>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <form-field
             [control]="ifaiSerieForm.get('typeProcedure')"
             label="Tipo de tr&aacute;mite">
             <input
-              type="string"
+              type="text"
               class="form-control"
               formControlName="typeProcedure" />
           </form-field>
         </div>
-
+      </div>
+      <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="ifaiSerieForm.get('description')"
@@ -35,8 +38,9 @@
             </textarea>
           </form-field>
         </div>
-
-        <div class="col-md-4">
+      </div>
+      <div class="row">
+        <div class="col-md-12">
           <form-field [control]="ifaiSerieForm.get('status')" label="Estado">
             <select class="form-control" formControlName="status">
               <option [value]="1">Activo</option>
@@ -44,17 +48,6 @@
             </select>
           </form-field>
         </div>
-
-        <!-- <div class="col-md-6">
-          <form-field
-            [control]="ifaiSerieForm.get('registryNumber')"
-            label="No&#46; registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registryNumber" />
-          </form-field>
-        </div> -->
       </div>
     </form>
   </div>
@@ -62,10 +55,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="ifaiSerieForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

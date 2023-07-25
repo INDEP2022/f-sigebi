@@ -216,6 +216,13 @@ export class CityDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.cityForm.controls['nameCity'].value.trim() === '' ||
+      this.cityForm.controls['legendOffice'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.cityService.create2(this.cityForm.value).subscribe({
       next: data => this.handleSuccess(),
