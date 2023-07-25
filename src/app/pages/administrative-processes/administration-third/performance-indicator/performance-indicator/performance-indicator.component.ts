@@ -665,8 +665,8 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
       let lv_rep_reg: Number;
       let lv_rep_ent: Number;
 
-      let lv_val_rep: Number = 0;
-      let lv_val_fol: Number = 0;
+      let lv_val_rep: string = '0';
+      let lv_val_fol: string = '0';
 
       lv_fol_reg = this.T_FOL_REG;
       lv_fol_ent = this.T_FOL_ENT;
@@ -680,21 +680,18 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
           undefined &&
         this.performanceIndicatorFormE_I.get('reportImp2').value != undefined
       ) {
+        //debugger;
         if (
-          Number(this.performanceIndicatorFormE_I.get('strategyAdmin').value) ==
-            lv_fol_reg ||
-          Number(this.performanceIndicatorFormE_I.get('strategyAdmin').value) ==
-            0
+          Number(
+            this.performanceIndicatorFormE_I.get('strategyAdmin').value
+          ) === (lv_fol_reg || 0)
         ) {
           if (
             Number(
               this.performanceIndicatorFormE_I.get('strategyAdmin2').value
-            ) == lv_fol_ent ||
-            Number(
-              this.performanceIndicatorFormE_I.get('strategyAdmin2').value
-            ) == 0
+            ) === (lv_fol_ent || 0)
           ) {
-            lv_val_fol = 1;
+            lv_val_fol = '1';
           } else {
             this.alert(
               'error',
@@ -711,17 +708,14 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
         }
 
         if (
-          Number(this.performanceIndicatorFormE_I.get('reportImp').value) ==
-            lv_rep_reg ||
-          Number(this.performanceIndicatorFormE_I.get('reportImp').value) == 0
+          Number(this.performanceIndicatorFormE_I.get('reportImp').value) ===
+          (lv_rep_reg || 0)
         ) {
           if (
-            Number(this.performanceIndicatorFormE_I.get('reportImp2').value) ==
-              lv_rep_ent ||
-            Number(this.performanceIndicatorFormE_I.get('reportImp2').value) ==
-              0
+            Number(this.performanceIndicatorFormE_I.get('reportImp2').value) ===
+            (lv_rep_ent || 0)
           ) {
-            lv_val_rep = 1;
+            lv_val_rep = '1';
           } else {
             this.alert(
               'error',
@@ -737,7 +731,7 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
           );
         }
 
-        if (lv_val_rep == 11 || lv_val_fol == 11) {
+        if (lv_val_rep + lv_val_fol == '11') {
           if (this.status == 0) {
             this.alert(
               'error',
@@ -755,6 +749,12 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
               ''
             );
           }
+        } else {
+          this.alert(
+            'error',
+            'Esta Estrategia de administración no fue cerrada',
+            ''
+          );
         }
       }
     }
