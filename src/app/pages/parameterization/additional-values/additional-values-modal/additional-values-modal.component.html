@@ -4,8 +4,8 @@
   </div>
   <div body>
     <form [formGroup]="additionalValuesForm" class="form-material">
-      <div class="row margin-input">
-        <div class="col-md-5">
+      <div class="row">
+        <div class="col-md-6">
           <form-field
             [control]="additionalValuesForm.get('cdtabla')"
             style="pointer-events: none">
@@ -21,7 +21,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
           <form-field
             [control]="additionalValuesForm.get('dstabla')"
             label="Descripci&oacute;n"
@@ -33,41 +33,43 @@
     </form>
     <div *ngIf="additionalValuesForm.valid">
       <form [formGroup]="tvalTableForm" class="form-material">
-        <div class="row margin-input">
-          <div class="col-md-2">
-            <form-field [control]="tvalTableForm.get('otKey1')" label="Clave1">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="tvalTableForm.get('otKey1')" label="Clave 1">
               <input
                 type="text"
                 formControlName="otKey1"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-2">
-            <form-field [control]="tvalTableForm.get('otKey2')" label="Clave2">
+          <div class="col-md-4">
+            <form-field [control]="tvalTableForm.get('otKey2')" label="Clave 2">
               <input
                 type="text"
                 formControlName="otKey2"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-2">
-            <form-field [control]="tvalTableForm.get('otKey3')" label="Clave3">
+          <div class="col-md-4">
+            <form-field [control]="tvalTableForm.get('otKey3')" label="Clave 3">
               <input
                 type="text"
                 formControlName="otKey3"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="tvalTableForm.get('otKey4')" label="Clave4">
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field [control]="tvalTableForm.get('otKey4')" label="Clave 4">
               <input
                 type="text"
                 formControlName="otKey4"
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="tvalTableForm.get('otKey5')" label="Clave5">
+          <div class="col-md-6">
+            <form-field [control]="tvalTableForm.get('otKey5')" label="Clave 5">
               <input
                 type="text"
                 formControlName="otKey5"
@@ -75,8 +77,8 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
-          <div class="col-md-4">
+        <div class="row pt-4">
+          <div class="col-md-6">
             <form-field
               [control]="tvalTableForm.get('fromDate')"
               label="Fecha Desde">
@@ -84,14 +86,16 @@
                 type="text"
                 formControlName="fromDate"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                (bsValueChange)="validateDate($event)" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <form-field
               [control]="tvalTableForm.get('toDate')"
               label="Fecha Hasta">
               <input
+                [minDate]="minDate"
                 type="text"
                 formControlName="toDate"
                 class="form-control"
@@ -99,11 +103,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue01')"
-              label="Atributo1">
+              label="Atributo 1">
               <input
                 type="text"
                 formControlName="otValue01"
@@ -113,7 +117,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue02')"
-              label="Atributo2">
+              label="Atributo 2">
               <input
                 type="text"
                 formControlName="otValue02"
@@ -123,7 +127,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue03')"
-              label="Atributo3">
+              label="Atributo 3">
               <input
                 type="text"
                 formControlName="otValue03"
@@ -133,7 +137,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue04')"
-              label="Atributo4">
+              label="Atributo 4">
               <input
                 type="text"
                 formControlName="otValue04"
@@ -141,11 +145,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue05')"
-              label="Atributo5">
+              label="Atributo 5">
               <input
                 type="text"
                 formControlName="otValue05"
@@ -155,7 +159,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue06')"
-              label="Atributo6">
+              label="Atributo 6">
               <input
                 type="text"
                 formControlName="otValue06"
@@ -165,7 +169,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue07')"
-              label="Atributo7">
+              label="Atributo 7">
               <input
                 type="text"
                 formControlName="otValue07"
@@ -175,7 +179,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue08')"
-              label="Atributo8">
+              label="Atributo 8">
               <input
                 type="text"
                 formControlName="otValue08"
@@ -183,11 +187,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue09')"
-              label="Atributo9">
+              label="Atributo 9">
               <input
                 type="text"
                 formControlName="otValue09"
@@ -197,7 +201,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue10')"
-              label="Atributo10">
+              label="Atributo 10">
               <input
                 type="text"
                 formControlName="otValue10"
@@ -207,7 +211,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue11')"
-              label="Atributo11">
+              label="Atributo 11">
               <input
                 type="text"
                 formControlName="otValue11"
@@ -217,7 +221,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue12')"
-              label="Atributo12">
+              label="Atributo 12">
               <input
                 type="text"
                 formControlName="otValue12"
@@ -225,11 +229,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue13')"
-              label="Atributo13">
+              label="Atributo 13">
               <input
                 type="text"
                 formControlName="otValue13"
@@ -239,7 +243,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue14')"
-              label="Atributo14">
+              label="Atributo 14">
               <input
                 type="text"
                 formControlName="otValue14"
@@ -249,7 +253,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue15')"
-              label="Atributo15">
+              label="Atributo 15">
               <input
                 type="text"
                 formControlName="otValue15"
@@ -259,7 +263,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue16')"
-              label="Atributo16">
+              label="Atributo 16">
               <input
                 type="text"
                 formControlName="otValue16"
@@ -267,11 +271,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue17')"
-              label="Atributo17">
+              label="Atributo 17">
               <input
                 type="text"
                 formControlName="otValue17"
@@ -281,7 +285,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue18')"
-              label="Atributo18">
+              label="Atributo 18">
               <input
                 type="text"
                 formControlName="otValue18"
@@ -291,7 +295,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue19')"
-              label="Atributo19">
+              label="Atributo 19">
               <input
                 type="text"
                 formControlName="otValue19"
@@ -301,7 +305,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue20')"
-              label="Atributo20">
+              label="Atributo 20">
               <input
                 type="text"
                 formControlName="otValue20"
@@ -309,11 +313,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue21')"
-              label="Atributo21">
+              label="Atributo 21">
               <input
                 type="text"
                 formControlName="otValue21"
@@ -323,7 +327,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue22')"
-              label="Atributo22">
+              label="Atributo 22">
               <input
                 type="text"
                 formControlName="otValue22"
@@ -333,7 +337,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue23')"
-              label="Atributo23">
+              label="Atributo 23">
               <input
                 type="text"
                 formControlName="otValue23"
@@ -343,7 +347,7 @@
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue24')"
-              label="Atributo24">
+              label="Atributo 24">
               <input
                 type="text"
                 formControlName="otValue24"
@@ -351,11 +355,11 @@
             </form-field>
           </div>
         </div>
-        <div class="row margin-input">
+        <div class="row pt-4">
           <div class="col-md-3">
             <form-field
               [control]="tvalTableForm.get('otValue25')"
-              label="Atributo25">
+              label="Atributo 25">
               <input
                 type="text"
                 formControlName="otValue25"

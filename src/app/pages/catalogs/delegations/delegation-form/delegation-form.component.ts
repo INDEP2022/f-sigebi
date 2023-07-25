@@ -8,7 +8,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -40,37 +40,113 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.delegationForm = this.fb.group({
       id: [null],
-      description: [null, [Validators.required, Validators.maxLength(80)]],
-      diffHours: [null, [Validators.required, Validators.maxLength(80)]],
-      zoneVigilanceKey: [null, [Validators.required, Validators.maxLength(80)]],
-      zoneContractKey: [null, [Validators.required, Validators.maxLength(80)]],
-      noRegister: [null, [Validators.required, Validators.maxLength(80)]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(150),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      diffHours: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(6),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      zoneVigilanceKey: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      zoneContractKey: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      noRegister: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
       etapaEdo: [
         null,
-        [Validators.required, Validators.min(0), Validators.maxLength(80)],
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
-      stateKey: [null, [Validators.required]],
+      stateKey: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       addressOffice: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       regionalDelegate: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(200),
+        ],
       ],
       // cveZone: [null, Validators.required],
-      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      city: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       status: [
         null,
-        [Validators.required, Validators.min(0), Validators.maxLength(80)],
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       iva: [
         null,
-        [Validators.required, Validators.min(0), Validators.maxLength(80)],
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       idZoneGeographic: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.delegation != null) {

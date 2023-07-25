@@ -99,10 +99,9 @@ export class CourtListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (
-        this.onLoadToast('error', error.error.message, ''),
-        (this.loading = false)
-      ),
+      error: error =>
+        //this.onLoadToast('error', error.error.message, ''),
+        (this.loading = false),
     });
   }
 

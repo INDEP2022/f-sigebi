@@ -6,7 +6,7 @@ export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
     sort: false,
   },
   cve_oficio_externo: {
-    title: 'Cve Oficio Externo',
+    title: 'Cve. Oficio Externo',
     sort: false,
   },
   no_expediente: {

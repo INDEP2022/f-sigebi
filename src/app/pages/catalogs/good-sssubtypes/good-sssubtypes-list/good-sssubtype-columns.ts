@@ -4,7 +4,7 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 
 export const GOOD_SSSUBTYPE_COLUMNS = {
   id: {
-    title: 'Código SssubTipo',
+    title: 'Código SubsubsubTipo',
     type: 'number',
     sort: false,
   },
@@ -14,7 +14,7 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     sort: false,
   },
   numType: {
-    title: 'Tipo bien',
+    title: 'Tipo Bien',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IGoodType) => {
@@ -25,7 +25,7 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     },
   },
   numSubType: {
-    title: 'Subtipo bien',
+    title: 'Subtipo Bien',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IGoodSubType) => {
@@ -36,7 +36,7 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     },
   },
   numSsubType: {
-    title: 'Ssubtipo bien',
+    title: 'Subsubtipo Bien',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: IGoodSsubType) => {
@@ -50,6 +50,7 @@ export const GOOD_SSSUBTYPE_COLUMNS = {
     title: 'No. Clasif Bien',
     type: 'number',
     sort: false,
+    with: '200px',
   },
   // numClasifAlterna: {
   //   title: 'No. Clasif alterna',

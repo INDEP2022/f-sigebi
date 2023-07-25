@@ -619,5 +619,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+
+    if (this.origin == 'FREPIMPFAC_0001') {
+      this.router.navigate(
+        [
+          '/pages/administrative-processes/services/implementation-reports-invoices',
+        ],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+          },
+        }
+      );
+    }
   }
 }

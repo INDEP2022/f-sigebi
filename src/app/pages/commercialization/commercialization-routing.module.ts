@@ -378,7 +378,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./penalty-billing/penalty-billing.module'))
         .CFpMPenaltyBillingModule,
-    data: { title: 'Facturación', screen: 'FCOMER089' },
+    data: { title: 'Facturación', screen: 'FCOMER099' },
   },
   {
     path: 'sirsae-movement-sending',
