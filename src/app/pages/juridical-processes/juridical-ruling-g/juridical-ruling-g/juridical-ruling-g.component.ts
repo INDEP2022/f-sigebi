@@ -2330,7 +2330,7 @@ export class JuridicalRulingGComponent
     } else {
       this.alert(
         'warning',
-        'Necesitas un número de expedientes con oficio.',
+        'Necesitas un Número de Expediente con Oficio.',
         ''
       );
       return; // Si 'documents' está vacío, detiene la ejecución aquí

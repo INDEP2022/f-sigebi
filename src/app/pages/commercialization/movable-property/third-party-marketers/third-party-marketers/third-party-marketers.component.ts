@@ -132,7 +132,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               nameReason: () => (searchFilter = SearchFilter.ILIKE),
               calculationRoutine: () => (searchFilter = SearchFilter.EQ),
             };
-            search[filter.field];
+            search[filter.field]();
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -160,6 +160,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
   // TIPOS DE EVENTOS QUE ATIENDE EL TERCERO //
   getTypeEventFilters() {
+    this.loading2 = false;
     this.typeEventList
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -211,6 +212,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
   // MONTOS //
   getAmountsFilters() {
+    this.loading3 = false;
     this.thirdPartyList
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -234,8 +236,8 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
             search[filter.field];
 
             if (filter.search !== '') {
-              // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
               // console.log(
               //   'this.columnFilters[field]',
@@ -269,7 +271,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.thirdPartyService.getAll(params).subscribe({
+    this.thirdPartyService.getAllFindItemV2(params).subscribe({
       next: response => {
         console.log(response);
         this.thirdPartyList.load(response.data);
@@ -308,7 +310,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   rowsSelectedGetTypeEvent(event: any) {
-    this.totalItems3 = 0;
+    this.totalItems2 = 0;
     // this.amountList = [];
     this.typeEvents = event.data;
 
@@ -382,9 +384,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params3.getValue(),
       ...this.columnFilters3,
     };
-    if (!IThirdParty) return;
-    params['filter.idThirdParty'] = `$eq:${IThirdParty.id}`;
-    this.comiXThirdService.getById(IThirdParty.id).subscribe({
+    if (!IThirdParty) {
+      this.loading3 = false;
+      return;
+    }
+    params['filter.idThirdParty'] = `${IThirdParty.id}`;
+    this.comiXThirdService.getAll_(params).subscribe({
       next: response => {
         console.log(response);
         this.amountList.load(response.data);
@@ -422,7 +427,11 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
         typeEvents,
         thirPartys,
         callback: (next: boolean) => {
-          if (next) this.getThirdPartyAll();
+          if (next) {
+            if (this.thirPartys) {
+              this.rowsSelectedGetTypeEvent(this.thirPartys);
+            }
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -438,7 +447,11 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
         amounts,
         thirPartys,
         callback: (next: boolean) => {
-          if (next) this.getThirdPartyAll();
+          if (next) {
+            if (this.thirPartys) {
+              this.rowsSelectedGetAmount(this.thirPartys);
+            }
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -511,7 +524,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     this.alertQuestion('question', '¿Desea Eliminar el Monto?', '').then(
       question => {
         if (question.isConfirmed) {
-          this.comiXThirdService.remove($event.id).subscribe({
+          this.comiXThirdService.remove($event.idComiXThird).subscribe({
             next: response => {
               this.alert('success', 'El Monto se Eliminó Correctamente', '');
               this.rowsSelectedGetAmount(this.thirPartys);
