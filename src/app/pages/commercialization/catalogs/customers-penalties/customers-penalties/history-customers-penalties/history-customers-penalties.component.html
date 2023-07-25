@@ -1,10 +1,34 @@
 <div class="row justify-content-end mr-1">
   <div class="ch-content">
     <h5 class="title">Hist&oacute;rico Penalizaciones</h5>
+    <div class="buttons">
+      <app-columns-select [(settings)]="settings"> </app-columns-select>
+      <div>
+        <div class="btn-group col-md-2" dropdown>
+          <button
+            id="button-basic"
+            dropdownToggle
+            type="button"
+            class="btn btn-success active btn-sm"
+            aria-controls="dropdown-basic">
+            Exportar <i class="bx bx-download float-icon"></i>
+          </button>
+          <ul
+            id="dropdown-basic"
+            *dropdownMenu
+            class="dropdown-menu"
+            role="menu"
+            aria-labelledby="button-basic">
+            <li role="menuitem">
+              <a class="dropdown-item" (click)="all()"
+                >Descargar Histórico <i class="bx bx-download float-icon"></i
+              ></a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-<div class="d-flex justify-content-end mr-1">
-  <app-columns-select [(settings)]="settings"> </app-columns-select>
 </div>
 <!--History Penalties Table-->
 <div class="row pt-4">

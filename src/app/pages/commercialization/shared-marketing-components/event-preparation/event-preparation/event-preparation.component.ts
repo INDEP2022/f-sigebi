@@ -16,8 +16,14 @@ import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
 import { EventStadisticsDefaultValue } from '../utils/forms/stadistics-default-form';
 import { EventPreparationMain } from './event-preparation-main.component';
 
-const LOTES_TAB = 2;
-const OPEN_TAB = 1;
+enum TABS {
+  NEW_EVENT_TAB = 0,
+  OPEN_TAB = 1,
+  LOTES_TAB = 2,
+  CUSTOMERS_TAB = 3,
+  AVAILABLE_GOODS_TAB = 4,
+  BASE_TAB = 5,
+}
 
 @Component({
   selector: 'app-event-preparation',
@@ -206,7 +212,7 @@ export class EventPreparationComponent
     const { id } = this.eventControls;
     if (!id.value) {
       setTimeout(() => {
-        this.selectTab(OPEN_TAB);
+        this.selectTab(TABS.OPEN_TAB);
         this.alert(
           'error',
           'Error',
@@ -219,6 +225,7 @@ export class EventPreparationComponent
     this.canvas.main = true;
     const params = new FilterParams();
     this.comerLotsListParams.next(params);
+    this.fillStadistics();
   }
 
   /**
@@ -252,7 +259,7 @@ export class EventPreparationComponent
       this.eventFormVisual.failureDate = true;
     }
     this.resetTableFilters();
-    this.selectTab(LOTES_TAB);
+    this.selectTab(TABS.LOTES_TAB);
     const params = new FilterParams();
     this.comerLotsListParams.next(params);
   }
@@ -290,7 +297,21 @@ export class EventPreparationComponent
   }
 
   viewCustomers() {
-    this.canvas.main = true;
+    const { id } = this.eventControls;
+    if (!id.value) {
+      this.alert(
+        'error',
+        'Error',
+        'Para ver los Clientes requiere tener un Evento Abierto'
+      );
+      setTimeout(() => {
+        this.selectTab(TABS.OPEN_TAB);
+      }, 500);
+      return;
+    }
+    this.comerCustomersListParams.next(new FilterParams());
+    this.selectTab(TABS.CUSTOMERS_TAB);
+    this.fillStadistics();
   }
 
   async validUser(event: string | number, user: string, address: 'I' | 'M') {
