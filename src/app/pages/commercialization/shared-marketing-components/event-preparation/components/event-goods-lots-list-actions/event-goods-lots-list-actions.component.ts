@@ -498,4 +498,96 @@ export class EventGoodsLotsListActionsComponent
   }
 
   // ? Clientes desde Tabla Tercero
+
+  async onLoadCustomersFroThird() {
+    const ask = await this.alertQuestion(
+      'question',
+      'Eliga una opción',
+      '',
+      'Lotificación',
+      'Cliente'
+    );
+    const { isConfirmed, dismiss } = ask;
+    if (isConfirmed) {
+      this.lotifyThirdTable();
+      return;
+    }
+
+    if (dismiss == Swal.DismissReason.cancel) {
+      this.customersTc();
+      return;
+    }
+  }
+
+  /**LOTIFICA_TABLATC */
+  lotifyThirdTable() {
+    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    console.warn('LOTIFICA_TABLATC');
+  }
+
+  /**CLIENTES_TC */
+  customersTc() {
+    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    console.warn('CLIENTES_TC');
+  }
+
+  // ? ---------------- Valida Bienes
+  onValidGoods() {
+    const { statusVtaId } = this.controls;
+    const invalidStatuses = ['SOLV', 'VALV', 'VEN', 'CONC', 'CNE', 'DES'];
+    if (invalidStatuses.includes(statusVtaId.value)) {
+      this.alert(
+        'error',
+        'Error',
+        `No puede eliminar bienes de este evento estatus de la venta: ${statusVtaId.value}`
+      );
+      return;
+    }
+    this.callRev();
+  }
+
+  /**PUP_LLAMA_REV */
+  callRev() {
+    const { eventTpId } = this.controls;
+    // PARAMETROS A ENVIAR A LA PANTALLA
+    const ESTATUS = this.reverseType();
+    const ID_EVENTO = eventTpId.value;
+    const P_DIRECCION = this.parameters.pDirection;
+    // TODO: LLAMAR A LA PANTALLA FMMOTCAMBIOREV
+  }
+
+  /**TIPO_REVERSA */
+  reverseType() {
+    const { eventTpId } = this.controls;
+    return [6, 10].includes(Number(eventTpId.value)) ? 'PRE' : 'CPV';
+  }
+
+  // ? --------------- Generar Oficio Avalúo
+  onGenerateOffice() {
+    const { eventTpId, tpsolavalId } = this.controls;
+    if (Number(eventTpId.value) != 10) {
+      this.alert(
+        'error',
+        'Error',
+        'No puede solicitar avalúo para este tipo de evento'
+      );
+      return;
+    }
+    if (!tpsolavalId.value) {
+      this.alert('error', 'Error', 'No ha seleccionado un tipo de solicitud');
+      return;
+    }
+    // TODO: PREGUNTAR POR EL LLAMADO A ESTO: "http://172.20.230.57/Pantallas/Avaluos/SolicitudAvaluo.aspx?"
+  }
+
+  // ?------------------------- Verifica Mandato
+  onVerifyMandate() {
+    this.checkLotTransf();
+  }
+
+  /**REVISA_TRANSF_X_LOTE */
+  checkLotTransf() {
+    // TODO: IMPLEMENTAR CUANDO SE TENGA
+    console.warn('REVISA_TRANSF_X_LOTE');
+  }
 }

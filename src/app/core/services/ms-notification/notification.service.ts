@@ -299,4 +299,8 @@ export class NotificationService extends HttpService {
     const route = 'application/updateUnitProgram';
     return this.post(route, body);
   }
+
+  validateGoodStatus(body: any) {
+    return this.post(this.route.ValidateGoodStatus, body);
+  }
 }

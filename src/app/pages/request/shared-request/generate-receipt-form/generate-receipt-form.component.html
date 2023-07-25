@@ -10,6 +10,7 @@
             [control]="generateReceiptForm.get('nameDelivery')"
             label="Nombre de Quien Entrega">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
               formControlName="nameDelivery" />
@@ -21,6 +22,7 @@
             [control]="generateReceiptForm.get('typeTransport')"
             label="Tipo de Transporte">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
               formControlName="typeTransport" />
@@ -34,6 +36,7 @@
             [control]="generateReceiptForm.get('chargeDelivery')"
             label="Cargo de Quien Entrega">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
               formControlName="chargeDelivery" />
@@ -45,6 +48,7 @@
             [control]="generateReceiptForm.get('plateNumber')"
             label="Número de Placa">
             <input
+              maxlength="20"
               type="text"
               class="form-control"
               formControlName="plateNumber" />
@@ -67,7 +71,11 @@
           <form-field
             [control]="generateReceiptForm.get('seal')"
             label="Precinto">
-            <input type="text" class="form-control" formControlName="seal" />
+            <input
+              maxlength="150"
+              type="text"
+              class="form-control"
+              formControlName="seal" />
           </form-field>
         </div>
       </div>
@@ -78,6 +86,7 @@
             [control]="generateReceiptForm.get('nameReceipt')"
             label="Nombre Quien Recibe">
             <input
+              maxlength="150"
               type="text"
               class="form-control"
               formControlName="nameReceipt" />
@@ -89,6 +98,7 @@
             [control]="generateReceiptForm.get('observation')"
             label="Observaciones">
             <input
+              maxlength="1500"
               type="text"
               class="form-control"
               formControlName="observation" />
@@ -104,7 +114,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="15"
+              maxlength="150"
               formControlName="chargeReceipt" />
           </form-field>
         </div>
