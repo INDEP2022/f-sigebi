@@ -17,7 +17,8 @@
               [control]="'goodId'"
               (change)="onGoodIdDescription($event)"
               [labelTemplate]="GoodLabel"
-              [optionTemplate]="GoodOption">
+              [optionTemplate]="GoodOption"
+              (change)="onSelectedGood($event)">
             </ngx-select>
           </form-field>
 
@@ -63,12 +64,16 @@
         </div>
       </div>
       <div class="form-inline justify-content-end btn-toolbar">
-        <button class="btn btn-primary btn-sm active" (click)="search()">
-          <i class="fa fa-search"></i> Buscar
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          (click)="search()">
+          Buscar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
         </button>
 
-        <button class="btn btn-danger btn-sm active" (click)="clean()">
-          Limpiar
+        <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
       <div class="row pt-4">
@@ -76,7 +81,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data">
+            [source]="data"
+            (userRowSelect)="onUserRowSelect($event)">
           </ng2-smart-table>
           <app-pagination
             [params]="params"
@@ -86,7 +92,7 @@
       <div class="row pt-4" *ngIf="searching">
         <div class="d-flex">
           <div class="p-2">
-            <button class="btn btn-success btn-sm active">
+            <button class="btn btn-success btn-sm active" (click)="accept()">
               <i class="bx bx-check"></i> Aceptar
             </button>
           </div>

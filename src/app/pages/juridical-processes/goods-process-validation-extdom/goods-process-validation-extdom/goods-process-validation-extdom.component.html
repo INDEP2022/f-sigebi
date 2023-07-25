@@ -521,7 +521,7 @@
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
         <div class="form-group">
           <button
-            [disabled]="loadingProcess"
+            [disabled]="loadingProcess || totalGoods4 == totalGoods2"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             tooltip="Agregar Seleccionados"
@@ -531,7 +531,7 @@
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
-            [disabled]="loadingProcess"
+            [disabled]="loadingProcess || totalGoods4 == totalGoods2"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             tooltip="Agregar Todos"
