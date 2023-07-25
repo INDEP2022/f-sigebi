@@ -7,4 +7,6 @@ export enum PrepareEventEndpoints {
   ComerEvent = 'comer-event',
   PA_Change_Status = 'process-v2/pa-change-status-validate',
   ProcessesTracker = 'util-comer-v1/processesTracker',
+  ApplicationDataEvent = 'application/get-data-eat-events',
+  ApplicationTpEvent = 'application/get-data-eatevents-tpevents',
 }

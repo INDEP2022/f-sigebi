@@ -216,7 +216,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           `Folio de escaneo generado correctamente`,
-          `Nro. ${response.id}`
+          `No. ${response.id}`
         );
         this.generateFo = false;
         // this.generate();
