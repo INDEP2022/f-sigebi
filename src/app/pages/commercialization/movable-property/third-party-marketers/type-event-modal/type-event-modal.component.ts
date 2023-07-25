@@ -24,7 +24,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class TypeEventModalComponent extends BasePage implements OnInit {
-  title: string = 'Tipo de Eventos';
+  title: string = 'Tipo de Evento';
   edit: boolean = false;
 
   typeEvent3erForm: ModelForm<ITypeEventXtercomer>;
@@ -181,14 +181,14 @@ export class TypeEventModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, this.title);
+    this.alert('success', `Tipo de Evento ${message} Correctamente`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, this.title);
+    this.alert('error', `Error al Intentar ${message} el Tipo de Evento`, '');
   }
 
   llenarDescription($event: any) {

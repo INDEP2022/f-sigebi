@@ -37,20 +37,20 @@ export const THIRD_COLUMNS = {
 };
 
 export const TYPE_EVENT_THIRD_COLUMNS = {
-  // thirdPartyId: {
-  //   title: 'ID 3ro Comercializador',
-  //   sort: false,
-  //   width: '20%'
-  // },
+  thirdPartyId: {
+    title: 'ID Tercero Comercializador',
+    sort: false,
+    width: '15%',
+  },
   typeEventId: {
     title: 'Tipo de Evento',
     sort: false,
-    width: '20%',
+    width: '15%',
   },
   description: {
     title: 'Descripción',
     sort: false,
-    width: '80%',
+    width: '70%',
     valuePrepareFunction: (cell: any, row: any) => {
       return row.eventDetail ? row.eventDetail.description : null;
     },
@@ -58,16 +58,15 @@ export const TYPE_EVENT_THIRD_COLUMNS = {
 };
 
 export const COMI_XTHIRC_COLUMNS = {
-  // idThirdParty: {
-  //   title: 'ID 3ro Comercializador',
-  //   sort: false,
-  //   valuePrepareFunction: (value: any) => {
-  //     return value.id;
-  //   },
-  // },
+  idThirdParty: {
+    title: 'ID Tercero Comercializador',
+    sort: false,
+    width: '15%',
+  },
   // idComiXThird: {
   //   title: 'ID Comer',
   //   sort: false,
+  //   width: '15%'
   // },
   startingAmount: {
     title: 'Monto Inicial',
