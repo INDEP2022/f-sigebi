@@ -20,7 +20,7 @@ import { DocumentsForDictumService } from 'src/app/core/services/catalogs/docume
 export class CatDocRequireModalComponent extends BasePage implements OnInit {
   documentsForDictumForm: ModelForm<IDocumentsForDictum>;
   documentsForDictum: IDocumentsForDictum;
-  title: string = 'Catálogo de requisitos documentales';
+  title: string = 'Catálogo de Requisitos Documentales';
   edit: boolean = false;
 
   constructor(

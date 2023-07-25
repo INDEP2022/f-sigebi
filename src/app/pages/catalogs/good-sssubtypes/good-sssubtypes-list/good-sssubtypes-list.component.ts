@@ -165,7 +165,7 @@ export class GoodSssubtypesListComponent extends BasePage implements OnInit {
     this.goodSssubtypeService.removeByIds(ids).subscribe({
       next: () => {
         this.getGoodSssubtypes(),
-          this.alert('success', 'Subsubsubtipo bien', 'Borrado Correctamente');
+          this.alert('success', 'Subsubsubtipo Bien', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

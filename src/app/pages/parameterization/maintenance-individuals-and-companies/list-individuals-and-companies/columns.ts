@@ -59,7 +59,7 @@ export const COLUMNS = {
     title: 'Teléfono',
     sort: false,
   },
-  zipC: {
+  zipCode: {
     title: 'Código Postal',
     sort: false,
   },

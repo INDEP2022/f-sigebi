@@ -59,8 +59,8 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'typeDictum'
+            filter.field == 'typeDictum' ||
+            filter.field == 'numRegister'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
