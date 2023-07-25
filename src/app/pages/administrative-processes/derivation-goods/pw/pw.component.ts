@@ -89,6 +89,7 @@ export class PwComponent extends BasePage implements OnInit {
             'Contraseña Incorrecta',
             'Por Favor Verificar y Volver a Intentar'
           );
+          this.loader.load = false;
         } else {
           if (this.conversionData.goodFatherNumber != null) {
             console.log(this.conversionData);
@@ -101,13 +102,16 @@ export class PwComponent extends BasePage implements OnInit {
               'Conversiones',
               'La Conversion debe tener un Bien Padre'
             );
+            this.loader.load = false;
           }
         }
       } else {
         this.alert('warning', 'Debe Introducir la Contraseña', '');
+        this.loader.load = false;
       }
     } else {
       this.alert('warning', 'Debe Introducir un Id Conversión', '');
+      this.loader.load = false;
     }
   }
 
