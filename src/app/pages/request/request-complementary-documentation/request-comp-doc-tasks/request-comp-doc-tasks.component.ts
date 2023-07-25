@@ -48,6 +48,7 @@ export class RequestCompDocTasksComponent
   dictumValidate: boolean = false;
   notifyReport: boolean = false;
   selectGoodForEyeVisit: boolean = false;
+  validateGoodForEyeVisit: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -115,7 +116,7 @@ export class RequestCompDocTasksComponent
         this.requestInfo = resp.data[0];
         this.requestId = resp.data[0].id;
         this.mapTask(this.process, resp.data[0].affair);
-        this.titleView(resp.data[0].affair);
+        this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
       },
@@ -268,12 +269,11 @@ export class RequestCompDocTasksComponent
     return new Promise(async (resolve, reject) => {
       console.log('verificando vienes oculares');
       let end = true;
-      let count = 0;
       let _page: number = 1;
       let _limit: number = 100;
       let countLimit: number = 100;
       let params = new ListParams();
-      params['filter.applicationId'] = `$eq:${56817}`; //this.requestId
+      params['filter.applicationId'] = `$eq:${this.requestId}`; //56817
       params.limit = _limit;
       let turnRequest: boolean = true;
       do {
