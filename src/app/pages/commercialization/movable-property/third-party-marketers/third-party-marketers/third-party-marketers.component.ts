@@ -132,7 +132,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               nameReason: () => (searchFilter = SearchFilter.ILIKE),
               calculationRoutine: () => (searchFilter = SearchFilter.EQ),
             };
-            search[filter.field]();
+            search[filter.field];
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;

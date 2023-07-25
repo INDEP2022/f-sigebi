@@ -58,40 +58,6 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     };
   }
   ngOnInit(): void {
-    this.dataFactGen
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            filter.field == 'idSafe' ||
-            filter.field == 'description' ||
-            filter.field == 'ubication' ||
-            filter.field == 'manager' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'municipalityCode' ||
-            filter.field == 'cityCode' ||
-            filter.field == ' localityCode'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.params = this.pageFilter(this.params);
-          this.search();
-        }
-      });
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.search());
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
@@ -136,6 +102,40 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
         }
       }
     }
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'idSafe' ||
+            filter.field == 'description' ||
+            filter.field == 'ubication' ||
+            filter.field == 'manager' ||
+            filter.field == 'stateCode' ||
+            filter.field == 'municipalityCode' ||
+            filter.field == 'cityCode' ||
+            filter.field == ' localityCode'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.search();
+        }
+      });
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.search());
   }
 
   goBack() {
@@ -172,6 +172,9 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
         this.vaults = data.data;
         this.dataFactGen.load(data.data);
         this.dataFactGen.refresh();
+      },
+      error: () => {
+        this.loading = false;
       },
     });
   }

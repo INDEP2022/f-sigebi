@@ -26,6 +26,21 @@
           </form-field>
         </div>
         <div class="col-md-4">
+          <form-field [control]="amountForm.get('idThirdParty')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="amountForm"
+              control="idThirdParty"
+              [data]="thirdPartySelect"
+              value="id"
+              bindLabel="id"
+              label="ID Tercero Comercializador"
+              (fetchItems)="getThirdPartyAll($event)">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="idThirdParty" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-4">
           <form-field
             label="Monto inicial"
             [control]="amountForm.get('startingAmount')">

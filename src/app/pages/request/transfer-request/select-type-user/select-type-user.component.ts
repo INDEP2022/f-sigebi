@@ -4,7 +4,10 @@ import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
@@ -100,7 +103,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     this.loading = true;
     const typeEmployee = this.userForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', typeEmployee);
-    this.params.value.addFilter('regionalDelegation', this.deleRegionalUserId);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalUserId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {

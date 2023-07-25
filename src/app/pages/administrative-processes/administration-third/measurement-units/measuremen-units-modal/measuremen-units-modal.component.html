@@ -9,7 +9,11 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('unit')" label="Unidad">
-            <input type="text" class="form-control" formControlName="unit" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="unit"
+              [readonly]="newOrEdit" />
           </form-field>
         </div>
         <div class="col-md-6">

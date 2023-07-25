@@ -84,14 +84,14 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     const deleRegionalId = user.delegacionreg;
     this.params.getValue()['filter.delegationreg'] = deleRegionalId;
     this.userProcessService
-      .getAllUsersWithRol(this.params.getValue())
+      .getAllUsersWithRolDistint(this.params.getValue())
       .subscribe({
         next: response => {
           this.filterUsersProg(response.data);
           this.totalItems = response.count;
           this.loading = false;
         },
-        error: error => {
+        error: () => {
           this.loading = false;
           this.alert('warning', 'Usuarios no encontrados', '');
           this.totalItems = 0;
