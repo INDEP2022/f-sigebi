@@ -2956,14 +2956,14 @@ export class DocumentsReceptionRegisterComponent
         error: () => {},
       });
     }
-    if (this.globals.bn == 0) {
-      this.notificationService.getLastWheelNumber().subscribe({
-        next: data => {
-          this.formControls.wheelNumber.setValue(data.nextval);
-        },
-        error: () => {},
-      });
-    }
+    // if (this.globals.bn == 0) {
+    //   this.notificationService.getLastWheelNumber().subscribe({
+    //     next: data => {
+    //       this.formControls.wheelNumber.setValue(data.nextval);
+    //     },
+    //     error: () => {},
+    //   });
+    // }
     if (this.formControls.wheelNumber.value == null) {
       this.existingNotification = false;
       this.notificationService.getLastWheelNumber().subscribe({
