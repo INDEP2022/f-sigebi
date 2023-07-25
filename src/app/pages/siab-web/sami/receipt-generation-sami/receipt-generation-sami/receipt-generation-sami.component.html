@@ -4,5 +4,205 @@
       <h5 class="title">Generacion de Recibos</h5>
     </div>
   </div>
-  <div body></div>
+  <div body>
+    <div class="row margin-input">
+      <form [formGroup]="programmingForm" class="form-material">
+        <div class="col-md-4">
+          <form-field
+            label="Ingresa la Programaci&oacute;n"
+            [control]="programmingForm.get('programmingId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="programmingId" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="searchPrograming()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <!-- </div> -->
+        <!-- <div class="row margin-input"> -->
+        <div class="col-md-4">
+          <form-field
+            label="ID Gesti&oacute;n"
+            [control]="programmingForm.get('managementId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="managementId" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-primary active btn-sm">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="row pt-2">
+      <div class="col-md-4">
+        <label class="label" for=""
+          >No. Gesti&oacute;n: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4">
+        <label class="label" for=""
+          >Clave &Uacute;nica: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4">
+        <label class="label" for="">Expediente: <span>......</span></label>
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for=""
+          >Descripci&oacute;n Trasferente: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for=""
+          >Cantidad Trasferente: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for=""
+          >Unidad Medida Trasferente: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for=""
+          >Estado F&iacute;sico Trasferente: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for=""
+          >Estado Conservaci&oacute;n Trasferente: <span>......</span></label
+        >
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for="">Destino Ligie: <span>......</span></label>
+      </div>
+      <div class="col-md-4 pt-2">
+        <label class="label" for=""
+          >Destino Trasferente: <span>......</span></label
+        >
+      </div>
+    </div>
+    <form [formGroup]="indepForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="indepForm.get('description')"
+            label="Descripci&oacute;n INDEP">
+            <textarea
+              formControlName="description"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Cantidad INDEP"
+            [control]="indepForm.get('quantity')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="quantity" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Unidad Medida INDEP"
+            [control]="indepForm.get('unitMeasure')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="unitMeasure" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Estado F&iacute;sico INDEP"
+            [control]="indepForm.get('physicalState')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="physicalState" />
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-2">
+          <form-field
+            label="Estado Conservaci&oacute;n INDEP"
+            [control]="indepForm.get('stateConservation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="stateConservation" />
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-2">
+          <form-field
+            label="Destino INDEP"
+            [control]="indepForm.get('destination')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="destination" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <tr>
+      <td colspan="5" align="center">
+        <button class="btn btn-primary active btn-sm m-2">
+          Asignar Recibo
+        </button>
+        <button class="btn btn-primary active btn-sm m-2">Resguardo</button>
+        <button class="btn btn-primary active btn-sm m-2">Almacén</button>
+        <button class="btn btn-primary active btn-sm m-2">
+          Reprogramaci&oacute;n
+        </button>
+        <button class="btn btn-primary active btn-sm m-2">
+          Cancelaci&oacute;n
+        </button>
+      </td>
+    </tr>
+    <div class="row margin-input">
+      <form [formGroup]="indepForm" class="form-material">
+        <div class="col-md-6 pt-2">
+          <form-field [control]="indepForm.get('cancellation')">
+            <ngx-select
+              (fetchItems)="getCancellation($event)"
+              [data]="cancellationList"
+              [form]="indepForm"
+              value="regionalCoordination"
+              bindLabel="description"
+              label="Seleccione el motivo de la Cancelaci&oacute;n"
+              control="cancellation">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-2">
+          <form-field [control]="indepForm.get('reprogramming')">
+            <ngx-select
+              (fetchItems)="getReprogramming($event)"
+              [data]="reprogramingList"
+              [form]="indepForm"
+              value="regionalCoordination"
+              bindLabel="description"
+              label="Seleccione el motivo de la Reprogramaci&oacute;n"
+              control="reprogramming">
+            </ngx-select>
+          </form-field>
+        </div>
+      </form>
+    </div>
+  </div>
 </app-card>
