@@ -83,15 +83,24 @@
               </form-field>
             </div>
 
-            <div class="col-md-3 mr-4">
-              <button
-                type="button"
-                class="btn btn-primary active btn-sm"
-                [disabled]="!flagSearch"
-                (click)="search()">
-                Buscar
-                <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
+            <div class="d-flex justify-content-center">
+              <div class="m-3">
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm"
+                  [disabled]="!flagSearch"
+                  (click)="search()">
+                  Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+              </div>
+              <div class="m-3">
+                <button
+                  type="button"
+                  class="btn btn-danger active btn-sm"
+                  (click)="cleanData()">
+                  Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+                </button>
+              </div>
             </div>
           </div>
         </form>
@@ -269,5 +278,5 @@
         </div>
       </div>
     </app-card>
-  </div></app-card
->
+  </div>
+</app-card>

@@ -320,6 +320,19 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
     }
   }
 
+  cleanData() {
+    this.performanceIndicatorForm.reset();
+    this.performanceIndicatorFormE_I.reset();
+    this.compliance = 0;
+    this.data1 = [];
+    this.data.load(this.data1);
+    this.data2 = [];
+    this.totalItemsA = 0;
+    this.totalItemsI = 0;
+    this.dataF.load(this.data2);
+    this.enabled = true;
+  }
+
   search() {
     let param = {
       yearEvaluateId: this.performanceIndicatorForm.get('year').value,
@@ -638,28 +651,112 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
         ''
       );
     } else {
+      console.log(
+        this.T_FOL_ENT,
+        '- ',
+        this.T_FOL_REG,
+        '-',
+        this.T_REP_ENT,
+        '-',
+        this.T_REP_REG
+      );
+      let lv_fol_reg: Number;
+      let lv_fol_ent: Number;
+      let lv_rep_reg: Number;
+      let lv_rep_ent: Number;
+
+      let lv_val_rep: Number = 0;
+      let lv_val_fol: Number = 0;
+
+      lv_fol_reg = this.T_FOL_REG;
+      lv_fol_ent = this.T_FOL_ENT;
+      lv_rep_reg = this.T_REP_REG;
+      lv_rep_ent = this.T_REP_ENT;
+      if (
+        this.performanceIndicatorFormE_I.get('strategyAdmin').value !=
+          undefined &&
+        this.performanceIndicatorFormE_I.get('reportImp').value != undefined &&
+        this.performanceIndicatorFormE_I.get('strategyAdmin2').value !=
+          undefined &&
+        this.performanceIndicatorFormE_I.get('reportImp2').value != undefined
+      ) {
+        if (
+          Number(this.performanceIndicatorFormE_I.get('strategyAdmin').value) ==
+            lv_fol_reg ||
+          Number(this.performanceIndicatorFormE_I.get('strategyAdmin').value) ==
+            0
+        ) {
+          if (
+            Number(
+              this.performanceIndicatorFormE_I.get('strategyAdmin2').value
+            ) == lv_fol_ent ||
+            Number(
+              this.performanceIndicatorFormE_I.get('strategyAdmin2').value
+            ) == 0
+          ) {
+            lv_val_fol = 1;
+          } else {
+            this.alert(
+              'error',
+              'No se puede cerrar el registro, el número de folios que se debierón de entregar no es correcto ...',
+              ''
+            );
+          }
+        } else {
+          this.alert(
+            'error',
+            'No se puede cerrar el registro, el número de folios registrados no es el adecuado, verifique sus datos ...',
+            ''
+          );
+        }
+
+        if (
+          Number(this.performanceIndicatorFormE_I.get('reportImp').value) ==
+            lv_rep_reg ||
+          Number(this.performanceIndicatorFormE_I.get('reportImp').value) == 0
+        ) {
+          if (
+            Number(this.performanceIndicatorFormE_I.get('reportImp2').value) ==
+              lv_rep_ent ||
+            Number(this.performanceIndicatorFormE_I.get('reportImp2').value) ==
+              0
+          ) {
+            lv_val_rep = 1;
+          } else {
+            this.alert(
+              'error',
+              'No se puede cerrar el registro, el número de reportes que se debierón de entregar no es correcto ...',
+              ''
+            );
+          }
+        } else {
+          this.alert(
+            'error',
+            'No se puede cerrar el registro, el número de reportes registrados no es el adecuado, verifique sus datos ...',
+            ''
+          );
+        }
+
+        if (lv_val_rep == 11 || lv_val_fol == 11) {
+          if (this.status == 0) {
+            this.alert(
+              'error',
+              'La Estrategia de administración ya fue cerrada ...',
+              ''
+            );
+          } else {
+            this.status = 0;
+            this.performanceIndicatorForm.patchValue({
+              dateCapture: new Date(),
+            });
+            this.alert(
+              'success',
+              'Estrategia de administración cerrada ...',
+              ''
+            );
+          }
+        }
+      }
     }
-
-    console.log(
-      this.T_FOL_ENT,
-      '- ',
-      this.T_FOL_REG,
-      '-',
-      this.T_REP_ENT,
-      '-',
-      this.T_REP_REG
-    );
-    let lv_fol_reg: Number;
-    let lv_fol_ent: Number;
-    let lv_rep_reg: Number;
-    let lv_rep_ent: Number;
-
-    let lv_val_rep: Number = 0;
-    let lv_val_fol: Number = 0;
-
-    lv_fol_reg = this.T_FOL_REG;
-    lv_fol_ent = this.T_FOL_ENT;
-    lv_rep_reg = this.T_REP_REG;
-    lv_rep_ent = this.T_REP_ENT;
   }
 }
