@@ -36,7 +36,11 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
       idDate: [null, [Validators.required]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
     });
     if (this.calendar != null) {

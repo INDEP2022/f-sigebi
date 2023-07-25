@@ -224,7 +224,7 @@ export class AttributesRegLogicalTablesComponent
       next: () => {
         this.alert(
           'success',
-          'Registro de Atributos para Tablas Lógicas',
+          'Registro de Atributo para Tabla Lógica',
           'Borrada Correctamente'
         );
         this.getRegisterAttribute(this.data);
