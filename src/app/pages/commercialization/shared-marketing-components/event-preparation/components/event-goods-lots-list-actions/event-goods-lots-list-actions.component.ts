@@ -25,6 +25,7 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import Swal from 'sweetalert2';
 import { EventPreparationService } from '../../event-preparation.service';
@@ -582,12 +583,46 @@ export class EventGoodsLotsListActionsComponent
 
   // ?------------------------- Verifica Mandato
   onVerifyMandate() {
-    this.checkLotTransf();
+    this.checkLotTransf().subscribe();
   }
 
   /**REVISA_TRANSF_X_LOTE */
   checkLotTransf() {
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.warn('REVISA_TRANSF_X_LOTE');
+    this.loader.load = true;
+    const { id } = this.controls;
+    const eventId = id.value;
+    const pLote = this.lotSelected?.id ?? null;
+    return this.lotService.checkTransXLot({ eventId, pLote }).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', ' Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(resp => {
+        this.loader.load = false;
+        this.validateTrasXLoteResponse(resp);
+      })
+    );
+  }
+
+  validateTrasXLoteResponse(resp: string | { data: string }) {
+    if (typeof resp != 'string') {
+      this.alert(
+        'success',
+        'Los Bienes de los Lotes pertenecen a un solo Mandato, Prueba Completada',
+        ''
+      );
+      return;
+    }
+    const message = resp;
+    const splitedMsg = message.split(' ');
+    const lot = splitedMsg[2];
+    this.alert(
+      'warning',
+      `El Lote ${
+        lot ?? ''
+      }  tiene Bienes de diferente Mandato, presione el botón Actualizar Mandato`,
+      ''
+    );
   }
 }
