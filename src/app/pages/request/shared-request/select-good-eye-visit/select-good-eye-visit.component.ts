@@ -11,8 +11,8 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-import { ModifyDatesModalComponent } from '../modify-dates-modal/modify-dates-modal.component';
-import { ViewFileButtonComponent } from '../view-file-button/view-file-button.component';
+import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
+import { ModifyDatesModalComponent } from './modify-dates-modal/modify-dates-modal.component';
 import { SELECT_GOODS_EYE_VISIT_COLUMNS } from './select-good-eye-visit-columns';
 
 @Component({
@@ -122,7 +122,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     //this.selectedGoodColumns.load(this.goodTestData) //= [...this.selectedGoodColumns, good];
     //this.selectedGoodTotalItems = this.goodTestData.length;
     this.loading = true;
-    params['filter.applicationId'] = `$eq:${56817}`;
+    params['filter.applicationId'] = `$eq:${this.idRequest}`; //56817
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
         setTimeout(() => {

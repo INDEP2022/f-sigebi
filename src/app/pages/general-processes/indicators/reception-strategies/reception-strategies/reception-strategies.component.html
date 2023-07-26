@@ -10,8 +10,10 @@
         (cleanEmmit)="clean($event)"
         [isReceptionStrategies]="true"></capture-filter-dict>
     </div>
+    <hr />
     <div class="row pt-3">
       <div class="col-md-12 d-flex justify-content-between">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
         <span class="text-success">
           <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
           <b>{{ blkcontrol.totalcumplido }}</b>
@@ -24,7 +26,6 @@
           ><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
           <b>{{ blkcontrol.porcentajeCunplido }}&#37;</b></span
         >
-        <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
     <div class="row">
