@@ -23,7 +23,6 @@ export class RegistrationHelper extends BasePage {
 
   updateExpedient(requestId: number, recordId: number) {
     return new Promise((resolve, reject) => {
-      debugger;
       this.goodProcessService.updateFileNumber(requestId, recordId).subscribe({
         next: resp => {
           resolve(resp);
@@ -31,9 +30,9 @@ export class RegistrationHelper extends BasePage {
         error: error => {
           this.onLoadToast(
             'error',
-            'No se pudo actualizar el expdiente de los bienes'
+            'No se pudo actualizar el expediente de los bienes'
           );
-          reject('No se pudo actualizar el expdiente de los bienes');
+          reject('No se pudo actualizar el expediente de los bienes');
         },
       });
     });
@@ -139,15 +138,19 @@ export class RegistrationHelper extends BasePage {
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
-      this.message('error', 'La solicitud no tiene expediente asociado', '');
+      this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 1) {
-      this.message('error', 'Se debe asociar un documento a la solicitud', '');
+    } else if (!lisDocument || lisDocument < 2) {
+      this.message(
+        'warning',
+        'Se debe asociar un documento a la solicitud para continuar',
+        ''
+      );
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
       this.message(
-        'error',
+        'warning',
         'Se marcó la solicitud como urgente, se debe tener una fecha de prioridad',
         ''
       );
@@ -155,14 +158,14 @@ export class RegistrationHelper extends BasePage {
     } else if (idTrandference === 1) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'error',
+          'warning',
           'Para la transferente FGR/PGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
         validoOk = false;
       } else if (circumstantialRecord === '' && previousInquiry === '') {
         this.message(
-          'error',
+          'warning',
           'Para la transferente FGR/PGR se debe tener al menos Acta Circunstancial o Averiguación Previa',
           ''
         );
@@ -172,13 +175,13 @@ export class RegistrationHelper extends BasePage {
     } else if (idTrandference === 3) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'error',
+          'warning',
           'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
       } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
         this.message(
-          'error',
+          'warning',
           'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
           ''
         );
@@ -197,7 +200,7 @@ export class RegistrationHelper extends BasePage {
         paperDate == null
       ) {
         this.message(
-          'error',
+          'warning',
           'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos',
           ''
         );
@@ -213,7 +216,7 @@ export class RegistrationHelper extends BasePage {
     ) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'error',
+          'warning',
           'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos',
           ''
         );
