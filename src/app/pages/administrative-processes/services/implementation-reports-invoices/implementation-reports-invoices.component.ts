@@ -623,5 +623,6 @@ export class ImplementationReportsInvoicesComponent
     this.strategy.load([]);
     this.data.load([]);
     this.totalValue = 0;
+    this.totalItems = 0;
   }
 }
