@@ -114,17 +114,13 @@ export class ParametersListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterModService.newRemove(parameter).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert(
-                'success',
-                'Parámetro Comercialización',
-                'Borrado Correctamente'
-              );
+              this.alert('success', 'Borrado Correctamente', '');
               this.getParameters();
             }
           },

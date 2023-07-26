@@ -1154,6 +1154,9 @@
                           <th scope="col" class="text-nowrap">
                             Estado Conservaci&oacute;n INDEP
                           </th>
+
+                          <th scope="col" class="text-nowrap">Observación</th>
+                          <th scope="col" class="text-nowrap">Destino INDEP</th>
                           <th scope="col" class="text-nowrap text-center">
                             Acciones
                           </th>
@@ -1282,29 +1285,58 @@
                                   </option>
                                 </select>
                               </td>
+
+                              <td class="text-center align-baseline">
+                                {{ good.get('observations')?.value }}
+                              </td>
+
+                              <td class="text-center align-baseline">
+                                <select
+                                  [value]="
+                                    executeForm.get('transferentDestiny').value
+                                  "
+                                  class="form-select"
+                                  style="
+                                    width: 150px;
+                                    height: 40px;
+                                    font-size: 13px !important;
+                                  "
+                                  formControlName="transferentDestiny">
+                                  <option
+                                    *ngFor="let transfer of transfersDestinity"
+                                    [value]="transfer.keyId">
+                                    {{ transfer.description }}
+                                  </option>
+                                </select>
+                              </td>
                               <td
-                                class="text-center align-baseline"
-                                class="text-nowrap">
+                                class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
                                     class="fa fa-file mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    style="cursor: pointer">
+                                    Ver Etiqueta</i
+                                  >
+                                </a>
 
                                 <a class="text-center">
                                   <i
                                     (click)="editGood(good.value)"
                                     class="fa fa-pencil-alt mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    style="cursor: pointer">
+                                    Editar</i
+                                  >
+                                </a>
 
                                 <a class="text-center">
                                   <i
                                     (click)="updateInfo(good.value)"
                                     class="fa fa-retweet mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    style="cursor: pointer">
+                                    Actualizar</i
+                                  >
+                                </a>
                               </td>
                             </ng-container>
                           </tr>
