@@ -31,7 +31,7 @@
           <ngx-select
             [form]="providerForm"
             control="user"
-            (fetchItems)="searchUser()"
+            (fetchItems)="searchUser($event)"
             [showTooltip]="true"
             [data]="selectUser"
             bindLabel="name"
@@ -88,9 +88,7 @@
         <confirm-button
           [disabled]="!providerForm.valid"
           [loading]="loading"
-          (confirm)="confirm()"
-          >Registrar</confirm-button
-        >
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

@@ -128,6 +128,7 @@ export class CustomersRepresentantsListComponent
   }
 
   openFormRepresentative(representative?: IRepresentative) {
+    console.log(representative);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       representative,

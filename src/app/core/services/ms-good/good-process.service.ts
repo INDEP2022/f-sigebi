@@ -223,4 +223,14 @@ export class GoodProcessService extends HttpService {
   }) {
     return this.post('application/pup-reconcilied', body);
   }
+
+  updateFileNumber(requestId: number, recordId?: number) {
+    const body: any = { proceedingsNumber: recordId };
+    const route = GoodProcessPoints.UpdateProcedingNumber;
+    if (recordId) {
+      return this.put(`${route}/${requestId}`, body);
+    } else {
+      return this.put(`${route}/${requestId}`);
+    }
+  }
 }

@@ -106,14 +106,16 @@
           text="Imprimir"
           loadingText="Generando Reporte"
           (confirm)="confirm()"
+          [btnSmall]="true"
+          icon="bx bx-printer bx-sm float-icon"
           [disabled]="!form.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button
           (click)="cleanForm()"
           type="button"
-          class="btn btn-danger active">
-          Limpiar
+          class="btn btn-danger btn-sm active">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
