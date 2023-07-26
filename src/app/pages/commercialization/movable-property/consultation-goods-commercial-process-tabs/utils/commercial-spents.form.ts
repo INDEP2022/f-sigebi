@@ -41,6 +41,5 @@ export class CommercialSpentForm {
     Validators.maxLength(20),
   ]);
   mandate = new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]);
-
   descMandate = new FormControl(null);
 }
