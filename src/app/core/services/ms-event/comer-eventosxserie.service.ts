@@ -33,8 +33,7 @@ export class ComerEventosXSerieService extends HttpService {
     return this.put(EventEndpoints.EventXSerie, comerEvent);
   }
 
-  remove(id: string | number) {
-    const route = `${this.endpoint}/${id}`;
-    return this.delete(route);
+  remove(data: { idInvoiceFolio: string; idTpevent: number }) {
+    return this.delete(EventEndpoints.EventXSerie, data);
   }
 }
