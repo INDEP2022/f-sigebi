@@ -43,11 +43,19 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
       id: [null],
       keyCompany: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       keyZoneContract: [null, Validators.required],
     });
@@ -71,6 +79,13 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   }
 
   create(): void {
+    if (
+      this.thirdPartyCompanyForm.controls['description'].value.trim() === '' ||
+      this.thirdPartyCompanyForm.controls['keyCompany'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.thirdPartyCompanyService
       .create(this.thirdPartyCompanyForm.value)

@@ -80,6 +80,10 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.cityForm.controls['noSubDelegation'].setValue(
         this.selectedDelegation.id
       );
+      this.cityForm.controls['state'].setValue(
+        this.selectedState.descCondition
+      );
+
       this.getDelegations(new ListParams());
       this.getSubDelegations(new ListParams());
       this.getStates(new ListParams());

@@ -57,7 +57,6 @@ export class IfaiSeriesFormComponent extends BasePage implements OnInit {
     if (this.ifaiSerie != null) {
       this.edit = true;
       this.ifaiSerieForm.patchValue(this.ifaiSerie);
-      this.ifaiSerieForm.controls['status'].disable();
     }
   }
   close() {
