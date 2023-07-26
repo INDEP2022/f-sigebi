@@ -48,4 +48,15 @@ export class ComerEventService extends HttpService {
       params
     );
   }
+  getAllFilterComerGoodLot(params: any) {
+    return this.get<any>(`comer-good-xlot?filter.goodNumber=${params}`);
+  }
+
+  getDataEvent(params: _Params | string) {
+    return this.get(PrepareEventEndpoints.ApplicationDataEvent, params);
+  }
+
+  getDataTpEvents(idEvent: number) {
+    return this.get(`${PrepareEventEndpoints.ApplicationTpEvent}/${idEvent}`);
+  }
 }

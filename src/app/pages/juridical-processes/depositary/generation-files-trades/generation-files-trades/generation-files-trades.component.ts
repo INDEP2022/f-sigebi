@@ -72,7 +72,7 @@ export class GenerationFilesTradesComponent
         this.selectWheel = new DefaultSelect(data.data, data.count);
       },
       error: error => {
-        this.onLoadToast('warning', error.error.message, '');
+        this.onLoadToast('warning', 'No se encuetra el Volante', '');
         this.cleanForm();
         this.selectWheel = new DefaultSelect();
       },

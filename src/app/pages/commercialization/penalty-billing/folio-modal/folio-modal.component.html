@@ -3,24 +3,16 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
-    <div class="row mt-3">
-      <div class="col-sm-12 col-md-12 col-lg-6">
-        <div class="form-material">
-          <search-bar [params]="params"></search-bar>
-        </div>
-      </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <div *ngIf="!loading">
+      <ng2-smart-table
+        (rowSelect)="isSelect($event.data)"
+        [attr.class]="'table-bordered table-responsive mb-4'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
     </div>
-    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          id="folioTable"
-          [settings]="folioSettings"
-          [source]="folioColumns"
-          (userRowSelect)="select($event.selected)">
-        </ng2-smart-table>
-      </div>
-    </ng-scrollbar>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <app-pagination [filterParams]="filter" [totalItems]="totalItems">
     </app-pagination>
   </div>
   <div footer>
@@ -28,15 +20,18 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary btn-sm active"
           (click)="confirm()"
-          [disabled]="selectedRows.length == 0">
+          [disabled]="!selectedRows.folioinvoiceId">
           Seleccionar
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Regresar
         </button>
       </div>
     </div>

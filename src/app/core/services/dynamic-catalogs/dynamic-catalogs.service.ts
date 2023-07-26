@@ -61,4 +61,8 @@ export class DynamicCatalogService extends HttpService {
       }>
     >(`dinamic-tables/getClaveCTransparente`, { no_expediente });
   }
+
+  faEtapaind(dateEtapa: string) {
+    return this.post('application/faEtapaind', { dateEtapa });
+  }
 }

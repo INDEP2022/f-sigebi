@@ -10,4 +10,6 @@ export enum EventEndpoints {
   FilterEvent = '?search=&filter.eventDad',
   FilterGood = '?search=&filter.goodNumber',
   FilterLot = '?search=&filter.lo',
+  EventXSerie = 'comer-tpeventxserie',
+  Application = 'application',
 }

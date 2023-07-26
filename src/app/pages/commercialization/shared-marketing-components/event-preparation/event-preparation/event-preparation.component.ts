@@ -8,6 +8,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { EventPreparationService } from '../event-preparation.service';
@@ -16,8 +17,14 @@ import { EventStadisticsForm } from '../utils/forms/event-stadistics-form';
 import { EventStadisticsDefaultValue } from '../utils/forms/stadistics-default-form';
 import { EventPreparationMain } from './event-preparation-main.component';
 
-const LOTES_TAB = 2;
-const OPEN_TAB = 1;
+enum TABS {
+  NEW_EVENT_TAB = 0,
+  OPEN_TAB = 1,
+  LOTES_TAB = 2,
+  CUSTOMERS_TAB = 3,
+  AVAILABLE_GOODS_TAB = 4,
+  BASE_TAB = 5,
+}
 
 @Component({
   selector: 'app-event-preparation',
@@ -54,7 +61,8 @@ export class EventPreparationComponent
     private comerEventosService: ComerEventosService,
     private lotService: LotService,
     private eventPreparationService: EventPreparationService,
-    private globalVarsService: GlobalVarsService
+    private globalVarsService: GlobalVarsService,
+    private eventAppService: EventAppService
   ) {
     super();
     // TODO: Recibir los parametros
@@ -71,7 +79,23 @@ export class EventPreparationComponent
     const { REL_BIENES } = global;
     if (REL_BIENES) {
       await this.onOpenEvent();
+      await this.verifyRejectedGoods();
     }
+  }
+
+  /**VERIFICARECHAZADOS */
+  async verifyRejectedGoods() {
+    const { id } = this.eventControls;
+    return firstValueFrom(
+      this.eventAppService.verifyRejectedGoods(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.warn({ response });
+        })
+      )
+    );
   }
 
   async ngOnInit() {
@@ -206,19 +230,20 @@ export class EventPreparationComponent
     const { id } = this.eventControls;
     if (!id.value) {
       setTimeout(() => {
-        this.selectTab(OPEN_TAB);
+        this.selectTab(TABS.OPEN_TAB);
         this.alert(
           'error',
           'Error',
           'Para trabajar los lotes requiere tener un evento abierto'
         );
-      }, 500);
+      });
       return;
     }
     this.defaultMenu();
     this.canvas.main = true;
     const params = new FilterParams();
     this.comerLotsListParams.next(params);
+    this.fillStadistics();
   }
 
   /**
@@ -252,7 +277,7 @@ export class EventPreparationComponent
       this.eventFormVisual.failureDate = true;
     }
     this.resetTableFilters();
-    this.selectTab(LOTES_TAB);
+    this.selectTab(TABS.LOTES_TAB);
     const params = new FilterParams();
     this.comerLotsListParams.next(params);
   }
@@ -290,7 +315,21 @@ export class EventPreparationComponent
   }
 
   viewCustomers() {
-    this.canvas.main = true;
+    const { id } = this.eventControls;
+    if (!id.value) {
+      this.alert(
+        'error',
+        'Error',
+        'Para ver los Clientes requiere tener un Evento Abierto'
+      );
+      setTimeout(() => {
+        this.selectTab(TABS.OPEN_TAB);
+      });
+      return;
+    }
+    this.comerCustomersListParams.next(new FilterParams());
+    this.selectTab(TABS.CUSTOMERS_TAB);
+    this.fillStadistics();
   }
 
   async validUser(event: string | number, user: string, address: 'I' | 'M') {
@@ -321,5 +360,52 @@ export class EventPreparationComponent
       },
     };
     this.parameters.pValids = grant ? 1 : 0;
+  }
+
+  availableGoods() {
+    const { eventTpId, statusVtaId, id } = this.eventControls;
+    if (!id.value) {
+      this.canNotSeeAvailableGoods('Debe tener un lote seleccionado');
+      return;
+    }
+    if (eventTpId.value == 9) {
+      this.canNotSeeAvailableGoods(
+        'Opción no disponible para este tipo de evento,lotifique desde archivo'
+      );
+      return;
+    }
+
+    if (!this.consignment()) {
+      this.canNotSeeAvailableGoods(
+        'Este tipo de Evento no permite esta funcionalidad'
+      );
+      return;
+    }
+
+    if (statusVtaId.value != 'PREP') {
+      this.canNotSeeAvailableGoods(
+        'Este tipo de Evento ya no admite incorporacion de bienes'
+      );
+      return;
+    }
+
+    this.preparation = !(eventTpId.value == 10);
+  }
+
+  /** REMESA */
+  consignment() {
+    const { eventTpId } = this.eventControls;
+    return !(eventTpId.value == 6);
+  }
+
+  canNotSeeAvailableGoods(reason: string) {
+    this.alert('error', 'Error', reason);
+    setTimeout(() => {
+      this.selectTab(TABS.OPEN_TAB);
+    });
+  }
+
+  exitConsignment() {
+    this.selectTab(TABS.LOTES_TAB);
   }
 }

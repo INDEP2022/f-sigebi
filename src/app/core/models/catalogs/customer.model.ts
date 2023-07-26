@@ -1,6 +1,6 @@
 export interface ICustomer {
   id?: number;
-  reasonName: string;
+  reasonName?: string;
   rfc: string;
   sellerId: ISeller | number;
   street: string;
@@ -30,7 +30,38 @@ export interface ICustomer {
   economicAgreementKey: string;
   identificationType: number;
   identificationNumber: string;
-  agentId: number;
+  agentId: {
+    id: number;
+    reasonName: string;
+    paternalSurname: string;
+    maternalSurname: string;
+    dateBorn: string;
+    rfc: string;
+    curp: string;
+    personType: string;
+    identificationType: number;
+    autEmiIndentify: string;
+    identificationNumber: string;
+    escrowNumber: string;
+    nationalityKey: string;
+    countryOriginKey: string;
+    street: string;
+    outsideNumber: string;
+    insisdeNumber: null;
+    city: string;
+    suburb: string;
+    delegation: string;
+    zipCode: number;
+    state: string;
+    homeCountryKey: string;
+    fax: string;
+    countryPhoneKey: string;
+    phone: number;
+    mailWeb: string;
+    ecoActivityKey: string;
+    repAssociatedId: string;
+    registerNumber: string;
+  };
   outsideNumber: string;
   insideNumber: string;
   password: string;
@@ -40,6 +71,7 @@ export interface ICustomer {
   branch: string;
   checksAccount: string;
   penaltyInitDate: string;
+  penaltyEndDate: string;
   penalizeUser: string;
 }
 
@@ -53,4 +85,64 @@ export interface ISeller {
   reasonName: string;
   rfc: string;
   street: string;
+}
+
+export interface ICustomersPenalties {
+  id: number;
+  reference: number;
+  movementNumber: number;
+  date: string;
+  amount: number;
+  bankKey: string;
+  code: number;
+  lotId: number;
+  clientId: {
+    id: number;
+  };
+  validSystem: string;
+  notInTime: string;
+  description: string;
+  type: string;
+  incomeid: string;
+  result: string;
+  branchOffice: number;
+  paymentIdReturns: string;
+  reconciled: string;
+  registrationDate: string;
+  referenceOri: number;
+  account: string;
+  oiDate: string;
+  appliedTo: string;
+  customerId: number;
+  oiFolio: string;
+  indicator: string;
+  codeEdoCta: string;
+  affectedDate: string;
+  registryNumber: string;
+  satTypeId: number;
+  expenseId: string;
+  paymentRequestId: string;
+}
+
+export interface IHistoryCustomersPenalties {
+  // data: any;
+  customerId: number;
+  batchId: number;
+  penaltyId: number;
+  eventId: number;
+  batchPublic: number;
+  initialDate: string;
+  finalDate: string;
+  processType: number;
+  referenceJobOther: string;
+  user: string;
+  flag: number;
+  recordNumber: number;
+  usrPenalize: string;
+  usrfree: string;
+  penalizesDate: string;
+  releasesDate: string;
+  causefree: string;
+  nbOrigin: string;
+  // penalty: string;
 }

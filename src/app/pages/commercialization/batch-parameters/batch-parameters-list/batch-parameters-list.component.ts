@@ -1,12 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IRequestLotParam } from 'src/app/core/models/requests/request-lot-params.model';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
+import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
   selector: 'app-batch-parameters-list',
@@ -16,8 +21,8 @@ import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
 export class BatchParametersListComponent extends BasePage implements OnInit {
   adding: boolean = false;
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  lotparams: IRequestLotParam[] = [];
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  lotData: LocalDataSource = new LocalDataSource();
   filterRow: any;
   addOption: any;
   addRowElement: any;
@@ -53,30 +58,90 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       confirmSave: true,
     },
   };
-
-  constructor(private lotparamsService: LotParamsService) {
+  columnFilters: any = [];
+  constructor(
+    private lotparamsService: LotParamsService,
+    private modalService: BsModalService
+  ) {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
     this.paramSettings.actions.delete = true;
+
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        add: false,
+        delete: true,
+        position: 'right',
+      },
+      columns: { ...BATCH_PARAMETERS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
-    this.hideFilters();
-    this.params
+    // this.hideFilters();
+    this.lotData
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              idLot: () => (searchFilter = SearchFilter.EQ),
+              idEvent: () => (searchFilter = SearchFilter.EQ),
+              publicLot: () => (searchFilter = SearchFilter.EQ),
+              specialGuarantee: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList = this.pageFilter(this.paramsList);
+          //Su respectivo metodo de busqueda de datos
+          this.getLotParams();
+        }
+      });
+
+    this.paramsList
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLotParams());
   }
 
   getLotParams() {
-    const params = this.params.getValue();
     this.loading = true;
-    this.lotparamsService.getAll(params).subscribe({
+    this.totalItems = 0;
+    let params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    this.lotparamsService.getAll_(params).subscribe({
       next: response => {
         this.loading = false;
-        this.lotparams = response.data;
+        this.lotData.load(response.data);
+        this.lotData.refresh();
         this.totalItems = response.count;
       },
-      error: () => (this.loading = false),
+      error: error => {
+        this.totalItems = 0;
+        this.lotData.load([]);
+        this.loading = false;
+      },
     });
   }
 
@@ -199,28 +264,21 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     let { confirm } = event;
     const idLot = event.data.idLot;
 
-    this.alertQuestion(
-      'question',
-      'Eliminar',
-      '¿Desea eliminar el registro?',
-      'Aceptar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        // Llamar servicio para eliminar
-        this.lotparamsService.remove(idLot).subscribe({
-          next: resp => {
-            this.msgModal(
-              'Se elimino el parametro '.concat(`<strong>${idLot}</strong>`),
-              'Eliminaci&oacute;n exitosa',
-              'success'
-            );
-          },
-        });
-
-        confirm.resolve(event.newData);
-        this.totalItems -= 1;
+    this.alertQuestion('question', '¿Desea Eliminar el Registro?', '').then(
+      question => {
+        if (question.isConfirmed) {
+          // Llamar servicio para eliminar
+          this.lotparamsService.remove(idLot).subscribe({
+            next: resp => {
+              this.alert('error', 'Registro Eliminado Correctamente', '');
+            },
+            error: err => {
+              this.alert('error', 'Error al Eliminar el Registro', '');
+            },
+          });
+        }
       }
-    });
+    );
   }
 
   msgModal(message: string, title: string, typeMsg: any) {
@@ -233,5 +291,29 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
     }).then(result => {});
+  }
+
+  edit(event: any) {
+    this.openForm(event.data, true);
+  }
+  add() {
+    this.openForm(null, false);
+  }
+
+  openForm(data: any, editVal: boolean) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        edit: editVal,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getLotParams();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NewAndUpdateComponent, config);
   }
 }

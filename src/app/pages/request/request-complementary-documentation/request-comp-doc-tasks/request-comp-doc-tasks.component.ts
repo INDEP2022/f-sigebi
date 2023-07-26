@@ -9,22 +9,29 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
+import { CompDocTasksComponent } from './comp-doc-task.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
   templateUrl: './request-comp-doc-tasks.component.html',
   styles: [],
 })
-export class RequestCompDocTasksComponent extends BasePage implements OnInit {
+export class RequestCompDocTasksComponent
+  extends CompDocTasksComponent
+  implements OnInit
+{
   /* CALL TABS DINAMICALY */
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   /**
@@ -39,6 +46,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   expRequest: boolean = false;
   viewSelectedGoods: boolean = false;
   dictumValidate: boolean = false;
+  notifyReport: boolean = false;
+  selectGoodForEyeVisit: boolean = false;
+  validateGoodForEyeVisit: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -50,8 +60,9 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   requestId: number = 0;
   contributor: string = '';
   processDetonate: string = '';
+  process: string = '';
   title: string;
-  requestInfo: any;
+  requestInfo: IRequest;
   screenWidth: number;
   public typeDoc: string = '';
   public updateInfo: boolean = false;
@@ -64,7 +75,10 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
+  //private rejectedService = inject(RejectedGoodService)
+
   /*  */
+
   constructor(
     private location: Location,
     private route: ActivatedRoute,
@@ -80,17 +94,10 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     const requestId = Number(this.route.snapshot.paramMap.get('request'));
-    const process = this.route.snapshot.paramMap.get('process');
-    //this.route.paramMap.subscribe(params => {
+    this.process = this.route.snapshot.paramMap.get('process');
     if (requestId) {
-      //this.requestId = parseInt(params.get('request'));
       this.getRequestInfo(requestId);
-      /**
-       *MAP TASKS
-       * */
     }
-    //});
-
     this.expedientEventTrigger();
   }
 
@@ -101,33 +108,20 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   }
 
   getRequestInfo(requestId: number) {
-    // Llamar servicio para obtener informacion de la solicitud
-    const process = this.route.snapshot.paramMap.get('process');
     const param = new FilterParams();
     param.addFilter('id', requestId);
     const filter = param.getParams();
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
-        this.titleView();
         this.requestId = resp.data[0].id;
-        this.mapTasks(process, resp.data[0].affair);
+        this.mapTask(this.process, resp.data[0].affair);
+        this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
-        //cierra el tab de buscar bienes solicitudes
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
       },
     });
     this.contributor = 'CARLOS G. PALMA';
-  }
-
-  titleView() {
-    if (this.requestInfo?.affair == 13) {
-      this.title = `DOCUMENTACIÓN COMPLEMENTARIA: Registro de Documentación Complementaria, No. Solicitud ${this.requestInfo.id}`;
-      this.complementaryDoc = true;
-    } else if (this.requestInfo?.affair == 10) {
-      this.title = `Devolución: Registro de documentación complementaria, No. Solicitud ${this.requestInfo.id}`;
-      this.complementaryDoc = true;
-    }
   }
 
   expedientSelected(event: any) {
@@ -159,8 +153,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   }
 
   close() {
-    // this.registRequestForm.reset();
-    //this.router.navigate(['pages/request/list']);
     this.location.back();
   }
 
@@ -184,9 +176,22 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
       '',
       'Turnar'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        if (this.process == 'similar-good-register-documentation') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else if (this.process == 'BSRegistroSolicitudes') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else if (this.process == 'BSNotificarTransferente') {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        } else if (this.process == 'BSVisitaOcular') {
+          const turn = await this.turnEyeVisitor();
+          if (turn == true) {
+            this.turnResquestMessage(this.requestId);
+          }
+        } else {
+          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+        }
       }
     });
   }
@@ -207,120 +212,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     });
   }
 
-  mapTasks(process: string, affair: number): void {
-    console.log('process', process);
-    console.log('affair', affair);
-    //REGISTRAR SOLICITUD
-    /*regRequest
-    associateReqSimGoods
-    selectOriginGoods
-    requestSiabSearch
-    integrateDocFile
-    turn
-    //Revision de lineamientos
-    receive
-    guidelinesReview
-    integrateDocFile
-    createReport
-    turn
-    //GENERAR RESULTADOS
-    receiveRequest
-    reject//AnalysisResults
-    guidelinesReview
-    integrateDocFile
-    sign
-    turn
-    //Validar dictamen
-    receive// request for opinion validation
-    reject// opinion validation
-    regOpinionValidation
-    integrateDocFile
-    createReport
-    turn*/
-
-    switch (process) {
-      case 'register-request':
-        if (affair == 13) {
-          this.regDocForm = true;
-          this.regDocView = false;
-          this.searchRequestSimGoods = true;
-          this.selectGoods = false;
-          this.viewSelectedGoods = false;
-          this.guidelines = false;
-          this.docRequest = false;
-          this.expRequest = true;
-          this.saveRequest = true;
-          this.dictumValidate = false;
-
-          this.turnReq = true;
-          this.createReport = false;
-          this.rejectReq = false;
-        } else if (affair == 10) {
-          this.searchRequestSimGoods = true;
-          this.regDocForm = true;
-          this.selectGoods = true;
-          this.expRequest = true;
-        }
-
-        break;
-      case 'guidelines-review':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = true;
-        this.guidelines = true;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
-
-        this.turnReq = true;
-        this.createReport = true;
-        this.rejectReq = false;
-
-        break;
-      case 'analysis-result':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = true;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = false;
-
-        this.turnReq = true;
-        this.createReport = true;
-        this.rejectReq = true;
-
-        break;
-      case 'dictum-validate':
-        this.regDocForm = false;
-        this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = true;
-        this.docRequest = false;
-        this.expRequest = true;
-        this.saveRequest = true;
-        this.dictumValidate = true;
-
-        this.turnReq = true;
-        this.createReport = true;
-        this.rejectReq = true;
-
-        break;
-      default:
-        break;
-    }
-  }
-
-  /*METODO QUE OYE CUANDO LA CARATULA SE CREO
-  ============================================= */
   expedientEventTrigger() {
     this.requestHelperService.currentExpedient.subscribe({
       next: resp => {
@@ -333,8 +224,6 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
     });
   }
 
-  /* METODO QUE CIERRA EL TAB DE CREAR CARATULA
-  ============================================== */
   closeSearchRequestSimGoodsTab(recordId: number) {
     if (recordId) {
       this.searchRequestSimGoods = false;
@@ -361,6 +250,71 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       error: error => {
         console.log('no se encontraron datos en asuntos ', error);
       },
+    });
+  }
+
+  openNotifyReport(context?: Partial<CreateReportComponent>) {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+      } //this.getCities();
+    });
+  }
+
+  async turnEyeVisitor() {
+    return new Promise(async (resolve, reject) => {
+      console.log('verificando vienes oculares');
+      let end = true;
+      let _page: number = 1;
+      let _limit: number = 100;
+      let countLimit: number = 100;
+      let params = new ListParams();
+      params['filter.applicationId'] = `$eq:${this.requestId}`; //56817
+      params.limit = _limit;
+      let turnRequest: boolean = true;
+      do {
+        params.page = 1;
+        const GRDResult: any = await this.getGoodResDev(params);
+        const error: any = await this.verifyEyesVisit(GRDResult.data);
+        if (error > 0) {
+          end = false;
+          turnRequest = false;
+          this.onLoadToast(
+            'error',
+            'Es necesario establecer fechas/horas inicio y fin de la visita ocular'
+          );
+        }
+        if (GRDResult.count >= countLimit) {
+          _page = 2;
+          countLimit = countLimit + 100;
+        } else {
+          end = false;
+        }
+      } while (end);
+
+      resolve(turnRequest);
+    });
+  }
+
+  verifyEyesVisit(data: any) {
+    return new Promise((resolve, reject) => {
+      let count = 0;
+      data.map((item: any) => {
+        if (item.codeStore != null) {
+          if (
+            item.resultFinal != 'Y' ||
+            item.startVisitDate == null ||
+            item.endVisitDate == null
+          ) {
+            count++;
+          }
+        }
+      });
+      resolve(count);
     });
   }
 }

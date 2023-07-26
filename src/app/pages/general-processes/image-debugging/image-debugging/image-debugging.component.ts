@@ -66,7 +66,7 @@ import {
 import { SubdelegationService } from '../../../../core/services/catalogs/subdelegation.service';
 import { AllExpedientComponent } from '../all-expedient/all-expedient/all-expedient.component';
 import { GoodsPhotoService } from '../services/image-debugging-service';
-import { IMAGE_DEBUGGING_COLUMNS } from './image-debugging-columns';
+import { PHOTOGRAPHY_COLUMNS } from './image-debugging-columns';
 @Component({
   selector: 'app-image-debugging',
   templateUrl: './image-debugging.component.html',
@@ -324,7 +324,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     this.params.value.limit = 1;
     this.settings = {
       ...this.settings,
-      columns: IMAGE_DEBUGGING_COLUMNS,
+      columns: PHOTOGRAPHY_COLUMNS,
       edit: {
         editButtonContent: '<i  class="fa fa-eye text-info mx-2" > Ver</i>',
       },
@@ -423,13 +423,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
 
   private disabledFotos() {
     if (this.staticTabs) {
-      this.staticTabs.tabs[2].disabled = true;
+      this.staticTabs.tabs[1].disabled = true;
     }
   }
 
   private enabledFotos() {
     if (this.staticTabs) {
-      this.staticTabs.tabs[2].disabled = false;
+      this.staticTabs.tabs[1].disabled = false;
     }
   }
 
@@ -1020,7 +1020,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       if (response && response.data && response.data.length > 0) {
         this.staticTabs.tabs[1].disabled = false;
         this.staticTabs.tabs[1].active = true;
-        this.staticTabs.tabs[2].disabled = false;
+        // this.staticTabs.tabs[2].disabled = false;
         let item = response.data[0];
         this.totalItems = response.count ?? 0;
         if (item) {
@@ -1039,7 +1039,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
             this.showPhoto = false;
           }
           this.numberGood.setValue(item.id);
-          // this.subtype.setValue(item.no_subtipo);
+          this.fileNumber.setValue(this.noExpedient);
           // this.form.get('ssubtype').setValue(item.no_ssubtipo);
           // this.form.get('sssubtype').setValue(item.no_sssubtipo);
           this.loadTypes = true;
@@ -1056,7 +1056,8 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           // this.getLatitudLongitud(item.goodid);
           this.numberClassification.setValue(item.goodclassnumber);
           this.goodStatus.setValue(item.status);
-          this.fileNumber.setValue(item.fileNumber);
+          this.fileNumber.setValue(this.noExpedient);
+          this.idLot.setValue(this.lot);
           this.descripcion.setValue(item.description);
           this.goodUnit.setValue(item.unit);
           this.goodQuantity.setValue(item.quantity);
@@ -1235,20 +1236,6 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     // this.good = ssssubType.numClasifGoods;
   }
 
-  // getLatitudLongitud(id: number) {
-  //   this.georeferencieService.getGeoreferencieObjectById(id).subscribe({
-  //     next: response => {
-  //       // console.log(response);
-  //       if (response) {
-  //         this.latitud.setValue(response.georefLatitude);
-  //         this.longitud.setValue(response.georefLongituded);
-  //       }
-  //     },
-  //     error: err => {
-  //       console.log(err);
-  //     },
-  //   });
-  // }
   loadImages() {
     let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
@@ -1392,32 +1379,47 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
       },
     });
   }
+  // getComerGoodLotes(id: number) {
+  //   this.comerEventService
+  //     .getAllFilterComerGoodEvent(id, this.params.getValue())
+  //     .subscribe({
+  //       next: (resp: any) => {
+  //         this.lot = resp.data;
+  //         console.log(this.lot);
+  //         this.form.get('idLot').patchValue(this.lot.idLot);
+  //         this.form.get('lotDesc').patchValue(this.lot.lotDescription);
+  //         // this.idLot.setValue(this.lot.lotId);
+  //         // this.lotDesc.setValue(this.lot.lotDescription);
+  //         console.log(resp);
+  //       },
+  //       error: error => {
+  //         console.log(error);
+  //       },
+  //     });
+  // }
   getComerGoodLotes(id: number) {
-    this.comerEventService
-      .getAllFilterComerGoodEvent(id, this.params.getValue())
-      .subscribe({
-        next: (resp: any) => {
-          this.lot = resp.data;
-          console.log(this.lot);
-          this.idLot.setValue(this.lot.lotId);
-          this.lotDesc.setValue(this.lot.lotDescription);
-          console.log(resp);
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
+    this.lotService.getGlobalGoodEventLot(id).subscribe({
+      next: (data: any) => {
+        this.lot = data;
+        console.log(data);
+      },
+      error: () => {
+        console.log('error');
+      },
+    });
   }
   setGood(good: IGood) {
     this.numberGood.setValue(good.id);
     this.fileNumber.setValue(this.noExpedient);
     this.descripcion.setValue(good.description);
     this.idLot.setValue(good.lotNumber);
-    this.form.controls['fileNumber'].setValue(this.noExpedient);
+    // this.form.get('lotDesc').patchValue(good.lotDescription);
+    // this.form.controls['fileNumber'].setValue(this.noExpedient);
   }
 
   searchExp(id: number | string) {
     if (!id) return;
+
     this.params.getValue().page = 1;
     this.loading = true;
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe({
@@ -1502,14 +1504,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
         this.goodO = data;
         data.data.filter((good: IGood) => {
           this.noExpedient = good.fileNumber;
+          this.fileNumber.setValue(good.fileNumber);
         });
-
         console.log(this.noExpedient);
         this.searchExp(this.noExpedient);
-        this.getComerGoodLotes(this.form.value.noBien);
-        this.getIdLot(this.goodO);
-        this.getEvent(this.goodO.lotNumber);
-        this.setGood(this.goodO);
+        // this.setGood(this.goodO);
+        this.getComerGoodLotes(this.goodO.lotNumber);
+        // this.getEvent(this.goodO.lotNumber);
       },
       error: error => {
         console.error('no existe el bien');
@@ -1517,20 +1518,13 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
     });
   }
 
-  getIdLot(data: any) {
+  getIdLot(id: number) {
     const datos: any = {};
-    this.comerEventService.getLotId(data.lotId).subscribe({
+    this.comerEventService.getAllFilterComerGoodLot(id).subscribe({
       next: resp => {
-        this.comerEventService.geEventId(resp.eventId).subscribe({
-          next: resp => {
-            //console.log(resp);
-            //this.form.controls['idEvent'].setValue(resp.id);
-            this.form.controls['idEvent'].setValue(resp.id);
-          },
-          error: error => {
-            console.log(error);
-          },
-        });
+        //console.log(resp);
+        this.form.controls['idEvent'].setValue(resp.id);
+        // this.form.get['idEvent'].setValue(resp.id);
       },
       error: error => {
         console.log(error);

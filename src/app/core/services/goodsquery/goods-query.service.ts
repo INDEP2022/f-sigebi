@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUnits } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
+import { ICaptureDig } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
   IUnityByClasif,
@@ -220,11 +221,18 @@ export class GoodsQueryService extends HttpService {
     return this.post(`${GoodsQueryEndpoints.getUnits}`, data);
   }
 
-  putUnits(data: IUnits, numero: number | string) {
+  putUnits(data: IUnits, numero: string) {
     return this.put(`${GoodsQueryEndpoints.getUnits}/${numero}`, data);
   }
 
   remove(numero: number | string) {
     return this.delete(`${GoodsQueryEndpoints.getUnits}/${numero}`);
+  }
+
+  getViewIncRecDoc(params: ListParams) {
+    return this.get<IListResponse<ICaptureDig>>(
+      GoodsQueryEndpoints.getViewIndRecDoc,
+      params
+    );
   }
 }

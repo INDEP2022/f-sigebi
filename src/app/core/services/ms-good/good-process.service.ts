@@ -178,7 +178,7 @@ export class GoodProcessService extends HttpService {
   }
 
   postGoodMasiveForm(body: any): Observable<IListResponse<any>> {
-    return this.post('application/get-conv-good-children', body);
+    return this.post('application/get-conv-good-children-masive', body);
   }
   getNumeProrraCsv(idProcnum: number) {
     const route = GoodProcessPoints.GetNumeProrraCsv;
@@ -222,5 +222,15 @@ export class GoodProcessService extends HttpService {
     dateMasiv: Date | string;
   }) {
     return this.post('application/pup-reconcilied', body);
+  }
+
+  updateFileNumber(requestId: number, recordId?: number) {
+    const body: any = { proceedingsNumber: recordId };
+    const route = GoodProcessPoints.UpdateProcedingNumber;
+    if (recordId) {
+      return this.put(`${route}/${requestId}`, body);
+    } else {
+      return this.put(`${route}/${requestId}`);
+    }
   }
 }

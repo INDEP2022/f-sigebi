@@ -1,46 +1,54 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const SERIES_FOLIOS_CONTROL_COLUMNS = {
-  id: {
-    title: 'ID',
-    width: '25px',
+  folioinvoiceId: {
+    title: 'Id Folio',
+    width: '50px',
     type: 'string',
     sort: false,
   },
-  coord: {
+  delegationNumber: {
     title: 'Coordinación',
     type: 'string',
     sort: false,
   },
-  regional: {
-    title: 'Regional',
-    type: 'string',
-    sort: false,
-  },
-  serie: {
+  // catDelegation: {
+  //   title: 'Regional',
+  //   width: '50px',
+  //   type: 'string',
+  //   sort: false,
+  //   valuePrepareFunction: (value: any) => (value ? value.description : ''),
+  // },
+  series: {
     title: 'Serie',
     type: 'string',
     sort: false,
   },
-  foInicial: {
+  invoiceStart: {
     title: 'Folio Inicial',
     type: 'string',
     sort: false,
   },
-  foFinal: {
+  invoiceEnd: {
     title: 'Folio Final',
     type: 'string',
     sort: false,
   },
-  validez: {
+  validity: {
     title: 'Validez',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
-  tipo: {
+  type: {
     title: 'Tipo',
     type: 'string',
     sort: false,
   },
-  estatus: {
+  statusfactId: {
     title: 'Estatus',
     type: 'string',
     sort: false,
@@ -50,29 +58,23 @@ export const SERIES_FOLIOS_CONTROL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  folRegistrados: {
+  availableFolios: {
     title: 'Folios Registrados',
     type: 'string',
     sort: false,
   },
-  folUtilizados: {
+  usedFolios: {
     title: 'Folios Utilizados',
     type: 'string',
     sort: false,
   },
-  fecUsuario: {
-    title: 'Fecha Usuario',
-    type: 'string',
-    sort: false,
-  },
-  fecRegistro: {
+  recordDate: {
     title: 'Fecha Registro',
     type: 'string',
     sort: false,
-  },
-  direccion: {
-    title: 'Dirección',
-    type: 'string',
-    sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };

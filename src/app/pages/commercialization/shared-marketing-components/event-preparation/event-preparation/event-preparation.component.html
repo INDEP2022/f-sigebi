@@ -73,7 +73,7 @@
               [comerLotsListParams]="comerLotsListParams"
               [parameters]="parameters"></commer-packages-lots
           ></tab>
-          <tab>
+          <tab (selectTab)="viewCustomers()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -84,9 +84,11 @@
                 </div>
               </div>
             </ng-template>
-            <commer-event-customers></commer-event-customers
+            <commer-event-customers
+              [eventForm]="eventForm"
+              [params]="comerCustomersListParams"></commer-event-customers
           ></tab>
-          <tab>
+          <tab (selectTab)="availableGoods()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">
@@ -97,11 +99,12 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <consigments-container
+              [preparation]="preparation"
+              (exit)="exitConsignment()"
+              [parameters]="parameters"
+              [eventForm]="eventForm"></consigments-container>
+          </tab>
           <tab>
             <ng-template tabHeading>
               <div class="row">

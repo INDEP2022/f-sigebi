@@ -5,6 +5,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
+  firstValueFrom,
   forkJoin,
   map,
   of,
@@ -52,6 +53,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   noDocumentsFound: boolean = false;
   noFoliosFound: boolean = false;
   registerUser: string = INVALID_USER;
+  pGoodFatherNumber: number;
   get controls() {
     return this.form.controls;
   }
@@ -72,6 +74,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
   processNumber: number = null; //no_tramite
+  tipoConv: number;
   paramsDepositaryAppointment: any = {
     P_NB: null,
     P_FOLIO: null,
@@ -79,6 +82,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   };
   P_NO_TRAMITE: number = null;
   P_GEST_OK: number = null;
+  P_VOLANTE: number = null;
+  P_EXPEDIENTE: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -121,6 +126,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.origin2 = params['origin2'] ?? null;
           this.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
           this.P_GEST_OK = params['P_GEST_OK'] ?? null;
+          this.P_VOLANTE = params['P_VOLANTE'] ?? null;
+          this.P_EXPEDIENTE = params['P_EXPEDIENTE'] ?? null;
         }
         if (
           this.origin == 'FACTGENSOLICDIGIT' &&
@@ -129,6 +136,9 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           this.paramsDepositaryAppointment.P_NB = params['P_NB'] ?? null;
           this.paramsDepositaryAppointment.P_FOLIO = params['P_FOLIO'] ?? null;
           this.paramsDepositaryAppointment.P_ND = params['P_ND'] ?? null;
+        }
+        if (this.origin == 'FCONVBIENHIJOS') {
+          this.tipoConv = params['tipoConv'] ?? null;
         }
       });
     this.settings = {
@@ -179,14 +189,24 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     this.loading = true;
     return this.getDocuments(params).pipe(
       catchError(error => {
+        console.warn('No se encontraron documentos');
+
         this.registerUser = INVALID_USER;
         this.loading = false;
         const message = DOCUMENTS_SCAN_MESSAGES.FOLIO_NOT_FOUND(this.folio);
         this.handleErrorAlert(message, error);
         return throwError(() => error);
       }),
+      tap(res => {
+        console.log(res);
+      }),
       map(response => response.data[0] ?? null),
       tap(document => {
+        console.warn(
+          'Asignacion de usuario que escaneo',
+          document.userRegistersScan
+        );
+
         this.registerUser = document.userRegistersScan ?? INVALID_USER;
         this.loading = false;
         if (!document) {
@@ -336,6 +356,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   }
 
   async confirmDelete() {
+    console.log(this.registerUser);
+
     const token = this.authService.decodeToken();
     const user = token?.preferred_username?.toUpperCase();
     const validUsers = [user, SERA_USER, DEVELOP_USER];
@@ -401,17 +423,39 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
     }
     const userRegistersScan = token?.preferred_username?.toUpperCase();
     const dateRegistrationScan = new Date();
-    this.documentsService
-      .update(this.folio, {
-        sheets,
-        scanStatus,
-        userRegistersScan,
-        dateRegistrationScan,
-      })
-      .subscribe(() => {
-        const params = this.documentsParams.getValue();
-        this.documentsParams.next(params);
-      });
+    const body = {
+      sheets,
+      scanStatus,
+      userRegistersScan,
+      dateRegistrationScan,
+    };
+    if (this.registerUser != INVALID_USER) {
+      delete body.userRegistersScan;
+    }
+    this.documentsService.update(this.folio, body).subscribe(async () => {
+      const params = this.documentsParams.getValue();
+      this.documentsParams.next(params);
+      await this.refreshUserRegisterScan();
+    });
+  }
+
+  async refreshUserRegisterScan() {
+    const params = new FilterParams();
+    params.addFilter('id', this.folio);
+    this.loading = true;
+    return await firstValueFrom(
+      this.getDocuments(params).pipe(
+        catchError(error => {
+          this.registerUser = INVALID_USER;
+          return throwError(() => error);
+        }),
+        map(response => response.data[0] ?? null),
+        tap(document => {
+          this.registerUser = document.userRegistersScan ?? INVALID_USER;
+          this.loading = false;
+        })
+      )
+    );
   }
 
   deleteFile(name: string) {
@@ -556,12 +600,37 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
             origin: this.origin2 ? this.origin2 : null,
             P_NO_TRAMITE: this.P_NO_TRAMITE,
             P_GEST_OK: this.P_GEST_OK,
+            P_VOLANTE: this.P_VOLANTE,
+            P_EXPEDIENTE: this.P_EXPEDIENTE,
           },
         }
       );
     }
     if (this.origin == 'FCONVBIENHIJOS') {
-      this.router.navigate([`pages/administrative-processes/derivation-goods`]);
+      this.router.navigate(
+        [`pages/administrative-processes/derivation-goods`],
+        {
+          queryParams: {
+            folio: this.originFolio,
+            expedientNumber: this.expedientNumber,
+            tipoConv: this.tipoConv,
+            pGoodFatherNumber: this.pGoodFatherNumber,
+          },
+        }
+      );
+    }
+
+    if (this.origin == 'FREPIMPFAC_0001') {
+      this.router.navigate(
+        [
+          '/pages/administrative-processes/services/implementation-reports-invoices',
+        ],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+          },
+        }
+      );
     }
   }
 }

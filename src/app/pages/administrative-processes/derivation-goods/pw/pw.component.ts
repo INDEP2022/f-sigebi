@@ -41,15 +41,12 @@ export class PwComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
   }
-  onBeforeUnload(): void {
-    // Lógica para eliminar el elemento del almacenamiento local
-    localStorage.removeItem('conversion');
-  }
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
       password: [null, [Validators.required]],
     });
+    this.loader.load = false;
     const conversion = localStorage.getItem('conversion');
     if (conversion != null) {
       this.loader.load = true;
@@ -57,6 +54,7 @@ export class PwComponent extends BasePage implements OnInit {
       this.idConversion.setValue(this.conversionData);
       this.password.setValue(this.conversionData.pwAccess);
       console.log(this.conversionData);
+      localStorage.removeItem('conversion');
       setTimeout(() => {
         this.sigin();
       }, 1000);
@@ -91,6 +89,7 @@ export class PwComponent extends BasePage implements OnInit {
             'Contraseña Incorrecta',
             'Por Favor Verificar y Volver a Intentar'
           );
+          this.loader.load = false;
         } else {
           if (this.conversionData.goodFatherNumber != null) {
             console.log(this.conversionData);
@@ -103,13 +102,16 @@ export class PwComponent extends BasePage implements OnInit {
               'Conversiones',
               'La Conversion debe tener un Bien Padre'
             );
+            this.loader.load = false;
           }
         }
       } else {
         this.alert('warning', 'Debe Introducir la Contraseña', '');
+        this.loader.load = false;
       }
     } else {
       this.alert('warning', 'Debe Introducir un Id Conversión', '');
+      this.loader.load = false;
     }
   }
 

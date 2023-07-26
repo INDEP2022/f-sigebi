@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class LotService extends HttpService {
   }
 
   getLotbyEvent(id: string | number, params?: ListParams) {
-    const route = `${LotEndpoints.ComerLot}?filter.eventId=${id}`;
+    const route = `${LotEndpoints.ComerLot}?filter.idEvent=${id}`;
     return this.get(route, params);
   }
 
@@ -66,7 +66,7 @@ export class LotService extends HttpService {
   }
 
   validLotifying(eventId: string | number) {
-    return this.get(
+    return this.get<{ aux: number }>(
       `apps/blk-ctr-bie-lots-img-inc-lots-excel-when-image-pressed/${eventId}`
     );
   }
@@ -82,5 +82,23 @@ export class LotService extends HttpService {
   getByLotEventPhoto(good: number, params: ListParams) {
     const route = `${LotEndpoints.GoodByLotsEvent}?filter.good=${good}`;
     return this.get(route, params);
+  }
+  getGlobalGoodEventLot(idLot: number) {
+    return this.get(`${LotEndpoints.ComerLot}?filter.idLot=${idLot}`);
+  }
+
+  getLotbyEvent_(params?: _Params) {
+    return this.get(LotEndpoints.ComerLot, params);
+  }
+
+  checkTransXLot(body: { eventId: string | number; pLote?: string | number }) {
+    return this.post<string | { data: string }>(
+      'apps/review-transf-x-lot',
+      body
+    );
+  }
+
+  incVXRGoods(body: { goods: (string | number)[]; user: string }) {
+    return this.post('apps/rejected-good', body);
   }
 }

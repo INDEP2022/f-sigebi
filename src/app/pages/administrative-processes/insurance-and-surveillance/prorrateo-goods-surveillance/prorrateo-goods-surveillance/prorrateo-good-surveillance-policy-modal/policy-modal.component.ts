@@ -51,7 +51,7 @@ export class ProrrateoGoodSurveillancePolicyModalComponent
       currencyCousinKey: [null],
       currencySaKkey: [null],
       registrationNumber: [null, Validators.required],
-      consecPol: [null],
+      consecPol: [null, Validators.required],
     });
   }
 
@@ -73,9 +73,10 @@ export class ProrrateoGoodSurveillancePolicyModalComponent
     this.newOrEdit = false;
     const dueDate = this.form.get('beginningDate').value;
     const formattedDueDate = this.formatDate(dueDate);
+    console.log('Fecha', new Date(formattedDueDate));
     const model = {} as IPolicyxSubtype;
     model.policyKeyId = this.form.get('policyKeyId').value;
-    model.beginningDate = new Date(formattedDueDate);
+    model.beginningDate = formattedDueDate as any;
     model.typeNumberId = this.form.get('typeNumberId').value;
     model.subtypeNumberId = this.form.get('subtypeNumberId').value;
     model.ssubtypeNumberId = this.form.get('ssubtypeNumberId').value;

@@ -3,16 +3,16 @@
     <h5 class="title">CAT&Aacute;LOGO DE CLIENTES</h5>
   </div>
   <div body>
-    <!-- <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar
-          [filterParams]="filterParams"
-          [filterField]="searchFilter"></search-bar>
-      </div>
-    </div> -->
     <div class="ch-content">
-      <h5 class="title">Todos los clientes</h5>
+      <h5 class="title">Todos los Clientes</h5>
       <div class="buttons">
+        <div>
+          <button
+            (click)="openFormClients()"
+            class="btn btn-info btn-sm active ml-2 mr-4">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
         <app-columns-select [(settings)]="settings"> </app-columns-select>
         <div>
           <div class="btn-group col-md-2" dropdown>
@@ -20,7 +20,7 @@
               id="button-basic"
               dropdownToggle
               type="button"
-              class="btn btn-success active btn-sm ml-3"
+              class="btn btn-success active btn-sm"
               aria-controls="dropdown-basic">
               Opciones <span class="caret"></span>
             </button>
@@ -30,27 +30,22 @@
               class="dropdown-menu"
               role="menu"
               aria-labelledby="button-basic">
-              <li role="menuitem">
-                <a class="dropdown-item" (click)="openFormClients()"
-                  >Agregar cliente<i class="fa fa-plus text-primary mx-2"></i
-                ></a>
-              </li>
               <li class="divider dropdown-divider"></li>
               <li role="menuitem">
                 <a class="dropdown-item" (click)="openBlackList()"
-                  >Lista Negraa<i class="fa fa-ban text-danger mx-2"></i
+                  >Lista Negra <i class="fa fa-ban text-danger mx-2"></i
                 ></a>
               </li>
               <li role="menuitem">
                 <a class="dropdown-item" (click)="openWhiteList()"
-                  >Lista Blanca<i class="fa fa-check text-success mx-2"></i
+                  >Lista Blanca <i class="fa fa-check text-success mx-2"></i
                 ></a>
               </li>
               <li class="divider dropdown-divider"></li>
               <li role="menuitem">
-                <a class="dropdown-item" (click)="exportAllClients()"
-                  >Descargar todo</a
-                >
+                <a class="dropdown-item" (click)="openAllClient()"
+                  >Descargar Todo <i class="bx bx-download float-icon"></i
+                ></a>
               </li>
             </ul>
           </div>
@@ -67,6 +62,7 @@
             [source]="data"
             (edit)="openFormClients($event.data)"
             (create)="openFormClients()"
+            (delete)="showDeleteAlert($event.data)"
             (userRowSelect)="rowsSelected($event)">
           </ng2-smart-table>
         </div>

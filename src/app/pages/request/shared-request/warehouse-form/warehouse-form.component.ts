@@ -173,13 +173,13 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.loading = true;
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Seguro de mandar a solicitar un nuevo almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
+        this.loading = true;
         this.warehouseForm
           .get('wildebeestDelegationregion')
           .setValue(this.regDelData.id);
@@ -286,7 +286,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getResponsibleUserSelect(params: ListParams) {
     const user: any = this.authService.decodeToken();
-    params['filter.regionalDelegation'] = user.delegacionreg;
+
     params['filter.search'] = params.text;
     this.userProcessService.getAll(params).subscribe({
       next: data => {

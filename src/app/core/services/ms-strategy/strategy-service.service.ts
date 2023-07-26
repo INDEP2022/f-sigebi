@@ -1,6 +1,8 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { StrategyEndpoints } from 'src/app/common/constants/endpoints/ms-strategy-endpoint';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -44,10 +46,61 @@ export class StrategyServiceService extends HttpService {
     return this.get<IListResponse<IMeasurementUnits>>(route, params);
   }
 
-  getZCenterOperationRegional(params?: ListParams) {
-    return this.get<IListResponse<any>>(
+  getZCenterOperationRegional(
+    model: Object,
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
       StrategyEndpoints.ZCenterOperationRegional,
+      model,
       params
     );
+  }
+
+  getZCenterOperationRegional1(model: Object, params?: ListParams) {
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post(
+      `${this.url}${this.microservice}/${this.prefix}z-center-operation-regional/getAllDescriptionCenterZOperationRegional`,
+      model,
+      { params, headers }
+    );
+  }
+
+  getStrategiesAdmin(params: any) {
+    return this.post(`${StrategyEndpoints.StrategyAdmin}/id?`, params);
+  }
+
+  getfolioDeliveredWeather(
+    yearEvaluateId: string,
+    monthEvaluateId: number,
+    delegationNumberId: number
+  ) {
+    return this.get(
+      `folio-delivered-weather?filter.yearEvaluateId=$eq:${yearEvaluateId}&filter.monthEvaluateId=$eq:${monthEvaluateId}&filter.delegationNumberId=$eq:${delegationNumberId}`
+    );
+  }
+
+  postValidaIndica(model: any) {
+    return this.get(`folio-delivered-weather/id`, model);
+  }
+
+  //T_FOL_REG
+  pupValidaIndica(model: any) {
+    return this.post(`folio-delivered-weather/validIndication`, model);
+  }
+
+  //T_FOL_ENT
+  pupValidaIndicaRep(model: any) {
+    return this.post(`folio-delivered-weather/validIndicationRep`, model);
+  }
+
+  //T_REP_REG
+  pupValidaIndicaTime(model: any) {
+    return this.post(`folio-delivered-weather/validIndicationTime`, model);
+  }
+
+  //T_REP_ENT
+  pupValidaIndicaVal(model: any) {
+    return this.post(`folio-delivered-weather/validIndicationVal`, model);
   }
 }

@@ -3,8 +3,12 @@ export const SAMI_ROUTES = [
     label: 'Sami',
     subItems: [
       {
-        label: 'Generacion de recibos',
+        label: 'Generacion de recibos Prog.',
         link: '/pages/siab-web/sami/receipt-generation',
+      },
+      {
+        label: 'Generacion de recibos',
+        link: '/pages/siab-web/sami/receipt-generation-sami',
       },
       {
         label: 'Mantenimiento programación',

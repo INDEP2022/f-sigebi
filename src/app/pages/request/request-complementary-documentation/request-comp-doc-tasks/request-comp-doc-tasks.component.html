@@ -66,6 +66,16 @@
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
+        <div class="mx-1" *ngIf="notifyReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openNotifyReport()">
+            <i class="bx bx-notepad mr-1 float-icon"></i> Reporte de
+            Notificacion
+          </button>
+        </div>
         <div class="mx-1" *ngIf="createReport">
           <button
             type="button"
@@ -164,7 +174,8 @@
           heading="Registro de Documentación"
           id="documentationTab">
           <app-register-documentation-form
-            [requestId]="requestId"></app-register-documentation-form>
+            [requestId]="requestId"
+            [process]="process"></app-register-documentation-form>
         </tab>
         <tab
           *ngIf="regDocView"
@@ -184,6 +195,21 @@
           heading="Seleccionar Bienes"
           id="selectGoodsTab">
           <app-select-goods [idRequest]="requestId"></app-select-goods>
+        </tab>
+        <tab
+          *ngIf="selectGoodForEyeVisit"
+          heading="Seleccionar Bienes"
+          id="selectGoodsEyeVisitTab">
+          <app-select-good-eye-visit
+            [idRequest]="requestId"></app-select-good-eye-visit>
+        </tab>
+        <tab
+          *ngIf="validateGoodForEyeVisit"
+          heading="Validar Resultado Visitas"
+          id="validateGoodsEyeVisitTab">
+          <app-validate-eye-visit>
+            [idRequest]="requestId"></app-validate-eye-visit
+          >
         </tab>
         <tab
           *ngIf="viewSelectedGoods"

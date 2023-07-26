@@ -10,4 +10,6 @@ export enum GoodsQueryEndpoints {
   MeasureUnitsView = 'goodsquery/api/v1/views/catMeasureUnitsView',
   OpinionDelRegSeq = 'application/opinionDelRegSeq',
   getUnits = 'ligie-units-measure',
+  getViewIndRecDoc = 'views/VIndRecDocView',
+  UnitsQuery = 'application/units-query',
 }

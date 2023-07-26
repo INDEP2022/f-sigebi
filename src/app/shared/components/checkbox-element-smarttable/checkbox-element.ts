@@ -3,10 +3,8 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
   OnInit,
   Output,
-  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 
@@ -37,7 +35,7 @@ import {
     `,
   ],
 })
-export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
+export class CheckboxElementComponent<T = any> implements OnInit {
   checked: boolean;
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
@@ -49,13 +47,9 @@ export class CheckboxElementComponent<T = any> implements OnInit, OnChanges {
 
   constructor() {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-  }
-
   ngOnInit(): void {
+    debugger;
     this.checked = this.value;
-    console.log(this.checked);
   }
 
   onToggle($event: Event) {

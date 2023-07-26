@@ -5,6 +5,13 @@
         <h5 class="title">DERIVACIÓN DE BIENES CONVERSIÓN</h5>
       </div>
       <div body>
+        <div style="text-align: right">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="session()">
+            Cerrar
+          </button>
+        </div>
         <div class="row mt-5">
           <div class="col-md-3 col-sm-12 col-xs-12">
             <form-field
@@ -36,7 +43,7 @@
               <select
                 class="form-control"
                 formControlName="tipo"
-                [disabled]="true">
+                [disabled]="typeAction">
                 <option value="1">Derivado</option>
                 <option value="2">Conversión</option>
               </select>
@@ -246,7 +253,7 @@
               </button>
             </div>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive scrollable-div">
             <ng2-smart-table
               [settings]="settingsGood"
               [source]="dataGoods2"
@@ -262,28 +269,47 @@
         <div class="card-header mb-3">
           <h5>ATRIBUTOS DEL BIEN</h5>
         </div>
-        <div class="card-block" style="max-height: 500px; overflow-y: auto">
-          <div class="row">
+        <div *ngIf="classificationOfGoods" class="p-3">
+          <!-- <div style="text-align: right">
+            <button
+              type="button"
+              data-toggle="tooltop"
+              title="Guardar"
+              class="btn btn-primary btn-sm active"
+              (click)="updateAttributes()">
+              Guardar
+              <i class="bx bx-save bx-sm float-icon"></i>
+            </button>
+          </div> -->
+          <app-good-characteristics-table
+            [goodChange]="goodChange"
+            [clasification]="classificationOfGoods"
+            [settings]="atributNewSettings"
+            [avaluo]="false"
+            [good]="goodForTableChar"
+            [disabled]="true"
+            [service]="service"
+            [initValue]="true"></app-good-characteristics-table>
+        </div>
+
+        <!-- <div class="card-block" style="max-height: 500px; overflow-y: auto"> -->
+        <!-- <div class="row">
             <div class="col-6">
               <h6>ATRIBUTOS</h6>
             </div>
             <div class="col-6">
               <h6>VALORES</h6>
             </div>
-          </div>
-          <div class="row" *ngFor="let attr of attributes">
+          </div> -->
+        <!-- <div class="row" *ngFor="let attr of attributes">
             <div class="col-6">
               <label class="label-first">{{ attr.attributes }}:</label>
             </div>
             <div class="col-6">
-              <input
-                type="text"
-                placeholder="Introduce un valor"
-                [readOnly]="true"
-                [value]="attr.value" />
+              <input type="text" placeholder="Introduce un valor" [readOnly]="true" [value]="attr.value" />
             </div>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
       </div>
     </div>
   </div>

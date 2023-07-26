@@ -13,7 +13,24 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-claims-follow-up-detail',
   templateUrl: './claims-follow-up-detail.component.html',
-  styles: [],
+  styles: [
+    `
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
+
+      /* input[type = file]::file-selector-button:hover {
+        background: #9D2449;
+      } */
+    `,
+  ],
 })
 export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
   claimsFollowUpDetailForm: FormGroup;

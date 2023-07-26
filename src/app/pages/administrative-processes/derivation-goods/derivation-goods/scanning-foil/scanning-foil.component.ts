@@ -42,6 +42,7 @@ export class ScanningFoilComponent
   generateFo: boolean = true;
   @Input() numberFoli: string | number = '';
   @Input() cveScreen: string | number = '';
+  @Input() tipoConv: string | number = '';
   @Input() expedientNumber: string | number = '';
   @Input() reportPrint: string = '';
   @Input() refresh: boolean = false;
@@ -69,10 +70,10 @@ export class ScanningFoilComponent
   }
 
   ngOnInit(): void {
-    console.log(this.numberFoli);
+    console.log(this.good);
 
     this.buildForm();
-    this.scanningFoli.setValue(this.numberFoli);
+
     this.form.disable();
     this.getDataUser();
   }
@@ -82,7 +83,12 @@ export class ScanningFoilComponent
       console.log(this.good);
       if (this.refresh) {
         console.log('REFRESHHHH....');
-        this.scanningFoli.setValue('');
+        if (this.numberFoli) {
+          this.scanningFoli.setValue(this.numberFoli);
+        } else {
+          this.scanningFoli.setValue('');
+        }
+
         /* this.document = undefined;
         this.good = undefined; */
       }
@@ -102,6 +108,8 @@ export class ScanningFoilComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+    this.scanningFoli.setValue(this.numberFoli);
+    console.log(this.numberFoli);
   }
   generateFoli() {
     console.log(
@@ -110,56 +118,74 @@ export class ScanningFoilComponent
       this.scanningFoli.value
     );
     if (this.good === null || this.good === undefined) {
-      this.alert('info', 'Información', 'Debe Cargar un Bien', '');
+      this.alert('question', 'Información', 'Debe Cargar un Bien', '');
       return;
     }
-    if (this.document !== undefined) {
+    // if (this.document !== undefined) {
+    //   this.alert(
+    //     'info',
+    //     'Información',
+    //     'El Número de Bien para este Proceso ya Tiene Folio de Escaneo.'
+    //   );
+    //   return;
+    // }
+    console.log(this.numberFoli);
+    if (this.numberFoli !== undefined && this.numberFoli !== null) {
       this.alert(
-        'info',
+        'question',
         'Información',
-        'El Número de Bien para este Proceso ya Tiene Folio de Escaneo.'
+        'El Paquete ya tiene Folio de Escaneo.'
       );
       return;
     }
-    const documents: IDocuments = {
-      numberProceedings: this.good.fileNumber,
-      keySeparator: '60',
-      keyTypeDocument: 'ENTRE',
-      natureDocument: 'ORIGINAL',
-      descriptionDocument: 'REGULARIZACION JURIDICA',
-      significantDate: this.significantDate(),
-      scanStatus: 'SOLICITADO',
-      userRequestsScan: this.user.usuario.user,
-      scanRequestDate: new Date(),
-      associateUniversalFolio: null,
-      flyerNumber: Number(this.good.flyerNumber),
-      goodNumber: Number(this.good.id),
-      numberDelegationRequested: this.user.usuario.delegationNumber,
-      numberDepartmentRequest: this.user.usuario.departamentNumber,
-      numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
-    };
-    console.log(documents);
-    this.documnetServices.create(documents).subscribe({
-      next: response => {
-        this.document = response;
-        console.log(response);
-        this.scanningFoli.setValue(response.id);
-        this.documentEmmit.emit(response);
-        /* this.onLoadToast(
-          'success',
-          'Generado correctamente',
-          `Se generó el Folio No ${response.id}`
-        ); */
-        this.generateFo = false;
-        const params = {
-          pn_folio: this.form.get('scanningFoli').value,
+    this.alertQuestion(
+      'question',
+      'Se Generará un Nuevo Folio de Escaneo para el Paquete Autorizado',
+      '¿Deseas continuar?',
+      'Continuar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        const documents: IDocuments = {
+          numberProceedings: this.good.fileNumber,
+          keySeparator: '60',
+          keyTypeDocument: 'ENTRE',
+          natureDocument: 'ORIGINAL',
+          descriptionDocument: 'REGULARIZACION JURIDICA',
+          significantDate: this.significantDate(),
+          scanStatus: 'SOLICITADO',
+          userRequestsScan: this.user.usuario.user,
+          scanRequestDate: new Date(),
+          associateUniversalFolio: null,
+          flyerNumber: Number(this.good.flyerNumber),
+          goodNumber: Number(this.good.id),
+          numberDelegationRequested: this.user.usuario.delegationNumber,
+          numberDepartmentRequest: this.user.usuario.departamentNumber,
+          numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
         };
-        this.downloadReport(this.reportPrint, params);
-      },
-      error: err => {
-        console.error(err);
-        this.alert('error', 'ERROR', err.error.message);
-      },
+        console.log(documents);
+        this.documnetServices.create(documents).subscribe({
+          next: response => {
+            this.document = response;
+            console.log(response);
+            this.scanningFoli.setValue(response.id);
+            this.documentEmmit.emit(response);
+            /* this.onLoadToast(
+              'success',
+              'Generado correctamente',
+              `Se generó el Folio No ${response.id}`
+            ); */
+            this.generateFo = false;
+            const params = {
+              pn_folio: this.form.get('scanningFoli').value,
+            };
+            this.downloadReport(this.reportPrint, params);
+          },
+          error: err => {
+            console.error(err);
+            this.alert('error', 'ERROR', err.error.message);
+          },
+        });
+      }
     });
   }
   significantDate() {
@@ -207,7 +233,7 @@ export class ScanningFoilComponent
   }
   scan() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
+      this.alert('question', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
     console.log(this.form.get('scanningFoli').value);
@@ -238,13 +264,15 @@ export class ScanningFoilComponent
         origin: this.cveScreen,
         folio: this.form.get('scanningFoli').value,
         expedientNumber: Number(this.expedientNumber),
+        tipoConv: this.tipoConv,
+        pGoodFatherNumber: this.good,
       },
     });
     this.modalRef.hide();
   }
   seeImages() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
+      this.alert('question', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
     if (this.document !== undefined) {
@@ -276,7 +304,7 @@ export class ScanningFoilComponent
 
   printScanFile() {
     if (this.good === undefined) {
-      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
+      this.alert('question', 'Información', 'No Existe Folio de Escaneo', '');
       return;
     }
     if (this.form.get('scanningFoli').value !== '') {
@@ -285,7 +313,7 @@ export class ScanningFoilComponent
       };
       this.downloadReport(this.reportPrint, params);
     } else {
-      this.alert('info', 'Información', 'No Existe Folio de Escaneo', '');
+      this.alert('question', 'Información', 'No Existe Folio de Escaneo', '');
     }
   }
 
