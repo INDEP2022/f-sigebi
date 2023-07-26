@@ -82,7 +82,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
   programmingGoodReceipt(params: ListParams) {
     if (this.programmingForm.controls['programmingId'].value) {
       params['filter.folio'] =
-        this.programmingForm.controls['programmingId'].value.trim();
+        this.programmingForm.controls['programmingId'].value;
     } else {
       this.alert(
         'warning',
