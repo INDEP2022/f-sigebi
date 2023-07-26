@@ -4,6 +4,11 @@ export const GOODS_EYE_VISIT_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  codeStore: {
+    title: 'Código Almacén',
+    type: 'string',
+    sort: false,
+  },
   startVisitDate: {
     title: 'Fecha Hora Inicio',
     type: 'string',
@@ -11,16 +16,6 @@ export const GOODS_EYE_VISIT_COLUMNS = {
   },
   endVisitDate: {
     title: 'Fecha Hora Fin',
-    type: 'string',
-    sort: false,
-  },
-  proceedingsId: {
-    title: 'Expediente',
-    type: 'string',
-    sort: false,
-  },
-  applicationId: {
-    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
@@ -99,11 +94,6 @@ export const GOODS_EYE_VISIT_COLUMNS = {
   //delegationRegionalId
   delegationDescrip: {
     title: 'Delegación',
-    type: 'string',
-    sort: false,
-  },
-  codeStore: {
-    title: 'Código Almacén',
     type: 'string',
     sort: false,
   },

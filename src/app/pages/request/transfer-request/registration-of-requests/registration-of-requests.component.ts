@@ -754,7 +754,6 @@ export class RegistrationOfRequestsComponent
       /* valida campos */
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
-        debugger;
         /* actualizamos el campo  fileNumber (expediente) de bienes*/
         const expUpdated = await this.registrationHelper.updateExpedient(
           request.id,

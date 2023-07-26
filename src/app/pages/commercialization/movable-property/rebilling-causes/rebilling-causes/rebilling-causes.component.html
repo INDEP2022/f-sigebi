@@ -19,15 +19,17 @@
     </div>
     <div class="row">
       <form-loader *ngIf="loading"></form-loader>
-      <div *ngIf="!loading">
+      <div>
         <ng2-smart-table
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
           [attr.class]="'table-bordered table-responsive mb-4'"
           [settings]="settings"
-          [source]="data"
-          (edit)="openForm($event.data)">
+          [source]="dataFilter"
+          (edit)="openForm($event.data)"
+          (delete)="remove($event.data)">
         </ng2-smart-table>
       </div>
-      <app-pagination [filterParams]="filter" [totalItems]="totalItems">
+      <app-pagination [params]="paramsList" [totalItems]="totalItems">
       </app-pagination>
     </div>
   </div>
