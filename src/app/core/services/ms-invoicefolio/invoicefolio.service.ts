@@ -33,6 +33,10 @@ export class InvoicefolioService extends HttpService {
     );
   }
 
+  deleteFolio(id: number) {
+    return this.delete(`${InvoiceFolioEndPoint.Folio}/${id}`);
+  }
+
   getAllFolioSepate(
     params: Params | string
   ): Observable<IListResponse<InvoiceFolioSeparate>> {
@@ -45,6 +49,10 @@ export class InvoicefolioService extends HttpService {
 
   updateFolioSeparate(data: InvoiceFolioSeparate) {
     return this.put(`${InvoiceFolioEndPoint.FolioSeparte}`, data);
+  }
+
+  deleteFolioSeparate(data: any) {
+    return this.delete(InvoiceFolioEndPoint.FolioSeparte, data);
   }
 
   getAuxFolio(data: {
