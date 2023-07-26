@@ -118,13 +118,14 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
   }
 
   loadImages() {
+    console.log('loadImages photography');
     let loadingPhotos = 0;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
     config.initialState = {
       goodProg: this.good,
       programming: this.programming,
       process: 'programming',
-      callback: (next: boolean) => {
+      callback: (next?: boolean) => {
         if (next) {
           this.formLoading = true;
           loadingPhotos = loadingPhotos + 1;

@@ -218,7 +218,11 @@ export class ClassifyAssetsTabComponent
       ],
       unitMeasure: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
       ], // preguntar Unidad Medida Transferente
       saeDestiny: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       brand: [
