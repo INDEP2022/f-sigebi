@@ -248,18 +248,12 @@
               [source]="dataFactCapt"
               (userRowSelect)="selectData($event)">
             </ng2-smart-table>
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItemsCaptura"></app-pagination>
           </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItemsCaptura"></app-pagination>
         </div>
       </div>
     </div>
-
-    <!-- <div class="row pt-3 table-content">
-      <ng2-smart-table [attr.class]="'table-bordered table-responsive'" [settings]="settings"
-        [source]="dataFactCapt"></ng2-smart-table>
-      <app-pagination [params]="params" [totalItems]="totalItemsCaptura"></app-pagination>
-    </div> -->
   </div>
 </app-card>
