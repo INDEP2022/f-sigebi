@@ -133,6 +133,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   stateName: string = '';
   authorityName: string = '';
   typeRelevantName: string = '';
+  idTypeRelevant: number = 0;
   formLoading: boolean = false;
   formLoadingReceipt: boolean = false;
   formLoadingReprog: boolean = false;
@@ -645,6 +646,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.id'] = this.programming.typeRelevantId;
     this.typeRelevantService.getAll(params.getValue()).subscribe(data => {
+      this.idTypeRelevant = data.data[0].id;
       this.typeRelevantName = data.data[0].description;
     });
   }
@@ -1173,6 +1175,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Se debe capturar el estado de conservación indep'
       );
       this.count = 0;
+    } else if (data.quantitySae == null) {
+      this.alert(
+        'error',
+        'Error de captura',
+        'Se debe capturar la cantidad indep'
+      );
+      this.count = 0;
     } else {
       this.alertQuestion(
         'question',
@@ -1226,36 +1235,38 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
-        if (Number(good.quantity) < Number(good.quantitySae)) {
-          if (this.count == 1) {
+        if (
+          Number(good.quantity) < Number(this.goodsGuards.value[0].quantitySae)
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'La cantidad indep es mayor a la cantidad transferente'
+              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
             );
           }
-        } else if (good.saePhysicalState == null) {
-          if (this.count == 1) {
+        } else if (this.goodsGuards.value[0].saePhysicalState == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado físico indep'
+              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
             );
           }
-        } else if (good.stateConservationSae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsGuards.value[0].stateConservationSae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado de conservación indep'
+              `Se debe capturar el estado de conservación indep ${good.goodId}`
             );
           }
-        } else if (good.quantitySae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsGuards.value[0].quantitySae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar la cantidad indep'
+              `Se debe capturar la cantidad indep ${good.goodId}`
             );
           }
         } else {
@@ -1265,9 +1276,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               '¿Seguro que quiere asignar los bienes  a una acta?',
               'Acción irreversible',
               'Aceptar'
-            ).then(question => {
+            ).then(async question => {
               if (question.isConfirmed) {
-                this.checkExistAct('resguardo');
+                const updateInfoGood = await this.updateInfoGoodAsignAct(good);
+                if (updateInfoGood) {
+                  this.checkExistAct('resguardo');
+                }
               }
             });
           }
@@ -1282,41 +1296,74 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
   }
 
+  updateInfoGoodAsignAct(data: IGood) {
+    return new Promise((resolve, reject) => {
+      const info = {
+        id: data.id,
+        descriptionGoodSae: data.descriptionGoodSae,
+        fileNumber: data.fileNumber,
+        goodDescription: data.descriptionGood,
+        goodId: data.goodId,
+        physicalStatus: data.physicalStatus,
+        quantity: data.quantity,
+        quantitySae: data.quantitySae,
+        regionalDelegationNumber: data.delegationNumber,
+        saeMeasureUnit: data.saeMeasureUnit,
+        saePhysicalState: data.saePhysicalState,
+        stateConservation: data.stateConservation,
+        stateConservationSae: data.stateConservationSae,
+        uniqueKey: data.uniqueKey,
+        unitMeasure: data.unitMeasure,
+        saeDestiny: data.transferentDestiny,
+      };
+
+      this.goodService.updateByBody(info).subscribe({
+        next: response => {
+          resolve(true);
+          //this.getInfoGoodsProgramming();
+        },
+        error: error => {},
+      });
+    });
+  }
+
   assingMinuteReprogramation() {
     if (this.selectGood.length > 0) {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
-        if (Number(good.quantity) < Number(good.quantitySae)) {
-          if (this.count == 1) {
+        if (
+          Number(good.quantity) < Number(this.goodsReprog.value[0].quantitySae)
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'La cantidad indep es mayor a la cantidad transferente'
+              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
             );
           }
-        } else if (good.saePhysicalState == null) {
-          if (this.count == 1) {
+        } else if (this.goodsReprog.value[0].saePhysicalState == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado físico indep'
+              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
             );
           }
-        } else if (good.stateConservationSae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsReprog.value[0].stateConservationSae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado de conservación indep'
+              `Se debe capturar el estado de conservación indep ${good.goodId}`
             );
           }
-        } else if (good.quantitySae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsReprog.value[0].quantitySae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar la cantidad indep'
+              `Se debe capturar la cantidad indep ${good.goodId}`
             );
           }
         } else {
@@ -1350,36 +1397,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
-        if (Number(good.quantity) < Number(good.quantitySae)) {
-          if (this.count == 1) {
+        if (
+          Number(good.quantity) <
+          Number(this.goodsCancelation.value[0].quantitySae)
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'La cantidad indep es mayor a la cantidad transferente'
+              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
             );
           }
-        } else if (good.saePhysicalState == null) {
-          if (this.count == 1) {
+        } else if (this.goodsCancelation.value[0].saePhysicalState == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado físico indep'
+              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
             );
           }
-        } else if (good.stateConservationSae == null) {
-          if (this.count == 1) {
+        } else if (
+          this.goodsCancelation.value[0].stateConservationSae == null
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado de conservación indep'
+              `Se debe capturar el estado de conservación indep ${good.goodId}`
             );
           }
-        } else if (good.quantitySae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsCancelation.value[0].quantitySae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar la cantidad indep'
+              `Se debe capturar la cantidad indep ${good.goodId}`
             );
           }
         } else {
@@ -1487,36 +1539,39 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
-        if (Number(good.quantity) < Number(good.quantitySae)) {
-          if (this.count == 1) {
+        if (
+          Number(good.quantity) <
+          Number(this.goodsWarehouse.value[0].quantitySae)
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'La cantidad indep es mayor a la cantidad transferente'
+              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
             );
           }
-        } else if (good.saePhysicalState == null) {
-          if (this.count == 1) {
+        } else if (this.goodsWarehouse.value[0].saePhysicalState == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado físico indep'
+              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
             );
           }
-        } else if (good.stateConservationSae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsWarehouse.value[0].stateConservationSae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado de conservación indep'
+              `Se debe capturar el estado de conservación indep ${good.goodId}`
             );
           }
-        } else if (good.quantitySae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsWarehouse.value[0].quantitySae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar la cantidad indep'
+              `Se debe capturar la cantidad indep ${good.goodId}`
             );
           }
         } else {
@@ -2239,36 +2294,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
-        if (Number(good.quantity) < Number(good.quantitySae)) {
-          if (this.count == 1) {
+        if (
+          Number(good.quantity) <
+          Number(this.goodsTransportable.value[0].quantitySae)
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'La cantidad indep es mayor a la cantidad transferente'
+              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
             );
           }
-        } else if (good.saePhysicalState == null) {
-          if (this.count == 1) {
+        } else if (this.goodsTransportable.value[0].saePhysicalState == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado físico indep'
+              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
             );
           }
-        } else if (good.stateConservationSae == null) {
-          if (this.count == 1) {
+        } else if (
+          this.goodsTransportable.value[0].stateConservationSae == null
+        ) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar el estado de conservación indep'
+              `Se debe capturar el estado de conservación indep ${good.goodId}`
             );
           }
-        } else if (good.quantitySae == null) {
-          if (this.count == 1) {
+        } else if (this.goodsTransportable.value[0].quantitySae == null) {
+          if (this.count == this.count) {
             this.alert(
               'error',
               'Error de captura',
-              'Se debe capturar la cantidad indep'
+              `Se debe capturar la cantidad indep ${good.goodId}`
             );
           }
         } else {
@@ -2987,8 +3047,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         if (this.count == 1) {
           this.alert(
             'error',
-            'Error de captura',
-            'La cantidad indep es mayor a la cantidad transferente'
+            `Error de captura`,
+            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
           );
         }
       } else if (good.saePhysicalState == null) {
@@ -2996,7 +3056,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado físico indep'
+            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
           );
         }
       } else if (good.stateConservationSae == null) {
@@ -3004,17 +3064,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado de conservación indep'
+            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
       } else if (good.quantitySae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            'Se debe capturar la cantidad indep'
-          );
-        }
+        this.alert(
+          'error',
+          'Error de captura',
+          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
+        );
       } else {
         this.count = 0;
         if (this.goodsReception.value.length > 0) {
@@ -3077,8 +3135,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         if (this.count == 1) {
           this.alert(
             'error',
-            'Error de captura',
-            'La cantidad indep es mayor a la cantidad transferente'
+            `Error de captura`,
+            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
           );
         }
       } else if (good.saePhysicalState == null) {
@@ -3086,7 +3144,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado físico indep'
+            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
           );
         }
       } else if (good.stateConservationSae == null) {
@@ -3094,17 +3152,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado de conservación indep'
+            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
       } else if (good.quantitySae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            'Se debe capturar la cantidad indep'
-          );
-        }
+        this.alert(
+          'error',
+          'Error de captura',
+          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
+        );
       } else {
         this.count = 0;
         if (this.goodsTransportable.value.length > 0) {
@@ -3163,13 +3219,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   saveInfoGoodGuard() {
     this.count = 0;
     this.goodsGuards.value.map((good: IGood) => {
+      console.log('good', good);
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
         if (this.count == 1) {
           this.alert(
             'error',
-            'Error de captura',
-            'La cantidad indep es mayor a la cantidad transferente'
+            `Error de captura`,
+            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
           );
         }
       } else if (good.saePhysicalState == null) {
@@ -3177,7 +3234,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado físico indep'
+            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
           );
         }
       } else if (good.stateConservationSae == null) {
@@ -3185,17 +3242,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado de conservación indep'
+            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
       } else if (good.quantitySae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            'Se debe capturar la cantidad indep'
-          );
-        }
+        this.alert(
+          'error',
+          'Error de captura',
+          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
+        );
       } else {
         this.count = 0;
         if (this.goodsGuards.value.length > 0) {
@@ -3258,8 +3313,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         if (this.count == 1) {
           this.alert(
             'error',
-            'Error de captura',
-            'La cantidad indep es mayor a la cantidad transferente'
+            `Error de captura`,
+            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
           );
         }
       } else if (good.saePhysicalState == null) {
@@ -3267,7 +3322,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado físico indep'
+            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
           );
         }
       } else if (good.stateConservationSae == null) {
@@ -3275,17 +3330,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado de conservación indep'
+            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
       } else if (good.quantitySae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            'Se debe capturar la cantidad indep'
-          );
-        }
+        this.alert(
+          'error',
+          'Error de captura',
+          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
+        );
       } else {
         this.count = 0;
         if (this.goodsWarehouse.value.length > 0) {
@@ -3348,8 +3401,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         if (this.count == 1) {
           this.alert(
             'error',
-            'Error de captura',
-            'La cantidad indep es mayor a la cantidad transferente'
+            `Error de captura`,
+            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
           );
         }
       } else if (good.saePhysicalState == null) {
@@ -3357,7 +3410,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado físico indep'
+            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
           );
         }
       } else if (good.stateConservationSae == null) {
@@ -3365,17 +3418,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado de conservación indep'
+            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
       } else if (good.quantitySae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            'Se debe capturar la cantidad indep'
-          );
-        }
+        this.alert(
+          'error',
+          'Error de captura',
+          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
+        );
       } else {
         this.count = 0;
         if (this.goodsReprog.value.length > 0) {
@@ -3438,8 +3489,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         if (this.count == 1) {
           this.alert(
             'error',
-            'Error de captura',
-            'La cantidad indep es mayor a la cantidad transferente'
+            `Error de captura`,
+            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
           );
         }
       } else if (good.saePhysicalState == null) {
@@ -3447,7 +3498,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado físico indep'
+            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
           );
         }
       } else if (good.stateConservationSae == null) {
@@ -3455,17 +3506,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error de captura',
-            'Se debe capturar el estado de conservación indep'
+            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
       } else if (good.quantitySae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            'Se debe capturar la cantidad indep'
-          );
-        }
+        this.alert(
+          'error',
+          'Error de captura',
+          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
+        );
       } else {
         this.count = 0;
         if (this.goodsCancelation.value.length > 0) {

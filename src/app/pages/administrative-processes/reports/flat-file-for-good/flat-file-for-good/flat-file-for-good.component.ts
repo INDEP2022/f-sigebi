@@ -16,6 +16,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import * as XLSX from 'xlsx';
 import { UsersService } from '../../../../../core/services/ms-users/users.service';
+
 interface IExcelToJson {
   id: number;
   utf8: string;
@@ -47,6 +48,7 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
   nameFileA = document.getElementById('nameFileA') as HTMLInputElement;
   flag_report: boolean = false;
   reporte_flag: boolean = false;
+  reporte_flag2: boolean = false;
   dataDelivery: any[] = [];
   dataForfeiture: any[] = [];
 
@@ -156,7 +158,8 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
   onSubmit() {
     this.cleanPlaceholder('nameFileA', 'Nombre del Archivo Excel (Entrega)');
     this.cleanPlaceholder('nameFileB', 'Nombre del Archivo Excel (Decomiso)');
-
+    this.reporte_flag = false;
+    this.reporte_flag2 = false;
     //Bandera cuando encuentre data
     //this.reporte_flag = true;
 
@@ -196,13 +199,15 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
           //this.onLoadToast('success', 'success', response);
           for (let i = 0; i < response.data.length; i++) {
             if (response.data[i] != undefined) {
+              this.reporte_flag = true;
               this.loading = true;
               const Array = response.data[i].uno.split('~');
               this.dataDelivery.push(Array);
             }
           }
+          this.cleanPlaceholder('nameFileA', 'reporteEntrega.xlsx');
         }
-        this.reporte_flag = true;
+
         //console.log("dataDelivery -> ",this.dataDelivery);
       },
       error: err => {
@@ -212,7 +217,11 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
         } else {
-          this.onLoadToast('error', 'Reporte Entrega', err.error.message);
+          this.onLoadToast(
+            'error',
+            'Reporte Entrega',
+            'No se encontró información'
+          );
         }
       },
     });
@@ -236,13 +245,15 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
           //this.onLoadToast('success', 'success', response);
           for (let i = 0; i < response.data.length; i++) {
             if (response.data[i] != undefined) {
+              this.reporte_flag2 = true;
               this.loading = true;
               const Array = response.data[i].uno.split('~');
               this.dataForfeiture.push(Array);
             }
           }
+          this.cleanPlaceholder('nameFileB', 'reporteDecomiso.xlsx');
         }
-        this.reporte_flag = true;
+
         //console.log("dataDelivery -> ",this.dataForfeiture);
       },
       error: err => {
@@ -252,7 +263,11 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
         } else {
-          this.onLoadToast('error', 'Reporte Decomiso', err.error.message);
+          this.onLoadToast(
+            'error',
+            'Reporte Decomiso',
+            'No se encontró información'
+          );
         }
       },
     });

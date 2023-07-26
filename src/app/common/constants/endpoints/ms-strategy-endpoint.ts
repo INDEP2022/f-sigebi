@@ -11,4 +11,5 @@ export enum StrategyEndpoints {
   StrategySum = 'aplication/getSumStrategy',
   StrategyAmount = 'strategy-rep-amounts',
   StrategyAdmin = 'strategies-admin',
+  getbyStatus = 'aplication/getStrategyStatus',
 }
