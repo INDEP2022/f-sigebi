@@ -16,7 +16,7 @@ export const STATUSTRANSFER_COLUMS = {
   },
   description: {
     title: 'Descripción',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
 };

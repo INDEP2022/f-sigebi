@@ -139,6 +139,8 @@ export class DepartmentsListComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {
         if (next) this.getDepartments();
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
     this.modalService.show(DepartmentFormComponent, modalConfig);
   }
