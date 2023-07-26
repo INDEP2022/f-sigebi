@@ -57,10 +57,10 @@ export class RebillingCausesComponent extends BasePage implements OnInit {
 
             const search: any = {
               id: () => (searchFilter = SearchFilter.EQ),
-              description: () => (searchFilter = SearchFilter.EQ),
-              rebill: () => (searchFilter = SearchFilter.ILIKE),
-              apply: () => (searchFilter = SearchFilter.ILIKE),
-              comments: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              rebill: () => (searchFilter = SearchFilter.EQ),
+              apply: () => (searchFilter = SearchFilter.EQ),
+              comments: () => (searchFilter = SearchFilter.ILIKE),
             };
 
             search[filter.field]();
