@@ -77,6 +77,7 @@ export class ImplementationReportsInvoicesComponent
   folioScan: number;
   contador: number = 0;
   boolScan: boolean = true;
+  estadoc: any;
   constructor(
     private fb: FormBuilder,
     private strategyProcessService: StrategyProcessService,
@@ -100,15 +101,14 @@ export class ImplementationReportsInvoicesComponent
           : null;
       });
     this.settings.columns = IMPLEMENTATION_COLUMNS;
-    this.settings.rowClassFunction = (row: { data: { status: any } }) =>
-      row.data.status != null
-        ? row.data.status === 'AUTORIZADA'
+    this.settings.rowClassFunction = (row: { data: { estatus: any } }) =>
+      row.data.estatus != null
+        ? row.data.estatus === 'AUTORIZADA'
           ? 'bg-success text-white'
           : 'bg-dark text-white'
         : '';
     this.settings = {
       ...this.settings,
-      hideSubHeader: false,
       actions: false,
       columns: { ...IMPLEMENTATION_COLUMNS },
     };
@@ -134,7 +134,7 @@ export class ImplementationReportsInvoicesComponent
               case 'cve_reporte':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'status':
+              case 'estatus':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'fecAuthorizes':
@@ -189,6 +189,7 @@ export class ImplementationReportsInvoicesComponent
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
       total: [null],
+      estado: [null, [Validators.required]],
     });
   }
   validNoInvoice(No: string | number) {
@@ -220,7 +221,6 @@ export class ImplementationReportsInvoicesComponent
     const statusControl = this.invoiceDetailsForm.get('status');
     this.estado = statusControl ? statusControl.value === null : true;
     if ((this.estado = true)) {
-      console.log('es null');
     } else {
       this.estado = false;
     }
@@ -236,7 +236,7 @@ export class ImplementationReportsInvoicesComponent
 
   onRowSelect(event: any) {
     this.selectedRow = event.data;
-    if (this.selectedRow.status == 'AUTORIZADA') {
+    if (this.selectedRow.estatus == 'AUTORIZADA') {
       this.status = true;
     } else {
       this.status = false;
@@ -262,13 +262,11 @@ export class ImplementationReportsInvoicesComponent
     const model = {} as IAccountMovement;
     let token = this.authService.decodeToken();
     model.userinsert = token.name.toUpperCase();
-    console.log('Token: ', token.name.toUpperCase());
     this.iddelegation = this.proceduralHistoryForm.value.delegation;
     this.idsubdelegation = this.proceduralHistoryForm.value.subdelegation;
-    console.log('Delegacion', this.iddelegation);
-    console.log('subdelegacion ', this.idsubdelegation);
+    this.estadoc = this.proceduralHistoryForm.get('estado').value;
     this.strategyProcessService
-      .getByDelegation(this.iddelegation, params)
+      .getByDelegation(this.iddelegation, this.estadoc, params)
       .subscribe({
         next: response => {
           let lista = [];
@@ -287,10 +285,9 @@ export class ImplementationReportsInvoicesComponent
                 : null;
             const formattedfecCapture =
               Capture != null ? this.formatDate(Capture) : null;
-            console.log('prueba: ', response.data[0]);
             let dataForm = {
               cveReport: response.data[i].cve_reporte,
-              status: response.data[i].estatus,
+              estatus: response.data[i].estatus,
               fecAuthorizes: formattedfec_autoriza,
               fecCapture: formattedfecCapture,
               observations: response.data[i].observaciones,
@@ -324,10 +321,8 @@ export class ImplementationReportsInvoicesComponent
   }
 
   getAmount(id: number) {
-    console.log('id ', id);
     this.strategyProcessService.getByNoReport(id).subscribe({
       next: response => {
-        console.log('prueba: ', response.data[0].sum);
         this.cantidad = response.data[0].sum;
       },
     });
@@ -342,7 +337,7 @@ export class ImplementationReportsInvoicesComponent
     } else {
       let dataForm = {
         cveReport: this.selectedRow.cveReport,
-        status: this.selectedRow.status,
+        estatus: this.selectedRow.estatus,
         observations: this.selectedRow.observations,
         quantity: this.cantidad,
         no_report: this.selectedRow.no_reporte,
@@ -351,7 +346,6 @@ export class ImplementationReportsInvoicesComponent
         subdelegation: this.selectedRow.subdelegation,
         zona: this.zone,
       };
-      console.log('Prueba: ', dataForm);
       this.box.push(dataForm);
       this.strategy.load(this.box);
       this.selectedRow = null;
@@ -371,18 +365,19 @@ export class ImplementationReportsInvoicesComponent
   }
 
   removeSelect() {
+    this.box = [];
     if (this.deleteselectedRow == null) {
       this.onLoadToast('error', 'Debe seleccionar un registro');
       return;
     } else {
-      console.log('selected Row: ', this.deleteselectedRow);
       this.strategy.remove(this.deleteselectedRow);
       this.strategy.remove(this.box);
       this.contador = 0;
+      this.totalValue = 0;
       this.countRowTotal();
       this.clearSelection();
       this.countFacture();
-      this.box = [];
+      this.strategy.load([]);
     }
   }
 
@@ -395,12 +390,10 @@ export class ImplementationReportsInvoicesComponent
   }
 
   async Application() {
-    console.log('Data 2 ', this.box);
     this.ObtenerFolio();
     for (let i = 0; i < this.box.length; i++) {
       this.bool = false;
       let cantidad = this.invoiceDetailsForm.get('quantity').value;
-      console.log('Cantidad: ', cantidad);
       if (this.box[i].cveReport != null) {
         if (cantidad > this.totalValue) {
           this.report = this.box[i].no_report;
@@ -432,7 +425,6 @@ export class ImplementationReportsInvoicesComponent
                   scanFolio: response.message,
                 });
                 this.folioScan = response.message;
-                console.log('folio ', this.folioScan);
 
                 this.proccesReport();
               },
@@ -607,11 +599,9 @@ export class ImplementationReportsInvoicesComponent
           subDelegationNumber: datos.subDelegationNumber,
           departamentNumber: datos.departamentNumber,
         };
-        console.log('Prueba: ', item);
         this.formFolio();
         this.documentsDictumStatetMService.postPupFol(item).subscribe({
           next: response => {
-            console.log('Succefull2: ', response);
             this.proccesReport();
           },
         });
@@ -633,5 +623,6 @@ export class ImplementationReportsInvoicesComponent
     this.strategy.load([]);
     this.data.load([]);
     this.totalValue = 0;
+    this.totalItems = 0;
   }
 }

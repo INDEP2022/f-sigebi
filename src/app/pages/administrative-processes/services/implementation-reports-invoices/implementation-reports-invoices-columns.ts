@@ -4,7 +4,7 @@ export const IMPLEMENTATION_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     width: '20%',
     sort: false,
@@ -31,7 +31,7 @@ export const INVOICE_COLUMNS = {
     width: '10%',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     width: '20%',
     sort: false,

@@ -180,8 +180,20 @@
               (emitSubdelegation)="seleccionarSubDelegacion($event)">
             </app-delegation-shared>
           </div>
+          <div class="col-md-4" style="margin: 1%">
+            <form-field
+              [control]="proceduralHistoryForm.get('estado')"
+              label="Estado">
+              <select class="form-control" formControlName="estado">
+                <option [value]="null">Seleccione el estado</option>
+                <option value="AUTORIZADA">AUTORIZADA</option>
+                <option value="PROCESO">PROCESO</option>
+              </select>
+            </form-field>
+          </div>
           <div class="col-md-2 justify-content-center" style="margin: 5%">
             <button
+              [disabled]="!proceduralHistoryForm.valid"
               type="button"
               class="btn btn-primary active btn-sm"
               (click)="DelegationI()">
