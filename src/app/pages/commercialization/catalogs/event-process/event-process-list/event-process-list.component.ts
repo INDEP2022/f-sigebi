@@ -61,6 +61,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          console.log(change.filter.filters);
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = ``;
@@ -83,6 +84,10 @@ export class EventProcessListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params.next({
+            ...this.params.getValue(),
+            filter: this.columnFilters,
+          });
           this.getEvents();
         }
       });
@@ -98,6 +103,8 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   }
 
   getEvents() {
+    console.log('get');
+
     let tpeventoId = this.form.controls['goodType'].value;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -106,6 +113,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
 
   getEventsByType(id: string | number): void {
     this.loading = true;
+    console.log(JSON.stringify(this.params.getValue()));
     this.comerTpEventsService
       .getEventsByType(id, this.params.getValue())
       .subscribe({
