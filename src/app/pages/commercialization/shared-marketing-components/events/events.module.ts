@@ -9,6 +9,7 @@ import { EventsRoutingModule } from './events-routing.module';
 //Components
 import { EventPermissionControlComponent } from './event-permission-control/event-permission-control.component';
 //@Standalone Components
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 import { EvenPermissionControlModalComponent } from './even-permission-control-modal/even-permission-control-modal.component';
 
@@ -24,6 +25,7 @@ import { EvenPermissionControlModalComponent } from './even-permission-control-m
     FormsModule,
     ReactiveFormsModule,
     EventsSharedComponent,
+    FormLoaderComponent,
   ],
 })
 export class EventsModule {}
