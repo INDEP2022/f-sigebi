@@ -165,14 +165,17 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'preliminaryInquiry' ||
-            filter.field == 'criminalCase' ||
+            filter.field == 'coordinacion_regional' ||
+            filter.field == 'cve_oficio_externo' ||
+            filter.field == 'no_expediente' ||
             filter.field == 'expedientType' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'expedientStatus' ||
-            filter.field == 'stationNumber' ||
-            filter.field == ' authorityNumber'
+            filter.field == 'no_volante' ||
+            filter.field == 'no_tramite' ||
+            filter.field == 'urecepcion' ||
+            filter.field == ' programa' ||
+            filter.field == ' finicia' ||
+            filter.field == ' fmaxima' ||
+            filter.field == ' cumplio'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -441,6 +444,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     };
     this.documentsService
       .getDocCaptureFind(this.search, this.params.getValue())
+      // .pipe(timeout(50000))
       .subscribe({
         next: data => {
           this.loading = false;
@@ -453,11 +457,11 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           );
           this.P_T_CUMP = cumple.length;
           this.P_T_NO_CUMP = noCumple.length;
-          this.P_T_NO_CUMP = data.info.total_no_cumplio;
-          this.P_CUMP = (this.P_T_CUMP / data.info.total_cumplio) * 100;
+          // this.P_T_NO_CUMP = data.info.total_no_cumplio;
+          this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
           this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
-          this.totalItemsCaptura = data.info.total_cumplio;
+          this.totalItemsCaptura = data.result.length;
           this.loading = false;
           // this.P_T_CUMP = data.info.total_cumplio;
           // this.P_CUMP = data.info.porcen_cumplidos;
@@ -467,7 +471,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           this.isData = false;
           this.capturasDig = [];
           this.nombreUser = '';
-          this.dataFactCapt.refresh();
+          this.dataFactCapt = new LocalDataSource();
         },
       });
   }
@@ -494,6 +498,5 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     console.log(this.formCapture.value.user);
     // this.formCapture.value.user = event.user
   }
-
   goBack() {}
 }

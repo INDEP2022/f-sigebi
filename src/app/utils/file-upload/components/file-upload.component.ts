@@ -74,6 +74,7 @@ export class FileUploadComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    console.log('Botón Subir presionado');
     if (this.fileEvents.length < 1) {
       this.alert('warning', 'Advertencia', 'Debes subir mínimo un archivo');
       return;
