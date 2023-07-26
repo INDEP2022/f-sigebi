@@ -26,6 +26,10 @@ export class RectifitationFieldsService extends HttpService {
     return this.put(`${ParameterInvoiceEndpoint.RectificationFields}`, data);
   }
 
+  remove(data: { columnId: string; invoiceFieldId: string; table: string }) {
+    return this.delete(ParameterInvoiceEndpoint.RectificationFields, data);
+  }
+
   getAllFieldValid(params: Params | string) {
     return this.get(ParameterInvoiceEndpoint.FieldValid, params);
   }
