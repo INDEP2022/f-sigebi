@@ -32,18 +32,9 @@
 
       <ng-container *ngIf="queryMode">
         <div class="row">
-          <div class="col-md-9"></div>
-          <div class="col-md-1">
-            <button
-              type="button"
-              class="btn btn-primary active btn-sm m-2"
-              (click)="queryMode = null">
-              Regresar <i class="fas fa-arrow-circle-left"></i>
-            </button>
-          </div>
           <div class="col-md-12">
             <form-field
-              class="col-md-6"
+              class="col-md-4"
               [control]="jobNumber"
               label="No&#46; Oficio">
               <input
@@ -52,12 +43,27 @@
                 [formControl]="jobNumber" />
             </form-field>
 
-            <div class="col-md-6 d-flex.justify-content-end">
-              <confirm-button
-                [loading]="loading"
-                loadingText="Buscando..."
-                text="Buscar"
-                [btnSmall]="true"></confirm-button>
+            <div class="col-md-7">
+              <div class="col-md-12"></div>
+              <div class="col-md-4">
+                <confirm-button
+                  [loading]="loading"
+                  loadingText="Buscando..."
+                  text="Buscar"
+                  [btnSmall]="true"
+                  icon="bx bx-search-alt bx-sm float-icon"
+                  height="100px"></confirm-button>
+              </div>
+              <div class="col-md-4"></div>
+              <div class="col-md-1">
+                <button
+                  type="button"
+                  class="btn btn-primary active btn-sm m-2"
+                  (click)="queryMode = null"
+                  style="position: absolute; top: -4px">
+                  Regresar <i class="fas fa-arrow-circle-left"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -67,7 +73,7 @@
 
   <div footer>
     <div class="col-md-8">
-      <!--  <div class="m-3">
+      <!--  <div class="m-3 ">
                 <confirm-button
           text="Buscar "
           loadingText="Buscando ... "

@@ -1,16 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import * as FileSaver from 'file-saver';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError, firstValueFrom, map, of } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
-  KEYGENERATION_PATTERN,
-  RFC_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { InvoiceFolioSeparate } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { FolioModalComponent } from '../folio-modal/folio-modal.component';
@@ -20,7 +30,7 @@ import { FolioModalComponent } from '../folio-modal/folio-modal.component';
   templateUrl: './penalty-billing-main.component.html',
   styles: [],
 })
-export class PenaltyBillingMainComponent implements OnInit {
+export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   layout: string = 'penalty'; // 'penalty', 'bases-sales'
   navigateCount: number = 0; // 'penalty', 'bases-sales'
   maxDate: Date = new Date();
@@ -141,132 +151,388 @@ export class PenaltyBillingMainComponent implements OnInit {
     document: 'EJE',
   };
 
+  //nuevo
+  dataEvent: DefaultSelect = new DefaultSelect();
+  dataLote: DefaultSelect = new DefaultSelect();
+  dataClient: DefaultSelect = new DefaultSelect();
+  dataClient2: DefaultSelect = new DefaultSelect();
+  dataTransferent: DefaultSelect = new DefaultSelect();
+  delegations: DefaultSelect = new DefaultSelect();
+
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
-  ) {}
+    private sanitizer: DomSanitizer,
+    private comerEventService: ComerEventService,
+    private comerInvoice: ComerInvoiceService,
+    private lotService: LotService,
+    private comerService: ComerClientsService,
+    private authSerivce: AuthService,
+    private parameterComerModSerivce: ParameterModService,
+    private transferentService: TransferentesSaeService,
+    private delegationService: DelegationService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      if (params.get('type')) {
-        if (this.navigateCount > 0) {
-          this.folioData = null;
-          this.billingForm.reset();
-          window.location.reload();
-        }
-        this.layout = params.get('type');
-        this.navigateCount += 1;
-      }
-    });
+    // this.route.paramMap.subscribe(params => {
+    //   if (params.get('type')) {
+    //     if (this.navigateCount > 0) {
+    //       this.folioData = null;
+    //       this.billingForm.reset();
+    //       window.location.reload();
+    //     }
+    //     this.layout = params.get('type');
+    //     this.navigateCount += 1;
+    //   }
+    // });
     this.prepareForm();
-    this.getEvents({ page: 1, text: '' });
-    this.getBatches({ page: 1, text: '' });
-    this.getMunicipalities({ page: 1, text: '' });
-    this.getStates({ page: 1, text: '' });
-    this.getTypes();
+  }
+
+  //nuevo
+
+  getEventData(params?: Params) {
+    this.comerEventService.getDataEvent(params).subscribe({
+      next: resp => {
+        this.dataEvent = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.dataEvent = new DefaultSelect();
+      },
+    });
+  }
+
+  getDelegation(params?: ListParams) {
+    params['limit'] = 50;
+    params['sortBy'] = 'id:ASC';
+    this.delegationService.getAll(params).subscribe({
+      next: resp => {
+        this.delegations = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.delegations = new DefaultSelect();
+      },
+    });
+  }
+
+  getTransferentData(params?: ListParams) {
+    if (params.text) {
+      params['filter.nameTransferent'] = `${SearchFilter.ILIKE}:${params.text}`;
+    }
+    this.transferentService.getAll(params).subscribe({
+      next: resp => {
+        this.dataTransferent = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.dataTransferent = new DefaultSelect();
+      },
+    });
+  }
+
+  getComerClientsData(params?: ListParams) {
+    let text: string = '';
+    if (params.text) {
+      params['filter.reasonName'] = `${SearchFilter.ILIKE}:${params.text}`;
+      text = params.text;
+    }
+    this.comerService.getAll(params).subscribe({
+      next: resp => {
+        if (resp.count == 1) {
+          this.billingForm.get('authorize').patchValue(resp.data[0].reasonName);
+        }
+        this.dataClient = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.billingForm.get('authorize').patchValue(text);
+        this.dataClient = new DefaultSelect([{ reasonName: text }], 1);
+      },
+    });
+  }
+
+  getComerClientsData2(params?: ListParams) {
+    if (params.text) {
+      params['filter.reasonName'] = `${SearchFilter.ILIKE}:${params.text}`;
+    }
+    this.comerService.getAll(params).subscribe({
+      next: resp => {
+        this.dataClient2 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: () => {
+        this.dataClient2 = new DefaultSelect();
+      },
+    });
+  }
+
+  selectedTrans(data: any) {
+    this.billingForm.get('descriptionCvman').patchValue(data.nameTransferent);
+    this.billingForm.get('transferenceNumber').patchValue(data.id);
+  }
+
+  setDataClient(data: any) {
+    this.billingForm.get('street').patchValue(data.street);
+    this.billingForm.get('colonia').patchValue(data.colony);
+    this.billingForm.get('rfc').patchValue(data.rfc);
+    this.billingForm.get('municipality').patchValue(data.city);
+    this.billingForm.get('state').patchValue(data.state);
+    this.billingForm.get('zipCode').patchValue(data.zipCode);
+  }
+
+  getDataLote({ idLot }: any) {
+    const { eventId, processKey } = this.billingForm.value;
+    this.comerInvoice
+      .getPenalizeData(Number(eventId), Number(idLot))
+      .subscribe({
+        next: resp => {
+          const data = resp.data[0];
+          //this.billingForm.get('authorize').patchValue(Number(data.AUTORIZO))
+          this.billingForm.get('street').patchValue(data.CALLE);
+          this.billingForm.get('client').patchValue(data.CLIENTE);
+          this.billingForm.get('colonia').patchValue(data.COLONIA);
+          this.billingForm.get('zipCode').patchValue(data.CP);
+          this.billingForm.get('cvman').patchValue(data.CVMAN);
+          this.billingForm.get('delegationNumber').patchValue(data.DELEGACION);
+          this.billingForm
+            .get('description')
+            .patchValue(data.DESCRIPCION.concat(` ${processKey}`));
+          this.billingForm.get('descriptionCvman').patchValue(data.DESC_CVMAN);
+          this.billingForm.get('state').patchValue(data.ESTADO);
+          this.billingForm.get('vat').patchValue(data.IVA);
+          this.billingForm.get('municipality').patchValue(data.MUNICIPIO);
+          this.billingForm.get('descDelegation').patchValue(data.NO_DELEGACION);
+          this.billingForm
+            .get('transferenceNumber')
+            .patchValue(data.NO_TRANSFERENTE);
+          this.billingForm.get('price').patchValue(data.PRECIO);
+          this.billingForm.get('rfc').patchValue(data.RFC);
+          this.billingForm.get('total').patchValue(data.TOTAL);
+
+          const params = new ListParams();
+
+          const value = parseInt(data.AUTORIZO);
+
+          value
+            ? (params['filter.id'] = `${SearchFilter.EQ}:${data.AUTORIZO}`)
+            : (params[
+                'filter.reasonName'
+              ] = `${SearchFilter.ILIKE}:${data.AUTORIZO}`);
+
+          this.getComerClientsData(params);
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error',
+            `No se encontraron datos sobre el evento: ${eventId} y lote: ${idLot}`
+          );
+        },
+      });
+  }
+
+  checkEvent({ id_evento }: any) {
+    if (id_evento) {
+      this.comerEventService.getDataTpEvents(Number(id_evento)).subscribe({
+        next: resp => {
+          this.billingForm.get('processKey').patchValue(resp.cve_proceso ?? '');
+          this.billingForm
+            .get('processTpKey')
+            .patchValue(resp.cve_procesotp ?? '');
+          this.billingForm
+            .get('eventDate')
+            .patchValue(
+              resp.fec_evento
+                ? resp.fec_evento.split('T')[0].split('-').reverse().join('/')
+                : ''
+            );
+          this.billingForm.get('tpEvent').patchValue(resp.tpevento ?? '');
+          this.getLoteByEvent(new ListParams());
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error',
+            'Evento no existe, debe crear un evento antes de emitir una factura'
+          );
+        },
+      });
+    }
+  }
+
+  getComerFacturas() {
+    const filter = new FilterParams();
+    filter.addFilter('invoiceTpId', 'P', SearchFilter.EQ);
+    filter.page = 13546;
+    this.comerInvoice.getAll(filter.getParams()).subscribe({
+      next: resp => {
+        console.log(resp.data[0]);
+        this.billingForm.patchValue(resp.data[0]);
+      },
+      error: () => {},
+    });
+  }
+
+  getLoteByEvent(params: Params) {
+    const { eventId } = this.billingForm.value;
+    if (eventId) {
+      this.lotService.getLotbyEvent(eventId, params).subscribe({
+        next: resp => {
+          this.dataLote = new DefaultSelect(resp.data, resp.count);
+        },
+        error: () => {
+          this.dataLote = new DefaultSelect();
+        },
+      });
+    }
+  }
+
+  async saveData() {
+    this.loading = true;
+    const { id, eventId } = this.billingForm.value;
+
+    if (!id) {
+      const idValue = await this.getIdMax(Number(eventId));
+      console.log(idValue);
+      this.billingForm.get('id').patchValue(idValue);
+    }
+
+    this.billingForm.get('invoiceStatusId').patchValue('PREF');
+    return;
+    this.comerInvoice.create(this.billingForm.value).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  getIdMax(eventId: number) {
+    return firstValueFrom(
+      this.comerInvoice.getMaxFacturaId(eventId).pipe(
+        map(resp => resp.id_factura),
+        catchError(() => of(1))
+      )
+    );
   }
 
   private prepareForm(): void {
     this.billingForm = this.fb.group({
-      event: [null, [Validators.required]],
-      batch: [null, [Validators.required]],
-      cve: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+      eventId: [null, Validators.required],
+      processKey: [null],
+      processTpKey: [null],
+      lotId: [null, Validators.required],
+      type: [20, Validators.required],
       eventDate: [null],
-      voucherType: [null, [Validators.required]],
-      eventType: [null, [Validators.required]],
       printDate: [null],
-      transferor: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      transferorDesc: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      cvman: [null, Validators.required],
+      descriptionCvman: [null, Validators.required],
       delegationNumber: [null],
-      delegationDesc: [null, Validators.pattern(STRING_PATTERN)],
-      authorize: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      description: [null, Validators.pattern(STRING_PATTERN)],
-      client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
-      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      neighborhood: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      municipality: [null, [Validators.required]],
-      state: [null, [Validators.required]],
-      cp: [null, [Validators.required]],
-      price: [null, [Validators.required]],
-      saleTax: [null, [Validators.required]],
-      total: [null, [Validators.required]],
+      descDelegation: [null],
+      description: [null],
+      client: [null, Validators.required],
+      authorize: [null, Validators.required],
+      street: [null, Validators.required],
+      colonia: [null, Validators.required],
+      municipality: [null, Validators.required],
+      state: [null, Validators.required],
+      rfc: [null, Validators.required],
+      zipCode: [null, Validators.required],
+      tpEvent: [null],
+      goodNumber: [null],
+      amount: [null],
+      temporaryImagenFile: [null],
+      serie: [null],
+      folio: [null],
+      invoiceStatusId: [null],
+      authorizeDate: [null],
+      price: [null],
+      vat: [null],
+      total: [null],
+      transferenceNumber: [null],
+      process: [null],
+      invoiceCauseId: [null],
+      invoiceFolioId: [null],
+      attached: [null],
+      userAuthorize: [null],
+      id: [null],
+      invoiceTpId: ['P', Validators.required],
+      voucherType: [null],
+      any: [null],
     });
   }
 
-  getTypes() {
-    this.voucherTypes = this.voucherTypeData;
-    this.eventTypes = this.eventTypeData;
-  }
+  async generateFolios() {
+    const { id, eventId } = this.billingForm.value;
+    const user = this.authSerivce.decodeToken();
+    let validUser: number;
 
-  getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventsTestData, 5);
+    validUser = await this.getUser(user.username.toUpperCase());
+
+    if (validUser == 0) {
+      this.alert(
+        'error',
+        'Error',
+        'No cuenta con los permisos para efectuar esta operación'
+      );
+      return;
     } else {
-      const id = parseInt(params.text);
-      const item = [this.eventsTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
+      if (!id) {
+        this.alert('error', 'Error', 'Debe guardar los datos');
+        return;
+      } else if (!eventId) {
+        this.alert('error', 'Error', 'Debe especificar un evento');
+        return;
+      }
     }
+
+    console.log('continua');
   }
 
-  getBatches(params: ListParams) {
-    if (params.text == '') {
-      this.batchItems = new DefaultSelect(this.batchesTestData, 5);
+  async getUser(user: string) {
+    return firstValueFrom(
+      this.parameterComerModSerivce.validUser({ user }).pipe(
+        map(resp => resp.lValUsu),
+        catchError(() => of(-1))
+      )
+    );
+  }
+
+  deleteFolios() {
+    const { id, eventId } = this.billingForm.value;
+
+    if (!id) {
+      this.alert('error', 'Error', 'Debe existir folio de facturación');
+      return;
+    }
+    if (!eventId) {
+      this.alert('error', 'Error', 'Debe seleccionar un evento');
+      return;
+    }
+
+    let aux = 0;
+    aux = 1;
+
+    if (aux == 1) {
+      this.changeProcess('EF', 'FOL');
+    }
+
+    this.comerInvoice.deleteFolio({ eventId, invoiceId: id }).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  changeProcess(process: string, status: string) {
+    const { invoiceStatusId } = this.billingForm.value;
+    let aux_status: string;
+    if (status == 'NULL') {
+      aux_status = null;
     } else {
-      const id = parseInt(params.text);
-      const item = [this.batchesTestData.filter((i: any) => i.id == id)];
-      this.batchItems = new DefaultSelect(item[0], 1);
+      aux_status = status;
+    }
+
+    if (invoiceStatusId) {
+      this.billingForm.get('process').patchValue(process);
     }
   }
-
-  getMunicipalities(params: ListParams) {
-    if (params.text == '') {
-      this.municipalityItems = new DefaultSelect(this.municipalityTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.municipalityTestData.filter((i: any) => i.id == id)];
-      this.municipalityItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  getStates(params: ListParams) {
-    if (params.text == '') {
-      this.stateItems = new DefaultSelect(this.stateTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.stateTestData.filter((i: any) => i.id == id)];
-      this.stateItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  generateFolios() {
-    switch (this.layout) {
-      case 'penalty':
-        this.folioData = this.folioGeneratedData;
-        break;
-      case 'bases-sales':
-        this.folioData = this.folioGeneratedData;
-        break;
-      default:
-        break;
-    }
-  }
-
-  deleteFolios() {}
 
   openPrevInvoice() {
     let config: ModalOptions = {
@@ -286,18 +552,77 @@ export class PenaltyBillingMainComponent implements OnInit {
   }
 
   getImage() {
+    const { id, eventId } = this.billingForm.value;
+
+    if (!id) {
+      this.alert('error', 'Error', 'Debe existir folio de facturación');
+      return;
+    }
+    if (!eventId) {
+      this.alert('error', 'Error', 'Debe seleccionar un evento');
+      return;
+    }
+
+    let valida: number = 0;
+    let borra: string;
+    valida = 1;
+    if (valida == 1) {
+      this.archiv();
+      this.createImg();
+      this.obtImg(null);
+    }
+
     const filename = 'Invoice_000_exported';
     FileSaver.saveAs(this.imagenurl, filename + '.jpg');
   }
 
+  changeStatusImg() {
+    const { eventId, id } = this.billingForm.value;
+    const body = {
+      pStatus: 'SEG',
+      pProcess: 'AR',
+      pEvent: eventId,
+      idFact: id,
+    };
+    this.comerInvoice.updateStatusImg(body).subscribe({
+      next: () => {},
+      error: () => {},
+    });
+  }
+
+  obtImg(img: string) {}
+
+  archiv() {
+    const { invoiceStatusId, temporaryImagenFile, eventId, id } =
+      this.billingForm.value;
+    if (invoiceStatusId == 'FOL' && !temporaryImagenFile) {
+      this.billingForm
+        .get('temporaryImagenFile')
+        .patchValue(`C:\IMTMPSIAB\TMP_${eventId}_${id}.BMP`);
+    }
+    this.changeProcess('AR', 'FOL');
+    //lip comit silencioso guardar datos
+  }
+
+  createImg() {}
+
   openFolioModal() {
-    const modalRef = this.modalService.show(FolioModalComponent, {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean, data: InvoiceFolioSeparate) => {
+          if (next) {
+            this.billingForm.get('serie').patchValue(data.series);
+            this.billingForm.get('folio').patchValue(data.invoice);
+            this.billingForm
+              .get('invoiceFolioId')
+              .patchValue(data.folioinvoiceId);
+          }
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.onSelected.subscribe((data: boolean) => {
-      if (data) this.addReservedFolio(data);
-    });
+    };
+    this.modalService.show(FolioModalComponent, config);
   }
 
   openCancelModal() {

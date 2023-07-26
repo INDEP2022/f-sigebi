@@ -25,7 +25,7 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
     title: 'Usuario',
     sort: false,
   },
-  captureMinutesReceptionDate: {
+  estgiaRecepFecCapture: {
     title: 'Fecha de Estrategia',
     sort: false,
     type: 'html',
@@ -37,8 +37,8 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
-  fin: {
-    title: 'Fecha page Programación',
+  programmingRecepFecIni: {
+    title: 'Fecha inicio Programación',
     sort: false,
     type: 'html',
     valuePrepareFunction: (text: string) => {
@@ -49,7 +49,7 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
-  receptionPhysicalDate: {
+  programmingRecepFecFin: {
     title: 'Fecha Fin Programación',
     sort: false,
     type: 'html',
@@ -61,8 +61,32 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
+  programmingRecepFecClosing: {
+    title: 'Fecha Maxima Estrategia',
+    sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
+  receptionPhysicalDate: {
+    title: 'Fecha Recepción',
+    sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+  },
   cumplio: {
-    title: 'Cumplio',
+    title: 'Cumplió',
     sort: false,
     /* valuePrepareFunction: (text: string) => {
       return text === 'S' ? 'SI' : 'NO';

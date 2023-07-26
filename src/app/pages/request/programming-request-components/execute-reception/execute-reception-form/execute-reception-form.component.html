@@ -75,13 +75,17 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
-            <span class="fs-4"> {{ programming?.startDate }} </span>
+            <span class="fs-4">
+              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+            </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
-            <span class="fs-4"> {{ programming?.endDate }}</span>
+            <span class="fs-4">
+              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+            >
           </div>
         </div>
       </div>
@@ -413,11 +417,18 @@
                       <td>
                         <form-field [control]="executeForm.get('quantitySae')">
                           <input
-                            type="number"
+                            type="text"
                             class="form-control"
-                            maxlength="50"
+                            maxlength="100"
                             formControlName="quantitySae" />
                         </form-field>
+                        <!--<form-field [control]="executeForm.get('quantitySae')">
+                          <input
+                            class="form-control"
+                            maxlength="50"
+                            
+                            formControlName="quantitySae" />
+                        </form-field> -->
                       </td>
                       <td class="text-left align-baseline">
                         {{ good.get('unitMeasure')?.value }}

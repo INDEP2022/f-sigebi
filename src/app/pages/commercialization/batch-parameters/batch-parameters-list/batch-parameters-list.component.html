@@ -3,7 +3,44 @@
     <h5 class="title">par&aacute;metros por lote</h5>
   </div>
   <div body>
-    <form class="form-material">
+    <div body>
+      <div class="ch-content" header>
+        <h5 class="title"></h5>
+        <div class="col-md-5 buttons mb-3">
+          <div>
+            <button
+              (click)="add()"
+              type="button"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form-loader *ngIf="loading"></form-loader>
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '400px' }">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              class="table-responsive"
+              [settings]="settings"
+              [source]="lotData"
+              (edit)="edit($event)"
+              (delete)="deleteEntry($event)">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <app-pagination
+          [params]="paramsList"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <!-- <form class="form-material">
       <div class="row mb-5">
         <div class="col-sm-12 col-md-6">
           <div class="form-material">
@@ -38,6 +75,6 @@
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
-    </form>
+    </form> -->
   </div>
 </app-card>

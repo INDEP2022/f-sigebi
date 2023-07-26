@@ -51,8 +51,17 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     params['filter.regionalDelegation'] = this.data[0].idDelegation;
     params['filter.managedBy'] = 'Transferente';
     params['filter.administratorName'] = this.data[0].idTransferent;
-    this.goodsQueryService.getCatStoresView(params).subscribe(data => {
-      this.warehouses = new DefaultSelect(data.data, data.count);
+    this.goodsQueryService.getCatStoresView(params).subscribe({
+      next: data => {
+        this.warehouses = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.alert(
+          'error',
+          'Error de información',
+          'La transferente no cuenta con almacenes'
+        );
+      },
     });
   }
 

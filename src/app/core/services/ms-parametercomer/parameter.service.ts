@@ -65,4 +65,8 @@ export class ParameterModService
     const route = `${this.route}`;
     return this.delete(route, model);
   }
+
+  validUser(data: { user: string }) {
+    return this.post(ParameterComerEndpoints.ApplicationUser, data);
+  }
 }

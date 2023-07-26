@@ -10,7 +10,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IRepresentative } from 'src/app/core/models/catalogs/representative-model';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CUSTOMERS_LIST_COLUMNS } from '../../..//customers-black-list/customers-list-columns';
+import { CUSTOMERS_LIST_COLUMNS } from '../../../customers-black-list/customers-list-columns';
 
 @Component({
   selector: 'app-customers-export-representants-list.component',

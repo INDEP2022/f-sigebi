@@ -69,7 +69,8 @@
                     <input
                       class="form-control"
                       formControlName="receiptDate"
-                      bsDatepicker />
+                      bsDatepicker
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -78,7 +79,9 @@
                     label="No&#46; Expediente Transferente">
                     <input
                       class="form-control"
-                      formControlName="expedientTransferenceNumber" />
+                      formControlName="expedientTransferenceNumber"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -87,7 +90,9 @@
                     label="Cve&#46; Oficio Externo">
                     <input
                       class="form-control"
-                      formControlName="officeExternalKey" />
+                      formControlName="officeExternalKey"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -97,7 +102,8 @@
                     <input
                       class="form-control"
                       formControlName="externalOfficeDate"
-                      bsDatepicker />
+                      bsDatepicker
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -106,7 +112,9 @@
                     label="Remitente Externo">
                     <input
                       class="form-control"
-                      formControlName="externalRemitter" />
+                      formControlName="externalRemitter"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -115,7 +123,9 @@
                     label="Cve&#46; Amparo">
                     <input
                       class="form-control"
-                      formControlName="protectionKey" />
+                      formControlName="protectionKey"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -124,7 +134,9 @@
                     label="Cve&#46; Toca Penal">
                     <input
                       class="form-control"
-                      formControlName="touchPenaltyKey" />
+                      formControlName="touchPenaltyKey"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -133,7 +145,9 @@
                     label="Acta Circunstanciada">
                     <input
                       class="form-control"
-                      formControlName="circumstantialRecord" />
+                      formControlName="circumstantialRecord"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -142,7 +156,9 @@
                     label="Averiguaci&oacute;n Previa">
                     <input
                       class="form-control"
-                      formControlName="preliminaryInquiry" />
+                      formControlName="preliminaryInquiry"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -151,10 +167,12 @@
                     label="Causa Penal">
                     <input
                       class="form-control"
-                      formControlName="criminalCase" />
+                      formControlName="criminalCase"
+                      [readonly]="true"
+                      [disabled]="true" />
                   </form-field>
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
                   <ngx-select
                     [data]="selectAffairkey"
                     bindLabel="dataDesc"
@@ -165,12 +183,13 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="affairKey"></ngx-select>
+                    control="affairKey"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field [control]="form.get('asunto')" label="Asunto">
                     <input class="form-control" formControlName="asunto" />
                   </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
                   <ngx-select
                     [data]="selectIndiciadoNumber"
                     bindLabel="dataDesc"
@@ -181,7 +200,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="indiciadoNumber"></ngx-select>
+                    control="indiciadoNumber"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('indiciadoNumber')"
                     label="Indiciado">
@@ -190,7 +210,7 @@
                       formControlName="indiciadoNumber" />
                   </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
                   <ngx-select
                     [data]="selectMinpubNumber"
                     bindLabel="dataDesc"
@@ -201,7 +221,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="minpubNumber"></ngx-select>
+                    control="minpubNumber"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('minpubNumber')"
                     label="Ministerio P&uacute;blico">
@@ -210,7 +231,7 @@
                       formControlName="minpubNumber" />
                   </form-field> -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
                   <ngx-select
                     [data]="selectCourtNumber"
                     bindLabel="dataDesc"
@@ -221,7 +242,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="courtNumber"></ngx-select>
+                    control="courtNumber"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('courtNumber')"
                     label="Juzgado">
@@ -239,7 +261,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="delegationNumber"></ngx-select>
+                    control="delegationNumber"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('delegationNumber')"
                     label="Delegaci&oacute;n">
@@ -259,7 +282,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="entFedKey"></ngx-select>
+                    control="entFedKey"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('entFedKey')"
                     label="Entidad Federativa">
@@ -277,7 +301,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="cityNumber"></ngx-select>
+                    control="cityNumber"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field [control]="form.get('cityNumber')" label="Ciudad">
                     <input class="form-control" formControlName="cityNumber" />
                   </form-field> -->
@@ -293,7 +318,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="transference"></ngx-select>
+                    control="transference"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('transference')"
                     label="Transferente">
@@ -313,7 +339,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="stationNumber"></ngx-select>
+                    control="stationNumber"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('stationNumber')"
                     label="Emisora">
@@ -333,7 +360,8 @@
                     [showTooltip]="true"
                     [searchOnInit]="true"
                     termMaxLength="80"
-                    control="authority"></ngx-select>
+                    control="authority"
+                    [readonly]="true"></ngx-select>
                   <!-- <form-field
                     [control]="form.get('authority')"
                     label="Autoridad">
@@ -350,6 +378,20 @@
     <br />
     <!-- tabla Bienes -->
     <div class="row">
+      <!-- PARTE DE ESCANEO -->
+      <div class="col-md-12 col-12 col-sm-12" *ngIf="showScanForm">
+        <app-scanning-foil-historical-goods-extdom
+          [formScan]="formScan"
+          [notificationData]="notificationData"
+          [dataUserLogged]="dataUserLogged"
+          (changeFolio)="changeFolio($event)"
+          (scanRequestEmitter)="scanRequest($event)"
+          (showScanningPageEmitter)="showScanningPage($event)"
+          (messageDigitalizationEmitter)="messageDigitalization($event)"
+          (viewPicturesEmitter)="
+            viewPictures($event)
+          "></app-scanning-foil-historical-goods-extdom>
+      </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
         <div class="card">
           <div class="card-body">
@@ -431,7 +473,11 @@
           <div class="card-body">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-8">
-                <h6>Bienes a Procesar para Validaci&oacute;n ASEG_EXTDOM</h6>
+                <h6>
+                  Bienes a Procesar para Validaci&oacute;n ASEG_EXTDOM
+                  &#40;Estos son los Nuevos Bienes que se van a Agregar a
+                  ASEG_EXTDOM&#41;
+                </h6>
               </div>
               <div
                 class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
@@ -449,12 +495,31 @@
                     [source]="dataTable3"></ng2-smart-table>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12">
+              <div class="col-sm-12 col-12 col-md-6">
+                <button
+                  [disabled]="loadingProcess"
+                  class="btn btn-primary btn-sm active m-3"
+                  (click)="btnEjecutarCambios()">
+                  Ejecutar Cambios
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
                 <app-pagination
                   [params]="dataTableParams3"
                   [totalItems]="totalGoods3"></app-pagination>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loadingProcess">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
           </div>
         </div>
       </div>
@@ -493,7 +558,7 @@
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
         <div class="form-group">
           <button
-            [disabled]="loadingProcess"
+            [disabled]="loadingProcess || totalGoods4 == totalGoods2"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             tooltip="Agregar Seleccionados"
@@ -503,7 +568,7 @@
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
-            [disabled]="loadingProcess"
+            [disabled]="loadingProcess || totalGoods4 == totalGoods2"
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
             tooltip="Agregar Todos"
@@ -539,7 +604,10 @@
           <div class="card-body">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-8">
-                <h6>Bienes en Validaci&oacute;n ASEG_EXTDOM para Liberar</h6>
+                <h6>
+                  Bienes en Validaci&oacute;n ASEG_EXTDOM para Liberar
+                  &#40;Estos son los Bienes que se van a Liberar&#41;
+                </h6>
               </div>
               <div
                 class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
@@ -557,7 +625,16 @@
                     [source]="dataTable4"></ng2-smart-table>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12">
+              <div class="col-sm-12 col-12 col-md-6">
+                <button
+                  [disabled]="loadingProcess"
+                  class="btn btn-primary btn-sm active m-3"
+                  (click)="btnEjecutarCambios()">
+                  Ejecutar Cambios
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
                 <app-pagination
                   [params]="dataTableParams4"
                   [totalItems]="totalGoods4"></app-pagination>
@@ -594,7 +671,14 @@
                   <button
                     class="btn btn-primary btn-sm active m-3"
                     (click)="applyReserved()">
-                    Aplicar <i class="fa fa-check" aria-hidden="true"></i>
+                    Guardar <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger active btn-sm m-2"
+                    (click)="cleanReserved()">
+                    Limpiar
+                    <i class="fa fa-eraser ml-1"></i>
                   </button>
                   <button
                     class="btn btn-primary btn-sm active mr-3"
@@ -607,39 +691,15 @@
           </form>
         </div>
       </div>
-      <div
-        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-        *ngIf="loadingProcess">
-        <div class="d-flex justify-content-center">
-          <div class="d-flex justify-content-center">
-            <div class="loader"></div>
-            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
-          </div>
-        </div>
-      </div>
-      <!-- PARTE DE ESCANEO -->
-      <div class="col-md-7 col-12 col-sm-12" *ngIf="showScanForm">
-        <app-scanning-foil-historical-goods-extdom
-          [formScan]="formScan"
-          [notificationData]="notificationData"
-          [dataUserLogged]="dataUserLogged"
-          (changeFolio)="changeFolio($event)"
-          (scanRequestEmitter)="scanRequest($event)"
-          (showScanningPageEmitter)="showScanningPage($event)"
-          (messageDigitalizationEmitter)="messageDigitalization($event)"
-          (viewPicturesEmitter)="
-            viewPictures($event)
-          "></app-scanning-foil-historical-goods-extdom>
-      </div>
-      <div class="col-md-5 col-12 col-sm-12 text-center">
-        <button
+      <div class="col-md-12 col-12 col-sm-12 text-center">
+        <!-- <button
           [disabled]="loadingProcess"
           tooltip="Ejecutar Cambios"
           containerClass="tooltip-style"
           class="btn btn-primary btn-sm active m-3"
           (click)="btnEjecutarCambios()">
           <i class="fa fa-check" aria-hidden="true"></i>
-        </button>
+        </button> -->
         <button
           [disabled]="loadingProcess"
           tooltip="Consultar Histórico"
