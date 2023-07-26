@@ -1219,10 +1219,10 @@ export class PerformProgrammingFormComponent
   getProgGoods() {
     this.loadingGoods = true;
     const filterColumns: Object = {
-      regionalDelegation: Number(this.delegationId),
-      transferent: Number(this.transferentId),
+      regionalDelegation: Number(this.dataProgramming.regionalDelegationNumber),
+      transferent: Number(this.dataProgramming.tranferId),
       // transferent: Number(760),
-      relevantType: Number(this.idTypeRelevant),
+      relevantType: Number(this.dataProgramming.typeRelevantId),
       statusGood: 'APROBADO',
     };
     this.goodsQueryService

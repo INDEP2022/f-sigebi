@@ -566,7 +566,8 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
-  changeStatusAnswered() {
+  changeStatusAnswered(xml: string) {
+    console.log('xml recibido: ', xml);
     this.loading = true;
     this.paramsReload.getValue()['filter.clarifiNewsRejectId'] =
       this.dataClarifications2.rejectNotificationId;
@@ -574,18 +575,24 @@ export class NotifyAssetsImproprietyFormComponent
     this.chatService.getAll(this.paramsReload.getValue()).subscribe({
       next: data => {
         this.dataChatClarifications = data.data;
-        this.updateChatClarification(this.dataChatClarifications[0]);
+        this.updateChatClarification(this.dataChatClarifications[0], xml);
       },
       error: error => {},
     });
   }
 
-  updateChatClarification(chatClarifications: IChatClarifications) {
+  updateChatClarification(
+    chatClarifications: IChatClarifications,
+    xml: string
+  ) {
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
       requestId: this.idRequest,
       goodId: this.dataClarifications2.goodId,
+      xmlJobClarification: xml,
+      xmlClarificationJobResp: xml,
+
       //clarificationStatus: 'EN_ACLARACION', //Valor a cambiar
     };
 
@@ -758,9 +765,9 @@ export class NotifyAssetsImproprietyFormComponent
         idReportAclara,
         idSolicitud,
         notificationValidate,
-        callback: (next: boolean) => {
+        callback: (next: boolean, xml?: string) => {
           if (next) {
-            this.changeStatusAnswered();
+            this.changeStatusAnswered(xml);
           } else {
           }
         },
