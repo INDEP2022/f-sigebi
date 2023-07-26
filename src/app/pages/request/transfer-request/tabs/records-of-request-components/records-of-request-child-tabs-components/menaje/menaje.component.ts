@@ -101,7 +101,7 @@ export class MenajeComponent extends BasePage implements OnInit {
           if (good.length !== 0) {
             this.menage.id = item.goodId;
             this.menage.description = good[0].description;
-            this.menage.requestId = item.requestId.id;
+            this.menage.requestId = item.requestId;
             resolve(this.menage);
           } else {
             resolve(null);

@@ -338,7 +338,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
   }
 
   showGood(item: IGoodProgrammingSelect) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
     config.initialState = {
       item,
       callback: () => {},

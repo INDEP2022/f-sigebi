@@ -92,7 +92,7 @@ export class GoodsListComponent
     };
   }
 
-  private fillSelectedRows(byPage: boolean) {
+  private fillSelectedRows() {
     setTimeout(() => {
       // debugger;
       console.log(this.selectedGooods, this.table);
@@ -237,7 +237,7 @@ export class GoodsListComponent
       next: response => {
         if (response) {
           this.selectedGooods = [];
-          this.getData(false);
+          this.getData();
         } else {
           this.data.load([]);
           this.selectedGooods = [];
@@ -273,7 +273,7 @@ export class GoodsListComponent
           this.classificationOfGoods.value
         ) {
           this.selectedGooods = [];
-          this.getData(false);
+          this.getData();
         }
       });
   }
@@ -282,7 +282,7 @@ export class GoodsListComponent
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
-  override getData(byPage: boolean = true) {
+  override getData() {
     this.loading = true;
     console.log(this.classificationOfGoods.value);
     const filterParams = new FilterParams();
@@ -367,7 +367,7 @@ export class GoodsListComponent
           console.log(response);
           this.data.load(response);
           this.data.refresh();
-          this.fillSelectedRows(byPage);
+          this.fillSelectedRows();
           // if (response.data && response.data.length > 0) {
           //   this.listGood = response.data;
           //   this.totalItems = response.count;

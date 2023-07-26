@@ -1,0 +1,34 @@
+export interface IReceiptItem {
+  id_recorrido: string;
+  guardado: string;
+  seleccionar: number;
+  id_bien: string;
+  clave_unica: string;
+  no_expediente: string;
+  descripcion_bien: string;
+  descripcion_bien_sae?: any;
+  cantidad: string;
+  cantidad_sae: string;
+  estatus_bien_programacion: string;
+  estatus_bien_bien: string;
+  estatus_programacion_bien: string;
+  unidad_medida: string;
+  unidad_medida_letra: string;
+  unidad_medida_sae: string;
+  unidad_medida_sae_letra?: any;
+  id_programacion: string;
+  estado_fisico: string;
+  estado_fisico_letra: string;
+  estado_fisico_sae: string;
+  estado_fisico_sae_letra: string;
+  estado_conservacion: string;
+  estado_conservacion_letra: string;
+  estado_conservacion_sae: string;
+  estado_conservacion_sae_letra: string;
+  destino: string;
+  destino_letra: string;
+  destino_transferente: string;
+  destino_transferente_letra: string;
+  destino_sae: string;
+  destino_sae_letra: string;
+}
