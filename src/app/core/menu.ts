@@ -100,7 +100,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Solicitud de Documentación Complementaria',
-            link: '/pages/request/request-comp-doc',
+            link: '/pages/request/request-comp-doc/create',
           },
         ],
       },

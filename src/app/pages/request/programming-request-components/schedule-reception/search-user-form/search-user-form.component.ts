@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { showHideErrorInterceptorService } from 'src/app/common/services/show-hide-error-interceptor.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
@@ -34,15 +35,17 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
     private programmingGoodService: ProgrammingGoodService,
     private userProcessService: UserProcessService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
-    private programmingService: ProgrammingRequestService
+    private programmingService: ProgrammingRequestService,
+    private authService: AuthService
   ) {
     super();
     this.settings = {
       ...this.settings,
+      selectMode: 'multi',
       actions: false,
       columns: {
         ...USER_COLUMNS,
-        name: {
+        /*name: {
           title: 'Selección usuario',
           sort: false,
           type: 'custom',
@@ -51,7 +54,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
             this.onUserChange(instance),
-        },
+        },*/
       },
     };
   }
@@ -78,18 +81,21 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   getUsers() {
     this.loading = true;
-    this.params.getValue()['filter.delegationreg'] = this.delegationUserLog;
+    const user = this.authService.decodeToken();
+    const deleRegionalId = user.delegacionreg;
+    this.params.getValue()['filter.delegationreg'] = deleRegionalId;
     this.userProcessService
-      .getAllUsersWithProgramming(this.params.getValue())
+      .getAllUsersWithRolDistint(this.params.getValue())
       .subscribe({
         next: response => {
           this.filterUsersProg(response.data);
           this.totalItems = response.count;
           this.loading = false;
         },
-        error: error => {
+        error: () => {
           this.loading = false;
           this.alert('warning', 'Usuarios no encontrados', '');
+          this.totalItems = 0;
         },
       });
   }
@@ -110,6 +116,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
           this.totalItems = this.totalItems - data.count;
           this.usersData.load(filter);
+          //this.totalItems = this.usersData.count();
           this.loading = false;
         },
         error: error => {
@@ -118,8 +125,13 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
       });
   }
 
+  userSelect(info: any) {
+    this.userInfo = info.selected;
+  }
+
   userProgramming(data: any) {
     this.usersData.load(data);
+
     this.loading = false;
   }
 
@@ -135,22 +147,32 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
 
   confirm() {
     if (this.userInfo.length > 0) {
-      let count: number = 0;
-      this.userInfo.map(info => {
-        let user: Object = {
-          programmingId: this.idProgramming,
-          user: info.firstName,
-          email: info.email,
-          version: 1,
-        };
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea agregar los usuarios a la programación?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          let count: number = 0;
+          this.userInfo.map(info => {
+            let user: Object = {
+              programmingId: this.idProgramming,
+              user: info.firstName,
+              email: info.email,
+              version: 1,
+            };
 
-        this.programmingService.createUsersProgramming(user).subscribe(data => {
-          count = count + 1;
-          if (count == 1) {
-            this.modalRef.content.callback(true);
-            this.modalRef.hide();
-          }
-        });
+            this.programmingService
+              .createUsersProgramming(user)
+              .subscribe(data => {
+                count = count + 1;
+                if (count == 1) {
+                  this.modalRef.content.callback(true);
+                  this.modalRef.hide();
+                }
+              });
+          });
+        }
       });
     } else {
       this.onLoadToast(

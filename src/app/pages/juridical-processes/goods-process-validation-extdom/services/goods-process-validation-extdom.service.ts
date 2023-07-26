@@ -4,6 +4,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { IHistoricGoodsAsegExtdom } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { INotification } from 'src/app/core/models/ms-notification/notification.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
@@ -51,6 +52,12 @@ export class GoodsProcessValidationExtdomService {
   ) {}
   getNotificationByFilters(params: _Params) {
     return this.msNotificationService.getAllFilter(params);
+  }
+  updateNotification(
+    wheelNumber: number,
+    notification: Partial<INotification>
+  ) {
+    return this.msNotificationService.update(wheelNumber, notification);
   }
   getAffair(params: ListParams) {
     return this.msAffairService.getAll(params);
@@ -120,7 +127,7 @@ export class GoodsProcessValidationExtdomService {
     if (selectType == 'P1') {
       textMessage =
         'De conformidad con las funciones encomendadas a la Dirección Ejecutiva de Soporte Legal,' +
-        'en el artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7º del ordenamiento ' +
+        'en el artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7 del ordenamiento ' +
         'invocado, se hace de su conocimiento que se notificó en las Oficinas Centrales de este Organismo,' +
         'la Suspensión "Provisional y/o definitiva", respecto de los bienes relacionados a continuación:\n\n' +
         (data.previous != null ? data.previous : '') +
@@ -142,7 +149,7 @@ export class GoodsProcessValidationExtdomService {
     } else if (selectType == 'P2') {
       textMessage =
         'De conformidad con las funciones encomendadas a la Dirección Ejecutiva de Soporte Legal, ' +
-        'en el artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7º del ordenamiento ' +
+        'en el artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7 del ordenamiento ' +
         'invocado, se hace de su conocimiento que se notificó en las Oficinas Centrales de este Organismo, ' +
         'la Suspensión "Provisional y/o definitiva", respecto de los bienes relacionados a continuación:\n\n' +
         (data.previous != null ? data.previous : '') +
@@ -162,7 +169,7 @@ export class GoodsProcessValidationExtdomService {
     } else if (selectType == 'P3') {
       textMessage =
         'De conformidad con las funciones encomendadas a la Dirección Ejecutiva de Soporte Legal, en el ' +
-        'artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7º del ordenamiento invocado, ' +
+        'artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7 del ordenamiento invocado, ' +
         'se hace de su conocimiento que se notificó en las Oficinas Centrales de este Organismo, el auto ' +
         'que ordena que a causado ejecutoria el juicio de amparo, relacionado con el Volante SIAB número ' +
         +(data.wheelNumber != null ? data.wheelNumber : '') +
@@ -180,7 +187,7 @@ export class GoodsProcessValidationExtdomService {
     } else if (selectType == 'P4') {
       textMessage =
         'De conformidad con las funciones encomendadas a la Dirección Ejecutiva de Soporte Legal, en el ' +
-        'artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7º del ordenamiento invocado, ' +
+        'artículo 30 del Estatuto Orgánico del SAE, y parte última del artículo 7 del ordenamiento invocado, ' +
         'se hace de su conocimiento que se notificó en las Oficinas Centrales de este Organismo, el auto ' +
         'que ordena que a causado ejecutoria el juicio de amparo, relacionado con el Volante SIAB número ' +
         +(data.wheelNumber != null ? data.wheelNumber : '') +

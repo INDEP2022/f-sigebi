@@ -92,10 +92,19 @@ export class NotificationService extends HttpService {
     return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
   }
 
+  // ! CORRECIÓN NUMERARIO 20/07/23 GENARO
+  // getLastWheelNumber(): Observable<{ nextval: number }> {
+  //   return this.get<{ max: string }>(this.route.LastFlyerId).pipe(
+  //     map(resp => {
+  //       return { nextval: Number(resp.max) };
+  //     })
+  //   );
+  // }
+
   getLastWheelNumber(): Observable<{ nextval: number }> {
-    return this.get<{ max: string }>(this.route.LastFlyerId).pipe(
+    return this.get<{ nextval: string }>(this.route.LastWheelNumber).pipe(
       map(resp => {
-        return { nextval: Number(resp.max) };
+        return { nextval: Number(resp.nextval) };
       })
     );
   }
@@ -289,5 +298,9 @@ export class NotificationService extends HttpService {
   applySomeGoddMaintenanceCoverage(body: any) {
     const route = 'application/updateUnitProgram';
     return this.post(route, body);
+  }
+
+  validateGoodStatus(body: any) {
+    return this.post(this.route.ValidateGoodStatus, body);
   }
 }

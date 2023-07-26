@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -71,9 +71,9 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       seal: [null],
       nameReceipt: [null],
       observation: [null],
-      chargeReceipt: [null, [Validators.maxLength(15)]],
-      electronicSignatureEnt: ['N'],
-      electronicSignatureReceipt: ['N'],
+      chargeReceipt: [null],
+      electronicSignatureEnt: [null],
+      electronicSignatureReceipt: [null],
     });
 
     this.params.getValue()['filter.id'] = this.proceeding.id;
@@ -83,7 +83,38 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
         this.dataReceipt = response.data[0];
-        this.generateReceiptForm.patchValue(response.data[0]);
+
+        this.generateReceiptForm
+          .get('nameDelivery')
+          .setValue(this.dataReceipt.nameDelivery);
+        this.generateReceiptForm
+          .get('typeTransport')
+          .setValue(this.dataReceipt.typeTransport);
+        this.generateReceiptForm
+          .get('chargeDelivery')
+          .setValue(this.dataReceipt.chargeDelivery);
+        this.generateReceiptForm
+          .get('plateNumber')
+          .setValue(this.dataReceipt.plateNumber);
+        if (this.dataReceipt.electronicSignatureEnt == 1) {
+          this.generateReceiptForm
+            .get('electronicSignatureEnt')
+            .setValue(this.dataReceipt.electronicSignatureEnt);
+        }
+        this.generateReceiptForm.get('seal').setValue(this.dataReceipt.seal);
+        this.generateReceiptForm
+          .get('nameReceipt')
+          .setValue(this.dataReceipt.nameReceipt);
+        this.generateReceiptForm
+          .get('chargeReceipt')
+          .setValue(this.dataReceipt.chargeReceipt);
+
+        if (this.dataReceipt.electronicSignatureReceipt == 1) {
+          this.generateReceiptForm
+            .get('electronicSignatureReceipt')
+            .setValue(this.dataReceipt.electronicSignatureReceipt);
+        }
+        //this.generateReceiptForm.patchValue(response.data[0]);
       },
       error: error => {},
     });
@@ -140,49 +171,76 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Estás seguro que desea crear los firmantes?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        const electronicSignatureEnt = this.generateReceiptForm.get(
-          'electronicSignatureEnt'
-        ).value;
-        const electronicSignatureReceipt = this.generateReceiptForm.get(
-          'electronicSignatureReceipt'
-        ).value;
+    const electronicSignatureEnt = this.generateReceiptForm.get(
+      'electronicSignatureEnt'
+    ).value;
+    const electronicSignatureReceipt = this.generateReceiptForm.get(
+      'electronicSignatureReceipt'
+    ).value;
 
-        if (electronicSignatureEnt == true) {
-          this.generateReceiptForm.get('electronicSignatureEnt').setValue(1);
-        } else if (electronicSignatureEnt == false) {
-          this.generateReceiptForm.get('electronicSignatureEnt').setValue(0);
-        }
+    if (electronicSignatureEnt == true) {
+      this.generateReceiptForm.get('electronicSignatureEnt').setValue(1);
+    } else if (electronicSignatureEnt == false) {
+      this.generateReceiptForm.get('electronicSignatureEnt').setValue(0);
+    }
 
-        if (electronicSignatureReceipt == true) {
-          this.generateReceiptForm
-            .get('electronicSignatureReceipt')
-            .setValue(1);
-        } else if (electronicSignatureReceipt == false) {
-          this.generateReceiptForm
-            .get('electronicSignatureReceipt')
-            .setValue(0);
-        }
+    if (electronicSignatureReceipt == true) {
+      this.generateReceiptForm.get('electronicSignatureReceipt').setValue(1);
+    } else if (electronicSignatureReceipt == false) {
+      this.generateReceiptForm.get('electronicSignatureReceipt').setValue(0);
+    }
 
-        this.receptionGoodService
-          .updateReceipt(this.generateReceiptForm.value)
-          .subscribe({
-            next: async response => {
-              const Signatures: any = await this.checkSign();
-              if (Signatures) {
-                this.formInfoSignature(Signatures);
-              }
+    const _electronicSignatureEnt = this.generateReceiptForm.get(
+      'electronicSignatureEnt'
+    ).value;
+    const _electronicSignatureReceipt = this.generateReceiptForm.get(
+      'electronicSignatureReceipt'
+    ).value;
+    if (_electronicSignatureEnt == 1 && _electronicSignatureReceipt == 1) {
+      this.receptionGoodService
+        .updateReceipt(this.generateReceiptForm.value)
+        .subscribe({
+          next: async () => {
+            const Signatures: any = await this.checkSign();
+            if (Signatures) {
+              this.formInfoSignature(Signatures);
+            }
+            //this.checkSign();
+          },
+          error: error => {},
+        });
+    } else if (!_electronicSignatureEnt && !_electronicSignatureReceipt) {
+      this.receptionGoodService
+        .updateReceipt(this.generateReceiptForm.value)
+        .subscribe({
+          next: async () => {
+            const Signatures: any = await this.deleteSign();
+            if (Signatures || !Signatures) {
+              this.modalRef.content.callback(
+                this.proceeding,
+                this.idProgramming,
+                'autograf'
+              );
+              this.close();
+              this.loading = false;
               //this.checkSign();
-            },
-            error: error => {},
-          });
-      }
-    });
+            }
+          },
+          error: error => {},
+        });
+    } else if (_electronicSignatureEnt == 1 && !_electronicSignatureReceipt) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Ambas firmas deben de ser electronicas'
+      );
+    } else if (!_electronicSignatureEnt && _electronicSignatureReceipt == 1) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Ambas firmas deben de ser electronicas'
+      );
+    }
   }
 
   checkSign() {
@@ -259,6 +317,32 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       });
     });
   }
+  deleteSign() {
+    return new Promise((resolve, reject) => {
+      const learnedType = 103;
+      const learnedId = this.idProgramming;
+      this.signatoriesService
+        .getSignatoriesFilter(learnedType, learnedId)
+        .subscribe({
+          next: async response => {
+            response.data.map(item => {
+              this.signatoriesService
+                .deleteFirmante(Number(item.signatoryId))
+                .subscribe({
+                  next: () => {
+                    //
+                    resolve(true);
+                  },
+                  error: error => {},
+                });
+            });
+          },
+          error: async error => {
+            resolve(false);
+          },
+        });
+    });
+  }
 
   async formInfoSignature(signatures: IReceipt) {
     if (signatures.electronicSignatureEnt) {
@@ -308,7 +392,11 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
           });
         });
       } else {
-        this.modalRef.content.callback(this.proceeding, this.idProgramming);
+        this.modalRef.content.callback(
+          this.proceeding,
+          this.idProgramming,
+          'electronic'
+        );
         this.close();
         this.loading = false;
       }
@@ -375,4 +463,6 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  electricOption(event: any) {}
 }

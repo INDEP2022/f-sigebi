@@ -7,7 +7,13 @@
       <div class="row mt-4">
         <div class="col-md-4">
           <form-field [control]="form.get('year')" label="Año">
-            <input class="form-control" formControlName="year" bsDatepicker />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="year"
+              [bsConfig]="bsConfig"
+              #dp="bsDatepicker"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">

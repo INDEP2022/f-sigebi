@@ -7,15 +7,6 @@
       Subir Fotos
       <i class="fa fa-upload"></i>
     </button>
-    <!-- <form-field [control]="form.get('img')" label="">
-                    <input
-                      class="form-control mb-3 mt-3"
-                      type="file"
-                      id="formFile"
-                      accept="image/png,image/jpeg"
-                      formControlName="img"
-                      (change)="onFileChange($event)" />
-                  </form-field> -->
   </div>
   <div class="col p-0" style="text-align: right">
     <button
@@ -47,10 +38,7 @@
                 [goodNumber]="goodNumber + ''"></app-good-photo>
             </div>
           </div>
-          <!-- <input
-                    type="checkbox"
-                    class="float-check checkbox-color checkbox-primary"
-                    id="check2" /> -->
+
           <form-check for="keep-{{ i }}" class="float-check">
             <input
               type="checkbox"

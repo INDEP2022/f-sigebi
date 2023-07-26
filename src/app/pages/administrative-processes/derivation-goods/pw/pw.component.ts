@@ -32,7 +32,8 @@ export class PwComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private serviceConversion: ConvertiongoodService,
     private modalService: BsModalRef,
-    private router: Router
+    private router: Router,
+    private modalRef: BsModalRef
   ) {
     super();
   }
@@ -40,12 +41,24 @@ export class PwComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.buildForm();
   }
-
   private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
       password: [null, [Validators.required]],
     });
+    this.loader.load = false;
+    const conversion = localStorage.getItem('conversion');
+    if (conversion != null) {
+      this.loader.load = true;
+      this.conversionData = JSON.parse(conversion);
+      this.idConversion.setValue(this.conversionData);
+      this.password.setValue(this.conversionData.pwAccess);
+      console.log(this.conversionData);
+      localStorage.removeItem('conversion');
+      setTimeout(() => {
+        this.sigin();
+      }, 1000);
+    }
   }
 
   serachIdConversion(e?: any) {
@@ -76,25 +89,33 @@ export class PwComponent extends BasePage implements OnInit {
             'Contraseña Incorrecta',
             'Por Favor Verificar y Volver a Intentar'
           );
+          this.loader.load = false;
         } else {
           if (this.conversionData.goodFatherNumber != null) {
+            console.log(this.conversionData);
             this.modalService.content.callback(this.conversionData);
             this.modalService.hide();
+            this.loader.load = false;
           } else {
             this.alert(
               'warning',
               'Conversiones',
               'La Conversion debe tener un Bien Padre'
             );
+            this.loader.load = false;
           }
         }
       } else {
         this.alert('warning', 'Debe Introducir la Contraseña', '');
+        this.loader.load = false;
       }
     } else {
       this.alert('warning', 'Debe Introducir un Id Conversión', '');
+      this.loader.load = false;
     }
   }
 
-  close() {}
+  close() {
+    this.modalRef.hide();
+  }
 }

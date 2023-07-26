@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { LotParamsEndpoints } from 'src/app/common/constants/endpoints/ms-lot-params-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -45,5 +45,9 @@ export class LotParamsService extends HttpService {
   getAllWithParams(params: ListParams): Observable<any> {
     const route = `${LotEndpoints.ComerLot}`;
     return this.get<any>(route, params);
+  }
+
+  getAll_(params: _Params): Observable<any> {
+    return this.get<any>(LotParamsEndpoints.FindAll, params);
   }
 }

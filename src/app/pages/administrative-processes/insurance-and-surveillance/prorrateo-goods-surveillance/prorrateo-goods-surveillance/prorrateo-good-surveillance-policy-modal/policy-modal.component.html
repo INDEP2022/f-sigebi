@@ -1,0 +1,147 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ newOrEdit ? 'Actualizar' : 'Nueva' }} {{ title }}
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('policyKeyId')"
+            label="Clave de Póliza">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="policyKeyId" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('beginningDate')"
+            label="Fecha de Inicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="beginningDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('typeNumberId')" label="Tipo">
+            <input
+              type="number"
+              formControlName="typeNumberId"
+              class="form-control"
+              max="999" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('subtypeNumberId')" label="Subtipo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="subtypeNumberId"
+              max="99" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('ssubtypeNumberId')" label="Ssubtipo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="ssubtypeNumberId"
+              max="99" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('sssubtypeNumberId')"
+            label="Sssubtipo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="sssubtypeNumberId"
+              max="99" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12">
+          <form-field [control]="form.get('concept')" label="Concépto">
+            <input type="text" class="form-control" formControlName="concept" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('currencyCousinKey')"
+            label="Clave de prima">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currencyCousinKey" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('currencySaKkey')"
+            label="Clave de moneda">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currencySaKkey" />
+          </form-field>
+        </div>
+        <div class="row mt-5">
+          <div class="col-md-8">
+            <form-field
+              [control]="form.get('registrationNumber')"
+              label="Número de registro">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="registrationNumber" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('consecPol')" label="consecPol">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="consecPol" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()"
+          [disabled]="!form.valid">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

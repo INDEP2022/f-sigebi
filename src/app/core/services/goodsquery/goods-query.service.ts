@@ -8,7 +8,9 @@ import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IUnits } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
+import { ICaptureDig } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
   IUnityByClasif,
@@ -206,6 +208,31 @@ export class GoodsQueryService extends HttpService {
     return this.get<IListResponse<IAttribClassifGoods>>(
       GoodsQueryEndpoints.AtributesClassificationGood,
       _params
+    );
+  }
+  getAllUnits(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      `${GoodsQueryEndpoints.getUnits}`,
+      params
+    );
+  }
+
+  postUnits(data: IUnits) {
+    return this.post(`${GoodsQueryEndpoints.getUnits}`, data);
+  }
+
+  putUnits(data: IUnits, numero: string) {
+    return this.put(`${GoodsQueryEndpoints.getUnits}/${numero}`, data);
+  }
+
+  remove(numero: number | string) {
+    return this.delete(`${GoodsQueryEndpoints.getUnits}/${numero}`);
+  }
+
+  getViewIncRecDoc(params: ListParams) {
+    return this.get<IListResponse<ICaptureDig>>(
+      GoodsQueryEndpoints.getViewIndRecDoc,
+      params
     );
   }
 }

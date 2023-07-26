@@ -52,7 +52,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.typeDoc', this.typeDoc);
     this.prepareForm();
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
@@ -289,14 +288,13 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         .subscribe({
           next: async response => {
             const updateReceipt = await this.updateReceipt(response.dDocName);
-            console.log('updateReceipt', updateReceipt);
+
             if (updateReceipt) {
               const updateProgrammingGood = await this.updateProgrammingGood();
 
-              console.log('updateProgrammingGood', updateProgrammingGood);
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGood();
-                console.log('updateGood', updateGood);
+
                 if (updateGood) {
                   this.alertInfo(
                     'success',
@@ -336,7 +334,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const extension = '.pdf';
       const docName = this.folioPro;
 
-      console.log('formData', formData);
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -385,7 +382,54 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
       const extension = '.pdf';
       const docName = this.folioPro;
 
-      console.log('formData', formData);
+      this.wContentService
+        .addDocumentToContent(
+          docName,
+          extension,
+          JSON.stringify(formData),
+          this.selectedFile,
+          extension
+        )
+        .subscribe({
+          next: response => {
+            const updateReceipt = this.procedding(response.dDocName);
+            if (updateReceipt) {
+              this.alertInfo(
+                'success',
+                'Acción Correcta',
+                'Documento adjuntado correctamente'
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.close();
+                  this.modalRef.content.callback(true);
+                }
+              });
+            }
+          },
+        });
+    }
+
+    if (this.typeDoc == 107) {
+      const idProg = this.programming.id;
+      //const idReceipt = this.
+      const formData = {
+        keyDoc: this.programming.id + '-' + this.actId,
+        xNivelRegistroNSBDB: 'Bien',
+        xNoProgramacion: this.programming.id,
+        xNombreProceso: 'Ejecutar Recepción',
+        xDelegacionRegional: this.programming.regionalDelegationNumber,
+        xFolioProgramacion: this.programming.folio,
+        DocTitle: this.folioPro,
+        xnoActa: this.actId,
+        dSecurityGroup: 'Public',
+        xidBien: this.goodId,
+        xidTransferente: this.programming.tranferId,
+        xTipoDocumento: 107,
+      };
+
+      const extension = '.pdf';
+      const docName = this.folioPro;
+
       this.wContentService
         .addDocumentToContent(
           docName,
@@ -492,7 +536,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
       goodsReception.map((item: IGood) => {
-        console.log('item', item);
         const formData: Object = {
           id: item.id,
           goodId: item.goodId,
@@ -502,9 +545,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: response => {
             resolve(true);
           },
-          error: error => {
-            console.log('error update good', error);
-          },
+          error: error => {},
         });
       });
     });

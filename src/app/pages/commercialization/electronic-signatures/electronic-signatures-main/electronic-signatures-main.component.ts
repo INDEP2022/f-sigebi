@@ -2,12 +2,22 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as FileSaver from 'file-saver';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IComerDocumentsXML } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ElectronicSignaturesService } from '../service/electronic-signatures.service';
 import {
   HISTORY_COLUMNS,
   PENDING_COLUMNS,
@@ -46,48 +56,15 @@ export class ElectronicSignaturesMainComponent
     ...TABLE_SETTINGS,
     actions: false,
   };
+  dataTablePending: LocalDataSource = new LocalDataSource();
+  dataTableParamsPending = new BehaviorSubject<ListParams>(new ListParams());
+  loadingPending: boolean = false;
+  totalPending: number = 0;
+  pendingTestData: IComerDocumentsXML[] = [];
   historySettings = {
     ...TABLE_SETTINGS,
     actions: false,
   };
-
-  pendingTestData = [
-    {
-      reference: 'Evento 22335',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-    {
-      reference: 'Evento 22336',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-    {
-      reference: 'Evento 22337',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-    {
-      reference: 'Evento 22338',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-    {
-      reference: 'Evento 22339',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-  ];
 
   historyTestData = [
     {
@@ -145,10 +122,15 @@ export class ElectronicSignaturesMainComponent
       type: 'AUTORIZA',
     },
   ];
+  dataUserLogged: IUserAccessAreaRelational;
+  messageText: string = '';
 
   constructor(
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private svElectronicSignatures: ElectronicSignaturesService,
+    private authService: AuthService,
+    private msUsersService: UsersService
   ) {
     super();
     this.pendingSettings.columns = PENDING_COLUMNS;
@@ -156,8 +138,116 @@ export class ElectronicSignaturesMainComponent
   }
 
   ngOnInit(): void {
+    this.initVariables();
+    const token = this.authService.decodeToken();
+    console.log(token);
+    if (token.preferred_username) {
+      this.getUserDataLogged(
+        token.preferred_username
+          ? token.preferred_username.toLocaleUpperCase()
+          : token.preferred_username
+      );
+    } else {
+      this.alertInfo(
+        'warning',
+        'Error al Obtener los Datos del Usuario de la Sesión Actual',
+        ''
+      );
+    }
     this.getPending();
     this.getHistory();
+  }
+
+  initVariables() {
+    this.messageText = '';
+  }
+
+  getUserDataLogged(userId: string) {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter(
+      'user',
+      userId == 'SIGEBIADMON' ? userId.toLocaleLowerCase() : userId
+    );
+    this.msUsersService.getInfoUserLogued(params.getParams()).subscribe({
+      next: res => {
+        console.log('USER INFO', res);
+        this.dataUserLogged = res.data[0];
+        this.initForm();
+      },
+      error: error => {
+        console.log(error);
+        this.alertInfo(
+          'warning',
+          'Error al Obtener los Datos del Usuario de la Sesión Actual',
+          error.error.message
+        );
+      },
+    });
+  }
+
+  initForm() {
+    const params = new ListParams();
+    params['filter.parameter'] = '$eq:SUPUSUFIRE';
+    params['filter.value'] = '$eq:' + this.dataUserLogged.user;
+    // params['sortBy'] = 'goodId:ASC';
+    this.svElectronicSignatures.getAllParametersMod(params).subscribe({
+      next: res => {
+        console.log('DATA PARAMETER MOD', res);
+        // FEC_FIRMA IS NOT NULL
+      },
+      error: error => {
+        // console.log(error);
+        // FEC_FIRMA IS NOT NULL AND USUARIO
+      },
+    });
+    this.initRelDocs();
+  }
+
+  initRelDocs() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('user', this.dataUserLogged.user);
+    params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
+    this.svElectronicSignatures
+      .getAllDocumentsComerceService(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA DOCUMENTS COMERCE', res);
+          this.messageText =
+            'Tiene ' + res.count + ' Documentos Pendientes de Firma';
+        },
+        error: error => {
+          console.log(error);
+          this.messageText = 'No Tiene Documentos Pendientes de Firma';
+        },
+      });
+    // this.getRelationPersons();
+    this.dataTableParamsPending
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRelationPersons());
+  }
+
+  getRelationPersons() {
+    this.loadingPending = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('user', this.dataUserLogged.user, SearchFilter.ILIKE);
+    // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
+
+    this.svElectronicSignatures
+      .getAllComerDocumentsXml(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA RELATION PERSONS', res);
+          this.pendingTestData = res.data;
+          this.loadingPending = false;
+        },
+        error: error => {
+          console.log(error);
+          this.loadingPending = false;
+        },
+      });
   }
 
   getPending() {

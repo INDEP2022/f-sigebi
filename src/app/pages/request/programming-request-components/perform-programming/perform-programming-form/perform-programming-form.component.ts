@@ -111,6 +111,7 @@ export class PerformProgrammingFormComponent
   municipailitites = new DefaultSelect<IMunicipality>();
   localities = new DefaultSelect<ILocality>();
   warehouseUbication: string = '';
+  warehouseId: number = 0;
   tranportableItems: number = 0;
   headingTransportable: string = `Transportables (0)`;
   headingGuard: string = `Resguardo (0)`;
@@ -258,7 +259,6 @@ export class PerformProgrammingFormComponent
     this.getAkaWarehouse(new ListParams());
     this.getStates(new ListParams());
 
-    this.getWarehouseSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
     this.showUsersProgramming();
     this.getProgrammingData();
@@ -418,6 +418,7 @@ export class PerformProgrammingFormComponent
 
   showWarehouse(warehouse: IWarehouse) {
     this.warehouseUbication = warehouse?.ubication;
+    this.warehouseId = warehouse?.idWarehouse;
     this.showUbication = true;
   }
 
@@ -464,6 +465,9 @@ export class PerformProgrammingFormComponent
         this.performForm.get('autorityId').setValue(this.autorityId);
       }
 
+      if (this.warehouseId != 0) {
+        this.performForm.get('storeId').setValue(this.warehouseId);
+      }
       this.performForm
         .get('regionalDelegationNumber')
         .setValue(this.delegationId);
@@ -487,7 +491,7 @@ export class PerformProgrammingFormComponent
                 const regDelData = this.regionalDelegationUser;
                 let config = {
                   ...MODAL_CONFIG,
-                  class: 'modal-lg modal-dialog-centered',
+                  class: 'modal-xl modal-dialog-centered',
                 };
                 config.initialState = {
                   programmingId: this.idProgramming,
@@ -497,7 +501,13 @@ export class PerformProgrammingFormComponent
                       this.performForm
                         .get('regionalDelegationNumber')
                         .setValue(this.delegation);
-                      //this.setDataProgramming();
+
+                      this.performForm
+                        .get('stationId')
+                        .setValue(Number(this.dataProgramming.stationId));
+                      this.setDataProgramming();
+                    } else {
+                      this.setDataProgramming();
                     }
                   },
                 };
@@ -1013,7 +1023,7 @@ export class PerformProgrammingFormComponent
             .get('regionalDelegationNumber')
             .setValue(delegation.description);
           this.regionalDelegationUser = delegation;
-
+          this.getWarehouseSelect(new ListParams());
           this.getStateSelect(new ListParams());
         });
     });
@@ -1081,6 +1091,7 @@ export class PerformProgrammingFormComponent
   getStations(params?: ListParams) {
     this.showSelectStation = true;
     params['filter.idTransferent'] = this.transferentId;
+    //params['filter.keyState'] = this.idState;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params['sortBy'] = 'stationName:ASC';
 
@@ -1108,6 +1119,8 @@ export class PerformProgrammingFormComponent
   getAuthoritySelect(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idTransferer'] = `$eq:${this.transferentId}`;
+    //params['filter.cveStatus'] = `$eq:${this.idState}`;
+    params['filter.idStation'] = `$eq:${this.idStation}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
     delete params.text;
@@ -1194,8 +1207,8 @@ export class PerformProgrammingFormComponent
 
   getWarehouseSelect(params: ListParams) {
     this.showWarehouseInfo = true;
-    params.limit = 6039;
-    //params['filter.stateCode'] = this.idState;
+    params.limit = 300;
+    params['filter.responsibleDelegation'] = this.delegationId;
     this.warehouseService.getAll(params).subscribe(data => {
       this.warehouse = new DefaultSelect(data.data, data.count);
     });
@@ -1610,6 +1623,7 @@ export class PerformProgrammingFormComponent
           const idTransferent = this.transferentId;
           config.initialState = {
             idTransferent,
+            delegation: this.delegationId,
             typeTransportable: 'warehouse',
             callback: async (warehouse: number) => {
               if (warehouse) {
@@ -1732,7 +1746,7 @@ export class PerformProgrammingFormComponent
 
   // Visualizar información del bien //
   showGood(item: IGoodProgrammingSelect) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
     config.initialState = {
       item,
       callback: () => {},
@@ -1922,7 +1936,10 @@ export class PerformProgrammingFormComponent
         this.formLoading = true;
         const folio: any = await this.generateFolio(this.performForm.value);
         this.performForm.get('folio').setValue(folio);
+        if (this.warehouseId > 0)
+          this.performForm.get('storeId').setValue(this.warehouseId);
         const task = JSON.parse(localStorage.getItem('Task'));
+
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
           this.programmingGoodService
@@ -1938,14 +1955,47 @@ export class PerformProgrammingFormComponent
                 this.performForm
                   .get('regionalDelegationNumber')
                   .setValue(this.delegation);
-                this.getProgrammingData();
-                this.formLoading = false;
-                this.newTransferent = false;
+                if (this.warehouseId > 0) {
+                  const updateWarehouseGood = await this.updateWarehouseGood();
+                  if (updateWarehouseGood) {
+                    this.getProgrammingData();
+                    this.formLoading = false;
+                    this.newTransferent = false;
+                  }
+                } else {
+                  this.getProgrammingData();
+                  this.formLoading = false;
+                  this.newTransferent = false;
+                }
               },
               error: error => {},
             });
         }
       }
+    });
+  }
+
+  updateWarehouseGood() {
+    return new Promise((resolve, reject) => {
+      this.goodsTranportables.getElements().then(data => {
+        if (data.length > 0) {
+          data.map((good: IGood) => {
+            const object = {
+              id: good.id,
+              goodId: good.goodId,
+              storeId: this.warehouseId,
+            };
+            this.goodService.updateByBody(object).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {},
+            });
+          });
+        } else {
+          resolve(true);
+        }
+      });
     });
   }
 
@@ -2064,6 +2114,7 @@ export class PerformProgrammingFormComponent
 
       this.performForm.get('tranferId').setValue(this.transferentId);
       this.performForm.get('stationId').setValue(this.stationId);
+      this.performForm.get('storeId').setValue(this.warehouseId);
       this.performForm.get('autorityId').setValue(this.autorityId);
       this.performForm
         .get('regionalDelegationNumber')
@@ -2088,8 +2139,18 @@ export class PerformProgrammingFormComponent
                   this.performForm
                     .get('regionalDelegationNumber')
                     .setValue(this.delegation);
-                  this.generateTaskAceptProgramming(folio);
-                  this.loading = false;
+
+                  if (this.warehouseId > 0) {
+                    const updateWarehouseGood =
+                      await this.updateWarehouseGood();
+                    if (updateWarehouseGood) {
+                      this.generateTaskAceptProgramming(folio);
+                      this.loading = false;
+                    }
+                  } else {
+                    this.generateTaskAceptProgramming(folio);
+                    this.loading = false;
+                  }
                 },
                 error: error => {},
               });
@@ -2274,6 +2335,7 @@ export class PerformProgrammingFormComponent
     const downloadLink = document.createElement('a');
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
+    downloadLink.download = 'Bienes_Programables.xlsx';
     downloadLink.click();
     this.alert('success', 'Acción Correcta', 'Archivo generado');
   }
@@ -2288,7 +2350,7 @@ export class PerformProgrammingFormComponent
       this.performForm.get('address').setValue(this.dataProgramming.address);
       this.performForm.get('city').setValue(this.dataProgramming.city);
       this.performForm.get('stateKey').setValue(this.dataProgramming.stateKey);
-      this.performForm.get('storeId').setValue(this.dataProgramming.storeId);
+
       this.performForm
         .get('emailTransfer')
         .setValue(this.dataProgramming.emailTransfer);
@@ -2333,10 +2395,12 @@ export class PerformProgrammingFormComponent
           error: error => {},
         });
 
-      if (this.dataProgramming.storeId) {
+      if (this.dataProgramming.storeId > 0) {
         this.warehouseService.getById(this.dataProgramming.storeId).subscribe({
           next: response => {
-            this.warehouseUbication = response.description;
+            this.performForm.get('storeId').setValue(response.description);
+            this.warehouseId = response?.idWarehouse;
+            this.warehouseUbication = response.ubication;
           },
           error: error => {},
         });

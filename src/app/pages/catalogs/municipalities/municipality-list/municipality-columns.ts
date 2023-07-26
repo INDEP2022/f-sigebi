@@ -25,6 +25,7 @@ export const MUNICIPALITIES_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.descCondition;
     },
+
     sort: false,
   },
   version: {

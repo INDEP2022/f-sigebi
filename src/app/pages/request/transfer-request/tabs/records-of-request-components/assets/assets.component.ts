@@ -113,8 +113,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    console.log('Activando tab: assets');
-    console.log('TIPO TRASFERENCIA', this.requestObject.typeOfTransfer);
+    //console.log('Activando tab: assets');
+    //console.log('TIPO TRASFERENCIA', this.requestObject.typeOfTransfer);
     this.typeRequest = this.requestObject.typeOfTransfer;
     this.settings = {
       ...TABLE_SETTINGS,
@@ -164,10 +164,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
   getMenaje(id: number) {
     return new Promise((resolve, reject) => {
-      this.menageService.getById(id).subscribe({
+      const params = new ListParams();
+      params['filter.noGoodMenaje'] = `$eq:${id}`;
+      this.menageService.getAll(params).subscribe({
         next: (resp: any) => {
-          if (resp) {
-            resolve(resp['noGood']);
+          if (resp.data) {
+            resolve(resp.data[0]['noGood']);
           } else {
             resolve('');
           }
@@ -534,6 +536,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
             `Error al crear el menaje ${error.error.message}`
           );
           console.log(error.error.message);
+          this.isSaveMenaje = false;
           reject(false);
         },
       });
@@ -760,7 +763,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       this.listGoodsFractions.push(good);
     }
     this.loading = false;
-    console.table(this.listGoodsFractions);
+    //console.table(this.listGoodsFractions);
     if (existAddres > 0) {
       this.onLoadToast(
         'info',
@@ -805,6 +808,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   matchLevelFraction(res: any) {
+    //debugger;
     switch (Number(res.level)) {
       case 5:
         this.getLevel4(new ListParams(), res.id);
@@ -844,6 +848,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
         ) {
+          this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
           this.fractionProperties['goodClassNumber'] =
             fractionDesc.clasifGoodNumber;
@@ -879,6 +884,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
         ) {
+          this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
           this.fractionProperties['goodClassNumber'] =
             fractionDesc.clasifGoodNumber;
@@ -917,6 +923,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
         ) {
+          this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
           this.fractionProperties['goodClassNumber'] =
             fractionDesc.clasifGoodNumber;
@@ -952,6 +959,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
         ) {
+          this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
           this.fractionProperties['goodClassNumber'] =
             fractionDesc.clasifGoodNumber;
@@ -986,6 +994,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
         ) {
+          this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
           this.fractionProperties['goodClassNumber'] =
             fractionDesc.clasifGoodNumber;
@@ -1016,10 +1025,12 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         const fractionCode = fraction.fractionCode
           ? fraction.fractionCode.toString()
           : '';
+
         if (
           fractionCode.length === 8 &&
           this.fractionProperties['goodClassNumber'] === undefined
         ) {
+          this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
           this.fractionProperties['goodClassNumber'] =
             fractionDesc.clasifGoodNumber;

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { format } from 'date-fns';
+import { addDays, addYears, format, startOfYear } from 'date-fns';
 import {
   catchError,
   firstValueFrom,
@@ -22,6 +22,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EventFormVisualProperties } from '../../utils/classes/comer-event-properties';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
+
 @Component({
   selector: 'event-data-form',
   templateUrl: './event-data-form.component.html',
@@ -38,6 +39,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() loadFromGoodsTracker = false;
   @Output() onLoadFromGoodsTracker = new EventEmitter<void>();
   @Input() eventFormVisual = new EventFormVisualProperties();
+  readonly minEventDate = new Date('2000-01-01');
+  readonly maxEventDate = new Date(addYears(startOfYear(new Date()), 5));
   get controls() {
     return this.eventForm.controls;
   }
@@ -195,5 +198,63 @@ export class EventDataFormComponent extends BasePage implements OnInit {
         return throwError(() => error);
       })
     );
+  }
+
+  eventDateChange(_eventDate: Date) {
+    const { eventDate, failureDate } = this.controls;
+    if (!_eventDate) {
+      failureDate.reset();
+      return;
+    }
+    const eventYear = _eventDate.getFullYear();
+    const currentYear = new Date().getFullYear();
+    if (eventYear < 2000) {
+      this.alert(
+        'error',
+        'Error',
+        'La fecha no puede ser anterior al año 2000'
+      );
+      eventDate.reset();
+      return;
+    }
+    if (eventYear > currentYear + 5) {
+      this.alert('error', 'Error', 'La fecha no puede ser mayor a 5 años');
+      eventDate.reset();
+      return;
+    }
+    failureDate.setValue(addDays(_eventDate, 3));
+  }
+
+  failureDateChange(failDate: Date) {
+    if (!failDate) {
+      return;
+    }
+    const { eventDate, failureDate } = this.controls;
+    if (failDate <= eventDate.value) {
+      this.alert(
+        'error',
+        'Error',
+        'La fecha de fallo no pueder menor o igual a la fecha del evento'
+      );
+      failureDate.reset();
+      return;
+    }
+  }
+
+  closingDateChange() {
+    const { eventDate, failureDate, eventClosingDate } = this.controls;
+    if (!eventClosingDate.value) {
+      return;
+    }
+
+    if (failureDate.value <= eventDate.value) {
+      this.alert(
+        'error',
+        'Error',
+        'La fecha de fallo no pueder menor o igual a la fecha del evento'
+      );
+      failureDate.reset();
+      return;
+    }
   }
 }

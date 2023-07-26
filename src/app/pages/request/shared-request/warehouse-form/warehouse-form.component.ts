@@ -32,7 +32,7 @@ import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-ali
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { UserProcessService } from 'src/app/core/services/ms-user-process/user-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 
@@ -98,10 +98,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     const now = moment();
     const date = new Date(now.format());
     this.warehouseForm = this.fb.group({
-      nbidstore: [
-        null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
-      ],
+      nbidstore: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       nbusername: [
         null,
         [
@@ -176,13 +173,13 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.loading = true;
     this.alertQuestion(
       'question',
       'Confirmación',
       '¿Seguro de mandar a solicitar un nuevo almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
+        this.loading = true;
         this.warehouseForm
           .get('wildebeestDelegationregion')
           .setValue(this.regDelData.id);

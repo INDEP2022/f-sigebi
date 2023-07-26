@@ -195,6 +195,9 @@ export class DepositTokensComponent
             instance.funcionEjecutada.subscribe(() => {
               this.miFuncion();
             });
+            instance.loadingConciliar.subscribe(() => {
+              this.miSegundaFuncion(); // Nueva segunda función independiente
+            });
           },
         },
         proceedingsnumber: {
@@ -210,6 +213,9 @@ export class DepositTokensComponent
           onComponentInitFunction: (instance: any) => {
             instance.funcionEjecutada.subscribe(() => {
               this.miFuncion();
+            });
+            instance.loadingConciliar.subscribe(() => {
+              this.miSegundaFuncion(); // Nueva segunda función independiente
             });
           },
         },
@@ -357,12 +363,12 @@ export class DepositTokensComponent
           title: 'Depósito',
           type: 'custom',
           sort: false,
-          renderComponent: CustomdbclickdepositComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.funcionEjecutada.subscribe(() => {
-              this.miFuncion();
-            });
-          },
+          // renderComponent: CustomdbclickdepositComponent,
+          // onComponentInitFunction: (instance: any) => {
+          //   instance.funcionEjecutada.subscribe(() => {
+          //     this.miFuncion();
+          //   });
+          // },
         },
         di_expediente2: {
           title: 'Expediente',
@@ -392,6 +398,10 @@ export class DepositTokensComponent
     this.settings2.actions = false;
   }
 
+  miSegundaFuncion() {
+    console.log('SIIAISDASDASD');
+    this.loading = !this.loading;
+  }
   ngOnInit(): void {
     console.log(screen.width);
     this.prepareForm();
@@ -701,7 +711,7 @@ export class DepositTokensComponent
         if (this.dataMovements.goodnumber == null) {
           this.alert(
             'warning',
-            'No existe un bien asociado a este depósito.',
+            'No Existe un Bien Asociado a este Depósito.',
             ''
           );
         } else {
@@ -716,13 +726,13 @@ export class DepositTokensComponent
               this.getAccount();
               this.alert(
                 'success',
-                `El bien ${this.dataMovements.goodnumber} ha sido desconciliado`,
+                `El Bien ${this.dataMovements.goodnumber} ha sido Desconciliado`,
                 ''
               );
               this.form.get('descriptionGood').setValue('');
             },
             error: err => {
-              this.alert('error', `Error al desconciliar`, err.error.message);
+              this.alert('error', `Error al Desconciliar`, err.error.message);
               // this.loading = false;
             },
           });
@@ -779,7 +789,7 @@ export class DepositTokensComponent
       }
       this.clearInput();
     } catch (error) {
-      this.alert('warning', 'Ocurrio un error al leer el archivo', '');
+      this.alert('warning', 'Ocurrio un Error al leer el Archivo', '');
       this.clearInput();
     }
   }
@@ -880,13 +890,13 @@ export class DepositTokensComponent
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
               'error',
-              'El archivo no cumple con las condiciones de inserción',
+              'El Archivo no Cumple con las Condiciones de Inserción',
               ''
             );
           } else {
             this.alert(
               'error',
-              'Ha ocurrido un error al intentar cargar el archivo',
+              'Ha Ocurrido un Error al Intentar Cargar el Archivo',
               err.error.message
             );
           }
@@ -1039,7 +1049,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
+        'No puede Eliminar un Movimiento que ya está Asociado a un Expediente-Bien',
         ''
       );
     } else {
@@ -1050,13 +1060,13 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          'No se uede Eliminar una Ficha mientras tenga Devoluciones Registradas',
           ''
         );
       } else {
         this.alertQuestion(
           'question',
-          'Se eliminará el movimiento',
+          'Se Eliminará el Movimiento',
           '¿Desea Continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
@@ -1072,7 +1082,7 @@ export class DepositTokensComponent
                 console.log('res', response);
               },
               error: err => {
-                this.alert('error', 'Error al eliminar el movimiento', '');
+                this.alert('error', 'Error al Eliminar el Movimiento', '');
               },
             });
           }
@@ -1099,13 +1109,13 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          'No se puede Eliminar una Ficha Mientras tenga Devoluciones Registradas',
           ''
         );
       } else {
         this.alertQuestion(
           'question',
-          'Se eliminará el movimiento',
+          'Se Eliminará el Movimiento',
           '¿Desea Continuar?'
         ).then(async question => {
           if (question.isConfirmed) {
@@ -1121,7 +1131,7 @@ export class DepositTokensComponent
                 console.log('res', response);
               },
               error: err => {
-                this.alert('error', 'Error al eliminar el movimiento', '');
+                this.alert('error', 'Error al Eliminar el Movimiento', '');
               },
             });
           }

@@ -37,4 +37,14 @@ export class StrategyProcessService extends HttpService {
     const route = `${StrategyEndpoints.StrategyProcess}/${id}`;
     return this.delete(route);
   }
+
+  getByDelegation(id: number, params: any) {
+    const route = `${StrategyEndpoints.getStrategy}?filter.delegationNumber=${id}`;
+    return this.get(route, params);
+  }
+
+  getByNoReport(id: number) {
+    const route = `${StrategyEndpoints.StrategySum}/${id}`;
+    return this.get(route);
+  }
 }

@@ -67,6 +67,7 @@ export enum GoodProcessPoints {
   GetFproSolNumerarioProdnumCsv = 'application/get-fpro-sol-numerario-prodnum',
   PubPrevieData = 'application/pupPreviewData',
   ProcedureStatusGood = 'application/procedure-status-good',
+  UpdateProcedingNumber = 'application/updateProceedingsNumber',
 }
 
 export enum GoodFinderEndpoint {

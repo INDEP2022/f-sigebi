@@ -13,6 +13,7 @@
         id="tableUser"
         [attr.class]="'table-bordered'"
         [settings]="settings"
+        (userRowSelect)="userSelect($event)"
         [source]="usersData">
       </ng2-smart-table>
     </div>

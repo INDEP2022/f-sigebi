@@ -36,6 +36,7 @@ import { ElectronicSignatureListComponent } from '../../../shared-request/electr
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
 import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
+import { DomicileFormComponent } from '../../shared-components-programming/domicile-form/domicile-form.component';
 import { RejectProgrammingFormComponent } from '../../shared-components-programming/reject-programming-form/reject-programming-form.component';
 import { ESTATE_COLUMNS, ESTATE_COLUMNS_VIEW } from '../columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../columns/users-columns';
@@ -163,9 +164,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       actions: false,
       columns: USER_COLUMNS_SHOW,
     };
-    this.programmingId = this.activatedRoute.snapshot.paramMap.get(
-      'id'
-    ) as unknown as number;
+    this.programmingId = Number(
+      this.activatedRoute.snapshot.paramMap.get('id')
+    );
   }
 
   ngOnInit(): void {
@@ -334,10 +335,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       },
     };
 
-    const confirmPro = this.modalService.show(
-      ConfirmProgrammingComponent,
-      config
-    );
+    this.modalService.show(ConfirmProgrammingComponent, config);
   }
 
   viewOffice() {
@@ -531,9 +529,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
         }
       });
     } else {
@@ -624,11 +619,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
         next: () => {
-          this.alert(
-            'success',
-            'Notificación',
-            'Se envio el correo electrónico a los usuarios correctamente'
-          );
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
         },
         error: error => {},
       });
@@ -845,12 +838,21 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   }
 
   showGood(item: IGoodProgrammingSelect) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
     config.initialState = {
       item,
       callback: () => {},
     };
     this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+
+  showAddress(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DomicileFormComponent, config);
   }
 
   msgGuardado(icon: any, title: string, message: string) {

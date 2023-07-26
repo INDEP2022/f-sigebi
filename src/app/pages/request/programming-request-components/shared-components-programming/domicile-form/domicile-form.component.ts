@@ -21,6 +21,7 @@ export class DomicileFormComponent extends BasePage implements OnInit {
   paramsState = new BehaviorSubject<ListParams>(new ListParams());
   domicileInfo: IDomicile;
   stateName: string = '';
+  municipalityName: string = '';
   constructor(
     private modalRef: BsModalRef,
     private statesService: StateOfRepublicService,
@@ -31,17 +32,16 @@ export class DomicileFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('item', this.item);
     this.getDomicilieInfo();
     //this.showInfostate();
-    //this.showInfoMuncipality();
   }
 
   getDomicilieInfo() {
     this.domicilieService.getById(this.item.addressId).subscribe({
       next: response => {
         this.domicileInfo = response;
-        this.getStateInfo(this.domicileInfo.cveState);
+        this.getStateInfo(this.domicileInfo?.cveState);
+        this.showInfoMuncipality();
       },
       error: error => {},
     });
@@ -63,21 +63,21 @@ export class DomicileFormComponent extends BasePage implements OnInit {
       },
       error: error => {},
     });
-  }
+  } */
+
   showInfoMuncipality() {
-    this.paramsState.getValue()['filter.stateKey'] =
-      this.item.domicilio.statusKey;
+    this.paramsState.getValue()['filter.stateKey'] = this.domicileInfo.cveState;
     this.paramsState.getValue()['filter.municipalityKey'] =
-      this.item.domicilio.municipalityKey;
+      this.domicileInfo.cveMunicipality;
     this.municipalityService
       .getAllMunipalitiesByFilter(this.paramsState.getValue())
       .subscribe({
         next: response => {
-          this.item.cveMunicipality = response.data[0].municipality;
+          this.municipalityName = response.data[0].municipality;
         },
         error: error => {},
       });
-  } */
+  }
 
   close() {
     this.modalRef.hide();

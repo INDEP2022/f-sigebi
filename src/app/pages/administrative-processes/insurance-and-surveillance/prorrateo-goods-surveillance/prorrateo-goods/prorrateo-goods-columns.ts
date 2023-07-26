@@ -1,5 +1,5 @@
 export const PRORRATEGO_GOODS_COLUMNS = {
-  goodId: {
+  goodNumberId: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -20,7 +20,7 @@ export const PRORRATEGO_GOODS_COLUMNS = {
     sort: false,
   },
   location: {
-    title: 'Ubicacion',
+    title: 'Ubicación',
     type: 'text',
     sort: false,
   },

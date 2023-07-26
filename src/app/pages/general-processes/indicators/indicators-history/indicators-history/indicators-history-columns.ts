@@ -1,18 +1,18 @@
 export const INDICATORS_HISTORY_COLUMNS = {
-  column: {
+  coordinacion_regional: {
     title: 'Regional',
     sort: false,
   },
-  column2: {
-    title: 'Cve Oficio Externo',
+  cve_oficio_externo: {
+    title: 'Cve. Oficio Externo',
     sort: false,
   },
-  column3: {
-    title: 'No Expediente',
+  no_expediente: {
+    title: 'No. Expediente',
     sort: false,
   },
-  column4: {
-    title: 'No Volante',
+  no_volante: {
+    title: 'No. Volante',
     sort: false,
   },
   column5: {
@@ -29,6 +29,26 @@ export const INDICATORS_HISTORY_COLUMNS = {
   },
   column8: {
     title: 'Entregas',
+    sort: false,
+  },
+  column9: {
+    title: 'Comer.',
+    sort: false,
+  },
+  column10: {
+    title: 'Donación',
+    sort: false,
+  },
+  column11: {
+    title: 'Destrucción',
+    sort: false,
+  },
+  column12: {
+    title: 'Devolución',
+    sort: false,
+  },
+  column13: {
+    title: 'Fecha Tecnica',
     sort: false,
   },
 };

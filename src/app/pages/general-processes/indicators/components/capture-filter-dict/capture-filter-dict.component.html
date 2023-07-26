@@ -5,9 +5,13 @@
       label="Rango de fechas"
       class="col-md-3 mt-3">
       <input
-        type="text"
         class="form-control"
+        ngModel
         bsDatepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD/MM/YYYY',
+          displayOneMonthRange: true
+        }"
         formControlName="fechaInicio" />
     </form-field>
 
@@ -19,6 +23,14 @@
         type="text"
         class="form-control"
         bsDatepicker
+        class="form-control"
+        ngModel
+        bsDatepicker
+        [bsConfig]="{
+          dateInputFormat: 'DD/MM/YYYY',
+          displayOneMonthRange: true
+        }"
+        [minDate]="fechaInicio.value"
         formControlName="fechaFin" />
     </form-field>
 
@@ -66,7 +78,7 @@
       class="col"
       [form]="form"
       [delegationField]="'cordinador'"
-      [labelDelegation]="'Cordinador Regional'"
+      [labelDelegation]="'Coordinador Regional'"
       [showSubdelegation]="false"
       [delegationChange]="false"
       (emitDelegation)="changeDelegation($event)"></app-delegation-shared>
@@ -152,7 +164,7 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-      <button class="btn btn-primary btn-sm active m-3" (click)="consult()">
+      <button class="btn btn-primary btn-sm active mr-3" (click)="consult()">
         Consultar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
@@ -162,7 +174,7 @@
       <button
         *ngIf="!isReceptionStrategies"
         type="button"
-        class="btn btn-primary active btn-sm"
+        class="btn btn-primary active btn-sm mr-3"
         (click)="report()">
         Reporte <i class="bx bx-printer bx-sm float-icon"></i>
       </button>

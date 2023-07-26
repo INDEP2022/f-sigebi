@@ -170,6 +170,7 @@ export class EmailGoodProcessValidationComponent
 
   sendEmail() {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       this.alert('warning', 'Complete los Campos Correctamente', '');
       return;
     }
@@ -204,28 +205,28 @@ export class EmailGoodProcessValidationComponent
     // };
     let bodyMail = {
       header: user.toUpperCase(), // encabezado
-      destination: PARA ? PARA.join(',') : [], // destino
-      copy: [CC], // copia
+      destination: PARA ? [PARA.join(',')] : [], // destino
+      copy: CC ? [CC.join(',')] : [], // copia
       subject: ASUNTO, // asunto
       message: MENSAJE, // mensaje
     };
     console.log(bodyMail);
-    // this.transferGoodService.sendEmail(bodyMail).subscribe({
-    //   next: resp => {
-    //     console.log(resp);
-    //     this.modalRef.hide();
-    //     // this.form.get('MENSAJE').patchValue(resp.message);
-    //     this.alert('success', 'Correo Enviado Correctamente', '');
-    //   },
-    //   error: err => {
-    //     console.log(err);
-    //     this.alert(
-    //       'warning',
-    //       'Error al Enviar',
-    //       'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
-    //     );
-    //   },
-    // });
+    this.transferGoodService.sendEmail(bodyMail).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.modalRef.hide();
+        // this.form.get('MENSAJE').patchValue(resp.message);
+        this.alert('success', 'Correo Enviado Correctamente', '');
+      },
+      error: err => {
+        console.log(err);
+        this.alert(
+          'warning',
+          'Error al Enviar',
+          'Ocurrió un Error al Enviar el Correo, Intente Nuevamente'
+        );
+      },
+    });
   }
 
   changeName(user: { name: string; email: string }) {

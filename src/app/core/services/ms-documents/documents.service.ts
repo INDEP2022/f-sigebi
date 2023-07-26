@@ -8,6 +8,8 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import { IClarificationDocumentsImpro } from '../../models/ms-documents/clarification-documents-impro-model';
 import { SeparatorsDocuments } from '../../models/ms-documents/document-separators';
 import {
+  ICaptureDig,
+  ICaptureDigFilter,
   ICatDigitalizationTemp,
   IDocuments,
   IGenerateFolioMassConv,
@@ -263,5 +265,14 @@ export class DocumentsService extends HttpService {
 
   deleteCatDigitalizationTmp(body: Object) {
     return this.delete(DocumentsEndpoints.CapDigiralizationTmp, body);
+  }
+  getDocCapture(body: ICaptureDig): Observable<IListResponse<ICaptureDig>> {
+    return this.post(DocumentsEndpoints.IndicatorRec, body);
+  }
+  getDocCaptureCoordinator(params: any): Observable<IListResponse<any>> {
+    return this.post(DocumentsEndpoints.IndicatorRec, params);
+  }
+  getDocCaptureFind(body: ICaptureDigFilter, params: ListParams) {
+    return this.post(DocumentsEndpoints.IndicatorRec, body, params);
   }
 }

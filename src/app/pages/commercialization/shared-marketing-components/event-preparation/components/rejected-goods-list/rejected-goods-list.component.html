@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-md-12">
+    <h6>Bienes Rechazados</h6>
+  </div>
+</div>
+
+<hr class="row" />
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-between">
+    <div>
+      <button
+        type="button"
+        (click)="goBack()"
+        class="btn btn-primary active btn-sm m-2">
+        Regresar
+        <i class="fas fa-arrow-circle-left"></i>
+      </button>
+    </div>
+    <div class="row">
+      <div class="col-md-12 d-flex">
+        <div class="mx-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-secondary active"
+            (click)="onIncorporate()">
+            Incorporar
+          </button>
+        </div>
+        <div class="mx-2">
+          <confirm-button
+            type="button"
+            (confirm)="onSale()"
+            text=" Cambiar a Venta"
+            [loading]="saleChangeLoading"
+            [disabled]="saleChangeLoading"
+            className="btn btn-sm btn-secondary active"
+            loadingText="Cargando..."></confirm-button>
+        </div>
+        <div class="mx-2">
+          <confirm-button
+            type="button"
+            (confirm)="onExportExcel()"
+            text="Exportar a Excel"
+            [loading]="excelLoading"
+            [disabled]="excelLoading"
+            className="btn btn-sm btn-success active"
+            loadingText="Cargando..."
+            icon="bx bx-download float-icon"></confirm-button>
+        </div>
+        <div class="mx-2">
+          <app-columns-select
+            [(settings)]="settings"
+            [defaultColumns]="5"></app-columns-select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row pt-2">
+  <div class="col-md-12 table-responsive">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="rejectedGoods">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <app-pagination
+      [filterParams]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>

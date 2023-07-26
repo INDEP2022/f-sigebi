@@ -45,6 +45,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import {
   DOUBLE_PATTERN,
   NUMBERS_PATTERN,
+  NUMBERS_POINT_PATTERN,
   NUM_POSITIVE,
   NUM_POSITIVE_LETTERS,
   POSITVE_NUMBERS_PATTERN,
@@ -457,13 +458,16 @@ export class DetailAssetsTabComponentComponent
           Validators.maxLength(40),
         ],
       ],
-      surfaceMts: [0, [Validators.required, Validators.pattern(NUM_POSITIVE)]],
+      surfaceMts: [
+        0,
+        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+      ],
       consSurfaceMts: [
         0,
         [
           Validators.required,
           Validators.maxLength(40),
-          Validators.pattern(NUM_POSITIVE),
+          Validators.pattern(NUMBERS_POINT_PATTERN),
         ],
       ],
       publicDeed: [
@@ -510,7 +514,7 @@ export class DetailAssetsTabComponentComponent
       ],
       mtsOfiWarehouse: [
         null,
-        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(40)],
+        [Validators.pattern(NUMBERS_POINT_PATTERN), Validators.maxLength(40)],
       ],
       bedrooms: [
         null,
@@ -560,7 +564,7 @@ export class DetailAssetsTabComponentComponent
         ],
       ],
       certLibLienDate: [null],
-      pffDate: [null, [Validators.required]],
+      pffDate: [null],
       gravFavorThird: [
         null,
         [Validators.pattern(NUM_POSITIVE_LETTERS), Validators.maxLength(40)],
@@ -662,6 +666,20 @@ export class DetailAssetsTabComponentComponent
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
     });
+
+    /* METODO QUE CAMBIA LOS CAMPOS DEL DOMICILIO A REQUERIDOS
+    ========================================================== */
+    this.setDomiciliesFieldRequired();
+  }
+
+  setDomiciliesFieldRequired() {
+    console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
+    if (this.typeOfRequest === 'MANUAL') {
+      this.goodDomicilieForm.controls['pffDate'].setValidators([
+        Validators.required,
+      ]);
+    }
+    this.goodDomicilieForm.updateValueAndValidity();
   }
 
   getPhysicalState(params: ListParams) {

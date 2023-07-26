@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
@@ -36,6 +36,7 @@ export class CommerPackagesLotsComponent
   @Output() fillStadistics = new EventEmitter<void>();
   comerLot: IComerLot;
   @Input() loggedUser: TokenInfoModel;
+  viewRejectedGoods = false;
   constructor(
     private globalVarsService: GlobalVarsService,
     private eventPreparationService: EventPreparationService,
@@ -64,14 +65,7 @@ export class CommerPackagesLotsComponent
       return;
     }
     if (REL_BIENES) {
-      this.processTracker(REL_BIENES, lastLot, lastPublicLot).subscribe({
-        next: res => {
-          this.fillStadistics.emit();
-        },
-        error: error => {
-          console.log(error);
-        },
-      });
+      this.processTracker(REL_BIENES, lastLot, lastPublicLot).subscribe();
     }
   }
 
@@ -81,16 +75,35 @@ export class CommerPackagesLotsComponent
     lotepub: string | number
   ) {
     const { id, eventTpId } = this.eventForm.controls;
-    return this.utilComerV1Service.processTracker({
-      id: relGoods,
-      dir: this.parameters.pDirection,
-      event: id.value,
-      lot,
-      tpeve2: eventTpId.value,
-      program: 'FCOMEREVENTOS',
-      lotepub,
-      user: 'DR_SIGEBI',
-    });
+    this.loader.load = true;
+    return this.utilComerV1Service
+      .processTracker({
+        id: relGoods,
+        dir: this.parameters.pDirection,
+        event: id.value,
+        lot,
+        tpeve2: eventTpId.value,
+        program: 'FCOMEREVENTOS',
+        lotepub,
+        user: 'DR_SIGEBI',
+      })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un error al procesar los bienes'
+          );
+          return throwError(() => error);
+        }),
+        tap(res => {
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          // TODO: BIENES RECHAZADOS
+          this.fillStadistics.emit();
+        })
+      );
   }
 
   onLotSelect(lot: IComerLot) {

@@ -10,11 +10,19 @@ export const COUNT_TIIE_COLUMNS = {
     title: 'Dias Tiie',
     type: 'number',
     sort: true,
+    valuePrepareFunction: (dias: number) => {
+      var formatted = Math.trunc(dias);
+      return formatted;
+    },
   },
   tiieAverage: {
     title: 'Promedio Tiie',
     type: 'number',
     sort: true,
+    valuePrepareFunction: (avg: number) => {
+      var formatted = Math.trunc(avg);
+      return formatted;
+    },
   },
   tiieMonth: {
     title: 'Mes Tiie',
@@ -38,10 +46,7 @@ export const COUNT_TIIE_COLUMNS = {
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
-      var formatted = new DatePipe('en-EN').transform(
-        raw,
-        'dd/MM/yyyy, h:mm a'
-      );
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },
   },
