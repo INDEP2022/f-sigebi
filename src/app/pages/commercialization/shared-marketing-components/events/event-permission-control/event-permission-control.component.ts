@@ -130,6 +130,9 @@ export class EventPermissionControlComponent
 
   cleanForm(): void {
     this.form.reset();
+    this.comerUsuaTxEvent.load([]);
+    this.comerUsuaTxEvent.refresh();
+    this.totalItems = 0;
     this.event_ = null;
   }
 
