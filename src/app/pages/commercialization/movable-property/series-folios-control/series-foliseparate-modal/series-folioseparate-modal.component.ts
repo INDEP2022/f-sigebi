@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { InvoicefolioService } from 'src/app/core/services/ms-invoicefolio/invoicefolio.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-series-folioseparate-modal',
   templateUrl: './series-folioseparate-modal.component.html',
@@ -42,7 +43,7 @@ export class SeriesFoliosSeparateModalComponent
   private prepareForm() {
     this.form = this.fb.group({
       folioinvoiceId: [null],
-      series: [null],
+      series: [null, Validators.pattern(STRING_PATTERN)],
       invoice: [null, Validators.required],
       pulledapart: ['M', Validators.required],
       recordNumber: [null],

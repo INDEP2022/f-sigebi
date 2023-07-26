@@ -11,6 +11,7 @@ export class CommercialSalesForm {
     Validators.maxLength(10),
     Validators.pattern(NUMBERS_PATTERN),
   ]);
+  client = new FormControl(null);
   expedientNumber = new FormControl(null, [
     Validators.maxLength(10),
     Validators.pattern(NUMBERS_PATTERN),
@@ -20,7 +21,10 @@ export class CommercialSalesForm {
     Validators.maxLength(10),
     Validators.pattern(NUMBERS_PATTERN),
   ]);
+  descEvent = new FormControl(null);
+  descTypeEvent = new FormControl(null);
   mandate = new FormControl(null);
+  descMandate = new FormControl(null);
   price = new FormControl(null, [
     Validators.maxLength(20),
     Validators.pattern(NUMBERS_PATTERN),
@@ -36,6 +40,8 @@ export class CommercialSalesForm {
   dateInit = new FormControl(null);
   dateFinal = new FormControl(null);
   regc = new FormControl(null);
+  descord = new FormControl(null);
+  facture = new FormControl(null);
   ref = new FormControl(null, [
     Validators.maxLength(35),
     Validators.pattern(STRING_PATTERN),
@@ -49,4 +55,5 @@ export class CommercialSalesForm {
     Validators.pattern(STRING_PATTERN),
   ]);
   limit = new FormControl(null);
+  reference = new FormControl(null);
 }
