@@ -8,6 +8,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { EventPreparationService } from '../event-preparation.service';
@@ -60,7 +61,8 @@ export class EventPreparationComponent
     private comerEventosService: ComerEventosService,
     private lotService: LotService,
     private eventPreparationService: EventPreparationService,
-    private globalVarsService: GlobalVarsService
+    private globalVarsService: GlobalVarsService,
+    private eventAppService: EventAppService
   ) {
     super();
     // TODO: Recibir los parametros
@@ -77,7 +79,23 @@ export class EventPreparationComponent
     const { REL_BIENES } = global;
     if (REL_BIENES) {
       await this.onOpenEvent();
+      await this.verifyRejectedGoods();
     }
+  }
+
+  /**VERIFICARECHAZADOS */
+  async verifyRejectedGoods() {
+    const { id } = this.eventControls;
+    return firstValueFrom(
+      this.eventAppService.verifyRejectedGoods(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.warn({ response });
+        })
+      )
+    );
   }
 
   async ngOnInit() {
@@ -218,7 +236,7 @@ export class EventPreparationComponent
           'Error',
           'Para trabajar los lotes requiere tener un evento abierto'
         );
-      }, 500);
+      });
       return;
     }
     this.defaultMenu();
@@ -306,7 +324,7 @@ export class EventPreparationComponent
       );
       setTimeout(() => {
         this.selectTab(TABS.OPEN_TAB);
-      }, 500);
+      });
       return;
     }
     this.comerCustomersListParams.next(new FilterParams());
@@ -342,5 +360,52 @@ export class EventPreparationComponent
       },
     };
     this.parameters.pValids = grant ? 1 : 0;
+  }
+
+  availableGoods() {
+    const { eventTpId, statusVtaId, id } = this.eventControls;
+    if (!id.value) {
+      this.canNotSeeAvailableGoods('Debe tener un lote seleccionado');
+      return;
+    }
+    if (eventTpId.value == 9) {
+      this.canNotSeeAvailableGoods(
+        'Opción no disponible para este tipo de evento,lotifique desde archivo'
+      );
+      return;
+    }
+
+    if (!this.consignment()) {
+      this.canNotSeeAvailableGoods(
+        'Este tipo de Evento no permite esta funcionalidad'
+      );
+      return;
+    }
+
+    if (statusVtaId.value != 'PREP') {
+      this.canNotSeeAvailableGoods(
+        'Este tipo de Evento ya no admite incorporacion de bienes'
+      );
+      return;
+    }
+
+    this.preparation = !(eventTpId.value == 10);
+  }
+
+  /** REMESA */
+  consignment() {
+    const { eventTpId } = this.eventControls;
+    return !(eventTpId.value == 6);
+  }
+
+  canNotSeeAvailableGoods(reason: string) {
+    this.alert('error', 'Error', reason);
+    setTimeout(() => {
+      this.selectTab(TABS.OPEN_TAB);
+    });
+  }
+
+  exitConsignment() {
+    this.selectTab(TABS.LOTES_TAB);
   }
 }
