@@ -13,6 +13,8 @@ export class MassiveDictationService extends HttpService {
   }
 
   deleteGoodOpinion(body: { goodIds?: string[]; identifier?: string }) {
+    console.log(this.route.P_ELIMINA_BIENES_DICTAMENT);
+    console.log(body);
     return this.post(`${this.route.P_ELIMINA_BIENES_DICTAMENT}`, body);
   }
 

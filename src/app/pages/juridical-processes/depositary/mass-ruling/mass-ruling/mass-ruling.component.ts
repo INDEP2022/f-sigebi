@@ -106,27 +106,29 @@ export class MassRulingComponent
 
   public form = new FormGroup({
     /**@description no_of_dicta */
-    id: new FormControl(null),
+    id: new FormControl('8047'),
     /**@description clave_oficio_armada */
-    passOfficeArmy: new FormControl('', [
+    passOfficeArmy: new FormControl('DCO/DECR/CRH/ATJRH/00470/2008', [
       Validators.pattern(KEYGENERATION_PATTERN),
     ]),
     /**@description no_expediente */
-    expedientNumber: new FormControl(null),
+    expedientNumber: new FormControl('383804'),
     /**@description tipo_dictaminacion */
-    typeDict: new FormControl(''),
+    typeDict: new FormControl('DESTRUCCION'),
     /**@description estatus_dictaminacion */
-    statusDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    statusDict: new FormControl('DICTAMINADO', [
+      Validators.pattern(STRING_PATTERN),
+    ]),
     /**@description fec_dictaminacion */
-    dictDate: new FormControl(''),
+    dictDate: new FormControl('2008-05-09'),
     /**@description usuario_dictamina */
-    userDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
+    userDict: new FormControl('FOSORIO', [Validators.pattern(STRING_PATTERN)]),
     /**@description fecha_instructora */
-    instructorDate: new FormControl(''),
+    instructorDate: new FormControl('2008-04-25'),
     /**@description no_volante */
-    wheelNumber: new FormControl(''),
+    wheelNumber: new FormControl('689709'),
     /**@description nn */
-    delete: new FormControl({ value: false, disabled: true }),
+    delete: new FormControl({ value: false, disabled: false }),
   });
   public formCargaMasiva = new FormGroup({
     identificadorCargaMasiva: new FormControl('', [
@@ -154,9 +156,10 @@ export class MassRulingComponent
   }
 
   ngOnInit(): void {
-    // this.form.get('wheelNumber').valueChanges.subscribe(x => {
-    //   this.getVolante();
-    // });
+    this.form.get('wheelNumber').valueChanges.subscribe(x => {
+      this.getVolante();
+      // console.log('llego aqui');
+    });
     this.params.pipe(skip(1)).subscribe(params => {
       this.loadDataForDataTable(params);
     });
@@ -179,38 +182,36 @@ export class MassRulingComponent
     id: number,
     wheelNumber: number
   ) {
-    // this.expedientNumber = id;
-    // if (!id && !wheelNumber) {
-    //   this.alert(
-    //     'warning',
-    //     'Advertencia',
-    //     'Debe ingresar un número de dictaminacion o un número de volante'
-    //   );
-    //   return;
-    // }
+    this.expedientNumber = id;
+    if (!id && !wheelNumber) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe ingresar un número de dictaminacion o un número de volante'
+      );
+      return;
+    }
 
     // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     //  let data = this.params.value;
     //   data.limit = 1;
     let params = `?limit=1&page=1`;
 
-    // if (id) {
-    //   params += `&filter.id=${id}`;
-    // }
+    if (id) {
+      params += `&filter.id=${id}`;
+    }
 
-    // if (wheelNumber) {
-    //   params += `&filter.wheelNumber=${wheelNumber}`;
-    // }
+    if (wheelNumber) {
+      params += `&filter.wheelNumber=${wheelNumber}`;
+    }
 
     const paramsSearch = this.generateParamsSearchDictation();
     Object.keys(paramsSearch).forEach(key => {
       params += `&${key}=${paramsSearch[key]}`;
     });
-
     this.dictationService.getAllWithFilters(params).subscribe({
       next: data => {
-        // console.log(data);
-        if (data.count > 1) {
+        if (data.count > +1) {
           this.openMoreOneResults();
         } else {
           // this.form.patchValue(data.data[0] as any);
@@ -226,6 +227,11 @@ export class MassRulingComponent
       error: err => {
         this.loading = false;
         this.form.reset();
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'Sin datos para la informacion suministrada'
+        );
       },
     });
   }
@@ -241,7 +247,8 @@ export class MassRulingComponent
   searchDictation() {
     const id = this.form.get('id').value;
     const wheelNumber = this.form.get('wheelNumber').value as any;
-    this.getDictations(id, wheelNumber);
+    //this.getDictations(parseInt(id), wheelNumber);
+    this.getDictationForId();
   }
 
   close() {
@@ -249,14 +256,6 @@ export class MassRulingComponent
   }
 
   async onClickGoodDictation() {
-    if (this.dataTable.length < 1) {
-      this.onLoadToast(
-        'warning',
-        'No se tiene datos cargados en la tabla de carga masiva'
-      );
-      return;
-    }
-
     if (this.dataTable.length < 1) {
       this.onLoadToast(
         'warning',
@@ -291,10 +290,12 @@ export class MassRulingComponent
 
       body['identifier'] = this.formCargaMasiva.value.identificadorCargaMasiva;
       this.btnsEnabled.btnGoodDictation = true;
-      // this.uploadForIdentifier();
+      // console.log(body);
     }
+    console.log(body);
     this.massiveDictationService.deleteGoodOpinion(body).subscribe({
-      next: () => {
+      next: data => {
+        console.log(data);
         this.onLoadToast('success', 'Proceso Terminado');
         this.dataTable = [];
         this.totalItems = 0;
@@ -313,48 +314,6 @@ export class MassRulingComponent
         this.btnsEnabled.btnGoodDictation = false;
       },
     });
-
-    // let identifier: number = null;
-    // if (this.dataTable[0].hasOwnProperty('id')) {
-    //   identifier = this.dataTable[0].id;
-    // } else {
-    //   this.onLoadToast(
-    //     'warning',
-    //     'No se tiene datos cargados en la tabla de carga masiva'
-    //   );
-    //   return;
-    // }
-
-    // this.alertQuestion(
-    //   'warning',
-    //   'Confirmación',
-    //   'Los Bienes del Dictamen serán eliminados, desea continuar?'
-    // ).then(question => {
-    //   if (question.isConfirmed) {
-    //     this.loading = true;
-    //     // TODO: Esperando resolucion de incidencia 785 para comprobación eliminación de carga masiva
-    //     this.massiveDictationService.deleteGoodOpinion(identifier).subscribe({
-    //       next: data => {
-    //         this.loading = false;
-    //         console.log(data);
-    //         showToast({
-    //           icon: 'success',
-    //           text: 'Proceso Terminado',
-    //         });
-    //         this.dataTable = [];
-    //         this.formCargaMasiva.reset();
-    //         this.form.get('delete').setValue(false);
-    //         this.isDisabledBtnGoodDictation = true;
-    //         this.form.get('delete').disable();
-    //       },
-    //       error: err => {
-    //         this.loading = false;
-    //         console.log(err);
-    //         this.onLoadToast('warning', err.error.message);
-    //       },
-    //     });
-    //   }
-    // });
   }
 
   onClickBtnClear() {
@@ -372,17 +331,18 @@ export class MassRulingComponent
   //TODO: FOR TESTING
   async onClickDictation() {
     const armyOfficeKey = this.form.get('passOfficeArmy').value;
-    // if (!armyOfficeKey) {
-    //   this.alert(
-    //     'warning',
-    //     'Advertencia',
-    //     'Debe ingresar la clave de la oficina del ejercito'
-    //   );
-    //   return;
-    // }
+    if (!armyOfficeKey) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        'Debe ingresar la clave de la oficina del ejercito'
+      );
+      return;
+    }
 
     try {
       const count = await this.CountDictationGoodFile(armyOfficeKey);
+      console.log(this.CountDictationGoodFile(armyOfficeKey));
       const responseQuestion = await this.alertQuestion(
         'info',
         'Información',
@@ -457,7 +417,7 @@ export class MassRulingComponent
     const params = `?filter.id=${identificador}&page=${listParams.page}&limit=${listParams.limit}`;
     this.massiveGoodService.getAllWithFilters(params).subscribe({
       next: data => {
-        console.log(data.data);
+        //console.log(data.data);
         this.dataTable = data.data.map(item => {
           return {
             goodNumber: (item.goodNumber as any)?.id,
@@ -482,6 +442,7 @@ export class MassRulingComponent
   dataFile: { goodNumber: number; fileNumber: number }[];
 
   async onClickLoadFile(event: any) {
+    console.log(this.formCargaMasiva);
     this.dataTableErrors = [];
     this.dataTable = [];
     this.totalItemsErrors = 0;
@@ -496,7 +457,14 @@ export class MassRulingComponent
       event.target.value = null;
       return;
     }
+    /*
+    setTimeout(() => {
+      console.log(event);
+    }, 10000);*/
     const file = event.target.files[0];
+    console.log('heeeeyy');
+    console.log(event.target.file);
+
     const data = await getDataFromExcel(file);
     if (!this.validateExcel(data)) {
       this.fileInput.nativeElement.value = null;
@@ -508,6 +476,7 @@ export class MassRulingComponent
         fileNumber: item.NO_EXPEDIENTE,
       };
     });
+
     this.pupPreviousData({ bienes: this.dataFile });
     // const dataTable: any[] = [];
     // const dataTableError: any[] = [];
@@ -594,21 +563,23 @@ export class MassRulingComponent
     }
   }
 
-  // async btnExpedientesXls(event: any) {
-  //   const data = await getDataFromExcel(event.target.files[0]);
-  //   if (!this.validateExcel(data)) {
-  //     return;
-  //   }
-  //   console.log({ data });
-  // }
+  async btnExpedientesXls(event: any) {
+    console.log('event', event);
+    const data = await getDataFromExcel(event.target.files[0]);
+    if (!this.validateExcel(data)) {
+      return;
+    }
+    console.log({ data });
+  }
 
-  isDisableCreateDictation = true;
+  isDisableCreateDictation = false;
   async onClickCreatedDictation() {
     let vNO_OF_DICTA;
-    // if (this.form.invalid) {
-    //   this.alert('error', 'Se debe ingresar un dictamen', '');
-    //   return;
-    // }
+    console.log('this.form', this.form);
+    if (this.form.invalid) {
+      this.alert('error', 'Se debe ingresar un dictamen', '');
+      return;
+    }
     if (!this.form.value.id && !this.form.value.typeDict) {
       this.alert('error', 'Se debe ingresar un dictamen', '');
       return;
@@ -616,8 +587,7 @@ export class MassRulingComponent
 
     try {
       const dictation = await this.getDictationForId();
-      console.log(dictation);
-      vNO_OF_DICTA = dictation.id;
+      vNO_OF_DICTA = dictation;
     } catch (error) {
       this.alert('error', 'No se encontró el dictamen', '');
       return;
@@ -648,20 +618,23 @@ export class MassRulingComponent
       id: this.form.value.id,
       typeDict: this.form.value.typeDict,
     };
-    const dictation = await firstValueFrom(
-      this.dictationService.findByIds(body)
-    );
-    console.log({ dictation });
-    return dictation;
+
+    this.dictationService.findByIds(body).subscribe({
+      next: data => {
+        console.log(data.id);
+        const dictation = data;
+        return dictation;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+
+    this.openMoreOneResults();
   }
 
   getVolante() {
     if (this.form.get('wheelNumber').value) {
-      console.log(this.form.get('wheelNumber').value);
-      // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-      // let data = this.params.value;
-
-      // data.addFilter('wheelNumber', this.form.get('wheelNumber').value);
       const params = `?filter.wheelNumber=${
         this.form.get('wheelNumber').value
       }&page=1&limit=1`;
@@ -888,6 +861,7 @@ export class MassRulingComponent
     id && (params['filter.id'] = id);
     expedientNumber && (params['filter.expedientNumber'] = expedientNumber);
     wheelNumber && (params['filter.wheelNumber'] = wheelNumber);
+    console.log(params);
     return params;
   }
 
@@ -923,53 +897,48 @@ export class MassRulingComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onClose.pipe(take(1)).subscribe(result => {
-      console.log({ result });
-      if (result) {
-        this.loadValuesDictation(result);
-      }
-    });
+    modalRef.content.onClose.pipe(take(1)).subscribe(result => {});
   }
 
-  // btnImprimeRelacionBienes() {
-  //   if (!this.form.get('id').value && !this.form.get('typeDict').value) {
-  //     this.alert('info', 'Se debe ingresar un dictamen', '');
-  //     return;
-  //   }
+  btnImprimeRelacionBienes() {
+    if (!this.form.get('id').value && !this.form.get('typeDict').value) {
+      this.alert('info', 'Se debe ingresar un dictamen', '');
+      return;
+    }
 
-  //   let params = {
-  //     CLAVE_ARMADA: this.form.controls['passOfficeArmy'].value,
-  //     TIPO_DIC: this.form.controls['typeDict'].value,
-  //     TIPO_VOL: this.wheelType,
-  //   };
+    let params = {
+      CLAVE_ARMADA: this.form.controls['passOfficeArmy'].value,
+      TIPO_DIC: this.form.controls['typeDict'].value,
+      TIPO_VOL: this.wheelType,
+    };
 
-  //   console.log(params);
+    console.log(params);
 
-  //   this.siabService
-  //     .fetchReport('RGENREPDICTAMASREL', params)
-  //     .subscribe(response => {
-  //       if (response !== null) {
-  //         if (response.body === null || response.code === 500) {
-  //           this.alert('error', 'No existe el reporte', '');
-  //           return;
-  //         }
-  //         const blob = new Blob([response], { type: 'application/pdf' });
-  //         const url = URL.createObjectURL(blob);
-  //         let config = {
-  //           initialState: {
-  //             documento: {
-  //               urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-  //               type: 'pdf',
-  //             },
-  //             callback: (data: any) => {},
-  //           },
-  //           class: 'modal-lg modal-dialog-centered',
-  //           ignoreBackdropClick: true,
-  //         };
-  //         this.modalService.show(PreviewDocumentsComponent, config);
-  //       }
-  //     });
-  // }
+    this.siabService
+      .fetchReport('RGENREPDICTAMASREL', params)
+      .subscribe(response => {
+        if (response !== null) {
+          if (response.body === null || response.code === 500) {
+            this.alert('error', 'No existe el reporte', '');
+            return;
+          }
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
 
   // btnImprimeRelacionExpediente() {
   //   if (
