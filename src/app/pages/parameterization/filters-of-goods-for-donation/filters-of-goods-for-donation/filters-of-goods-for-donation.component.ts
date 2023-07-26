@@ -152,7 +152,7 @@ export class FiltersOfGoodsForDonationComponent
           next: () => {
             this.alert(
               'success',
-              'Filtro de bienes para donación',
+              'Filtro de Bienes para Donación',
               'Borrado  Correctamente'
             );
             this.getPagination();

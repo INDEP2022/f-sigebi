@@ -81,6 +81,7 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
     }
     this.getDelegations(new ListParams());
     this.getState(new ListParams());
+    this.edosXCoorForm.controls['stage'].disable();
   }
 
   getDelegations(params: ListParams) {
@@ -161,31 +162,53 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    const id = this.edosXCoorForm.controls['id'].value;
-    this.edosXCoorForm.controls['id'].setValue(parseInt(id));
-    this.edosXCoorService.create(this.edosXCoorForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    /*const id = this.edosXCoorForm.controls['id'].value;
-    const noState = this.edosXCoorForm.controls['noState'].value;
-    const stage = this.edosXCoorForm.controls['stage'].value;
-    this.edosXCoorForm.controls['id'].setValue(parseInt(id));
-    this.edosXCoorForm.controls['noState'].setValue(parseInt(noState));
-    this.edosXCoorForm.controls['stage'].setValue(parseInt(stage));*/
-    const id = this.edosXCoorForm.controls['id'].value;
-    this.edosXCoorForm.controls['id'].setValue(parseInt(id));
-    this.edosXCoorService
-      .newUpdate(this.edosXCoorForm.getRawValue())
-      .subscribe({
+    if (
+      this.edosXCoorForm.controls['description'].value.trim() == '' ||
+      this.edosXCoorForm.controls['state'].value.trim() == '' ||
+      (this.edosXCoorForm.controls['description'].value.trim() == '' &&
+        this.edosXCoorForm.controls['state'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      const id = this.edosXCoorForm.controls['id'].value;
+      this.edosXCoorForm.controls['id'].setValue(parseInt(id));
+      this.edosXCoorService.create(this.edosXCoorForm.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.edosXCoorForm.controls['description'].value.trim() == '' ||
+      this.edosXCoorForm.controls['state'].value.trim() == '' ||
+      (this.edosXCoorForm.controls['description'].value.trim() == '' &&
+        this.edosXCoorForm.controls['state'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      /*const id = this.edosXCoorForm.controls['id'].value;
+      const noState = this.edosXCoorForm.controls['noState'].value;
+      const stage = this.edosXCoorForm.controls['stage'].value;
+      this.edosXCoorForm.controls['id'].setValue(parseInt(id));
+      this.edosXCoorForm.controls['noState'].setValue(parseInt(noState));
+      this.edosXCoorForm.controls['stage'].setValue(parseInt(stage));*/
+      const id = this.edosXCoorForm.controls['id'].value;
+      this.edosXCoorForm.controls['id'].setValue(parseInt(id));
+      this.edosXCoorService
+        .newUpdate(this.edosXCoorForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

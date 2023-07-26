@@ -21,9 +21,32 @@ export interface IBrand {
 }
 
 export interface ISubBrands {
-  idBrand: string;
+  idBrand: {
+    id: string;
+  };
   idSubBrand: string;
   subBrandDescription?: string;
+}
+
+export interface ISubBrandsModel {
+  idBrand: string;
+  idSubBrand: string;
+}
+
+export interface IUpdateSubBrands {
+  idBrand: {
+    id: string;
+  };
+  idSubBrand: string;
+  subBrandDescription?: string;
+  nbOrigin?: string;
+}
+
+export interface IUpdateSubBrandsModel {
+  idBrand: string;
+  idSubBrand: string;
+  subBrandDescription: string;
+  nbOrigin: string;
 }
 
 export interface ITiieV1 {
