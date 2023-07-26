@@ -44,14 +44,6 @@ export class ElectronicSignaturesMainComponent
   alertMsg: boolean = true;
   pdfUrl: string =
     'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-  pendingRows: any[] = [];
-  historyRows: any[] = [];
-  pendingParams = new BehaviorSubject<ListParams>(new ListParams());
-  historyParams = new BehaviorSubject<ListParams>(new ListParams());
-  pendingTotalItems: number = 0;
-  historyTotalItems: number = 0;
-  pendingColumns: any[] = [];
-  historyColumns: any[] = [];
   pendingSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -65,63 +57,11 @@ export class ElectronicSignaturesMainComponent
     ...TABLE_SETTINGS,
     actions: false,
   };
-
-  historyTestData = [
-    {
-      user: 'VCORTES',
-      reference: 'Evento 22333',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'ELABORA',
-    },
-    {
-      user: 'VCORTES',
-      reference: 'Evento 22333',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'REVISA',
-    },
-    {
-      user: 'MGARCIA',
-      reference: 'Evento 22333',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-    {
-      user: 'AMORALES',
-      reference: 'Evento 22334',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'ELABORA',
-    },
-    {
-      user: 'AMORALES',
-      reference: 'Evento 22334',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'REVISA',
-    },
-    {
-      user: 'MGARCIA',
-      reference: 'Evento 22334',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-  ];
+  dataTableHistorical: LocalDataSource = new LocalDataSource();
+  dataTableParamsHistorical = new BehaviorSubject<ListParams>(new ListParams());
+  loadingHistorical: boolean = false;
+  totalHistorical: number = 0;
+  historicalTestData: IComerDocumentsXML[] = [];
   dataUserLogged: IUserAccessAreaRelational;
   messageText: string = '';
 
@@ -159,6 +99,7 @@ export class ElectronicSignaturesMainComponent
   }
 
   initVariables() {
+    this.alertMsg = true;
     this.messageText = '';
   }
 
@@ -232,15 +173,32 @@ export class ElectronicSignaturesMainComponent
     this.loadingPending = true;
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('user', this.dataUserLogged.user, SearchFilter.ILIKE);
+    params.addFilter('user', 'ADABDOUBG', SearchFilter.ILIKE); //this.dataUserLogged.user, SearchFilter.ILIKE);
     // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
-
+    params.limit = this.dataTableParamsPending.value.limit;
+    params.page = this.dataTableParamsPending.value.page;
     this.svElectronicSignatures
       .getAllComerDocumentsXml(params.getParams())
       .subscribe({
         next: res => {
           console.log('DATA RELATION PERSONS', res);
-          this.pendingTestData = res.data;
+          this.pendingTestData = res.data.map((i: any) => {
+            i['reference'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Evento ' + i.referenceid
+                : '';
+            i['document'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Reporte ' + i.reportkey
+                : '';
+            return i;
+          });
+          this.dataTablePending.load(this.pendingTestData);
+          this.totalPending = res.count;
           this.loadingPending = false;
         },
         error: error => {
@@ -250,22 +208,64 @@ export class ElectronicSignaturesMainComponent
       });
   }
 
+  getRelationHistorical() {
+    this.loadingHistorical = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('user', 'ADABDOUBG', SearchFilter.ILIKE); //this.dataUserLogged.user, SearchFilter.ILIKE);
+    // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
+    params.limit = this.dataTableParamsHistorical.value.limit;
+    params.page = this.dataTableParamsHistorical.value.page;
+    this.svElectronicSignatures
+      .getAllComerDocumentsXml(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA RELATION PERSONS', res);
+          this.historicalTestData = res.data.map((i: any) => {
+            i['reference'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Evento ' + i.referenceid
+                : '';
+            i['document'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Reporte ' + i.reportkey
+                : '';
+            return i;
+          });
+          this.dataTableHistorical.load(this.historicalTestData);
+          this.totalHistorical = res.count;
+          this.loadingHistorical = false;
+        },
+        error: error => {
+          console.log(error);
+          this.loadingHistorical = false;
+        },
+      });
+  }
+
   getPending() {
-    this.pendingColumns = this.pendingTestData;
-    this.pendingTotalItems = this.pendingColumns.length;
+    // this.pendingColumns = this.pendingTestData;
+    // this.pendingTotalItems = this.pendingColumns.length;
   }
 
   getHistory() {
-    this.historyColumns = this.historyTestData;
-    this.historyTotalItems = this.historyColumns.length;
+    // this.historyColumns = this.historyTestData;
+    // this.historyTotalItems = this.historyColumns.length;
+    this.dataTableParamsHistorical
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRelationHistorical());
   }
 
   selectPending(row: any) {
-    this.pendingRows.push(row);
+    // this.pendingRows.push(row);
   }
 
   selectHistory(row: any) {
-    this.historyRows.push(row);
+    // this.historyRows.push(row);
   }
 
   refresh() {

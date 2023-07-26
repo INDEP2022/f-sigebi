@@ -221,7 +221,6 @@ export class ImplementationReportsInvoicesComponent
     const statusControl = this.invoiceDetailsForm.get('status');
     this.estado = statusControl ? statusControl.value === null : true;
     if ((this.estado = true)) {
-      console.log('es null');
     } else {
       this.estado = false;
     }
@@ -263,12 +262,9 @@ export class ImplementationReportsInvoicesComponent
     const model = {} as IAccountMovement;
     let token = this.authService.decodeToken();
     model.userinsert = token.name.toUpperCase();
-    console.log('Token: ', token.name.toUpperCase());
     this.iddelegation = this.proceduralHistoryForm.value.delegation;
     this.idsubdelegation = this.proceduralHistoryForm.value.subdelegation;
     this.estadoc = this.proceduralHistoryForm.get('estado').value;
-    console.log('Delegacion', this.iddelegation);
-    console.log('subdelegacion ', this.idsubdelegation);
     this.strategyProcessService
       .getByDelegation(this.iddelegation, this.estadoc, params)
       .subscribe({
@@ -276,7 +272,6 @@ export class ImplementationReportsInvoicesComponent
           let lista = [];
           this.totalItems = response.count;
           for (let i = 0; i < response.data.length; i++) {
-            console.log('data ', response.data[i]);
             const autoriza =
               response.data[i].fec_autoriza != null
                 ? new Date(response.data[i].fec_autoriza)
@@ -290,7 +285,6 @@ export class ImplementationReportsInvoicesComponent
                 : null;
             const formattedfecCapture =
               Capture != null ? this.formatDate(Capture) : null;
-            console.log('prueba: ', response.data[0]);
             let dataForm = {
               cveReport: response.data[i].cve_reporte,
               estatus: response.data[i].estatus,
@@ -327,10 +321,8 @@ export class ImplementationReportsInvoicesComponent
   }
 
   getAmount(id: number) {
-    console.log('id ', id);
     this.strategyProcessService.getByNoReport(id).subscribe({
       next: response => {
-        console.log('prueba: ', response.data[0].sum);
         this.cantidad = response.data[0].sum;
       },
     });
@@ -354,7 +346,6 @@ export class ImplementationReportsInvoicesComponent
         subdelegation: this.selectedRow.subdelegation,
         zona: this.zone,
       };
-      console.log('Prueba: ', dataForm);
       this.box.push(dataForm);
       this.strategy.load(this.box);
       this.selectedRow = null;
@@ -379,7 +370,6 @@ export class ImplementationReportsInvoicesComponent
       this.onLoadToast('error', 'Debe seleccionar un registro');
       return;
     } else {
-      console.log('selected Row: ', this.deleteselectedRow);
       this.strategy.remove(this.deleteselectedRow);
       this.strategy.remove(this.box);
       this.contador = 0;
@@ -400,12 +390,10 @@ export class ImplementationReportsInvoicesComponent
   }
 
   async Application() {
-    console.log('Data 2 ', this.box);
     this.ObtenerFolio();
     for (let i = 0; i < this.box.length; i++) {
       this.bool = false;
       let cantidad = this.invoiceDetailsForm.get('quantity').value;
-      console.log('Cantidad: ', cantidad);
       if (this.box[i].cveReport != null) {
         if (cantidad > this.totalValue) {
           this.report = this.box[i].no_report;
@@ -437,7 +425,6 @@ export class ImplementationReportsInvoicesComponent
                   scanFolio: response.message,
                 });
                 this.folioScan = response.message;
-                console.log('folio ', this.folioScan);
 
                 this.proccesReport();
               },
@@ -612,11 +599,9 @@ export class ImplementationReportsInvoicesComponent
           subDelegationNumber: datos.subDelegationNumber,
           departamentNumber: datos.departamentNumber,
         };
-        console.log('Prueba: ', item);
         this.formFolio();
         this.documentsDictumStatetMService.postPupFol(item).subscribe({
           next: response => {
-            console.log('Succefull2: ', response);
             this.proccesReport();
           },
         });
