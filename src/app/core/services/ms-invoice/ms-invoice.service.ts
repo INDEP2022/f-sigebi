@@ -18,7 +18,7 @@ export class MsInvoiceService extends HttpService {
     );
   }
 
-  getComerHeadboard(params?: string){
-    return this.get(`comer-headboard`,params)
+  getComerHeadboard(params?: string) {
+    return this.get(`comer-headboard`, params);
   }
 }
