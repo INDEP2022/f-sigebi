@@ -17,7 +17,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   valuesForm: ModelForm<ITvaltable1>;
   tvalTable: ITvaltable1;
   value: ITablesType;
-  title: string = 'Valores';
+  title: string = 'Valor de Atributo';
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
@@ -32,13 +32,32 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.valuesForm = this.fb.group({
-      otKey: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      otKey: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
+      value: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          ,
+          Validators.maxLength(40),
+        ],
+      ],
       table: [null],
       numRegister: [null],
       abbreviation: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
       ],
     });
     console.log(this.tvalTable);
@@ -73,7 +92,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
-          this.onLoadToast('error', 'ERROR', error.error.message);
+          this.alert('error', 'La Clave ya fue registrada', '');
         },
       });
   }

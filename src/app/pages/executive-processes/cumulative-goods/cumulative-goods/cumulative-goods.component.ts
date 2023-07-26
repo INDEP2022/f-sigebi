@@ -102,8 +102,8 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null],
-      subdelegation: [null],
+      delegation: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
       //toMonth: [null, [Validators.required, maxDate(new Date())]],
       //fromMonth: [null, [Validators.required, maxDate(new Date())]],

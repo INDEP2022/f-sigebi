@@ -33,7 +33,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   valueMunicipality: IMunicipality;
   valueLocality: ILocality;
 
-  title: string = 'Catálogo de Bóvedas';
+  title: string = 'Bóveda';
   edit: boolean = false;
   filterCity: string = '';
   idStateFilter: string = '';

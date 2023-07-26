@@ -97,4 +97,8 @@ export class LotService extends HttpService {
       body
     );
   }
+
+  incVXRGoods(body: { goods: (string | number)[]; user: string }) {
+    return this.post('apps/rejected-good', body);
+  }
 }

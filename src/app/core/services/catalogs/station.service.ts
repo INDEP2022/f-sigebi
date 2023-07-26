@@ -60,7 +60,7 @@ export class StationService
     params?: ListParams
   ): Observable<IListResponse<IStation2>> {
     const route = `${Station.Station}?filter.idTransferent=${id}`;
-    return this.get(route);
+    return this.get(route, params);
   }
 
   getTransfers(params?: ListParams): Observable<IListResponse<ITransferente>> {

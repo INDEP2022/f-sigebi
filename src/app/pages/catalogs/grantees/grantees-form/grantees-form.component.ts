@@ -146,21 +146,67 @@ export class GranteesFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.granteeService.create(this.granteesForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.granteeService
-      .update(this.grantee.id, this.granteesForm.getRawValue())
-      .subscribe({
+    if (
+      this.granteesForm.controls['description'].value.trim() == '' ||
+      this.granteesForm.controls['puesto'].value.trim() == '' ||
+      this.granteesForm.controls['razonSocial'].value.trim() == '' ||
+      this.granteesForm.controls['street'].value.trim() == '' ||
+      this.granteesForm.controls['noExterior'].value.trim() == '' ||
+      this.granteesForm.controls['col'].value.trim() == '' ||
+      this.granteesForm.controls['nomedo'].value.trim() == '' ||
+      this.granteesForm.controls['cp'].value.trim() == '' ||
+      (this.granteesForm.controls['description'].value.trim() == '' &&
+        this.granteesForm.controls['puesto'].value.trim() == '' &&
+        this.granteesForm.controls['razonSocial'].value.trim() == '' &&
+        this.granteesForm.controls['street'].value.trim() == '' &&
+        this.granteesForm.controls['noExterior'].value.trim() == '' &&
+        this.granteesForm.controls['col'].value.trim() == '' &&
+        this.granteesForm.controls['nomedo'].value.trim() == '' &&
+        this.granteesForm.controls['cp'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.granteeService.create(this.granteesForm.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.granteesForm.controls['description'].value.trim() == '' ||
+      this.granteesForm.controls['puesto'].value.trim() == '' ||
+      this.granteesForm.controls['razonSocial'].value.trim() == '' ||
+      this.granteesForm.controls['street'].value.trim() == '' ||
+      this.granteesForm.controls['noExterior'].value.trim() == '' ||
+      this.granteesForm.controls['col'].value.trim() == '' ||
+      this.granteesForm.controls['nomedo'].value.trim() == '' ||
+      this.granteesForm.controls['cp'].value.trim() == '' ||
+      (this.granteesForm.controls['description'].value.trim() == '' &&
+        this.granteesForm.controls['puesto'].value.trim() == '' &&
+        this.granteesForm.controls['razonSocial'].value.trim() == '' &&
+        this.granteesForm.controls['street'].value.trim() == '' &&
+        this.granteesForm.controls['noExterior'].value.trim() == '' &&
+        this.granteesForm.controls['col'].value.trim() == '' &&
+        this.granteesForm.controls['nomedo'].value.trim() == '' &&
+        this.granteesForm.controls['cp'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.granteeService
+        .update(this.grantee.id, this.granteesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

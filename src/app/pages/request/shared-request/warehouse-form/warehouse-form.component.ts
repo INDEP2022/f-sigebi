@@ -286,7 +286,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getResponsibleUserSelect(params: ListParams) {
     const user: any = this.authService.decodeToken();
-    params['filter.regionalDelegation'] = user.delegacionreg;
+
     params['filter.search'] = params.text;
     this.userProcessService.getAll(params).subscribe({
       next: data => {
