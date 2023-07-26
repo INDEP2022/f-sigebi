@@ -17,7 +17,7 @@ import { ClarificationService } from '../../../../core/services/catalogs/clarifi
 })
 export class ClarificationsDetailComponent extends BasePage implements OnInit {
   clarificationForm: ModelForm<IClarification>;
-  title: string = 'Catálogo de aclaraciones ';
+  title: string = 'Aclaración';
   edit: boolean = false;
   clarification: IClarification;
 
@@ -38,14 +38,18 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
       id: [null, [Validators.pattern(STRING_PATTERN), Validators.minLength(1)]],
       clarification: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       type: [
         null,
         [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.minLength(1),
+          Validators.maxLength(2),
         ],
       ],
       active: [
@@ -57,7 +61,7 @@ export class ClarificationsDetailComponent extends BasePage implements OnInit {
       ],
       version: [
         null,
-        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.minLength(1)],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
       ],
       modificationDate: [null],
       creationUser: [null],

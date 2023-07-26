@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  CURP_PATTERN,
   NUMBERS_PATTERN,
   PHONE_PATTERN,
   RFC_PATTERN,
@@ -22,7 +23,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
-  title: string = 'MANTENIMIENTO DE PERSONAS FÍSICAS Y MORALES';
+  title: string = 'Mantenimiento de Personas Físicas y Morales';
   dataPerson: any;
   value: string;
   constructor(
@@ -73,7 +74,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
       ],
       observations: [null, [Validators.required, Validators.maxLength(100)]],
       rfc: [null, [Validators.pattern(RFC_PATTERN)]],
-      curp: [null, [Validators.pattern(STRING_PATTERN)]],
+      curp: [null, [Validators.pattern(CURP_PATTERN)]],
       curriculumV: [null],
       curriculum: ['N'],
       typePerson: [null, [Validators.required]],
@@ -92,7 +93,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
         this.dataPerson.state.descCondition
       );
       if (this.form.controls['typePerson'].value === 'M') {
-        this.form.get('manager').setValidators(Validators.required);
+        this.form
+          .get('manager')
+          .setValidators([Validators.required, Validators.maxLength(50)]);
+        this.form.get('manager').updateValueAndValidity();
         this.form.get('numberDeep').setValidators(Validators.required);
       }
       console.log(this.form.value);
@@ -190,8 +194,12 @@ export class MaintenanceIndividualsAndCompaniesComponent
   }
   typeChange(data: string) {
     if (data === 'M') {
-      this.form.get('manager').setValidators(Validators.required);
-      this.form.get('numberDeep').setValidators(Validators.required);
+      this.form
+        .get('manager')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
+      this.form
+        .get('numberDeep')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
       this.form.get('manager').updateValueAndValidity();
       this.form.get('numberDeep').updateValueAndValidity();
     } else {

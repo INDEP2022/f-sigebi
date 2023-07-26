@@ -84,7 +84,7 @@ export class CourtCityComponent extends BasePage implements OnInit {
   handleSuccess() {
     //const message: string = this.edit ? 'Actualizado' : 'Guardado';
     //this.onLoadToast('success', 'Registro de ciudad', `Guardado Correctamente`);
-    this.alert('success', 'Registro de ciudad', 'Guardado Correctamente');
+    this.alert('success', 'Registro de Ciudad', 'Guardado Correctamente');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -93,7 +93,8 @@ export class CourtCityComponent extends BasePage implements OnInit {
   confirm() {
     this.courtCityServ.create(this.form.value).subscribe({
       next: () => this.handleSuccess(),
-      error: err => this.onLoadToast('error', err.error.message, ''),
+      error: err =>
+        this.onLoadToast('error', 'La Ciudad ya fue registrada', ''),
     });
   }
 
