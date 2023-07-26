@@ -72,7 +72,7 @@ export class TransferenteService extends HttpService {
     return this.get<IListResponse<ITransferente>>(route, params);
   }
 
-  appsGetPassword(transferente: any, params: _Params) {
+  appsGetPassword(transferente: any, params?: _Params) {
     return this.post('apps/getPassword', transferente, params);
   }
 }
