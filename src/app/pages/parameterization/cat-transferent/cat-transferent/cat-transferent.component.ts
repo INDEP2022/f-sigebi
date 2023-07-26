@@ -34,6 +34,8 @@ import { CatStationModalComponent } from '../cat-station-modal/cat-station-modal
 export class CatTransferentComponent extends BasePage implements OnInit {
   columns: ITransferente[] = [];
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
   transferentList: ITransferente[] = [];
@@ -53,7 +55,8 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
-
+  columnFilters1: any = [];
+  columnFilters2: any = [];
   settings2;
   settings3;
 
@@ -213,25 +216,71 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.stationList = [];
     this.transferents = event.data;
+
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'stationName':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                console.log(field);
+                break;
+              case 'keyState':
+                searchFilter = SearchFilter.EQ;
+                console.log(field);
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters1[field]);
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getStationByTransferent(this.transferents);
+        }
+      });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getStationByTransferent(idTrans.id));
   }
 
   //trae las emisoras de un transferente seleccionado
-  getStationByTransferent(id?: number) {
+  getStationByTransferent(id?: any) {
     this.loading2 = true;
     const idTrans = { ...this.transferents };
-    this.stationService
-      .getStationByTransferent(idTrans.id, this.params2.getValue())
-      .subscribe({
-        next: response => {
-          this.stationList = response.data;
-          this.totalItems2 = response.count;
-          this.loading2 = false;
-        },
-        error: error => (this.showNullRegister1(), (this.loading2 = false)),
-      });
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
+
+    this.stationService.getStationByTransferent(idTrans.id, params2).subscribe({
+      next: response => {
+        this.stationList = response.data;
+        this.totalItems2 = response.count;
+        this.data1.load(response.data);
+        this.data1.refresh();
+        this.loading2 = false;
+      },
+      error: error => (this.showNullRegister1(), (this.loading2 = false)),
+    });
   }
 
   //Modal para editar las emisoras
@@ -270,7 +319,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.stationService.remove(id).subscribe({
       next: () => {
         this.getStationByTransferent();
-        this.alert('success', 'Borrado', '');
+        this.alert('success', 'Emisora', 'Borrado Correctamente');
       },
       error: err => {
         this.alert(
@@ -288,6 +337,56 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.totalItems3 = 0;
     this.authorityList = [];
     this.stations = event.data;
+
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'idAuthority':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cveUnique':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'idCity':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'authorityName':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'idStation':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'idTransferer':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters2[field]);
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.params3 = this.pageFilter(this.params3);
+          this.getStationByTransferent(this.stations);
+        }
+      });
     this.params3
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAuthorityByTransferent(idEmi.id));
@@ -304,12 +403,17 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.loading3 = true;
     const idEmi = { ...this.stations };
     const idTrans = { ...this.transferents };
+    let params3 = {
+      ...this.params3.getValue(),
+      ...this.columnFilters2,
+    };
     this.authorityService
-      .getAuthorityByTransferent(idEmi.id, idTrans.id, this.params3.getValue())
+      .getAuthorityByTransferent(idEmi.id, idTrans.id, params3)
       .subscribe({
         next: response => {
           this.authorityList = response.data;
           this.totalItems3 = response.count;
+          this.data2.load(response.data);
           this.loading3 = false;
         },
         error: error => (this.showNullRegister2(), (this.loading3 = false)),
@@ -342,7 +446,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete3(authority.idAuthority, authority);
-        this.alert('success', 'Autoridad', `Borrado`);
+        this.alert('success', 'Autoridad', `Borrado Correctamente`);
         //Swal.fire('Borrado', '', 'success');
       }
     });

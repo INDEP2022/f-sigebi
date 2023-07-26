@@ -50,8 +50,8 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
             filter.field == 'description' ||
-            filter.field == 'noType' ||
-            filter.field == 'noSubType'
+            filter.field == 'nameGoodType' ||
+            filter.field == 'nameSubtypeGood'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -122,12 +122,12 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
     this.goodSsubtypeService.removeByIds(ids).subscribe({
       next: () => {
         this.getGoodSsubtypes(),
-          this.alert('success', 'Subsubtipo bien', 'Borrado Correctamente');
+          this.alert('success', 'Subsubtipo Bien', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(
           'warning',
-          'Subtipo Tipo',
+          'Subsubtipo Bien',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

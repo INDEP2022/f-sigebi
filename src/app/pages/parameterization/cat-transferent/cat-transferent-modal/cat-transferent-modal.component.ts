@@ -19,7 +19,7 @@ import {
   styles: [],
 })
 export class CatTransferentModalComponent extends BasePage implements OnInit {
-  title: string = 'TRANSFERENTE';
+  title: string = 'Transferente';
   edit: boolean = false;
 
   transferentForm: ModelForm<ITransferente>;

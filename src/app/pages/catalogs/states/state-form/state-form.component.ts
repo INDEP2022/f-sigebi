@@ -49,7 +49,10 @@ export class StateFormComponent extends BasePage implements OnInit {
       nmtable: [null],
       abbreviation: [null],
       risk: [null],
-      version: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      version: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       zoneHourlyStd: [
         null,
         [
@@ -86,6 +89,13 @@ export class StateFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.stateForm.controls['descCondition'].value.trim() === '' ||
+      this.stateForm.controls['codeCondition'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.stateService.create(this.stateForm.value).subscribe({
       next: data => this.handleSuccess(),

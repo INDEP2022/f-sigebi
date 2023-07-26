@@ -13,7 +13,7 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     sort: false,
   },
   noType: {
-    title: 'Tipo bien',
+    title: 'Tipo Bien',
     type: 'string',
     valuePrepareFunction: (value: IGoodType) => {
       return value.nameGoodType;
@@ -21,7 +21,7 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     sort: false,
   },
   noSubType: {
-    title: 'Subtipo bien',
+    title: 'Subtipo Bien',
     type: 'string',
     valuePrepareFunction: (value: IGoodSubType) => {
       return value.nameSubtypeGood;

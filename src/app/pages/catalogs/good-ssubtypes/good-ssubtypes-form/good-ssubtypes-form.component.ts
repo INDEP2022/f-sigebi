@@ -10,6 +10,7 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -19,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   goodSsubtypeForm: ModelForm<IGoodSsubType>;
-  title: string = 'Sub Sub tipo Bien';
+  title: string = 'Subsubtipo Bien';
   edit: boolean = false;
   goodSsubtype: IGoodSsubType;
   types = new DefaultSelect<IGoodType>();
@@ -41,7 +42,10 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodSsubtypeForm = this.fb.group({
       id: [null],
-      description: [null],
+      description: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
       noType: [null, [Validators.required]],
       noSubType: [null, [Validators.required]],
       noRegister: [null],
@@ -94,6 +98,10 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.goodSsubtypeForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.goodSsubtypeService.create(this.goodSsubtypeForm.value).subscribe({
       next: data => this.handleSuccess(),

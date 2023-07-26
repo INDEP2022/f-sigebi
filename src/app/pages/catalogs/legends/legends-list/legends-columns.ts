@@ -32,6 +32,16 @@ export const LEGENDS_COLUMS = {
         ? '<strong><span class="badge badge-pill label-success">Activo</span></strong>'
         : '<strong><span class="badge badge-pill label-danger">Inactivo</span></strong>';
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: '1', title: 'Activo' },
+          { value: '0', title: 'Inactivo' },
+        ],
+      },
+    },
     sort: false,
   },
 };
