@@ -17,4 +17,8 @@ export class MsInvoiceService extends HttpService {
       `${ENDPOINT_INVOICE.straInvoice}?filter.billId=$eq:${invoice}`
     );
   }
+
+  getComerHeadboard(params?: string){
+    return this.get(`comer-headboard`,params)
+  }
 }

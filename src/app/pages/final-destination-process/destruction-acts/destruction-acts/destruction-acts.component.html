@@ -96,7 +96,6 @@
                 <ngx-select
                   control="act"
                   label="Tipo Acta"
-                  bindLabel="records"
                   [data]="records"
                   [searchable]="false"
                   [form]="actForm"></ngx-select>
@@ -107,7 +106,6 @@
                 <ngx-select
                   control="status"
                   label="Estado"
-                  bindLabel="records"
                   [data]="statusData"
                   [searchable]="false"
                   [form]="actForm"></ngx-select>
@@ -115,29 +113,28 @@
             </div>
             <form-field [control]="actForm.get('transferent')" class="col">
               <ngx-select
+                (fetchItems)="getTransfers($event)"
                 control="transferent"
                 label="Transferente"
-                bindLabel="records"
+                bindLabel="password"
                 [data]="transferentData"
-                [searchable]="false"
                 [form]="actForm"></ngx-select>
             </form-field>
             <form-field [control]="actForm.get('destructor')" class="col">
               <ngx-select
+                (fetchItems)="getAdminDestroy($event)"
                 control="destructor"
-                label="Destr"
-                bindLabel="records"
+                label="Destruye"
+                bindLabel="delegation"
                 [data]="destructorData"
-                [searchable]="false"
                 [form]="actForm"></ngx-select>
             </form-field>
             <form-field [control]="actForm.get('admin')" class="col">
               <ngx-select
                 control="admin"
-                label="Tipo Acta"
+                label="Administra"
                 bindLabel="records"
                 [data]="adminData"
-                [searchable]="false"
                 [form]="actForm"></ngx-select>
             </form-field>
             <form-field
