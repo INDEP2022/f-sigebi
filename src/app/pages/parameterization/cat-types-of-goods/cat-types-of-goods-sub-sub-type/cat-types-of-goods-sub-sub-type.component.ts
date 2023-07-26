@@ -38,7 +38,11 @@ export class CatTypesOfGoodsSubSubTypeComponent
       noType: [null],
       description: [
         '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       noRegister: [null],
     });
@@ -98,7 +102,7 @@ export class CatTypesOfGoodsSubSubTypeComponent
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast(
       'success',
-      'Sub Sub Tipo de bienes',
+      'Sub Sub Tipo de Bien',
       `${message} Correctamente`
     );
     this.loading = false;

@@ -117,9 +117,13 @@ export class AttributesRegLogicalTablesModalComponent
         .create(this.tdescAtribForm.getRawValue())
         .subscribe({
           next: data => this.handleSuccess(),
-
           error: error => {
             this.loading = false;
+            this.alert(
+              'warning',
+              'El campo No. Atributo ya está resgistrado',
+              ``
+            );
           },
         });
     }

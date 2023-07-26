@@ -35,13 +35,21 @@ export class CatTypesOfGoodsSubTypeComponent
       id: [null],
       nameSubtypeGood: [
         '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       idTypeGood: [null],
       noPhotography: [null],
       descriptionPhotography: [
         '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       noRegister: [null],
       version: null,
@@ -118,11 +126,7 @@ export class CatTypesOfGoodsSubTypeComponent
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast(
-      'success',
-      'Sub Tipo de bienes',
-      `${message} Correctamente`
-    );
+    this.onLoadToast('success', 'Sub Tipo de Bien', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

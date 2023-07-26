@@ -70,23 +70,35 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.statusTransferService
-      .create(this.statusTransferForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.statusTransferForm.controls['bank'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.statusTransferService
+        .create(this.statusTransferForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.statusTransferService
-      .update(this.statusTransfer.id, this.statusTransferForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.statusTransferForm.controls['bank'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.statusTransferService
+        .update(this.statusTransfer.id, this.statusTransferForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

@@ -4,7 +4,7 @@ export const LEGAL_SUPPORT_COLUMS = {
     type: 'number',
     width: '15%',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    /*valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -14,7 +14,7 @@ export const LEGAL_SUPPORT_COLUMS = {
       } else {
         return false;
       }
-    },
+    },*/
   },
   support: {
     title: 'Sustento',
