@@ -14,8 +14,7 @@ import { COLUMNS2 } from '../../columns';
 
 @Component({
   selector: 'app-customers-export-HistoryCustomersPenalties-list.component',
-  templateUrl:
-    './customers-export-HistoryCustomersPenalties-list.component.html',
+  templateUrl: './cus-exp-HisCusPen.component.html',
   styles: [], //
 })
 export class CustomersExportHistoryCustomersPenaltiesListComponent

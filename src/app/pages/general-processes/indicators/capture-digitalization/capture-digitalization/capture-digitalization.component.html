@@ -107,11 +107,6 @@
               </div>
               <div class="row mt-4">
                 <div class="col-md-6">
-                  <!-- <form-field [control]="formCapture.get('cvCoors')">
-                    <ngx-select [form]="formCapture" control="cvCoors" (fetchItems)="getDelegations($event)"
-                      [showTooltip]="true" [data]="delegations" bindLabel="description" label="Coor. Regional"
-                      value="id" [multiple]="true"></ngx-select>
-                  </form-field> -->
                   <form-field [control]="formCapture.get('cvCoors')">
                     <ngx-select
                       label="Coor. Regional"
@@ -122,6 +117,7 @@
                       control="cvCoors"
                       [searchOnInit]="true"
                       [showTooltip]="true"
+                      (change)="updateSelectedIds($event)"
                       termMaxLength="50"
                       value="id"
                       [multiple]="true">
@@ -249,7 +245,8 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="dataFactCapt">
+              [source]="dataFactCapt"
+              (userRowSelect)="selectData($event)">
             </ng2-smart-table>
             <app-pagination
               [params]="params"
