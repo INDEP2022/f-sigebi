@@ -4,40 +4,40 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row p-1">
         <div class="col-md-6">
-          <form-field [control]="form.get('referencia')" label="Referencia">
+          <form-field [control]="form.get('reference')" label="Referencia">
             <input
               maxlength="30"
               type="text"
               class="form-control"
-              formControlName="referencia" />
+              formControlName="reference" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('cliente')">
+          <form-field [control]="form.get('clientId')">
             <ngx-select
               [searchOnInit]="true"
               [form]="form"
-              control="cliente"
+              control="clientId"
               [data]="clients"
               value="id"
               bindLabel="idAndName"
               label="Cliente"
               (fetchItems)="getClients($event)">
             </ngx-select>
-            <!-- <input type="text" class="form-control" formControlName="cliente" /> -->
+            <!-- <input type="text" class="form-control" formControlName="clientId" /> -->
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="form.get('numberMovement')"
+            [control]="form.get('movementNumber')"
             label="No. Movimiento">
             <input
               maxlength="11"
               type="text"
               class="form-control"
-              formControlName="numberMovement" />
+              formControlName="movementNumber" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -54,20 +54,20 @@
           </form-field> -->
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('monto')" label="Monto">
+          <form-field [control]="form.get('amount')" label="Monto">
             <input
               maxlength="17"
               type="text"
               class="form-control"
-              formControlName="monto" />
+              formControlName="amount" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('lote')">
+          <form-field [control]="form.get('lotId')">
             <ngx-select
               [searchOnInit]="true"
               [form]="form"
-              control="lote"
+              control="lotId"
               [data]="lotes"
               value="idLot"
               bindLabel="idAndDesc"
@@ -76,7 +76,7 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <!-- <div class="col-md-6">
           <form-field
             [control]="form.get('entryOrderId')"
             label="Id Orden Ingreso">
@@ -86,20 +86,20 @@
               class="form-control"
               formControlName="entryOrderId" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6">
-          <form-field [control]="form.get('cveBanco')">
+          <form-field [control]="form.get('bankKey')">
             <ngx-select
               [searchOnInit]="true"
               [form]="form"
-              control="cveBanco"
+              control="bankKey"
               [data]="banks"
               value="cveBank"
               bindLabel="bankAndNumber"
               label="Banco"
               (fetchItems)="getBanks($event)">
             </ngx-select>
-            <!-- <input type="text" class="form-control" formControlName="cveBanco" /> -->
+            <!-- <input type="text" class="form-control" formControlName="bankKey" /> -->
           </form-field>
         </div>
         <div class="col-md-6">
@@ -114,8 +114,8 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('aplicadoA')" label="Aplicado a:">
-            <ng-select formControlName="aplicadoA" class="form-control pt-1">
+          <form-field [control]="form.get('appliedTo')" label="Aplicado a:">
+            <ng-select formControlName="appliedTo" class="form-control pt-1">
               <ng-option value="D">Devolución</ng-option>
               <ng-option value="P">Penalización</ng-option>
             </ng-select>

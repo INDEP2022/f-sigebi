@@ -73,9 +73,7 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
         [Validators.maxLength(240), Validators.pattern(STRING_PATTERN)],
       ],
     });
-
     if (this.comerTpEvent != null) {
-      //console.log(this.brand)
       this.edit = true;
       this.form.patchValue(this.comerTpEvent);
       this.form.get('id').disable();
@@ -87,26 +85,6 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
   }
 
   close(): void {
-    this.modalRef.hide();
-  }
-
-  create(): void {
-    this.loading = true;
-    this.tpEventService.createTevents(this.form.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => {
-        this.showError(error);
-        this.loading = false;
-      },
-    });
-  }
-
-  handleSuccess(): void {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
-    //this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
-    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
@@ -123,31 +101,35 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => {
-          this.showError(error);
+          this.alert(
+            'warning',
+            `No es Posible Actualizar el Tipo de Evento`,
+            ''
+          );
           this.loading = false;
         },
       });
   }
 
-  showError(error?: any): void {
-    let action: string;
-    this.edit ? (action = 'agregar') : 'editar';
-    this.onLoadToast(
-      'error',
-      `Error al ${action} datos`,
-      'Hubo un problema al conectarse con el servior'
-    );
-    error ? console.log(error) : null;
+  create(): void {
+    this.loading = true;
+    this.tpEventService.createTevents(this.form.getRawValue()).subscribe({
+      next: data => {
+        this.handleSuccess();
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.alert('warning', `No es Posible Crear el Tipo de Evento`, '');
+        this.loading = false;
+      },
+    });
   }
 
-  /* showAlert(error?: any): void {
-    let action: string;
-    this.edit ? (action = 'agregar') : 'editar';
-    this.onLoadToast(
-      'warning',
-      `¡El id ingresado ya existe!`,
-      'Intente nuevamente con otro Id'
-    );
-    error ? console.log(error) : null;
-  }*/
+  handleSuccess(): void {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', `${message} Correctamente`, '');
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
 }
