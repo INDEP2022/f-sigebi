@@ -73,7 +73,7 @@ export const COMI_XTHIRC_COLUMNS = {
     sort: false,
   },
   pctCommission: {
-    title: 'Pct Comisión',
+    title: 'PCT Comisión',
     sort: false,
   },
   finalAmount: {

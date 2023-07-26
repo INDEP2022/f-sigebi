@@ -10,7 +10,7 @@
             <input [readonly]="edit" type="text" class="form-control" formControlName="idComiXThird" />
           </form-field>
         </div> -->
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <form-field [control]="amountForm.get('idThirdParty')">
             <ngx-select
               [searchOnInit]="true"
@@ -22,12 +22,13 @@
               label="ID Tercero Comercializador"
               (fetchItems)="getThirdPartyAll($event)">
             </ngx-select>
-            <!-- <input type="text" class="form-control" formControlName="idThirdParty" /> -->
+            <input type="text" class="form-control" formControlName="idThirdParty" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-4">
           <form-field [control]="amountForm.get('idThirdParty')">
             <ngx-select
+              [readonly]="true"
               [searchOnInit]="true"
               [form]="amountForm"
               control="idThirdParty"

@@ -29,6 +29,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
   };
   selectedList: any = [];
   maneuverReqList: any[] = [];
+
   constructor() {
     super();
     this.selectedGoodSettings.columns = GOODS_EYE_VISIT_COLUMNS;
@@ -57,6 +58,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           });
         },
       },
+      ...this.selectedGoodSettings.columns,
     };
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
