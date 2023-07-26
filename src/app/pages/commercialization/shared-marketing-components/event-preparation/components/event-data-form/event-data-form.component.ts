@@ -70,7 +70,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       .getAllComerTpEvent(params.getParams())
       .pipe(
         catchError(error => {
-          this.eventTypes = new DefaultSelect();
+          this.eventTypes = new DefaultSelect([], 0);
           return throwError(() => error);
         }),
         tap(response => {

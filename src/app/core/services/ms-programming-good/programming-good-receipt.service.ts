@@ -18,4 +18,7 @@ export class ProgrammingGoodReceiptService extends HttpService {
       params
     );
   }
+  postGoodsProgramingReceipts(data: any) {
+    return this.post('programminggood/apps/goods-programming-receipts', data);
+  }
 }
