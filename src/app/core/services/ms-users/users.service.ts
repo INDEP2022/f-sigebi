@@ -135,6 +135,34 @@ export class UsersService extends HttpService {
     );
   }
 
+  getComerUsersAutXEvent(_params?: _Params) {
+    return this.get<IListResponse<any>>(
+      UserEndpoints.ComerUsersAutXEvent,
+      _params
+    );
+  }
+
+  createComerUsersAutXEvent(params: any) {
+    return this.post<IListResponse<any>>(
+      UserEndpoints.ComerUsersAutXEvent,
+      params
+    );
+  }
+
+  updateComerUsersAutXEvent(params: any) {
+    return this.put<IListResponse<any>>(
+      `${UserEndpoints.ComerUsersAutXEvent}`,
+      params
+    );
+  }
+
+  deleteComerUsersAutXEvent(params: any) {
+    return this.delete<IListResponse<any>>(
+      `${UserEndpoints.ComerUsersAutXEvent}`,
+      params
+    );
+  }
+
   /*
  getUsersJob() {
     return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);

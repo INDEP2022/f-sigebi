@@ -19,4 +19,16 @@ export class PaymentService extends HttpService {
   remove(id: any) {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
+
+  createHeader(params: any) {
+    return this.post(PaymentEndPoints.ComerPaymentRef, params);
+  }
+
+  create(params: any) {
+    return this.post(PaymentEndPoints.ComerPaymentRef, params);
+  }
+
+  update(id: any, params: any) {
+    return this.post(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+  }
 }
