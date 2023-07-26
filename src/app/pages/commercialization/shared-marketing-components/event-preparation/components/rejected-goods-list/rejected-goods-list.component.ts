@@ -15,9 +15,13 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IComerGoodRejected } from 'src/app/core/models/ms-prepareevent/comer-good-rejected.mode';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerGoodsRejectedService } from 'src/app/core/services/ms-prepareevent/comer-goods-rejected.service';
 import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { COMER_REJECTED_GOODS_COLUMNS } from '../../utils/table-columns/comer-rejected-goods-list-columns';
 
@@ -35,11 +39,20 @@ export class RejectedGoodsListComponent extends BasePage implements OnInit {
   totalItems = 0;
   vxrGoods: IComerGoodRejected[] = [];
   saleGoods: IComerGoodRejected[] = [];
+  excelLoading = false;
+  saleChangeLoading = false;
+  vxrLoading = false;
 
   get controls() {
     return this.eventForm.controls;
   }
-  constructor(private comerGoodsRejectedService: ComerGoodsRejectedService) {
+
+  constructor(
+    private comerGoodsRejectedService: ComerGoodsRejectedService,
+    private goodProcessService: GoodprocessService,
+    private lotService: LotService,
+    private authService: AuthService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -66,6 +79,12 @@ export class RejectedGoodsListComponent extends BasePage implements OnInit {
           filter: false,
           renderComponent: CheckboxElementComponent,
           showAlways: true,
+          valuePrepareFunction: (
+            isSelected: boolean,
+            row: IComerGoodRejected
+          ) => this.isASaleGood(row),
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onSaleChange(instance),
         },
       },
       actions: false,
@@ -74,9 +93,7 @@ export class RejectedGoodsListComponent extends BasePage implements OnInit {
   }
 
   isAVXRGood(_good: IComerGoodRejected) {
-    const exists = this.vxrGoods.find(
-      good => good.propertyNumber == _good.propertyNumber
-    );
+    const exists = this.vxrGoods.find(good => good.id == _good.id);
     return exists ? true : false;
   }
 
@@ -91,9 +108,8 @@ export class RejectedGoodsListComponent extends BasePage implements OnInit {
 
   VXRChange(good: IComerGoodRejected, selected: boolean) {
     if (!selected) {
-      this.vxrGoods = this.vxrGoods.filter(
-        _good => _good.propertyNumber != good.propertyNumber
-      );
+      this.vxrGoods = this.vxrGoods.filter(_good => _good.id != good.id);
+      return;
     }
     if (good.status != 'VXR' || !good.status) {
       this.alert('error', 'Error', 'Este estatus no se puede incorporar');
@@ -101,6 +117,28 @@ export class RejectedGoodsListComponent extends BasePage implements OnInit {
       return;
     }
     this.vxrGoods.push(good);
+  }
+
+  isASaleGood(_good: IComerGoodRejected) {
+    const exists = this.saleGoods.find(good => good.id == _good.id);
+    return exists ? true : false;
+  }
+
+  onSaleChange(instance: CheckboxElementComponent) {
+    instance.toggle
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(({ row, toggle }) => this.saleChange(row, toggle))
+      )
+      .subscribe();
+  }
+
+  saleChange(good: IComerGoodRejected, selected: boolean) {
+    if (!selected) {
+      this.saleGoods = this.saleGoods.filter(_good => _good.id != good.id);
+      return;
+    }
+    this.saleGoods.push(good);
   }
 
   ngOnInit(): void {
@@ -169,30 +207,101 @@ export class RejectedGoodsListComponent extends BasePage implements OnInit {
     this.viewRejectedGoodsChange.emit(false);
   }
 
+  // ? --------------------- Incorporar
+
   onIncorporate() {
-    this.incorporate();
+    if (!this.vxrGoods.length) {
+      this.alert('error', 'Error', 'No se ha seleccionado ningún Bien');
+      return;
+    }
+    this.incorporate().subscribe();
   }
 
   incorporate() {
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.log('COMER_BIENESRECHAZADOS=INCVXR=WHEN-BUTTON-PRESSED.txt');
+    // TODO: MANDA 500 probar con evento - 11466
+    const goods = this.vxrGoods.map(good => good.propertyNumber);
+    const user = this.authService.decodeToken().preferred_username;
+    this.vxrLoading = true;
+    return this.lotService.incVXRGoods({ goods, user }).pipe(
+      catchError(error => {
+        console.log(error);
+        this.vxrLoading = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log(response);
+        this.alert(
+          'success',
+          'Los Bienes se han Actualizado para su Venta',
+          ''
+        );
+        this.vxrLoading = false;
+        this.vxrGoods = [];
+        this.saleGoods = [];
+        this.settings = { ...this.settings };
+      })
+    );
   }
-
+  //  ? -------------------- Cambiar a venta
   onSale() {
-    this.changeToSale();
+    if (!this.saleGoods.length) {
+      this.alert(
+        'error',
+        'Error',
+        'No se ha seleccionado ningún Bien para Venta'
+      );
+      return;
+    }
+    this.changeToSale().subscribe();
   }
 
   changeToSale() {
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.log('COMER_BIENESRECHAZADOS=NO_ETQ_3=WHEN-BUTTON-PRESSED.txt');
+    const goods = this.saleGoods.map(good => good.propertyNumber);
+    this.saleChangeLoading = true;
+    return this.goodProcessService.setStatusToSale({ goods }).pipe(
+      catchError(error => {
+        this.saleChangeLoading = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(res => {
+        this.saleChangeLoading = false;
+        this.alert(
+          'success',
+          'Los Bienes se han Actualizado para su Venta',
+          ''
+        );
+        this.vxrGoods = [];
+        this.saleGoods = [];
+        this.settings = { ...this.settings };
+      })
+    );
   }
 
+  //  ? ------------------- Exportar a Excel
+
   onExportExcel() {
-    this.exportExcel();
+    this.exportExcel().subscribe();
   }
 
   /**EXPORTA_RECHAZADOS */
   exportExcel() {
-    console.log('EXPORTA_RECHAZADOS');
+    const { id } = this.controls;
+    this.excelLoading = true;
+    return this.goodProcessService.exportRejectedGoods(id.value).pipe(
+      catchError(error => {
+        this.excelLoading = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.excelLoading = false;
+        this._downloadExcelFromBase64(
+          response.base64File,
+          `Bienes-Rechazados-${id.value}`
+        );
+      })
+    );
   }
 }

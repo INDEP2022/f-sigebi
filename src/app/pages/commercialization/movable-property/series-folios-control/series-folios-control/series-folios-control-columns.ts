@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const SERIES_FOLIOS_CONTROL_COLUMNS = {
   folioinvoiceId: {
     title: 'Id Folio',
@@ -10,13 +12,13 @@ export const SERIES_FOLIOS_CONTROL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  catDelegation: {
-    title: 'Regional',
-    width: '50px',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (value: any) => (value ? value.description : ''),
-  },
+  // catDelegation: {
+  //   title: 'Regional',
+  //   width: '50px',
+  //   type: 'string',
+  //   sort: false,
+  //   valuePrepareFunction: (value: any) => (value ? value.description : ''),
+  // },
   series: {
     title: 'Serie',
     type: 'string',
@@ -36,6 +38,10 @@ export const SERIES_FOLIOS_CONTROL_COLUMNS = {
     title: 'Validez',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   type: {
     title: 'Tipo',
@@ -66,5 +72,9 @@ export const SERIES_FOLIOS_CONTROL_COLUMNS = {
     title: 'Fecha Registro',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };

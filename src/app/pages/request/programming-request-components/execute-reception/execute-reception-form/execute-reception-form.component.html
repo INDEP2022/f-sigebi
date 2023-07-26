@@ -75,13 +75,17 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
-            <span class="fs-4"> {{ programming?.startDate }} </span>
+            <span class="fs-4">
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+            </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
-            <span class="fs-4"> {{ programming?.endDate }}</span>
+            <span class="fs-4">
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
+            >
           </div>
         </div>
       </div>
@@ -413,11 +417,18 @@
                       <td>
                         <form-field [control]="executeForm.get('quantitySae')">
                           <input
-                            type="number"
+                            type="text"
                             class="form-control"
-                            maxlength="50"
+                            maxlength="100"
                             formControlName="quantitySae" />
                         </form-field>
+                        <!--<form-field [control]="executeForm.get('quantitySae')">
+                          <input
+                            class="form-control"
+                            maxlength="50"
+                            
+                            formControlName="quantitySae" />
+                        </form-field> -->
                       </td>
                       <td class="text-left align-baseline">
                         {{ good.get('unitMeasure')?.value }}
@@ -1143,6 +1154,9 @@
                           <th scope="col" class="text-nowrap">
                             Estado Conservaci&oacute;n INDEP
                           </th>
+
+                          <th scope="col" class="text-nowrap">Observación</th>
+                          <th scope="col" class="text-nowrap">Destino INDEP</th>
                           <th scope="col" class="text-nowrap text-center">
                             Acciones
                           </th>
@@ -1271,29 +1285,58 @@
                                   </option>
                                 </select>
                               </td>
+
+                              <td class="text-center align-baseline">
+                                {{ good.get('observations')?.value }}
+                              </td>
+
+                              <td class="text-center align-baseline">
+                                <select
+                                  [value]="
+                                    executeForm.get('transferentDestiny').value
+                                  "
+                                  class="form-select"
+                                  style="
+                                    width: 150px;
+                                    height: 40px;
+                                    font-size: 13px !important;
+                                  "
+                                  formControlName="transferentDestiny">
+                                  <option
+                                    *ngFor="let transfer of transfersDestinity"
+                                    [value]="transfer.keyId">
+                                    {{ transfer.description }}
+                                  </option>
+                                </select>
+                              </td>
                               <td
-                                class="text-center align-baseline"
-                                class="text-nowrap">
+                                class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
                                   <i
                                     (click)="showGood(good.value)"
                                     class="fa fa-file mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    style="cursor: pointer">
+                                    Ver Etiqueta</i
+                                  >
+                                </a>
 
                                 <a class="text-center">
                                   <i
                                     (click)="editGood(good.value)"
                                     class="fa fa-pencil-alt mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    style="cursor: pointer">
+                                    Editar</i
+                                  >
+                                </a>
 
                                 <a class="text-center">
                                   <i
                                     (click)="updateInfo(good.value)"
                                     class="fa fa-retweet mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    style="cursor: pointer">
+                                    Actualizar</i
+                                  >
+                                </a>
                               </td>
                             </ng-container>
                           </tr>

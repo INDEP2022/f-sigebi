@@ -259,7 +259,6 @@ export class PerformProgrammingFormComponent
     this.getAkaWarehouse(new ListParams());
     this.getStates(new ListParams());
 
-    this.getWarehouseSelect(new ListParams());
     this.getTransferentSelect(new ListParams());
     this.showUsersProgramming();
     this.getProgrammingData();
@@ -1024,7 +1023,7 @@ export class PerformProgrammingFormComponent
             .get('regionalDelegationNumber')
             .setValue(delegation.description);
           this.regionalDelegationUser = delegation;
-
+          this.getWarehouseSelect(new ListParams());
           this.getStateSelect(new ListParams());
         });
     });
@@ -1092,6 +1091,7 @@ export class PerformProgrammingFormComponent
   getStations(params?: ListParams) {
     this.showSelectStation = true;
     params['filter.idTransferent'] = this.transferentId;
+    //params['filter.keyState'] = this.idState;
     params['filter.stationName'] = `$ilike:${params.text}`;
     params['sortBy'] = 'stationName:ASC';
 
@@ -1119,6 +1119,8 @@ export class PerformProgrammingFormComponent
   getAuthoritySelect(params?: ListParams) {
     params['filter.authorityName'] = `$ilike:${params.text}`;
     params['filter.idTransferer'] = `$eq:${this.transferentId}`;
+    //params['filter.cveStatus'] = `$eq:${this.idState}`;
+    params['filter.idStation'] = `$eq:${this.idStation}`;
     params['sortBy'] = 'authorityName:ASC';
     delete params['search'];
     delete params.text;
@@ -1206,7 +1208,7 @@ export class PerformProgrammingFormComponent
   getWarehouseSelect(params: ListParams) {
     this.showWarehouseInfo = true;
     params.limit = 300;
-    //params['filter.stateCode'] = this.idState;
+    params['filter.responsibleDelegation'] = this.delegationId;
     this.warehouseService.getAll(params).subscribe(data => {
       this.warehouse = new DefaultSelect(data.data, data.count);
     });
@@ -1217,10 +1219,10 @@ export class PerformProgrammingFormComponent
   getProgGoods() {
     this.loadingGoods = true;
     const filterColumns: Object = {
-      regionalDelegation: Number(this.delegationId),
-      transferent: Number(this.transferentId),
+      regionalDelegation: Number(this.dataProgramming.regionalDelegationNumber),
+      transferent: Number(this.dataProgramming.tranferId),
       // transferent: Number(760),
-      relevantType: Number(this.idTypeRelevant),
+      relevantType: Number(this.dataProgramming.typeRelevantId),
       statusGood: 'APROBADO',
     };
     this.goodsQueryService
@@ -1744,7 +1746,7 @@ export class PerformProgrammingFormComponent
 
   // Visualizar información del bien //
   showGood(item: IGoodProgrammingSelect) {
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    let config = { ...MODAL_CONFIG, class: 'modal-xl modal-dialog-centered' };
     config.initialState = {
       item,
       callback: () => {},
@@ -1976,19 +1978,23 @@ export class PerformProgrammingFormComponent
   updateWarehouseGood() {
     return new Promise((resolve, reject) => {
       this.goodsTranportables.getElements().then(data => {
-        data.map((good: IGood) => {
-          const object = {
-            id: good.id,
-            goodId: good.goodId,
-            storeId: this.warehouseId,
-          };
-          this.goodService.updateByBody(object).subscribe({
-            next: response => {
-              resolve(true);
-            },
-            error: error => {},
+        if (data.length > 0) {
+          data.map((good: IGood) => {
+            const object = {
+              id: good.id,
+              goodId: good.goodId,
+              storeId: this.warehouseId,
+            };
+            this.goodService.updateByBody(object).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {},
+            });
           });
-        });
+        } else {
+          resolve(true);
+        }
       });
     });
   }

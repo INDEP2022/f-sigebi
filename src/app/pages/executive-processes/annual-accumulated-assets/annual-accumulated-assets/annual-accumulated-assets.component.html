@@ -58,29 +58,36 @@
               formControlName="toYear"
               [maxDate]="maxDateEnd"
               [minDate]="minDateEnd"
+              [min]="form.get('fromYear').value"
+              [ngModel]="
+                form.get('toYear').value < form.get('toYear').value
+                  ? form.get('toYear').value
+                  : form.get('toYear').value
+              "
               bsDatepicker />
           </form-field>
         </div>
       </div>
     </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          type="submit"
-          class="btn btn-primary active"
-          [disabled]="!form.valid"
+          type="button"
+          [disabled]="form.invalid"
+          class="btn btn-primary active btn-sm"
           (click)="confirm()">
-          Imprimir Reporte
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
         <button
-          (click)="cleanForm()"
           type="button"
-          class="btn btn-danger active">
-          Limpiar
+          class="btn btn-danger active btn-sm"
+          (click)="cleanForm()">
+          Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
         </button>
       </div>
     </div>

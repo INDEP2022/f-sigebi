@@ -23,7 +23,7 @@ import { UserEventTypesService } from 'src/app/core/services/catalogs/users-even
 export class EventTypeSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() eventField: string = 'event';
-  @Input() label: string = 'Tipo de evento';
+  @Input() label: string = 'Tipo de Evento';
   @Input() bindLabel: string = 'descripcion';
   @Input() showEvents: boolean = true;
   @Output() emitTevents = new EventEmitter<ITevents>();

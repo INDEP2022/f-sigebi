@@ -1,0 +1,163 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('referencia')" label="Referencia">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="referencia" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('cliente')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="cliente"
+              [data]="clients"
+              value="id"
+              bindLabel="idAndName"
+              label="Cliente"
+              (fetchItems)="getClients($event)">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="cliente" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('numberMovement')"
+            label="No. Movimiento">
+            <input
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="numberMovement" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('date')" label="Fecha">
+            <input
+              maxlength="11"
+              bsDatepicker
+              type="text"
+              class="form-control"
+              formControlName="date" />
+          </form-field>
+          <!-- <form-field [control]="form.get('date')" label="Fecha">
+            <input type="text" class="form-control" formControlName="date" />
+          </form-field> -->
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('monto')" label="Monto">
+            <input
+              maxlength="17"
+              type="text"
+              class="form-control"
+              formControlName="monto" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('lote')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="lote"
+              [data]="lotes"
+              value="idLot"
+              bindLabel="idAndDesc"
+              label="Lote"
+              (fetchItems)="getLotes($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('entryOrderId')"
+            label="Id Orden Ingreso">
+            <input
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="entryOrderId" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('cveBanco')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="cveBanco"
+              [data]="banks"
+              value="cveBank"
+              bindLabel="bankAndNumber"
+              label="Banco"
+              (fetchItems)="getBanks($event)">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="cveBanco" /> -->
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('validSystem')"
+            label="Sistema Válido">
+            <input
+              maxlength="1"
+              type="text"
+              class="form-control"
+              formControlName="validSystem" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('aplicadoA')" label="Aplicado a:">
+            <ng-select formControlName="aplicadoA" class="form-control pt-1">
+              <ng-option value="D">Devolución</ng-option>
+              <ng-option value="P">Penalización</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <textarea
+              maxlength="200"
+              class="form-control"
+              cols="5"
+              rows="5"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="form.invalid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          {{ edit ? 'Actualizar' : 'Guardar' }}
+          <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
+          <span *ngIf="!edit"
+            ><i aria-hidden="true" class="fa fa-save"></i
+          ></span>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

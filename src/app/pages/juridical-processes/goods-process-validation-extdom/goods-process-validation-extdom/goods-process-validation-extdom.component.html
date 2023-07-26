@@ -378,6 +378,20 @@
     <br />
     <!-- tabla Bienes -->
     <div class="row">
+      <!-- PARTE DE ESCANEO -->
+      <div class="col-md-12 col-12 col-sm-12" *ngIf="showScanForm">
+        <app-scanning-foil-historical-goods-extdom
+          [formScan]="formScan"
+          [notificationData]="notificationData"
+          [dataUserLogged]="dataUserLogged"
+          (changeFolio)="changeFolio($event)"
+          (scanRequestEmitter)="scanRequest($event)"
+          (showScanningPageEmitter)="showScanningPage($event)"
+          (messageDigitalizationEmitter)="messageDigitalization($event)"
+          (viewPicturesEmitter)="
+            viewPictures($event)
+          "></app-scanning-foil-historical-goods-extdom>
+      </div>
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
         <div class="card">
           <div class="card-body">
@@ -459,7 +473,11 @@
           <div class="card-body">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-8">
-                <h6>Bienes a Procesar para Validaci&oacute;n ASEG_EXTDOM</h6>
+                <h6>
+                  Bienes a Procesar para Validaci&oacute;n ASEG_EXTDOM
+                  &#40;Estos son los Nuevos Bienes que se van a Agregar a
+                  ASEG_EXTDOM&#41;
+                </h6>
               </div>
               <div
                 class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
@@ -477,12 +495,31 @@
                     [source]="dataTable3"></ng2-smart-table>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12">
+              <div class="col-sm-12 col-12 col-md-6">
+                <button
+                  [disabled]="loadingProcess"
+                  class="btn btn-primary btn-sm active m-3"
+                  (click)="btnEjecutarCambios()">
+                  Ejecutar Cambios
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
                 <app-pagination
                   [params]="dataTableParams3"
                   [totalItems]="totalGoods3"></app-pagination>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+        *ngIf="loadingProcess">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
+            <div class="loader"></div>
+            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
           </div>
         </div>
       </div>
@@ -567,7 +604,10 @@
           <div class="card-body">
             <div class="row">
               <div class="col-12 col-sm-12 col-md-8">
-                <h6>Bienes en Validaci&oacute;n ASEG_EXTDOM para Liberar</h6>
+                <h6>
+                  Bienes en Validaci&oacute;n ASEG_EXTDOM para Liberar
+                  &#40;Estos son los Bienes que se van a Liberar&#41;
+                </h6>
               </div>
               <div
                 class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
@@ -585,7 +625,16 @@
                     [source]="dataTable4"></ng2-smart-table>
                 </div>
               </div>
-              <div class="col-sm-12 col-12 col-md-12">
+              <div class="col-sm-12 col-12 col-md-6">
+                <button
+                  [disabled]="loadingProcess"
+                  class="btn btn-primary btn-sm active m-3"
+                  (click)="btnEjecutarCambios()">
+                  Ejecutar Cambios
+                  <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6">
                 <app-pagination
                   [params]="dataTableParams4"
                   [totalItems]="totalGoods4"></app-pagination>
@@ -642,39 +691,15 @@
           </form>
         </div>
       </div>
-      <div
-        class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-        *ngIf="loadingProcess">
-        <div class="d-flex justify-content-center">
-          <div class="d-flex justify-content-center">
-            <div class="loader"></div>
-            <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
-          </div>
-        </div>
-      </div>
-      <!-- PARTE DE ESCANEO -->
-      <div class="col-md-7 col-12 col-sm-12" *ngIf="showScanForm">
-        <app-scanning-foil-historical-goods-extdom
-          [formScan]="formScan"
-          [notificationData]="notificationData"
-          [dataUserLogged]="dataUserLogged"
-          (changeFolio)="changeFolio($event)"
-          (scanRequestEmitter)="scanRequest($event)"
-          (showScanningPageEmitter)="showScanningPage($event)"
-          (messageDigitalizationEmitter)="messageDigitalization($event)"
-          (viewPicturesEmitter)="
-            viewPictures($event)
-          "></app-scanning-foil-historical-goods-extdom>
-      </div>
-      <div class="col-md-5 col-12 col-sm-12 text-center">
-        <button
+      <div class="col-md-12 col-12 col-sm-12 text-center">
+        <!-- <button
           [disabled]="loadingProcess"
           tooltip="Ejecutar Cambios"
           containerClass="tooltip-style"
           class="btn btn-primary btn-sm active m-3"
           (click)="btnEjecutarCambios()">
           <i class="fa fa-check" aria-hidden="true"></i>
-        </button>
+        </button> -->
         <button
           [disabled]="loadingProcess"
           tooltip="Consultar Histórico"

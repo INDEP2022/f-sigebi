@@ -17,7 +17,6 @@ export const COLUMNS_GOODS_LIST_EXTDOM = {
       return value ? value : '';
     },
     onComponentInitFunction: (instance: any) => {
-      console.log(instance);
       instance.pClass = 'text-white';
       instance.spanClass = 'text-white';
     },
@@ -56,7 +55,6 @@ export const COLUMNS_GOODS_LIST_EXTDOM_2 = {
       return value ? value : '';
     },
     onComponentInitFunction: (instance: any) => {
-      console.log(instance);
       instance.pClass = 'text-white';
       instance.spanClass = 'text-white';
     },
@@ -94,7 +92,6 @@ export const COLUMNS_GOODS_LIST_EXTDOM_3 = {
       return value ? value : '';
     },
     onComponentInitFunction: (instance: any) => {
-      console.log(instance);
       instance.pClass = 'text-white';
       instance.spanClass = 'text-white';
     },
@@ -132,7 +129,6 @@ export const COLUMNS_GOODS_LIST_EXTDOM_4 = {
       return value ? value : '';
     },
     onComponentInitFunction: (instance: any) => {
-      console.log(instance);
       instance.pClass = 'text-white';
       instance.spanClass = 'text-white';
     },

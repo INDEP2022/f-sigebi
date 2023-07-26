@@ -173,7 +173,7 @@ const routes: Routes = [
           './shared-marketing-components/unreconciled-payment/unreconciled-payment.module'
         )
       ).UnreconciledPaymentModule,
-    data: { title: 'Pagos no Conciliados' },
+    data: { title: 'Pagos no Conciliados', screen: 'FCOMER113' },
   },
   {
     path: 'payment-dispersion-monitor',
@@ -190,7 +190,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/events/events.module'))
         .EventsModule,
-    data: { title: 'Delegar Permisos a Eventos', screen: 'EventsModule' },
+    data: { title: 'Delegar Permisos a Eventos', screen: 'FCOMER079' },
   },
   {
     path: 'numeraire-exchange',
@@ -378,7 +378,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./penalty-billing/penalty-billing.module'))
         .CFpMPenaltyBillingModule,
-    data: { title: 'Facturación', screen: 'FCOMER089' },
+    data: { title: 'Facturación', screen: 'FCOMER099' },
   },
   {
     path: 'sirsae-movement-sending',

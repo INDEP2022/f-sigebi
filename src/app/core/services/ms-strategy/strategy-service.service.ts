@@ -65,4 +65,42 @@ export class StrategyServiceService extends HttpService {
       { params, headers }
     );
   }
+
+  getStrategiesAdmin(params: any) {
+    return this.post(`${StrategyEndpoints.StrategyAdmin}/id?`, params);
+  }
+
+  getfolioDeliveredWeather(
+    yearEvaluateId: string,
+    monthEvaluateId: number,
+    delegationNumberId: number
+  ) {
+    return this.get(
+      `folio-delivered-weather?filter.yearEvaluateId=$eq:${yearEvaluateId}&filter.monthEvaluateId=$eq:${monthEvaluateId}&filter.delegationNumberId=$eq:${delegationNumberId}`
+    );
+  }
+
+  postValidaIndica(model: any) {
+    return this.get(`folio-delivered-weather/id`, model);
+  }
+
+  //T_FOL_REG
+  pupValidaIndica(model: any) {
+    return this.post(`folio-delivered-weather/validIndication`, model);
+  }
+
+  //T_FOL_ENT
+  pupValidaIndicaRep(model: any) {
+    return this.post(`folio-delivered-weather/validIndicationRep`, model);
+  }
+
+  //T_REP_REG
+  pupValidaIndicaTime(model: any) {
+    return this.post(`folio-delivered-weather/validIndicationTime`, model);
+  }
+
+  //T_REP_ENT
+  pupValidaIndicaVal(model: any) {
+    return this.post(`folio-delivered-weather/validIndicationVal`, model);
+  }
 }

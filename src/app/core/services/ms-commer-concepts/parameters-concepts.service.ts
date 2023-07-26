@@ -3,7 +3,11 @@ import { map } from 'rxjs';
 import { ComerConceptEndpoints } from 'src/app/common/constants/endpoints/ms-comerconcept';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
-import { IParameterConcept } from '../../models/ms-comer-concepts/parameter-concept';
+import {
+  IParameterConcept,
+  IParameterConceptCreate,
+  IParameterConceptUpdate,
+} from '../../models/ms-comer-concepts/parameter-concept';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +16,18 @@ export class ParametersConceptsService extends HttpService {
   constructor() {
     super();
     this.microservice = ComerConceptEndpoints.BasePath;
+  }
+
+  create(body: IParameterConceptCreate) {
+    return this.post(ComerConceptEndpoints.ParametersConceptsCreate, body);
+  }
+
+  update(body: IParameterConceptUpdate) {
+    return this.put(ComerConceptEndpoints.ParametersConceptsUpdate, body);
+  }
+
+  remove(body: IParameterConceptUpdate) {
+    return this.delete(ComerConceptEndpoints.ParametersConceptsDelete, body);
   }
 
   getAll(params?: _Params) {

@@ -128,11 +128,11 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.EQ),
               nameReason: () => (searchFilter = SearchFilter.ILIKE),
+              id: () => (searchFilter = SearchFilter.EQ),
               calculationRoutine: () => (searchFilter = SearchFilter.EQ),
             };
-            search[filter.field];
+            search[filter.field]();
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -160,6 +160,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
   // TIPOS DE EVENTOS QUE ATIENDE EL TERCERO //
   getTypeEventFilters() {
+    this.loading2 = false;
     this.typeEventList
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -211,6 +212,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
   // MONTOS //
   getAmountsFilters() {
+    this.loading3 = false;
     this.thirdPartyList
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -234,8 +236,8 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
             search[filter.field];
 
             if (filter.search !== '') {
-              // this.columnFilters[field] = `${filter.search}`;
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
 
               // console.log(
               //   'this.columnFilters[field]',
@@ -269,7 +271,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.thirdPartyService.getAll(params).subscribe({
+    this.thirdPartyService.getAllFindItemV2(params).subscribe({
       next: response => {
         console.log(response);
         this.thirdPartyList.load(response.data);
@@ -287,28 +289,28 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-    if (event.data == this.thirPartys) {
-      this.thirPartys = null;
-      this.totalItems2 = 0;
-      this.totalItems3 = 0;
+    // if (event.data == this.thirPartys) {
+    //   this.thirPartys = null;
+    //   this.totalItems2 = 0;
+    //   this.totalItems3 = 0;
 
-      this.typeEventList.load([]);
-      this.typeEventList.refresh;
+    //   this.typeEventList.load([]);
+    //   this.typeEventList.refresh;
 
-      this.amountList.load([]);
-      this.amountList.refresh();
-    } else {
-      this.totalItems2 = 0;
-      this.totalItems3 = 0;
-      // this.typeEventList = [];
-      this.thirPartys = event.data;
-      this.rowsSelectedGetAmount(this.thirPartys);
-      this.rowsSelectedGetTypeEvent(this.thirPartys);
-    }
+    //   this.amountList.load([]);
+    //   this.amountList.refresh();
+    // } else {
+    this.totalItems2 = 0;
+    this.totalItems3 = 0;
+    // this.typeEventList = [];
+    this.thirPartys = event.data;
+    this.rowsSelectedGetAmount(this.thirPartys);
+    this.rowsSelectedGetTypeEvent(this.thirPartys);
+    // }
   }
 
   rowsSelectedGetTypeEvent(event: any) {
-    this.totalItems3 = 0;
+    this.totalItems2 = 0;
     // this.amountList = [];
     this.typeEvents = event.data;
 
@@ -323,6 +325,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters2,
     };
+
+    if (!thirdParty) {
+      this.loading2 = false;
+      return;
+    }
+
     params['filter.thirdPartyId'] = `$eq:${thirdParty.id}`;
     this.typeEventXterComerService.getAll(params).subscribe({
       next: response => {
@@ -382,9 +390,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params3.getValue(),
       ...this.columnFilters3,
     };
-    if (!IThirdParty) return;
-    params['filter.idThirdParty'] = `$eq:${IThirdParty.id}`;
-    this.comiXThirdService.getById(IThirdParty.id).subscribe({
+    if (!IThirdParty) {
+      this.loading3 = false;
+      return;
+    }
+    params['filter.idThirdParty'] = `${IThirdParty.id}`;
+    this.comiXThirdService.getAll_(params).subscribe({
       next: response => {
         console.log(response);
         this.amountList.load(response.data);
@@ -416,13 +427,21 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   openForm2(typeEvents?: ITypeEventXtercomer) {
+    if (!this.thirPartys) {
+      this.alert('warning', 'Debe Seleccionar un Tercero Comercializador', '');
+      return;
+    }
     const thirPartys = this.thirPartys;
     let config: ModalOptions = {
       initialState: {
         typeEvents,
         thirPartys,
         callback: (next: boolean) => {
-          if (next) this.getThirdPartyAll();
+          if (next) {
+            if (this.thirPartys) {
+              this.rowsSelectedGetTypeEvent(this.thirPartys);
+            }
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -432,13 +451,21 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   openForm3(amounts?: IComiXThird) {
+    if (!this.thirPartys) {
+      this.alert('warning', 'Debe Seleccionar un Tercero Comercializador', '');
+      return;
+    }
     const thirPartys = this.thirPartys;
     let config: ModalOptions = {
       initialState: {
         amounts,
         thirPartys,
         callback: (next: boolean) => {
-          if (next) this.getThirdPartyAll();
+          if (next) {
+            if (this.thirPartys) {
+              this.rowsSelectedGetAmount(this.thirPartys);
+            }
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -464,11 +491,22 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
             this.getThirdPartyAll();
           },
           error: error => {
-            this.alert(
-              'error',
-              'Ocurrió un Error al Eliminar el Tercero Comercializador',
-              ''
-            );
+            if (
+              error.error.message ==
+              'Ocurrio un error al intentar obtener los datos.'
+            ) {
+              this.alert(
+                'error',
+                'Error al Eliminar, El Registro Tiene Montos o Tipos de Eventos Relacionados',
+                ''
+              );
+            } else {
+              this.alert(
+                'error',
+                'Ocurrió un Error al Eliminar el Tercero Comercializador',
+                ''
+              );
+            }
           },
         });
       }
@@ -511,7 +549,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     this.alertQuestion('question', '¿Desea Eliminar el Monto?', '').then(
       question => {
         if (question.isConfirmed) {
-          this.comiXThirdService.remove($event.id).subscribe({
+          this.comiXThirdService.remove($event.idComiXThird).subscribe({
             next: response => {
               this.alert('success', 'El Monto se Eliminó Correctamente', '');
               this.rowsSelectedGetAmount(this.thirPartys);

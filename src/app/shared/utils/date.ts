@@ -168,3 +168,13 @@ export function formatForIsoDate(
           : '')
     : new Date(+values[0], +mes - 1, +values[2]);
 }
+
+export function secondFormatDateToDate2(date: string) {
+  if (date) {
+    const array = date.split('-');
+    let aaa = Number(array[1]) - 1;
+    return new Date(+array[0], +aaa, +array[2]);
+  } else {
+    return null;
+  }
+}

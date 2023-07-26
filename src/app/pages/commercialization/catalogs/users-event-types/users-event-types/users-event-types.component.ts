@@ -122,10 +122,11 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
         // const newData = response.data.filter((item: any) => {
         //   return item.id_tpevento === id;
         // });
+        console.log(response.count);
         this.valuesList = response.data;
         this.data.load(this.valuesList);
         this.data.refresh();
-        this.totalItems = response.data.length;
+        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => {
@@ -156,7 +157,9 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
       idTypeEvent,
       callback: (next: any) => {
         if (next) {
-          this.getValuesAll(new ListParams(), next);
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getValuesAll(new ListParams(), next));
         }
       },
     };
@@ -169,18 +172,15 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
       '¿Desea Eliminar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
+        console.log(parameter);
         let data = {
-          idTpevent: parameter.id_tpevento,
-          username: parameter.usuariotpvto,
+          idTpevent: parameter.idTpevent,
+          username: parameter.username,
         };
         this.userTpeeventsService.remove(data).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert(
-                'success',
-                'Usuario por Tipo de Evento',
-                'Borrado Correctamente'
-              );
+              this.alert('success', 'Borrado Correctamente', '');
               this.getValuesAll(
                 new ListParams(),
                 this.teventsForm.controls['event'].value
