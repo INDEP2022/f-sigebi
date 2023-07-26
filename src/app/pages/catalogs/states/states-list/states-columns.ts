@@ -15,12 +15,12 @@ export const STATES_COLUMNS = {
     sort: false,
   },
   zoneHourlyStd: {
-    title: 'Zona horaria',
+    title: 'Zona Horaria',
     type: 'string',
     sort: false,
   },
   zoneHourlyVer: {
-    title: 'Versión de zona horaria',
+    title: 'Versión de Zona Horaria',
     type: 'string',
     sort: false,
   },

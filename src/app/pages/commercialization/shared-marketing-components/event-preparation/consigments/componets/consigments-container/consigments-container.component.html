@@ -1,0 +1,34 @@
+<div class="row">
+  <h6>{{ title }}</h6>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <button
+      type="button"
+      (click)="goBack()"
+      class="btn btn-primary active btn-sm m-2">
+      Regresar
+      <i class="fas fa-arrow-circle-left"></i>
+    </button>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <consigments-events
+      [parameters]="parameters"
+      [preparation]="preparation"
+      [(eventSelected)]="eventSelected"></consigments-events>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-9">
+    <consigments-lots
+      [eventSelected]="eventSelected"
+      [(lotSelected)]="lotSelected"></consigments-lots>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <consigments-goods [lotSelected]="lotSelected"></consigments-goods>
+  </div>
+</div>

@@ -8,7 +8,6 @@
       </div>
       <div class="p-2 buttons">
         <button
-          [disabled]="isClassifyAsset == true"
           class="btn btn-primary btn-sm active"
           (click)="openSearchModal()">
           B&uacute;squeda Avanzada
@@ -17,7 +16,7 @@
       </div>
       <div class="p-2 buttons">
         <button
-          [disabled]="statusTask == 'FINALIZADA' || isClassifyAsset == true"
+          [disabled]="statusTask == 'FINALIZADA'"
           class="btn btn-primary btn-sm active"
           (click)="saveRequest()">
           Guardar
@@ -49,8 +48,7 @@
             [virtualScroll]="true"
             [loading]="loading"
             bindLabel="description"
-            bindValue="id"
-            [readonly]="isClassifyAsset">
+            bindValue="id">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -74,8 +72,7 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id"
-            [readonly]="isClassifyAsset">
+            bindValue="id">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -101,8 +98,7 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id"
-            [readonly]="isClassifyAsset">
+            bindValue="id">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -136,8 +132,7 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id"
-            [readonly]="isClassifyAsset">
+            bindValue="id">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -173,8 +168,7 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id"
-            [readonly]="isClassifyAsset">
+            bindValue="id">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}
@@ -198,8 +192,7 @@
             [loading]="loading"
             bindLabel="description"
             [notFoundText]="noItemsFoundMessage"
-            bindValue="id"
-            [readonly]="isClassifyAsset">
+            bindValue="id">
             <ng-template ng-option-tmp let-item="item" let-index="index">
               <div [title]="item.description">
                 <b>{{ item.code }}</b> {{ item.description }}

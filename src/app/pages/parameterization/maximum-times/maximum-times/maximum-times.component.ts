@@ -135,7 +135,11 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
           .remove(maximumTimes.data.certificateType)
           .subscribe({
             next: () => {
-              this.alert('success', 'Registro Eliminado Correctamente', '');
+              this.alert(
+                'success',
+                'Tiempo Máximo Para Cierre Actas Devolución',
+                'Borrando Correctamente'
+              );
               this.getMaximumTimeAll();
             },
             error: err => this.onLoadToast('error', err.error.message, ''),

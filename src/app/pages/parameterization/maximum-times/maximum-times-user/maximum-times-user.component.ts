@@ -53,6 +53,10 @@ export class MaximumTimesUserComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}`;
                 break;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

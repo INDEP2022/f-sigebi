@@ -23,7 +23,6 @@ export class RegistrationHelper extends BasePage {
 
   updateExpedient(requestId: number, recordId: number) {
     return new Promise((resolve, reject) => {
-      debugger;
       this.goodProcessService.updateFileNumber(requestId, recordId).subscribe({
         next: resp => {
           resolve(resp);
@@ -31,9 +30,9 @@ export class RegistrationHelper extends BasePage {
         error: error => {
           this.onLoadToast(
             'error',
-            'No se pudo actualizar el expdiente de los bienes'
+            'No se pudo actualizar el expediente de los bienes'
           );
-          reject('No se pudo actualizar el expdiente de los bienes');
+          reject('No se pudo actualizar el expediente de los bienes');
         },
       });
     });
@@ -139,20 +138,18 @@ export class RegistrationHelper extends BasePage {
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
-      this.message('error', 'La solicitud no tiene expediente asociado', '');
+      this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 1) {
-      this.message('error', 'Se debe asociar un documento a la solicitud', '');
-      validoOk = false;
-    } else if (urgentPriority === 'Y' && priorityDate === null) {
-      //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
+    } else if (!lisDocument || lisDocument < 2) {
       this.message(
-        'error',
-        'Se marcó la solicitud como urgente, se debe tener una fecha de prioridad',
+        'warning',
+        'Se debe asociar un documento a la solicitud para continuar',
         ''
       );
       validoOk = false;
-    } else if (idTrandference === 1) {
+    } else if (urgentPriority === 'Y' && priorityDate === null) {
+      //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
+      this.message('error', '', '');
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
@@ -162,7 +159,7 @@ export class RegistrationHelper extends BasePage {
         validoOk = false;
       } else if (circumstantialRecord === '' && previousInquiry === '') {
         this.message(
-          'error',
+          'warning',
           'Para la transferente FGR/PGR se debe tener al menos Acta Circunstancial o Averiguación Previa',
           ''
         );
@@ -173,14 +170,16 @@ export class RegistrationHelper extends BasePage {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
+
+          'warning',
           ''
         );
-      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
         this.message(
           'error',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
-          ''
+
+          'warning',
+
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
         );
       } else {
         validoOk = true;
@@ -198,8 +197,9 @@ export class RegistrationHelper extends BasePage {
       ) {
         this.message(
           'error',
-          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos',
-          ''
+          'warning',
+
+          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
         );
       } else {
         validoOk = true;
@@ -214,8 +214,8 @@ export class RegistrationHelper extends BasePage {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
-          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos',
-          ''
+          'warning',
+          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
         );
       } else {
         validoOk = true;
@@ -244,6 +244,7 @@ export class RegistrationHelper extends BasePage {
         let sinCantidad: boolean = false;
         let sinDestinoT: boolean = false;
         let sinUnidadM: boolean = false;
+        let sinUnidTrans: boolean = false;
         let sinDescripcionT: boolean = false;
         let codigoFraccion: any = null;
         let faltaClasificacion: boolean = false;
@@ -286,6 +287,14 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener una cantidad'
             );
             break;
+          } else if (good.unitMeasure == null) {
+            sinUnidTrans = true;
+            this.message(
+              'warning',
+              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+              'Todos los bienes deben tener una Unidad de Medidad Transferente'
+            );
+            break;
           } else if (good.ligieUnit == null) {
             /*else if (good.transferentDestiny == null) {
             sinDestinoT = true;
@@ -295,7 +304,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
-          } 
+          }
           */
             sinUnidadM = true;
             this.message(
@@ -717,7 +726,8 @@ export class RegistrationHelper extends BasePage {
           sinTipoRelevante === false &&
           sinCantidad === false &&
           sinDestinoT === false &&
-          sinUnidadM === false
+          sinUnidadM === false &&
+          sinUnidTrans === false
         ) {
           allOk = true;
         }

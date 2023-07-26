@@ -19,7 +19,7 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
 
   idAuth: IStation2;
 
-  title: string = 'AUTORIDAD';
+  title: string = 'Autoridad';
   edit: boolean = false;
 
   constructor(
@@ -39,26 +39,49 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
       idAuthority: [null, []],
       idTransferer: [null, []],
       idStation: [null, []],
-      cveUnique: [null, [Validators.pattern(NUM_POSITIVE)]],
+      cveUnique: [
+        null,
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(20)],
+      ],
       idCity: [
         null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       authorityName: [
         null,
-        [Validators.maxLength(150), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(150),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       status: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       codeStatus: [
         null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       cveStatus: [
         null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
     });
     if (this.authority != null) {
@@ -82,6 +105,14 @@ export class CatAuthorityModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.authorityForm.controls['authorityName'].value.trim() === '' ||
+      this.authorityForm.controls['idCity'].value.trim() === '' ||
+      this.authorityForm.controls['codeStatus'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.authorityService.create2(this.authorityForm.value).subscribe({
       next: data => this.handleSuccess(),

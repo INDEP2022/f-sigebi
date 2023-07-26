@@ -6,6 +6,7 @@ import { ScanFileSharedComponent } from 'src/app/@standalone/shared-forms/scan-f
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DestructionActsRoutingModule } from './destruction-acts-routing.module';
 import { DestructionActsComponent } from './destruction-acts/destruction-acts.component';
+
 @NgModule({
   declarations: [DestructionActsComponent],
   imports: [
