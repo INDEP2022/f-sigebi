@@ -25,6 +25,10 @@ import { EventLotsListComponent } from './components/event-lots-list/event-lots-
 import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
 import { RejectedGoodsListComponent } from './components/rejected-goods-list/rejected-goods-list.component';
 import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
+import { ConsigmentsContainerComponent } from './consigments/componets/consigments-container/consigments-container.component';
+import { ConsigmentsEventsComponent } from './consigments/componets/consigments-events/consigments-events.component';
+import { ConsigmentsGoodsComponent } from './consigments/componets/consigments-goods/consigments-goods.component';
+import { ConsigmentsLotsComponent } from './consigments/componets/consigments-lots/consigments-lots.component';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
 import { EventPreparationRoutingModule } from './event-preparation-routing.module';
@@ -58,6 +62,10 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     EventGoodsLotsListActionsComponent,
     RejectedGoodsListComponent,
     ComerEventTraspComponent,
+    ConsigmentsEventsComponent,
+    ConsigmentsLotsComponent,
+    ConsigmentsGoodsComponent,
+    ConsigmentsContainerComponent,
   ],
   imports: [
     CommonModule,

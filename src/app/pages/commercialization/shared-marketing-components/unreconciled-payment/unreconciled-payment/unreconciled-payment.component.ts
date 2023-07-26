@@ -166,4 +166,25 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  enviarSIRSAE() {
+    // CREA_CABECERA;
+    this.creaCabecera();
+    // ENVIA_LEE_SIRSAE(1, NULL);
+    this.enviaLeeSirsae(1, null);
+  }
+  creaCabecera() {
+    let obj = {};
+    this.paymentService.createHeader(obj).subscribe({
+      next: response => {
+        // this.alert('success', 'El Registro se Eliminó Correctamente', '');
+        this.getPayments();
+      },
+      error: error => {
+        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+      },
+    });
+  }
+
+  enviaLeeSirsae(item1: number, item2: any) {}
 }

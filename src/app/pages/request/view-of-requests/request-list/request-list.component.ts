@@ -268,6 +268,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'BSVisitaOcular',
   },
+  {
+    title:
+      'BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSValidarVisitaOcular',
+  },
 ];
 
 //AP_Amparo
@@ -527,6 +536,14 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
       case 'BSVisitaOcular':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSValidarVisitaOcular':
         //Doc. Complementaria Gestionar Bienes Similares
         this.router.navigate([
           'pages/request/request-comp-doc/tasks',

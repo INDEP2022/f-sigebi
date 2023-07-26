@@ -90,4 +90,15 @@ export class LotService extends HttpService {
   getLotbyEvent_(params?: _Params) {
     return this.get(LotEndpoints.ComerLot, params);
   }
+
+  checkTransXLot(body: { eventId: string | number; pLote?: string | number }) {
+    return this.post<string | { data: string }>(
+      'apps/review-transf-x-lot',
+      body
+    );
+  }
+
+  incVXRGoods(body: { goods: (string | number)[]; user: string }) {
+    return this.post('apps/rejected-good', body);
+  }
 }
