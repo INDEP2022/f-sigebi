@@ -156,7 +156,8 @@ export class ReportsAssetsDeclaredAbandonedComponent
       PC_USUARIO: this.form.controls['user'].value,
     };
     this.siabService
-      .fetchReport('RGERJURDECLARABAND', params)
+      // .fetchReport('RGERJURDECLARABAND', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

@@ -24,6 +24,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodDataAsetService } from 'src/app/core/services/ms-good/good-data-aset.service';
 import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
@@ -100,7 +101,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     private fractionService: FractionService,
     private goodsQueryService: GoodsQueryService,
     private goodFinderService: GoodFinderService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private goodDataAsetService: GoodDataAsetService
   ) {
     super();
   }
@@ -113,6 +115,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.fractionProperties = {
+      goodClassNumber: null,
+      unitMeasure: null,
+      ligieUnit: null,
+      fractionId: null,
+      goodTypeId: null,
+    };
     //console.log('Activando tab: assets');
     //console.log('TIPO TRASFERENCIA', this.requestObject.typeOfTransfer);
     this.typeRequest = this.requestObject.typeOfTransfer;
@@ -487,6 +496,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.listGoodsFractions.map(async (item: any, i: number) => {
       let index = i + 1;
       const fractionResult = await this.updateGoods(item);
+      this.updateGoodFindRecord(item);
       if (fractionResult) {
         if (this.listGoodsFractions.length === index) {
           this.message(
@@ -496,6 +506,13 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           );
           this.refreshTable();
           this.isSaveFraction = false;
+          this.fractionProperties = {
+            goodClassNumber: null,
+            unitMeasure: null,
+            ligieUnit: null,
+            fractionId: null,
+            goodTypeId: null,
+          };
         }
       }
     });
@@ -611,7 +628,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (data) {
           setTimeout(() => {
             this.closeCreateGoodWIndows();
-          }, 800);
+          }, 1000);
         }
       },
     });
@@ -622,6 +639,24 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     this.createNewAsset = false;
     this.btnCreate = 'Nuevo Bien';
     this.paginatedData();
+  }
+
+  updateGoodFindRecord(good: any) {
+    this.goodDataAsetService
+      .updateGoodFinderRecord(good.goodId, good.id)
+      .subscribe({
+        next: resp => {
+          console.log('registro actualizado');
+        },
+        error: error => {
+          console.log('Error actualizar el registro de good', error);
+          this.onLoadToast(
+            'error',
+            'Error al actualizar',
+            'No se pudo actualizar el registro'
+          );
+        },
+      });
   }
 
   message(header: any, title: string, body: string) {
@@ -846,7 +881,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           : '';
         if (
           fractionCode.length === 8 &&
-          this.fractionProperties['goodClassNumber'] === undefined
+          this.fractionProperties.goodClassNumber === null
         ) {
           this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
@@ -882,7 +917,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           : '';
         if (
           fractionCode.length === 8 &&
-          this.fractionProperties['goodClassNumber'] === undefined
+          this.fractionProperties.goodClassNumber === null
         ) {
           this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
@@ -921,7 +956,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           : '';
         if (
           fractionCode.length === 8 &&
-          this.fractionProperties['goodClassNumber'] === undefined
+          this.fractionProperties.goodClassNumber === null
         ) {
           this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
@@ -957,7 +992,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           : '';
         if (
           fractionCode.length === 8 &&
-          this.fractionProperties['goodClassNumber'] === undefined
+          this.fractionProperties.goodClassNumber === null
         ) {
           this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
@@ -990,9 +1025,11 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         const fractionCode = fraction.fractionCode
           ? fraction.fractionCode.toString()
           : '';
+        console.log(this.fractionProperties);
+
         if (
           fractionCode.length === 8 &&
-          this.fractionProperties['goodClassNumber'] === undefined
+          this.fractionProperties.goodClassNumber === null
         ) {
           this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
@@ -1028,7 +1065,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
 
         if (
           fractionCode.length === 8 &&
-          this.fractionProperties['goodClassNumber'] === undefined
+          this.fractionProperties.goodClassNumber === null
         ) {
           this.fractionProperties['relevantTypeId'] = fraction.relevantTypeId;
           const fractionDesc: any = await this.getNoClasifyGood(fractionCode);
@@ -1099,7 +1136,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.onLoadToast(
             'success',
             'Asignación exitosa',
-            `Se asigno un domicilio a todos los bienes`
+            `Se asignó un domicilio a todos los bienes`
           );
           this.loading = true;
           this.closeCreateGoodWIndows();

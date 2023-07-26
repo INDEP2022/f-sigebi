@@ -86,4 +86,6 @@ export class EventPreparationMain extends BasePage {
   comerCustomersListParams = new BehaviorSubject(new FilterParams());
   lots = new LocalDataSource();
   events = new LocalDataSource();
+
+  preparation = false;
 }

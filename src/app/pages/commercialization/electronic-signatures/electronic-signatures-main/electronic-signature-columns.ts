@@ -1,25 +1,42 @@
+import { DatePipe } from '@angular/common';
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
+
 export const PENDING_COLUMNS = {
   reference: {
     title: 'Referencia',
     type: 'string',
     sort: false,
   },
-  report: {
+  document: {
     title: 'Reporte',
     type: 'string',
     sort: false,
   },
-  date: {
+  creationdate: {
     title: 'Fecha',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
   description: {
     title: 'Descripción Documento',
-    type: 'string',
     sort: false,
+    type: 'custom',
+    renderComponent: SeeMoreComponent,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'null' || value == 'undefined') {
+        return '';
+      }
+
+      return value ? value : '';
+    },
   },
-  type: {
+  denomination: {
     title: 'Tipo Firma',
     type: 'string',
     sort: false,

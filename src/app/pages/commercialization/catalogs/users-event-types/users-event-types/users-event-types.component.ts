@@ -122,10 +122,11 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
         // const newData = response.data.filter((item: any) => {
         //   return item.id_tpevento === id;
         // });
+        console.log(response.count);
         this.valuesList = response.data;
         this.data.load(this.valuesList);
         this.data.refresh();
-        this.totalItems = response.data.length;
+        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => {
@@ -156,7 +157,9 @@ export class UsersEventTypesComponent extends BasePage implements OnInit {
       idTypeEvent,
       callback: (next: any) => {
         if (next) {
-          this.getValuesAll(new ListParams(), next);
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getValuesAll(new ListParams(), next));
         }
       },
     };
