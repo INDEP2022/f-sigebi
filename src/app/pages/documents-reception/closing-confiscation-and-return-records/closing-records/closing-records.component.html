@@ -54,14 +54,6 @@
     </form>
     <div *ngIf="flag">
       <div class="row pr-4 pl-4 justify-content-end">
-        <div class="col-md-3 text-right pr-0" *ngIf="selectedProceedings">
-          <button
-            #closeButton
-            class="btn btn-primary btn-sm active"
-            (click)="closeProceedings()">
-            Cerrar Acta
-          </button>
-        </div>
         <div class="col-md-3 text-right pr-0">
           <button
             class="btn btn-primary btn-sm active"
@@ -77,6 +69,17 @@
       </div>
 
       <div class="d-flex justify-content-end mt-5">
+        <div
+          class="col-md-3 text-right pr-0"
+          *ngIf="selectedProceedings"
+          style="right: 1%">
+          <button
+            #closeButton
+            class="btn btn-primary btn-sm active"
+            (click)="closeProceedings()">
+            Cerrar Acta
+          </button>
+        </div>
         <app-columns-select
           [(settings)]="settings2"
           class="row justify-content-end">
