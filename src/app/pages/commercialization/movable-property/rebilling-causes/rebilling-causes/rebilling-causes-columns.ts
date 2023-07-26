@@ -1,7 +1,7 @@
 export const REBILLING_CAUSES_COLUMNS = {
   id: {
-    title: 'ID',
-    width: '25px',
+    title: 'Id',
+    width: '100px',
     type: 'string',
     sort: false,
   },
@@ -30,6 +30,17 @@ export const REBILLING_CAUSES_COLUMNS = {
       }
       return desc;
     },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'R', title: 'REFACTURA' },
+          { value: 'C', title: 'CANCELA' },
+          { value: 'N', title: 'REFAC/NOIMG' },
+        ],
+      },
+    },
   },
   apply: {
     title: 'Aplica',
@@ -50,6 +61,17 @@ export const REBILLING_CAUSES_COLUMNS = {
         desc = '';
       }
       return desc;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'F', title: 'FACTURA' },
+          { value: 'D', title: 'DEVOLUCION' },
+          { value: 'A', title: 'AMBAS' },
+        ],
+      },
     },
   },
   comments: {
