@@ -36,6 +36,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   valuesSign: ISignatories;
   requestInfo: IRequest;
   process: string = '';
+  dataClarifications1: any;
   dataClarifications2: IChatClarifications;
   idProg: number = 0;
   receiptId: number = 0;
@@ -648,12 +649,15 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     }
   }
 
+  xml: string = '';
   //Método para plasmar firma en reporte generado
   firmReport(requestInfo?: number, nameTypeReport?: string, formData?: Object) {
     this.gelectronicFirmService
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
         next: data => {
+          console.log('XML Geneardo: ', data);
+          this.xml = data;
           this.msjCheck = true;
           this.handleSuccess();
 
@@ -771,6 +775,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     const message: string = 'Firmado';
     this.alertInfo('success', 'Reporte Firmado', ``);
     this.loading = false;
-    this.modalRef.content.callback(true);
+    this.modalRef.content.callback(true, this.xml);
   }
 }
