@@ -58,7 +58,12 @@ export class RectificationFieldsComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = '';
             let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
+
+            if (filter.field == 'tabla') {
+              field = `filter.table`;
+            } else {
+              field = `filter.${filter.field}`;
+            }
 
             const search: any = {
               columnId: () => (searchFilter = SearchFilter.ILIKE),
