@@ -19,59 +19,65 @@
         formControlName="a" />
     </form-field>
 
-    <form-field
-      *ngIf="
-        !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
-      "
-      [control]="form.get('fecha')"
-      label="Fecha Ingreso"
-      class="col-md-2">
-      <input
-        type="text"
-        class="form-control"
-        bsDatepicker
-        formControlName="fecha" />
-    </form-field>
-
-    <form-field
-      *ngIf="
-        (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
-      "
-      [control]="form.get('tipoEvento')"
-      class="col-md-3"
-      label="Tipo Evento">
-      <select class="form-control" formControlName="tipoEvento">
-        <option *ngFor="let event of eventTypes" [value]="event">
-          {{ event }}
-        </option>
-      </select>
-    </form-field>
-
-    <form-field [control]="form.get('cordinador')" class="col">
+    <!-- <form-field [control]="form.get('cordinador')" class="col">
       <ngx-select
         [form]="form"
-        control="cordinador"
-        label="Cordinador Regional"
-        [data]="select">
+        control="coordinador"
+        label="Coordinador Regional"
+        [data]="selectCoordinador">
       </ngx-select>
     </form-field>
   </div>
 
-  <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
+  <div class="row pt-3">
     <form-field [control]="form.get('usuario')" class="col-md-4">
       <ngx-select
         [form]="form"
         control="usuario"
         label="Usuario"
-        [data]="select">
+        [data]="selectUsuario">
       </ngx-select>
-    </form-field>
+    </form-field> -->
+    <div class="row">
+      <!-- <app-user-shared
+        class="col-md-6"
+        [form]="form"
+        [userField]="'usuario'"
+        control="usuario"
+        [label]="'Usuario'"
+        [id]="true"
+        (change)="onChangeUser($event)">
+      </app-user-shared>
+      <app-delegation-shared
+        class="col"
+        [form]="form"
+        control="coordinador"
+        [delegationField]="'coordinador'"
+        [labelDelegation]="'Coordinador Regional'"
+        [showSubdelegation]="false"
+        [delegationChange]="false"
+        (emitDelegation)="changeDelegation($event)">
+      </app-delegation-shared> -->
+    </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <button class="btn active btn-info mr-2">Reporte</button>
-      <button class="btn active btn-primary" (click)="onConsultar()">
-        Consulta
+      <button
+        type="button"
+        tooltip="Agregar"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2"
+        (click)="onClickReport()"
+        [disabled]="form.invalid">
+        Reporte
+      </button>
+
+      <button
+        class="btn btn-primary btn-sm active m-3"
+        (click)="onConsultar()"
+        [disabled]="form.invalid">
+        Consultar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
   </div>

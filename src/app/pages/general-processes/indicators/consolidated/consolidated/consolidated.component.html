@@ -5,12 +5,15 @@
   <div body>
     <div class="row">
       <capture-filter-dictamina
-        [isConsolidated]="true"></capture-filter-dictamina>
+        [isConsolidated]="true"
+        (reportEmite)="generateReport($event)"></capture-filter-dictamina>
     </div>
     <div class="row pt-3 table-content">
       <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
 
-      <app-pagination></app-pagination>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>
