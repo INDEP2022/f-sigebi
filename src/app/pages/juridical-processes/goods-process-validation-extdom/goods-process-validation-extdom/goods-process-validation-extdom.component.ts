@@ -183,6 +183,7 @@ export class GoodsProcessValidationExtdomComponent
   nameTable2: string = '"Bienes a Procesar para Validación ASEG_EXTDOM"';
   nameTable3: string = '"Bienes en Validación ASEG_EXTDOM"';
   nameTable4: string = '"Bienes en Validación ASEG_EXTDOM para Liberar"';
+  newSearch: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -306,6 +307,7 @@ export class GoodsProcessValidationExtdomComponent
       );
     }
     this.prepareForm();
+    this.newSearch = false;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
@@ -834,6 +836,7 @@ export class GoodsProcessValidationExtdomComponent
       this.form.get('expedientNumber').setValue(expedientNumber);
       this.form.get('expedientNumber').updateValueAndValidity();
     }
+    this.newSearch = true;
     this.getNotificationData();
   }
 
@@ -1846,15 +1849,13 @@ export class GoodsProcessValidationExtdomComponent
   }
 
   confirmMessageValidFolio(message: string, folioMessage: string) {
-    this.alertQuestion('question', message, '').then(response => {
+    this.alertQuestion('question', message, folioMessage).then(response => {
       if (response.isConfirmed) {
         if (!this.universalFolio) {
           this.alert(
             'warning',
-            'No Existe Folio de Escaneo' +
-              folioMessage +
-              ', Favor de Ingresar...',
-            ''
+            'Sin Folio de Escaneo',
+            'No Existe Folio de Escaneo, Favor de Generar un Folio de Escaneo'
           );
           return;
         } else {
@@ -2289,8 +2290,8 @@ export class GoodsProcessValidationExtdomComponent
         origin: this.screenKey,
         origin2: this.origin ? this.origin : null,
         P_CVE_PANTALLA: this.screenKey,
-        P_NO_TRAMITE: this.P_NO_TRAMITE,
-        P_GEST_OK: this.P_GEST_OK,
+        P_NO_TRAMITE: this.newSearch == false ? this.P_NO_TRAMITE : null,
+        P_GEST_OK: this.newSearch == false ? this.P_GEST_OK : null,
         P_VOLANTE: this.P_VOLANTE
           ? this.P_VOLANTE
           : this.notificationData.wheelNumber,
@@ -2432,8 +2433,9 @@ export class GoodsProcessValidationExtdomComponent
                 origin: this.screenKey,
                 folio: this.formScan.get('scanningFoli').value,
                 origin2: this.origin ? this.origin : null,
-                P_NO_TRAMITE: this.P_NO_TRAMITE,
-                P_GEST_OK: this.P_GEST_OK,
+                P_NO_TRAMITE:
+                  this.newSearch == false ? this.P_NO_TRAMITE : null,
+                P_GEST_OK: this.newSearch == false ? this.P_GEST_OK : null,
                 P_VOLANTE: this.P_VOLANTE
                   ? this.P_VOLANTE
                   : this.notificationData.wheelNumber,
