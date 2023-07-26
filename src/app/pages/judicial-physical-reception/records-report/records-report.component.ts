@@ -201,28 +201,17 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaHasta').value != null
     ) {
       if (
-        this.form.get('fechaDesde').value >= this.form.get('fechaHasta').value
+        this.form.get('desde').valid &&
+        this.form.get('hasta').valid &&
+        this.form.get('fechaDesde').valid &&
+        this.form.get('fechaHasta').valid
       ) {
-        if (
-          this.form.get('desde').valid &&
-          this.form.get('hasta').valid &&
-          this.form.get('fechaDesde').valid &&
-          this.form.get('fechaHasta').valid
-        ) {
-          return true;
-        } else {
-          this.alert(
-            'warning',
-            'Debe registrar datos validos',
-            'Alguno de los campos que lleno no son válidos'
-          );
-          return false;
-        }
+        return true;
       } else {
         this.alert(
           'warning',
-          'Verificar sus datos',
-          'La fecha inicial no puede ser mayor a la final'
+          'Debe registrar datos validos',
+          'Alguno de los campos que lleno no son válidos'
         );
         return false;
       }
