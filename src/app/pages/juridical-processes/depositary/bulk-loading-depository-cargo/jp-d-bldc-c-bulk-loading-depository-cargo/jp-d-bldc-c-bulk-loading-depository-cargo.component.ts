@@ -399,6 +399,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
     this.dataTable.load(this.paginatedData2);
     this.dataTable.refresh();
     this.loading = false;
+    setTimeout(() => {
+      this.alert('success', 'Proceso Terminado', '');
+    }, 500);
   }
   resetCountsAndVariables() {
     this.V_BAN = false;
@@ -808,6 +811,9 @@ export class JpDBldcCBulkLoadingDepositoryCargoComponent
       if (this.regCorrect > 0 || this.regCorjur > 0 || this.regCoradm > 0) {
         this.disableApplyRecords = true; // Enable button
       }
+      setTimeout(() => {
+        this.alert('success', 'Proceso de Validación Terminado', '');
+      }, 500);
     }
   }
 }

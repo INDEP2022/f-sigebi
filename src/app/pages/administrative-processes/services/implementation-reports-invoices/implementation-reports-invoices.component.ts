@@ -274,11 +274,19 @@ export class ImplementationReportsInvoicesComponent
           let lista = [];
           this.totalItems = response.count;
           for (let i = 0; i < response.data.length; i++) {
-            const autoriza = new Date(response.data[i].fec_autoriza);
-            const formattedfec_autoriza = this.formatDate(autoriza);
+            const autoriza =
+              response.data[i].fec_autoriza != null
+                ? new Date(response.data[i].fec_autoriza)
+                : null;
+            const formattedfec_autoriza =
+              autoriza != null ? this.formatDate(autoriza) : null;
 
-            const Capture = new Date(response.data[i].fec_captura);
-            const formattedfecCapture = this.formatDate(Capture);
+            const Capture =
+              response.data[i].fec_captura != null
+                ? new Date(response.data[i].fec_captura)
+                : null;
+            const formattedfecCapture =
+              Capture != null ? this.formatDate(Capture) : null;
             console.log('prueba: ', response.data[0]);
             let dataForm = {
               cveReport: response.data[i].cve_reporte,
@@ -620,5 +628,10 @@ export class ImplementationReportsInvoicesComponent
   clearform() {
     this.folioScan = null;
     this.invoiceDetailsForm.reset();
+    this.delegationForm.reset();
+    this.proceduralHistoryForm.reset();
+    this.strategy.load([]);
+    this.data.load([]);
+    this.totalValue = 0;
   }
 }
