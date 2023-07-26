@@ -79,6 +79,12 @@ export class TvalTable1Service
     return this.Tvaltablas1Repository.getById4(`${this.route}`, id, params);
   }
 
+  getById10(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<ITvaltable1>> {
+    return this.Tvaltablas1Repository.getById4(`${this.route3}`, id, params);
+  }
   create2(id: string | number, model: ITvaltable1): Observable<ITvaltable1> {
     return this.Tvaltablas1Repository.create2(
       `${this.route1}/tval-table1/${id}`,

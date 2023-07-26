@@ -85,7 +85,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
       next: response => {
         this.totalItems = response.count;
         this.storeHouse = response.data;
-        this.data.load(this.storeHouse);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -109,7 +109,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(storeHouse.id);

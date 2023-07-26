@@ -58,11 +58,16 @@ export class VaultListComponent extends BasePage implements OnInit {
             console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
+
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'idSafe':
                 searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'managerDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -70,9 +75,6 @@ export class VaultListComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -110,7 +112,7 @@ export class VaultListComponent extends BasePage implements OnInit {
           response.data[i].managerDetail = resp.data[0].name;
           if (i == response.data.length - 1) {
             this.vaults = response.data;
-            this.data.load(this.vaults);
+            this.data.load(response.data);
             this.data.refresh();
             this.loading = false;
           }
@@ -118,7 +120,7 @@ export class VaultListComponent extends BasePage implements OnInit {
         error: erro => {
           if (i == response.data.length - 1) {
             this.vaults = response.data;
-            this.data.load(this.vaults);
+            this.data.load(response.data);
             this.data.refresh();
             this.loading = false;
           }
@@ -150,7 +152,7 @@ export class VaultListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(vaults.idSafe);

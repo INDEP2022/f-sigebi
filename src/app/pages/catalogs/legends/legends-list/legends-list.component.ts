@@ -78,6 +78,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDeductives();
         }
       });
@@ -96,7 +97,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
       next: response => {
         this.legends = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.legends);
+        this.data.load(response.data);
         this.loading = false;
       },
       error: error => (this.loading = false),
@@ -118,7 +119,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         console.log(legend);

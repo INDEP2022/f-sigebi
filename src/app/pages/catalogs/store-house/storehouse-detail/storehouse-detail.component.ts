@@ -24,7 +24,7 @@ import { StorehouseService } from '../../../../core/services/catalogs/storehouse
 export class StorehouseDetailComponent extends BasePage implements OnInit {
   storeHouseForm: ModelForm<IStorehouse>;
   storeHouse: any;
-  title: string = 'Catálogo de Bodega';
+  title: string = 'Bodega';
   edit: boolean = false;
   states = new DefaultSelect();
   municipalities = new DefaultSelect();
@@ -54,15 +54,27 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     this.storeHouseForm = this.fb.group({
       id: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       manager: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(80),
+        ],
       ],
       description: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(80),
+        ],
       ],
       municipalityCodeID: [null],
       municipality: [
@@ -76,9 +88,13 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
       ],
       ubication: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(80),
+        ],
       ],
-      idEntity: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      idEntity: [null, [Validators.maxLength(60)]],
     });
     if (this.storeHouse != null) {
       console.log(this.storeHouse);
@@ -108,9 +124,19 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.storeHouseForm.controls['manager'].value.trim() === '' ||
+      this.storeHouseForm.controls['description'].value.trim() === '' ||
+      this.storeHouseForm.controls['ubication'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.storehouseService.create(this.storeHouseForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
+      next: data => {
+        this.handleSuccess();
+      },
       error: error => (this.loading = false),
     });
   }
