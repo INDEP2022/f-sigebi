@@ -6,5 +6,65 @@
   </div>
   <div body>
     <app-receipt-table-goods></app-receipt-table-goods>
+    <div class="row" style="row-gap: 10px">
+      <div class="col-md-3 col-sm-4">
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          (click)="showTableByTiporecibo('RECIBO')">
+          Recibos({{ recibos }})
+        </button>
+      </div>
+      <div class="col-md-3 col-sm-4">
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          (click)="showTableByTiporecibo('RESGUARDO')">
+          Resguardo({{ resguardo }})
+        </button>
+      </div>
+      <div class="col-md-3 col-sm-4">
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          (click)="showTableByTiporecibo('ALMACEN')">
+          Almacen({{ almacen }})
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-4">
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          (click)="showTableByTiporecibo('REPROGRAMACION')">
+          Programación({{ programacion }})
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-4">
+        <button
+          class="btn btn-primary btn-sm active"
+          type="submit"
+          size="small"
+          (click)="showTableByTiporecibo('CANCELACION')">
+          Cancelación({{ cancelacion }})
+        </button>
+      </div>
+    </div>
+    <div class="row" *ngIf="typeReceiptSelected">
+      <div *ngIf="isFirstTable()">
+        <app-receipt-table-programings></app-receipt-table-programings>
+      </div>
+      <div *ngIf="!isFirstTable()">
+        <app-receipt-table-goods
+          [estatus_bien_programacion]="
+            estatus_bien_programacion
+          "></app-receipt-table-goods>
+      </div>
+    </div>
   </div>
 </app-card>

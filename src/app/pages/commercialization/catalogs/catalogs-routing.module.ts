@@ -88,7 +88,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./brands-sub-brands/brands-sub-brands.module'))
         .BrandsSubBrandsModule,
-    data: { title: 'Marcas y Sub Marcas' },
+    data: { title: 'Marcas y SubMarcas', screen: 'FCOMER069' },
   },
   {
     path: 'models',

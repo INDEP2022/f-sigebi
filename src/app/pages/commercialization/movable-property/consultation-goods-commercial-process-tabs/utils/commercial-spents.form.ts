@@ -31,6 +31,7 @@ export class CommercialSpentForm {
     Validators.maxLength(12),
   ]);
   concept = new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]);
+  descConcept = new FormControl(null);
   invoice = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
     Validators.maxLength(10),
@@ -40,4 +41,5 @@ export class CommercialSpentForm {
     Validators.maxLength(20),
   ]);
   mandate = new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]);
+  descMandate = new FormControl(null);
 }

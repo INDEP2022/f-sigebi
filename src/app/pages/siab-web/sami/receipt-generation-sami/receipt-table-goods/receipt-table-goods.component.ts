@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
@@ -16,7 +22,7 @@ export class ReceiptTableGoodsComponent
   extends BasePageWidhtDinamicFiltersExtra<IReceiptItem>
   implements OnInit
 {
-  @Input() tipoProgramacion: string = null;
+  @Input() estatus_bien_programacion: string = null;
   pageSelecteds: number[] = [];
   previousSelecteds: IReceiptItem[] = [];
   selectedGooods: IReceiptItem[] = [];
@@ -43,6 +49,17 @@ export class ReceiptTableGoodsComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (
+      changes['estatus_bien_programacion'] &&
+      changes['estatus_bien_programacion'].currentValue
+    ) {
+      setTimeout(() => {
+        this.getData();
+      }, 500);
+    }
   }
 
   override extraOperationsGetData() {
@@ -158,6 +175,10 @@ export class ReceiptTableGoodsComponent
     let newColumnFilters = this.columnFilters;
     if (this.folio) {
       newColumnFilters['filter.folio'] = '$eq:' + this.folio;
+    }
+    if (this.estatus_bien_programacion) {
+      newColumnFilters['filter.estatus_bien_programacion'] =
+        '$eq:' + this.estatus_bien_programacion;
     }
     return {
       ...this.params.getValue(),
