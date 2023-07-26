@@ -1,4 +1,4 @@
-import { CheckboxElementComponent } from "src/app/shared/components/checkbox-element-smarttable/checkbox-element";
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export let goodCheck: any[] = [];
 
@@ -79,13 +79,12 @@ export const DETAILS_OI_COLUMNS = {
           console.log(goodCheck);
         } else {
           goodCheck = goodCheck.filter(valor => valor.row.id != data.row.id);
-          console.log(goodCheck)
+          console.log(goodCheck);
         }
       });
     },
     sort: false,
   },
-  
 };
 
 export function clearGoodCheck() {

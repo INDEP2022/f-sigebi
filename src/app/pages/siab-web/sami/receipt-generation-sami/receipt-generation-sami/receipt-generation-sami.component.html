@@ -204,27 +204,32 @@
       <td colspan="5" align="center">
         <button
           class="btn btn-primary active btn-sm m-2"
-          (click)="assignReceiptOne(0)">
+          (click)="assignReceiptOne(0)"
+          [disabled]="!indepForm.valid">
           Asignar Recibo
         </button>
         <button
           class="btn btn-primary active btn-sm m-2"
-          (click)="assignReceiptOne(1)">
+          (click)="assignReceiptOne(1)"
+          [disabled]="!indepForm.valid">
           Resguardo
         </button>
         <button
           class="btn btn-primary active btn-sm m-2"
-          (click)="assignReceiptOne(2)">
+          (click)="assignReceiptOne(2)"
+          [disabled]="!indepForm.valid">
           Almacén
         </button>
         <button
           class="btn btn-primary active btn-sm m-2"
-          (click)="reprogrammingOne()">
+          (click)="reprogrammingOne()"
+          [disabled]="!indepForm.valid">
           Reprogramaci&oacute;n
         </button>
         <button
           class="btn btn-primary active btn-sm m-2"
-          (click)="cancellationOne()">
+          (click)="cancellationOne()"
+          [disabled]="!indepForm.valid">
           Cancelaci&oacute;n
         </button>
       </td>
@@ -273,6 +278,7 @@
         </div>
       </form>
     </div>
-    <app-receipt-table-goods></app-receipt-table-goods>
+    <hr />
+    <app-receipt-tables [folio]="folio" [count]="count"></app-receipt-tables>
   </div>
 </app-card>

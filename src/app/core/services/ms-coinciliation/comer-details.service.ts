@@ -12,8 +12,8 @@ export class ComerDetailsService extends HttpService {
     this.microservice = 'conciliation';
   }
 
-  getComerDetails(params?:string){
-    return this.get(`${this.route}`,params)
+  getComerDetails(params?: string) {
+    return this.get(`${this.route}`, params);
   }
 
   faCoinciliationGood(body: any) {
