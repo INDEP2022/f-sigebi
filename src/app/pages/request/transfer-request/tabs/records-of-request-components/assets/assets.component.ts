@@ -1099,7 +1099,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.onLoadToast(
             'success',
             'Asignación exitosa',
-            `Se asigno un domicilio a todos los bienes`
+            `Se asignó un domicilio a todos los bienes`
           );
           this.loading = true;
           this.closeCreateGoodWIndows();
