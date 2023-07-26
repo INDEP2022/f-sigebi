@@ -244,6 +244,7 @@ export class RegistrationHelper extends BasePage {
         let sinCantidad: boolean = false;
         let sinDestinoT: boolean = false;
         let sinUnidadM: boolean = false;
+        let sinUnidTrans: boolean = false;
         let sinDescripcionT: boolean = false;
         let codigoFraccion: any = null;
         let faltaClasificacion: boolean = false;
@@ -284,6 +285,14 @@ export class RegistrationHelper extends BasePage {
               'warning',
               `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
               'Todos los bienes deben tener una cantidad'
+            );
+            break;
+          } else if (good.unitMeasure == null) {
+            sinUnidTrans = true;
+            this.message(
+              'warning',
+              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+              'Todos los bienes deben tener una Unidad de Medidad Transferente'
             );
             break;
           } else if (good.ligieUnit == null) {
@@ -717,7 +726,8 @@ export class RegistrationHelper extends BasePage {
           sinTipoRelevante === false &&
           sinCantidad === false &&
           sinDestinoT === false &&
-          sinUnidadM === false
+          sinUnidadM === false &&
+          sinUnidTrans === false
         ) {
           allOk = true;
         }
