@@ -42,6 +42,7 @@ export class RegistrationOfInterestModalComponent
   id: number = 0;
   tiie: ITiieV1;
   selectUser = new DefaultSelect<IUser>();
+  editUser: any;
   tiiesList: ITiieV1[] = [];
   @Input() registration: RegistrationOfInterestComponent;
   @Output() onConfirm = new EventEmitter<any>();
@@ -69,8 +70,8 @@ export class RegistrationOfInterestModalComponent
         null,
         [
           Validators.pattern(NUM_POSITIVE),
-          Validators.min(1000),
-          Validators.max(999999),
+          Validators.min(1),
+          Validators.max(99),
         ],
       ],
       tiieMonth: [null, [Validators.pattern(NUM_POSITIVE), Validators.max(99)]],
@@ -84,17 +85,19 @@ export class RegistrationOfInterestModalComponent
         null,
         [
           Validators.pattern(NUM_POSITIVE),
-          Validators.min(1000),
-          Validators.max(999999),
+          Validators.min(1),
+          Validators.max(99),
         ],
       ],
-      user: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
-      ],
+      user: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.provider !== undefined) {
       this.edit = true;
+      console.log(this.provider);
+      this.provider.tiieDays = Math.trunc(this.provider.tiieDays);
+      this.provider.tiieAverage = Math.trunc(this.provider.tiieAverage);
+      //Set select value
+      this.searchUser({ text: this.provider.user });
       this.providerForm.patchValue(this.provider);
     } else {
       this.edit = false;
@@ -135,7 +138,9 @@ export class RegistrationOfInterestModalComponent
   //   const searchUser = this.modalService.show(SearchUserFormComponent, config);
   // }
 
-  searchUser() {
+  searchUser(event: any) {
+    console.log('search' + JSON.stringify(event));
+    this.params.getValue()['search'] = event.text;
     this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
       next: data => {
         data.data.map(data => {
@@ -155,7 +160,21 @@ export class RegistrationOfInterestModalComponent
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Ya existe mes y año tiie!!', '');
+        let errorFixed = '';
+        if (
+          error.error.message.includes(
+            'duplicate key value violates unique constraint'
+          )
+        ) {
+          errorFixed = 'Mes y año tiie duplicado';
+        } else {
+          if (Array.isArray(error.error.message)) {
+            errorFixed = error.error.message[0];
+          } else {
+            errorFixed = error.error.message;
+          }
+        }
+        this.onLoadToast('error', errorFixed, '');
         return;
       },
     });
@@ -173,8 +192,22 @@ export class RegistrationOfInterestModalComponent
           .subscribe({
             next: data => this.handleSuccess(),
             error: error => {
-              this.onLoadToast('error', 'Mes y año tiie duplicado', '');
               this.loading = false;
+              let errorFixed = '';
+              if (
+                error.error.message.includes(
+                  'duplicate key value violates unique constraint'
+                )
+              ) {
+                errorFixed = 'Mes y año tiie duplicado';
+              } else {
+                if (Array.isArray(error.error.message)) {
+                  errorFixed = error.error.message[0];
+                } else {
+                  errorFixed = error.error.message;
+                }
+              }
+              this.onLoadToast('error', errorFixed, '');
             },
           });
       }
