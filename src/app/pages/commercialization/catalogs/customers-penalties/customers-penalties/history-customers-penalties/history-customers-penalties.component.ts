@@ -17,7 +17,7 @@ import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/cli
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CustomersPenaltiesExportHistoricComponent } from '../../customer-penalties-export-historic/customer-penalties-export-historic.component';
 import { COLUMNS2 } from '../columns';
-import { CustomersExportHistoryCustomersPenaltiesListComponent } from './customers-export-HistoryCustomersPenalties-list/customers-export-HistoryCustomersPenalties-list.component';
+import { CustomersExportHistoryCustomersPenaltiesListComponent } from './customers-export-HistoryCustomersPenalties-list/cus-exp-HisCusPen.component';
 
 @Component({
   selector: 'app-history-customers-penalties',

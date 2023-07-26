@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ElectronicFirmEndpoint } from 'src/app/common/constants/endpoints/ms-electronicfirm-endpoint';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IComerDocumentsXML } from '../../models/ms-electronicfirm/signatories-model';
 import { ISSF3FirmaEelecDocs } from '../../models/ms-electronicfirm/ssf3-signature-elec-docs-model';
 
 @Injectable({
@@ -29,6 +30,15 @@ export class Ssf3SignatureElecDocsService extends HttpService {
     return this.delete<IListResponse<ISSF3FirmaEelecDocs>>(
       ElectronicFirmEndpoint.SSF3FirmaEelecDocs,
       body
+    );
+  }
+
+  getAllComerDocumentsXml(
+    params: _Params
+  ): Observable<IListResponse<IComerDocumentsXML>> {
+    return this.get<IListResponse<IComerDocumentsXML>>(
+      ElectronicFirmEndpoint.ComerDocumentsXml,
+      params
     );
   }
 }
