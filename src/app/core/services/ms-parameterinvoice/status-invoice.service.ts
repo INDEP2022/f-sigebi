@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Params } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ParameterInvoiceEndpoint } from 'src/app/common/constants/endpoints/parameterinvoice-endpoint';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 @Injectable({
@@ -14,7 +13,7 @@ export class StatusInvoiceService extends HttpService {
     this.microservice = ParameterInvoiceEndpoint.BasePath;
   }
 
-  getAll(params: Params | string): Observable<IListResponse<any>> {
+  getAll(params: _Params | string): Observable<IListResponse<any>> {
     return this.get(ParameterInvoiceEndpoint.StatusInvoice, params);
   }
 
@@ -27,5 +26,9 @@ export class StatusInvoiceService extends HttpService {
       `${ParameterInvoiceEndpoint.StatusInvoice}/${data.id}`,
       data
     );
+  }
+
+  remove(id: string) {
+    return this.delete(`${ParameterInvoiceEndpoint.StatusInvoice}/${id}`);
   }
 }

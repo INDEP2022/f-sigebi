@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ParameterInvoiceService } from 'src/app/core/services/ms-parameterinvoice/parameterinvoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-rebilling-causes-modal',
@@ -32,10 +33,13 @@ export class RebillingCausesModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      description: [null, Validators.required],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       rebill: ['R', Validators.required],
       apply: [null, Validators.required],
-      comments: [null],
+      comments: [null, Validators.pattern(STRING_PATTERN)],
     });
     if (this.allotment != null) {
       this.edit = true;
