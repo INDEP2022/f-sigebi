@@ -106,27 +106,25 @@ export class MassRulingComponent
 
   public form = new FormGroup({
     /**@description no_of_dicta */
-    id: new FormControl('8047'),
+    id: new FormControl(''),
     /**@description clave_oficio_armada */
-    passOfficeArmy: new FormControl('DCO/DECR/CRH/ATJRH/00470/2008', [
+    passOfficeArmy: new FormControl('', [
       Validators.pattern(KEYGENERATION_PATTERN),
     ]),
     /**@description no_expediente */
-    expedientNumber: new FormControl('383804'),
+    expedientNumber: new FormControl(''),
     /**@description tipo_dictaminacion */
-    typeDict: new FormControl('DESTRUCCION'),
+    typeDict: new FormControl(''),
     /**@description estatus_dictaminacion */
-    statusDict: new FormControl('DICTAMINADO', [
-      Validators.pattern(STRING_PATTERN),
-    ]),
+    statusDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
     /**@description fec_dictaminacion */
-    dictDate: new FormControl('2008-05-09'),
+    dictDate: new FormControl(''),
     /**@description usuario_dictamina */
-    userDict: new FormControl('FOSORIO', [Validators.pattern(STRING_PATTERN)]),
+    userDict: new FormControl('', [Validators.pattern(STRING_PATTERN)]),
     /**@description fecha_instructora */
-    instructorDate: new FormControl('2008-04-25'),
+    instructorDate: new FormControl(''),
     /**@description no_volante */
-    wheelNumber: new FormControl('689709'),
+    wheelNumber: new FormControl(''),
     /**@description nn */
     delete: new FormControl({ value: false, disabled: false }),
   });
@@ -158,7 +156,6 @@ export class MassRulingComponent
   ngOnInit(): void {
     this.form.get('wheelNumber').valueChanges.subscribe(x => {
       this.getVolante();
-      // console.log('llego aqui');
     });
     this.params.pipe(skip(1)).subscribe(params => {
       this.loadDataForDataTable(params);
@@ -290,12 +287,9 @@ export class MassRulingComponent
 
       body['identifier'] = this.formCargaMasiva.value.identificadorCargaMasiva;
       this.btnsEnabled.btnGoodDictation = true;
-      // console.log(body);
     }
-    console.log(body);
     this.massiveDictationService.deleteGoodOpinion(body).subscribe({
       next: data => {
-        console.log(data);
         this.onLoadToast('success', 'Proceso Terminado');
         this.dataTable = [];
         this.totalItems = 0;
@@ -308,7 +302,6 @@ export class MassRulingComponent
         // this.file = null;
       },
       error: err => {
-        console.log(err);
         const message = err.error.message || 'Error al eliminar los bienes';
         this.onLoadToast('warning', message);
         this.btnsEnabled.btnGoodDictation = false;
@@ -342,7 +335,6 @@ export class MassRulingComponent
 
     try {
       const count = await this.CountDictationGoodFile(armyOfficeKey);
-      console.log(this.CountDictationGoodFile(armyOfficeKey));
       const responseQuestion = await this.alertQuestion(
         'info',
         'Información',
@@ -417,7 +409,6 @@ export class MassRulingComponent
     const params = `?filter.id=${identificador}&page=${listParams.page}&limit=${listParams.limit}`;
     this.massiveGoodService.getAllWithFilters(params).subscribe({
       next: data => {
-        //console.log(data.data);
         this.dataTable = data.data.map(item => {
           return {
             goodNumber: (item.goodNumber as any)?.id,
@@ -442,7 +433,6 @@ export class MassRulingComponent
   dataFile: { goodNumber: number; fileNumber: number }[];
 
   async onClickLoadFile(event: any) {
-    console.log(this.formCargaMasiva);
     this.dataTableErrors = [];
     this.dataTable = [];
     this.totalItemsErrors = 0;
@@ -457,13 +447,7 @@ export class MassRulingComponent
       event.target.value = null;
       return;
     }
-    /*
-    setTimeout(() => {
-      console.log(event);
-    }, 10000);*/
     const file = event.target.files[0];
-    console.log('heeeeyy');
-    console.log(event.target.file);
 
     const data = await getDataFromExcel(file);
     if (!this.validateExcel(data)) {
@@ -569,13 +553,11 @@ export class MassRulingComponent
     if (!this.validateExcel(data)) {
       return;
     }
-    console.log({ data });
   }
 
   isDisableCreateDictation = false;
   async onClickCreatedDictation() {
     let vNO_OF_DICTA;
-    console.log('this.form', this.form);
     if (this.form.invalid) {
       this.alert('error', 'Se debe ingresar un dictamen', '');
       return;
@@ -621,7 +603,6 @@ export class MassRulingComponent
 
     this.dictationService.findByIds(body).subscribe({
       next: data => {
-        console.log(data.id);
         const dictation = data;
         return dictation;
       },
@@ -705,7 +686,6 @@ export class MassRulingComponent
         throw error;
       }
       this.alert('warning', 'info', error?.message);
-      // console.log({ error });
       throw error;
     }
 
@@ -799,7 +779,6 @@ export class MassRulingComponent
     const notification = await firstValueFrom(
       this.notificationsService.getAllFilter(queryParams)
     );
-    console.log({ notification });
     return notification.data[0];
   }
 
@@ -811,7 +790,6 @@ export class MassRulingComponent
     const data: { data: any[] } = await firstValueFrom(
       this.dictationService.postFindGoodDictGood1(body)
     );
-    // console.log({ findGoodAndDictXGood1: data });
     if (data?.data.length > 1) {
       throw new Error('Se tiene varios identificadores en el Dictamen.');
     }
@@ -861,7 +839,6 @@ export class MassRulingComponent
     id && (params['filter.id'] = id);
     expedientNumber && (params['filter.expedientNumber'] = expedientNumber);
     wheelNumber && (params['filter.wheelNumber'] = wheelNumber);
-    console.log(params);
     return params;
   }
 
@@ -890,8 +867,6 @@ export class MassRulingComponent
       path: 'dictation',
     };
 
-    console.log({ context });
-
     const modalRef = this.modalService.show(HasMoreResultsComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -911,8 +886,6 @@ export class MassRulingComponent
       TIPO_DIC: this.form.controls['typeDict'].value,
       TIPO_VOL: this.wheelType,
     };
-
-    console.log(params);
 
     this.siabService
       .fetchReport('RGENREPDICTAMASREL', params)
