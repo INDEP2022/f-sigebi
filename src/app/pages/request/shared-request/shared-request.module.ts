@@ -71,10 +71,10 @@ import { ResultVisitsComponent } from './result-visits/result-visits.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
 import { SearchRequestSimilarGoodsComponent } from './search-request-similar-goods/search-request-similar-goods.component';
 import { SearchRequestsComponent } from './search-requests/search-requests.component';
+import { ModifyDatesModalComponent } from './select-good-eye-visit/modify-dates-modal/modify-dates-modal.component';
+import { SelectGoodEyeVisitComponent } from './select-good-eye-visit/select-good-eye-visit.component';
 import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goods-button.component';
-import { ModifyDatesModalComponent } from './select-goods/modify-dates-modal/modify-dates-modal.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
-import { SelectGoodEyeVisitComponent } from './select-goods/select-good-eye-visit/select-good-eye-visit.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
 import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
@@ -88,6 +88,7 @@ import { SignatureTypeComponent } from './signature-type/signature-type.componen
 import { UploadElectronicSignatureComponent } from './upload-electronic-signature/upload-electronic-signature.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { ValidateEyeVisitComponent } from './validate-eye-visit/validate-eye-visit.component';
 import { ConfirmValidationComponent } from './validate-visit-result/confirm-validation/confirm-validation.component';
 import { ValidateVisitResultComponent } from './validate-visit-result/validate-visit-result.component';
 import { ViewExpedientComponent } from './validate-visit-result/view-expedient/view-expedient.component';
@@ -192,6 +193,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ReadInfoVehicleComponent,
     SelectGoodEyeVisitComponent,
     ModifyDatesModalComponent,
+    ValidateEyeVisitComponent,
   ],
   imports: [
     CommonModule,
@@ -247,6 +249,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GoodsNotTransferredComponent,
     ModalNotTransferredComponent,
     SelectGoodEyeVisitComponent,
+    ValidateEyeVisitComponent,
   ],
 })
 export class SharedRequestModule {}

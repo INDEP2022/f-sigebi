@@ -15,6 +15,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 export class ClientPenaltyService extends HttpService {
   private readonly route: string = ClientPenaltyEndpoints.ComerPenalty;
   private readonly route2: string = ClientPenaltyEndpoints.ComerPenaltyHis;
+  private readonly route3: string = `comer-penalty?filter.clientId=$eq`;
   constructor(
     private clientPenaltyRepository: Repository<ICustomersPenalties>
   ) {
@@ -42,13 +43,22 @@ export class ClientPenaltyService extends HttpService {
     return this.get(route, params);
   }
 
+  getByIdComerPenaltyHish(
+    id: string | number,
+    params?: string
+  ): Observable<IListResponse<IHistoryCustomersPenalties>> {
+    const route = `${this.route3}:${id}`;
+    return this.get(route, params);
+  }
+
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
     return this.clientPenaltyRepository.create(this.route, model);
   }
 
-  updateCustomers(id: string | number, customersPenaltie: ICustomersPenalties) {
-    const route = `${this.route}/${id}`;
-    return this.put(route, customersPenaltie);
+  //ACTUALIZAR
+  updateCustomers(customersPenalties: IHistoryCustomersPenalties) {
+    console.log(customersPenalties);
+    return this.put(this.route2, customersPenalties);
   }
 
   remove(id: string | number): Observable<Object> {

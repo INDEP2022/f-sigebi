@@ -149,7 +149,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     });
   }
 
+  //Modal para crear o editar clientes penalizados
   openForm(customersPenalties?: ICustomersPenalties) {
+    console.log(customersPenalties);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       customersPenalties,
@@ -160,10 +162,10 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
   }
 
-  all(customersPenalties?: ICustomersPenalties) {
+  //Abrir modal de todos los penalizados
+  openAllCustomersPenalties() {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      customersPenalties,
       callback: (next: boolean) => {
         if (next) this.getDeductives();
       },

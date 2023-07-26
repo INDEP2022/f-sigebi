@@ -183,6 +183,7 @@ export class GoodsProcessValidationExtdomComponent
   nameTable2: string = '"Bienes a Procesar para Validación ASEG_EXTDOM"';
   nameTable3: string = '"Bienes en Validación ASEG_EXTDOM"';
   nameTable4: string = '"Bienes en Validación ASEG_EXTDOM para Liberar"';
+  newSearch: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -306,6 +307,7 @@ export class GoodsProcessValidationExtdomComponent
       );
     }
     this.prepareForm();
+    this.newSearch = false;
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params: any) => {
@@ -834,6 +836,7 @@ export class GoodsProcessValidationExtdomComponent
       this.form.get('expedientNumber').setValue(expedientNumber);
       this.form.get('expedientNumber').updateValueAndValidity();
     }
+    this.newSearch = true;
     this.getNotificationData();
   }
 
@@ -1834,27 +1837,25 @@ export class GoodsProcessValidationExtdomComponent
     } else if (this.executionType == this.registerType) {
       this.confirmMessageValidFolio(
         // 'Se identificó que existen nuevos bienes, sólo se aplicará el cambio de Proceso a ASEG_EXTDOM. ¿Quiere continuar con el proceso?',
-        'Existen nuevos bienes, aplicar el cambio de proceso a ASEG_EXTDOM',
-        '¿Desea continuar con el proceso?'
+        'Existen Nuevos Bienes',
+        'Aplicar el Cambio de Proceso a ASEG_EXTDOM. ¿Desea Continuar con el Proceso?'
       );
     } else if (this.executionType == this.registerExistType) {
       this.confirmMessageValidFolio(
-        'Se identificó que existen bienes para Liberar, se aplicara el cambio. ¿Quiere continuar con el proceso?',
-        'para Liberación'
+        'Se Identificó que Existen Bienes para Liberar',
+        'Se Aplicará el Cambio para Liberación. ¿Quiere Continuar con el Proceso?'
       );
     }
   }
 
   confirmMessageValidFolio(message: string, folioMessage: string) {
-    this.alertQuestion('question', message, '').then(response => {
+    this.alertQuestion('question', message, folioMessage).then(response => {
       if (response.isConfirmed) {
         if (!this.universalFolio) {
           this.alert(
             'warning',
-            'No Existe Folio de Escaneo' +
-              folioMessage +
-              ', Favor de Ingresar...',
-            ''
+            'Sin Folio de Escaneo',
+            'No Existe Folio de Escaneo, Favor de Generar un Folio de Escaneo'
           );
           return;
         } else {
@@ -2289,8 +2290,8 @@ export class GoodsProcessValidationExtdomComponent
         origin: this.screenKey,
         origin2: this.origin ? this.origin : null,
         P_CVE_PANTALLA: this.screenKey,
-        P_NO_TRAMITE: this.P_NO_TRAMITE,
-        P_GEST_OK: this.P_GEST_OK,
+        P_NO_TRAMITE: this.newSearch == false ? this.P_NO_TRAMITE : null,
+        P_GEST_OK: this.newSearch == false ? this.P_GEST_OK : null,
         P_VOLANTE: this.P_VOLANTE
           ? this.P_VOLANTE
           : this.notificationData.wheelNumber,
@@ -2432,8 +2433,9 @@ export class GoodsProcessValidationExtdomComponent
                 origin: this.screenKey,
                 folio: this.formScan.get('scanningFoli').value,
                 origin2: this.origin ? this.origin : null,
-                P_NO_TRAMITE: this.P_NO_TRAMITE,
-                P_GEST_OK: this.P_GEST_OK,
+                P_NO_TRAMITE:
+                  this.newSearch == false ? this.P_NO_TRAMITE : null,
+                P_GEST_OK: this.newSearch == false ? this.P_GEST_OK : null,
                 P_VOLANTE: this.P_VOLANTE
                   ? this.P_VOLANTE
                   : this.notificationData.wheelNumber,
