@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, tap } from 'rxjs';
@@ -75,7 +75,8 @@ export class ImplementationReportsInvoicesComponent
   flagsol: boolean = false;
   totalValue: number = 0;
   folioScan: number;
-  contador: number;
+  contador: number = 0;
+  boolScan: boolean = true;
   constructor(
     private fb: FormBuilder,
     private strategyProcessService: StrategyProcessService,
@@ -87,9 +88,17 @@ export class ImplementationReportsInvoicesComponent
     private modalService: BsModalService,
     private router: Router,
     private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
     private msInvoiceService: MsInvoiceService
   ) {
     super();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.folioScan = params['folioScan']
+          ? Number(params['folioScan'])
+          : null;
+      });
     this.settings.columns = IMPLEMENTATION_COLUMNS;
     this.settings.rowClassFunction = (row: { data: { status: any } }) =>
       row.data.status != null
@@ -108,6 +117,8 @@ export class ImplementationReportsInvoicesComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.formFolio();
+    console.log('Pruebaaaa: ', this.folioScan);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -366,40 +377,7 @@ export class ImplementationReportsInvoicesComponent
       this.box = [];
     }
   }
-  /*
-    Application() {
-      console.log('Data 2 ', this.data2);
-      for (let i = 0; i < this.data2.length; i++) {
-        if (this.data2[i].cveReport != null) {
-          this.report = this.data2[i].no_report;
-          this.detailProceeDelRecService.getReport(this.report).subscribe({
-            next: response => {
-              this.expediente = response.data[0].max;
-              console.log("expediente ", this.expediente);
-            },
-          });
-          this.expediente = this.expediente;
-          this.t_reportes = this.data2[i].cveReport + ' ' + this.data2[i].quantity;
-        }
-        this.documentsDictumStatetMService.getSeqDocument().subscribe({
-          next: response => {
-            this.lnu_folio = response.data;
-          },
-        });
-        this.factura = this.invoiceDetailsForm.get('invoice').value;
-        const item = {
-          fileNumber: this.expediente,
-          reports: 'FACTURA ' + this.factura + '  REPORTES: ' + this.t_reportes,
-          fractureId: this.factura,
-          delegationNumber: this.data2[i].delegation,
-          subDelegationNumber: this.data2[i].subdelegation,
-          departamentNumber: this.data2[i].zona,
-        };
-        console.log("PRUEBA:  -> ", item)
-        //this.documentsTypeService.postDocument().subscribe({});
-      }
-    }
-  */
+
   ObtenerFolio() {
     this.documentsDictumStatetMService.getSeqDocument().subscribe({
       next: response => {
@@ -447,11 +425,12 @@ export class ImplementationReportsInvoicesComponent
                 });
                 this.folioScan = response.message;
                 console.log('folio ', this.folioScan);
+
+                this.proccesReport();
               },
             });
           } catch (error) {
             console.error('Error al obtener el reporte:', error);
-            this.bool = true;
           }
         } else {
           this.alert(
@@ -462,10 +441,6 @@ export class ImplementationReportsInvoicesComponent
           return;
         }
       }
-    }
-    console.log('BOOL: ', this.bool);
-    if (!this.bool) {
-      this.proccesReport();
     }
   }
 
@@ -510,17 +485,59 @@ export class ImplementationReportsInvoicesComponent
     }
   }
 
+  proccesReportScan() {
+    if (this.folioScan) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          //PRINTIMGDOC
+          .fetchReport('blank', { pn_folio: this.folioScan })
+          .pipe(
+            tap(response => {
+              this.alert(
+                'success',
+                'Generado correctamente',
+                'Generado correctamente con folio: ' + this.folioScan
+              );
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe tener el folio en pantalla para poder reimprimir'
+      );
+    }
+  }
+
   goToScan() {
     localStorage.setItem('numberExpedient', this.folioScan.toString());
     this.router.navigate([`/pages/general-processes/scan-documents`], {
       queryParams: {
-        origin:
-          '/pages/administrative-processes/services/implementation-reports-invoices',
+        origin: 'FREPIMPFAC_0001',
         folio: this.folioScan,
       },
     });
   }
   openScannerPage() {
+    this.boolScan = false;
     if (this.invoiceDetailsForm.get('scanFolio').value) {
       this.alertQuestion(
         'info',
@@ -583,9 +600,7 @@ export class ImplementationReportsInvoicesComponent
           departamentNumber: datos.departamentNumber,
         };
         console.log('Prueba: ', item);
-        this.invoiceDetailsForm.patchValue({
-          scanFolio: this.lnu_folio,
-        });
+        this.formFolio();
         this.documentsDictumStatetMService.postPupFol(item).subscribe({
           next: response => {
             console.log('Succefull2: ', response);
@@ -594,5 +609,16 @@ export class ImplementationReportsInvoicesComponent
         });
       },
     });
+  }
+
+  formFolio() {
+    this.invoiceDetailsForm.patchValue({
+      scanFolio: this.folioScan,
+    });
+  }
+
+  clearform() {
+    this.folioScan = null;
+    this.invoiceDetailsForm.reset();
   }
 }

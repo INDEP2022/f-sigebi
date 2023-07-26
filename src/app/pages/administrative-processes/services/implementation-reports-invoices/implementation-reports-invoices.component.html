@@ -3,6 +3,11 @@
     <h5 class="modal-title">Datos de la Factura</h5>
   </div>
   <div body>
+    <div style="text-align: right">
+      <button class="btn btn-danger btn-sm active mr-3" (click)="clearform()">
+        Limpiar <i class="fas fa-eraser"> </i>
+      </button>
+    </div>
     <form [formGroup]="invoiceDetailsForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
@@ -115,10 +120,11 @@
                 class="btn btn-info active btn-sm"
                 [disabled]="
                   billId === true ||
+                  folioScan === null ||
                   (billId === null && estado === false) ||
                   estado === null
                 "
-                (click)="goToScan()">
+                (click)="openScannerPage()">
                 Escanear <i class="bx bx-file bx-sm float-icon"></i>
               </button>
             </div>
@@ -140,7 +146,7 @@
               <button
                 type="button"
                 class="btn btn-primary active btn-sm"
-                [disabled]="lnu_folio === null"
+                [disabled]="folioScan === null"
                 (click)="proccesReport()">
                 Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
               </button>
@@ -150,7 +156,8 @@
             <div class="justify-content-center margin-input">
               <button
                 class="btn btn-primary btn-sm active mr-3"
-                [disabled]="lnu_folio === null">
+                [disabled]="folioScan === null"
+                (click)="proccesReportScan()">
                 Ver <i class="fa fa-eye" aria-hidden="true"></i>
               </button>
             </div>
