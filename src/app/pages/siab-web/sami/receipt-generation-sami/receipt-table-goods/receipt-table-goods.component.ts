@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
+import { takeUntil } from 'rxjs';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { ReceiptGenerationDataService } from '../services/receipt-generation-data.service';
@@ -22,10 +23,12 @@ export class ReceiptTableGoodsComponent
   extends BasePageWidhtDinamicFiltersExtra<IReceiptItem>
   implements OnInit
 {
+  @Input() folio: string; // = 'R-METROPOLITANA-SAT-24-OS';
   @Input() estatus_bien_programacion: string = null;
+  @Input() override haveInitialCharge = false;
   pageSelecteds: number[] = [];
   previousSelecteds: IReceiptItem[] = [];
-  selectedGooods: IReceiptItem[] = [];
+
   pageSizeOptions = [5, 10, 20, 25];
   limit: FormControl = new FormControl(5);
   @ViewChild('table') table: Ng2SmartTableComponent;
@@ -49,21 +52,43 @@ export class ReceiptTableGoodsComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+    this.dataService.refreshAll.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
+    });
+  }
+
+  get selectedGooods() {
+    return this.dataService.selectedGooods;
+  }
+
+  set selectedGooods(value) {
+    this.dataService.selectedGooods = value;
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    // debugger;
     if (
-      changes['estatus_bien_programacion'] &&
-      changes['estatus_bien_programacion'].currentValue
+      (changes['estatus_bien_programacion'] &&
+        changes['estatus_bien_programacion'].currentValue) ||
+      (changes['folio'] && changes['folio'].currentValue)
     ) {
-      setTimeout(() => {
-        this.getData();
-      }, 500);
+      console.log('ngOnChanges Table Goods');
+      this.getData();
     }
   }
 
   override extraOperationsGetData() {
     this.fillSelectedRows();
+    if (this.estatus_bien_programacion === 'CANCELADO_TMP') {
+      this.dataService.cancelacion = this.totalItems;
+    }
+    if (this.estatus_bien_programacion === 'EN_PROGRAMACION_TMP') {
+      this.dataService.programacion = this.totalItems;
+    }
   }
 
   private removeGood(item: IReceiptItem) {
@@ -164,10 +189,6 @@ export class ReceiptTableGoodsComponent
         this.table.isAllSelected = allSelected;
       }
     }, 300);
-  }
-
-  get folio() {
-    return this.dataService.folio;
   }
 
   override getParams() {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
@@ -12,6 +12,7 @@ import { COLUMNS } from './columns';
   styleUrls: ['./receipt-table-programings.component.scss'],
 })
 export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFiltersExtra<any> {
+  @Input() folio: string;
   pageSizeOptions = [5, 10, 20, 25];
   limit: FormControl = new FormControl(5);
   constructor(
@@ -41,10 +42,13 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
           }
         },
       });
-  }
-
-  get folio() {
-    return this.dataService.folio;
+    this.dataService.refreshAll.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response) {
+          this.getData();
+        }
+      },
+    });
   }
 
   get typeReceiptSelected() {

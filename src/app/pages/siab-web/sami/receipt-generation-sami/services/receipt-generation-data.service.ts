@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { EReceiptType } from '../models/eReceiptType';
+import { IReceiptItem } from '../receipt-table-goods/ireceipt';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReceiptGenerationDataService {
-  folio: string = 'R-METROPOLITANA-SAT-24-OS';
   recibos = 0;
   resguardo = 0;
   almacen = 0;
@@ -14,5 +14,7 @@ export class ReceiptGenerationDataService {
   cancelacion = 0;
   typeReceiptSelected: EReceiptType;
   refreshTableProgrammings = new Subject();
+  refreshAll = new Subject();
+  selectedGooods: IReceiptItem[] = [];
   constructor() {}
 }

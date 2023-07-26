@@ -52,6 +52,14 @@
               type="text"
               class="form-control"
               formControlName="dateFinish"
+              [min]="form.get('dateInitRatification').value"
+              [minDate]="form.get('dateInitRatification').value"
+              [ngModel]="
+                form.get('dateFinish').value <
+                form.get('dateInitRatification').value
+                  ? form.get('dateInitRatification').value
+                  : form.get('dateFinish').value
+              "
               bsDatepicker />
           </form-field>
         </div>
@@ -61,8 +69,17 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('atFile')" label="Al Expediente">
-            <input type="text" class="form-control" formControlName="atFile" />
+          <form-field [control]="form.get('atFile')" label="al Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="atFile"
+              [min]="form.get('ofFile').value"
+              [ngModel]="
+                form.get('atFile').value < form.get('ofFile').value
+                  ? form.get('ofFile').value
+                  : form.get('atFile').value
+              " />
           </form-field>
         </div>
       </div>
@@ -73,8 +90,17 @@
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="form.get('atgood')" label="Al Bien">
-            <input type="text" class="form-control" formControlName="atgood" />
+          <form-field [control]="form.get('atgood')" label="al Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="atgood"
+              [min]="form.get('ofgood').value"
+              [ngModel]="
+                form.get('atgood').value < form.get('ofgood').value
+                  ? form.get('ofgood').value
+                  : form.get('atgood').value
+              " />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
