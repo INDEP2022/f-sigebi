@@ -1146,7 +1146,8 @@ export class NotificationAssetsTabComponent
             );
           } else {
             const idNotify = { ...this.notificationsGoods };
-            const idAclaracion = this.selectedRow.clarification.id; //ID de la aclaración para mandar al reporte del sat
+            const idAclaracion =
+              this.selectedRow.chatClarification.idClarification; //ID de la aclaración para mandar al reporte del sat
             const idSolicitud = this.idRequest;
             let config: ModalOptions = {
               initialState: {
