@@ -52,6 +52,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
   reprogramingView: boolean = false;
   count = 0;
   folio: string;
+  id_programacion: string;
   constructor(
     private fb: FormBuilder,
     private programmingGoodReceiptService: ProgrammingGoodReceiptService,
@@ -97,6 +98,11 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     this.programmingGoodReceiptService.getAll(params).subscribe({
       next: resp => {
         console.log(resp);
+        if (resp) {
+          this.id_programacion = resp.data[0].id_programacion;
+        } else {
+          this.id_programacion = null;
+        }
         this.goodsList = new DefaultSelect(resp.data, resp.count);
         this.count = resp.count ?? 0;
         this.programmingForm.controls['managementId'].enable();
@@ -105,6 +111,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       error: eror => {
         this.loader.load = false;
         this.count = 0;
+        this.id_programacion = null;
         this.goodsList = new DefaultSelect([], 0, true);
         this.alert(
           'warning',
