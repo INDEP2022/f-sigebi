@@ -256,7 +256,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
 
     this.jasperService
 
-      .fetchReport('RGEROFPOFIVOLANTE', params)
+      //.fetchReport('RGEROFPOFIVOLANTE', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -306,7 +307,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   setOfficeKey(department: IDepartment) {
-    debugger;
+    //debugger;
     const { dsarea, lastOffice } = department;
     const last = Number(lastOffice ?? 0) + 1;
     const year = new Date().getFullYear();
@@ -321,8 +322,10 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   getDeparmentById(id: number) {
-    debugger;
-    return this.departmentService.getById(id);
+    const data = {
+      id: id,
+    };
+    return this.departmentService.getDeparmentById(data);
   }
 
   getDepartmentById(id: number) {
@@ -358,57 +361,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       next: () => {
         this.incrementLastOffice(department);
         this.queryMode = true;
-        this.alert('success', 'Oficio Enviado Correctamente', '');
-      },
-    });
-  }
-
-  saveEo() {
-    let notification = {
-      wheelNumber: this.selectedRow.wheelNumber,
-      proceedingsNumber: 'null',
-      cveManagement: this.selectedRow.cveManagement,
-      managementNumber: 'null',
-      sender: this.selectedRow.sender,
-      delRemNumber: this.selectedRow.delRemNumber,
-      depRemNumber: this.selectedRow.depRemNumber,
-      addressee: this.selectedRow.addressee,
-      city: this.selectedRow.city,
-      text1: this.selectedRow.text1,
-      text2: this.selectedRow.text2,
-      statusOf: 'null',
-      insertUser: this.selectedRow.insertUser,
-      areaUser: this.selectedRow.areaUser,
-      deleUser: this.selectedRow.deleUser,
-      insertDate: this.selectedRow.insertDate,
-      jobType: this.selectedRow.jobType,
-      nomPersExt: this.selectedRow.nomPersExt,
-      refersTo: this.selectedRow.refersTo,
-      jobBy: this.selectedRow.jobBy,
-      recordNumber: this.selectedRow.recordNumber,
-      armedKeyNumber: this.selectedRow.armedKeyNumber,
-      desSenderpa: this.selectedRow.desSenderpa,
-      text3: this.selectedRow.text3,
-      insertHcDate: this.selectedRow.insertHcDate,
-      projectDate: this.selectedRow.projectDate,
-      inventoryNumber: this.selectedRow.inventoryNumber,
-      sheetsNumber: this.selectedRow.sheetsNumber,
-      description: this.selectedRow.description,
-      problematiclegal: this.selectedRow.problematiclegal,
-      goodNumber: this.selectedRow.goodNumber,
-      portfolio: this.selectedRow.portfolio,
-      batch: this.selectedRow.batch,
-      event: this.selectedRow.event,
-      invoiceUniversal: this.selectedRow.invoiceUniversal,
-      invoiceUniversalassoc: this.selectedRow.invoiceUniversalassoc,
-      id: this.selectedRow.id,
-    };
-    this.notificationService.create(notification).subscribe({
-      next: res => {
-        this.alert('success', 'Registro agregado correctamente', '');
-      },
-      error: err => {
-        this.alert('error', err.mensaje, '');
+        //this.alert('success', 'Oficio Enviado Correctamente', '');
       },
     });
   }
@@ -417,6 +370,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     const { receiver, cpp } = this.formControls;
     this.receiver.controls.personKey.setValue(receiver.value);
     this.cpp.controls.personKey.setValue(`${cpp.value}`);
+
     const copies = [this.receiver];
     if (cpp.value) {
       copies.push(this.cpp);
@@ -610,11 +564,12 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   saveNotification(notificacion: any) {
+    console.log('notifica -> ', notificacion);
     notificacion.institutionNumber = notificacion.institutionNumber.id;
     this.notificationService.create(notificacion).subscribe({
       next: data => {
         console.log(data);
-        this.onLoadToast('success', 'Notificación exitosa', '');
+        //this.onLoadToast('success', 'Notificación exitosa', '');
       },
       error: err => {
         console.log(err);

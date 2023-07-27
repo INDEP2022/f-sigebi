@@ -50,6 +50,8 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
   destinoTransferenteLetra: string;
   cancellationView: boolean = false;
   reprogramingView: boolean = false;
+  count = 0;
+  folio: string;
   constructor(
     private fb: FormBuilder,
     private programmingGoodReceiptService: ProgrammingGoodReceiptService,
@@ -83,6 +85,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (this.programmingForm.controls['programmingId'].value) {
       params['filter.folio'] =
         this.programmingForm.controls['programmingId'].value.trim();
+      this.folio = this.programmingForm.controls['programmingId'].value.trim();
     } else {
       this.alert(
         'warning',
@@ -95,11 +98,13 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       next: resp => {
         console.log(resp);
         this.goodsList = new DefaultSelect(resp.data, resp.count);
+        this.count = resp.count ?? 0;
         this.programmingForm.controls['managementId'].enable();
         this.loader.load = false;
       },
       error: eror => {
         this.loader.load = false;
+        this.count = 0;
         this.goodsList = new DefaultSelect([], 0, true);
         this.alert(
           'warning',
@@ -214,6 +219,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       },
     });
   }
+
   assignReceiptOne(sender: number) {
     if (
       this.indepForm.controls['unidad_medida_sae'].value != 'KG' ||

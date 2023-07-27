@@ -86,3 +86,7 @@ export const DETAILS_OI_COLUMNS = {
     sort: false,
   },
 };
+
+export function clearGoodCheck() {
+  goodCheck = [];
+}

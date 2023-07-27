@@ -11,6 +11,14 @@ export const COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.name : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.name;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
   registrationDate: {

@@ -48,18 +48,32 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'keyCompany' ||
-            filter.field == 'description' ||
-            filter.field == 'keyZoneContract'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+
+                break;
+              case 'keyCompany':
+                searchFilter = SearchFilter.EQ;
+
+                break;
+              case 'keyZoneContract':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDeductives();
         }
       });
@@ -77,7 +91,7 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
     this.thirdPartyCompanyService.getAll(params).subscribe({
       next: response => {
         this.thirdPartyCompany = response.data;
-        this.data.load(this.thirdPartyCompany);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
@@ -112,7 +126,7 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.thirdPartyCompanyService.removeThirdPartyCompany(id).subscribe(
       res => {
-        this.alert('success', 'Empresa de tercero', 'Borrada Correctamente');
+        this.alert('success', 'Empresa de Terceros', 'Borrada Correctamente');
         this.getDeductives();
       },
       err => {
