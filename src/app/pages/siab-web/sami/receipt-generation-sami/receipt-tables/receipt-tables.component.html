@@ -4,7 +4,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Recibos)">
       Asignar Recibo
     </button>
@@ -12,7 +12,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Resguardo)">
       Resguardo
     </button>
@@ -20,15 +20,15 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Almacen)">
-      Almacen
+      Almacén
     </button>
     <button
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Reprogramacion)">
       Reprogramación
     </button>
@@ -36,7 +36,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Cancelacion)">
       Cancelación
     </button>
@@ -44,43 +44,62 @@
 </tr>
 <div class="mb-4"></div>
 <form action="" class="form-material mt-5 mb-4" [formGroup]="form">
-  <ng-custom-select-loading
-    [form]="form"
-    [path]="pathCatalogsCancelacion"
-    [readonly]="!divcanmas"
-    formControlName="motiveCancel"
-    label="Selecciona el motivo de la Cancelación"
-    value="keyId"
-    bindLabel="description"
-    paramSearch="filter.description"
-    prefixSearch="$ilike">
-  </ng-custom-select-loading>
-  <div class="pt-4"></div>
-  <ng-custom-select-loading
-    [form]="form"
-    [path]="pathCatalogsReprogramacion"
-    [readonly]="!divrepmas"
-    formControlName="motiveReprograming"
-    label="Selecciona el motivo de la Reprogramación"
-    value="keyId"
-    bindLabel="description"
-    paramSearch="filter.description"
-    prefixSearch="$ilike">
-  </ng-custom-select-loading>
-  <div class="d-flex" style="justify-content: flex-end">
-    <button
-      style="width: auto"
-      [disabled]="disabledMassiveButton"
-      class="btn btn-primary btn-sm active"
-      type="submit"
-      size="small"
-      (click)="massiveClick()">
-      Aceptar
-    </button>
+  <div class="row" *ngIf="divcanmas">
+    <div class="col-md-9">
+      <ng-custom-select-loading
+        [form]="form"
+        [path]="pathCatalogsCancelacion"
+        formControlName="motiveCancel"
+        label="Selecciona el motivo de la Cancelación"
+        value="keyId"
+        bindLabel="description"
+        paramSearch="filter.description"
+        prefixSearch="$ilike">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-3">
+      <button
+        style="width: auto"
+        [disabled]="disabledMassiveButton"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="massiveClick()">
+        Aceptar
+      </button>
+    </div>
   </div>
+  <div class="row" *ngIf="divrepmas">
+    <div class="col-md-9">
+      <ng-custom-select-loading
+        [form]="form"
+        [path]="pathCatalogsReprogramacion"
+        formControlName="motiveReprograming"
+        label="Selecciona el motivo de la Reprogramación"
+        value="keyId"
+        bindLabel="description"
+        paramSearch="filter.description"
+        prefixSearch="$ilike">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-3">
+      <button
+        style="width: auto"
+        [disabled]="disabledMassiveButton"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="massiveClick()">
+        Aceptar
+      </button>
+    </div>
+  </div>
+  <!-- <div class="pt-4"></div> -->
 </form>
 
-<app-receipt-table-goods [folio]="folio"></app-receipt-table-goods>
+<app-receipt-table-goods
+  [folio]="folio"
+  [selectEnabled]="true"></app-receipt-table-goods>
 <tr>
   <td colspan="5" align="center">
     <button
@@ -105,7 +124,7 @@
       type="submit"
       size="small"
       (click)="showTableByTiporecibo(receiptType.Almacen)">
-      Almacen({{ almacen }})
+      Almacén({{ almacen }})
     </button>
     <button
       [disabled]="count === 0"
@@ -129,7 +148,9 @@
 <div class="row" *ngIf="typeReceiptSelected">
   <div *ngIf="isFirstTable()">
     <app-receipt-table-programings
-      [folio]="folio"></app-receipt-table-programings>
+      [id_programacion]="id_programacion"
+      [folio]="folio"
+      [type]="typeReceiptSelected"></app-receipt-table-programings>
   </div>
   <div *ngIf="!isFirstTable()">
     <app-receipt-table-goods

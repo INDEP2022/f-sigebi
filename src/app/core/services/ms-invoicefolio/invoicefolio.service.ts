@@ -76,4 +76,10 @@ export class InvoicefolioService extends HttpService {
   getMaxFolio(folio: number) {
     return this.get(`${InvoiceFolioEndPoint.GetMaxFolio}/${folio}`);
   }
+
+  validateFolioAvailable(event: number, tpEvent: number) {
+    return this.get(
+      `${InvoiceFolioEndPoint.ValidateFoliosAvailable}/${event}/${tpEvent}`
+    );
+  }
 }
