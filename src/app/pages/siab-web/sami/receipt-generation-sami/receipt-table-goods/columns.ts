@@ -8,11 +8,11 @@ export const COLUMNS = {
     sort: false,
   },
   no_expediente: {
-    title: 'Expediente',
+    title: 'EXPEDIENTE',
     sort: false,
   },
   descripcion_bien: {
-    title: 'Descripción del Bien',
+    title: 'DESCRIPCIÓN DEL BIEN',
     sort: false,
   },
   cantidad: {

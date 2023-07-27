@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
@@ -68,7 +71,6 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       },
     });
   }
-
   get typeReceiptSelected() {
     return this.dataService.typeReceiptSelected;
   }
@@ -89,14 +91,22 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     // debugger;
     let newColumnFilters = this.columnFilters;
     if (this.id_programacion) {
-      newColumnFilters['filter.id_programacion'] = this.id_programacion;
+      newColumnFilters['filter.id_programacion'] =
+        SearchFilter.EQ + ':' + this.id_programacion;
     }
     if (this.typeReceiptSelected) {
-      newColumnFilters['filter.folio'] = this.folio;
+      newColumnFilters['filter.tipo_recibo'] =
+        SearchFilter.EQ + ':' + this.typeReceiptSelected;
     }
+    // if (this.folio) {
+    //   newColumnFilters['filter.folio'] = this.folio;
+    // }
     return {
-      ...this.params.getValue(),
-      ...newColumnFilters,
+      folio: this.folio,
+      params: {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      },
     };
   }
   selectGoodstickets(data: any) {

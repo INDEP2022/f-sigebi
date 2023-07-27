@@ -91,14 +91,33 @@ export class ReceiptTablesComponent extends BasePage {
     let receiptType;
     let P_MOTIVOCAN;
     if (this.divcanmas) {
-      receiptType = EReceiptType.Cancelacion;
-      P_MOTIVOCAN = this.form.get('motiveCancel').value;
+      this.alertQuestion(
+        'question',
+        'Se Cancelará la programación',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          receiptType = EReceiptType.Cancelacion;
+          P_MOTIVOCAN = this.form.get('motiveCancel').value;
+          this.registerReceipt(receiptType, P_MOTIVOCAN);
+        }
+      });
     }
     if (this.divrepmas) {
-      receiptType = EReceiptType.Reprogramacion;
-      P_MOTIVOCAN = this.form.get('motiveReprograming').value;
+      this.alertQuestion(
+        'question',
+        'Se hará una Reprogramación',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          receiptType = EReceiptType.Reprogramacion;
+          P_MOTIVOCAN = this.form.get('motiveReprograming').value;
+          this.registerReceipt(receiptType, P_MOTIVOCAN);
+        }
+      });
     }
-    this.registerReceipt(receiptType, 0);
   }
   isFirstTable() {
     if (this.typeReceiptSelected === 'RECIBO') return true;
