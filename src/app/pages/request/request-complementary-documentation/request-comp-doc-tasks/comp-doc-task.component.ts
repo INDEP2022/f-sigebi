@@ -259,6 +259,28 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.turnReq = true;
         break;
+      case 'RevisonLineamientos':
+        this.regDocView = true;
+        this.viewSelectedGoods = true;
+        this.guidelines = true;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.createReport = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+        break;
+      case 'GRAnalisisResarcimiento':
+        this.regDocView = true;
+        this.selectGoods = true;
+
+        this.guidelines = true;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.createReport = true;
+        this.saveRequest = true;
+        this.rejectReq = true;
+        this.turnReq = true;
+        break;
       default:
         break;
     }
