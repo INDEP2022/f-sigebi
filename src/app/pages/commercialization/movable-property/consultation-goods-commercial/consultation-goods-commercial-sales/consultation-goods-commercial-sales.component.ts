@@ -16,9 +16,9 @@ import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
 import { IChargeSpent } from 'src/app/core/services/ms-spent/spents-model';
+import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 
 @Component({
   selector: 'app-consultation-goods-commercial-sales',
@@ -201,95 +201,94 @@ export class ConsultationGoodsCommercialSalesComponent
 
   //Funciones Grigork
   //Gets
-  get goodNumber(){
-    return this.form.get('goodNumber')
+  get goodNumber() {
+    return this.form.get('goodNumber');
   }
 
-  get descGood(){
-    return this.form.get('descGood')
+  get descGood() {
+    return this.form.get('descGood');
   }
 
-  get expedientNumber(){
-    return this.form.get('expedientNumber')
+  get expedientNumber() {
+    return this.form.get('expedientNumber');
   }
 
-  get serieNumber(){
-    return this.form.get('serieNumber')
+  get serieNumber() {
+    return this.form.get('serieNumber');
   }
 
-  get mandate(){
-    return this.form.get('mandate')
+  get mandate() {
+    return this.form.get('mandate');
   }
 
-  get descMandate(){
-    return this.form.get('descMandate')
+  get descMandate() {
+    return this.form.get('descMandate');
   }
 
-  get lot(){
-    return this.form.get('lot')
+  get lot() {
+    return this.form.get('lot');
   }
 
-  get rfc(){
-    return this.form.get('rfc')
+  get rfc() {
+    return this.form.get('rfc');
   }
 
-  get eventId(){
-    return this.form.get('eventId')
+  get eventId() {
+    return this.form.get('eventId');
   }
 
-  get descEvent(){
-    return this.form.get('descEvent')
+  get descEvent() {
+    return this.form.get('descEvent');
   }
 
-  get eventTp(){
-    return this.form.get('eventTp')
+  get eventTp() {
+    return this.form.get('eventTp');
   }
 
-  get desctTypeEvent(){
-    return this.form.get('descTypeEvent')
+  get desctTypeEvent() {
+    return this.form.get('descTypeEvent');
   }
 
-  get price(){
-    return this.form.get('price')
+  get price() {
+    return this.form.get('price');
   }
 
-  get regc(){
-    return this.form.get('regc')
+  get regc() {
+    return this.form.get('regc');
   }
 
-  get descord(){
-    return this.form.get('descord')
+  get descord() {
+    return this.form.get('descord');
   }
 
-  get facture(){
-    return this.form.get('facture')
+  get facture() {
+    return this.form.get('facture');
   }
 
-  get reference(){
-    return this.form.get('reference')
+  get reference() {
+    return this.form.get('reference');
   }
 
-  get dateInit(){
-    return this.form.get('dateInit')
+  get dateInit() {
+    return this.form.get('dateInit');
   }
 
-  get dateFinal(){
-    return this.form.get('dateFinal')
+  get dateFinal() {
+    return this.form.get('dateFinal');
   }
 
   //Ejecutar Consulta
-  executeConsult(){
-    let model: IChargeSpent = {
-      
-    }
+  executeConsult() {
+    let model: IChargeSpent = {};
 
-    this.goodNumber.value != null ? model.goodNumber = this.goodNumber.value : '';
+    this.goodNumber.value != null
+      ? (model.goodNumber = this.goodNumber.value)
+      : '';
     //Descripción de bien
     //Número de expediente
     //Número de serie
-    this.mandate.value != null ? model.mandate = this.mandate.value : '';
+    this.mandate.value != null ? (model.mandate = this.mandate.value) : '';
     //Descripción de mandato
     //Lote
-    
   }
 }

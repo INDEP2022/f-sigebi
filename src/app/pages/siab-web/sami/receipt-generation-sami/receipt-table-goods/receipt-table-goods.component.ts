@@ -91,10 +91,10 @@ export class ReceiptTableGoodsComponent
     if (!this.selectEnabled) {
       this.fillSelectedRows();
     }
-    if (this.estatus_bien_programacion === 'CANCELADO_TMP') {
+    if (this.estatus_bien_programacion === 'CANCELADO') {
       this.dataService.cancelacion = this.totalItems;
     }
-    if (this.estatus_bien_programacion === 'EN_PROGRAMACION_TMP') {
+    if (this.estatus_bien_programacion === 'EN_PROGRAMACION') {
       this.dataService.programacion = this.totalItems;
     }
   }
