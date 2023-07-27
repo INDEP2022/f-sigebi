@@ -134,7 +134,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   }
 
   edit(event: any) {
-    this.openForm(event.data, true);
+    console.log('aaa', event);
+    this.openForm(event, true);
   }
   add() {
     this.openForm(null, false);
