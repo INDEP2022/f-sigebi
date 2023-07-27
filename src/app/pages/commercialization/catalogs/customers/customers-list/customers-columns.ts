@@ -147,7 +147,7 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   interbankKey: {
-    title: 'CLABE',
+    title: 'CLABE Interbancaria',
     sort: false,
   },
   bank: {
