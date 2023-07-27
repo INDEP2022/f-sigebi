@@ -5,10 +5,8 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { EventService } from 'src/app/common/services/event.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
-import { ComerSaleStatusService } from 'src/app/core/services/ms-event/comer-sale-status.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -27,8 +25,8 @@ export class DispersionPaymentComponent implements OnInit {
   eventType: string = null;
   eventManagement: string = null;
 
-  dataCustomer = new LocalDataSource
-  totalIncome: number
+  dataCustomer = new LocalDataSource();
+  totalIncome: number;
 
   private clie_procesar: boolean = false;
   private lot_procesar: boolean = false;
@@ -126,116 +124,117 @@ export class DispersionPaymentComponent implements OnInit {
     this.form = this.fb.group({
       event: [null, [Validators.required]],
       cveProcess: [null],
-      dateEvent:[null],
-      dateClose:[null],
-      dateFail:[null],
-      dateNotification:[null],
-      dateMaxWarranty:[null],
-      dateMaxPayment:[null],
+      dateEvent: [null],
+      dateClose: [null],
+      dateFail: [null],
+      dateNotification: [null],
+      dateMaxWarranty: [null],
+      dateMaxPayment: [null],
     });
   }
 
   //Gets
-  get event(){
-    return this.form.get('event')
+  get event() {
+    return this.form.get('event');
   }
 
-  get cveProcess(){
-    return this.form.get('cveProcess')
+  get cveProcess() {
+    return this.form.get('cveProcess');
   }
 
-  get dateEvent(){
-    return this.form.get('dateEvent')
+  get dateEvent() {
+    return this.form.get('dateEvent');
   }
 
-  get dateClose(){
-    return this.form.get('dateClose')
+  get dateClose() {
+    return this.form.get('dateClose');
   }
 
-  get dateFail(){
-    return this.form.get('dateFail')
+  get dateFail() {
+    return this.form.get('dateFail');
   }
 
-  get dateNotification(){
-    return this.form.get('dateNotification')
+  get dateNotification() {
+    return this.form.get('dateNotification');
   }
 
-  get dateMaxWarranty(){
-    return this.form.get('dateMaxWarranty')
+  get dateMaxWarranty() {
+    return this.form.get('dateMaxWarranty');
   }
 
-  get dateMaxPayment(){
-    return this.form.get('dateMaxPayment')
+  get dateMaxPayment() {
+    return this.form.get('dateMaxPayment');
   }
 
   //Seleccionar eventos
-  selectEvent(){
-    const paramsF = new FilterParams()
-    paramsF.addFilter('id', this.event.value)
-    console.log(this.event.value)
+  selectEvent() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('id', this.event.value);
+    console.log(this.event.value);
     this.comerEventService.getAllFilter(paramsF.getParams()).subscribe(
       res => {
-        console.log(res)
-        const resp = res['data'][0]
-        this.cveProcess.setValue(resp.processKey)
-        this.dateEvent.setValue(resp.eventDate)
-        this.dateClose.setValue(resp.eventClosingDate)
-        this.dateFail.setValue(resp.failureDate)
-        this.dateNotification.setValue(resp.notificationDate)
-        this.dateMaxWarranty.setValue(resp.processKey)
-        this.dateMaxPayment.setValue(resp.processKey)
-        this.postQueryEvent(resp.eventTpId, resp.StatusvtaId)
-        this.getDateComerCustomer()
-
+        console.log(res);
+        const resp = res['data'][0];
+        this.cveProcess.setValue(resp.processKey);
+        this.dateEvent.setValue(resp.eventDate);
+        this.dateClose.setValue(resp.eventClosingDate);
+        this.dateFail.setValue(resp.failureDate);
+        this.dateNotification.setValue(resp.notificationDate);
+        this.dateMaxWarranty.setValue(resp.processKey);
+        this.dateMaxPayment.setValue(resp.processKey);
+        this.postQueryEvent(resp.eventTpId, resp.StatusvtaId);
+        this.getDateComerCustomer();
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
-  
+
   //POSTQUERY del Evento
-  postQueryEvent(eventTpId: string, salesStatusId: string){
-    const paramsF = new FilterParams()
-    paramsF.addFilter('id',eventTpId)
+  postQueryEvent(eventTpId: string, salesStatusId: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('id', eventTpId);
     this.comerTpEventsService.getAllComerTpEvent(paramsF.getParams()).subscribe(
       res => {
-        console.log(res)
-        this.eventType = res['data'][0].description
+        console.log(res);
+        this.eventType = res['data'][0].description;
       },
       err => {
-        this.eventType = 'SIN DESCRIPCION'
-        console.log(err)
+        this.eventType = 'SIN DESCRIPCION';
+        console.log(err);
       }
-    )
+    );
 
-    const paramsF2 = new FilterParams()
-    paramsF2.addFilter('salesStatusId', salesStatusId)
-    this.parametersModService.getParameterStatus(paramsF2.getParams()).subscribe(
-      res => {
-        console.log(res)
-        this.statusEvent = res['data'][0].description
-      },
-      err => {
-        this.statusEvent = 'SIN DESCRIPCION'
-        console.log(err)
-      }
-    )
+    const paramsF2 = new FilterParams();
+    paramsF2.addFilter('salesStatusId', salesStatusId);
+    this.parametersModService
+      .getParameterStatus(paramsF2.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.statusEvent = res['data'][0].description;
+        },
+        err => {
+          this.statusEvent = 'SIN DESCRIPCION';
+          console.log(err);
+        }
+      );
   }
 
   //Data de COMER_CLIENTESXEVENTO
-  getDateComerCustomer(){
-    const paramsF = new FilterParams()
-    paramsF.addFilter('eventId', this.event.value)
+  getDateComerCustomer() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('eventId', this.event.value);
     this.customersService.getComerCustomerEvent(paramsF.getParams()).subscribe(
       res => {
-        console.log(res)
-        this.dataCustomer.load(res.data)
-        this.totalIncome = res.count
+        console.log(res);
+        this.dataCustomer.load(res.data);
+        this.totalIncome = res.count;
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
 }

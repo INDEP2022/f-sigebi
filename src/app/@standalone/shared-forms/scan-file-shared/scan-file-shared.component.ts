@@ -8,6 +8,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
@@ -17,7 +18,6 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PreviewDocumentsComponent } from '../../preview-documents/preview-documents.component';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-scan-file-shared',
@@ -50,7 +50,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     private router: Router,
     private serviceParameterG: ParametersService,
     private authService: AuthService,
-    private serviceProcVal: ProceedingsDeliveryReceptionService,
+    private serviceProcVal: ProceedingsDeliveryReceptionService
   ) {
     super();
   }
@@ -89,7 +89,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                 const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
                 this.serviceNotification.getAllFilter(route).subscribe(resp => {
                   const wheelNumber = resp.data[0]['wheelNumber'];
-                  const user =this.authService.decodeToken();
+                  const user = this.authService.decodeToken();
                   const routeUser = `?filter.id=$eq:${user.preferred_username}`;
                   this.serviceUser.getAllSegUsers(routeUser).subscribe(
                     res => {

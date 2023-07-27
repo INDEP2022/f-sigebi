@@ -14,7 +14,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
-import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
+import {
+  IDataBienes,
+  IDictationXGood1,
+} from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { DictationXGood1Service } from 'src/app/core/services/ms-dictation/dictation-x-good1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { GoodsDialogComponent } from '../dialogs/goods-dialog/goods-dialog.component';
@@ -49,8 +52,9 @@ export class GoodsComponent
     this.loading = value;
   }
 
-  @Input() set data(value: IDictationXGood1[]) {
-    this.dataTable = value;
+  @Input() set data(value: IDataBienes) {
+    this.dataTable = value?.data;
+    this.totalItems = +value?.count || 0;
   }
 
   @Input() dictation: IDictation;
@@ -68,7 +72,7 @@ export class GoodsComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes && changes['data']) {
-      if (changes['data'].currentValue.length > 0) {
+      if (changes['data']?.currentValue?.length > 0) {
         this.loading = false;
       }
     }
