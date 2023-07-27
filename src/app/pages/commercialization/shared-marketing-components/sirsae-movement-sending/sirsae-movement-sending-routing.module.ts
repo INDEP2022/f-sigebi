@@ -4,6 +4,7 @@ import { SirsaeMovementSendingMainComponent } from './sirsae-movement-sending-ma
 
 const routes: Routes = [
   {
+    // path: '',
     path: ':goodType',
     component: SirsaeMovementSendingMainComponent,
     data: { screen: 'FCOMER112' },
