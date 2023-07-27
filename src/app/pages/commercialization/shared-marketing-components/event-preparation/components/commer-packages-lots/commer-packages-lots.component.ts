@@ -34,6 +34,7 @@ export class CommerPackagesLotsComponent
   @Input() lots = new LocalDataSource();
   @Input() onlyBase = false;
   @Output() fillStadistics = new EventEmitter<void>();
+  @Output() onLotSelected = new EventEmitter<IComerLot>();
   comerLot: IComerLot;
   @Input() loggedUser: TokenInfoModel;
   viewRejectedGoods = false;
@@ -107,6 +108,7 @@ export class CommerPackagesLotsComponent
   }
 
   onLotSelect(lot: IComerLot) {
+    this.onLotSelected.emit(lot);
     this.comerLot = lot;
   }
 }

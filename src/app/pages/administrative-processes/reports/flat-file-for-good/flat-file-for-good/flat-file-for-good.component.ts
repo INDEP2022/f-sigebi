@@ -217,7 +217,11 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
         } else {
-          this.onLoadToast('error', 'Reporte Entrega', err.error.message);
+          this.onLoadToast(
+            'error',
+            'Reporte Entrega',
+            'No se encontró información'
+          );
         }
       },
     });
@@ -259,7 +263,11 @@ export class FlatFileForGoodComponent extends BasePage implements OnInit {
           error = 'Revise su conexión de Internet.';
           this.onLoadToast('error', 'Error', error);
         } else {
-          this.onLoadToast('error', 'Reporte Decomiso', err.error.message);
+          this.onLoadToast(
+            'error',
+            'Reporte Decomiso',
+            'No se encontró información'
+          );
         }
       },
     });

@@ -180,8 +180,20 @@
               (emitSubdelegation)="seleccionarSubDelegacion($event)">
             </app-delegation-shared>
           </div>
+          <div class="col-md-4" style="margin: 1%">
+            <form-field
+              [control]="proceduralHistoryForm.get('estado')"
+              label="Estado">
+              <select class="form-control" formControlName="estado">
+                <option [value]="null">Seleccione el estado</option>
+                <option value="AUTORIZADA">AUTORIZADA</option>
+                <option value="PROCESO">PROCESO</option>
+              </select>
+            </form-field>
+          </div>
           <div class="col-md-2 justify-content-center" style="margin: 5%">
             <button
+              [disabled]="!proceduralHistoryForm.valid"
               type="button"
               class="btn btn-primary active btn-sm"
               (click)="DelegationI()">
@@ -194,7 +206,7 @@
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Reporte de Implementación</h5>
-        <div class="col-md-12 mb-1" style="text-align: end">
+        <div class="col-md-12 mb-1 d-flex justify-content-end">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
         <div [class]="loading ? 'table-loading' : ''">
@@ -231,9 +243,7 @@
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Reporte relacionados con la factura</h5>
-        <div
-          class="col-md-12 mb-1"
-          style="text-align: end; margin-block-end: auto">
+        <div class="col-md-12 mb-1 d-flex justify-content-end">
           <app-columns-select [(settings)]="settings2"></app-columns-select>
         </div>
         <div [class]="loading ? 'table-loading' : ''">
