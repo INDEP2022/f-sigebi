@@ -34,7 +34,18 @@
           </p> -->
         </div>
         <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-          <button class="btn btn-sm btn-block btn-info active">
+          <button
+            [disabled]="!eventSelected"
+            (click)="search()"
+            class="btn btn-sm btn-block btn-primary active">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row mt-4 d-flex justify-content-center">
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button class="w-100 btn btn-sm btn-block btn-info active">
             Obtener OI
           </button>
         </div>
@@ -42,7 +53,7 @@
           <button
             *ngIf="layout == 'M'"
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn w-100 btn-primary btn-sm active"
             tooltip="Enviar SIRSAE"
             containerClass="tooltip-style"
             (click)="enviarSIRSAE()">
@@ -121,7 +132,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="movementColumns"
+            [source]="data"
             (edit)="edit($event.data)"
             (userRowSelect)="selectClients($event.selected)">
           </ng2-smart-table>
@@ -131,6 +142,33 @@
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
+    </div>
+    <div class="row justify-content-center text-center">
+      <div class="col-4"></div>
+      <div class="col-md-2">
+        <button
+          (click)="allNo()"
+          type="button"
+          tooltip="Agregar"
+          containerClass="tooltip-style"
+          class="w-100 btn btn-primary btn-sm active ml-2 mb-3">
+          Todos NO
+          <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          style="float: left; width: 70%"
+          (click)="allYes()"
+          type="button"
+          tooltip="Agregar"
+          containerClass="tooltip-style"
+          class="w-100 btn btn-success active btn-sm ml-2 mb-3">
+          Todos SI
+          <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
+        </button>
+      </div>
+      <div class="col-4"></div>
     </div>
   </div>
 </app-card>
