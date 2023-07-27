@@ -1,4 +1,4 @@
-import { IDetailGoods } from './detail-goods.model';
+import { IDetailGoods, IDetailGoodsClose } from './detail-goods.model';
 
 export interface IDetailProceedingsDevolution {
   numGoodId: IDetailGoods;
@@ -12,5 +12,5 @@ export interface IDetailProceedingsDevolution {
   numberRegister: number;
   amountReturned: number;
   valChange: number;
-  good: IDetailGoods[];
+  good: IDetailGoodsClose;
 }
