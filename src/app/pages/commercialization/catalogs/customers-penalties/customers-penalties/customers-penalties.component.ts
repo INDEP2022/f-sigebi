@@ -99,9 +99,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
@@ -151,7 +148,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
 
   //Modal para crear o editar clientes penalizados
   openForm(customersPenalties?: ICustomersPenalties) {
-    console.log(customersPenalties);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       customersPenalties,
