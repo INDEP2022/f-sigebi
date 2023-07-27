@@ -53,7 +53,6 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       },
     });
   }
-
   get typeReceiptSelected() {
     return this.dataService.typeReceiptSelected;
   }
@@ -77,6 +76,9 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       newColumnFilters['filter.id_programacion'] = this.id_programacion;
     }
     if (this.typeReceiptSelected) {
+      newColumnFilters['filter.tipo_recibo'] = this.typeReceiptSelected;
+    }
+    if (this.folio) {
       newColumnFilters['filter.folio'] = this.folio;
     }
     return {

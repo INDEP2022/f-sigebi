@@ -44,40 +44,53 @@
 </tr>
 <div class="mb-4"></div>
 <form action="" class="form-material mt-5 mb-4" [formGroup]="form">
-  <ng-custom-select-loading
-    [form]="form"
-    [path]="pathCatalogsCancelacion"
-    [readonly]="!divcanmas"
-    formControlName="motiveCancel"
-    label="Selecciona el motivo de la Cancelación"
-    value="keyId"
-    bindLabel="description"
-    paramSearch="filter.description"
-    prefixSearch="$ilike">
-  </ng-custom-select-loading>
-  <div class="pt-4"></div>
-  <ng-custom-select-loading
-    [form]="form"
-    [path]="pathCatalogsReprogramacion"
-    [readonly]="!divrepmas"
-    formControlName="motiveReprograming"
-    label="Selecciona el motivo de la Reprogramación"
-    value="keyId"
-    bindLabel="description"
-    paramSearch="filter.description"
-    prefixSearch="$ilike">
-  </ng-custom-select-loading>
-  <div class="d-flex" style="justify-content: flex-end">
-    <button
-      style="width: auto"
-      [disabled]="disabledMassiveButton"
-      class="btn btn-primary btn-sm active"
-      type="submit"
-      size="small"
-      (click)="massiveClick()">
-      Aceptar
-    </button>
+  <div class="row" *ngIf="divcanmas">
+    <ng-custom-select-loading
+      [form]="form"
+      [path]="pathCatalogsCancelacion"
+      formControlName="motiveCancel"
+      label="Selecciona el motivo de la Cancelación"
+      value="keyId"
+      bindLabel="description"
+      paramSearch="filter.description"
+      prefixSearch="$ilike">
+    </ng-custom-select-loading>
+    <div class="d-flex" style="justify-content: flex-end">
+      <button
+        style="width: auto"
+        [disabled]="disabledMassiveButton"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="massiveClick()">
+        Aceptar
+      </button>
+    </div>
   </div>
+  <div class="row" *ngIf="divrepmas">
+    <ng-custom-select-loading
+      [form]="form"
+      [path]="pathCatalogsReprogramacion"
+      formControlName="motiveReprograming"
+      label="Selecciona el motivo de la Reprogramación"
+      value="keyId"
+      bindLabel="description"
+      paramSearch="filter.description"
+      prefixSearch="$ilike">
+    </ng-custom-select-loading>
+    <div class="d-flex" style="justify-content: flex-end">
+      <button
+        style="width: auto"
+        [disabled]="disabledMassiveButton"
+        class="btn btn-primary btn-sm active"
+        type="submit"
+        size="small"
+        (click)="massiveClick()">
+        Aceptar
+      </button>
+    </div>
+  </div>
+  <!-- <div class="pt-4"></div> -->
 </form>
 
 <app-receipt-table-goods
