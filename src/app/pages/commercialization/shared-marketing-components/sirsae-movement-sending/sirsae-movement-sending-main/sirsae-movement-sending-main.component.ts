@@ -3,7 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SIRSAE_MOVEMENT_SENDING_COLUMNS } from './sirsae-movement-sending-columns';
@@ -19,7 +24,7 @@ export class SirsaeMovementSendingMainComponent
 {
   layout: string = 'movable'; // 'movable' 'immovable'
   navigateCount: number = 0;
-  movementForm: FormGroup = new FormGroup({});
+  form: FormGroup = new FormGroup({});
   eventItems = new DefaultSelect();
   batchItems = new DefaultSelect();
   selectedEvent: any = null;
@@ -113,39 +118,87 @@ export class SirsaeMovementSendingMainComponent
     },
   ];
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder) {
+  comerEventSelect = new DefaultSelect();
+  constructor(
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private comerEventService: ComerEventService
+  ) {
     super();
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+        rowClassFunction: (row: any) => {
+          console.log('SI', row);
+          return;
+        },
+      },
+      columns: { ...SIRSAE_MOVEMENT_SENDING_COLUMNS },
+    };
     this.movementSettings.columns = SIRSAE_MOVEMENT_SENDING_COLUMNS;
   }
 
   ngOnInit(): void {
+    console.log('AQUI');
     this.route.paramMap.subscribe(params => {
       if (params.get('goodType')) {
+        console.log(params.get('goodType'));
         if (this.navigateCount > 0) {
-          this.movementForm.reset();
+          this.form.reset();
           this.clientRows = [];
           window.location.reload();
         }
         this.layout = params.get('goodType');
+
         this.navigateCount += 1;
       }
     });
     this.prepareForm();
     this.getData();
-    this.getEvents({ page: 1, text: '' });
-    this.getBatches({ page: 1, text: '' });
   }
 
   private prepareForm(): void {
-    this.movementForm = this.fb.group({
+    this.form = this.fb.group({
       event: [null, [Validators.required]],
-      batch: [null, [Validators.required]],
+      batch: [null],
+      description: [null],
     });
   }
 
-  getData() {
-    this.movementColumns = this.clientsTestData;
-    this.totalItems = this.movementColumns.length;
+  getData() {}
+
+  getComerEvents(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+
+    params.addFilter('address', `M`, SearchFilter.EQ);
+    params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
+    params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
+
+    this.comerEventService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        // let result = data.data.map(item => {
+        //   item['bindlabel_'] = item.id + ' - ' + item.description;
+        // });
+        // Promise.all(result).then(resp => {
+        console.log('EVENT', data);
+        this.comerEventSelect = new DefaultSelect(data.data, data.count);
+        // });
+      },
+      error: err => {
+        this.comerEventSelect = new DefaultSelect();
+      },
+    });
   }
 
   getEvents(params: ListParams) {
@@ -169,7 +222,7 @@ export class SirsaeMovementSendingMainComponent
   }
 
   selectEvent(event: any) {
-    this.selectedEvent = event;
+    if (event) this.selectedEvent = event.processKey;
   }
 
   selectBatch(batch: any) {
@@ -193,4 +246,10 @@ export class SirsaeMovementSendingMainComponent
         break;
     }
   }
+
+  edit($event: any) {}
+
+  openForm() {}
+
+  enviarSIRSAE() {}
 }
