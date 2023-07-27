@@ -67,7 +67,7 @@
             <commer-packages-lots
               [eventForm]="eventForm"
               [lots]="lots"
-              [onlyBase]="onlyBase"
+              (onLotSelected)="lotSelected = $event"
               [loggedUser]="loggedUser"
               (fillStadistics)="fillStadistics()"
               [comerLotsListParams]="comerLotsListParams"
@@ -116,11 +116,16 @@
                 </div>
               </div>
             </ng-template>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt
-            adipisci, totam earum repudiandae illo aliquam quia deserunt
-            voluptate aperiam amet soluta? Sunt similique, eaque ullam aperiam
-            placeat facilis quidem corrupti.</tab
-          >
+            <commer-packages-lots
+              [eventForm]="eventForm"
+              [lots]="lots"
+              (onLotSelected)="lotSelected = $event"
+              [onlyBase]="true"
+              [loggedUser]="loggedUser"
+              (fillStadistics)="fillStadistics()"
+              [comerLotsListParams]="comerLotsListParams"
+              [parameters]="parameters"></commer-packages-lots>
+          </tab>
         </tabset>
       </div>
     </div>
