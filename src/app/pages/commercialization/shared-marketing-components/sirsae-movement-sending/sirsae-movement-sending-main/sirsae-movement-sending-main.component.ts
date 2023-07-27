@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -32,7 +34,7 @@ export class SirsaeMovementSendingMainComponent
   clientRows: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  movementColumns: any[] = [];
+  data: LocalDataSource = new LocalDataSource();
   movementSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -122,7 +124,8 @@ export class SirsaeMovementSendingMainComponent
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private comerEventService: ComerEventService
+    private comerEventService: ComerEventService,
+    private comerClientsService: ComerClientsService
   ) {
     super();
     this.settings = {
@@ -141,7 +144,6 @@ export class SirsaeMovementSendingMainComponent
       },
       columns: { ...SIRSAE_MOVEMENT_SENDING_COLUMNS },
     };
-    this.movementSettings.columns = SIRSAE_MOVEMENT_SENDING_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -173,6 +175,56 @@ export class SirsaeMovementSendingMainComponent
 
   getData() {}
 
+  getEvents(params: ListParams) {
+    if (params.text == '') {
+      this.eventItems = new DefaultSelect(this.eventsTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.eventsTestData.filter((i: any) => i.id == id)];
+      this.eventItems = new DefaultSelect(item[0], 1);
+    }
+  }
+
+  getBatches(params: ListParams) {
+    if (params.text == '') {
+      this.batchItems = new DefaultSelect(this.batchesTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.batchesTestData.filter((i: any) => i.id == id)];
+      this.batchItems = new DefaultSelect(item[0], 1);
+    }
+  }
+
+  eventSelected: any = null;
+  selectEvent(event: any) {
+    this.eventSelected = event;
+    if (event) this.selectedEvent = event.processKey;
+  }
+
+  selectBatch(batch: any) {
+    this.selectedBatch = batch;
+  }
+
+  selectClients(rows: any[]) {
+    this.clientRows = rows;
+  }
+
+  sendSirsae(type: string = '') {
+    switch (type) {
+      case 'BATCH':
+        console.log(this.clientRows);
+        break;
+      case 'CLIENT':
+        console.log(this.clientRows);
+        break;
+      default:
+        console.log(this.clientRows);
+        break;
+    }
+  }
+
+  // ---------------------- WILMER ---------------------- //
+
   getComerEvents(lparams: ListParams) {
     const params = new FilterParams();
 
@@ -201,50 +253,48 @@ export class SirsaeMovementSendingMainComponent
     });
   }
 
-  getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventsTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.eventsTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
+  // COMER_CLIENTESXEVENTO
+
+  getComerClientsXEvent() {
+    this.loading = true;
+    const params = new FilterParams();
+    params.addFilter('eventId', this.eventSelected.id, SearchFilter.EQ);
+    this.comerClientsService.getAll_(params.getParams()).subscribe({
+      next: data => {
+        this.data.load(data.data);
+        this.data.refresh();
+        this.totalItems = data.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'No se Encontraron Clientes para este Evento',
+          ''
+        );
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        this.loading = false;
+      },
+    });
   }
 
-  getBatches(params: ListParams) {
-    if (params.text == '') {
-      this.batchItems = new DefaultSelect(this.batchesTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.batchesTestData.filter((i: any) => i.id == id)];
-      this.batchItems = new DefaultSelect(item[0], 1);
-    }
-  }
+  search() {
+    if (!this.eventSelected)
+      return this.alert(
+        'warning',
+        'Debe Seleccionar un Evento para Consultar',
+        ''
+      );
 
-  selectEvent(event: any) {
-    if (event) this.selectedEvent = event.processKey;
-  }
+    this.totalItems = 0;
+    // this.amountList = [];
+    // this.typeEvents = event.data;
 
-  selectBatch(batch: any) {
-    this.selectedBatch = batch;
-  }
-
-  selectClients(rows: any[]) {
-    this.clientRows = rows;
-  }
-
-  sendSirsae(type: string = '') {
-    switch (type) {
-      case 'BATCH':
-        console.log(this.clientRows);
-        break;
-      case 'CLIENT':
-        console.log(this.clientRows);
-        break;
-      default:
-        console.log(this.clientRows);
-        break;
-    }
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getComerClientsXEvent());
   }
 
   edit($event: any) {}
@@ -252,4 +302,7 @@ export class SirsaeMovementSendingMainComponent
   openForm() {}
 
   enviarSIRSAE() {}
+
+  allNo() {}
+  allYes() {}
 }
