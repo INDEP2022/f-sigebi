@@ -118,16 +118,14 @@ export class ServicesUnitPricesComponent extends BasePage implements OnInit {
   }
 
   showDeleteAlert(service?: IStrategyService) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea borrar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.delete(service.serviceNumber);
-        this.alert('success', 'Registro eliminado correctamente', '');
+    this.alertQuestion('warning', '', '¿Desea borrar este registro?').then(
+      question => {
+        if (question.isConfirmed) {
+          this.delete(service.serviceNumber);
+          this.alert('success', 'Registro Eliminado Correctamente', '');
+        }
       }
-    });
+    );
   }
 
   delete(id: number) {
