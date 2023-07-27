@@ -80,7 +80,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.cityForm.controls['noSubDelegation'].setValue(
         this.selectedDelegation.id
       );
-      this.cityForm.controls['state'].setValue(this.selectedState.id);
+      this.cityForm.controls['state'].setValue(this.selectedState);
       console.log(
         this.cityForm.controls['state'].setValue(this.selectedState.id)
       );
