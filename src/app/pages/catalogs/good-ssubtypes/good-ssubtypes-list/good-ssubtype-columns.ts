@@ -26,9 +26,15 @@ export const GOOD_SSUBTYPES_COLUMNS = {
         return false;
       }
     },
-
     sort: false,
   },
+
+  /*nameGoodType: {
+    title: 'Tipo Bien',
+    type: 'string',
+    sort: false,
+  },*/
+
   noSubType: {
     title: 'Subtipo Bien',
     type: 'string',
@@ -45,4 +51,10 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     },
     sort: false,
   },
+
+  /*nameSubtypeGood: {
+    title: 'Subtipo Bien',
+    type: 'string',
+    sort: false,
+  },*/
 };

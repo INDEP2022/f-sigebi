@@ -51,7 +51,18 @@ export class StorehouseListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'idSafe':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'idEntity':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
             filter.field == 'manager' ||
             filter.field == 'description' ||
             filter.field == 'municipality' ||
@@ -59,7 +70,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
             filter.field == 'ubication' ||
             filter.field == 'idEntity'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -89,7 +100,12 @@ export class StorehouseListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 

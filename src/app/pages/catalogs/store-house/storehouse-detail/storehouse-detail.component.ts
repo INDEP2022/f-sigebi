@@ -127,28 +127,50 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     if (
       this.storeHouseForm.controls['manager'].value.trim() === '' ||
       this.storeHouseForm.controls['description'].value.trim() === '' ||
-      this.storeHouseForm.controls['ubication'].value.trim() === ''
+      this.storeHouseForm.controls['ubication'].value.trim() === '' ||
+      (this.storeHouseForm.controls['manager'].value.trim() == '' &&
+        this.storeHouseForm.controls['description'].value.trim() == '' &&
+        this.storeHouseForm.controls['ubication'].value.trim() == '')
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);
       return; // Retorna temprano si el campo está vacío.
+    } else {
+      this.loading = true;
+      this.storehouseService
+        .create(this.storeHouseForm.getRawValue())
+        .subscribe({
+          next: data => {
+            this.handleSuccess();
+          },
+          error: error => {
+            this.loading = false;
+            this.alert('warning', 'El No. Bodega ya fue registrado', ``);
+            return;
+          },
+        });
     }
-    this.loading = true;
-    this.storehouseService.create(this.storeHouseForm.getRawValue()).subscribe({
-      next: data => {
-        this.handleSuccess();
-      },
-      error: error => (this.loading = false),
-    });
   }
 
   update() {
-    this.loading = true;
-    this.storehouseService
-      .newUpdate(this.storeHouseForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.storeHouseForm.controls['manager'].value.trim() === '' ||
+      this.storeHouseForm.controls['description'].value.trim() === '' ||
+      this.storeHouseForm.controls['ubication'].value.trim() === '' ||
+      (this.storeHouseForm.controls['manager'].value.trim() == '' &&
+        this.storeHouseForm.controls['description'].value.trim() == '' &&
+        this.storeHouseForm.controls['ubication'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    } else {
+      this.loading = true;
+      this.storehouseService
+        .newUpdate(this.storeHouseForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

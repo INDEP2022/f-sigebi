@@ -31,7 +31,7 @@ export const STOREHOUSE_COLUMNS = {
   },
   idEntity: {
     title: 'Entidad',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
 };

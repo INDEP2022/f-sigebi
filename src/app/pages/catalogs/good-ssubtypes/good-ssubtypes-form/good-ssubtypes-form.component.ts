@@ -51,6 +51,7 @@ export class GoodSsubtypesFormComponent extends BasePage implements OnInit {
       noRegister: [null],
     });
     if (this.goodSsubtype != null) {
+      console.log(this.goodSsubtype);
       this.edit = true;
       let goodType: IGoodType = this.goodSsubtype.noType as IGoodType;
       let goodSubtype: IGoodSubType = this.goodSsubtype
