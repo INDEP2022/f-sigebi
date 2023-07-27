@@ -119,8 +119,15 @@ export class DocumentationGoodsDialogComponent
     this.documentService
       .create(this.documentsDictumXStateMForm.value)
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          // this.handleSuccess();
+          this.alert('success', 'Se ha creado el documento correctamente.', '');
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'Error', 'Error creando documento');
+        },
       });
   }
 
@@ -130,8 +137,19 @@ export class DocumentationGoodsDialogComponent
     this.documentService
       .update(this.documentsDictumXStateMForm.value)
       .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        next: data => {
+          // this.handleSuccess();
+          this.alert(
+            'success',
+            'Se ha actualizado el documento correctamente.',
+            ''
+          );
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'Error', 'Error actualizando documento');
+        },
       });
   }
 
