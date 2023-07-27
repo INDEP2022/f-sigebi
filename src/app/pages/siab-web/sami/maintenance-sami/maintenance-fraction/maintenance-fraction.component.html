@@ -1,0 +1,56 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row margin-input">
+    <div class="col-md-8 p-0">
+      <form-field label="No. Gestión" [control]="form.get('gestion')">
+        <input type="number" class="form-control" formControlName="gestion" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="searchDescription()">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
+  <!-- <div class="row">
+    <form-field label="Fraccion" [control]="form.get('dice')">
+      <textarea
+        class="form-control"
+        formControlName="dice"
+        readonly
+        rows="2"></textarea>
+    </form-field>
+  </div>
+  <div class="row">
+    <form-field label="Debe decir" [control]="form.get('debeDecir')">
+      <textarea
+        [readOnly]="readOnlyDebeDecir"
+        class="form-control"
+        formControlName="debeDecir"
+        rows="2"
+        maxlength="1250"></textarea>
+    </form-field>
+  </div> -->
+  <tr>
+    <td colspan="5" align="center">
+      <button
+        [disabled]="form.invalid"
+        class="btn btn-primary btn-sm mr-2 active"
+        type="submit"
+        size="small"
+        (click)="update()">
+        Actualizar
+      </button>
+      <button
+        class="btn btn-danger btn-sm m-2 active"
+        type="submit"
+        size="small"
+        (click)="clear()">
+        Cancelar
+      </button>
+    </td>
+  </tr>
+</form>
