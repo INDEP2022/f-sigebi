@@ -63,11 +63,9 @@ export class VaultListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'idSafe':
                 searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
                 break;
               case 'managerDetail':
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
                 break;
               case 'cityDetail':
                 field = `filter.${filter.field}.nameCity`;
