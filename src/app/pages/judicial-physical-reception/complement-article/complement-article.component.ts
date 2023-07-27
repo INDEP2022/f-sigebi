@@ -107,6 +107,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     private tableServ: TvalTable5Service
   ) {
     super();
+    this.changePagin();
   }
 
   ngOnInit(): void {
@@ -115,45 +116,49 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     this.form.get('solicitud').valueChanges.subscribe(res => {
       console.log('solicitud', res);
     });
-    if (this.form.get('expediente').value != null) {
-      this.dataGoods
-        .onChanged()
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(change => {
-          if (change.action === 'filter') {
-            let filters = change.filter.filters;
-            filters.map((filter: any) => {
-              let field = ``;
-              let searchFilter = SearchFilter.EQ;
-              field = `filter.${filter.field}`;
-              /*SPECIFIC CASES*/
-              switch (filters.field) {
-                case 'id':
-                  searchFilter = SearchFilter.EQ;
-                  break;
-                case 'description':
-                  searchFilter = SearchFilter.ILIKE;
-                  break;
-                default:
-                  searchFilter = SearchFilter.EQ;
-                  break;
-              }
-              if (filter.search !== '') {
-                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              } else {
-                delete this.columnFilters[field];
-              }
-            });
-            this.params = this.pageFilter(this.params);
-            console.log('params ', this.params);
-            this.getGoodsByExpedient();
-          }
-        });
-      this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getGoodsByExpedient());
-      console.log('params ', this.params);
-    }
+    //if (this.form.get('expediente').value != null) {
+
+    //}
+  }
+
+  changePagin() {
+    this.dataGoods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log('params ', this.params);
+          this.getGoodsByExpedient();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByExpedient());
+    console.log('params ', this.params);
   }
 
   prepareForm() {
