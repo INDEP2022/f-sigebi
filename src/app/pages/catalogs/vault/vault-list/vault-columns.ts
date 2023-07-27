@@ -74,13 +74,13 @@ export const VAULT_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.nameLocation : '';
     },
-  },
-  filterFunction(cell?: any, search?: string): boolean {
-    let column = cell.nameLocation;
-    if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
-      return true;
-    } else {
-      return false;
-    }
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameLocation;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 };
