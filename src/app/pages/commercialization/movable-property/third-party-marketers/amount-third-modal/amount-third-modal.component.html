@@ -47,7 +47,7 @@
             [control]="amountForm.get('startingAmount')">
             <input
               [max-length]="10"
-              pattern="^[0-9]+"
+              pattern="^[0-9.]+"
               type="number"
               class="form-control"
               formControlName="startingAmount" />
@@ -58,8 +58,8 @@
             label="PCT Comisión"
             [control]="amountForm.get('pctCommission')">
             <input
-              [max-length]="5"
-              pattern="^[0-9]+"
+              [max-length]="3"
+              pattern="^[0-9.]+"
               type="number"
               class="form-control"
               formControlName="pctCommission" />
@@ -71,12 +71,27 @@
             [control]="amountForm.get('finalAmount')">
             <input
               [max-length]="10"
-              pattern="^[0-9]+"
+              pattern="^[0-9.]+"
               type="number"
               class="form-control"
               formControlName="finalAmount" />
           </form-field>
         </div>
+        <!-- <div class="col-md-4">
+          <form-field label="Monto inicial" [control]="amountForm.get('startingAmount')">
+            <input maxlength="10" pattern="^[0-9.]+" type="text" class="form-control" formControlName="startingAmount" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="PCT Comisión" [control]="amountForm.get('pctCommission')">
+            <input maxlength="5" pattern="^[0-9.]+" type="text" class="form-control" formControlName="pctCommission" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Monto Final" [control]="amountForm.get('finalAmount')">
+            <input maxlength="10" pattern="^[0-9.]+" type="text" class="form-control" formControlName="finalAmount" />
+          </form-field>
+        </div> -->
       </div>
 
       <!-- <div class="row pt-5">

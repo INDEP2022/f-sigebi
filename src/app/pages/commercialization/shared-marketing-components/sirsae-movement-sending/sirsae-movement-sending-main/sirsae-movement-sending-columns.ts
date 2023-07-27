@@ -1,6 +1,6 @@
 export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
-  id: {
-    title: 'Id Cliente',
+  customerId: {
+    title: 'ID Cliente',
     type: 'number',
     sort: false,
   },
@@ -14,8 +14,13 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  sent: {
+  sendedSirsae: {
     title: 'Enviado SIRSAE',
+    type: 'string',
+    sort: false,
+  },
+  sendSirsae: {
+    title: 'Enviar SIRSAE',
     type: 'string',
     sort: false,
   },
