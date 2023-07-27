@@ -53,13 +53,15 @@ export class ConfirmValidationModalComponent implements OnInit {
       resultTaxpayer: [null, [Validators.required]],
       observationsResult: [null, [Validators.required]],
     });
+
+    this.getResultTax();
   }
 
   close() {
     this.bsModalRef.hide();
   }
 
-  getResultTax(params: ListParams) {
+  getResultTax(params?: ListParams) {
     this.selectResultTaxpayer = new DefaultSelect(
       resultContribuyente,
       resultContribuyente.length
@@ -92,12 +94,13 @@ export class ConfirmValidationModalComponent implements OnInit {
               item.resultTaxpayer = 'RECHAZADO';
               item.resultFinal = 'Y';
 
-              //deleteReverveGood(item);
+              this.deleteGoodDated(item);
             }
           }
         });
       }
     } else if (form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE') {
+      const resultadoFinal = 'P';
     } else if (form.resultTaxpayer == 'RECHAZADO') {
     } else if (form.resultTaxpayer == 'NO ASISTIO') {
     } else if (form.resultTaxpayer == 'REPROGRAMAR') {
@@ -114,5 +117,13 @@ export class ConfirmValidationModalComponent implements OnInit {
         },
       });
     });
+  }
+
+  deleteGoodDated(good: any) {
+    if (good.resultFinal != null) {
+      //llamar a sacar de la reserva en almacen
+      if (good.reservationId != null) {
+      }
+    }
   }
 }

@@ -7,7 +7,11 @@
 <div class="row pt-5">
   <div class="d-flex">
     <div class="p-2">
-      <button class="btn btn-primary btn-sm active mb-3">Ver Expediente</button>
+      <button
+        class="btn btn-primary btn-sm active mb-3"
+        (click)="seeExpedients()">
+        Ver Expediente
+      </button>
     </div>
     <div class="p-2">
       <button
@@ -17,7 +21,9 @@
       </button>
     </div>
     <div class="p-2">
-      <button class="btn btn-success btn-sm active mb-3">
+      <button
+        class="btn btn-success btn-sm active mb-3"
+        (click)="approveAcceptProvioning()">
         Aprobar Bien Aceptado Provisionamiento en Otro Almacen
         <i class="fa fa-check-circle" aria-hidden="true"></i>
       </button>

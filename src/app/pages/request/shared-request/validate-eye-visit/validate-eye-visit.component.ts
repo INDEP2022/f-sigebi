@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { CheckboxSelectElementComponent } from './checkbox-selected/checkbox-select-element';
 import { ConfirmValidationModalComponent } from './confirm-validation-modal/confirm-validation-modal.component';
+import { SeeExpedientComponent } from './see-expedient/see-expedient.component';
 import { GOODS_EYE_VISIT_COLUMNS } from './validate-eye-visit-columns';
 
 @Component({
@@ -49,6 +50,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
   private fractionService = inject(FractionService);
 
   ngOnInit(): void {
+    console.log('validate visita', this.idRequest);
     const self = this;
     this.selectedGoodSettings.columns = {
       select: {
@@ -92,9 +94,10 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
         //setTimeout(() => {
-        const result = resp.data.map(async (item: any) => {
+        const result = resp.data.map(async (item: any, _i) => {
           item.select = false;
-          if (item.resultFinal != null) {
+
+          /* if (item.resultFinal != null) {
             if (item.resultFinal != 'N') {
               const column = this.tableGoods.grid.getColumns();
               const maneuverReqColumn = column.find(
@@ -102,8 +105,16 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
               );
               maneuverReqColumn.hide = true;
             }
+          } */
+          //borrar solo de prueba
+          if (_i == 0) {
+            item.resultTaxpayer = 'ACEPTADO';
+            item.resultFinal = 'Y';
           }
+          //fin
 
+          item['validated'] =
+            item.resultFinal == 'Y' || item.resultFinal == 'P' ? true : false;
           item['maneuverRequired'] =
             item.requiresManeuver == 'Y' ? true : false;
 
@@ -129,6 +140,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           this.selectedGoodTotalItems = resp.count;
           setTimeout(() => {
             this.disableValidateColumn();
+            this.setContributorValidatorRows();
           }, 600);
           this.loading = false;
         });
@@ -254,5 +266,66 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     } else {
       this.onLoadToast('info', 'Se tiene que seleccionar un bien');
     }
+  }
+
+  /* METODO QUE ESTABLECE LOS ESTILOS DE LAS COLUMNAS */
+  setContributorValidatorRows() {
+    this.selectedGoodColumns.getElements().then(data => {
+      data.map((item: any, i: number) => {
+        const tabla = document.getElementById('selectedGoodsTable');
+        const tbody = tabla.children[0].children[1].children;
+        if (item.resultTaxpayer == 'ACEPTADO') {
+          const elem = tbody[i].children[2].setAttribute(
+            'style',
+            'background-color:green;color:white;'
+          );
+        }
+        if (item.resultFinal == 'Y' || item.resultFinal == 'P') {
+          const elem = tbody[i].children[1].setAttribute(
+            'style',
+            'color:green;'
+          );
+        }
+      });
+    });
+  }
+
+  approveAcceptProvioning() {
+    const codigoAlmacen = this.selectedList.codeStore; //codigo almacen seleccionado
+    const codigoAlmacenTarea = ''; //
+    const resultadoFinal = this.selectedList.resultFinal;
+
+    if (
+      codigoAlmacen != null &&
+      codigoAlmacen != codigoAlmacenTarea &&
+      resultadoFinal == 'P'
+    ) {
+      this.alertQuestion(
+        'question',
+        'Aceptar Bien Ajeno',
+        'Se aceptara provisionalmente un bien de otro almacen'
+      ).then(questionResult => {
+        if (questionResult.isConfirmed) {
+        }
+      });
+    } else {
+      this.onLoadToast(
+        'info',
+        'No es posible aprobar el bien seleccionado',
+        ''
+      );
+      return;
+    }
+  }
+
+  seeExpedients() {
+    const config: ModalOptions = {
+      initialState: {
+        idRequest: this.idRequest,
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalService.show(SeeExpedientComponent, config);
   }
 }

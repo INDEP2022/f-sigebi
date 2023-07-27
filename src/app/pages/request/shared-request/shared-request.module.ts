@@ -89,6 +89,7 @@ import { UploadElectronicSignatureComponent } from './upload-electronic-signatur
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
 import { ConfirmValidationModalComponent } from './validate-eye-visit/confirm-validation-modal/confirm-validation-modal.component';
+import { SeeExpedientComponent } from './validate-eye-visit/see-expedient/see-expedient.component';
 import { ValidateEyeVisitComponent } from './validate-eye-visit/validate-eye-visit.component';
 import { ConfirmValidationComponent } from './validate-visit-result/confirm-validation/confirm-validation.component';
 import { ValidateVisitResultComponent } from './validate-visit-result/validate-visit-result.component';
@@ -196,6 +197,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ModifyDatesModalComponent,
     ValidateEyeVisitComponent,
     ConfirmValidationModalComponent,
+    SeeExpedientComponent,
   ],
   imports: [
     CommonModule,
