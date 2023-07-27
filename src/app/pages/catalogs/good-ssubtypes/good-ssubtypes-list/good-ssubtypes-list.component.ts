@@ -53,7 +53,7 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 field = `filter.${filter.field}`;
                 break;
-              case 'description':
+              /*case 'description':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}`;
                 break;
@@ -64,7 +64,7 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
               case 'noSubType':
                 field = `filter.${filter.field}.nameSubtypeGood`;
                 searchFilter = SearchFilter.ILIKE;
-                break;
+                break;*/
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -90,7 +90,7 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodSsubtypeService.getAll(params).subscribe({
+    this.goodSsubtypeService.getAll1(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;

@@ -26,7 +26,7 @@ export class RegisterKeysLogicalTablesModalComponent
   idCve: ITable;
   selectTabla: string;
 
-  title: string = 'Registro de claves para tablas logicas con 5 claves';
+  title: string = 'Claves para Tabla Lógica con 5 Claves';
   edit: boolean = false;
 
   _id: any;

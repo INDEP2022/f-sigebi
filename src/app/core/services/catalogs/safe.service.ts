@@ -30,6 +30,10 @@ export class SafeService extends HttpService implements ICrudMethods<ISafe> {
     return this.safeRepository.getAllPaginated(this.route, params);
   }
 
+  getAll1(params?: ListParams): Observable<IListResponse<ISafe>> {
+    return this.safeRepository.getAll(this.route, params);
+  }
+
   getById(id: string | number): Observable<ISafe> {
     return this.safeRepository.getById(this.route, id);
   }

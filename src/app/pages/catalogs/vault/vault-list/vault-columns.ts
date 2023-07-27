@@ -14,16 +14,16 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  managerDetail: {
+  manager: {
     title: 'Responsable',
     type: 'string',
     sort: false,
   },
-  cityDetail: {
+  nameCity: {
     title: 'Ciudad',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    /*valuePrepareFunction: (value: any) => {
       return value != null ? value.nameCity : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -33,13 +33,13 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },
+    },*/
   },
-  stateDetail: {
+  descState: {
     title: 'Entidad',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    /*valuePrepareFunction: (value: any) => {
       return value != null ? value.descCondition : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -49,13 +49,14 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },
+    },*/
   },
-  municipalityDetail: {
+
+  nameMunicipality: {
     title: 'Municipio',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    /*valuePrepareFunction: (value: any) => {
       return value != null ? value.nameMunicipality : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -65,13 +66,13 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },
+    },*/
   },
-  localityDetail: {
+  nameLocation: {
     title: 'Localidad',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (value: any) => {
+    /*valuePrepareFunction: (value: any) => {
       return value != null ? value.nameLocation : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -81,6 +82,6 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },
+    },*/
   },
 };
