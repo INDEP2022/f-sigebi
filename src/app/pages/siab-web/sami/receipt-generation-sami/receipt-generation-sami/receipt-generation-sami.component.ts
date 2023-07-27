@@ -302,6 +302,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         next: resp => {
           console.log(resp);
           this.alert('success', `Bien Agregado a ${operation}`, '');
+          this.cleanInsert();
         },
         error: eror => {
           this.alert(
