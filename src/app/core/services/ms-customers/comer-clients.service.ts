@@ -46,4 +46,8 @@ export class ComerClientsService extends HttpService {
   getAll_(params?: _Params): Observable<IListResponse<IComerClients>> {
     return this.get<IListResponse<IComerClients>>(this.endpoint, params);
   }
+
+  getById_(id?: any): Observable<IListResponse<IComerClients>> {
+    return this.get<IListResponse<IComerClients>>(`${this.endpoint}/${id}`);
+  }
 }
