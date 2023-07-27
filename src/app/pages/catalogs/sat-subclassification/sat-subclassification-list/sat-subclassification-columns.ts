@@ -6,7 +6,7 @@ export const SAT_SUBCLASSIFICATION_COLUMNS = {
     width: '10%',
   },
   nameSubClasification: {
-    title: 'Nombre SubClasificación',
+    title: 'Nombre Subclasificación',
     type: 'string',
     sort: false,
     width: '40%',

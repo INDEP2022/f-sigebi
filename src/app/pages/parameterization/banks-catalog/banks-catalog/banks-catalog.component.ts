@@ -52,13 +52,12 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(30)],
       ],
-      cveCurrency: [['A']],
       accountType: [null, []],
       delegationNumber: [null, Validators.pattern(STRING_PATTERN)],
       accountNumberTransfer: [null, Validators.pattern(NUMBERS_PATTERN)],
       square_I: [{ value: '', disabled: true }],
       branch_I: [{ value: '', disabled: true }],
-      currency_I: [],
+      currency_I: [null, [Validators.pattern(STRING_PATTERN)]],
       accountType_I: [{ value: '', disabled: true }],
       bank_I: [{ value: '', disabled: true }],
       cveInterestCalcRate: ['CETES', Validators.pattern(STRING_PATTERN)],
@@ -104,7 +103,11 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
 
         this.bankServ.update(id, data).subscribe({
           next: () => {
-            this.alert('success', 'Registro Actualizado Correctamente', '');
+            this.alert(
+              'success',
+              'Cuenta de Banco',
+              'Actualizada Correctamente'
+            );
             this.close();
           },
           error: err => {
@@ -115,7 +118,7 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
       } else {
         this.bankServ.create(data).subscribe({
           next: () => {
-            this.alert('success', 'Registro Creado Correctamente', '');
+            this.alert('success', 'Cuenta de Banco', 'Guardada Correctamente');
             this.close();
           },
           error: err => {

@@ -46,7 +46,11 @@ export class SatSubclassificationFormComponent
       id: [null],
       nameSubClasification: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       idClasification: [null, [Validators.required]],
       idClasificationCode: [null],
@@ -99,6 +103,14 @@ export class SatSubclassificationFormComponent
   }
 
   create() {
+    if (
+      this.satSubclassificationForm.controls[
+        'nameSubClasification'
+      ].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.satSubclassificationService
       .create(this.satSubclassificationForm.getRawValue())
@@ -140,7 +152,7 @@ export class SatSubclassificationFormComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;

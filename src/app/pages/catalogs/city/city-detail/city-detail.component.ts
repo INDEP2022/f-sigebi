@@ -80,8 +80,9 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.cityForm.controls['noSubDelegation'].setValue(
         this.selectedDelegation.id
       );
-      this.cityForm.controls['state'].setValue(
-        this.selectedState.descCondition
+      this.cityForm.controls['state'].setValue(this.selectedState.id);
+      console.log(
+        this.cityForm.controls['state'].setValue(this.selectedState.id)
       );
 
       this.getDelegations(new ListParams());
@@ -97,6 +98,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
     this.stateService.getAll(params).subscribe({
       next: data => {
         this.states = new DefaultSelect(data.data, data.count);
+        console.log('DL', data);
       },
     });
   }
@@ -194,17 +196,21 @@ export class CityDetailComponent extends BasePage implements OnInit {
       this.edit = true;
       this.idState = this.city.state as IState;
       this.cityForm.patchValue(formCity);
+      console.log(this.cityForm.patchValue(formCity));
+
       //this.getSubDelegations(new ListParams(), formCity.subDelegation.id);
     }
   }
 
   confirm() {
     const newCity = Object.assign({}, this.cityForm.value);
+    console.log(newCity);
 
     Object.defineProperties(newCity, {
       state: {
         value: newCity.state.id,
       },
+
       noDelegation: {
         value: newCity.noDelegation.id,
       },
