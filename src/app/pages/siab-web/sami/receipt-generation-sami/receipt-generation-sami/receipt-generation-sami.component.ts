@@ -13,7 +13,7 @@ import { IReceiptItem } from '../receipt-table-goods/ireceipt';
   templateUrl: './receipt-generation-sami.component.html',
   styles: [
     `
-      .label {
+      /* .label {
         color: black;
         font-weight: 900;
       }
@@ -23,7 +23,7 @@ import { IReceiptItem } from '../receipt-table-goods/ireceipt';
         color: black;
         font-size: 0.8em;
         font-weight: 400;
-      }
+      } */
     `,
   ],
 })
@@ -236,12 +236,41 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         return;
       }
     }
+    this.cancellationView = false;
+    this.reprogramingView = false;
     if (sender == 0) {
-      this.performOperation('UNO', 'RECIBO', 0);
+      this.alertQuestion(
+        'question',
+        'Se Asignará al Recibo',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperation('UNO', 'RECIBO', 0);
+        }
+      });
     } else if (sender == 1) {
-      this.performOperation('UNO', 'RESGUARDO', 0);
+      this.alertQuestion(
+        'question',
+        'Se Asignará al Resguardo',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperation('UNO', 'RESGUARDO', 0);
+        }
+      });
     } else if (sender == 2) {
-      this.performOperation('UNO', 'ALMACEN', 0);
+      this.alertQuestion(
+        'question',
+        'Se Asignará al Almacen',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperation('UNO', 'ALMACEN', 0);
+        }
+      });
     }
   }
   performOperation(type: string, operation: string, reasonCanRep: number) {
@@ -370,6 +399,20 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       );
       return;
     }
+  }
+  cleanInsert() {
+    this.programmingForm.controls['managementId'].setValue('');
+    this.goodID = '';
+    this.uniqueKey = '';
+    this.noFile = '';
+    this.descriptionGood = '';
+    this.quantity = '';
+    this.unitMeasure = '';
+    this.physicalStateLetter = '';
+    this.letterConservationStatus = '';
+    this.destinationLetter = '';
+    this.destinoTransferenteLetra = '';
+    this.indepForm.reset();
   }
   clean() {
     this.programmingForm.reset();
