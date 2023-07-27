@@ -63,7 +63,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           console.log(change.filter.filters);
           let filters = change.filter.filters;
-          filters.map((filter: any) => {
+          for (let filter of filters) {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -71,6 +71,16 @@ export class EventProcessListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
+                field = `filter.id.` + filter.field;
+                break;
+              case 'processKey':
+                field = `filter.id.` + filter.field;
+                break;
+              case 'tpeventoId':
+                field = `filter.id.` + filter.field;
+                break;
+              case 'statusvtaId':
+                field = `filter.id.` + filter.field;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -83,11 +93,15 @@ export class EventProcessListComponent extends BasePage implements OnInit {
             } else {
               delete this.columnFilters[field];
             }
-          });
+          }
+          console.log(this.columnFilters);
+          //reset params
+          this.params.next(new ListParams());
           this.params.next({
             ...this.params.getValue(),
-            filter: this.columnFilters,
+            ...this.columnFilters,
           });
+          console.log(this.params.getValue());
           this.getEvents();
         }
       });
@@ -120,10 +134,16 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         next: response => {
           this.comerEvent = response.data;
           this.data.load(this.comerEvent);
+          this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;
         },
-        error: error => (this.loading = false),
+        error: error => {
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+          this.loading = false;
+        },
       });
   }
 
