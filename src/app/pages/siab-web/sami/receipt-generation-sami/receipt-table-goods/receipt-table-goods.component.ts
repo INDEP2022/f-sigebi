@@ -49,7 +49,7 @@ export class ReceiptTableGoodsComponent
         ...COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        return row.data.notSelect ? 'notSelect' : '';
+        return row.data.guardado === '1' ? 'notSelect' : '';
       },
     };
     this.dataService.refreshAll.pipe(takeUntil(this.$unSubscribe)).subscribe({
