@@ -116,7 +116,6 @@
               formControlName="code" />
           </form-field>
         </div>
-
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
             <input
@@ -203,7 +202,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="form.invalid"
+          [disabled]="form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">

@@ -114,8 +114,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         branchOffice: this.data.branchOffice,
         reconciled: this.data.reconciled,
         appliedTo: this.data.appliedTo,
-        // clientId: this.data.clientId,
-        // lotId: this.data.lotId,
+        clientId: this.data.clientId,
+        lotId: this.data.lotId,
       });
 
       console.log('this.data', this.data);
