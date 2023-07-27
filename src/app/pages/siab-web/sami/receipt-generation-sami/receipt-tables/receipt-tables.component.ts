@@ -114,7 +114,7 @@ export class ReceiptTablesComponent extends BasePage {
             P_ESTADO_CONSERVACION_SAE: 0,
             P_ESTADO_FISICO_SAE: 0,
             P_UNIDAD_MEDIDA_SAE: 0,
-            P_DESCRIPCION_BIEN_SAE: '',
+            P_DESCRIPCION_BIEN_SAE: ' ',
             P_ID_BIEN: row.id_bien,
             P_ID_PROGRAMACION: row.id_programacion,
           })
