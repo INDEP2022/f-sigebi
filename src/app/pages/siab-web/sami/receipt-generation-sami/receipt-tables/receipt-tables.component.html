@@ -4,7 +4,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Recibos)">
       Asignar Recibo
     </button>
@@ -12,7 +12,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Resguardo)">
       Resguardo
     </button>
@@ -20,7 +20,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Almacen)">
       Almacen
     </button>
@@ -28,7 +28,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Reprogramacion)">
       Reprogramación
     </button>
@@ -36,7 +36,7 @@
       class="btn btn-primary btn-sm m-2 active"
       type="submit"
       size="small"
-      [disabled]="selectedGooods.length === 0"
+      [disabled]="selectedGoods.length === 0"
       (click)="assignReception(receiptType.Cancelacion)">
       Cancelación
     </button>
@@ -131,7 +131,7 @@
 <div class="row" *ngIf="typeReceiptSelected">
   <div *ngIf="isFirstTable()">
     <app-receipt-table-programings
-      [folio]="folio"></app-receipt-table-programings>
+      [id_programacion]="id_programacion"></app-receipt-table-programings>
   </div>
   <div *ngIf="!isFirstTable()">
     <app-receipt-table-goods
