@@ -111,4 +111,8 @@ export class DepartamentService
     const route = `${DepartamentEndpoints.Departament}?filter.numDelegation=$eq:${id}&filter.description=$ilike:${descripcion}`;
     return this.get(route);
   }
+
+  getDeparmentById(model: any): Observable<IDepartment> {
+    return this.departamentRepository.create(this.route + '/id', model);
+  }
 }
