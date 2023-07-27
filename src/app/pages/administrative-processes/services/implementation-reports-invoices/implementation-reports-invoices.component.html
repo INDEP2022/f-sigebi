@@ -206,7 +206,7 @@
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Reporte de Implementación</h5>
-        <div class="col-md-12 mb-1" style="text-align: end">
+        <div class="col-md-12 mb-1 d-flex justify-content-end">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
         <div [class]="loading ? 'table-loading' : ''">
@@ -243,9 +243,7 @@
     <div class="row">
       <div class="col-md-12">
         <h5 class="title pt-4">Reporte relacionados con la factura</h5>
-        <div
-          class="col-md-12 mb-1"
-          style="text-align: end; margin-block-end: auto">
+        <div class="col-md-12 mb-1 d-flex justify-content-end">
           <app-columns-select [(settings)]="settings2"></app-columns-select>
         </div>
         <div [class]="loading ? 'table-loading' : ''">
