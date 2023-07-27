@@ -54,11 +54,14 @@ export class EventGoodsLotsListActionsComponent
   invoiceInput: ElementRef<HTMLInputElement>;
   @ViewChild('invoiceDataInput', { static: true })
   invoiceDataInput: ElementRef<HTMLInputElement>;
+  @ViewChild('saleBaseInput', { static: true })
+  saleBaseInput: ElementRef<HTMLInputElement>;
   @Input() params: BehaviorSubject<FilterParams>;
   goodsLotifyControl = new FormControl(null);
   customersImportControl = new FormControl(null);
   invoiceControl = new FormControl(null);
   invoiceDataControl = new FormControl(null);
+  @Input() onlyBase = false;
   get controls() {
     return this.eventForm.controls;
   }
@@ -624,5 +627,45 @@ export class EventGoodsLotsListActionsComponent
       }  tiene Bienes de diferente Mandato, presione el botón Actualizar Mandato`,
       ''
     );
+  }
+
+  // * ----------------- ACCIONES DE BASE
+
+  // ?-------------------- EXPORTAR EXCEL
+  onBaseExportExcel() {
+    this.baseThird();
+  }
+
+  /**ARCHIVO_TERCERO_BASE */
+  baseThird() {
+    console.warn('ARCHIVO_TERCERO_BASE');
+  }
+
+  //  ? -------------------- CARGA VENTA DE BASES
+  onLoadBaseSales() {
+    const { statusVtaId } = this.controls;
+    const valid = this.consignment();
+    const canContinue =
+      (valid && this.parameters.pValids) || statusVtaId.value == 'CONC';
+    if (!canContinue) {
+      this.alert(
+        'error',
+        'Error',
+        'Este tipo de evento no permite esta funcionalidad o Usted no tiene permisos'
+      );
+      return;
+    }
+    this.saleBaseInput.nativeElement.click();
+  }
+
+  loadSaleBases(event: Event) {
+    if (!this.isValidFile(event)) {
+      return;
+    }
+    this.impExcelBase();
+  }
+
+  impExcelBase() {
+    console.warn('PUP_IMP_EXCEL_BASES');
   }
 }
