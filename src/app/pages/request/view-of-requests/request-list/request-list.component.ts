@@ -277,6 +277,33 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'BSValidarVisitaOcular',
   },
+  {
+    title:
+      'RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RERegistroDocComplementaria',
+  },
+  {
+    title:
+      'Revisión de lineamientos resarcimiento (EN ESPECIE), No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RevisonLineamientos',
+  },
+  {
+    title:
+      'Generar Resultado de Análisis Resarcimiento(EN ESPECIE), No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'GRAnalisisResarcimiento',
+  },
 ];
 
 //AP_Amparo
@@ -545,6 +572,35 @@ export class RequestListComponent extends BasePage implements OnInit {
         break;
       case 'BSValidarVisitaOcular':
         //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RERegistroDocComplementaria':
+        //Doc. Complementaria Gestionar Bienes Similares
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RERegistroDocComplementaria':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RevisonLineamientos':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'GRAnalisisResarcimiento':
         this.router.navigate([
           'pages/request/request-comp-doc/tasks',
           event.data.process,
