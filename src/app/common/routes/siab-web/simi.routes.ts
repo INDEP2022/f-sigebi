@@ -11,6 +11,10 @@ export const SAMI_ROUTES = [
         link: '/pages/siab-web/sami/receipt-generation-sami',
       },
       {
+        label: 'Mantenimiento',
+        link: '/pages/siab-web/sami/maintenance',
+      },
+      {
         label: 'Mantenimiento programación',
         link: '/pages/siab-web/sami/schedule-maintenance',
       },
