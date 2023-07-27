@@ -18,6 +18,15 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     valuePrepareFunction: (value: IGoodType) => {
       return value.nameGoodType;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameGoodType;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
     sort: false,
   },
   noSubType: {
@@ -25,6 +34,14 @@ export const GOOD_SSUBTYPES_COLUMNS = {
     type: 'string',
     valuePrepareFunction: (value: IGoodSubType) => {
       return value.nameSubtypeGood;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameSubtypeGood;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
     sort: false,
   },

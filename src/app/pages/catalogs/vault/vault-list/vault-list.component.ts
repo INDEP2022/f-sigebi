@@ -63,11 +63,25 @@ export class VaultListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'idSafe':
                 searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
                 break;
               case 'managerDetail':
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}`;
+                break;
+              case 'cityDetail':
+                field = `filter.${filter.field}.nameCity`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stateDetail':
+                field = `filter.${filter.field}.descCondition`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipalityDetail':
+                field = `filter.${filter.field}.nameMunicipality`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'localityDetail':
+                field = `filter.${filter.field}.nameLocation`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -95,15 +109,25 @@ export class VaultListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll2(params).subscribe(
-      response => {
-        this.getManager(response);
+    this.safeService.getAll2(params).subscribe({
+      next: response => {
+        //this.getManager(response);
         this.totalItems = response.count;
+        this.data.load(response.data);
+        //console.log(this.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: err => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
-  async getManager(response: any): Promise<void> {
+  /*async getManager(response: any): Promise<void> {
     for (let i = 0; i < response.data.length; i++) {
       const params = new ListParams();
       params['filter.user'] = `$eq:${response.data[i].manager}`;
@@ -128,7 +152,8 @@ export class VaultListComponent extends BasePage implements OnInit {
       });
       await new Promise(resolve => setTimeout(resolve, 300));
     }
-  }
+  }*/
+
   openForm(vault?: ISafe) {
     const modalConfig = MODAL_CONFIG;
     const valueState = { ...this.values };
