@@ -13,9 +13,10 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class SaleStatusFormComponent extends BasePage implements OnInit {
   status: string = 'Nuevo';
   edit: boolean = false;
-  title: string = 'ESTATUS DE VENTA';
+  title: string = 'Estatus de Venta';
   form: FormGroup = new FormGroup({});
   saleStatus: any;
+  responseBoolean: boolean;
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -48,7 +49,6 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
     });
 
     if (this.saleStatus) {
-      //console.log(this.brand)
       this.status = 'Actualizar';
       this.edit = true;
       this.form.patchValue(this.saleStatus);
@@ -70,14 +70,10 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
       .checkExistingId(this.form.controls['id'].value)
       .subscribe({
         next: response => {
-          console.log(response);
-          if (response) {
-            this.loading = false;
-            this.onLoadToast(
-              'error',
-              'Estatus No Válido',
-              'El estatus ingresado ya existe'
-            );
+          this.responseBoolean = response;
+          if (this.responseBoolean === true) {
+            this.alert('warning', 'El Estatus Ingresado ya Existe', '');
+            this.modalRef.hide();
           } else {
             this.saleStatusService.create(this.form.getRawValue()).subscribe({
               next: response => {
@@ -86,21 +82,17 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
               },
               error: () => {
                 this.loading = false;
-                this.onLoadToast(
-                  'error',
-                  'Error al conectar con el servidor',
-                  ''
-                );
+                this.alert('error', 'Error al Conectar con el Servidor', '');
               },
             });
           }
         },
       });
-    this.handleSuccess();
   }
+
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -117,7 +109,7 @@ export class SaleStatusFormComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.loading = false;
-          this.onLoadToast('error', 'Error al conectar con el servidor', '');
+          this.alert('error', 'Error al Conectar con el Servidor', '');
         },
       });
   }

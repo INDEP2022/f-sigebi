@@ -52,7 +52,18 @@
               [source]="dataGoods"
               (rowSelect)="getGoodData($event)"
               (rowDeselect)="deselectRow()"></ng2-smart-table>
+            <!-- <div class="row">
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div> -->
           </div>
+          <div class="row">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+
           <span>{{ goodStatus }}</span>
         </div>
 
@@ -133,10 +144,23 @@
                   </div>
 
                   <div class="row">
-                    <app-currency-shared
+                    <!-- <app-currency-shared
                       [currencyField]="monedaField"
                       [class]="!this.isEnableGood ? 'disabled' : ''"
-                      [form]="form"></app-currency-shared>
+                      [form]="form"></app-currency-shared> -->
+                    <form-field [control]="form.get('moneda')">
+                      <ngx-select
+                        [searchOnInit]="true"
+                        (fetchItems)="getCurrencies($event)"
+                        [data]="currencies"
+                        [class]="!this.isEnableGood ? 'disabled' : ''"
+                        [form]="form"
+                        value="cve_moneda"
+                        bindLabel="desc_moneda"
+                        label="Moneda"
+                        control="moneda">
+                      </ngx-select>
+                    </form-field>
                   </div>
 
                   <div class="row mb-3">

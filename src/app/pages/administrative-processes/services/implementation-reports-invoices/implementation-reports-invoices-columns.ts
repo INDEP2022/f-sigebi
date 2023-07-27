@@ -1,21 +1,21 @@
 export const IMPLEMENTATION_COLUMNS = {
   cveReport: {
-    title: 'Cve.Reporte',
+    title: 'Cve. Reporte',
     width: '10%',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     width: '20%',
     sort: false,
   },
   fecAuthorizes: {
-    title: 'Fec.Autoriza',
+    title: 'Fec. Autoriza',
     width: '10%',
     sort: false,
   },
   fecCapture: {
-    title: 'Fec.Captura',
+    title: 'Fec. Captura',
     width: '10%',
     sort: false,
   },
@@ -27,11 +27,11 @@ export const IMPLEMENTATION_COLUMNS = {
 };
 export const INVOICE_COLUMNS = {
   cveReport: {
-    title: 'Cve.Reporte',
+    title: 'Cve. Reporte',
     width: '10%',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     width: '20%',
     sort: false,

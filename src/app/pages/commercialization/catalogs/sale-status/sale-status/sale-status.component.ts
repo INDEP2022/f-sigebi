@@ -1,14 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-
-import { COLUMNS } from './columns';
-//Components
-
-//Provisional Data
 import { BasePageWidhtDinamicFilters } from 'src/app/core/shared/base-page-dinamic-filters';
 import { IComerSaleStatus } from '../../../../../core/models/ms-event/sale-status.model';
 import { ComerSaleStatusService } from '../../../../../core/services/ms-event/comer-sale-status.service';
 import { SaleStatusFormComponent } from '../sale-status-form/sale-status-form.component';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-sale-status',
@@ -21,8 +17,6 @@ export class SaleStatusComponent
 {
   saleStatusD: IComerSaleStatus[];
   selectedRow: IComerSaleStatus | null = null;
-
-  //Columns
   columns = COLUMNS;
 
   constructor(
@@ -42,6 +36,7 @@ export class SaleStatusComponent
       columns: COLUMNS,
     };
   }
+
   openForm(saleStatus?: any) {
     let config: ModalOptions = {
       initialState: {
@@ -72,7 +67,7 @@ export class SaleStatusComponent
           },
           error: () => {
             this.loading = false;
-            this.alert('error', 'Error al conectar con el servidor', '');
+            this.alert('error', 'Error al Conectar con el Servidor', '');
           },
         });
       }
