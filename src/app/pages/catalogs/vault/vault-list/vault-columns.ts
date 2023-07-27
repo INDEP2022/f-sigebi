@@ -19,11 +19,11 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  nameCity: {
+  cityDetail: {
     title: 'Ciudad',
     type: 'string',
     sort: false,
-    /*valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: any) => {
       return value != null ? value.nameCity : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -33,13 +33,13 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },*/
+    },
   },
-  descState: {
+  stateDetail: {
     title: 'Entidad',
     type: 'string',
     sort: false,
-    /*valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: any) => {
       return value != null ? value.descCondition : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -49,14 +49,14 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },*/
+    },
   },
 
-  nameMunicipality: {
+  municipalityDetail: {
     title: 'Municipio',
     type: 'string',
     sort: false,
-    /*valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: any) => {
       return value != null ? value.nameMunicipality : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -66,13 +66,14 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },*/
+    },
   },
-  nameLocation: {
+
+  localityDetail: {
     title: 'Localidad',
     type: 'string',
     sort: false,
-    /*valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: any) => {
       return value != null ? value.nameLocation : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
@@ -82,6 +83,6 @@ export const VAULT_COLUMNS = {
       } else {
         return false;
       }
-    },*/
+    },
   },
 };
