@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="batchForm">
       <div class="row">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="batchForm.get('id')" label="CODIGO LOTE">
+          <form-field [control]="batchForm.get('id')" label="Código Lote">
             <input
               type="tel"
               class="form-control"
@@ -43,7 +43,14 @@
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field [control]="batchForm.get('status')" label="Estado">
-            <input type="text" class="form-control" formControlName="status" />
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="V">Activo</ng-option>
+              <ng-option value="I">Inactivo</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
@@ -52,10 +59,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!batchForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

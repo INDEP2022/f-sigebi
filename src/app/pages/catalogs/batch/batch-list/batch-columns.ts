@@ -1,11 +1,11 @@
 export const BATCH_COLUMNS = {
   id: {
-    title: 'Codigo',
+    title: 'Código',
     type: 'number',
     sort: false,
   },
   numStore: {
-    title: 'ID Almacén',
+    title: 'Id Almacén',
     type: 'number',
     sort: false,
     valuePrepareFunction: (value: any) => {
@@ -13,7 +13,7 @@ export const BATCH_COLUMNS = {
     },
   },
   numRegister: {
-    title: 'ID Registro',
+    title: 'Id Registro',
     type: 'number',
     sort: false,
   },
@@ -25,6 +25,21 @@ export const BATCH_COLUMNS = {
   status: {
     title: 'Estado',
     type: 'string',
+    valuePrepareFunction: (value: string) => {
+      if (value == 'V') return 'Activo';
+      if (value == 'I') return 'Inactivo';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'V', title: 'Activo' },
+          { value: 'I', title: 'Inactivo' },
+        ],
+      },
+    },
     sort: false,
   },
 };

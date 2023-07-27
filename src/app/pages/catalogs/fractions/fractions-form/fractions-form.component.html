@@ -78,12 +78,11 @@
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('relevantTypeId')"
-            label="Tipo relevante">
+            label="Tipo Relevante">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="relevantTypeId"
-              min="0" />
+              formControlName="relevantTypeId" />
           </form-field>
         </div>
 
@@ -123,7 +122,7 @@
         <div class="col-md-4">
           <form-field
             [control]="fractionForm.get('decimalAmount')"
-            label="Cantidad decimal">
+            label="Cantidad Decimal">
             <input
               type="text"
               class="form-control"

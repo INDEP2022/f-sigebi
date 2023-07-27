@@ -44,3 +44,8 @@ export interface IComerDocumentsXML {
   denomination: string;
   firmdate: Date;
 }
+
+export interface IUpdateComerPagosRef {
+  referenceId: number;
+  documentId: number;
+}

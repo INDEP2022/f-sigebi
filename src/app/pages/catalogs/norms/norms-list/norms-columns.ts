@@ -50,6 +50,14 @@ export const NORMS_COLUMNS = {
     title: 'Destino',
     type: 'string',
     sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.name;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   condition: {
     title: 'Condición',

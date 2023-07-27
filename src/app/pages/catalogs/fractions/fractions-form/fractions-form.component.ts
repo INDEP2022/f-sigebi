@@ -43,43 +43,94 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   prepareForm() {
     this.fractionForm = this.fb.group({
       id: [null],
-      code: [null, [Validators.required]],
-      level: ['0', [Validators.required]],
+      code: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
+      level: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       normId: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      unit: [null],
+      unit: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(30)],
+      ],
       clasificationId: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      version: [1, [Validators.required]],
+      version: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
       relevantTypeId: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       codeErp1: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
       codeErp2: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
       codeErp3: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(30)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
       ],
-      decimalAmount: [null, [Validators.required, Validators.maxLength(1)]],
-      status: [null],
+      decimalAmount: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
+      status: [null, [Validators.maxLength(1)]],
       fractionCode: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       parentId: [null],
     });
@@ -130,6 +181,10 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.fractionForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     console.log(this.fractionForm.value);
     this.fractionService.create(this.fractionForm.value).subscribe({
@@ -150,7 +205,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
 
     this.loading = false;
