@@ -49,7 +49,6 @@ export class EventPreparationComponent
 {
   eventForm = this.fb.group(new ComerEventForm());
   stadisticsForm = this.fb.group(new EventStadisticsForm());
-  onlyBase = false;
   @ViewChild('tasksTabs', { static: true }) tasksTabs?: TabsetComponent;
   get eventControls() {
     return this.eventForm.controls;
@@ -262,13 +261,14 @@ export class EventPreparationComponent
   }
 
   openExistingEvent() {
-    this.onlyBase = false;
+    // this.onlyBase = false;
     const { eventTpId, id } = this.eventControls;
     if (eventTpId.value == 11) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
       this.eventFormVisual.thirdId = false;
-      this.onlyBase = true;
+      // TODO: MADAR AL TAB CORRESPONDIENTE
+      // this.onlyBase = true;
     } else if (eventTpId.value == 6) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
@@ -365,7 +365,7 @@ export class EventPreparationComponent
   availableGoods() {
     const { eventTpId, statusVtaId, id } = this.eventControls;
     if (!id.value) {
-      this.canNotSeeAvailableGoods('Debe tener un lote seleccionado');
+      this.canNotSeeAvailableGoods('Debe tener Evento Abierto');
       return;
     }
     if (eventTpId.value == 9) {
@@ -389,6 +389,14 @@ export class EventPreparationComponent
       return;
     }
 
+    if (!this.lotSelected) {
+      this.canNotSeeAvailableGoods(
+        'Debe tener un lote seleccionado',
+        TABS.LOTES_TAB
+      );
+      return;
+    }
+
     this.preparation = !(eventTpId.value == 10);
   }
 
@@ -398,10 +406,10 @@ export class EventPreparationComponent
     return !(eventTpId.value == 6);
   }
 
-  canNotSeeAvailableGoods(reason: string) {
+  canNotSeeAvailableGoods(reason: string, tab: TABS = TABS.OPEN_TAB) {
     this.alert('error', 'Error', reason);
     setTimeout(() => {
-      this.selectTab(TABS.OPEN_TAB);
+      this.selectTab(tab);
     });
   }
 

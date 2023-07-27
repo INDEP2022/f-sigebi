@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IReceiptItem } from '../../receipt-generation-sami/receipt-table-goods/ireceipt';
@@ -39,8 +40,13 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   programmingForm: FormGroup;
   fileProgrammingForm: FormGroup;
+  folio: string;
+  count = 0;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private programmingGoodReceiptService: ProgrammingGoodReceiptService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -102,7 +108,42 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     this.programmingForm.controls['managementId'].disable();
   }
   chargeFile(event: any) {}
-  searchPrograming() {}
-  programmingGoodReceipt(params: ListParams) {}
+  searchPrograming() {
+    this.loader.load = true;
+    this.programmingGoodReceipt(new ListParams());
+  }
+  programmingGoodReceipt(params: ListParams) {
+    if (this.programmingForm.controls['programmingId'].value) {
+      params['filter.folio'] =
+        this.programmingForm.controls['programmingId'].value.trim();
+      this.folio = this.programmingForm.controls['programmingId'].value.trim();
+    } else {
+      this.alert(
+        'warning',
+        'Generación de Recibos',
+        'Ingresa una Programación'
+      );
+      return;
+    }
+    this.programmingGoodReceiptService.getAll(params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.goodsList = new DefaultSelect(resp.data, resp.count);
+        this.count = resp.count ?? 0;
+        this.programmingForm.controls['managementId'].enable();
+        this.loader.load = false;
+      },
+      error: eror => {
+        this.loader.load = false;
+        this.count = 0;
+        this.goodsList = new DefaultSelect([], 0, true);
+        this.alert(
+          'warning',
+          'Generación de Recibos',
+          'Esta Programación no tienes Bienes'
+        );
+      },
+    });
+  }
   searchManagement(data: IReceiptItem) {}
 }

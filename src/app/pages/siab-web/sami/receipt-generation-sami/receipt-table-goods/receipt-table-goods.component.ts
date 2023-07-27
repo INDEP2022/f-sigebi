@@ -5,7 +5,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
@@ -30,8 +29,8 @@ export class ReceiptTableGoodsComponent
   pageSelecteds: number[] = [];
   previousSelecteds: IReceiptItem[] = [];
 
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
+  // pageSizeOptions = [5, 10, 20, 25];
+  // limit: FormControl = new FormControl(5);
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ReceiptGenerationDataService,
@@ -39,7 +38,7 @@ export class ReceiptTableGoodsComponent
   ) {
     super();
     this.service = this.receiptService;
-    this.params.value.limit = 5;
+    // this.params.value.limit = 5;
     // this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
@@ -49,7 +48,7 @@ export class ReceiptTableGoodsComponent
         ...COLUMNS,
       },
       rowClassFunction: (row: any) => {
-        return row.data.notSelect ? 'notSelect' : '';
+        return row.data.guardado === '1' ? 'notSelect' : '';
       },
     };
     this.dataService.refreshAll.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -61,12 +60,12 @@ export class ReceiptTableGoodsComponent
     });
   }
 
-  get selectedGooods() {
-    return this.dataService.selectedGooods;
+  get selectedGoods() {
+    return this.dataService.selectedGoods;
   }
 
-  set selectedGooods(value) {
-    this.dataService.selectedGooods = value;
+  set selectedGoods(value) {
+    this.dataService.selectedGoods = value;
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -101,9 +100,9 @@ export class ReceiptTableGoodsComponent
   }
 
   private removeGood(item: IReceiptItem) {
-    const good = this.selectedGooods.find(x => x.id_bien === item.id_bien);
+    const good = this.selectedGoods.find(x => x.id_bien === item.id_bien);
     if (good) {
-      this.selectedGooods = this.selectedGooods.filter(
+      this.selectedGoods = this.selectedGoods.filter(
         _good => _good.id_bien != good.id_bien
       );
     }
@@ -137,11 +136,11 @@ export class ReceiptTableGoodsComponent
           this.pageSelecteds.push(currentPage);
         }
         selecteds.forEach(selected => {
-          const item = this.selectedGooods.find(
+          const item = this.selectedGoods.find(
             x => x.id_bien === selected.id_bien
           );
           if (!item) {
-            this.selectedGooods.push(selected);
+            this.selectedGoods.push(selected);
           }
         });
       } else if (event.isSelected === true) {
@@ -154,37 +153,37 @@ export class ReceiptTableGoodsComponent
           this.pageSelecteds.push(currentPage);
         }
         selecteds.forEach(selected => {
-          const item = this.selectedGooods.find(
+          const item = this.selectedGoods.find(
             x => x.id_bien === selected.id_bien
           );
           if (!item) {
-            this.selectedGooods.push(selected);
+            this.selectedGoods.push(selected);
           }
         });
       } else {
         this.removeGood(event.data);
       }
     }
-    console.log(this.selectedGooods);
+    console.log(this.selectedGoods);
     this.previousSelecteds = [...selecteds];
   }
 
   private fillSelectedRows() {
     setTimeout(() => {
       // debugger;
-      console.log(this.selectedGooods, this.table);
+      console.log(this.selectedGoods, this.table);
       const currentPage = this.params.getValue().page;
       const selectedPage = this.pageSelecteds.find(
         page => page === currentPage
       );
       this.table.isAllSelected = false;
       let allSelected = true;
-      if (this.selectedGooods && this.selectedGooods.length > 0) {
+      if (this.selectedGoods && this.selectedGoods.length > 0) {
         this.table.grid.getRows().forEach(row => {
           // console.log(row);
 
           if (
-            this.selectedGooods.find(
+            this.selectedGoods.find(
               item => row.getData()['id_bien'] === item.id_bien
             )
           ) {
