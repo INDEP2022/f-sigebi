@@ -23,4 +23,19 @@ export class PaymentService extends HttpService {
   getComerReldisDisp(){
     return this.get(`comer-reldis-disp`)
   }
+  createHeader(params: any) {
+    return this.post(PaymentEndPoints.CreateHeaderFcomer113, params);
+  }
+
+  create(params: any) {
+    return this.post(PaymentEndPoints.ComerPaymentRef, params);
+  }
+
+  update(id: any, params: any) {
+    return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+  }
+
+  sendReadSirsaeFcomer113(params: any) {
+    return this.post(PaymentEndPoints.SendReadSirsaeFcomer113, params);
+  }
 }

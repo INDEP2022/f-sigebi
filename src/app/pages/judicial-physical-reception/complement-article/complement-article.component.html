@@ -22,16 +22,16 @@
         <div class="col-md-2">
           <button
             id="search-goods-expedient"
-            class="btn btn-primary btn-sm active disabled w-50"
+            class="btn btn-primary active btn-sm"
             (click)="getGoodsByExpedient()">
-            Buscar
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
 
         <div class="col-md-4">
           <form-field
             [control]="form.get('fechaFe')"
-            label="Fecha de fe ministerial">
+            label="Fecha de f&eacute; ministerial">
             <input
               bsDatepicker
               class="form-control"
@@ -52,7 +52,18 @@
               [source]="dataGoods"
               (rowSelect)="getGoodData($event)"
               (rowDeselect)="deselectRow()"></ng2-smart-table>
+            <!-- <div class="row">
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div> -->
           </div>
+          <div class="row">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
+
           <span>{{ goodStatus }}</span>
         </div>
 
@@ -133,10 +144,23 @@
                   </div>
 
                   <div class="row">
-                    <app-currency-shared
+                    <!-- <app-currency-shared
                       [currencyField]="monedaField"
                       [class]="!this.isEnableGood ? 'disabled' : ''"
-                      [form]="form"></app-currency-shared>
+                      [form]="form"></app-currency-shared> -->
+                    <form-field [control]="form.get('moneda')">
+                      <ngx-select
+                        [searchOnInit]="true"
+                        (fetchItems)="getCurrencies($event)"
+                        [data]="currencies"
+                        [class]="!this.isEnableGood ? 'disabled' : ''"
+                        [form]="form"
+                        value="cve_moneda"
+                        bindLabel="desc_moneda"
+                        label="Moneda"
+                        control="moneda">
+                      </ngx-select>
+                    </form-field>
                   </div>
 
                   <div class="row mb-3">
@@ -208,9 +232,9 @@
                 <button
                   id="apprais-good"
                   [class]="!this.isEnableGood ? 'disabled' : ''"
-                  class="my-1 mx-2 btn btn-primary active btn-sm"
+                  class="btn btn-primary btn-sm active"
                   (click)="postAppraisGood()">
-                  Guardar
+                  Guardar <i aria-hidden="true" class="fa fa-save"></i>
                 </button>
               </div>
             </tab>
@@ -344,9 +368,9 @@
             <div class="col-2">
               <button
                 [class]="!this.isEnableGood ? 'disabled' : ''"
-                class="btn btn-primary active btn-sm mx-auto"
+                class="btn btn-primary btn-sm active"
                 (click)="updateGeneral()">
-                Guardar
+                Guardar <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
           </div>

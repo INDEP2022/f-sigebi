@@ -11,4 +11,5 @@ export enum GoodsQueryEndpoints {
   OpinionDelRegSeq = 'application/opinionDelRegSeq',
   getUnits = 'ligie-units-measure',
   getViewIndRecDoc = 'views/VIndRecDocView',
+  UnitsQuery = 'application/units-query',
 }

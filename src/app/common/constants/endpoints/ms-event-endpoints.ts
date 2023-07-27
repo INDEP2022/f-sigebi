@@ -11,4 +11,6 @@ export enum EventEndpoints {
   FilterGood = '?search=&filter.goodNumber',
   FilterLot = '?search=&filter.lo',
   EventXSerie = 'comer-tpeventxserie',
+  Application = 'application',
+  AppGetfComer = 'application/get-f-comer',
 }
