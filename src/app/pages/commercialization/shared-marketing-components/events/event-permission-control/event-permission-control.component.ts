@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -12,6 +13,7 @@ import {
 import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
 import { IComerUsuaTxEvent } from 'src/app/core/models/ms-event/comer-usuatxevent-model';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerUsuauTxEventService } from 'src/app/core/services/ms-event/comer-usuautxevento.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -42,13 +44,16 @@ export class EventPermissionControlComponent
 
   event_: any = null;
   columnFilters: any = [];
+  layout: string;
   constructor(
     private fb: FormBuilder,
     private comerEventosService: ComerEventosService,
     private comerUsuauTxEventService: ComerUsuauTxEventService,
     private modalService: BsModalService,
     private comerEventService: ComerEventService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private route: ActivatedRoute,
+    private token: AuthService
   ) {
     super();
     this.settings = {
@@ -75,9 +80,20 @@ export class EventPermissionControlComponent
   }
 
   ngOnInit(): void {
-    /*this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());*/
+    this.route.paramMap.subscribe(params => {
+      if (params.get('goodType')) {
+        console.log(params.get('goodType'));
+        // if (this.navigateCount > 0) {
+        //   this.form.reset();
+        //   this.clientRows = [];
+        //   window.location.reload();
+        // }
+        this.layout = params.get('goodType');
+
+        // this.navigateCount += 1;
+      }
+    });
+
     this.prepareForm();
 
     this.comerUsuaTxEvent
@@ -202,9 +218,15 @@ export class EventPermissionControlComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
-
-    this.comerEventService.getAllFilter(params.getParams()).subscribe({
+    // if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+    let obj = {
+      p_direccion: this.layout,
+      toolbar_usuario: this.token.decodeToken().preferred_username,
+      usuario: this.token.decodeToken().preferred_username,
+      perPage: lparams.limit,
+      page: lparams.page,
+    };
+    this.comerEventosService.getAppGetfComer(obj).subscribe({
       next: data => {
         // let result = data.data.map(item => {
         //   item['bindlabel_'] = item.id + ' - ' + item.description;
@@ -224,10 +246,12 @@ export class EventPermissionControlComponent
     this.event_ = $event;
     if ($event) {
       this.form.patchValue({
-        processKey: $event.processKey,
-        username: $event.user,
-        address: $event.address,
+        processKey: $event.cve_proceso,
+        username: $event.usuario,
+        address: $event.direccion,
       });
+    } else {
+      this.getComerEvents(new ListParams());
     }
   }
 
@@ -255,7 +279,8 @@ export class EventPermissionControlComponent
       params['filter.date'] = `$eq:${fechaFormateada}`;
       // delete params['filter.date'];
     }
-    params['filter.eventId'] = `$eq:${this.event_.id}`;
+    console.log(this.event_);
+    params['filter.eventId'] = `$eq:${this.event_.id_evento}`;
     this.usersService.getComerUsersAutXEvent(params).subscribe({
       next: response => {
         console.log(response.data);
