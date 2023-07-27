@@ -5,16 +5,29 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row p-1">
-        <div class="col-md-6">
-          <form-field [control]="form.get('reference')" label="Referencia">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="reference" />
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('bankKey')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="bankKey"
+              [data]="banks"
+              value="cveBank"
+              bindLabel="bankAndNumber"
+              label="Banco"
+              (fetchItems)="getBanks($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('appliedTo')" label="Aplicado a:">
+            <ng-select formControlName="appliedTo" class="form-control pt-1">
+              <ng-option value="D">Devolución</ng-option>
+              <ng-option value="P">Penalización</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
           <form-field [control]="form.get('clientId')">
             <ngx-select
               [searchOnInit]="true"
@@ -26,43 +39,9 @@
               label="Cliente"
               (fetchItems)="getClients($event)">
             </ngx-select>
-            <!-- <input type="text" class="form-control" formControlName="clientId" /> -->
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="form.get('movementNumber')"
-            label="No. Movimiento">
-            <input
-              maxlength="11"
-              type="text"
-              class="form-control"
-              formControlName="movementNumber" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('date')" label="Fecha">
-            <input
-              maxlength="11"
-              bsDatepicker
-              type="text"
-              class="form-control"
-              formControlName="date" />
-          </form-field>
-          <!-- <form-field [control]="form.get('date')" label="Fecha">
-            <input type="text" class="form-control" formControlName="date" />
-          </form-field> -->
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('amount')" label="Monto">
-            <input
-              maxlength="17"
-              type="text"
-              class="form-control"
-              formControlName="amount" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
+        <div class="col-md-6 mt-2">
           <form-field [control]="form.get('lotId')">
             <ngx-select
               [searchOnInit]="true"
@@ -76,33 +55,106 @@
             </ngx-select>
           </form-field>
         </div>
-        <!-- <div class="col-md-6">
+        <div class="col-md-6 mt-2">
           <form-field
-            [control]="form.get('entryOrderId')"
-            label="Id Orden Ingreso">
+            [control]="form.get('movementNumber')"
+            label="No. Movimiento">
             <input
               maxlength="11"
               type="text"
               class="form-control"
-              formControlName="entryOrderId" />
-          </form-field>
-        </div> -->
-        <div class="col-md-6">
-          <form-field [control]="form.get('bankKey')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="form"
-              control="bankKey"
-              [data]="banks"
-              value="cveBank"
-              bindLabel="bankAndNumber"
-              label="Banco"
-              (fetchItems)="getBanks($event)">
-            </ngx-select>
-            <!-- <input type="text" class="form-control" formControlName="bankKey" /> -->
+              formControlName="movementNumber" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('date')" label="Fecha">
+            <input
+              maxlength="11"
+              bsDatepicker
+              type="text"
+              class="form-control"
+              formControlName="date" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('amount')" label="Monto">
+            <input
+              maxlength="17"
+              type="text"
+              class="form-control"
+              formControlName="amount" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('dateOi')" label="Fecha OI">
+            <input
+              bsDatepicker
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="dateOi" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('code')" label="Código">
+            <input
+              maxlength="4"
+              type="text"
+              class="form-control"
+              formControlName="code" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input
+              maxlength="1"
+              type="text"
+              class="form-control"
+              formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('recordDate')" label="Fecha Registro">
+            <input
+              bsDatepicker
+              [readonly]="true"
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="recordDate" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field
+            [control]="form.get('referenceOri')"
+            label="Referencia Ori">
+            <input
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="referenceOri" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('branchOffice')" label="Sucursal">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="branchOffice" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
           <form-field
             [control]="form.get('validSystem')"
             label="Sistema Válido">
@@ -113,24 +165,33 @@
               formControlName="validSystem" />
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('appliedTo')" label="Aplicado a:">
-            <ng-select formControlName="appliedTo" class="form-control pt-1">
-              <ng-option value="D">Devolución</ng-option>
-              <ng-option value="P">Penalización</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
 
-        <div class="col-md-12">
-          <form-field [control]="form.get('description')" label="Descripción">
-            <textarea
-              maxlength="200"
-              class="form-control"
-              cols="5"
-              rows="5"
-              formControlName="description"></textarea>
-          </form-field>
+        <div class="col-12">
+          <div class="row">
+            <div class="col-md-6 mt-2">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripción">
+                <textarea
+                  maxlength="200"
+                  class="form-control"
+                  cols="5"
+                  rows="5"
+                  formControlName="description"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-6 mt-2">
+              <form-field [control]="form.get('result')" label="Resultado">
+                <textarea
+                  maxlength="200"
+                  type="text"
+                  cols="5"
+                  rows="5"
+                  class="form-control"
+                  formControlName="result"></textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
       </div>
     </form>
@@ -139,7 +200,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="form.invalid"
+          [disabled]="form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
