@@ -151,14 +151,12 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          console.log('params ', this.params);
           this.getGoodsByExpedient();
         }
       });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodsByExpedient());
-    console.log('params ', this.params);
   }
 
   prepareForm() {
