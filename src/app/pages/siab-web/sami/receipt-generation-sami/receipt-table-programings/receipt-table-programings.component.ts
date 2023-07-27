@@ -60,13 +60,16 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
         next: response => {
           if (response) {
             this.getData();
+            this.data1.load([]);
+            this.data1.refresh();
           }
         },
       });
     this.dataService.refreshAll.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         if (response) {
-          this.getData();
+          this.data1.load([]);
+          this.data1.refresh();
         }
       },
     });
@@ -110,6 +113,7 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     };
   }
   selectGoodstickets(data: any) {
+    this.loading = true;
     console.log(data);
     let datos = {
       programmingId: data.data.id_programacion,
@@ -124,13 +128,17 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
         this.data1.load(resp.data);
         this.data1.refresh();
         this.totalItems1 = resp.count;
+        this.loading = false;
       },
       error: eror => {
+        this.data1.load([]);
+        this.data1.refresh();
         this.alert(
           'warning',
           'Generación de Recibos',
           'No se encontraron Bienes'
         );
+        this.loading = false;
       },
     });
   }

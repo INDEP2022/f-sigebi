@@ -15,6 +15,10 @@ export const COLUMNS = {
     title: 'Estatus Recibo',
     sort: false,
   },
+  tipo_recibo: {
+    title: 'Tipo Recibo',
+    sort: false,
+  },
 };
 export const COLUMNS1 = {
   id_bien: {

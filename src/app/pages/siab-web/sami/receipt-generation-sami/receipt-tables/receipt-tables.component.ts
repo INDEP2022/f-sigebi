@@ -203,15 +203,14 @@ export class ReceiptTablesComponent extends BasePage {
       this.form.get('motiveReprograming').setValue(null);
       return;
     }
-
+    this.divcanmas = false;
+    this.divrepmas = false;
     this.alertQuestion(
       'question',
       '¿Desea registrar los bienes con tipo ' + receiptType + '?',
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        this.divcanmas = false;
-        this.divrepmas = false;
         this.form.get('motiveCancel').setValue(null);
         this.form.get('motiveReprograming').setValue(null);
         this.registerReceipt(receiptType, 0);
