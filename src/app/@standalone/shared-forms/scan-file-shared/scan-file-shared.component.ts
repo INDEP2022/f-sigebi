@@ -89,11 +89,8 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                 const route = `notification?filter.wheelNumber=$not:$null&filter.expedientNumber=$eq:${this.noExpedient}&sortBy=wheelNumber:DESC`;
                 this.serviceNotification.getAllFilter(route).subscribe(resp => {
                   const wheelNumber = resp.data[0]['wheelNumber'];
-                  const user =
-                    localStorage.getItem('username') == 'sigebiadmon'
-                      ? localStorage.getItem('username')
-                      : localStorage.getItem('username').toLocaleUpperCase();
-                  const routeUser = `?filter.name=$eq:${user}`;
+                  const user =this.authService.decodeToken();
+                  const routeUser = `?filter.id=$eq:${user.preferred_username}`;
                   this.serviceUser.getAllSegUsers(routeUser).subscribe(
                     res => {
                       console.log(res);
@@ -106,9 +103,9 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         significantDate: format(new Date(), 'MM/yyyy'),
                         scanStatus: 'ESCANEADO',
                         fileStatus: '',
-                        userRequestsScan: user,
+                        userRequestsScan: user.preferred_username,
                         scanRequestDate: new Date(),
-                        userRegistersScan: user,
+                        userRegistersScan: user.preferred_username,
                         dateRegistrationScan: undefined,
                         userReceivesFile: '',
                         dateReceivesFile: undefined,
