@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { takeUntil } from 'rxjs';
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { EReceiptType } from '../models/eReceiptType';
@@ -73,17 +74,22 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     // debugger;
     let newColumnFilters = this.columnFilters;
     if (this.id_programacion) {
-      newColumnFilters['filter.id_programacion'] = this.id_programacion;
+      newColumnFilters['filter.id_programacion'] =
+        SearchFilter.EQ + ':' + this.id_programacion;
     }
     if (this.typeReceiptSelected) {
-      newColumnFilters['filter.tipo_recibo'] = this.typeReceiptSelected;
+      newColumnFilters['filter.tipo_recibo'] =
+        SearchFilter.EQ + ':' + this.typeReceiptSelected;
     }
-    if (this.folio) {
-      newColumnFilters['filter.folio'] = this.folio;
-    }
+    // if (this.folio) {
+    //   newColumnFilters['filter.folio'] = this.folio;
+    // }
     return {
-      ...this.params.getValue(),
-      ...newColumnFilters,
+      folio: this.folio,
+      params: {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      },
     };
   }
 }
