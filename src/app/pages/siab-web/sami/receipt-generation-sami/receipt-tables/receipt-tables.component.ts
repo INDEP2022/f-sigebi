@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { catchError, forkJoin, map, of } from 'rxjs';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { catchError, forkJoin, map, of, takeUntil } from 'rxjs';
 import { INotSucess, ISucess } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { BasePage } from 'src/app/core/shared';
@@ -14,6 +14,7 @@ import { ReceiptGenerationDataService } from '../services/receipt-generation-dat
 })
 export class ReceiptTablesComponent extends BasePage {
   @Input() folio: string;
+  @Input() id_programacion: string;
   @Input() count = 0;
   estatus_bien_programacion: string;
   receiptType = EReceiptType;
@@ -27,8 +28,8 @@ export class ReceiptTablesComponent extends BasePage {
   ) {
     super();
     this.form = this.fb.group({
-      motiveCancel: [null],
-      motiveReprograming: [null],
+      motiveCancel: [null, [Validators.required]],
+      motiveReprograming: [null, [Validators.required]],
     });
   }
 
@@ -78,8 +79,12 @@ export class ReceiptTablesComponent extends BasePage {
     return this.receiptGenerationData.typeReceiptSelected;
   }
 
-  get selectedGooods() {
-    return this.receiptGenerationData.selectedGooods;
+  get selectedGoods() {
+    return this.receiptGenerationData.selectedGoods;
+  }
+
+  set selectedGoods(value) {
+    this.receiptGenerationData.selectedGoods = value;
   }
 
   massiveClick() {
@@ -103,8 +108,10 @@ export class ReceiptTablesComponent extends BasePage {
   }
 
   private registerReceipt(receiptType: EReceiptType, P_MOTIVOCAN: number) {
+    console.log(this.selectedGoods);
+
     forkJoin(
-      this.selectedGooods.map(row => {
+      this.selectedGoods.map(row => {
         return this.programmingGoodReceiptService
           .postGoodsProgramingReceipts({
             P_TIPO_OPERACION: receiptType,
@@ -114,11 +121,13 @@ export class ReceiptTablesComponent extends BasePage {
             P_ESTADO_CONSERVACION_SAE: 0,
             P_ESTADO_FISICO_SAE: 0,
             P_UNIDAD_MEDIDA_SAE: 0,
-            P_DESCRIPCION_BIEN_SAE: '',
+            P_DESCRIPCION_BIEN_SAE: ' ',
             P_ID_BIEN: row.id_bien,
             P_ID_PROGRAMACION: row.id_programacion,
+            P_USUARIO_CREACION: localStorage.getItem('username'),
           })
           .pipe(
+            takeUntil(this.$unSubscribe),
             map(item => {
               return { sucess: row.id_bien } as ISucess;
             }),
@@ -143,14 +152,15 @@ export class ReceiptTablesComponent extends BasePage {
         });
         this.showMessage(addeds, notAddeds, receiptType);
         this.receiptGenerationData.refreshAll.next(true);
+        this.selectedGoods = [];
         // this.getData();
       },
       error: err => {
         let recibos = '';
-        this.selectedGooods.forEach((selected, index) => {
+        this.selectedGoods.forEach((selected, index) => {
           recibos +=
             selected.id_bien +
-            (index < this.selectedGooods.length - 1 ? ',' : '');
+            (index < this.selectedGoods.length - 1 ? ',' : '');
         });
         this.alert(
           'error',
@@ -165,14 +175,30 @@ export class ReceiptTablesComponent extends BasePage {
     if (receiptType === EReceiptType.Reprogramacion) {
       this.divcanmas = false;
       this.divrepmas = true;
+      this.form.get('motiveCancel').setValue(null);
       return;
     }
     if (receiptType === EReceiptType.Cancelacion) {
       this.divcanmas = true;
       this.divrepmas = false;
+      this.form.get('motiveReprograming').setValue(null);
       return;
     }
-    this.registerReceipt(receiptType, 0);
+
+    this.alertQuestion(
+      'question',
+      '¿Desea registrar los bienes con tipo ' + receiptType + '?',
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.divcanmas = false;
+        this.divrepmas = false;
+        this.form.get('motiveCancel').setValue(null);
+        this.form.get('motiveReprograming').setValue(null);
+        this.registerReceipt(receiptType, 0);
+      }
+    });
+
     // selectedGoods.forEach(async row => {
     //   this.programmingGoodReceiptService.postGoodsProgramingReceipts(row).pipe();
     // })
@@ -187,7 +213,7 @@ export class ReceiptTablesComponent extends BasePage {
     if (addeds.length > 0) {
       addeds.forEach((selected, index) => {
         recibos +=
-          recibos + (index < this.selectedGooods.length - 1 ? ',' : '');
+          selected + (index < this.selectedGoods.length - 1 ? ',' : '');
       });
       this.alert(
         'success',
@@ -210,7 +236,7 @@ export class ReceiptTablesComponent extends BasePage {
     if (notAddeds.length > 0) {
       notAddeds.forEach((selected, index) => {
         goodsNotAddeds +=
-          selected + (index < this.selectedGooods.length - 1 ? ',' : '');
+          selected + (index < this.selectedGoods.length - 1 ? ',' : '');
       });
       return `pero no se pudieron eliminar las recibos con No. Bien ${goodsNotAddeds}`;
     } else {
@@ -224,9 +250,9 @@ export class ReceiptTablesComponent extends BasePage {
       this.receiptGenerationData.refreshTableProgrammings.next(true);
     } else {
       if (type === EReceiptType.Cancelacion) {
-        this.estatus_bien_programacion = 'CANCELADO_TMP';
+        this.estatus_bien_programacion = 'CANCELADO';
       } else {
-        this.estatus_bien_programacion = 'EN_PROGRAMACION_TMP';
+        this.estatus_bien_programacion = 'EN_PROGRAMACION';
       }
     }
   }
