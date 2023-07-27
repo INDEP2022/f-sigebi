@@ -29,6 +29,6 @@ export class PaymentService extends HttpService {
   }
 
   update(id: any, params: any) {
-    return this.post(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+    return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
   }
 }

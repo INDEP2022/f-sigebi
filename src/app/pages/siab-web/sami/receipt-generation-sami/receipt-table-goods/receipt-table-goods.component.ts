@@ -26,6 +26,7 @@ export class ReceiptTableGoodsComponent
   @Input() folio: string; // = 'R-METROPOLITANA-SAT-24-OS';
   @Input() estatus_bien_programacion: string = null;
   @Input() override haveInitialCharge = false;
+  @Input() selectEnabled = false;
   pageSelecteds: number[] = [];
   previousSelecteds: IReceiptItem[] = [];
 
@@ -44,7 +45,6 @@ export class ReceiptTableGoodsComponent
       ...this.settings,
       hideSubHeader: false,
       actions: false,
-      selectMode: 'multi',
       columns: {
         ...COLUMNS,
       },
@@ -79,10 +79,19 @@ export class ReceiptTableGoodsComponent
       console.log('ngOnChanges Table Goods');
       this.getData();
     }
+
+    if (changes['selectEnabled'] && changes['selectEnabled'].currentValue) {
+      this.settings = {
+        ...this.settings,
+        selectMode: 'multi',
+      };
+    }
   }
 
   override extraOperationsGetData() {
-    this.fillSelectedRows();
+    if (!this.selectEnabled) {
+      this.fillSelectedRows();
+    }
     if (this.estatus_bien_programacion === 'CANCELADO_TMP') {
       this.dataService.cancelacion = this.totalItems;
     }
@@ -106,6 +115,7 @@ export class ReceiptTableGoodsComponent
     data: IReceiptItem;
   }) {
     console.log(event);
+    if (!this.selectEnabled) return;
     const selecteds = event.selected;
 
     if (selecteds.length === 0) {
