@@ -15,6 +15,6 @@ export class ReceiptGenerationDataService {
   typeReceiptSelected: EReceiptType;
   refreshTableProgrammings = new Subject();
   refreshAll = new Subject();
-  selectedGooods: IReceiptItem[] = [];
+  selectedGoods: IReceiptItem[] = [];
   constructor() {}
 }
