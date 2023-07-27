@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { takeUntil } from 'rxjs';
+import { SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { EReceiptType } from '../models/eReceiptType';
@@ -13,6 +14,9 @@ import { COLUMNS } from './columns';
 })
 export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFiltersExtra<any> {
   @Input() id_programacion: string;
+  @Input() folio: string;
+  @Input() type: string;
+
   // pageSizeOptions = [5, 10, 20, 25];
   // limit: FormControl = new FormControl(5);
   constructor(
@@ -50,7 +54,6 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       },
     });
   }
-
   get typeReceiptSelected() {
     return this.dataService.typeReceiptSelected;
   }
@@ -72,15 +75,21 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     let newColumnFilters = this.columnFilters;
     if (this.id_programacion) {
       newColumnFilters['filter.id_programacion'] =
-        '$eq:' + this.id_programacion;
+        SearchFilter.EQ + ':' + this.id_programacion;
     }
     if (this.typeReceiptSelected) {
       newColumnFilters['filter.tipo_recibo'] =
-        '$eq:' + this.typeReceiptSelected;
+        SearchFilter.EQ + ':' + this.typeReceiptSelected;
     }
+    // if (this.folio) {
+    //   newColumnFilters['filter.folio'] = this.folio;
+    // }
     return {
-      ...this.params.getValue(),
-      ...newColumnFilters,
+      folio: this.folio,
+      params: {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      },
     };
   }
 }

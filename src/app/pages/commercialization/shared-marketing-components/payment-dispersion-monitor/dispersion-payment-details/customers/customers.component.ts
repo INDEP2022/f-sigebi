@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-customers',
@@ -11,7 +12,10 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class CustomersComponent extends BasePage implements OnInit {
-  data: any[] = [];
+  @Input() dataIncome: LocalDataSource
+  @Input() totalIncome: number
+
+  data = new LocalDataSource()
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -28,7 +32,10 @@ export class CustomersComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.dataIncome)
+    console.log(this.totalIncome)
+  }
 
   add() {
     //this.openModal();
