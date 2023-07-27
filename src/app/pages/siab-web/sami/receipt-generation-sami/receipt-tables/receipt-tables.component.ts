@@ -224,9 +224,9 @@ export class ReceiptTablesComponent extends BasePage {
       this.receiptGenerationData.refreshTableProgrammings.next(true);
     } else {
       if (type === EReceiptType.Cancelacion) {
-        this.estatus_bien_programacion = 'CANCELADO_TMP';
+        this.estatus_bien_programacion = 'CANCELADO';
       } else {
-        this.estatus_bien_programacion = 'EN_PROGRAMACION_TMP';
+        this.estatus_bien_programacion = 'EN_PROGRAMACION';
       }
     }
   }
