@@ -16,6 +16,8 @@ import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
+import { IChargeSpent } from 'src/app/core/services/ms-spent/spents-model';
 import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
 
 @Component({
@@ -49,7 +51,8 @@ export class ConsultationGoodsCommercialSalesComponent
     private comerEventService: ComerEventosService,
     private comerTypeEventService: ComerTpEventosService,
     private transferentService: TransferenteService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private spentService: SpentService
   ) {
     super();
     this.settings = {
@@ -194,5 +197,98 @@ export class ConsultationGoodsCommercialSalesComponent
       fromDateCtrl.addValidators(maxDate(min));
     }
     fromDateCtrl.updateValueAndValidity();
+  }
+
+  //Funciones Grigork
+  //Gets
+  get goodNumber() {
+    return this.form.get('goodNumber');
+  }
+
+  get descGood() {
+    return this.form.get('descGood');
+  }
+
+  get expedientNumber() {
+    return this.form.get('expedientNumber');
+  }
+
+  get serieNumber() {
+    return this.form.get('serieNumber');
+  }
+
+  get mandate() {
+    return this.form.get('mandate');
+  }
+
+  get descMandate() {
+    return this.form.get('descMandate');
+  }
+
+  get lot() {
+    return this.form.get('lot');
+  }
+
+  get rfc() {
+    return this.form.get('rfc');
+  }
+
+  get eventId() {
+    return this.form.get('eventId');
+  }
+
+  get descEvent() {
+    return this.form.get('descEvent');
+  }
+
+  get eventTp() {
+    return this.form.get('eventTp');
+  }
+
+  get desctTypeEvent() {
+    return this.form.get('descTypeEvent');
+  }
+
+  get price() {
+    return this.form.get('price');
+  }
+
+  get regc() {
+    return this.form.get('regc');
+  }
+
+  get descord() {
+    return this.form.get('descord');
+  }
+
+  get facture() {
+    return this.form.get('facture');
+  }
+
+  get reference() {
+    return this.form.get('reference');
+  }
+
+  get dateInit() {
+    return this.form.get('dateInit');
+  }
+
+  get dateFinal() {
+    return this.form.get('dateFinal');
+  }
+
+  //Ejecutar Consulta
+  executeConsult() {
+    let model: IChargeSpent = {};
+
+    this.goodNumber.value != null
+      ? (model.goodNumber = this.goodNumber.value)
+      : '';
+    //Descripción de bien
+    //Número de expediente
+    //Número de serie
+    this.mandate.value != null ? (model.mandate = this.mandate.value) : '';
+    //Descripción de mandato
+    //Lote
   }
 }
