@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { IExpedient } from '../ms-expedient/expedient';
 
 export interface IDocuments {
@@ -98,7 +99,27 @@ export interface ICaptureDig {
   fmaxima: string;
   cumplio: boolean;
   column5: string;
+  image: string;
 }
+
+@Injectable()
+export class CaptureDig {
+  coordinacion_regional: number;
+  cve_oficio_externo: string;
+  no_expediente: IExpedient;
+  no_volante: number;
+  no_tramite: number;
+  urecepcion: number;
+  programa: string;
+  fescaneo: string;
+  cant_bien: number;
+  finicia: string;
+  fmaxima: string;
+  cumplio: boolean;
+  column5: string;
+  image: string;
+}
+
 export interface ICaptureDigFilter {
   cveJobExternal: string;
   user: string;

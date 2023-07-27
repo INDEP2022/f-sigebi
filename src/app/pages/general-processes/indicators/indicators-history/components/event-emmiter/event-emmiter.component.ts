@@ -6,7 +6,18 @@ import { Component, OnInit } from '@angular/core';
   styles: [],
 })
 export class EventEmmiterComponent implements OnInit {
+  //
+
+  static cumplio: string;
+
+  //
   constructor() {}
 
   ngOnInit(): void {}
+
+  //
+
+  static test(mensaje: any) {
+    return console.log('El mensaje ', this.cumplio);
+  }
 }

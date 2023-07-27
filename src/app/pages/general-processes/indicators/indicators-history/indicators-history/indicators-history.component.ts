@@ -1,8 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ICaptureDig } from 'src/app/core/models/ms-documents/documents';
+import { CaptureDig } from 'src/app/core/models/ms-documents/documents';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -19,12 +20,15 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  columns: ICaptureDig[] = [];
+  columns: CaptureDig[] = [];
   danger: boolean = false;
 
   //
 
-  constructor(private viewService: GoodsQueryService) {
+  constructor(
+    private viewService: GoodsQueryService,
+    private _domSanitizer: DomSanitizer
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -35,9 +39,6 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
         add: false,
         delete: false,
         position: 'right',
-        onCustom: (event: any) => {
-          this.onCustom(event);
-        },
       },
       columns: {
         coordinacion_regional: {
@@ -59,45 +60,54 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
         column5: {
           title: 'Captura y Digitalización',
           sort: false,
+          filter: false,
+          type: 'html',
+          valuePrepareFunction: (image: any, row: CaptureDig) => {
+            return this.assignAndValidateImageOne(row);
+          },
         },
         column6: {
           title: 'Dictaminación',
           sort: false,
+          filter: false,
         },
         column7: {
           title: 'Recepción Fisica',
           sort: false,
+          filter: false,
         },
         column8: {
           title: 'Entregas',
           sort: false,
+          filter: false,
         },
         column9: {
           title: 'Comer.',
           sort: false,
+          filter: false,
         },
         column10: {
           title: 'Donación',
           sort: false,
+          filter: false,
         },
         column11: {
           title: 'Destrucción',
           sort: false,
+          filter: false,
         },
         column12: {
           title: 'Devolución',
           sort: false,
+          filter: false,
         },
         column13: {
           title: 'Fecha Tecnica',
           sort: false,
+          filter: false,
         },
       },
     };
-  }
-
-  onCustom(event: any) {
-    console.log('Seleccionamos la columna vamoooo');
   }
 
   ngOnInit(): void {}
@@ -107,7 +117,6 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
     this.viewService.getViewIncRecDoc(params).subscribe({
       next: response => {
         this.columns = response.data;
-        this.valueImg(this.columns);
         this.data.load(this.columns);
         this.totalItems = response.count || 0;
         this.data.refresh();
@@ -119,17 +128,22 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
     });
   }
 
-  valueImg(columns: ICaptureDig[]) {
-    for (const i of columns) {
-      if (i.fescaneo == null) {
-        i.column5 = 'No Cumplido';
-      } else if (i.cant_bien != 0) {
-        i.column5 = 'Cumplido';
-      } else {
-        i.column5 = 'Destiempo';
+  assignAndValidateImageOne(i: CaptureDig) {
+    if (i.fescaneo == null) {
+      return this._domSanitizer.bypassSecurityTrustHtml(
+        `<img src="../../../../../../../assets/images/no_cumplido.png" alt="Smiley face" height="20" width="100">`
+      );
+    } else {
+      if (i.cant_bien != 0) {
+        return this._domSanitizer.bypassSecurityTrustHtml(
+          `<img src="../../../../../../../assets/images/cumplido.png" alt="Smiley face" height="20" width="100">`
+        );
       }
     }
+    return this._domSanitizer.bypassSecurityTrustHtml(
+      `<img src="../../../../../../../assets/images/destiempo.png" alt="Smiley face" height="20" width="100">`
+    );
   }
 
-  //
+  assignAndValidateImageTwo() {}
 }
