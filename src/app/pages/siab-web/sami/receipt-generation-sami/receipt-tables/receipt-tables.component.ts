@@ -124,6 +124,7 @@ export class ReceiptTablesComponent extends BasePage {
             P_DESCRIPCION_BIEN_SAE: ' ',
             P_ID_BIEN: row.id_bien,
             P_ID_PROGRAMACION: row.id_programacion,
+            P_USUARIO_CREACION: localStorage.getItem('username'),
           })
           .pipe(
             takeUntil(this.$unSubscribe),
