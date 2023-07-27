@@ -45,17 +45,19 @@
 <div class="mb-4"></div>
 <form action="" class="form-material mt-5 mb-4" [formGroup]="form">
   <div class="row" *ngIf="divcanmas">
-    <ng-custom-select-loading
-      [form]="form"
-      [path]="pathCatalogsCancelacion"
-      formControlName="motiveCancel"
-      label="Selecciona el motivo de la Cancelación"
-      value="keyId"
-      bindLabel="description"
-      paramSearch="filter.description"
-      prefixSearch="$ilike">
-    </ng-custom-select-loading>
-    <div class="d-flex" style="justify-content: flex-end">
+    <div class="col-md-9">
+      <ng-custom-select-loading
+        [form]="form"
+        [path]="pathCatalogsCancelacion"
+        formControlName="motiveCancel"
+        label="Selecciona el motivo de la Cancelación"
+        value="keyId"
+        bindLabel="description"
+        paramSearch="filter.description"
+        prefixSearch="$ilike">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-3">
       <button
         style="width: auto"
         [disabled]="disabledMassiveButton"
@@ -68,17 +70,19 @@
     </div>
   </div>
   <div class="row" *ngIf="divrepmas">
-    <ng-custom-select-loading
-      [form]="form"
-      [path]="pathCatalogsReprogramacion"
-      formControlName="motiveReprograming"
-      label="Selecciona el motivo de la Reprogramación"
-      value="keyId"
-      bindLabel="description"
-      paramSearch="filter.description"
-      prefixSearch="$ilike">
-    </ng-custom-select-loading>
-    <div class="d-flex" style="justify-content: flex-end">
+    <div class="col-md-9">
+      <ng-custom-select-loading
+        [form]="form"
+        [path]="pathCatalogsReprogramacion"
+        formControlName="motiveReprograming"
+        label="Selecciona el motivo de la Reprogramación"
+        value="keyId"
+        bindLabel="description"
+        paramSearch="filter.description"
+        prefixSearch="$ilike">
+      </ng-custom-select-loading>
+    </div>
+    <div class="col-md-3">
       <button
         style="width: auto"
         [disabled]="disabledMassiveButton"
