@@ -1,10 +1,10 @@
 export const COLUMNS = {
   id_bien: {
-    title: 'ID BIEN',
+    title: 'ID Bien',
     sort: false,
   },
   clave_unica: {
-    title: 'CLAVE ÚNICA',
+    title: 'Clave Única',
     sort: false,
   },
   no_expediente: {
@@ -16,51 +16,51 @@ export const COLUMNS = {
     sort: false,
   },
   cantidad: {
-    title: 'CANTIDAD',
+    title: 'Cantidad',
     sort: false,
   },
   cantidad_sae: {
-    title: 'CANTIDAD SAE',
+    title: 'Cantidad SAE',
     sort: false,
   },
   unidad_medida_letra: {
-    title: 'UNIDAD MEDIDA LETRA',
+    title: 'Unidad Medida Letra',
     sort: false,
   },
   unidad_medida_sae_letra: {
-    title: 'UNIDAD MEDIDA SAE LETRA',
+    title: 'Unidad Medida SAE Letra',
     sort: false,
   },
   estado_fisico_letra: {
-    title: 'ESTADO FISICO LETRA',
+    title: 'Estado Fisico Letra',
     sort: false,
   },
   estado_fisico_sae_letra: {
-    title: 'ESTADO FISICO SAE LETRA',
+    title: 'Estado Fisico SAE Letra',
     sort: false,
   },
   estado_conservacion_letra: {
-    title: 'ESTADO CONSERVACION LETRA',
+    title: 'Estado Conservación Letra',
     sort: false,
   },
   estado_conservacion_sae_letra: {
-    title: 'ESTADO CONSERVACION SAE LETRA',
+    title: 'Estado Conservación SAE Letra',
     sort: false,
   },
   destino_letra: {
-    title: 'DESTINO LETRA',
+    title: 'Destino Letra',
     sort: false,
   },
   destino_transferente_letra: {
-    title: 'DESTINO TRANSFERENTE LETRA',
+    title: 'Destino Transferente Letra',
     sort: false,
   },
   destino_sae_letra: {
-    title: 'DESTINO SAE LETRA',
+    title: 'Destino SAE Letra',
     sort: false,
   },
   id_recorrido: {
-    title: 'ID RECORRIDO',
+    title: 'ID Recorrido',
     sort: false,
   },
 };
