@@ -260,7 +260,7 @@ export const COMMERCIALIZATION_ROUTES = [
             link: '/pages/commercialization/catalogs/bank-movements-types',
           },
           {
-            label: 'Parámetros Comercialización',
+            label: 'Parámetros del Módulo Comercialización',
             link: '/pages/commercialization/catalogs/parameters',
           },
           {

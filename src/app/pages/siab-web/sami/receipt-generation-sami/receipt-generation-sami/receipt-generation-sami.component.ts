@@ -13,7 +13,7 @@ import { IReceiptItem } from '../receipt-table-goods/ireceipt';
   templateUrl: './receipt-generation-sami.component.html',
   styles: [
     `
-      .label {
+      /* .label {
         color: black;
         font-weight: 900;
       }
@@ -23,7 +23,7 @@ import { IReceiptItem } from '../receipt-table-goods/ireceipt';
         color: black;
         font-size: 0.8em;
         font-weight: 400;
-      }
+      } */
     `,
   ],
 })
@@ -50,6 +50,9 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
   destinoTransferenteLetra: string;
   cancellationView: boolean = false;
   reprogramingView: boolean = false;
+  count = 0;
+  folio: string;
+  id_programacion: string;
   constructor(
     private fb: FormBuilder,
     private programmingGoodReceiptService: ProgrammingGoodReceiptService,
@@ -83,6 +86,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (this.programmingForm.controls['programmingId'].value) {
       params['filter.folio'] =
         this.programmingForm.controls['programmingId'].value.trim();
+      this.folio = this.programmingForm.controls['programmingId'].value.trim();
     } else {
       this.alert(
         'warning',
@@ -94,12 +98,20 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     this.programmingGoodReceiptService.getAll(params).subscribe({
       next: resp => {
         console.log(resp);
+        if (resp) {
+          this.id_programacion = resp.data[0].id_programacion;
+        } else {
+          this.id_programacion = null;
+        }
         this.goodsList = new DefaultSelect(resp.data, resp.count);
+        this.count = resp.count ?? 0;
         this.programmingForm.controls['managementId'].enable();
         this.loader.load = false;
       },
       error: eror => {
         this.loader.load = false;
+        this.count = 0;
+        this.id_programacion = null;
         this.goodsList = new DefaultSelect([], 0, true);
         this.alert(
           'warning',
@@ -214,6 +226,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       },
     });
   }
+
   assignReceiptOne(sender: number) {
     if (
       this.indepForm.controls['unidad_medida_sae'].value != 'KG' ||
@@ -230,12 +243,41 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         return;
       }
     }
+    this.cancellationView = false;
+    this.reprogramingView = false;
     if (sender == 0) {
-      this.performOperation('UNO', 'RECIBO', 0);
+      this.alertQuestion(
+        'question',
+        '¿Desea registrar los bienes con tipo RECIBO?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperation('UNO', 'RECIBO', 0);
+        }
+      });
     } else if (sender == 1) {
-      this.performOperation('UNO', 'RESGUARDO', 0);
+      this.alertQuestion(
+        'question',
+        '¿Desea registrar los bienes con tipo RESGUARDO?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperation('UNO', 'RESGUARDO', 0);
+        }
+      });
     } else if (sender == 2) {
-      this.performOperation('UNO', 'ALMACEN', 0);
+      this.alertQuestion(
+        'question',
+        '¿Desea registrar los bienes con tipo ALMACÉN?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperation('UNO', 'ALMACEN', 0);
+        }
+      });
     }
   }
   performOperation(type: string, operation: string, reasonCanRep: number) {
@@ -252,6 +294,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         this.indepForm.controls['descripcion_bien_sae'].value,
       P_ID_BIEN: this.recepiptGood.id_bien,
       P_ID_PROGRAMACION: this.recepiptGood.id_programacion,
+      P_USUARIO_CREACION: localStorage.getItem('username'),
     };
     this.programmingGoodReceiptService
       .postGoodsProgramingReceipts(data)
@@ -364,6 +407,20 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       );
       return;
     }
+  }
+  cleanInsert() {
+    this.programmingForm.controls['managementId'].setValue('');
+    this.goodID = '';
+    this.uniqueKey = '';
+    this.noFile = '';
+    this.descriptionGood = '';
+    this.quantity = '';
+    this.unitMeasure = '';
+    this.physicalStateLetter = '';
+    this.letterConservationStatus = '';
+    this.destinationLetter = '';
+    this.destinoTransferenteLetra = '';
+    this.indepForm.reset();
   }
   clean() {
     this.programmingForm.reset();
