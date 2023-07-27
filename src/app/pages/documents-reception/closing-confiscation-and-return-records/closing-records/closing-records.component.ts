@@ -90,6 +90,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   inputValue: string | number;
   historyGoodFailed: any[]; //usado para llevar un log de las inserciones de histórico de bienes fallidas
   updateGoodFalied: any[]; //usado para llevar un log de las actualicaciones de bienes fallidas
+  selectedRow: any = null;
+  rowSelected: boolean = false;
+  statusRowActa: boolean = true;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -138,6 +141,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   editProceeding(proceeding: IProceedings) {
     console.log(proceeding);
+    this.dataProceedingsSelected = proceeding;
     console.log(this.copyDataProceedings);
     const found = this.copyDataProceedings.find(
       (element: IProceedings) => element.id == proceeding.id
@@ -257,6 +261,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       proceeding,
+      dataProceedingsSelected: {
+        dataProceedingsSelected: this.dataProceedingsSelected,
+      },
       title: 'Actualizar Acta',
       callback: (next: boolean) => {
         this.getInfo(this.fileNumber);
@@ -330,6 +337,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     console.log(row?.id);
     this.proceedingsNumb = row?.id;
     this.paramsGoods.next({ page: 1, limit: 10 });
+    if (row.proceedingStatus === 'CERRADA') {
+      console.log('status close');
+      this.statusRowActa = false;
+    }
   }
 
   getProceedings(fileNumber: number) {
@@ -1610,5 +1621,25 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   getScreenName() {
     this.screenName = this.activatedRoute.snapshot.data['screen'];
     console.log(this.screenName);
+  }
+
+  selectRow(row: any) {
+    console.log(row.data);
+    this.selectedRow = row.data;
+    this.rowSelected = true;
+    if (row.data.goodsId != null && row.data.goodsId != undefined) {
+      this.route.navigate(
+        [
+          `/pages/general-processes/historical-good-situation/${row.data.goodsId}`,
+        ],
+        { queryParams: { origin: 'FACTREFACTACIEDEV' } }
+      );
+    }
+  }
+
+  redirectTo(event: any) {
+    console.log('data send -> ', this.selectRow);
+    if (this.selectRow) {
+    }
   }
 }
