@@ -16,6 +16,7 @@ export const PENDING_COLUMNS = {
     title: 'Fecha',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (value: string) => {
       if (!value) {
         return '';
@@ -63,6 +64,7 @@ export const HISTORY_COLUMNS = {
     title: 'Fecha',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (value: string) => {
       if (!value) {
         return '';

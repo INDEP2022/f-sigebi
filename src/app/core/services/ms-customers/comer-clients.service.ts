@@ -43,8 +43,8 @@ export class ComerClientsService extends HttpService {
     return this.delete(route);
   }
 
-  getComerCustomerEvent(params?: string){
-    return this.get('comer-clientsxevent', params)
+  getComerCustomerEvent(params?: string) {
+    return this.get('comer-clientsxevent', params);
   }
   getAll_(params?: _Params): Observable<IListResponse<IComerClients>> {
     return this.get<IListResponse<IComerClients>>(this.endpoint, params);
