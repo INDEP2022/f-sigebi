@@ -119,18 +119,21 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   selectEvent(event: any) {
     if (event.isSelected) {
       this.globalEventChange.emit(event.data);
-      this.eventForm.patchValue({
-        ...event.data,
-        eventDate: event.data?.eventDate
-          ? new Date(event.data?.eventDate)
-          : null,
-        eventClosingDate: event.data?.eventClosingDate
-          ? new Date(event.data?.eventClosingDate)
-          : null,
-        failureDate: event.data?.failureDate
-          ? new Date(event.data?.failureDate)
-          : null,
-      });
+      this.eventForm.patchValue(
+        {
+          ...event.data,
+          eventDate: event.data?.eventDate
+            ? new Date(event.data?.eventDate)
+            : null,
+          eventClosingDate: event.data?.eventClosingDate
+            ? new Date(event.data?.eventClosingDate)
+            : null,
+          failureDate: event.data?.failureDate
+            ? new Date(event.data?.failureDate)
+            : null,
+        },
+        { emitEvent: false }
+      );
     } else {
       this.globalEventChange.emit(null);
       this.eventForm.reset();

@@ -62,6 +62,12 @@ export class ListBanksComponent extends BasePage implements OnInit {
               case 'accountNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'delegationNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'accountNumberTransfer':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -76,6 +82,7 @@ export class ListBanksComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.filterParams = this.pageFilter(this.filterParams);
           this.getCourts();
         }
       });

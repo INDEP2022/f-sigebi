@@ -22,7 +22,7 @@ export class MaintenanceDelegSubdelegModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Sub Delegación';
+  title: string = 'Subdelegación';
   edit: boolean = false;
 
   subDelegationForm: ModelForm<ISubdelegation>;
@@ -56,10 +56,21 @@ export class MaintenanceDelegSubdelegModalComponent
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       //dailyConNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       //dateDailyCon: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -114,17 +125,26 @@ export class MaintenanceDelegSubdelegModalComponent
   }
 
   create() {
+    if (this.subDelegationForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
-    this.subDelegationService.create(this.subDelegationForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.subDelegationService
+      .create(this.subDelegationForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'El No. Subdelegacion ya fue registrado', '');
+        },
+      });
   }
 
   update() {
     this.loading = true;
     this.subDelegationService
-      .update(this.subDelegation.id, this.subDelegationForm.value)
+      .update(this.subDelegation.id, this.subDelegationForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -133,9 +153,11 @@ export class MaintenanceDelegSubdelegModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
-    this.loading = false;
+    this.alert('success', this.title, `${message} Correctamente`);
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+    console.log(this.modalRef.hide());
+    this.loading = false;
+    this.close();
   }
 }

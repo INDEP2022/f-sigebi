@@ -37,20 +37,16 @@ export class DelegationModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  getZones(event: ListParams) {
-    this.zoneGeographicService.getAll(event).subscribe({
-      next: data => {
-        this.idZ = new DefaultSelect(data.data, data.count);
-      },
-    });
-  }
-
   private prepareForm() {
     this.delegationForm = this.fb.group({
       id: [null],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       etapaEdo: [
         null,
@@ -60,12 +56,40 @@ export class DelegationModalComponent extends BasePage implements OnInit {
           Validators.maxLength(1),
         ],
       ],
-      idZoneGeographic: [null, [Validators.required, Validators.maxLength(1)]],
+      idZoneGeographic: [null, [Validators.required]],
     });
     if (this.delegationM != null) {
       this.edit = true;
+      let dele: any;
+      dele = this.delegationM.idZoneGeographic;
+      this.getSubtypes(new ListParams(), dele.id);
+      this.delegationForm.get('idZoneGeographic').setValue(dele.id);
       this.delegationForm.patchValue(this.delegationM);
+      console.log(this.delegationM);
+      console.log(dele.id);
     }
+  }
+  getZones(event: ListParams) {
+    this.zoneGeographicService.getAll(event).subscribe({
+      next: data => {
+        this.idZ = new DefaultSelect(data.data, data.count);
+      },
+    });
+  }
+
+  getSubtypes(params: ListParams, id?: string) {
+    if (id) {
+      params['filter.id'] = id;
+    }
+    this.zoneGeographicService.getAll(params).subscribe(
+      data => {
+        this.idZ = new DefaultSelect(data.data, data.count);
+        console.log(data);
+      },
+      error => {
+        this.idZ = new DefaultSelect([], 0, true);
+      }
+    );
   }
 
   close() {
@@ -73,26 +97,33 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    const newDelegation = Object.assign({}, this.delegationForm.value);
+    /*const newDelegation = Object.assign({}, this.delegationForm.value);
 
     Object.defineProperty(newDelegation, 'idZoneGeographic', {
       value: newDelegation.idZoneGeographic.id,
+
     });
+    console.log(newDelegation);
 
-    if (this.edit) newDelegation.id = this.delegationM.id;
+    if (this.edit) newDelegation.idZoneGeographic.id = this.delegationM.id;*/
 
-    this.edit ? this.update() : this.create(newDelegation);
+    this.edit ? this.update() : this.create();
   }
 
-  create(newDelegation: IDelegation) {
-    console.log(newDelegation);
+  create() {
+    if (this.delegationForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
-    this.delegationService.create2(newDelegation).subscribe({
-      next: data => {
-        this.handleSuccess();
-      },
-      error: error => (this.loading = false),
-    });
+    this.delegationService
+      .create2(this.delegationForm.getRawValue())
+      .subscribe({
+        next: data => {
+          this.handleSuccess();
+        },
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
