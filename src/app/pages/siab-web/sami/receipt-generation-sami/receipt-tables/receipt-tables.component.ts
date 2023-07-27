@@ -14,6 +14,7 @@ import { ReceiptGenerationDataService } from '../services/receipt-generation-dat
 })
 export class ReceiptTablesComponent extends BasePage {
   @Input() folio: string;
+  @Input() id_programacion: string;
   @Input() count = 0;
   estatus_bien_programacion: string;
   receiptType = EReceiptType;
@@ -178,6 +179,8 @@ export class ReceiptTablesComponent extends BasePage {
           this.divrepmas = false;
           return;
         }
+        this.divcanmas = false;
+        this.divrepmas = false;
         this.registerReceipt(receiptType, 0);
       }
     });
