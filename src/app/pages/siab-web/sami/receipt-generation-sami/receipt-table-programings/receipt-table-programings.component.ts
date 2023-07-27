@@ -13,6 +13,9 @@ import { COLUMNS } from './columns';
 })
 export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFiltersExtra<any> {
   @Input() id_programacion: string;
+  @Input() folio: string;
+  @Input() type: string;
+
   // pageSizeOptions = [5, 10, 20, 25];
   // limit: FormControl = new FormControl(5);
   constructor(
@@ -71,12 +74,10 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     // debugger;
     let newColumnFilters = this.columnFilters;
     if (this.id_programacion) {
-      newColumnFilters['filter.id_programacion'] =
-        '$eq:' + this.id_programacion;
+      newColumnFilters['filter.id_programacion'] = this.id_programacion;
     }
     if (this.typeReceiptSelected) {
-      newColumnFilters['filter.tipo_recibo'] =
-        '$eq:' + this.typeReceiptSelected;
+      newColumnFilters['filter.folio'] = this.folio;
     }
     return {
       ...this.params.getValue(),
