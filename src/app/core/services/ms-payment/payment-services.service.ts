@@ -19,4 +19,8 @@ export class PaymentService extends HttpService {
   remove(id: any) {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
+
+  getComerReldisDisp(){
+    return this.get(`comer-reldis-disp`)
+  }
 }

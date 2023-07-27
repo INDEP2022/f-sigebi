@@ -42,4 +42,8 @@ export class ComerClientsService extends HttpService {
     const route = `${this.endpoint}/${id}`;
     return this.delete(route);
   }
+
+  getComerCustomerEvent(params?: string){
+    return this.get('comer-clientsxevent', params)
+  }
 }
