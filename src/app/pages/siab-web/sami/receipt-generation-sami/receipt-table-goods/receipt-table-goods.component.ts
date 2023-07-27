@@ -5,7 +5,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { takeUntil } from 'rxjs';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
@@ -30,8 +29,8 @@ export class ReceiptTableGoodsComponent
   pageSelecteds: number[] = [];
   previousSelecteds: IReceiptItem[] = [];
 
-  pageSizeOptions = [5, 10, 20, 25];
-  limit: FormControl = new FormControl(5);
+  // pageSizeOptions = [5, 10, 20, 25];
+  // limit: FormControl = new FormControl(5);
   @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ReceiptGenerationDataService,
@@ -39,7 +38,7 @@ export class ReceiptTableGoodsComponent
   ) {
     super();
     this.service = this.receiptService;
-    this.params.value.limit = 5;
+    // this.params.value.limit = 5;
     // this.haveInitialCharge = false;
     this.settings = {
       ...this.settings,
