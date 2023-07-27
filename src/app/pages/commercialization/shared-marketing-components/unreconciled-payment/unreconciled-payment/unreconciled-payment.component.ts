@@ -9,6 +9,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { COLUMNS } from './columns';
 import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
@@ -27,7 +28,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private token: AuthService
   ) {
     super();
     this.settings = {
@@ -61,9 +63,20 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.EQ),
-              nameReason: () => (searchFilter = SearchFilter.ILIKE),
-              calculationRoutine: () => (searchFilter = SearchFilter.EQ),
+              paymentId: () => (searchFilter = SearchFilter.EQ),
+              reference: () => (searchFilter = SearchFilter.EQ),
+              movementNumber: () => (searchFilter = SearchFilter.EQ),
+              move: () => (searchFilter = SearchFilter.EQ),
+              date: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              bankKey: () => (searchFilter = SearchFilter.EQ),
+              entryOrderId: () => (searchFilter = SearchFilter.EQ),
+              lotPub: () => (searchFilter = SearchFilter.EQ),
+              event: () => (searchFilter = SearchFilter.EQ),
+              clientId: () => (searchFilter = SearchFilter.EQ),
+              taxId: () => (searchFilter = SearchFilter.EQ),
+              name: () => (searchFilter = SearchFilter.EQ),
+              appliedTo: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -166,4 +179,34 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  enviarSIRSAE() {
+    // CREA_CABECERA;
+    this.creaCabecera();
+    // ENVIA_LEE_SIRSAE(1, NULL);
+    this.enviaLeeSirsae(1, null);
+  }
+  creaCabecera() {
+    let obj = {
+      user: this.token.decodeToken().preferred_username,
+      idPay: 380375,
+      idEvent: 12054,
+      pAddress: 'M',
+      idLot: 12345,
+      appliedA: 'D',
+      amount: 12345,
+      idLotPub: 12345,
+    };
+    this.paymentService.createHeader(obj).subscribe({
+      next: response => {
+        // this.alert('success', 'El Registro se Eliminó Correctamente', '');
+        this.getPayments();
+      },
+      error: error => {
+        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+      },
+    });
+  }
+
+  enviaLeeSirsae(item1: number, item2: any) {}
 }

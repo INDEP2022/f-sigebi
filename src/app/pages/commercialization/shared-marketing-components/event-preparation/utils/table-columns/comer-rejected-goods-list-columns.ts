@@ -16,7 +16,7 @@ export const COMER_REJECTED_GOODS_COLUMNS = {
     sort: false,
   },
   cause: {
-    title: 'Cause',
+    title: 'Causa',
     sort: false,
   },
   event: {
