@@ -17,6 +17,13 @@ const routes: Routes = [
     data: { title: 'Generacion de Recibo' },
   },
   {
+    path: 'maintenance',
+    loadChildren: async () =>
+      (await import('./maintenance-sami/maintenance-sami.module'))
+        .MaintenanceSamiModule,
+    data: { title: 'Mantenimiento' },
+  },
+  {
     path: 'schedule-maintenance',
     loadChildren: async () =>
       (await import('./schedule-maintenance/schedule-maintenance.module'))
