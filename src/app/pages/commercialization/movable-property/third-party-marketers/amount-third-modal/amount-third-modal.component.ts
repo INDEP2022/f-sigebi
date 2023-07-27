@@ -51,12 +51,20 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
       idThirdParty: [null, [Validators.required]],
       startingAmount: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
-      pctCommission: [null, [Validators.required]],
+      pctCommission: [null, [Validators.required, Validators.maxLength(5)]],
       finalAmount: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.amounts != null) {
@@ -65,9 +73,15 @@ export class AmountThirdModalComponent extends BasePage implements OnInit {
       this.amountForm.patchValue({
         idComiXThird: this.amounts.idComiXThird,
         idThirdParty: this.amounts.idThirdParty,
-        startingAmount: this.amounts.startingAmount,
-        pctCommission: this.amounts.pctCommission,
-        finalAmount: this.amounts.finalAmount,
+        startingAmount: this.amounts.startingAmount
+          ? Number(this.amounts.startingAmount)
+          : null,
+        pctCommission: this.amounts.pctCommission
+          ? Number(this.amounts.pctCommission)
+          : null,
+        finalAmount: this.amounts.finalAmount
+          ? Number(this.amounts.finalAmount)
+          : null,
       });
       this.amountForm.controls['idThirdParty'].setValue(this.thirdParty.id);
       if (this.thirPartys != null) {

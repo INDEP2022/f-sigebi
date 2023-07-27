@@ -20,8 +20,11 @@ export class PaymentService extends HttpService {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
 
+  getComerReldisDisp(){
+    return this.get(`comer-reldis-disp`)
+  }
   createHeader(params: any) {
-    return this.post(PaymentEndPoints.ComerPaymentRef, params);
+    return this.post(PaymentEndPoints.CreateHeaderFcomer113, params);
   }
 
   create(params: any) {
@@ -30,5 +33,9 @@ export class PaymentService extends HttpService {
 
   update(id: any, params: any) {
     return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+  }
+
+  sendReadSirsaeFcomer113(params: any) {
+    return this.post(PaymentEndPoints.SendReadSirsaeFcomer113, params);
   }
 }
