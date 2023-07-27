@@ -1,6 +1,6 @@
 :host ::ng-deep ng2-smart-table table tr {
   &.notSelect {
-    td:first-child app-checkbox-element {
+    td:first-child input {
       display: none;
     }
   }

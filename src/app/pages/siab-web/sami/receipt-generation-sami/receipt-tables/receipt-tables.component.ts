@@ -14,6 +14,7 @@ import { ReceiptGenerationDataService } from '../services/receipt-generation-dat
 })
 export class ReceiptTablesComponent extends BasePage {
   @Input() folio: string;
+  @Input() id_programacion: string;
   @Input() count = 0;
   estatus_bien_programacion: string;
   receiptType = EReceiptType;
@@ -114,7 +115,7 @@ export class ReceiptTablesComponent extends BasePage {
             P_ESTADO_CONSERVACION_SAE: 0,
             P_ESTADO_FISICO_SAE: 0,
             P_UNIDAD_MEDIDA_SAE: 0,
-            P_DESCRIPCION_BIEN_SAE: '',
+            P_DESCRIPCION_BIEN_SAE: ' ',
             P_ID_BIEN: row.id_bien,
             P_ID_PROGRAMACION: row.id_programacion,
           })
@@ -162,17 +163,28 @@ export class ReceiptTablesComponent extends BasePage {
   }
 
   assignReception(receiptType: EReceiptType) {
-    if (receiptType === EReceiptType.Reprogramacion) {
-      this.divcanmas = false;
-      this.divrepmas = true;
-      return;
-    }
-    if (receiptType === EReceiptType.Cancelacion) {
-      this.divcanmas = true;
-      this.divrepmas = false;
-      return;
-    }
-    this.registerReceipt(receiptType, 0);
+    this.alertQuestion(
+      'question',
+      '¿Desea registrar los bienes con tipo ' + receiptType,
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (receiptType === EReceiptType.Reprogramacion) {
+          this.divcanmas = false;
+          this.divrepmas = true;
+          return;
+        }
+        if (receiptType === EReceiptType.Cancelacion) {
+          this.divcanmas = true;
+          this.divrepmas = false;
+          return;
+        }
+        this.divcanmas = false;
+        this.divrepmas = false;
+        this.registerReceipt(receiptType, 0);
+      }
+    });
+
     // selectedGoods.forEach(async row => {
     //   this.programmingGoodReceiptService.postGoodsProgramingReceipts(row).pipe();
     // })
@@ -224,9 +236,9 @@ export class ReceiptTablesComponent extends BasePage {
       this.receiptGenerationData.refreshTableProgrammings.next(true);
     } else {
       if (type === EReceiptType.Cancelacion) {
-        this.estatus_bien_programacion = 'CANCELADO_TMP';
+        this.estatus_bien_programacion = 'CANCELADO';
       } else {
-        this.estatus_bien_programacion = 'EN_PROGRAMACION_TMP';
+        this.estatus_bien_programacion = 'EN_PROGRAMACION';
       }
     }
   }
