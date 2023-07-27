@@ -46,5 +46,5 @@ export const COLUMNSTABLE2 = {
         return null;
       }
     },
-  }
+  },
 };

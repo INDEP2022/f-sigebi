@@ -90,6 +90,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   inputValue: string | number;
   historyGoodFailed: any[]; //usado para llevar un log de las inserciones de histórico de bienes fallidas
   updateGoodFalied: any[]; //usado para llevar un log de las actualicaciones de bienes fallidas
+  selectedRow: any = null;
+  rowSelected: boolean = false;
+  statusRowActa: boolean = true;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -138,6 +141,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   editProceeding(proceeding: IProceedings) {
     console.log(proceeding);
+    this.dataProceedingsSelected = proceeding;
     console.log(this.copyDataProceedings);
     const found = this.copyDataProceedings.find(
       (element: IProceedings) => element.id == proceeding.id
@@ -257,6 +261,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       proceeding,
+      dataProceedingsSelected: {
+        dataProceedingsSelected: this.dataProceedingsSelected,
+      },
       title: 'Actualizar Acta',
       callback: (next: boolean) => {
         this.getInfo(this.fileNumber);
@@ -301,11 +308,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   initPaginatorGoods() {
     this.paramsGoods.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      console.log(2);
       this.paginatorGoods.page = data.page;
       this.paginatorGoods.limit = data.limit;
       if (!this.firsTime) {
-        console.log('XXXX');
         this.getGoods(this.proceedingsNumb).subscribe((data: any) => {
           this.prepareGoodsData(data);
         });
@@ -332,6 +337,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     console.log(row?.id);
     this.proceedingsNumb = row?.id;
     this.paramsGoods.next({ page: 1, limit: 10 });
+    if (row.proceedingStatus === 'CERRADA') {
+      console.log('status close');
+      this.statusRowActa = false;
+    }
   }
 
   getProceedings(fileNumber: number) {
@@ -389,7 +398,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
           this.prepareData(data);
           this.totalProceedings = Number(data.proceedings.count);
           this.totalGoods = Number(data.goods.count);
-          console.log(this.totalGoods);
+          console.log('this.totalGoods', this.totalGoods);
         },
         error: error => {
           console.log(error);
@@ -421,8 +430,11 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.form.patchValue(expedientInfo);
     this.prepareProceedingsData(data.proceedings);
     // this.proceedingsData = this.proceedingsData2;
+    console.log('data.goods', data.goods);
     if (!data.goods.hasOwnProperty('error')) {
-      this.prepareGoodsData(data.goods);
+      if (data.goods != undefined) {
+        this.prepareGoodsData(data.goods);
+      }
     }
     // this.form.patchValue(this.dataForm);
     this.flag = true;
@@ -442,7 +454,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
         universalFolio: proceedings.universalFolio,
         observations: proceedings.observations,
       };
-      console.log(proceedingsTemp.universalFolio);
+      console.log('proceedingsTemp ', proceedingsTemp.universalFolio);
       this.proceedingsData.push(proceedingsTemp);
     }
   }
@@ -450,16 +462,32 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   prepareGoodsData(data: IListResponse<IDetailProceedingsDevolution>) {
     this.quantityOfGoods = data.count;
     let goodsData: any[] = [];
-    for (let good of data.data) {
-      let data: any = {
-        goodsId: good.good[0].goodsID,
-        description: good.good[0].description,
-        quantity: good.good[0].quantity,
-        amountReturned: good.amountReturned,
-      };
-      goodsData.push(data);
+    for (let i = 0; i < data.count; i++) {
+      if (data.data[i] != undefined) {
+        let param: any = {
+          goodsId: data.data[i].good.goodId,
+          description: data.data[i].good.description,
+          quantity: data.data[i].good.quantity,
+          amountReturned: data.data[i].amountReturned,
+        };
+        goodsData.push(param);
+      }
     }
     this.dataTable = goodsData;
+
+    /*
+    for (let good of data.data) {
+      if (good != undefined) {
+        let data: any = {
+          goodsId: good.good[0].goodId,
+          description: good.good[0].description,
+          quantity: good.good[0].quantity,
+          amountReturned: good.amountReturned,
+        };
+        goodsData.push(data);
+      }
+    }
+    this.dataTable = goodsData;*/
   }
 
   enableDisableFields(option: string) {
@@ -1451,7 +1479,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     );
   }
 
-  searchUnreconciledGoods(reconciledGoods: any, totalGoods: any) {
+  UnreconciledGoods(reconciledGoods: any, totalGoods: any) {
     console.debug(reconciledGoods);
     console.debug(totalGoods);
     let goodsWithoutReconciling: any[] = [];
@@ -1593,5 +1621,25 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   getScreenName() {
     this.screenName = this.activatedRoute.snapshot.data['screen'];
     console.log(this.screenName);
+  }
+
+  selectRow(row: any) {
+    console.log(row.data);
+    this.selectedRow = row.data;
+    this.rowSelected = true;
+    if (row.data.goodsId != null && row.data.goodsId != undefined) {
+      this.route.navigate(
+        [
+          `/pages/general-processes/historical-good-situation/${row.data.goodsId}`,
+        ],
+        { queryParams: { origin: 'FACTREFACTACIEDEV' } }
+      );
+    }
+  }
+
+  redirectTo(event: any) {
+    console.log('data send -> ', this.selectRow);
+    if (this.selectRow) {
+    }
   }
 }

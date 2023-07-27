@@ -50,44 +50,52 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      referencia: [
+      reference: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
-      numberMovement: [
+      movementNumber: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
       date: [null, [Validators.required]],
-      monto: [
+      amount: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
       ],
-      description: [null, [Validators.required]],
-      conciliado: [null, [Validators.required]],
-      cveBanco: [null, [Validators.required]],
-      aplicadoA: [null, [Validators.required]],
-      cliente: [null, [Validators.required]],
-      lote: [null, [Validators.required]],
+      bankKey: [null, [Validators.required]],
+      code: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+      ],
+      lotId: [null, [Validators.required]],
+      type: [null, [Validators.required]],
+      result: [null, [Validators.required]],
+      recordDate: [null, [Validators.required]],
+      referenceOri: [null, [Validators.required]],
+      dateOi: [null],
+      entryOrderId: [null],
       validSystem: [null, [Validators.required]],
-      entryOrderId: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
-      ],
+      description: [null, [Validators.required]],
+      branchOffice: [null, [Validators.required]],
+      // conciliado: [null, [Validators.required]],
+
+      appliedTo: [null, [Validators.required]],
+      clientId: [null, [Validators.required]],
     });
 
     if (this.data != null) {
       this.edit = true;
       this.form.patchValue({
-        referencia: this.data.idEvent,
-        numberMovement: this.data.publicLot,
+        reference: this.data.idEvent,
+        movementNumber: this.data.publicLot,
         date: this.data.specialGuarantee,
-        monto: this.data.idLot,
+        amount: this.data.idLot,
         description: this.data.idLot,
-        conciliado: this.data.idLot,
-        cveBanco: this.data.idLot,
-        aplicadoA: this.data.idLot,
-        cliente: this.data.idLot,
+        // conciliado: this.data.idLot,
+        bankKey: this.data.idLot,
+        appliedTo: this.data.idLot,
+        clientId: this.data.idLot,
         validSystem: this.data.idLot,
         entryOrderId: this.data.entryOrderId,
       });
@@ -104,16 +112,17 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   update() {
     const requestBody: any = {
+      paymentId: this.data.paymentId,
       reference: Number(this.form.value.reference),
-      numberMovement: Number(this.form.value.numberMovement),
+      movementNumber: Number(this.form.value.movementNumber),
       date: this.form.value.date,
-      amount: Number(this.form.value.monto),
+      amount: Number(this.form.value.amount),
       description: this.form.value.description,
       conciliado: this.form.value.conciliado,
-      bankkey: this.form.value.cveBanco,
-      aplicadoA: this.form.value.aplicadoA,
-      clientId: Number(this.form.value.cliente),
-      lote: this.form.value.lote,
+      bankKey: this.form.value.bankKey,
+      appliedTo: this.form.value.appliedTo,
+      clientId: Number(this.form.value.clientId),
+      lotId: this.form.value.lotId,
       entryOrderId: Number(this.form.value.entryOrderId),
       validSystem: this.form.value.validSystem,
     };
@@ -132,16 +141,16 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   create() {
     const requestBody: any = {
       reference: Number(this.form.value.reference),
-      numberMovement: Number(this.form.value.numberMovement),
+      movementNumber: Number(this.form.value.movementNumber),
       date: this.form.value.date,
-      amount: Number(this.form.value.monto),
+      amount: Number(this.form.value.amount),
       description: this.form.value.description,
       conciliado: this.form.value.conciliado,
-      bankkey: this.form.value.cveBanco,
-      aplicadoA: this.form.value.aplicadoA,
-      clientId: Number(this.form.value.cliente),
-      lote: this.form.value.lote,
-      entryOrderId: Number(this.form.value.entryOrderId),
+      bankKey: this.form.value.bankKey,
+      appliedTo: this.form.value.appliedTo,
+      clientId: Number(this.form.value.clientId),
+      lotId: this.form.value.lotId,
+      // entryOrderId: Number(this.form.value.entryOrderId),
       validSystem: this.form.value.validSystem,
     };
 
