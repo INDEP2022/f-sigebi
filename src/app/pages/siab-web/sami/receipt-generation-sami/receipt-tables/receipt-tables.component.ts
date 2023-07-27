@@ -162,17 +162,26 @@ export class ReceiptTablesComponent extends BasePage {
   }
 
   assignReception(receiptType: EReceiptType) {
-    if (receiptType === EReceiptType.Reprogramacion) {
-      this.divcanmas = false;
-      this.divrepmas = true;
-      return;
-    }
-    if (receiptType === EReceiptType.Cancelacion) {
-      this.divcanmas = true;
-      this.divrepmas = false;
-      return;
-    }
-    this.registerReceipt(receiptType, 0);
+    this.alertQuestion(
+      'question',
+      '¿Desea registrar los bienes con tipo ' + receiptType,
+      ''
+    ).then(question => {
+      if (question.isConfirmed) {
+        if (receiptType === EReceiptType.Reprogramacion) {
+          this.divcanmas = false;
+          this.divrepmas = true;
+          return;
+        }
+        if (receiptType === EReceiptType.Cancelacion) {
+          this.divcanmas = true;
+          this.divrepmas = false;
+          return;
+        }
+        this.registerReceipt(receiptType, 0);
+      }
+    });
+
     // selectedGoods.forEach(async row => {
     //   this.programmingGoodReceiptService.postGoodsProgramingReceipts(row).pipe();
     // })
@@ -224,9 +233,9 @@ export class ReceiptTablesComponent extends BasePage {
       this.receiptGenerationData.refreshTableProgrammings.next(true);
     } else {
       if (type === EReceiptType.Cancelacion) {
-        this.estatus_bien_programacion = 'CANCELADO_TMP';
+        this.estatus_bien_programacion = 'CANCELADO';
       } else {
-        this.estatus_bien_programacion = 'EN_PROGRAMACION_TMP';
+        this.estatus_bien_programacion = 'EN_PROGRAMACION';
       }
     }
   }
