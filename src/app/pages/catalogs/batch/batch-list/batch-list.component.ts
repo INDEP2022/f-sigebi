@@ -48,6 +48,7 @@ export class BatchListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
+            filter.field == 'numRegister' ||
             filter.field == 'weightedDeduction' ||
             filter.field == 'startingRankPercentage' ||
             filter.field == 'finalRankPercentage' ||

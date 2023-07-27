@@ -103,7 +103,10 @@ export class BatchFormComponent extends BasePage implements OnInit {
     this.loading = true;
     this.batchService.create(this.batchForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
-      error: error => ((this.loading = false), console.log(error)),
+      error: error => {
+        this.loading = false;
+        this.alert('error', 'El Almacen ya fue registrado', '');
+      },
     });
   }
 

@@ -60,6 +60,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getFractions();
         }
       });
@@ -119,7 +120,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.fractionService.remove(id).subscribe({
       next: response => {
-        this.alert('success', 'Fracción', 'Borrado Correctamente'),
+        this.alert('success', 'Fracción', 'Borrada Correctamente'),
           this.getFractions();
       },
       error: err => {
