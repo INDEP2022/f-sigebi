@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { EReceiptType } from '../models/eReceiptType';
 import { ReceiptGenerationDataService } from '../services/receipt-generation-data.service';
 import { COLUMNS } from './columns';
 
@@ -52,6 +53,18 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
 
   get typeReceiptSelected() {
     return this.dataService.typeReceiptSelected;
+  }
+
+  override extraOperationsGetData() {
+    if (this.typeReceiptSelected === EReceiptType.Recibos) {
+      this.dataService.recibos = this.totalItems;
+    }
+    if (this.typeReceiptSelected === EReceiptType.Resguardo) {
+      this.dataService.resguardo = this.totalItems;
+    }
+    if (this.typeReceiptSelected === EReceiptType.Almacen) {
+      this.dataService.resguardo = this.totalItems;
+    }
   }
 
   override getParams() {
