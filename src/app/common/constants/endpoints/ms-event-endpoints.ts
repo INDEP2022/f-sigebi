@@ -12,4 +12,5 @@ export enum EventEndpoints {
   FilterLot = '?search=&filter.lo',
   EventXSerie = 'comer-tpeventxserie',
   Application = 'application',
+  AppGetfComer = 'application/get-f-comer',
 }

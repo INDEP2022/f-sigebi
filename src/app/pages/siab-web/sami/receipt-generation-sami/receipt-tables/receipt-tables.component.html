@@ -131,7 +131,9 @@
 <div class="row" *ngIf="typeReceiptSelected">
   <div *ngIf="isFirstTable()">
     <app-receipt-table-programings
-      [id_programacion]="id_programacion"></app-receipt-table-programings>
+      [id_programacion]="id_programacion"
+      [folio]="folio"
+      [type]="typeReceiptSelected"></app-receipt-table-programings>
   </div>
   <div *ngIf="!isFirstTable()">
     <app-receipt-table-goods
