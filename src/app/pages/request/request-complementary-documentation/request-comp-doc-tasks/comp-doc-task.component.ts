@@ -16,6 +16,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract selectGoodForEyeVisit: boolean;
   protected abstract validateGoodForEyeVisit: boolean;
   protected abstract viewSelectedGoods: boolean;
+  protected abstract resultEyeVisitReport: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
   protected abstract saveRequest: boolean;
@@ -244,6 +245,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.notifyReport = false;
         this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = true;
+        this.resultEyeVisitReport = true;
 
         this.turnReq = true;
         this.createReport = false;

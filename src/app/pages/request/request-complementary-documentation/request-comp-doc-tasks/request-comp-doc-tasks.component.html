@@ -66,6 +66,16 @@
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
+        <div class="mx-1" *ngIf="resultEyeVisitReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="reportResultEyeVisit()">
+            Reporte Resultado Visita Ocular
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="notifyReport">
           <button
             type="button"

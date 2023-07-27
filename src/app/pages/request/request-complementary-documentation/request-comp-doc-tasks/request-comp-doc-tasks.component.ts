@@ -49,6 +49,7 @@ export class RequestCompDocTasksComponent
   notifyReport: boolean = false;
   selectGoodForEyeVisit: boolean = false;
   validateGoodForEyeVisit: boolean = false;
+  resultEyeVisitReport: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -315,6 +316,18 @@ export class RequestCompDocTasksComponent
         }
       });
       resolve(count);
+    });
+  }
+
+  reportResultEyeVisit(context?: Partial<CreateReportComponent>): void {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+      } //this.getCities();
     });
   }
 }
