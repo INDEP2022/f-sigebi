@@ -27,6 +27,7 @@
           </button>
         </div>
       </div>
+
       <div class="row margin-input">
         <div class="col-md-12">
           <form-field [control]="programmingForm.get('managementId')">
@@ -278,6 +279,7 @@
         </div>
       </form>
     </div>
-    <app-receipt-table-goods></app-receipt-table-goods>
+    <hr />
+    <app-receipt-tables [folio]="folio" [count]="count"></app-receipt-tables>
   </div>
 </app-card>

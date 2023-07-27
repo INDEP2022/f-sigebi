@@ -444,6 +444,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     };
     this.documentsService
       .getDocCaptureFind(this.search, this.params.getValue())
+      // .pipe(timeout(50000))
       .subscribe({
         next: data => {
           this.loading = false;
@@ -460,21 +461,17 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
           this.P_CUMP = (this.P_T_CUMP / data.result.length) * 100;
           this.dataFactCapt.load(this.capturasDig);
           this.dataFactCapt.refresh();
-          this.totalItemsCaptura = data.info.total_cumplio;
+          this.totalItemsCaptura = data.result.length;
           this.loading = false;
           // this.P_T_CUMP = data.info.total_cumplio;
           // this.P_CUMP = data.info.porcen_cumplidos;
         },
-        error: (error: any) => {
-          if (error.status === '504') {
-            this.loading = false;
-            this.isData = false;
-            this.capturasDig = [];
-            this.nombreUser = '';
-            this.dataFactCapt = new LocalDataSource();
-          } else {
-            console.error(error);
-          }
+        error: () => {
+          this.loading = false;
+          this.isData = false;
+          this.capturasDig = [];
+          this.nombreUser = '';
+          this.dataFactCapt = new LocalDataSource();
         },
       });
   }
@@ -501,6 +498,5 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     console.log(this.formCapture.value.user);
     // this.formCapture.value.user = event.user
   }
-
   goBack() {}
 }
