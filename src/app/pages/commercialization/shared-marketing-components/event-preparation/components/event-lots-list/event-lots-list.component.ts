@@ -52,6 +52,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
   @Input() lots = new LocalDataSource();
+  @Input() onlyBase = false;
   lotSelected: IComerLot = null;
 
   excelControl = new FormControl(null);
