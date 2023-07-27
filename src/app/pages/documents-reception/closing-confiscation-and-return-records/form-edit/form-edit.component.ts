@@ -20,6 +20,8 @@ export class FormEditComponent extends BasePage implements OnInit {
   dataForm: any = {};
   title: string;
   proceeding: IProceedings;
+  dataProceedingsSelected: any;
+  flagSave: boolean = true;
 
   constructor(
     private modalRef: BsModalRef,
@@ -33,6 +35,14 @@ export class FormEditComponent extends BasePage implements OnInit {
     console.log(this.proceeding);
     this.initForm();
     this.setForm(this.proceeding);
+    console.log('dataProceedingsSelected ', this.dataProceedingsSelected);
+    console.log('dataProceedingsSelected ');
+    if (
+      this.dataProceedingsSelected.dataProceedingsSelected.proceedingStatus ===
+      'CERRADA'
+    ) {
+      this.flagSave = false;
+    }
   }
 
   initForm() {
