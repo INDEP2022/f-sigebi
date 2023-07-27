@@ -57,6 +57,7 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   mapTask(process: string, affair?: number) {
     console.log('affair', affair);
+    this.disableTabs();
     switch (process) {
       case 'register-request':
         if (affair == 13) {
@@ -249,7 +250,15 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = false;
         this.rejectReq = false;
         break;
-
+      case 'RERegistroDocComplementaria':
+        this.regDocForm = true;
+        this.searchRequestSimGoods = true;
+        this.selectGoods = true;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+        break;
       default:
         break;
     }
@@ -284,5 +293,22 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.onLoadToast('success', 'Solicitud turnada con éxito', '');
       }
     });
+  }
+  private disableTabs() {
+    this.regDocForm = false;
+    this.regDocView = false;
+    this.searchRequestSimGoods = false;
+    this.selectGoods = false;
+    this.viewSelectedGoods = false;
+    this.guidelines = false;
+    this.docRequest = false;
+    this.expRequest = false;
+    this.saveRequest = false;
+    this.dictumValidate = false;
+    this.notifyReport = false;
+    this.selectGoodForEyeVisit = false;
+    this.turnReq = false;
+    this.createReport = false;
+    this.rejectReq = false;
   }
 }
