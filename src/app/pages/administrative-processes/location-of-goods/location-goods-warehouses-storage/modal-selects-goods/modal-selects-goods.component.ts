@@ -46,6 +46,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   @Input() formVault: LocationGoodsWarehousesStorageComponent;
   @Input() formWarehouse: LocationGoodsWarehousesStorageComponent;
   @Output() allGoodsUpdated = new EventEmitter();
+  @Input() noExpediente: string | number;
 
   //Data Table
 
@@ -296,7 +297,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           goodClassNumber: good.goodClassNumber,
           unit: good.unit,
           labelNumber: good.labelNumber,
-          vaultNumber: this.form.get('safe').value,
+          vaultNumber: this.formSafe.get('safe').value,
           // estatus: good.estatus // incluir la propiedad estatus
         };
         // if (this.validarGood()) return;
@@ -318,7 +319,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           }
         );
       });
-      this.onLoadGoodList();
+      // this.onLoadGoodList();
       this.alert('success', 'Bienes', `Actualizados correctamente`);
     } catch (err) {
       console.error(err);
@@ -369,7 +370,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     this.params.getValue().page = 1;
     this.params.getValue().limit = 10;
     this.serviceGood
-      .getByExpedient(this.fileNumber, this.params.getValue())
+      .getByExpedient(this.noExpediente, this.params.getValue())
       .subscribe({
         next: data => {
           this.goods = data.data;

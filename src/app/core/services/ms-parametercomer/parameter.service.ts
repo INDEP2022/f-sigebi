@@ -69,4 +69,14 @@ export class ParameterModService
   validUser(data: { user: string }) {
     return this.post(ParameterComerEndpoints.ApplicationUser, data);
   }
+
+  //COMER_PARAMETROSMOD
+  getParamterMod(params?: string) {
+    return this.get(`parameters-mod`, params);
+  }
+
+  //COMER_STATUS_VTA
+  getParameterStatus(params?: string) {
+    return this.get(`comer-status-vta`, params);
+  }
 }

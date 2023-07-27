@@ -314,11 +314,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   getDataUser() {
     const token = this.authService.decodeToken();
-    console.log(token);
-    const user =
-      localStorage.getItem('username') == 'sigebiadmon'
-        ? localStorage.getItem('username')
-        : localStorage.getItem('username').toLocaleUpperCase();
     const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       console.log(res);
