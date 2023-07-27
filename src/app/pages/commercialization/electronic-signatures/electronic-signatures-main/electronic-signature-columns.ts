@@ -54,27 +54,39 @@ export const HISTORY_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  report: {
-    title: 'Reporte',
+  document: {
+    title: 'Documento',
     type: 'string',
     sort: false,
   },
-  date: {
+  creationdate: {
     title: 'Fecha',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
-  signatureDate: {
+  firmdate: {
     title: 'Fecha Firma',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (!value) {
+        return '';
+      }
+      return new DatePipe('en-US').transform(value, 'dd/MM/yyyy');
+    },
   },
   description: {
     title: 'Descripción Documento',
     type: 'string',
     sort: false,
   },
-  type: {
+  denomination: {
     title: 'Tipo Firma',
     type: 'string',
     sort: false,

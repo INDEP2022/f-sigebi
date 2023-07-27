@@ -66,4 +66,8 @@ export class ComerEventosService extends HttpService {
   validUser(body: { event: number | string; user: string; address: string }) {
     return this.post(EventEndpoints.ComerE + '/valid-user', body);
   }
+
+  getAppGetfComer(body: any) {
+    return this.post(EventEndpoints.AppGetfComer, body);
+  }
 }

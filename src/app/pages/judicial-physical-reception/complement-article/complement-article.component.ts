@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { addDays, format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -10,12 +11,14 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { IMoneda } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { IAppraisersGood } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IRequestAppraisal } from 'src/app/core/models/ms-request-appraisal/request-appraisal.model';
 import { AppraisersService } from 'src/app/core/services/catalogs/appraisers.service';
 import { AppraisersHttpService } from 'src/app/core/services/catalogs/ms-appraisers.service';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
+import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { AppraisalGoodService } from 'src/app/core/services/ms-appraisal-good/appraisal-good.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -35,9 +38,11 @@ import { AppraisalHistoryComponent } from './appraisal-history/appraisal-history
 export class ComplementArticleComponent extends BasePage implements OnInit {
   settings1 = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
     rowClassFunction: (row: { data: { available: any } }) =>
       row.data.available ? 'available' : 'not-available',
     actions: false,
+
     columns: {
       id: {
         title: 'No. Bien',
@@ -79,6 +84,12 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   dateVigencia: Date;
   isEnableGood = false;
   goodStatus = '';
+  params = new BehaviorSubject(new ListParams());
+  totalItems: number = 0;
+  columnFilters: any = [];
+  data: LocalDataSource = new LocalDataSource();
+
+  currencies = new DefaultSelect<IMoneda>([], 0);
 
   constructor(
     private fb: FormBuilder,
@@ -92,17 +103,62 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     private serviceReqAppr: RequestAppraisalService,
     private serviceScreenStatus: ScreenStatusService,
     private serviceCatalogAppraise: AppraisersHttpService,
-    private serviceExpediente: ExpedientService
+    private serviceExpediente: ExpedientService,
+    private tableServ: TvalTable5Service
   ) {
     super();
+    this.changePagin();
   }
 
   ngOnInit(): void {
     this.prepareForm();
     this.getStatusView();
     this.form.get('solicitud').valueChanges.subscribe(res => {
-      console.log(res);
+      console.log('solicitud', res);
     });
+    //if (this.form.get('expediente').value != null) {
+
+    //}
+  }
+
+  changePagin() {
+    this.dataGoods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log('params ', this.params);
+          this.getGoodsByExpedient();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoodsByExpedient());
+    console.log('params ', this.params);
   }
 
   prepareForm() {
@@ -115,7 +171,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       remarks: [null, [Validators.pattern(STRING_PATTERN)]],
       solicitud: [null, []],
       importe: [null, []],
-      moneda: [null, [Validators.pattern(STRING_PATTERN)]],
+      moneda: [null],
       fechaVigencia: [null, []],
       fechaAvaluo: [null, [maxDate(new Date())]],
       perito: [null, []],
@@ -247,12 +303,18 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
   getGoodsByExpedient() {
     this.disabledButton('search-goods-expedient');
     this.clearInputs();
+    this.params.getValue()['text'] = '?expedient=';
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.serviceGood
-      .getByExpedient(this.form.get('expediente').value, {
-        text: '?expedient=',
-      })
+      .getByExpedient(this.form.get('expediente').value, params)
       .subscribe({
         next: async (res: any) => {
+          console.log('resp ', res);
+          console.log('resp total ', res.count);
+          this.totalItems = res.count;
           const newData = await Promise.all(
             res.data.map(async (e: any) => {
               if (this.statusScreen.includes(e.status)) {
@@ -264,10 +326,13 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
           );
           this.dataGoods.load(newData);
           this.enableButton('search-goods-expedient');
+          console.log(
+            "this.form.get('expediente').value ",
+            this.form.get('expediente').value
+          );
           this.serviceExpediente
             .getById(this.form.get('expediente').value)
             .subscribe(resp => {
-              console.log(resp.ministerialDate);
               this.form
                 .get('fechaFe')
                 .setValue(
@@ -279,6 +344,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         },
         error: (err: any) => {
           console.error(err);
+          this.totalItems = 0;
           this.dataGoods.load([]);
           this.alert(
             'warning',
@@ -356,10 +422,19 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         this.goodStatus = data.goodStatus;
         this.getgoodCategory = data.goodCategory;
         this.getoriginSignals = data.originSignals;
-        this.getnotifyDate = format(data.notifyDate, 'dd-MM-yyyy');
-        this.getnotifyA = data.notifyA;
+        console.log('data.notifyDate ', data.notifyDate);
+        this.getnotifyDate =
+          data.notifyDate != null
+            ? (this.getnotifyDate = this.formatDate(new Date(data.notifyDate)))
+            : null;
+        //this.getnotifyDate = format(data.notifyDate, 'dd-MM-yyyy');
+
+        this.getnotifyA = data.notifyA || null;
         this.getplaceNotify = data.placeNotify;
-        this.getfechaDictamen = format(data.dateOpinion, 'dd-MM-yyyy');
+        this.getfechaDictamen =
+          data.dateOpinion != null
+            ? this.formatDate(new Date(data.dateOpinion))
+            : null;
         this.getdictamenPerenidad = data.opinion;
         this.getdictamenPerito = data.proficientOpinion;
         this.getdictamenInstitucion = data.valuerOpinion;
@@ -372,7 +447,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         data.dateOpinion != null
           ? this.form
               .get('fechaDictamen')
-              .setValue(format(data.dateOpinion, 'dd-MM-yyyy'))
+              .setValue(this.formatDate(new Date(data.dateOpinion)))
           : this.form.get('fechaDictamen').setValue('');
         this.fillFormData(data.proficientOpinion, 'dictamenPerito');
         this.fillFormData(data.valuerOpinion, 'dictamenInstitucion');
@@ -380,11 +455,13 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         data.notifyDate != null
           ? this.form
               .get('fechaAseg')
-              .setValue(format(data.notifyDate, 'dd-MM-yyyy'))
+              .setValue(this.formatDate(new Date(data.notifyDate)))
           : this.form.get('fechaAseg').setValue('');
         this.fillFormData(data.notifyA, 'notificado');
         this.fillFormData(data.placeNotify, 'lugar');
+        console.log('cargado ');
       },
+
       err => {
         console.log(err);
       }
@@ -698,5 +775,41 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         );
       }
     }
+  }
+
+  getCurrencies($params: ListParams) {
+    let params = new FilterParams();
+    params.page = $params.page;
+    params.limit = $params.limit;
+    if ($params.text) params.search = $params.text;
+    this.getRegCurrency(params);
+  }
+
+  getRegCurrency(_params?: FilterParams, val?: boolean) {
+    // const params = new FilterParams();
+
+    // params.page = _params.page;
+    // params.limit = _params.limit;
+    // if (val) params.addFilter3('filter.desc_moneda', _params.text);
+
+    this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
+      next: data => {
+        data.data.map(data => {
+          data.desc_moneda = `${data.cve_moneda}- ${data.desc_moneda}`;
+          return data;
+        });
+        this.currencies = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.currencies = new DefaultSelect();
+      },
+    });
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}-${month}-${year}`;
   }
 }
