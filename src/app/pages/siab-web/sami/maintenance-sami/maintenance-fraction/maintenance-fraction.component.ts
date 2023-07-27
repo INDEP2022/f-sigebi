@@ -4,13 +4,12 @@ import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-maintenance-goods',
-  templateUrl: './maintenance-goods.component.html',
-  styleUrls: ['./maintenance-goods.component.scss'],
+  selector: 'app-maintenance-fraction',
+  templateUrl: './maintenance-fraction.component.html',
+  styleUrls: ['./maintenance-fraction.component.scss'],
 })
-export class MaintenanceGoodsComponent extends BasePage implements OnInit {
+export class MaintenanceFractionComponent extends BasePage implements OnInit {
   form: FormGroup;
-  readOnlyDebeDecir = true;
   constructor(private fb: FormBuilder) {
     super();
     this.form = this.fb.group({
@@ -25,22 +24,7 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
 
   ngOnInit() {}
 
-  searchDescription() {
-    this.readOnlyDebeDecir = false;
-    // llenar dice
-  }
-
-  updateDescription() {
-    this.alertQuestion(
-      'question',
-      'Se actualizará la descripción del bien ¿Desea continuar?',
-      ''
-    ).then(question => {
-      if (question.isConfirmed) {
-        // actualizar descripción
-      }
-    });
-  }
+  update() {}
 
   clear() {
     this.form.reset();

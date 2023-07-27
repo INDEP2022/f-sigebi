@@ -12,7 +12,7 @@ export interface IValidations {
   typeProceedings: string;
   resultValue: string | null;
   secVal: number | null;
-  statusValue: number | null;
+  statusValue: number | string | null;
 }
 
 export interface TransferProceeding {
