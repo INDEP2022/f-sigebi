@@ -8,6 +8,8 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IOrigin } from '../../../../core/models/catalogs/origin.model';
@@ -21,6 +23,7 @@ import { ORIGIN_COLUMNS } from './origin-columns';
 })
 export class OriginListComponent extends BasePage implements OnInit {
   origins: IOrigin[] = [];
+  city: ICity[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
@@ -28,7 +31,8 @@ export class OriginListComponent extends BasePage implements OnInit {
 
   constructor(
     private originService: OriginService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private cityService: CityService
   ) {
     super();
     this.settings.columns = ORIGIN_COLUMNS;
@@ -51,11 +55,8 @@ export class OriginListComponent extends BasePage implements OnInit {
             filter.field == 'id' ||
             filter.field == 'idTransferer' ||
             filter.field == 'keyTransferer' ||
-            filter.field == 'description' ||
             filter.field == 'type' ||
-            filter.field == 'address' ||
             filter.field == 'idCity' ||
-            filter.field == 'city' ||
             filter.field == 'keyEntityFederative'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
@@ -69,9 +70,9 @@ export class OriginListComponent extends BasePage implements OnInit {
           this.getExample();
         }
       });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getExample();
+    });
   }
 
   getExample() {
@@ -84,7 +85,7 @@ export class OriginListComponent extends BasePage implements OnInit {
       next: response => {
         if (response.count > 0) {
           this.origins = response.data;
-          this.data.load(this.origins);
+          this.data.load(response.data);
           this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;
@@ -105,7 +106,9 @@ export class OriginListComponent extends BasePage implements OnInit {
       origin,
       edit: !!origin,
       callback: (next: boolean) => {
-        if (next) this.getExample();
+        if (next) {
+          this.getExample();
+        }
       },
     };
     this.modalService.show(OriginFormComponent, modalConfig);

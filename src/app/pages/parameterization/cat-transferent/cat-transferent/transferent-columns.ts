@@ -192,15 +192,15 @@ export const AUTHORITY_COLUMNS = {
     sort: false,
   },
   idCity: {
-    title: 'No. ciudad',
+    title: 'No. Ciudad',
     sort: false,
   },
   authorityName: {
-    title: 'Nombre de autoridad',
+    title: 'Nombre de Autoridad',
     sort: false,
   },
   codeStatus: {
-    title: 'Código de estado',
+    title: 'Código de Estado',
     sort: false,
   },
   idStation: {

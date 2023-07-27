@@ -213,19 +213,6 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     if (this.refe_ori != this.referenceOriDat) {
       motivo_reclap = 'REFERENCIA';
       enviar = 1;
-
-      const paramsF = new FilterParams();
-      paramsF.addFilter('recordedOrderId', this.idOI.value);
-      this.invoiceService.getComerHeadboard(paramsF.getParams()).subscribe(
-        res => {
-          console.log(res['data'][0]);
-          this.refe_ori = 'NADA';
-          this.fillIncomeDataOI(res['data'][0]);
-        },
-        err => {
-          console.log(err);
-        }
-      );
     }
   }
 

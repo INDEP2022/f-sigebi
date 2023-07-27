@@ -325,7 +325,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Emisoras',
-          'No se puede eliminar debe eliminar sus AUTORIDADES'
+          'No se puede eliminar debe eliminar sus Autoridades'
         );
       },
     });
@@ -333,10 +333,11 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
   //Selecciona fila de tabla de emisoras
   rowsSelected2(event: any) {
-    const idEmi = { ...this.stations };
+    const idEmi = { ...this.authoritys };
     this.totalItems3 = 0;
     this.authorityList = [];
     this.stations = event.data;
+    this.authoritys = event.data;
 
     this.data2
       .onChanged()
@@ -351,9 +352,10 @@ export class CatTransferentComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'idAuthority':
                 searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
                 break;
               case 'cveUnique':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 field = `filter.${filter.field}`;
                 break;
               case 'idCity':
@@ -372,6 +374,10 @@ export class CatTransferentComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}`;
                 break;
+              case 'codeStatus':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -384,12 +390,12 @@ export class CatTransferentComponent extends BasePage implements OnInit {
             }
           });
           this.params3 = this.pageFilter(this.params3);
-          this.getStationByTransferent(this.stations);
+          this.getAuthorityByTransferent(this.stations);
         }
       });
     this.params3
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAuthorityByTransferent(idEmi.id));
+      .subscribe(() => this.getAuthorityByTransferent(idEmi.idAuthority));
   }
 
   //Muestra información de la fila seleccionada de Emisoras
@@ -399,7 +405,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   }
 
   //Trae lista de autoridades por transferente
-  getAuthorityByTransferent(id?: number) {
+  getAuthorityByTransferent(id?: any) {
     this.loading3 = true;
     const idEmi = { ...this.stations };
     const idTrans = { ...this.transferents };

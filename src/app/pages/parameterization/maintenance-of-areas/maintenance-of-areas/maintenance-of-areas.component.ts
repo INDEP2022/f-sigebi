@@ -127,19 +127,22 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
 
   getDelegations(params: ListParams) {
     this.serviceDeleg.getAll(params).subscribe(
-      data => {
-        this.delegations = new DefaultSelect(data.data, data.count);
-      },
-      err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-      },
-      () => {}
+      {
+        next: data => {
+          this.delegations = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          let error = '';
+          if (err.status === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+      }
+
+      //() => {}
     );
   }
 

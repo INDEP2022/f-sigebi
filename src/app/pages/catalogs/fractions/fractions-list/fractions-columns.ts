@@ -1,5 +1,3 @@
-import { INorm } from 'src/app/core/models/catalogs/norm.model';
-
 export const FRACTIONS_COLUMNS = {
   id: {
     title: 'Registro',
@@ -28,8 +26,8 @@ export const FRACTIONS_COLUMNS = {
   norms: {
     title: 'Norma',
     type: 'string',
-    valuePrepareFunction: (nom: INorm) => {
-      return nom?.norm;
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.norm : '';
     },
     sort: false,
     filterFunction(cell?: any, search?: string): boolean {

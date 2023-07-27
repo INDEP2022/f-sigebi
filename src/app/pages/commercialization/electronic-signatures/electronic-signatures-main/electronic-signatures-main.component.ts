@@ -12,11 +12,16 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IComerDocumentsXML } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import {
+  IComerDocumentsXML,
+  IUpdateComerPagosRef,
+} from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ElectronicSignatureFirmModalComponent } from '../electronic-signatures-main-firm-modal/electronic-signatures-main-firm-modal.component';
 import { ElectronicSignaturesService } from '../service/electronic-signatures.service';
 import {
   HISTORY_COLUMNS,
@@ -44,14 +49,6 @@ export class ElectronicSignaturesMainComponent
   alertMsg: boolean = true;
   pdfUrl: string =
     'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-  pendingRows: any[] = [];
-  historyRows: any[] = [];
-  pendingParams = new BehaviorSubject<ListParams>(new ListParams());
-  historyParams = new BehaviorSubject<ListParams>(new ListParams());
-  pendingTotalItems: number = 0;
-  historyTotalItems: number = 0;
-  pendingColumns: any[] = [];
-  historyColumns: any[] = [];
   pendingSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -65,72 +62,22 @@ export class ElectronicSignaturesMainComponent
     ...TABLE_SETTINGS,
     actions: false,
   };
-
-  historyTestData = [
-    {
-      user: 'VCORTES',
-      reference: 'Evento 22333',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'ELABORA',
-    },
-    {
-      user: 'VCORTES',
-      reference: 'Evento 22333',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'REVISA',
-    },
-    {
-      user: 'MGARCIA',
-      reference: 'Evento 22333',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-    {
-      user: 'AMORALES',
-      reference: 'Evento 22334',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'ELABORA',
-    },
-    {
-      user: 'AMORALES',
-      reference: 'Evento 22334',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'REVISA',
-    },
-    {
-      user: 'MGARCIA',
-      reference: 'Evento 22334',
-      report: 'Reporte 02',
-      date: '09/04/2021',
-      signatureDate: '09/04/2021',
-      description: 'Reporte de Órdenes de Ingreso de Muebles por Mandato',
-      type: 'AUTORIZA',
-    },
-  ];
+  dataTableHistorical: LocalDataSource = new LocalDataSource();
+  dataTableParamsHistorical = new BehaviorSubject<ListParams>(new ListParams());
+  loadingHistorical: boolean = false;
+  totalHistorical: number = 0;
+  historicalTestData: IComerDocumentsXML[] = [];
   dataUserLogged: IUserAccessAreaRelational;
   messageText: string = '';
+  selectedRow: IComerDocumentsXML = null;
 
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private svElectronicSignatures: ElectronicSignaturesService,
     private authService: AuthService,
-    private msUsersService: UsersService
+    private msUsersService: UsersService,
+    private siabService: SiabService
   ) {
     super();
     this.pendingSettings.columns = PENDING_COLUMNS;
@@ -159,7 +106,9 @@ export class ElectronicSignaturesMainComponent
   }
 
   initVariables() {
+    this.alertMsg = true;
     this.messageText = '';
+    this.selectedRow = null;
   }
 
   getUserDataLogged(userId: string) {
@@ -195,10 +144,16 @@ export class ElectronicSignaturesMainComponent
       next: res => {
         console.log('DATA PARAMETER MOD', res);
         // FEC_FIRMA IS NOT NULL
+        this.dataTableParamsHistorical
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getRelationHistorical());
       },
       error: error => {
         // console.log(error);
         // FEC_FIRMA IS NOT NULL AND USUARIO
+        this.dataTableParamsHistorical
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getRelationHistorical(true));
       },
     });
     this.initRelDocs();
@@ -232,15 +187,32 @@ export class ElectronicSignaturesMainComponent
     this.loadingPending = true;
     const params = new FilterParams();
     params.removeAllFilters();
-    params.addFilter('user', this.dataUserLogged.user, SearchFilter.ILIKE);
+    params.addFilter('user', 'ADABDOUBG', SearchFilter.ILIKE); //this.dataUserLogged.user, SearchFilter.ILIKE);
     // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
-
+    params.limit = this.dataTableParamsPending.value.limit;
+    params.page = this.dataTableParamsPending.value.page;
     this.svElectronicSignatures
       .getAllComerDocumentsXml(params.getParams())
       .subscribe({
         next: res => {
           console.log('DATA RELATION PERSONS', res);
-          this.pendingTestData = res.data;
+          this.pendingTestData = res.data.map((i: any) => {
+            i['reference'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Evento ' + i.referenceid
+                : '';
+            i['document'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Reporte ' + i.reportkey
+                : '';
+            return i;
+          });
+          this.dataTablePending.load(this.pendingTestData);
+          this.totalPending = res.count;
           this.loadingPending = false;
         },
         error: error => {
@@ -250,27 +222,180 @@ export class ElectronicSignaturesMainComponent
       });
   }
 
+  getRelationHistorical(userFilter: boolean = false) {
+    this.loadingHistorical = true;
+    const params = new FilterParams();
+    params.removeAllFilters();
+    if (userFilter == true) {
+      params.addFilter('user', 'ADABDOUBG', SearchFilter.ILIKE); //this.dataUserLogged.user, SearchFilter.ILIKE);
+    }
+    // params.addFilter('signatureDate', SearchFilter.NULL, SearchFilter.NULL);
+    params.limit = this.dataTableParamsHistorical.value.limit;
+    params.page = this.dataTableParamsHistorical.value.page;
+    this.svElectronicSignatures
+      .getAllComerDocumentsXml(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA HISTORICAL PERSONS', res);
+          this.historicalTestData = res.data.map((i: any) => {
+            i['reference'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Evento ' + i.referenceid
+                : '';
+            i['document'] =
+              ['FCOMEREPINGXMAND_I', 'FCOMEREPINGXMAND'].includes(
+                i.screenkey
+              ) == true
+                ? 'Reporte ' + i.reportkey
+                : '';
+            return i;
+          });
+          this.dataTableHistorical.load(this.historicalTestData);
+          this.totalHistorical = res.count;
+          this.loadingHistorical = false;
+        },
+        error: error => {
+          console.log(error);
+          this.loadingHistorical = false;
+        },
+      });
+  }
+
   getPending() {
-    this.pendingColumns = this.pendingTestData;
-    this.pendingTotalItems = this.pendingColumns.length;
+    console.log('PENDIENTES');
+    // this.pendingColumns = this.pendingTestData;
+    // this.pendingTotalItems = this.pendingColumns.length;
   }
 
   getHistory() {
-    this.historyColumns = this.historyTestData;
-    this.historyTotalItems = this.historyColumns.length;
+    console.log('HISTORICO');
+    // this.historyColumns = this.historyTestData;
+    // this.historyTotalItems = this.historyColumns.length;
+    // this.dataTableParamsHistorical
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getRelationHistorical());
   }
 
-  selectPending(row: any) {
-    this.pendingRows.push(row);
+  selectPending(event: any) {
+    // this.pendingRows.push(row);
+    console.log('SELECCION PENDIENTE', event);
+    if (event.selected) {
+      this.selectedRow = event.data;
+      // this.updatePaysRefS(event.data);
+    }
   }
 
-  selectHistory(row: any) {
-    this.historyRows.push(row);
+  selectHistory(event: any) {
+    // this.historyRows.push(row);
+    console.log('SELECCION HISTORIAL', event);
+    if (event.selected) {
+      this.selectedRow = event.data;
+      // this.updatePaysRefS(event.data);
+    }
+  }
+
+  updatePaysRefS(data: IComerDocumentsXML) {
+    console.log('UPDATE PAYS REF ', data);
+    let body: IUpdateComerPagosRef = {
+      referenceId: data.referenceid,
+      documentId: data.documentid,
+    };
+    this.svElectronicSignatures.updateComerPagosRefS(body).subscribe({
+      next: res => {
+        console.log('DATA UPDATE S', res);
+        this.generatePdf(
+          data.referenceid,
+          0,
+          data.title,
+          data.documentid,
+          data
+        );
+      },
+      error: error => {
+        console.log(error);
+        this.generatePdf(
+          data.referenceid,
+          0,
+          data.title,
+          data.documentid,
+          data
+        );
+      },
+    });
+  }
+
+  generatePdf(
+    idEvent: number,
+    count: number,
+    origin: string,
+    consecutive: number,
+    data: IComerDocumentsXML
+  ) {
+    let params: any = {
+      IDEVENTO: count == 0 ? idEvent : null,
+      P_ORIGEN: origin,
+      P_CONSEC: consecutive,
+    };
+    this.siabService
+      .fetchReport('RCOMERINGXMAND', params)
+      .subscribe(response => {
+        console.log(response);
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          this.alert('warning', 'Reporte no disponible por el momento', '');
+        }
+        this.selectedRow = null;
+        this.updatePaysRef(data);
+      });
+  }
+
+  updatePaysRef(data: IComerDocumentsXML) {
+    console.log('UPDATE PAYS REF ', data);
+    let body: IUpdateComerPagosRef = {
+      referenceId: data.referenceid,
+      documentId: data.documentid,
+    };
+    this.svElectronicSignatures.updateComerPagosRef(body).subscribe({
+      next: res => {
+        console.log('DATA UPDATE NULL', res);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   refresh() {
     this.getPending();
     this.getHistory();
+  }
+
+  viewDocument() {
+    if (this.selectedRow != null) {
+      this.updatePaysRefS(this.selectedRow);
+    } else {
+      this.alert(
+        'warning',
+        'Sin Registro Seleccionado',
+        'Selecciona un Registro para Continuar'
+      );
+    }
   }
 
   viewFile() {
@@ -291,9 +416,134 @@ export class ElectronicSignaturesMainComponent
   }
 
   openSignWindow() {
-    let url =
-      'http://firma.sae.gob.mx/firmar.aspx?DICTAMEN=_&NATURALEZA_DOC=&NO_DOCUMENTO=&TIPO_DOCUMENTO=&RFC_USR=XAXX010101000';
-    window.open(url, 'Firmar Documento | INDEP');
+    if (this.selectedRow != null) {
+      this.getElectronicFirmData();
+    } else {
+      this.alert(
+        'warning',
+        'Sin Registro Seleccionado',
+        'Selecciona un Registro para Continuar'
+      );
+    }
+    // let url =
+    //   'http://firma.sae.gob.mx/firmar.aspx?DICTAMEN=_&NATURALEZA_DOC=&NO_DOCUMENTO=&TIPO_DOCUMENTO=&RFC_USR=XAXX010101000';
+    // window.open(url, 'Firmar Documento | INDEP');
+  }
+
+  // SSF3_FIRMA_ELEC_DOCS
+  getElectronicFirmData() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('natureDocument', this.selectedRow.screenkey);
+    params.addFilter('documentNumber', this.selectedRow.referenceid);
+    params.addFilter('documentType', this.selectedRow.documentid);
+    this.svElectronicSignatures
+      .getElectronicFirmData(params.getParams())
+      .subscribe({
+        next: data => {
+          console.log('FIRMA ELECTRONICA', data);
+          this.generateXMLFile();
+        },
+        error: error => {
+          console.log(error);
+          if (error.status == 400) {
+            this.generateXMLFile();
+          } else {
+            this.alert(
+              'error',
+              'Error',
+              'Ocurrió un Error al Validar la Firma Electrónica'
+            );
+          }
+        },
+      });
+  }
+
+  generateXMLFile() {
+    let paramsData = new ListParams();
+    let nameFile: string =
+      this.selectedRow.referenceid + '_' + this.selectedRow.documentid;
+    paramsData = {
+      IDEVENTO: this.selectedRow.referenceid,
+      P_ORIGEN: this.selectedRow.title,
+      P_CONSEC: this.selectedRow.documentid,
+      nombreReporte: 'RCOMERINGXMAND' + '.jasper',
+    };
+    this.svElectronicSignatures.getXMLReportToFirm(paramsData).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.xmlResponseToFirm(response, nameFile);
+      },
+      error: error => {
+        console.log(error);
+        if (error.status == 200) {
+          let response = error.error.text;
+          this.xmlResponseToFirm(response, nameFile);
+        } else {
+          this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+          this.onLoadToast(
+            'warning',
+            'Ocurrió un error al CREAR el XML con el nombre: ',
+            ''
+          );
+        }
+      },
+    });
+  }
+
+  xmlResponseToFirm(response: any, nameFile: string) {
+    if (!response) {
+      this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+      this.onLoadToast(
+        'warning',
+        'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+        ''
+      );
+      return;
+    }
+    if (!response.includes('xml')) {
+      this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+      this.onLoadToast(
+        'warning',
+        'Ocurrió un error al cargar el XML con el nombre: ' + nameFile,
+        ''
+      );
+      return;
+    }
+    const formData = new FormData();
+    const file = new File([response], nameFile + '.xml', {
+      type: 'text/xml',
+    });
+    formData.append('file', file);
+    this.startFirmComponent({
+      nameFileDictation: nameFile,
+      natureDocumentDictation: this.selectedRow.screenkey,
+      numberDictation: this.selectedRow.referenceid,
+      typeDocumentDictation: this.selectedRow.documentid + '',
+      fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+    });
+  }
+
+  errorFirmOnGetXml() {
+    console.log('Error en Firma');
+  }
+
+  startFirmComponent(context?: Partial<ElectronicSignatureFirmModalComponent>) {
+    const modalRef = this.modalService.show(
+      ElectronicSignatureFirmModalComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.responseFirm.subscribe((next: any) => {
+      console.log('next', next);
+    });
+    modalRef.content.errorFirm.subscribe((next: any) => {
+      console.log(next);
+      this.errorFirmOnGetXml(); // Error y regresa los datos a como estaban
+    });
   }
 
   downloadFile() {
