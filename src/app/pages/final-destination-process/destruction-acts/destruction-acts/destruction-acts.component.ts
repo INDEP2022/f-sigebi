@@ -121,7 +121,7 @@ export class DestructionActsComponent extends BasePage implements OnInit {
     this.buttonToggle();
     this.getEdoPhase();
 
-    this.newProceeding()
+    this.newProceeding();
   }
 
   initializesForm() {
@@ -482,42 +482,28 @@ export class DestructionActsComponent extends BasePage implements OnInit {
   //TRAER DELEGACION QUE ADMINISTRA
 
   //FUNCION PARA ARMAR LA CLAVE
-  weaponCveProceedingFn(){
-    this.act.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
-    this.status.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
-    this.transferent.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
-    this.destructor.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
-    this.admin.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
-    this.folio.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
-    this.year.valueChanges.subscribe(
-      res => {
-        this.weaponCveProceeding()
-      }
-    )
+  weaponCveProceedingFn() {
+    this.act.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
+    this.status.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
+    this.transferent.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
+    this.destructor.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
+    this.admin.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
+    this.folio.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
+    this.year.valueChanges.subscribe(res => {
+      this.weaponCveProceeding();
+    });
   }
 
   //ARMA CLAVE DE NUEVA ACTA
@@ -539,19 +525,17 @@ export class DestructionActsComponent extends BasePage implements OnInit {
       '/' +
       (this.month.value != null ? this.zeroAdd(this.month.value, 2) : '');
 
-      this.act2.setValue(nameAct)
+    this.act2.setValue(nameAct);
   }
 
   //FUNCIÓN NUEVA ACTA
-  newProceeding(){
-    this.year.disable()
-    this.month.disable()
-    this.year.setValue(format(new Date(),'yy'))
-    this.month.setValue(format(new Date(),'MM'))
-    this.weaponCveProceedingFn()
+  newProceeding() {
+    this.year.disable();
+    this.month.disable();
+    this.year.setValue(format(new Date(), 'yy'));
+    this.month.setValue(format(new Date(), 'MM'));
+    this.weaponCveProceedingFn();
   }
 
-  unsubscribeFn(){
-    
-  }
+  unsubscribeFn() {}
 }

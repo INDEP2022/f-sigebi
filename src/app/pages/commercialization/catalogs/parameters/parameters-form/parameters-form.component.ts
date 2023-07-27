@@ -22,7 +22,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ParametersFormComponent extends BasePage implements OnInit {
-  title: string = 'Parámetro Comercialización';
+  title: string = 'Parámetro del Módulo Comercialización';
   edit: boolean = false;
   form: ModelForm<IParameter>;
   parameter: IParameter;
