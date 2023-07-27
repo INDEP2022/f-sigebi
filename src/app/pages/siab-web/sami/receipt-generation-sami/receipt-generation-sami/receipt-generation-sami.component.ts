@@ -248,8 +248,8 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (sender == 0) {
       this.alertQuestion(
         'question',
-        'Se Asignará al Recibo',
-        '¿Deseas continuar?',
+        '¿Desea registrar los bienes con tipo RECIBO?',
+        '',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -259,8 +259,8 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     } else if (sender == 1) {
       this.alertQuestion(
         'question',
-        'Se Asignará al Resguardo',
-        '¿Deseas continuar?',
+        '¿Desea registrar los bienes con tipo RESGUARDO?',
+        '',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -270,8 +270,8 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     } else if (sender == 2) {
       this.alertQuestion(
         'question',
-        'Se Asignará al Almacen',
-        '¿Deseas continuar?',
+        '¿Desea registrar los bienes con tipo ALMACÉN?',
+        '',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -294,6 +294,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         this.indepForm.controls['descripcion_bien_sae'].value,
       P_ID_BIEN: this.recepiptGood.id_bien,
       P_ID_PROGRAMACION: this.recepiptGood.id_programacion,
+      P_USUARIO_CREACION: localStorage.getItem('username'),
     };
     this.programmingGoodReceiptService
       .postGoodsProgramingReceipts(data)
