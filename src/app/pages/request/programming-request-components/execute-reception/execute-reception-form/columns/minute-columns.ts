@@ -23,6 +23,11 @@ export const RECEIPT_GUARD_COLUMNS = {
     title: 'Fecha Recibo',
     type: 'string',
     sort: false,
+    // valuePrepareFunction: (date: Date) => {
+    //   var raw = new Date(date);
+    //   var formatted = new DatePipe('es-ES').transform(raw, 'dd/MM/aaaa');
+    //   return formatted;
+    // },
   },
 
   typeReceipt: {

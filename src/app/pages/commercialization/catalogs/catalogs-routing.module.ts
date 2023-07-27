@@ -74,7 +74,7 @@ const routes: Routes = [
     path: 'parameters',
     loadChildren: async () =>
       (await import('./parameters/parameters.module')).ParametersModule,
-    data: { title: 'Parámetros Comercialización', screen: '' },
+    data: { title: 'Parámetros del Módulo Comercialización' },
   },
   {
     path: 'users-event-types',

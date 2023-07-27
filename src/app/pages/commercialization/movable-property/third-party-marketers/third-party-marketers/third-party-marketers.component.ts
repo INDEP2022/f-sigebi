@@ -63,6 +63,8 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   loading2: boolean = false;
   loading3: boolean = false;
 
+  disabledBtnCerrar: boolean = false;
+  acordionOpen: boolean = false;
   constructor(
     private thirdPartyService: ThirdPartyService,
     private typeEventXterComerService: TypeEventXterComerService,
@@ -288,31 +290,30 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     });
   }
 
+  valAcc: any = null;
   rowsSelected(event: any) {
-    // if (event.data == this.thirPartys) {
-    //   this.thirPartys = null;
-    //   this.totalItems2 = 0;
-    //   this.totalItems3 = 0;
+    if (event.data == this.valAcc) {
+      this.acordionOpen = false;
+      this.disabledBtnCerrar = false;
+      this.valAcc = null;
+    } else {
+      this.acordionOpen = true;
+      this.disabledBtnCerrar = true;
+      this.valAcc = event.data;
+    }
 
-    //   this.typeEventList.load([]);
-    //   this.typeEventList.refresh;
-
-    //   this.amountList.load([]);
-    //   this.amountList.refresh();
-    // } else {
     this.totalItems2 = 0;
     this.totalItems3 = 0;
     // this.typeEventList = [];
     this.thirPartys = event.data;
     this.rowsSelectedGetAmount(this.thirPartys);
     this.rowsSelectedGetTypeEvent(this.thirPartys);
-    // }
   }
 
   rowsSelectedGetTypeEvent(event: any) {
     this.totalItems2 = 0;
     // this.amountList = [];
-    this.typeEvents = event.data;
+    // this.typeEvents = event.data;
 
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
@@ -377,7 +378,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   rowsSelectedGetAmount(event: any) {
     this.totalItems3 = 0;
     // this.amountList = [];
-    this.typeEvents = event.data;
+    // this.typeEvents = event.data;
 
     this.params3
       .pipe(takeUntil(this.$unSubscribe))
@@ -413,6 +414,26 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   openForm1(thirPartys?: IThirdParty) {
+    if (thirPartys) {
+      if (thirPartys == this.valAcc) {
+        this.acordionOpen = false;
+        this.disabledBtnCerrar = false;
+        this.valAcc = null;
+      } else {
+        this.acordionOpen = true;
+        this.disabledBtnCerrar = true;
+        this.valAcc = thirPartys;
+      }
+
+      this.totalItems2 = 0;
+      this.totalItems3 = 0;
+      // this.typeEventList = [];
+      this.thirPartys = thirPartys;
+      console.log(this.thirPartys);
+      this.rowsSelectedGetAmount(this.thirPartys);
+      this.rowsSelectedGetTypeEvent(this.thirPartys);
+    }
+
     let config: ModalOptions = {
       initialState: {
         thirPartys,
