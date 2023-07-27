@@ -54,8 +54,13 @@
       </form-field>
     </div>
   </div>
+  <div class="row debeDecir">
+    <span>Debe decir:</span>
+  </div>
   <div class="row">
-    <div class="col-md-6">
+    <div
+      class="col-md-6"
+      [class]="disabledDates ? 'disabledDate' : 'enabledDate'">
       <form-field label="Fecha Inicio" [control]="form.get('newFechaInicio')">
         <input
           type="text"
@@ -65,7 +70,9 @@
           readonly
           required
           [bsConfig]="{
-            dateInputFormat: 'DD-MM-YYYY'
+            withTimepicker: true,
+            rangeInputFormat: 'DD/MM/YYYY, h:mm:ss a',
+            dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
           }" />
       </form-field>
     </div>
@@ -79,12 +86,14 @@
           readonly
           required
           [bsConfig]="{
-            dateInputFormat: 'DD-MM-YYYY'
+            withTimepicker: true,
+            rangeInputFormat: 'DD/MM/YYYY, h:mm:ss a',
+            dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
           }" />
       </form-field>
     </div>
   </div>
-  <div class="row">
+  <div class="row mt-3">
     <form-field
       label="Justificación del Cambio"
       [control]="form.get('txtMotivoCambio')">

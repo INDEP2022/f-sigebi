@@ -20,8 +20,8 @@ export class PaymentService extends HttpService {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
 
-  getComerReldisDisp(){
-    return this.get(`comer-reldis-disp`)
+  getComerReldisDisp() {
+    return this.get(`comer-reldis-disp`);
   }
   createHeader(params: any) {
     return this.post(PaymentEndPoints.CreateHeaderFcomer113, params);
