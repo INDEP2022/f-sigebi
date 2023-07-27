@@ -25,13 +25,8 @@
               </div> -->
             </div>
             <div class="row mt-5">
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                <!-- <div class="form-material">
-                  <search-bar [params]="dataTableParamsPending"></search-bar>
-                </div> -->
-              </div>
-              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                <div class="d-flex flex-row-reverse my-3">
+              <div class="col-md-8">
+                <!-- <div class="d-flex flex-row-reverse my-3">
                   <div>
                     <button
                       class="btn btn-sm btn-info active me-2 font-size-14"
@@ -57,6 +52,36 @@
                       Ver Documento
                     </button>
                   </div>
+                </div> -->
+              </div>
+              <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <div>
+                  <app-columns-select
+                    [(settings)]="pendingSettings"
+                    [leftList]="true"></app-columns-select>
+                </div>
+                <!-- <div>
+                  <button
+                    class="btn btn-sm btn-info active me-2 font-size-14"
+                    (click)="refresh()">
+                    <i class="bx bx-revision text-light float-icon"></i>
+                  </button>
+                </div> -->
+                <div>
+                  <button
+                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    (click)="openSignWindow()">
+                    <i class="bx bx-pen text-light float-icon"></i>
+                    Firmar Documento
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    (click)="viewDocument()">
+                    <i class="bx bx-show-alt text-light float-icon"></i>
+                    Ver Documento
+                  </button>
                 </div>
               </div>
             </div>
@@ -66,7 +91,7 @@
                   id="rfcTable"
                   [settings]="pendingSettings"
                   [source]="dataTablePending"
-                  (userRowSelect)="selectPending($event.selected)">
+                  (userRowSelect)="selectPending($event)">
                 </ng2-smart-table>
               </div>
             </div>
@@ -77,26 +102,32 @@
           </tab>
           <tab heading="Histórico" id="historyTab">
             <div class="row">
-              <div class="col-sm-12 col-md-6">
+              <div class="col-md-8">
                 <!-- <div class="form-material">
                   <search-bar [params]="historicalParams"></search-bar>
                 </div> -->
               </div>
-              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                <div class="d-flex flex-row-reverse my-3">
-                  <div class="">
-                    <app-columns-select
-                      [(settings)]="historySettings"></app-columns-select>
-                  </div>
-                  <!-- <div>
-                    <button
-                      class="btn btn-sm btn-primary active me-2 font-size-14"
-                      (click)="downloadFile()"
-                      [disabled]="historyRows.length == 0">
-                      <i class="bx bx-download text-light float-icon"></i>
-                      Descargar
-                    </button>
-                  </div> -->
+              <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <div>
+                  <app-columns-select
+                    [(settings)]="historySettings"
+                    [leftList]="true"></app-columns-select>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-primary active me-2 font-size-14"
+                    (click)="openSignWindow()">
+                    <i class="bx bx-pen text-light float-icon"></i>
+                    Firmar Documento
+                  </button>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    (click)="viewDocument()">
+                    <i class="bx bx-show-alt text-light float-icon"></i>
+                    Ver Documento
+                  </button>
                 </div>
               </div>
             </div>
@@ -109,7 +140,7 @@
                   id="rfcTable"
                   [settings]="historySettings"
                   [source]="dataTableHistorical"
-                  (userRowSelect)="selectHistory($event.selected)">
+                  (userRowSelect)="selectHistory($event)">
                 </ng2-smart-table>
               </div>
               <div class="table-padding"></div>
