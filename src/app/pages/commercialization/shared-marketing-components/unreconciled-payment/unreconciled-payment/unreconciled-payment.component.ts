@@ -262,17 +262,19 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     // ENVIA_LEE_SIRSAE(1, NULL);
     const b = await this.enviaLeeSirsae(1, null);
 
-    if (!a && !b) {
-      this.alert('error', 'Ocurrió un Error al Ejecutar realizar el Envío', '');
+    if (b == null) {
+      this.loadingBtn = false;
+      // this.alert('error', 'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)', '')
+      return;
     } else {
+      this.loadingBtn = false;
       this.alert('success', 'Proceso Ejecutado Correctamente', '');
     }
     // else if (a && b) {
     //   this.alert('success', 'Procesos Ejecutados Correctamente', '');
     // }
-
-    this.loadingBtn = false;
   }
+
   async creaCabecera() {
     let obj = {
       user: this.token.decodeToken().preferred_username,
@@ -314,8 +316,29 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
           // this.getPayments();
         },
         error: error => {
-          resolve(null);
-          // this.alert('error', 'Ocurrió un Error al Intentar Ejecutar el Proceso', error.error.message);
+          console.log('error', error);
+          if (
+            error.error.message ==
+            'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+          ) {
+            console.log('si');
+            this.loadingBtn = false;
+            this.alert(
+              'error',
+              'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)',
+              ''
+            );
+            resolve(null);
+            return;
+          } else {
+            resolve(null);
+            this.alert(
+              'error',
+              'Ocurrió un Error al Intentar Ejecutar el Proceso',
+              error.error.message
+            );
+            return;
+          }
         },
       });
     });
