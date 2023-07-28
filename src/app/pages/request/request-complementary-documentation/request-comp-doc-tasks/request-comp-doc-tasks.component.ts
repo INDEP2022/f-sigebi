@@ -50,6 +50,7 @@ export class RequestCompDocTasksComponent
   selectGoodForEyeVisit: boolean = false;
   validateGoodForEyeVisit: boolean = false;
   resultEyeVisitReport: boolean = false;
+  resultVisits: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -70,6 +71,7 @@ export class RequestCompDocTasksComponent
   typeModule: string = '';
   displayExpedient: boolean = false;
   complementaryDoc: boolean = false;
+  typeVisit: string = '';
 
   /* INJECTIONS
   ============== */

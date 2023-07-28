@@ -82,35 +82,27 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     };
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      //if (this.idRequest) {
-      this.getData(data);
-      //}
+      //borrar
+      //this.idRequest = 56817
+      //fin
+      if (this.idRequest) {
+        this.getData(data);
+      }
     });
   }
 
   getData(params: ListParams) {
     this.loading = true;
-    params['filter.applicationId'] = `$eq:56817`; // ${this.idRequest}
+    params['filter.applicationId'] = `$eq:${this.idRequest}`;
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
-        //setTimeout(() => {
         const result = resp.data.map(async (item: any, _i) => {
           item.select = false;
-
-          /* if (item.resultFinal != null) {
-            if (item.resultFinal != 'N') {
-              const column = this.tableGoods.grid.getColumns();
-              const maneuverReqColumn = column.find(
-                x => x.id == 'maneuverRequired'
-              );
-              maneuverReqColumn.hide = true;
-            }
-          } */
           //borrar solo de prueba
-          if (_i == 0) {
+          /* if (_i == 0) {
             item.resultTaxpayer = 'ACEPTADO';
             item.resultFinal = 'Y';
-          }
+          } */
           //fin
 
           item['validated'] =
@@ -144,7 +136,6 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
           }, 600);
           this.loading = false;
         });
-        //}, 600);
       },
     });
   }
