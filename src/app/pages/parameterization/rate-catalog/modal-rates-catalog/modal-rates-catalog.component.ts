@@ -8,7 +8,11 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IRateCatalog } from 'src/app/core/models/catalogs/rate-catalog.model';
 import { ParameterBaseCatService } from 'src/app/core/services/catalogs/rate-catalog.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-rates-catalog',
@@ -50,7 +54,7 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
+          Validators.pattern(DOUBLE_PATTERN),
           Validators.maxLength(20),
         ],
       ],
@@ -107,14 +111,16 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
     let year = this.form.value.year;
     var date = new Date(year);
     year = date.getFullYear();
-    this.form.value.year = year;
+    //this.form.value.year = year;
+    this.form.controls['year'].setValue(year);
 
     let month = this.form.value.month;
     var date = new Date(month);
     month = date.getMonth() + 1;
-    this.form.value.month = month;
+    //this.form.value.month = month;
+    this.form.controls['month'].setValue(month);
 
-    this.parameterCatService.newItem(this.form.value).subscribe({
+    this.parameterCatService.newItem(this.form.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -124,7 +130,7 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.parameterCatService.update(this.form.value).subscribe({
+    this.parameterCatService.update(this.form.getRawValue()).subscribe({
       next: data => {
         this.modalRef.hide();
         this.handleSuccess();

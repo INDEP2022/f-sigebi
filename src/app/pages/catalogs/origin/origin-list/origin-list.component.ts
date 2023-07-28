@@ -52,14 +52,29 @@ export class OriginListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'idTransferer':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'idCity':
+                field = `filter.${filter.field}.nameCity`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
             filter.field == 'idTransferer' ||
             filter.field == 'keyTransferer' ||
             filter.field == 'type' ||
             filter.field == 'idCity' ||
             filter.field == 'keyEntityFederative'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -121,13 +136,18 @@ export class OriginListComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(origins.id);
+        this.delete(origins);
       }
     });
   }
 
-  delete(id: number) {
-    this.originService.remove(id).subscribe({
+  delete(event: any) {
+    console.log(event.id, event.idTransferer);
+    let body = {
+      id: event.id,
+      idTransferer: event.idTransferer,
+    };
+    this.originService.remove(body).subscribe({
       next: () => {
         this.alert('success', 'Procedencia', 'Borrada Correctamente');
         this.getExample();

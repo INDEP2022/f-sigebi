@@ -85,12 +85,14 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   receiptSelect(receipt: IReceipt) {
+    console.log('receipt', receipt);
     this.receiptId = receipt.id;
     this.actId = receipt.actId;
     this.statusReceipt = receipt.statusReceipt;
   }
 
   async confirm() {
+    console.log('this.statusReceipt', this.statusReceipt);
     if (this.statusReceipt == 'ABIERTO') {
       const updateProgrammingGood = await this.updateProgGoood();
 
@@ -190,14 +192,14 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   createReceipt() {
-    if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
-      this.alertInfo(
-        'info',
+    if (this.receipts[this.receipts.length]?.statusReceipt == 'ABIERTO') {
+      this.alert(
+        'warning',
         'Acción Inválida',
         'Aún se encuentran recibos abiertos'
-      ).then();
+      );
     } else {
-      if (this.proceedign) {
+      if (this.proceedign.proceedingStatus == 'ABIERTO') {
         const receiptForm: Object = {
           id: 1,
           actId: this.proceedign.id,
@@ -216,7 +218,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         });
       } else {
         const form: Object = {
-          minutesId: '1',
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
         };
@@ -225,12 +226,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
             const createKeyAct = await this.createKeyAct(response);
             if (createKeyAct == true) {
               const receiptForm: Object = {
-                id: 1,
+                id: this.receipts.length + 1,
                 actId: response.id,
                 programmingId: this.programming.id,
                 statusReceipt: 'ABIERTO',
               };
-
               this.receptionGoodService.createReceipt(receiptForm).subscribe({
                 next: async response => {
                   const folioReceipt = await this.createKeyReceipt(response);

@@ -37,7 +37,7 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.docCompensationForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.required]],
+      id: [null],
       satTypeJob: [
         null,
         [

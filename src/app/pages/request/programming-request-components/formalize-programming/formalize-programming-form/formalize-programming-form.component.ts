@@ -9,7 +9,6 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
@@ -263,8 +262,8 @@ export class FormalizeProgrammingFormComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getProccedings());
 
-    /*
     this.getInfoGoodsProgramming();
+    /*
     this.router.navigate(
       [
         '/pages/request/programming-request/formalize-programming',
@@ -345,8 +344,10 @@ export class FormalizeProgrammingFormComponent
   getProccedings() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.idPrograming'] = this.programmingId;
+    params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
+        console.log('response', response);
         this.actId = response.data[0].id;
         this.proceedingData = response.data[0];
         this.proceeding.clear();
@@ -388,7 +389,7 @@ export class FormalizeProgrammingFormComponent
         //this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getInfoGoodsProgramming());
+          .subscribe(() => this.getInfoReceptionGood());
       });
   }
 
@@ -490,7 +491,7 @@ export class FormalizeProgrammingFormComponent
       });
   } */
 
-  getInfoGoodsProgramming() {
+  getInfoReceptionGood() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
@@ -498,11 +499,12 @@ export class FormalizeProgrammingFormComponent
       .subscribe(data => {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.filterStatusReception(data.data));
+          .subscribe(() => this.filterStatusReception());
 
         this.paramsGuard
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.filterStatusGuard(data.data));
+          .subscribe(() => this.filterStatusGuard());
+        /* 
 
         this.paramsGoodsWarehouse
           .pipe(takeUntil(this.$unSubscribe))
@@ -512,14 +514,62 @@ export class FormalizeProgrammingFormComponent
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.filterStatusReprog(data.data));
 
-        this.filterStatusCancel(data.data);
+        this.filterStatusCancel(data.data); */
         /*
          */
       });
   }
 
-  filterStatusReception(data: IGoodProgramming[]) {
+  getInfoGoodsProgramming() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusReception());
+
+    this.paramsGuard
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusGuard());
+
+    this.paramsGoodsWarehouse
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusWarehouse());
+
+    this.paramsReprog
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusReprog());
+
+    this.paramsCanc
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusCancel());
+  }
+
+  filterStatusReception() {
     const goodsInfoRecep: any[] = [];
+
+    this.params.getValue()['filter.programmingId'] = this.programmingId;
+    this.params.getValue()['filter.status'] = 'EN_RECEPCION';
+    this.programmingService
+      .getGoodsProgramming(this.params.getValue())
+      .subscribe(data => {
+        data.data.map(items => {
+          this.goodService.getGoodByIds(items.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              // queda pendiente mostrar el alías del almacén //
+
+              goodsInfoRecep.push(response);
+              this.goodsRecepcion.load(goodsInfoRecep);
+              this.totalItemsReception = this.goodsRecepcion.count();
+              //this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+            },
+          });
+        });
+      });
+    /*const goodsInfoRecep: any[] = [];
     const goodsRecep = data.filter(items => {
       return items.status == 'EN_RECEPCION';
     });
@@ -541,107 +591,141 @@ export class FormalizeProgrammingFormComponent
           //this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
         },
       });
-    });
+    }); */
   }
-  filterStatusGuard(data: IGoodProgramming[]) {
+
+  filterStatusGuard() {
     const goodsInfoGuard: any[] = [];
+    this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
+    this.paramsGuard.getValue()['filter.status'] = 'EN_RESGUARDO';
+    this.programmingService
+      .getGoodsProgramming(this.paramsGuard.getValue())
+      .subscribe({
+        next: response => {
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+
+                goodsInfoGuard.push(response);
+                this.goodsGuards.load(goodsInfoGuard);
+                this.totalItemsGuard = this.goodsGuards.count();
+                this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              },
+            });
+          });
+        },
+        error: error => {},
+      });
+    /*
+   
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_RESGUARDO';
     });
 
-    goodsTrans.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
-        next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-
-          goodsInfoGuard.push(response);
-          this.goodsGuards.load(goodsInfoGuard);
-          this.totalItemsGuard = this.goodsGuards.count();
-          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
-        },
-      });
-    });
+     */
   }
 
-  filterStatusWarehouse(data: IGoodProgramming[]) {
+  filterStatusWarehouse() {
     const goodsInfoWarehouse: any[] = [];
-    const goodswarehouse = data.filter(items => {
-      return items.status == 'EN_ALMACEN';
-    });
-
-    goodswarehouse.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
+    this.paramsGoodsWarehouse.getValue()['filter.programmingId'] =
+      this.programmingId;
+    this.paramsGoodsWarehouse.getValue()['filter.status'] = 'EN_ALMACEN';
+    this.programmingService
+      .getGoodsProgramming(this.paramsGoodsWarehouse.getValue())
+      .subscribe({
         next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          goodsInfoWarehouse.push(response);
-          this.goodsWarehouse.load(goodsInfoWarehouse);
-          this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+                goodsInfoWarehouse.push(response);
+                this.goodsWarehouse.load(goodsInfoWarehouse);
+                this.totalItemsWarehouse = this.goodsWarehouse.count();
+                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+              },
+            });
+          });
         },
       });
-    });
   }
 
-  filterStatusReprog(data: IGoodProgramming[]) {
+  filterStatusReprog() {
     const goodsInfoReprog: any[] = [];
-    const goodsReprog = data.filter(items => {
-      return items.status == 'EN_PROGRAMACION';
-    });
-
-    goodsReprog.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
+    this.paramsReprog.getValue()['filter.programmingId'] = this.programmingId;
+    this.paramsReprog.getValue()['filter.status'] = 'EN_PROGRAMACION';
+    this.programmingService
+      .getGoodsProgramming(this.paramsReprog.getValue())
+      .subscribe({
         next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          goodsInfoReprog.push(response);
-          this.goodsReprog.load(goodsInfoReprog);
-          this.totalItemsReprog = this.goodsReprog.count();
-          this.headingReprogramation = `Reprogramación(${this.goodsReprog.count()})`;
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+                goodsInfoReprog.push(response);
+                this.goodsReprog.load(goodsInfoReprog);
+                this.totalItemsReprog = this.goodsReprog.count();
+                this.headingReprogramation = `Reprogramación(${this.goodsReprog.count()})`;
+              },
+            });
+          });
         },
       });
-    });
   }
 
-  filterStatusCancel(data: IGoodProgramming[]) {
+  filterStatusCancel() {
     const goodsInfoCancel: any[] = [];
+    this.paramsCanc.getValue()['filter.programmingId'] = this.programmingId;
+    this.paramsCanc.getValue()['filter.status'] = 'CANCELADO';
+    this.programmingService
+      .getGoodsProgramming(this.paramsCanc.getValue())
+      .subscribe({
+        next: response => {
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+                goodsInfoCancel.push(response);
+                this.goodsCancel.load(goodsInfoCancel);
+                //this.totalItemsWarehouse = this.goodsWarehouse.count();
+                this.headingCancelation = `Cancelación(${this.goodsCancel.count()})`;
+              },
+            });
+          });
+        },
+        error: error => {},
+      });
+    /*
+    
     const goodsCancel = data.filter(items => {
       return items.status == 'CANCELADO';
     });
 
-    goodsCancel.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
-        next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          goodsInfoCancel.push(response);
-          this.goodsCancel.load(goodsInfoCancel);
-          //this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingCancelation = `Cancelación(${this.goodsCancel.count()})`;
-        },
-      });
-    });
+    */
   }
 
   generateMinute(proceeding: IProceedings) {

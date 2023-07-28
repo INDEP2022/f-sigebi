@@ -64,7 +64,7 @@ export class VaultListComponent extends BasePage implements OnInit {
               case 'idSafe':
                 searchFilter = SearchFilter.EQ;
                 break;
-              /*case 'managerDetail':
+              case 'managerDetail':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'cityDetail':
@@ -82,7 +82,7 @@ export class VaultListComponent extends BasePage implements OnInit {
               case 'localityDetail':
                 field = `filter.${filter.field}.nameLocation`;
                 searchFilter = SearchFilter.ILIKE;
-                break;*/
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -109,7 +109,7 @@ export class VaultListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll(params).subscribe({
+    this.safeService.getAll1(params).subscribe({
       next: response => {
         //this.getManager(response);
         this.totalItems = response.count;

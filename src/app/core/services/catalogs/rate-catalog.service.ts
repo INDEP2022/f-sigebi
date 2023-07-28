@@ -38,6 +38,6 @@ export class ParameterBaseCatService extends HttpService {
   }
 
   remove(model: IRateCatalog): Observable<Object> {
-    return this.deductiveRepository.removeRepuves(this.route1, model);
+    return this.deductiveRepository.remove3(this.route1, model);
   }
 }

@@ -36,6 +36,7 @@ export class MailComponent extends BasePage implements OnInit {
   P_GEST_OK: number = null;
   P_VOLANTE: number = null;
   P_EXPEDIENTE: number = null;
+  back: boolean = false;
 
   constructor(
     private modalService: BsModalService,

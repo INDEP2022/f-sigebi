@@ -14,3 +14,8 @@ export interface IStateOfRepublic {
   userModification: string;
   modificationDate: string;
 }
+
+export interface IStateOfRepublicGetAll {
+  idState?: string;
+  descCondition?: string;
+}

@@ -83,6 +83,15 @@
             [control]="form.get('firstTimeLoginDate')"
             label="Fecha Inicio">
             <input
+              type="text"
+              formControlName="firstTimeLoginDate"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              bsDatepicker />
+            <!--<input
               class="form-control"
               ngModel
               bsDatepicker
@@ -90,7 +99,7 @@
                 dateInputFormat: 'YYYY-MM-DD',
                 displayOneMonthRange: true
               }"
-              formControlName="firstTimeLoginDate" />
+              formControlName="firstTimeLoginDate" />-->
           </form-field>
         </div>
       </div>
@@ -197,7 +206,7 @@
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cerrar
+          Cancelar
         </button>
       </div>
     </div>
