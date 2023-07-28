@@ -7,7 +7,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   ICaptureLinesMain,
   IDetCapturelines,
@@ -42,8 +41,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
 
   constructor(
     private modalService: BsModalService,
-    private capturelineService: CapturelineService,
-    private excelService: ExcelService
+    private capturelineService: CapturelineService
   ) {
     super();
     this.settings.columns = CAPTURE_LINES_COLUMNS;
@@ -52,6 +50,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.capture);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -94,6 +93,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
   }
 
   getData() {
+    console.log('Hola');
     this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
@@ -112,6 +112,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
           next: response => {
             this.captureLinesMain = response.data;
             this.data.load(response.data);
+            console.log(this.data);
             this.data.refresh();
             this.totalItems = response.count;
             this.loading = false;
