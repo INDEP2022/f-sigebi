@@ -75,7 +75,7 @@
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
@@ -83,7 +83,7 @@
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
             <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -258,21 +258,27 @@
                       <td
                         class="text-center align-baseline"
                         *ngIf="proceedingData.statusProceeedings == 'ABIERTO'">
-                        <a
-                          (click)="generateMinute(proceeding.value)"
-                          class="text-center">
-                          <i class="fa fa-file mr-2" style="cursor: pointer"></i
-                        ></a>
+                        <a class="text-center">
+                          <button
+                            (click)="generateMinute(proceeding.value)"
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fa fa-file"></i>
+                          </button>
+                        </a>
                       </td>
 
                       <td
                         class="text-center align-baseline"
                         *ngIf="proceedingData.statusProceeedings == 'CERRADO'">
-                        <a
-                          (click)="showProceeding(proceeding.value)"
-                          class="text-center">
-                          <i class="fa fa-eye mr-2" style="cursor: pointer"></i
-                        ></a>
+                        <a class="text-center">
+                          <button
+                            (click)="showProceeding(proceeding.value)"
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fa fa-eye mr-2"></i>
+                          </button>
+                        </a>
                       </td>
                     </ng-container>
                   </tr>

@@ -60,9 +60,10 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   getReceipts() {
     this.loadingTable = true;
     this.params.getValue()['filter.programmingId'] = this.programming.id;
-
+    this.params.getValue()['filter.statusReceipt'] = 'ABIERTO';
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
+        console.log('');
         this.receipts = response.data;
         this.loadingTable = false;
       },
@@ -91,6 +92,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   async confirm() {
+    console.log('this.statusReceipt', this.statusReceipt);
     if (this.statusReceipt == 'ABIERTO') {
       const updateProgrammingGood = await this.updateProgGoood();
 
@@ -190,14 +192,24 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   createReceipt() {
+    console.log('this.receipts', this.receipts);
     if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
+      this.alertInfo(
+        'info',
+        'Acción Inválida',
+        'Aún se encuentran recibos abiertos'
+      );
+    } else if (this.receipts.length == 0) {
+    }
+
+    /*if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
       this.alertInfo(
         'info',
         'Acción Inválida',
         'Aún se encuentran recibos abiertos'
       ).then();
     } else {
-      if (this.proceedign) {
+      if (this.proceedign?.proceedingStatus == 'ABIERTO') {
         const receiptForm: Object = {
           id: 1,
           actId: this.proceedign.id,
@@ -245,7 +257,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       }
-    }
+    } */
   }
 
   createKeyAct(act: IProceedings) {
