@@ -56,7 +56,7 @@
               control="clientId"
               [data]="clients"
               value="id"
-              bindLabel="idAndName"
+              bindLabel="id"
               label="Cliente"
               (fetchItems)="getClients($event)">
             </ngx-select>
@@ -70,7 +70,7 @@
               control="lotId"
               [data]="lotes"
               value="idLot"
-              bindLabel="idAndDesc"
+              bindLabel="idLot"
               label="Lote"
               (fetchItems)="getLotes($event)">
             </ngx-select>
@@ -202,6 +202,14 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
           [disabled]="form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
@@ -211,7 +219,7 @@
           <span *ngIf="!edit"
             ><i aria-hidden="true" class="fa fa-save"></i
           ></span>
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button

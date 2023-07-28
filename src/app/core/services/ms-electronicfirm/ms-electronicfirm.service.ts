@@ -4,6 +4,7 @@ import { ElectronicFirmEndpoint } from 'src/app/common/constants/endpoints/ms-el
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  IComerDestXML,
   IComerDocumentsXML,
   IComerOrigins,
   IUpdateComerPagosRef,
@@ -48,6 +49,13 @@ export class ElectronicFirmService extends HttpService {
   getComerOrigins(params: _Params): Observable<IListResponse<IComerOrigins>> {
     return this.get<IListResponse<IComerOrigins>>(
       ElectronicFirmEndpoint.ComerOrigins,
+      params
+    );
+  }
+
+  getComerDestXML(params: _Params): Observable<IListResponse<IComerDestXML>> {
+    return this.get<IListResponse<IComerDestXML>>(
+      ElectronicFirmEndpoint.ComerDestXML,
       params
     );
   }

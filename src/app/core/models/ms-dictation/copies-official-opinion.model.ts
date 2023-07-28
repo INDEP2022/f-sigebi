@@ -34,3 +34,9 @@ export interface IRullings {
   dateRulingHc: string;
   admissionDateHc: string;
 }
+
+export interface IDataCopiasOficio {
+  count: number;
+  data: ICopiesOfficialOpinion[];
+  message: string[];
+}

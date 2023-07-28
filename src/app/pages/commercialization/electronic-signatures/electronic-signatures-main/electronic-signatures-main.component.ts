@@ -174,6 +174,7 @@ export class ElectronicSignaturesMainComponent
               // this.columnFiltersPending[
               //   'firmdate'
               // ] = `${SearchFilter.EQ}:NULL`;
+              this.columnFiltersHistorical['firmdate'] = `$is:$null`;
               this.columnFiltersPending['filter.creationdate'] = `$order:desc`;
             } else {
               delete this.columnFiltersPending[field];
@@ -196,6 +197,7 @@ export class ElectronicSignaturesMainComponent
     // this.columnFiltersPending[
     //   'firmdate'
     // ] = `${SearchFilter.EQ}:NULL`;
+    this.columnFiltersHistorical['firmdate'] = `$is:$null`;
     this.columnFiltersPending['filter.creationdate'] = `$order:desc`;
     //observador para el paginado
     this.dataTableParamsPending
@@ -248,7 +250,7 @@ export class ElectronicSignaturesMainComponent
                   'user'
                 ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
               }
-              this.columnFiltersHistorical['firmdate'] = `$not:null`;
+              this.columnFiltersHistorical['firmdate'] = `$not:$null`;
               this.columnFiltersHistorical[
                 'filter.creationdate'
               ] = `$order:desc`;
@@ -269,7 +271,7 @@ export class ElectronicSignaturesMainComponent
         'user'
       ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
     }
-    this.columnFiltersHistorical['firmdate'] = `$not:null`;
+    this.columnFiltersHistorical['firmdate'] = `$not:$null`;
     this.columnFiltersHistorical['filter.creationdate'] = `$order:desc`;
     //observador para el paginado
     this.dataTableParamsHistorical

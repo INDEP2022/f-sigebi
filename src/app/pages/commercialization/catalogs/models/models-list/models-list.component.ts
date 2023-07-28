@@ -44,6 +44,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
   }
 
   form = this.fb.group({
+    id: [null],
     modelComment: [null],
   });
 
@@ -107,7 +108,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {
-    this.modelName = this.form.get('modelComment').value;
+    this.modelName = this.form.get('id').value;
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -116,7 +117,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
     this.modelServices.getAll2(this.modelName, params).subscribe({
       next: response => {
         this.parameterComer = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;

@@ -40,6 +40,12 @@ export class SignatureAuxiliaryCatalogsMainComponent
   testDataReport: any[] = [];
   columnFiltersReport: any = [];
   // Addresee Table
+  dataTableAddresee: LocalDataSource = new LocalDataSource();
+  dataTableParamsAddresee = new BehaviorSubject<ListParams>(new ListParams());
+  loadingAddresee: boolean = false;
+  totalAddresee: number = 0;
+  testDataAddresee: any[] = [];
+  columnFiltersAddresee: any = [];
 
   reportParams = new BehaviorSubject<ListParams>(new ListParams());
   addresseeParams = new BehaviorSubject<ListParams>(new ListParams());
@@ -58,10 +64,12 @@ export class SignatureAuxiliaryCatalogsMainComponent
   signatureColumns: any[] = [];
   reportSettings = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
     actions: false,
   };
   addresseeSettings = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
     actions: false,
   };
   typeSettings = {
@@ -206,6 +214,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
 
   initForm() {
     this.loadingDataTableReport();
+    this.loadingDataTableAddresee();
   }
 
   getData() {
@@ -293,10 +302,10 @@ export class SignatureAuxiliaryCatalogsMainComponent
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              referenceid: () => (searchFilter = SearchFilter.EQ),
-              reportkey: () => (searchFilter = SearchFilter.EQ),
+              screenKey: () => (searchFilter = SearchFilter.EQ),
+              signatoriesNumber: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
-              denomination: () => (searchFilter = SearchFilter.EQ),
+              reportKey: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -344,6 +353,75 @@ export class SignatureAuxiliaryCatalogsMainComponent
         this.dataTableReport.load([]);
         this.totalReport = 0;
         this.loadingReport = false;
+      },
+    });
+  }
+
+  loadingDataTableAddresee() {
+    //Filtrado por columnas
+    this.dataTableAddresee
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.user`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              email: () => (searchFilter = SearchFilter.ILIKE),
+              name: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersAddresee[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersAddresee[field];
+            }
+          });
+          this.dataTableParamsAddresee = this.pageFilter(
+            this.dataTableParamsAddresee
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getAddreseeData();
+        }
+      });
+
+    this.columnFiltersAddresee['filter.creationdate'] = `$order:desc`;
+    //observador para el paginado
+    this.dataTableParamsAddresee
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAddreseeData());
+  }
+
+  getAddreseeData() {
+    this.loadingAddresee = true;
+    let params = {
+      ...this.dataTableParamsAddresee.getValue(),
+      ...this.columnFiltersAddresee,
+    };
+    console.log('PARAMS ', params);
+    this.svSignatureAuxiliaryCatalogsService.getComerDestXML(params).subscribe({
+      next: res => {
+        console.log('DATA ADDRESEE', res);
+        this.testDataAddresee = res.data;
+        this.dataTableAddresee.load(this.testDataAddresee);
+        this.totalAddresee = res.count;
+        this.loadingAddresee = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataAddresee = [];
+        this.dataTableAddresee.load([]);
+        this.totalAddresee = 0;
+        this.loadingAddresee = false;
       },
     });
   }

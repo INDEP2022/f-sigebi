@@ -326,3 +326,108 @@ export const ESTATE_COLUMNS_1 = {
     sort: false,
   },
 };
+
+export const TRANS_GOODS_EXECUTE = {
+  goodId: {
+    title: 'No. Gestión',
+    type: 'string',
+    sort: false,
+  },
+
+  uniqueKey: {
+    title: 'Clave Única',
+    type: 'string',
+    sort: false,
+  },
+
+  fileNumber: {
+    title: 'Expediente',
+    type: 'string',
+    sort: false,
+  },
+
+  goodDescription: {
+    title: 'Descripción Transferente',
+    sort: false,
+  },
+
+  descriptionGoodSae: {
+    title: 'Descripción Bien INDEP',
+    type: 'string',
+    sort: false,
+  },
+
+  quantity: {
+    title: 'Cantidad Transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  quantitySae: {
+    title: 'Cantidad INDEP',
+    type: 'string',
+    sort: false,
+  },
+
+  unitMeasure: {
+    title: 'Unidad Medida Transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  physicalStatus: {
+    title: 'Estado Físico Transferente',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  saePhysicalState: {
+    title: 'Estado Físico INDEP',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  stateConservation: {
+    title: 'Estado de Conservación',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  stateConservationSae: {
+    title: 'Estado de Conservación INDEP',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  observations: {
+    title: 'Observación',
+    type: 'string',
+    sort: false,
+  },
+
+  saeMeasureUnit: {
+    title: 'Unidad de Medida INDEP',
+    type: 'string',
+    sort: false,
+  },
+};

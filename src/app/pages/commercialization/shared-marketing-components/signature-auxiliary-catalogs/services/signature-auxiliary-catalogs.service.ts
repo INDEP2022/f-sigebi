@@ -11,4 +11,8 @@ export class SignatureAuxiliaryCatalogsService {
   getComerOrigins(params: _Params) {
     return this.msElectronicFirmService.getComerOrigins(params);
   }
+
+  getComerDestXML(params: _Params) {
+    return this.msElectronicFirmService.getComerDestXML(params);
+  }
 }

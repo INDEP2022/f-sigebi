@@ -59,3 +59,11 @@ export interface IComerOrigins {
   recordNumber: number;
   nbOrigin: string;
 }
+
+export interface IComerDestXML {
+  originId: number;
+  email: string;
+  name: string;
+  recordNumber: number;
+  nbOrigin: string;
+}

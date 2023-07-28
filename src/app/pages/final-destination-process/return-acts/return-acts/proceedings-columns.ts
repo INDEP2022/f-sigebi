@@ -55,3 +55,23 @@ export const PROCEEDINGS_COLUMNS = {
     sort: false,
   },
 };
+
+export const PROCEEDINGS_COLUMNS_CLOSE = {
+  id: {
+    title: 'No. Acta',
+    type: 'string',
+    sort: false,
+  },
+
+  statusProceeedings: {
+    title: 'Estatus Acta',
+    type: 'string',
+    sort: false,
+  },
+
+  observationProceedings: {
+    title: 'Observaciones',
+    type: 'string',
+    sort: false,
+  },
+};
