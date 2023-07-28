@@ -1,13 +1,38 @@
-<app-card [header]="false" [footer]="true">
-  <form [formGroup]="comerLibsForm" class="form-material">
-    <!-- <div class="float-right pl-3">
-                <button (click)="searchProcs()" class="btn btn-primary btn-sm active m-1" tooltip="Conversiones"
-                  containerClass="tooltip-style">
-                  <i class="bx bx-list-plus bx-sm float-icon"></i>
-                </button>
-              </div> -->
-    <div body>
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <div class="col-md-5">
+      <h5 class="title">REPORTES DE CARTAS DE LIBERACIÓN</h5>
+    </div>
+  </div>
+
+  <div>
+    <label for="">Fecha: </label>
+    <!-- {{ time | date : 'hh:mm' }} -->
+  </div>
+  <div body>
+    <form [formGroup]="comerLibsForm" class="form-material">
       <div class="row">
+        <div class="d-flex justify-content-end">
+          <div class="d-inline mr-2">
+            Fecha:
+            <span class="ml-3 mr-3" style="display: initial !important">
+              {{ dateLetter || '00/00/0000' }}
+            </span>
+            <button
+              class="btn btn-primary active btn-sm m-2"
+              (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+            <button
+              (click)="searchComer()"
+              class="btn btn-primary btn-sm active m-1"
+              tooltip="Cartas de Liberación"
+              containerClass="tooltip-style">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-12">
@@ -17,20 +42,26 @@
                     <div class="col-md-3">
                       <div>
                         <label for="">Área: </label>
-                        <!-- {{ conversion || '' }} -->
+                        {{ department || '' }}
                       </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                       <div>
                         <label for="">Delegación: </label>
-                        <!-- {{ goodFatherNumber || '' }} -->
+                        {{ delegation || '' }}
                       </div>
                     </div>
 
                     <div class="col-md-3">
-                      <div>
-                        <label for="">SubDelegación: </label>
-                        <!-- {{ fileNumber || '' }} -->
+                      <div style="display: flex; gap: 10px">
+                        <label style="display: flex; align-items: center">
+                          <input type="checkbox" [checked]="read" />
+                          <span style="margin-left: 5px">Lectura</span>
+                        </label>
+                        <label style="display: flex; align-items: center">
+                          <input type="checkbox" [checked]="insert" />
+                          <span style="margin-left: 5px">Escritura</span>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -38,21 +69,110 @@
                     <div class="col-md-3">
                       <div>
                         <label for="">Usuario: </label>
-                        <!-- {{ preAver || '' }} -->
+                        {{ userName || '' }}
                       </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                       <div>
-                        <label for="">Permisos: </label>
-                        <!-- {{ trasnfer || '' }} -->
+                        <label for="">SubDelegación: </label>
+                        {{ subDelegation || '' }}
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <div>
-                        <label for="">Fecha: </label>
-                        <!-- {{ time | date : 'hh:mm' }} -->
-                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('oficio')"
+                        label="Oficio">
+                        <input
+                          type="number"
+                          [readonly]="!validPermisos"
+                          class="form-control"
+                          formControlName="oficio" />
+                      </form-field>
                     </div>
+                  </div>
+                  <!-- <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field [control]="
+                                                comerLibsForm.get('description')
+                                              " label="Descripción">
+                        <input #inputValue type="text" class="form-control" formControlName="description"
+                          class="form-control" readonly />
+                      </form-field>
+                    </div>
+                  </div> -->
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('diridoA')"
+                        label="Dirigido a:">
+                        <input
+                          #inputValue
+                          type="text"
+                          [readonly]="!validPermisos"
+                          class="form-control"
+                          formControlName="diridoA"
+                          maxlength="50" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('puesto')"
+                        label="Puesto">
+                        <input
+                          type="text"
+                          [readonly]="!validPermisos"
+                          class="form-control"
+                          formControlName="puesto"
+                          maxlength="50" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-2">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('adjudicatorio')"
+                        label="Adjudicatorio">
+                        <input
+                          type="text"
+                          [readonly]="!validPermisos"
+                          class="form-control"
+                          formControlName="adjudicatorio"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <!-- <form-field [control]=" comerLibsForm.get('parrafo1')" label="P&aacute;rrafo 1">
+                      <textarea maxlength="500" [readonly]="!validPermisos" type="text" class="form-control"
+                        formControlName="parrafo1" rows="5"></textarea>
+                    </form-field> -->
+                    <form-field
+                      class="col-md-12 col-sm-12 col-12 p-2"
+                      [control]="comerLibsForm.get('parrafo1')"
+                      label="P&aacute;rrafo 1">
+                      <textarea
+                        maxlength="500"
+                        class="form-control"
+                        [readonly]="!validPermisos"
+                        formControlName="parrafo1"
+                        rows="5"></textarea>
+                    </form-field>
                   </div>
                 </div>
               </div>
@@ -83,99 +203,9 @@
             
           </div>
         </div> -->
-    </div>
-  </form>
-  <form [formGroup]="bienesLotesForm" class="form-material">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card">
-              <div class="card-body">
-                <div class="col-md-4 mt-2">
-                  <div>
-                    <!-- <form-field [control]="comerLibsForm.get('oficio')" label="Oficio">
-                      <input type="number" class="form-control" formControlName="oficio" />
-                    </form-field> -->
-                  </div>
-                </div>
-                <!-- <div class="col-md-4 mt-3">
-                  <div>
-                    <form-field [control]="
-                                          comerLibsForm.get('description')
-                                        " label="Descripción">
-                      <input #inputValue type="text" class="form-control" formControlName="description"
-                        class="form-control" readonly />
-                    </form-field>
-                  </div>
-                </div> -->
-                <div class="col-md-4 mt-3">
-                  <div>
-                    <!-- <form-field [control]="comerLibsForm.get('diridoA')" label="Dirigido a:">
-                      <input #inputValue type="text" class="form-control" formControlName="diridoA" maxlength="50" />
-                    </form-field> -->
-                  </div>
-                </div>
-                <div class="col-md-4 mt-3">
-                  <div>
-                    <!-- <form-field [control]="comerLibsForm.get('puesto')" label="Puesto">
-                      <input type="text" class="form-control" formControlName="puesto" placeholder="Puesto"
-                        maxlength="50" />
-                    </form-field> -->
-                  </div>
-                </div>
-                <div class="col-md-4 mt-3">
-                  <div>
-                    <!-- <form-field [control]=" comerLibsForm.get('parrafo1')" label="P&aacute;rrafo 1">
-                      <textarea maxlength="500" [readonly]="!validPermisos" type="text" class="form-control"
-                        formControlName="parrafo1" rows="5"></textarea>
-                    </form-field> -->
-                  </div>
-                </div>
-
-                <div class="col-md-4 mt-2">
-                  <div>
-                    <!-- <form-field [control]="comerLibsForm.get('adjudicatorio')" label="Adjudicatorio">
-                      <input type="text" class="form-control" formControlName="adjudicatorio" readonly />
-                    </form-field> -->
-                  </div>
-                </div>
-              </div>
-
-              <div class="row mt-5">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                  <!-- <form-field [control]="
-                                        comerLibsForm.get('parrafo1')
-                                      " label="P&aacute;rrafo 1">
-                    <textarea maxlength="2000" [readonly]="!validPermisos" type="text" class="form-control"
-                      formControlName="parrafo1" rows="5"></textarea>
-                  </form-field> -->
-                </div>
-              </div>
-              <div class="row mt-5">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                  <!-- <form-field [control]="
-                                        comerLibsForm.get('parrafo2')
-                                      " label="P&aacute;rrafo 2">
-                    <textarea maxlength="4000" [readonly]="!validPermisos" type="text" class="form-control"
-                      formControlName="parrafo2" rows="5"></textarea>
-                  </form-field> -->
-                </div>
-              </div>
-              <div class="row mt-5">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                  <!-- <form-field [control]="
-                                        comerLibsForm.get('parrafo3')
-                                      " label="P&aacute;rrafo 3">
-                    <textarea maxlength="4000" [readonly]="!validPermisos" type="text" class="form-control"
-                      formControlName="parrafo3" rows="5"></textarea>
-                  </form-field> -->
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </form>
+    </form>
+  </div>
+  <!-- <form [formGroup]="bienesLotesForm" class="form-material">
+   
+  </form> -->
 </app-card>
