@@ -87,18 +87,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
       } else {
         console.log('SIN PARAMETROS');
         if (!this.origin) {
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-        } else {
-          // this.alertInfo(
-          //   'info',
-          //   'Error en los paramétros',
-          //   'Los paramétros No. Oficio: ' +
-          //     this.paramsScreen.P_VALOR +
-          //     ' y el Tipo Oficio: ' +
-          //     this.paramsScreen.TIPO +
-          //     ' al iniciar la pantalla son requeridos'
-          // );
+          console.log(this.origin);
         }
       }
     }
