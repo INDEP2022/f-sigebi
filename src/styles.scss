@@ -766,3 +766,13 @@ custom-view-component {
 .tessst {
   margin-left: 27px !important;
 }
+
+#testDate .form-control[readonly] {
+  background: white !important;
+  // opacity: 1 !important;
+}
+
+//remover si afecta visualizacion
+.main-content {
+  overflow: visible;
+}

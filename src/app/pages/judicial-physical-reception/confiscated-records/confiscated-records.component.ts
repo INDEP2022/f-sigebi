@@ -314,11 +314,6 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   getDataUser() {
     const token = this.authService.decodeToken();
-    console.log(token);
-    const user =
-      localStorage.getItem('username') == 'sigebiadmon'
-        ? localStorage.getItem('username')
-        : localStorage.getItem('username').toLocaleUpperCase();
     const routeUser = `?filter.id=$eq:${token.preferred_username}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       console.log(res);
@@ -1370,11 +1365,18 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
 
   getWarehouses(params: ListParams) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('description', params.text, SearchFilter.ILIKE);
+    !isNaN(parseInt(params.text))
+      ? paramsF.addFilter('idWarehouse', params.text)
+      : paramsF.addFilter('description', params.text, SearchFilter.ILIKE);
     this.serviceWarehouse.getWarehouseFilter(paramsF.getParams()).subscribe(
-      res => {
-        this.warehouseSelect = new DefaultSelect(res.data, res.count);
-        console.log(res);
+      async res => {
+        console.log(res.data);
+        const newData = await Promise.all(
+          res.data.map((e: any) => {
+            return { ...e, visualData: `${e.idWarehouse} - ${e.description}` };
+          })
+        );
+        this.warehouseSelect = new DefaultSelect(newData, res.count);
       },
       err => {
         console.log(err);
@@ -1382,13 +1384,47 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     );
   }
 
+  setVaultNumerary() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('idWarehouse', 9999);
+    this.serviceVault.getAllFilter(paramsF.getParams()).subscribe(
+      async res => {
+        const newData = await Promise.all(
+          res.data.map((e: any) => {
+            return { ...e, visualData: `${e.idSafe} - ${e.description}` };
+          })
+        );
+        this.vaultSelect = new DefaultSelect(newData, res.count);
+        this.form.get('boveda').setValue(newData[0]);
+      },
+      err => {
+        this.alert('warning', 'No se encontraron Bóvedas', '');
+        this.vaultSelect = new DefaultSelect();
+      }
+    );
+  }
+
   getSafeVault(params: ListParams) {
-    this.serviceVault
-      .getAllFilter(`filter.description=$ilike:${params.text}`)
-      .subscribe(res => {
-        this.vaultSelect = new DefaultSelect(res.data, res.count);
+    const paramsF = new FilterParams();
+    !isNaN(parseInt(params.text))
+      ? paramsF.addFilter('idSafe', params.text)
+      : paramsF.addFilter('description', params.text, SearchFilter.LIKE);
+    this.serviceVault.getAllFilter(paramsF.getParams()).subscribe(
+      async res => {
+        console.log(res);
+        const newData = await Promise.all(
+          res.data.map((e: any) => {
+            return { ...e, visualData: `${e.idSafe} - ${e.description}` };
+          })
+        );
+        this.vaultSelect = new DefaultSelect(newData, res.count);
         console.log(this.vaultSelect);
-      });
+      },
+      err => {
+        this.alert('warning', 'No se encontraron Bóvedas', '');
+        this.vaultSelect = new DefaultSelect();
+      }
+    );
   }
 
   getAdmin(params: ListParams) {
@@ -1398,7 +1434,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       res => {
         this.adminSelect = new DefaultSelect(res.data, res.count);
       },
-      err => console.log(err)
+      err => {
+        this.adminSelect = new DefaultSelect();
+      }
     );
   }
 
@@ -1485,7 +1523,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         const acta = this.form.get('acta2').value;
         const arrAct = acta.split('/');
         const valAct = arrAct[0];
-        if (valAct[0] != 'N') {
+        if (['NA','ND'].includes(valAct)) {
           if (res != null && res != undefined && res.numberDelegation2) {
             if (res.numberDelegation2 != this.delUser) {
               this.alert(
@@ -1752,6 +1790,12 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         this.form.get('acta2').setValue(dataRes.keysProceedings);
+        const splitActa = dataRes.keysProceedings.split('/');
+        console.log(splitActa)
+        if (['NA','ND'].includes(splitActa[0])) {
+          this.setVaultNumerary();
+        }
+
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -1805,6 +1849,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('testigo').setValue(dataRes.comptrollerWitness);
         this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         this.form.get('acta2').setValue(dataRes.keysProceedings);
+
+        const splitActa = dataRes.keysProceedings.split('/');
+        console.log(splitActa)
+        if (['NA','ND'].includes(splitActa[0])) {
+          this.setVaultNumerary();
+        }
+
         if (this.form.get('statusProceeding').value === 'ABIERTA') {
           this.labelActa = 'Cerrar acta';
           this.btnCSSAct = 'btn-primary';
@@ -2242,6 +2293,11 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   this.form.get('statusProceeding').setValue('ABIERTA');
                   this.form.get('fecCaptura').setValue(new Date());
                   this.alert('success', 'Se guardó el acta', '');
+
+                  const splitActa = this.form.get('acta2').value.split('/');
+                  if (['NA','ND'].includes(splitActa[0])) {
+                    this.setVaultNumerary();
+                  }
                 },
                 err => {
                   console.log(err);
