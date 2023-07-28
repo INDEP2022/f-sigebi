@@ -63,3 +63,4 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
 export function clearGoodCheck() {
   goodCheck = [];
 }
+

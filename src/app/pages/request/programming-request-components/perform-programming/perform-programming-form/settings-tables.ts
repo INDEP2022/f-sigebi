@@ -2,6 +2,7 @@ import { TrackerValues } from 'src/app/pages/general-processes/goods-tracker/uti
 import {
   ESTATE_COLUMNS_1,
   ESTATE_COLUMNS_VIEW,
+  TRANS_GOODS_EXECUTE,
 } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 
@@ -30,6 +31,21 @@ export const settingTransGoods = {
     editButtonContent: '<i class="fa fa-eye"></i>',
   },
   columns: ESTATE_COLUMNS_1,
+};
+
+export const settingTransGoodsExecute = {
+  actions: false,
+  /*actions: {
+    delete: true,
+    edit: true,
+    columnTitle: 'Acciones',
+    position: 'right',
+  }, */
+  edit: {
+    editButtonContent: '<i class="fa fa-eye"></i>',
+  },
+  selectMode: 'multi',
+  columns: TRANS_GOODS_EXECUTE,
 };
 
 export const settingTransGoodsClose = {

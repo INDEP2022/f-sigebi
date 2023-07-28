@@ -139,7 +139,7 @@ export class ReceiptTableGoodsComponent
           const item = this.selectedGoods.find(
             x => x.id_bien === selected.id_bien
           );
-          if (!item) {
+          if (!item && selected.guardado === '0') {
             this.selectedGoods.push(selected);
           }
         });
@@ -156,7 +156,7 @@ export class ReceiptTableGoodsComponent
           const item = this.selectedGoods.find(
             x => x.id_bien === selected.id_bien
           );
-          if (!item) {
+          if (!item && selected.guardado === '0') {
             this.selectedGoods.push(selected);
           }
         });
