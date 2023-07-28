@@ -196,6 +196,10 @@
           class="btn btn-primary disabled btn-sm active">
           Actualizar <i class="fas fa-sync-alt"> </i>
         </button>
+
+        <button class="btn btn-info btn-sm active">
+          Ver actas cerradas <i class="fas fa-eye"> </i>
+        </button>
       </div>
       <div class="row pt-3">
         <form [formGroup]="proceedingForm">
@@ -403,7 +407,7 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsReprog"
-                    [source]="">
+                    [source]="goodsReprog">
                   </ng2-smart-table>
                 </div>
               </div>
@@ -424,7 +428,7 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsCancelation"
-                    [source]="">
+                    [source]="goodsCancel">
                   </ng2-smart-table>
 
                   <app-pagination

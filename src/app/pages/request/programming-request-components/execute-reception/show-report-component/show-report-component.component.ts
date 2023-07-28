@@ -148,6 +148,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}&CID_BIEN=${this.goodId}`;
         this.src = linkDoc;
         this.formLoading = false;
+      } else {
+        let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}`;
+        this.src = linkDoc;
+        this.formLoading = false;
       }
 
       if (this.goodsId) {
