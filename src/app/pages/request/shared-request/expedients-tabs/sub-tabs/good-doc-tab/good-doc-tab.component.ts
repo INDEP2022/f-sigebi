@@ -38,6 +38,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   idRequest: number = 0;
   @Input() typeDoc = '';
   @Input() screen = 'doc-goods';
+  @Input() requestId: number = null;
   goodSelect: IGood[] = [];
   allGooods: IGood[] = [];
   showSearchForm: boolean = false;
@@ -61,7 +62,12 @@ export class GoodDocTabComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.typeModule != '' && this.typeModule == 'doc-complementary') {
+    this.idRequest = this.idRequest || this.requestId;
+    if (
+      this.typeModule != '' &&
+      this.typeModule == 'doc-complementary' &&
+      !this.idRequest
+    ) {
       this.idRequest = this.activatedRoute.snapshot.paramMap.get(
         'request'
       ) as unknown as number;

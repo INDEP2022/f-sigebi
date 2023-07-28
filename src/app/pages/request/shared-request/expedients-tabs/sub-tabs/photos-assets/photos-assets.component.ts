@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -25,7 +31,11 @@ import { UploadFileComponent } from './upload-file/upload-file.component';
   templateUrl: './photos-assets.component.html',
   styleUrls: ['./photos-assets.component.scss'],
 })
-export class PhotosAssetsComponent extends BasePage implements OnInit {
+export class PhotosAssetsComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
+  @Input() requestId: number = null;
   parentRef: BsModalRef;
   showSearchFilter: boolean = true;
   filterForm: FormGroup = new FormGroup({});
@@ -57,6 +67,13 @@ export class PhotosAssetsComponent extends BasePage implements OnInit {
     this.idRequest = this.activatedRoute.snapshot.paramMap.get(
       'id'
     ) as unknown as number;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.idRequest = this.idRequest ? this.idRequest : this.requestId;
+    if (this.requestId) {
+      this.getGoodsRequest();
+    }
   }
 
   ngOnInit(): void {

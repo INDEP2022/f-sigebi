@@ -3,39 +3,32 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
-  selector: 'app-checkbox-element',
+  selector: 'app-checkbox-select-element',
   template: `
     <div class="row justify-content-center">
       <input
         [disabled]="disabled"
         #box
-        class="common-check custom-checkbox"
         [checked]="checked"
         (change)="onToggle($event)"
         type="checkbox" />
     </div>
   `,
-  styles: [
-    `
-      .custom-checkbox input[type='checkbox'] {
-        background-color: blue; /* Cambia el color de fondo del checkbox */
-        border-color: red; /* Cambia el color del borde del checkbox */
-      }
-
-      .custom-checkbox input[type='checkbox']:checked {
-        background-color: green; /* Cambia el color de fondo del checkbox cuando está seleccionado */
-        border-color: yellow; /* Cambia el color del borde del checkbox cuando está seleccionado */
-      }
-    `,
-  ],
+  styles: [],
 })
-export class CheckboxElementComponent<T = any> implements OnInit {
+export class CheckboxSelectElementComponent<T = any>
+  extends BasePage
+  implements OnInit, OnChanges
+{
   checked: boolean;
   disabled: boolean;
   @ViewChild('box', { static: true }) box: ElementRef<HTMLInputElement>;
@@ -45,7 +38,13 @@ export class CheckboxElementComponent<T = any> implements OnInit {
   @Output() toggle: EventEmitter<{ row: T; toggle: boolean }> =
     new EventEmitter();
 
-  constructor() {}
+  constructor() {
+    super();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+  }
 
   ngOnInit(): void {
     this.checked = this.value;
@@ -55,9 +54,16 @@ export class CheckboxElementComponent<T = any> implements OnInit {
     let row: any = this.rowData;
     let toggle = ($event.currentTarget as HTMLInputElement).checked;
     this.toggle.emit({ row, toggle });
-  }
 
-  setValue(value: boolean) {
-    this.checked = value;
+    /* debugger
+    if(this.count >= 1 && toggle == true){
+      this.box.nativeElement.checked = false;
+      toggle = false;
+      this.count = this.count - 1;
+      this.toggle.emit({ row, toggle });
+    } else {
+      this.count = this.count + 1;
+      this.toggle.emit({ row, toggle });
+    }*/
   }
 }
