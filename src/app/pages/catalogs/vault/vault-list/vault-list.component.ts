@@ -109,7 +109,7 @@ export class VaultListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll(params).subscribe({
+    this.safeService.getAll1(params).subscribe({
       next: response => {
         //this.getManager(response);
         this.totalItems = response.count;

@@ -76,7 +76,11 @@ export class MaintenanceDelegSubdelegModalComponent
       //dateDailyCon: [null, [Validators.pattern(STRING_PATTERN)]],
       phaseEdo: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       registerNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });

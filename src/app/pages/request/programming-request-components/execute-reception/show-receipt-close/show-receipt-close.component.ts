@@ -42,7 +42,7 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
   };
 
   paramsReceipts = new BehaviorSubject<ListParams>(new ListParams());
-  receipts: LocalDataSource = new LocalDataSource();
+  receiptsClose: LocalDataSource = new LocalDataSource();
   totalItemsReceipt: number = 0;
   formLoadingReceipt: boolean = false;
   programming: Iprogramming;
@@ -62,14 +62,14 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
         });
 
         this.receiptData = receiptOpen[0];
-        this.receipts.load(receiptOpen);
-        this.totalItemsReceipt = this.receipts.count();
+        this.receiptsClose.load(receiptOpen);
+        this.totalItemsReceipt = this.receiptsClose.count();
         this.formLoadingReceipt = false;
       },
       error: error => {
         this.formLoadingReceipt = false;
         this.totalItemsReceipt = 0;
-        this.receipts = new LocalDataSource();
+        this.receiptsClose = new LocalDataSource();
       },
     });
   }
