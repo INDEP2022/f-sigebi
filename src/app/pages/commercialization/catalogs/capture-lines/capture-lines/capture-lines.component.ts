@@ -7,7 +7,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { ExcelService } from 'src/app/common/services/excel.service';
 import {
   ICaptureLinesMain,
   IDetCapturelines,
@@ -42,8 +41,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
 
   constructor(
     private modalService: BsModalService,
-    private capturelineService: CapturelineService,
-    private excelService: ExcelService
+    private capturelineService: CapturelineService
   ) {
     super();
     this.settings.columns = CAPTURE_LINES_COLUMNS;
@@ -75,7 +73,6 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
