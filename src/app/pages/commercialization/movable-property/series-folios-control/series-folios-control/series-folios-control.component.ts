@@ -314,11 +314,19 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
           this.dataFilter2.refresh();
           this.totalItems2 = 0;
           if (err.status == 400) {
-            this.alert(
-              'error',
-              'Error',
-              `No se encontraron Folios Apartados para este Id Folio: ${this.isSelect.folioinvoiceId}`
-            );
+            if (!this.isSelect.folioinvoiceId) {
+              this.alert(
+                'error',
+                'Error',
+                `Seleccione un folio para consultar Folios Apartados`
+              );
+            } else {
+              this.alert(
+                'error',
+                'Error',
+                `No se encontraron Folios Apartados para este Id Folio: ${this.isSelect.folioinvoiceId}`
+              );
+            }
           }
         },
       });
@@ -352,11 +360,19 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
         this.dataFilter3.load([]);
         this.dataFilter3.refresh();
         if (err.status == 400) {
-          this.alert(
-            'error',
-            'Error',
-            `No se encontraron Tipos de Eventos por Serie para este Id Folio: ${this.isSelect.folioinvoiceId}`
-          );
+          if (!this.isSelect.folioinvoiceId) {
+            this.alert(
+              'error',
+              'Error',
+              `Seleccione un folio para consultar Tipos de Eventos por Serie`
+            );
+          } else {
+            this.alert(
+              'error',
+              'Error',
+              `No se encontraron Tipos de Eventos por Serie para este Id Folio: ${this.isSelect.folioinvoiceId}`
+            );
+          }
         }
       },
     });

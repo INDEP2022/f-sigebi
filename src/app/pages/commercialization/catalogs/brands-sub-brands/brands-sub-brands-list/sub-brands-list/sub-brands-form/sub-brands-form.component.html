@@ -12,7 +12,8 @@
                 type="text"
                 class="form-control"
                 formControlName="idBrand"
-                maxlength="20" />
+                maxlength="20"
+                [readonly]="edit" />
             </form-field>
           </div>
           <div class="col-md-6">
@@ -23,12 +24,13 @@
                 type="text"
                 class="form-control"
                 formControlName="idSubBrand"
-                maxlength="30" />
+                maxlength="30"
+                [readonly]="edit" />
             </form-field>
           </div>
         </div>
 
-        <div class="row">
+        <div class="row mt-2">
           <div class="col-md-8">
             <form-field
               [control]="modelForm.get('subBrandDescription')"
@@ -38,15 +40,6 @@
                 class="form-control"
                 formControlName="subBrandDescription"
                 maxlength="100" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="modelForm.get('nbOrigin')" label="nbOrigin">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="nbOrigin"
-                maxlength="30" />
             </form-field>
           </div>
         </div>

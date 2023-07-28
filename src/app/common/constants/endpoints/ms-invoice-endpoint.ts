@@ -9,4 +9,6 @@ export enum ENDPOINT_INVOICE {
   UpdateByEvemt = 'application/update-by-idevent',
   CopyInvoice = 'ctrl-invoice/copy-invoice',
   ComerHeadboard = 'comer-headboard',
+  ComerRectInvoice = 'comer-rectinvoices',
+  ComerDetInvoice = 'comer-direct-fac',
 }

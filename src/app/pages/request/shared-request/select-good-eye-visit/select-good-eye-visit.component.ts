@@ -13,7 +13,10 @@ import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { ModifyDatesModalComponent } from './modify-dates-modal/modify-dates-modal.component';
-import { SELECT_GOODS_EYE_VISIT_COLUMNS } from './select-good-eye-visit-columns';
+import {
+  SELECTED_GOOD_REVIEW,
+  SELECT_GOODS_EYE_VISIT_COLUMNS,
+} from './select-good-eye-visit-columns';
 
 @Component({
   selector: 'app-select-good-eye-visit',
@@ -23,6 +26,7 @@ import { SELECT_GOODS_EYE_VISIT_COLUMNS } from './select-good-eye-visit-columns'
 export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @Input() idRequest: number;
+  @Input() typeVisit: string;
   selectedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodTotalItems: number = 0;
   selectedGoodColumns = new LocalDataSource();
@@ -43,8 +47,16 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   constructor() {
     super();
-    this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
+    if (this.typeVisit === 'selectGood') {
+      this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
+    } else {
+      this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
+    }
   }
+
+  /*ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.typeVisit);
+  }*/
 
   goodTestData = [
     {
@@ -66,46 +78,63 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     const self = this;
-    this.selectedGoodSettings.columns = {
-      select: {
-        title: '',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any, component: any = self) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-            component.checked(data);
-          });
+    if (this.typeVisit === 'selectGood') {
+      this.selectedGoodSettings.columns = {
+        select: {
+          title: '',
+          type: 'custom',
+          sort: false,
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.toggle.subscribe((data: any) => {
+              data.row.to = data.toggle;
+              component.checked(data);
+            });
+          },
         },
-      },
-      maneuverRequired: {
-        title: 'Maniobra Requerida',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any, component: any = self) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-            component.requiredVisitChecked(data);
-          });
+        maneuverRequired: {
+          title: 'Maniobra Requerida',
+          type: 'custom',
+          sort: false,
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.toggle.subscribe((data: any) => {
+              data.row.to = data.toggle;
+              component.requiredVisitChecked(data);
+            });
+          },
         },
-      },
-      viewFile: {
-        title: 'Expediente',
-        type: 'custom',
-        sort: false,
-        renderComponent: ViewFileButtonComponent,
-        onComponentInitFunction(instance: any, component: any = self) {
-          instance.action.subscribe((row: any) => {
-            component.viewFile(row);
-          });
+        viewFile: {
+          title: 'Expediente',
+          type: 'custom',
+          sort: false,
+          renderComponent: ViewFileButtonComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.action.subscribe((row: any) => {
+              component.viewFile(row);
+            });
+          },
         },
-      },
-      ...this.selectedGoodSettings.columns,
-    };
+        ...this.selectedGoodSettings.columns,
+      };
+    } else if (this.typeVisit == 'resultGood') {
+      this.selectedGoodSettings.columns = {
+        viewFile: {
+          title: 'Expediente',
+          type: 'custom',
+          sort: false,
+          renderComponent: ViewFileButtonComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.action.subscribe((row: any) => {
+              component.viewFile(row);
+            });
+          },
+        },
+        ...this.selectedGoodSettings.columns,
+      };
+    }
     //id de prueba borrar
-    this.idRequest = 1;
+    //this.idRequest = 56817;
     //
     this.selectedGoodParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -117,12 +146,8 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   }
 
   getData(params: ListParams) {
-    //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
-    //const good: any = Object.assign(this.goodTestData[0]);
-    //this.selectedGoodColumns.load(this.goodTestData) //= [...this.selectedGoodColumns, good];
-    //this.selectedGoodTotalItems = this.goodTestData.length;
     this.loading = true;
-    params['filter.applicationId'] = `$eq:${this.idRequest}`; //56817
+    params['filter.applicationId'] = `$eq:${this.idRequest}`;
     this.rejectedGoodService.getAll(params).subscribe({
       next: resp => {
         setTimeout(() => {
@@ -157,10 +182,12 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(x => {
-            console.log(resp.data);
             this.selectedGoodColumns.load(resp.data);
             this.selectedGoodTotalItems = resp.count;
             this.loading = false;
+            setTimeout(() => {
+              this.centerExpedientButton();
+            }, 200);
           });
         }, 600);
       },
@@ -206,10 +233,14 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     });
   }
 
-  saveManeuverReq() {
-    /*this.maneuverReqList.map((item)=>{
-      const body:any = {id:item.id, requiresManeuver: item.requiresManeuver}
-    })*/
+  centerExpedientButton() {
+    const table = document.getElementById('selectedGoodsTable');
+    const tbody = table.children[0].children[1].children;
+
+    for (let index = 0; index < tbody.length; index++) {
+      const element = tbody[index];
+      element.children[0].setAttribute('style', 'text-align: center;');
+    }
   }
 
   modifyDate() {

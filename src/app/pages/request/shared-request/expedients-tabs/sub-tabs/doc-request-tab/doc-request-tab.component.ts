@@ -58,6 +58,7 @@ export class DocRequestTabComponent
   @Input() updateInfo: boolean = true;
   @Input() displayName: string = '';
   @Input() typeModule?: string = '';
+  @Input() requestId?: number = null; // se pasa desde el padre en algunos componentes
   title: string = '';
   showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
@@ -165,7 +166,12 @@ export class DocRequestTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log('typeDoc', this.typeDoc);
-    if (this.typeModule != '' && this.typeModule == 'doc-complementary') {
+    this.idRequest = this.idRequest || this.requestId;
+    if (
+      this.typeModule != '' &&
+      this.typeModule == 'doc-complementary' &&
+      !this.idRequest
+    ) {
       this.idRequest = this.activatedRoute.snapshot.paramMap.get(
         'request'
       ) as unknown as number;
