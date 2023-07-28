@@ -6,77 +6,67 @@ import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
+import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
-import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
-import { RECEIPT_COLUMNS } from '../execute-reception-form/columns/minute-columns';
+import { PROCEEDINGS_COLUMNS_CLOSE } from 'src/app/pages/final-destination-process/return-acts/return-acts/proceedings-columns';
 
 @Component({
-  selector: 'app-show-receipt-close',
-  templateUrl: './show-receipt-close.component.html',
+  selector: 'app-show-proceeding-close',
+  templateUrl: './show-proceeding-close.component.html',
   styles: [],
 })
-export class ShowReceiptCloseComponent extends BasePage implements OnInit {
-  constructor(
-    private modalRef: BsModalRef,
-    private wcontentService: WContentService,
-    private sanitizer: DomSanitizer,
-    private modalService: BsModalService,
-    private receptionGoodService: ReceptionGoodService
-  ) {
-    super();
-  }
-
-  settingsReceiptClose = {
+export class ShowProceedingCloseComponent extends BasePage implements OnInit {
+  settingsProceedingClose = {
     ...this.settings,
     actions: {
       columnTitle: 'Visualizar',
       position: 'right',
       delete: false,
     },
-    columns: RECEIPT_COLUMNS,
+    columns: PROCEEDINGS_COLUMNS_CLOSE,
     edit: {
       editButtonContent: '<i class="fa fa-eye text-primary mx-2"></i>',
     },
   };
 
-  paramsReceipts = new BehaviorSubject<ListParams>(new ListParams());
-  receiptsClose: LocalDataSource = new LocalDataSource();
-  totalItemsReceipt: number = 0;
-  formLoadingReceipt: boolean = false;
+  proceedingClose: LocalDataSource = new LocalDataSource();
+  paramsProceeding = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsProceeding: number = 0;
   programming: Iprogramming;
-  receiptData: IReceipt;
+  proceeding: IProceedings;
+
+  constructor(
+    private modalRef: BsModalRef,
+    private sanitizer: DomSanitizer,
+    private wcontentService: WContentService,
+    private modalService: BsModalService,
+    private proceedingService: ProceedingsService
+  ) {
+    super();
+  }
+
   ngOnInit(): void {
-    this.getReceipts();
+    this.getProceedingClose();
   }
 
-  getReceipts() {
-    this.formLoadingReceipt = true;
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.programmingId'] = this.programming.id;
-    this.receptionGoodService.getReceipt(params.getValue()).subscribe({
-      next: response => {
-        const receiptOpen = response.data.filter((receipt: IReceipt) => {
-          return receipt.statusReceipt == 'CERRADO';
-        });
-
-        this.receiptData = receiptOpen[0];
-        this.receiptsClose.load(receiptOpen);
-        this.totalItemsReceipt = this.receiptsClose.count();
-        this.formLoadingReceipt = false;
-      },
-      error: error => {
-        this.formLoadingReceipt = false;
-        this.totalItemsReceipt = 0;
-        this.receiptsClose = new LocalDataSource();
-      },
-    });
+  getProceedingClose() {
+    this.paramsProceeding.getValue()['filter.idPrograming'] =
+      this.programming.id;
+    this.paramsProceeding.getValue()['filter.statusProceeedings'] = 'CERRADO';
+    this.proceedingService
+      .getProceedings(this.paramsProceeding.getValue())
+      .subscribe({
+        next: response => {
+          this.proceedingClose.load(response.data);
+        },
+        error: error => {},
+      });
   }
 
-  confirm() {}
-
-  showReceipt(receipt: IReceipt) {
+  showProceeding(receipt: IReceipt) {
     this.wcontentService.obtainFile(receipt.contentId).subscribe({
       next: response => {
         let blob = this.dataURItoBlob(response);

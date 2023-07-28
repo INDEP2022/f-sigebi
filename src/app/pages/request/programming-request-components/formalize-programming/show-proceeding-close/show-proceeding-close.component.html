@@ -1,22 +1,22 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">RECIBOS CERRADOS</h5>
+    <h5 class="modal-title pull-left">ACTAS FIRMADAS</h5>
   </div>
-  <div body>
+  <div body class="body">
     <div class="row">
       <div class="d-flex justify-content-end">
         <app-columns-select
-          [(settings)]="settingsReceiptClose"></app-columns-select>
+          [(settings)]="settingsProceedingClose"></app-columns-select>
       </div>
       <ng2-smart-table
         [attr.class]="'table-bordered pt-3'"
-        [settings]="settingsReceiptClose"
-        [source]="receiptsClose"
-        (edit)="showReceipt($event.data)">
+        [settings]="settingsProceedingClose"
+        [source]="proceedingClose"
+        (edit)="showProceeding($event.data)">
       </ng2-smart-table>
       <app-pagination
-        [params]="paramsReceipts"
-        [totalItems]="totalItemsReceipt"></app-pagination>
+        [params]="paramsProceeding"
+        [totalItems]="totalItemsProceeding"></app-pagination>
     </div>
   </div>
   <div footer>

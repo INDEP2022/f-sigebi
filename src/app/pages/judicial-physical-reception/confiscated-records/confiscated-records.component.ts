@@ -1523,7 +1523,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         const acta = this.form.get('acta2').value;
         const arrAct = acta.split('/');
         const valAct = arrAct[0];
-        if (['NA', 'ND'].includes(valAct)) {
+        if (!['NA','ND'].includes(valAct)) {
           if (res != null && res != undefined && res.numberDelegation2) {
             if (res.numberDelegation2 != this.delUser) {
               this.alert(
@@ -1791,8 +1791,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('folioEscaneo').setValue(dataRes.universalFolio);
         this.form.get('acta2').setValue(dataRes.keysProceedings);
         const splitActa = dataRes.keysProceedings.split('/');
-        console.log(splitActa);
-        if (['NA', 'ND'].includes(splitActa[0])) {
+        console.log(splitActa)
+        if (['NA','ND'].includes(splitActa[0])) {
           this.setVaultNumerary();
         }
 
@@ -1851,8 +1851,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.form.get('acta2').setValue(dataRes.keysProceedings);
 
         const splitActa = dataRes.keysProceedings.split('/');
-        console.log(splitActa);
-        if (['NA', 'ND'].includes(splitActa[0])) {
+        console.log(splitActa)
+        if (['NA','ND'].includes(splitActa[0])) {
           this.setVaultNumerary();
         }
 
@@ -2295,7 +2295,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                   this.alert('success', 'Se guardó el acta', '');
 
                   const splitActa = this.form.get('acta2').value.split('/');
-                  if (['NA', 'ND'].includes(splitActa[0])) {
+                  if (['NA','ND'].includes(splitActa[0])) {
                     this.setVaultNumerary();
                   }
                 },
