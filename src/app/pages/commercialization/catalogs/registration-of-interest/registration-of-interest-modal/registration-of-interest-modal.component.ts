@@ -191,7 +191,7 @@ export class RegistrationOfInterestModalComponent
     this.alertQuestion(
       'warning',
       'Actualizar',
-      'Desea Actualizar Este Registro?'
+      '¿Desea Actualizar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterTiieService
