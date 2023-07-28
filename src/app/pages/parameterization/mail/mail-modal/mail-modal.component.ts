@@ -26,7 +26,7 @@ export class MailModalComponent extends BasePage implements OnInit {
   segUsers: ISegUsers;
   delegationNumber: IUserAccessAreas;
 
-  title: string = 'Mantenimiento de correo';
+  title: string = 'Mantenimiento de Correo';
   edit: boolean = false;
 
   constructor(
@@ -60,7 +60,14 @@ export class MailModalComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      rfc: [null, [Validators.maxLength(13), Validators.pattern(RFC_PATTERN)]],
+      rfc: [
+        null,
+        [
+          Validators.maxLength(13),
+          Validators.pattern(RFC_PATTERN),
+          Validators.required,
+        ],
+      ],
       curp: [
         null,
         [Validators.maxLength(20), Validators.pattern(CURP_PATTERN)],
@@ -83,7 +90,7 @@ export class MailModalComponent extends BasePage implements OnInit {
       ],
       phone: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(20), Validators.pattern(NUMBERS_PATTERN)],
       ],
       profession: [
         null,
@@ -158,6 +165,7 @@ export class MailModalComponent extends BasePage implements OnInit {
     });
     if (this.segUsers != null) {
       this.delegationNumber = this.segUsers.usuario as IUserAccessAreas;
+
       this.edit = true;
       const formatFec = this.segUsers.passLastChangeDate;
       const fechaObjeto = new Date(formatFec);
@@ -228,7 +236,7 @@ export class MailModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
