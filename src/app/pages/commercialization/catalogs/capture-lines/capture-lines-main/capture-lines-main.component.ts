@@ -45,9 +45,9 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
               case 'eventId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              // case 'CLAVE-DE-EVENTOS':
-              //   searchFilter = SearchFilter.ILIKE;
-              //   break;
+              case 'eatEventDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
               case 'customerBmx':
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -67,7 +67,13 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (filter.field === 'eatEventDetail') {
+                this.columnFilters[
+                  'filter.eatEventDetail.processKey'
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
             } else {
               delete this.columnFilters[field];
             }
@@ -102,12 +108,12 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.capturelineService.getAll(params).subscribe({
+    this.capturelineService.getAll2(params).subscribe({
       next: response => {
         this.captureLinesMain = response.data;
         this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
