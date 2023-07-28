@@ -171,7 +171,6 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
     this.authorityService.getAll(params).subscribe({
       next: data => {
         this.authority = new DefaultSelect(data.data, data.count);
-        console.log('Las autoridades: ', this.authority);
       },
       error: () => {
         this.authority = new DefaultSelect();
@@ -198,7 +197,6 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
         if (response.count > 0) {
           const name = this.formCapture.get('urecepcion').value;
           const data = response.data.filter(m => m.id == name);
-          console.log(data);
           this.formCapture.get('urecepcion').patchValue(data[0]);
         }
         this.users$ = new DefaultSelect(response.data, response.count);
@@ -302,8 +300,6 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
           value?.id || value?.idAuthority || value || this.convertDate(value);
       }
     }
-
-    console.log('Estos son los parametros: ', params);
     this.consultEmmit.emit(params);
   }
 

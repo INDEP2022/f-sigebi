@@ -1,9 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { CaptureDig } from 'src/app/core/models/ms-documents/documents';
+import { ICaptureDig } from 'src/app/core/models/ms-documents/documents';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -15,12 +15,15 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class IndicatorsHistoryComponent extends BasePage implements OnInit {
   //
 
-  @ViewChild('grid', { static: false }) grid: Ng2SmartTableComponent;
   @ViewChild('columnContent') columnContent: ElementRef;
+
   data: LocalDataSource = new LocalDataSource();
-  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  columns: CaptureDig[] = [];
+  columns: ICaptureDig[] = [];
+  noVolante: number;
+  noExpediente: number;
+
+  totalItems: number = 0;
   danger: boolean = false;
 
   //
@@ -41,19 +44,19 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
         position: 'right',
       },
       columns: {
-        coordinacion_regional: {
+        regionalCoordination: {
           title: 'Regional',
           sort: false,
         },
-        cve_oficio_externo: {
+        externalLetterCode: {
           title: 'Cve. Oficio Externo',
           sort: false,
         },
-        no_expediente: {
+        fileNumber: {
           title: 'No. Expediente',
           sort: false,
         },
-        no_volante: {
+        flyerNumber: {
           title: 'No. Volante',
           sort: false,
         },
@@ -62,7 +65,7 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
           sort: false,
           filter: false,
           type: 'html',
-          valuePrepareFunction: (image: any, row: CaptureDig) => {
+          valuePrepareFunction: (image: any, row: ICaptureDig) => {
             return this.assignAndValidateImageOne(row);
           },
         },
@@ -128,13 +131,13 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
     });
   }
 
-  assignAndValidateImageOne(i: CaptureDig) {
-    if (i.fescaneo == null) {
+  assignAndValidateImageOne(i: ICaptureDig) {
+    if (i.scanningDate == null) {
       return this._domSanitizer.bypassSecurityTrustHtml(
         `<img src="../../../../../../../assets/images/no_cumplido.png" alt="Smiley face" height="20" width="100">`
       );
     } else {
-      if (i.cant_bien != 0) {
+      if (i.quantityGoods != 0) {
         return this._domSanitizer.bypassSecurityTrustHtml(
           `<img src="../../../../../../../assets/images/cumplido.png" alt="Smiley face" height="20" width="100">`
         );
@@ -145,5 +148,8 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
     );
   }
 
-  assignAndValidateImageTwo() {}
+  onUserRowSelect(event: any) {
+    this.noVolante = event.selected[0].flyerNumber | 0;
+    this.noExpediente = event.selected[0].fileNumber | 0;
+  }
 }

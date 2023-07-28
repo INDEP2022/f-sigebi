@@ -1,4 +1,3 @@
-import { Injectable } from '@angular/core';
 import { IExpedient } from '../ms-expedient/expedient';
 
 export interface IDocuments {
@@ -86,39 +85,51 @@ export interface ICatDigitalizationTemp {
 }
 
 export interface ICaptureDig {
-  coordinacion_regional: number;
-  cve_oficio_externo: string;
-  no_expediente: IExpedient;
-  no_volante: number;
-  no_tramite: number;
-  urecepcion: number;
-  programa: string;
-  fescaneo: string;
-  cant_bien: number;
-  finicia: string;
-  fmaxima: string;
+  regionalCoordination: number;
+  externalLetterCode: string;
+  fileNumber: IExpedient;
+  flyerNumber: number;
+  procedureNumber: number;
+  receptionUnit: number;
+  // programa: string;
+  scanningDate: string;
+  quantityGoods: number;
+  startDate: string;
+  maximumDate: string;
   cumplio: boolean;
   column5: string;
-  image: string;
 }
 
-@Injectable()
-export class CaptureDig {
-  coordinacion_regional: number;
-  cve_oficio_externo: string;
-  no_expediente: IExpedient;
+export interface ICaptureHistoryIndicators {
+  num: number;
+  indicador: string;
+  no_expediente: number;
   no_volante: number;
-  no_tramite: number;
-  urecepcion: number;
-  programa: string;
-  fescaneo: string;
-  cant_bien: number;
-  finicia: string;
-  fmaxima: string;
-  cumplio: boolean;
-  column5: string;
-  image: string;
+  usr_trabaja: string;
+  fec_ingreso: string;
+  fec_trabajo: string;
+  fecha_max: string;
+  cumplio: string;
+  no_dias: number;
 }
+
+// @Injectable()
+// export class CaptureDig {
+//   coordinacion_regional: number;
+//   cve_oficio_externo: string;
+//   no_expediente: IExpedient;
+//   no_volante: number;
+//   no_tramite: number;
+//   urecepcion: number;
+//   programa: string;
+//   fescaneo: string;
+//   cant_bien: number;
+//   finicia: string;
+//   fmaxima: string;
+//   cumplio: boolean;
+//   column5: string;
+//   image: string;
+// }
 
 export interface ICaptureDigFilter {
   cveJobExternal: string;
