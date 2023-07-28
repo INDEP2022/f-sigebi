@@ -46,7 +46,11 @@ export class SatSubclassificationFormComponent
       id: [null],
       nameSubClasification: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       idClasification: [null, [Validators.required]],
       idClasificationCode: [null],
@@ -181,7 +185,7 @@ export class SatSubclassificationFormComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
