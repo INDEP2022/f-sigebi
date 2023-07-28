@@ -53,7 +53,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   insert: boolean = false;
   lettersAll: IComerLetter[] = [];
   idGood: number = null;
-  dateLetter: string = '';
+  dateLetter = new Date();
   valid: boolean = false;
   validPermisos: boolean = false;
   start: string;
@@ -198,6 +198,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
   bienlotForm() {
     this.bienesLotesForm = this.fb.group({
+      lote: [null],
       evento: [null],
       description: [null],
     });
@@ -271,13 +272,25 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLetterService.getById(id).subscribe({
       next: data => {
         this.loading = false;
-        this.dateLetter = this.datePipe.transform(
-          this.comerLibsForm.controls['fechaCarta'].value,
-          'dd/MM/yyyy'
-        );
+        this.datePipe.transform(this.dateLetter, 'dd/MM/yyyy');
         console.log(data);
         this.letter = data;
-        this.comerLibsForm.patchValue(this.letter);
+        this.comerLibsForm.get('oficio').setValue(this.letter.id);
+        this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
+        this.comerLibsForm.get('puesto').setValue(this.letter.position);
+        this.comerLibsForm.get('parrafo1').setValue(this.letter.paragraph1);
+        this.comerLibsForm.get('parrafo2').setValue(this.letter.paragraph2);
+        this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
+        this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
+        this.comerLibsForm
+          .get('fechaFactura')
+          .setValue(this.letter.invoiceDate);
+        this.comerLibsForm.get('ccp1').setValue(this.letter.ccp1);
+        this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
+        this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
+        this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
+        this.comerLotes(this.letter.lotsId);
+        // this.bienesLotesForm.get('description').setValue(this.letter.lots);
       },
       error: () => {
         console.log('error');
@@ -411,6 +424,19 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           this.modalService.show(PreviewDocumentsComponent, config);
         }
       });
+  }
+
+  comerBienesLetter(params: ListParams) {}
+  comerLotes(id: number) {
+    this.comerLotService.getByIdLot(id).subscribe({
+      next: data => {
+        this.comerLotes = data;
+        console.log(this.comerLotes);
+      },
+      error: error => {
+        console.error(error);
+      },
+    });
   }
 
   cleanForm(): void {

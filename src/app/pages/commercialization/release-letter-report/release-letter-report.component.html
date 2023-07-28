@@ -98,22 +98,13 @@
                         label="Oficio">
                         <input
                           type="number"
+                          maxlength="50"
                           [readonly]="!validPermisos"
                           class="form-control"
                           formControlName="oficio" />
                       </form-field>
                     </div>
                   </div>
-                  <!-- <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field [control]="
-                                                comerLibsForm.get('description')
-                                              " label="Descripción">
-                        <input #inputValue type="text" class="form-control" formControlName="description"
-                          class="form-control" readonly />
-                      </form-field>
-                    </div>
-                  </div> -->
                   <div class="col-md-4 mt-3">
                     <div>
                       <form-field
@@ -143,25 +134,7 @@
                       </form-field>
                     </div>
                   </div>
-                  <div class="col-md-4 mt-2">
-                    <div>
-                      <form-field
-                        [control]="comerLibsForm.get('adjudicatorio')"
-                        label="Adjudicatorio">
-                        <input
-                          type="text"
-                          [readonly]="!validPermisos"
-                          class="form-control"
-                          formControlName="adjudicatorio"
-                          readonly />
-                      </form-field>
-                    </div>
-                  </div>
                   <div class="card-body">
-                    <!-- <form-field [control]=" comerLibsForm.get('parrafo1')" label="P&aacute;rrafo 1">
-                      <textarea maxlength="500" [readonly]="!validPermisos" type="text" class="form-control"
-                        formControlName="parrafo1" rows="5"></textarea>
-                    </form-field> -->
                     <form-field
                       class="col-md-12 col-sm-12 col-12 p-2"
                       [control]="comerLibsForm.get('parrafo1')"
@@ -173,6 +146,102 @@
                         formControlName="parrafo1"
                         rows="5"></textarea>
                     </form-field>
+                  </div>
+                  <div class="col-md-4 mt-2">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('adjudicatorio')"
+                        label="Adjudicatorio">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="adjudicatorio"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('factura')"
+                        label="No. Factura">
+                        <input
+                          type="text"
+                          maxlength="20"
+                          [readonly]="!validPermisos"
+                          class="form-control"
+                          formControlName="factura" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('fechaFactura')"
+                        label="Fecha Factura">
+                        <input
+                          bsDatepicker
+                          class="form-control"
+                          [readonly]="!validPermisos"
+                          formControlName="fechaFactura" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form-field
+                      class="col-md-12 col-sm-12 col-12 p-2"
+                      [control]="comerLibsForm.get('parrafo2')"
+                      label="P&aacute;rrafo 2">
+                      <textarea
+                        maxlength="500"
+                        class="form-control"
+                        [readonly]="!validPermisos"
+                        formControlName="parrafo2"
+                        rows="5"></textarea>
+                    </form-field>
+                  </div>
+                  <div class="card-body">
+                    <form-field
+                      class="col-md-12 col-sm-12 col-12 p-2"
+                      [control]="comerLibsForm.get('firmante')"
+                      label="Firmante">
+                      <textarea
+                        maxlength="500"
+                        class="form-control"
+                        [readonly]="!validPermisos"
+                        formControlName="firmante"
+                        rows="5"></textarea>
+                    </form-field>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('ccp1')"
+                        label="CCP1">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="ccp1" />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('ccp2')"
+                        label="CCP2">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="ccp2" />
+                      </form-field>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -205,7 +274,32 @@
         </div> -->
     </form>
   </div>
-  <!-- <form [formGroup]="bienesLotesForm" class="form-material">
-   
-  </form> -->
+  <form [formGroup]="bienesLotesForm" class="form-material">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="col-md-4 mt-3">
+                  <div>
+                    <form-field
+                      [control]="bienesLotesForm.get('description')"
+                      label="Descripción">
+                      <input
+                        type="text"
+                        [readonly]="!validPermisos"
+                        class="form-control"
+                        formControlName="description"
+                        maxlength="50" />
+                    </form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </app-card>
