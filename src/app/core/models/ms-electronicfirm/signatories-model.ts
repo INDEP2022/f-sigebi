@@ -49,3 +49,13 @@ export interface IUpdateComerPagosRef {
   referenceId: number;
   documentId: number;
 }
+
+export interface IComerOrigins {
+  originId: number;
+  screenKey: string;
+  signatoriesNumber: number;
+  description: string;
+  reportKey: string;
+  recordNumber: number;
+  nbOrigin: string;
+}

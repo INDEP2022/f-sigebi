@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CBROimCReportsModalComponent } from '../reports-modal/reports-modal.component';
+import { SignatureAuxiliaryCatalogsService } from '../services/signature-auxiliary-catalogs.service';
 import { TypesModalComponent } from '../types-modal/types-modal.component';
 import {
   ELECTRONIC_SIGNATURE_ADDRESSEE_COLUMNS,
@@ -27,6 +32,15 @@ export class SignatureAuxiliaryCatalogsMainComponent
   layout: string = 'movable'; // 'movable', 'immovable'
   selectedReport: any[] = [];
   orders: number[] = [];
+  // Reports Table
+  dataTableReport: LocalDataSource = new LocalDataSource();
+  dataTableParamsReport = new BehaviorSubject<ListParams>(new ListParams());
+  loadingReport: boolean = false;
+  totalReport: number = 0;
+  testDataReport: any[] = [];
+  columnFiltersReport: any = [];
+  // Addresee Table
+
   reportParams = new BehaviorSubject<ListParams>(new ListParams());
   addresseeParams = new BehaviorSubject<ListParams>(new ListParams());
   typeParams = new BehaviorSubject<ListParams>(new ListParams());
@@ -169,7 +183,8 @@ export class SignatureAuxiliaryCatalogsMainComponent
 
   constructor(
     private route: ActivatedRoute,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private svSignatureAuxiliaryCatalogsService: SignatureAuxiliaryCatalogsService
   ) {
     super();
     this.reportSettings.columns = ELECTRONIC_SIGNATURE_REPORT_COLUMNS;
@@ -186,6 +201,11 @@ export class SignatureAuxiliaryCatalogsMainComponent
       }
     });
     this.getData();
+    this.initForm();
+  }
+
+  initForm() {
+    this.loadingDataTableReport();
   }
 
   getData() {
@@ -254,6 +274,77 @@ export class SignatureAuxiliaryCatalogsMainComponent
         // Llamar servicio para eliminar
         console.log(type);
       }
+    });
+  }
+
+  loadingDataTableReport() {
+    //Filtrado por columnas
+    this.dataTableReport
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.user`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              referenceid: () => (searchFilter = SearchFilter.EQ),
+              reportkey: () => (searchFilter = SearchFilter.EQ),
+              description: () => (searchFilter = SearchFilter.ILIKE),
+              denomination: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersReport[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersReport[field];
+            }
+          });
+          this.dataTableParamsReport = this.pageFilter(
+            this.dataTableParamsReport
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getReportData();
+        }
+      });
+
+    this.columnFiltersReport['filter.creationdate'] = `$order:desc`;
+    //observador para el paginado
+    this.dataTableParamsReport
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getReportData());
+  }
+
+  getReportData() {
+    this.loadingReport = true;
+    let params = {
+      ...this.dataTableParamsReport.getValue(),
+      ...this.columnFiltersReport,
+    };
+    console.log('PARAMS ', params);
+    this.svSignatureAuxiliaryCatalogsService.getComerOrigins(params).subscribe({
+      next: res => {
+        console.log('DATA REPORT', res);
+        this.testDataReport = res.data;
+        this.dataTableReport.load(this.testDataReport);
+        this.totalReport = res.count;
+        this.loadingReport = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataReport = [];
+        this.dataTableReport.load([]);
+        this.totalReport = 0;
+        this.loadingReport = false;
+      },
     });
   }
 }
