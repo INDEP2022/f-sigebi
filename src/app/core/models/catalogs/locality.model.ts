@@ -27,3 +27,8 @@ export interface ILocality2 {
   editionUser: string;
   modificationDate: string;
 }
+
+export interface ILocalityGetAll {
+  idLocality: number;
+  nameLocation: string;
+}

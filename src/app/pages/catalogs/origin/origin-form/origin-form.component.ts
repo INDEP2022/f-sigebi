@@ -6,6 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IOrigin } from 'src/app/core/models/catalogs/origin.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { OriginService } from 'src/app/core/services/catalogs/origin.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -26,12 +27,15 @@ export class OriginFormComponent extends BasePage implements OnInit {
   origin: IOrigin;
   origins = new DefaultSelect<IOrigin>();
 
+  transferentSelect = new DefaultSelect();
+
   @Output() refresh = new EventEmitter<true>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private originService: OriginService,
-    private cityService: CityService
+    private cityService: CityService,
+    private transferenteService: TransferenteService
   ) {
     super();
   }
@@ -43,13 +47,20 @@ export class OriginFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [],
+      id: [
+        null,
+        [
+          Validators.maxLength(15),
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       idTransferer: [
         null,
         [
           Validators.required,
           Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(15),
         ],
       ],
       keyTransferer: [
@@ -65,7 +76,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(255),
         ],
       ],
       type: [
@@ -73,7 +84,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(255),
         ],
       ],
       address: [
@@ -81,10 +92,10 @@ export class OriginFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(255),
         ],
       ],
-      cityCode: [null, [Validators.required]],
+      city: [null, [Validators.required]],
       idCity: [
         null,
         [
@@ -98,19 +109,48 @@ export class OriginFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(80),
+          Validators.maxLength(15),
         ],
       ],
     });
     if (this.origin != null) {
       this.edit = true;
-      let city = this.origin.cityCode;
+      let city = this.origin.city;
       this.form.patchValue(this.origin);
-      this.form.controls['cityCode'].setValue(city.nameCity);
-      this.form.controls['cityCodeID'].setValue(city.idCity);
-      const { cityCode } = this.origin;
-      this.cities = new DefaultSelect([cityCode.nameCity], 1);
+      this.form.controls['keyTransferer'].disable();
+      this.form.controls['idTransferer'].disable();
+      this.form.controls['idCity'].disable();
+      this.form.controls['id'].disable();
+
+      //this.form.controls['cityCode'].setValue(city.nameCity);
+      //this.form.controls['cityCodeID'].setValue(city.idCity);
+      //const { cityCode } = this.origin;
+      //this.cities = new DefaultSelect([cityCode.nameCity], 1);
     }
+    this.form.controls['keyTransferer'].disable();
+    this.form.controls['idCity'].disable();
+    setTimeout(() => {
+      this.getTransfer(new ListParams());
+      this.getCities(new ListParams());
+    }, 1000);
+  }
+
+  getTransfer(params: ListParams) {
+    this.transferenteService.getAll(params).subscribe({
+      next: data => {
+        console.log(data.data);
+        this.transferentSelect = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.transferentSelect = new DefaultSelect([], 0);
+        console.log('error', err);
+      },
+    });
+  }
+
+  changeSelect(event: any) {
+    console.log(event.keyTransferent);
+    this.form.controls['keyTransferer'].setValue(event.keyTransferent);
   }
 
   getData(params: ListParams) {
@@ -136,6 +176,11 @@ export class OriginFormComponent extends BasePage implements OnInit {
     this.getCities(new ListParams(), data.id);
   }
 
+  changeCity(event: any) {
+    console.log(event.nameCity);
+    this.form.controls['idCity'].setValue(event.idCity);
+  }
+
   close() {
     this.modalRef.hide();
   }
@@ -154,8 +199,19 @@ export class OriginFormComponent extends BasePage implements OnInit {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);
       return; // Retorna temprano si el campo está vacío.
     }
+    /*let body = {
+      id
+      idTransferer
+      keyTransferer
+      description
+      type
+      address
+      city
+      idCity
+      keyEntityFederative
+    }*/
     this.loading = true;
-    this.originService.create(this.form.value).subscribe({
+    this.originService.create(this.form.getRawValue()).subscribe({
       next: data => {
         this.handleSuccess(), console.log(data);
       },

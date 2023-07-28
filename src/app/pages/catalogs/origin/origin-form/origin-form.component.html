@@ -5,7 +5,7 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field [control]="form.get('id')" label="No. Transferencia">
             <input
               type="text"
@@ -14,21 +14,10 @@
               formControlName="id" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field
-            [control]="form.get('idTransferer')"
-            label="No. Transferente">
-            <input
-              type="text"
-              class="form-control"
-              id="idTransferer"
-              formControlName="idTransferer" />
-          </form-field>
-        </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
           <form-field
             [control]="form.get('keyTransferer')"
-            label="Clave Transferencia">
+            label="Clave Transferente">
             <input
               type="text"
               class="form-control"
@@ -36,6 +25,30 @@
               formControlName="keyTransferer" />
           </form-field>
         </div>
+        <div class="pt-3 col-md-12">
+          <form-field [control]="form.get('idTransferer')">
+            <ngx-select
+              (fetchItems)="getTransfer($event)"
+              [data]="transferentSelect"
+              [form]="form"
+              value="id"
+              bindLabel="nameTransferent"
+              label="No. Transferente"
+              control="idTransferer"
+              (change)="changeSelect($event)">
+            </ngx-select>
+          </form-field>
+          <!--<form-field
+            [control]="form.get('idTransferer')"
+            label="No. Transferente">
+            <input
+              type="text"
+              class="form-control"
+              id="idTransferer"
+              formControlName="idTransferer" />
+          </form-field>-->
+        </div>
+
         <div class="col-md-12 pt-3">
           <form-field
             [control]="form.get('description')"
@@ -65,7 +78,7 @@
               formControlName="address"></textarea>
           </form-field>
         </div>
-        <div class="col-md-12 pt-3">
+        <div class="col-md-6 pt-3">
           <form-field [control]="form.get('idCity')" label="No. Ciudad">
             <input
               type="text"
@@ -74,20 +87,21 @@
               formControlName="idCity" />
           </form-field>
         </div>
-        <div class="col-md-12 pt-3">
-          <form-field [control]="form.get('cityCode')">
+        <div class="col-md-6 pt-3">
+          <form-field [control]="form.get('city')">
             <!--<input type="text" class="form-control" id="city" formControlName="city" />-->
             <ngx-select
               [form]="form"
               [data]="cities"
               label="Ciudad"
-              value="idCity"
+              value="nameCity"
               bindLabel="nameCity"
-              control="cityCode">
+              control="city"
+              (change)="changeCity($event)">
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-12 pt-3">
+        <div class="col-md-6 pt-3">
           <form-field
             [control]="form.get('keyEntityFederative')"
             label="Clave Federativa">
@@ -104,7 +118,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

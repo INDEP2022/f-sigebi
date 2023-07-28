@@ -47,7 +47,23 @@ export class BatchListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'numStore':
+                field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'numRegister':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'id' ||
             filter.field == 'numRegister' ||
             filter.field == 'weightedDeduction' ||
             filter.field == 'startingRankPercentage' ||
@@ -55,7 +71,7 @@ export class BatchListComponent extends BasePage implements OnInit {
             filter.field == 'status' ||
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
