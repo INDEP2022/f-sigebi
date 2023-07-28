@@ -180,48 +180,76 @@
                     settingsTransportableGoods
                   "></app-columns-select>
               </div>
-              <div class="table-responsive pt-3">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settingsTransportableGoods"
-                  [source]="goodsTranportables"
-                  (edit)="showAddress($event.data)">
-                </ng2-smart-table>
+
+              <div
+                class="row"
+                *ngIf="formLoadingTransportable"
+                style="margin-bottom: 5rem">
+                <form-loader *ngIf="formLoadingTransportable"></form-loader>
+              </div>
+              <div *ngIf="!formLoadingTransportable">
+                <div class="table-responsive pt-3">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered table-responsive'"
+                    [settings]="settingsTransportableGoods"
+                    [source]="goodsTranportables"
+                    (edit)="showAddress($event.data)">
+                  </ng2-smart-table>
+                </div>
               </div>
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItemsTransportable"></app-pagination>
+                [params]="paramsTransportableGoods"
+                [totalItems]="totalItemsTransportableGoods"></app-pagination>
             </tab>
             <tab [heading]="headingGuard">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
-              <div class="table-responsive pt-3">
+              <div
+                class="row"
+                *ngIf="formLoadingGuard"
+                style="margin-bottom: 5rem">
+                <form-loader *ngIf="formLoadingGuard"></form-loader>
+              </div>
+
+              <div *ngIf="!formLoadingGuard">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive pt-3'"
                   [settings]="settingGuardGoods"
                   [source]="goodsGuards"
                   (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
+              <app-pagination
+                [params]="paramsGuardGoods"
+                [totalItems]="totalItemsTransportableGuard"></app-pagination>
             </tab>
             <tab [heading]="headingWarehouse">
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-start">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>
-              <div class="table-responsive pt-3">
+              <div
+                class="row"
+                *ngIf="formLoadingWarehouse"
+                style="margin-bottom: 5rem">
+                <form-loader *ngIf="formLoadingWarehouse"></form-loader>
+              </div>
+              <div *ngIf="!formLoadingWarehouse">
                 <ng2-smart-table
-                  [attr.class]="'table-bordered'"
+                  [attr.class]="'table-bordered table-responsive pt-3'"
                   [settings]="settingWarehouseGoods"
                   [source]="goodsWarehouse"
                   (edit)="showAddress($event.data)">
                 </ng2-smart-table>
               </div>
+
               <app-pagination
-                [params]="params"
-                [totalItems]="totalItemsWarehouse"></app-pagination>
+                [params]="paramsWarehouseGoods"
+                [totalItems]="
+                  totalItemsTransportableWarehouse
+                "></app-pagination>
             </tab>
           </tabset>
         </div>
