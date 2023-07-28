@@ -24,6 +24,7 @@
               (fetchItems)="getUsers($event)"
               [data]="users"
               [form]="comerUserForm"
+              (change)="userChange($event)"
               value="user"
               bindLabel="userAndName"
               control="username"
@@ -34,6 +35,8 @@
         <div class="col-md-3">
           <form-field label="Fecha" [control]="comerUserForm.get('date')">
             <input
+              [ngClass]="{ 'bg-gray': disabledSend }"
+              [readonly]="disabledSend"
               type="text"
               class="form-control"
               formControlName="date"

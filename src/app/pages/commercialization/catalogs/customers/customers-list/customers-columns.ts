@@ -1,3 +1,5 @@
+import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
+
 export const CUSTOMERS_COLUMNS = {
   id: {
     title: 'Clave Cliente',
@@ -85,10 +87,40 @@ export const CUSTOMERS_COLUMNS = {
   blackListDate: {
     title: 'Fecha de Lista Negra',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      const dateObject = typeof date === 'string' ? new Date(date) : date;
+      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+        const year = dateObject.getFullYear();
+        return `${day}/${month}/${year}`;
+      } else {
+        return date;
+      }
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   releaseDate: {
     title: 'Fecha de Liberación',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      const dateObject = typeof date === 'string' ? new Date(date) : date;
+      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+        const year = dateObject.getFullYear();
+        return `${day}/${month}/${year}`;
+      } else {
+        return date;
+      }
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   penaltyId: {
     title: 'Clave de Penalización',
@@ -109,6 +141,21 @@ export const CUSTOMERS_COLUMNS = {
   freeDate: {
     title: 'Fecha Libera',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      const dateObject = typeof date === 'string' ? new Date(date) : date;
+      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+        const year = dateObject.getFullYear();
+        return `${day}/${month}/${year}`;
+      } else {
+        return date;
+      }
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   registryNumber: {
     title: 'No. Registro',
@@ -147,7 +194,7 @@ export const CUSTOMERS_COLUMNS = {
     sort: false,
   },
   interbankKey: {
-    title: 'CLABE',
+    title: 'CLABE Interbancaria',
     sort: false,
   },
   bank: {
@@ -165,6 +212,21 @@ export const CUSTOMERS_COLUMNS = {
   penaltyInitDate: {
     title: 'Fecha Inicial de Penalización',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      const dateObject = typeof date === 'string' ? new Date(date) : date;
+      if (dateObject instanceof Date && !isNaN(dateObject.getTime())) {
+        const day = dateObject.getDate().toString().padStart(2, '0');
+        const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+        const year = dateObject.getFullYear();
+        return `${day}/${month}/${year}`;
+      } else {
+        return date;
+      }
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },
   },
   penalizeUser: {
     title: 'Usuario Penalizado',

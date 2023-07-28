@@ -1,6 +1,16 @@
 export const GOODS_EYE_VISIT_COLUMNS = {
+  resultTaxpayer: {
+    title: 'Resultado del Contribuyente',
+    type: 'string',
+    sort: false,
+  },
   goodGrouper: {
     title: 'Nombre del Bien Agrupador',
+    type: 'string',
+    sort: false,
+  },
+  codeStore: {
+    title: 'Código Almacén',
     type: 'string',
     sort: false,
   },
@@ -11,16 +21,6 @@ export const GOODS_EYE_VISIT_COLUMNS = {
   },
   endVisitDate: {
     title: 'Fecha Hora Fin',
-    type: 'string',
-    sort: false,
-  },
-  proceedingsId: {
-    title: 'Expediente',
-    type: 'string',
-    sort: false,
-  },
-  applicationId: {
-    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
@@ -99,11 +99,6 @@ export const GOODS_EYE_VISIT_COLUMNS = {
   //delegationRegionalId
   delegationDescrip: {
     title: 'Delegación',
-    type: 'string',
-    sort: false,
-  },
-  codeStore: {
-    title: 'Código Almacén',
     type: 'string',
     sort: false,
   },

@@ -1,92 +1,131 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS = {
   paymentId: {
-    title: 'Id.Pago',
-    width: '15%',
+    title: 'ID Pago',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
   reference: {
-    title: 'Ref.',
-    width: '15%',
+    title: 'Referencia',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
   movementNumber: {
     title: 'No. Movto.',
-    width: '15%',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
   move: {
     title: 'Movimiento',
-    width: '15%',
+    // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.comerctrlpayments ? row.comerctrlpayments.description : null;
+    },
   },
   date: {
     title: 'Fecha',
-    width: '15%',
+    // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   amount: {
     title: 'Monto',
-    width: '15%',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
   bankKey: {
     title: 'Banco',
-    width: '15%',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
-  oi: {
+  entryOrderId: {
     title: 'OI',
-    width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  dateOi: {
-    title: 'Fecha OI',
-    width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  customerId: {
-    title: 'Id.Cliente',
-    width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  taxId: {
-    title: 'R.F.C',
-    width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  name: {
-    title: 'Nombre',
-    width: '15%',
-    type: 'string',
-    sort: false,
-  },
-  devPena: {
-    title: 'Dev/Pena',
-    width: '15%',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
   event: {
     title: 'Evento',
-    width: '15%',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.comerLots ? row.comerLots.idEvent : null;
+    },
+  },
+  lotPub: {
+    title: 'Lote Pub.',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.comerLots ? row.comerLots.lotPublic : null;
+    },
+  },
+
+  // dateOi: {
+  //   title: 'Fecha OI',
+  //   width: '15%',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  clientId: {
+    title: 'ID Cliente',
+    // width: '15%',
     type: 'string',
     sort: false,
   },
-  batch: {
-    title: 'Lote',
-    width: '15%',
+  rfc: {
+    title: 'R.F.C',
+    // width: '15%',
     type: 'string',
     sort: false,
+  },
+  name: {
+    title: 'Nombre',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  appliedTo: {
+    title: 'Dev/Pena',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'D', title: 'Devolución' },
+          { value: 'P', title: 'Penalización' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.appliedTo == 'P') {
+        return 'Penalización';
+      } else if (row.appliedTo == 'D') {
+        return 'Devolución';
+      } else {
+        return row.appliedTo;
+      }
+    },
   },
 };

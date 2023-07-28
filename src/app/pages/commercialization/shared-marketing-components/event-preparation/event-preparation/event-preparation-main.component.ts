@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
+import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { BasePage } from 'src/app/core/shared';
 import { TrackerValues } from 'src/app/pages/general-processes/goods-tracker/utils/constants/filter-match';
 import { EventFormVisualProperties } from '../utils/classes/comer-event-properties';
@@ -88,4 +89,5 @@ export class EventPreparationMain extends BasePage {
   events = new LocalDataSource();
 
   preparation = false;
+  lotSelected: IComerLot;
 }

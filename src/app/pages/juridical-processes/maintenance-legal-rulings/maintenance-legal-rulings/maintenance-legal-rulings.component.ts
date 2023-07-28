@@ -4,11 +4,11 @@ import { BehaviorSubject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IUsrRelBitacora } from 'src/app/core/models/ms-audit/usr-rel-bitacora.model';
-import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
+import { IDataCopiasOficio } from 'src/app/core/models/ms-dictation/copies-official-opinion.model';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
-import { IDictationXGood1 } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
+import { IDataBienes } from 'src/app/core/models/ms-dictation/dictation-x-good1.model';
 import { IOfficialDictation } from 'src/app/core/models/ms-dictation/official-dictation.model';
-import { IDocumentsDictumXStateM } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
+import { IDataDocumentosBien } from 'src/app/core/models/ms-documents/documents-dictum-x-state-m';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
@@ -31,9 +31,9 @@ export class MaintenanceLegalRulingComponent
   public form: FormGroup;
   user: TokenInfoModel;
   params = new BehaviorSubject<FilterParams>(new FilterParams());
-  dataDocumentDictumStateM: IDocumentsDictumXStateM[] = [];
-  dataDictationXGood1: IDictationXGood1[] = [];
-  dataCopiesOfficialOpinion: ICopiesOfficialOpinion[] = [];
+  dataDocumentDictumStateM: IDataDocumentosBien;
+  dataDictationXGood1: IDataBienes;
+  dataCopiesOfficialOpinion: IDataCopiasOficio;
   dataJobDictumTexts: IJobDictumTexts;
   dataOfficialDictation: IOfficialDictation;
   loading1: boolean = false;
@@ -161,10 +161,11 @@ export class MaintenanceLegalRulingComponent
 
     this.documentsDictumStatetMService.getAll(data.getParams()).subscribe({
       next: data => {
-        this.dataDocumentDictumStateM = data.data;
+        this.dataDocumentDictumStateM = data;
+        this.loading2 = false;
       },
       error: () => {
-        this.dataDocumentDictumStateM = [];
+        this.dataDocumentDictumStateM = null;
         this.loading2 = false;
       },
     });
@@ -191,10 +192,11 @@ export class MaintenanceLegalRulingComponent
 
     this.copiesOfficialOpinionService.getAll(data.getParams()).subscribe({
       next: data => {
-        this.dataCopiesOfficialOpinion = data.data;
+        this.dataCopiesOfficialOpinion = data;
+        this.loading3 = false;
       },
       error: err => {
-        this.dataCopiesOfficialOpinion = [];
+        this.dataCopiesOfficialOpinion = null;
         this.loading3 = false;
       },
     });
@@ -221,11 +223,11 @@ export class MaintenanceLegalRulingComponent
 
     this.dictationXGood1Service.getAll(data.getParams()).subscribe({
       next: data => {
-        this.dataDictationXGood1 = data.data;
-        console.log(data.data);
+        this.dataDictationXGood1 = data;
+        this.loading1 = false;
       },
       error: err => {
-        this.dataDictationXGood1 = [];
+        this.dataDictationXGood1 = null;
         this.loading1 = false;
       },
     });
@@ -257,20 +259,23 @@ export class MaintenanceLegalRulingComponent
     }
     console.log(this.user);
     const req: Partial<IUsrRelBitacora> = {
-      // sessionId: this.user.,
-      sidId: this.user.sid,
+      sessionId: null, //api dice que es tipo number, pendiente validar, se le preguntó a Marcelo. Henry me confirma que envíe null temporalmente.
+      sidId: null, //api dice que es tipo number, pendiente validar, se le preguntó a Marcelo.Henry me confirma que envíe null temporalmente.
       user: this.user.name.toUpperCase(),
-      userrequired: 'USER',
+      userrequired: this.user.name.toUpperCase(),
       observed: this.form.get('justificacion').value.toUpperCase(),
       observedDate: new Date(),
-      // detiUser: 'USER',
+      detiUser: this.user.name.toUpperCase(),
     };
+
+    console.log('Body para justificacion: ', req);
     this.loading = true;
 
     this.usrRelLogService.create(req as any).subscribe({
       next: data => {
         this.alert('success', 'Se ha creado la bitácora correctamente.', '');
         this.loading = false;
+        this.form.reset();
       },
       error: err => {
         this.loading = false;

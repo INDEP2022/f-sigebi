@@ -27,7 +27,7 @@
               </button>
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3 mt-3">
             <form-field [control]="form.get('idOI')" class="col" label="OI">
               <input type="text" formControlName="idOI" class="form-control" />
             </form-field>
@@ -39,24 +39,6 @@
             </form-field>
             <form-field [control]="form.get('ur')" label="UR" class="col">
               <input type="text" formControlName="ur" class="form-control" />
-            </form-field>
-            <form-field
-              [control]="form.get('clientRFC')"
-              label="Cliente RFC"
-              class="col">
-              <input
-                type="text"
-                formControlName="clientRFC"
-                class="form-control" />
-            </form-field>
-            <form-field
-              [control]="form.get('descriptionRFC')"
-              label="Nombre Cliente RFC"
-              class="col">
-              <input
-                type="text"
-                formControlName="descriptionRFC"
-                class="form-control" />
             </form-field>
             <form-field [control]="form.get('anexo')" label="Anexo" class="col">
               <input type="text" formControlName="anexo" class="form-control" />
@@ -77,6 +59,26 @@
               <input
                 type="text"
                 formControlName="idEvent"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="row mb-3 mt-3">
+            <form-field
+              [control]="form.get('clientRFC')"
+              label="Cliente RFC"
+              class="col-md-4">
+              <input
+                type="text"
+                formControlName="clientRFC"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="form.get('descriptionRFC')"
+              label="Nombre Cliente RFC"
+              class="col-md-8">
+              <input
+                type="text"
+                formControlName="descriptionRFC"
                 class="form-control" />
             </form-field>
           </div>
@@ -183,16 +185,7 @@
             [params]="params"
             [limit]="limit"
             [totalItems]="totalItems"></app-pagination>
-      <hr class="row mt-5 mb-5" />
-          <div class="row">
-              <form-field [control]="form.get('chain')" class="col" label="Cadena">
-                <textarea
-                  rows="5"
-                  class="form-control"
-                  [maxlength]="1000"
-                  formControlName="chain"></textarea>
-              </form-field>
-          </div>
+          <hr class="row mt-5 mb-5" />
         </div>
       </app-card>
     </form>
