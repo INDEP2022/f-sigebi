@@ -10,12 +10,14 @@
         <div class="ch-content" header>
           <h5 class="title">Delegaciones</h5>
           <div class="col-md-5 buttons">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
             <div>
               <button
-                (click)="openForm()"
-                class="btn btn-primary active btn-sm ml-3">
-                Nuevo
+                type="button"
+                tooltip="Nuevo"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -25,7 +27,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="delegationList"
+              [source]="data"
               (edit)="openForm($event.data)"
               (delete)="showDeleteAlert($event.data)"
               (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
@@ -37,24 +39,26 @@
       </div>
       <div class="col-md-6">
         <div class="ch-content" header>
-          <h5 class="title">Sub Delegaciones</h5>
+          <h5 class="title">Subdelegaciones</h5>
           <div class="col-md-5 buttons">
             <app-columns-select [(settings)]="settings2"></app-columns-select>
             <div>
               <button
-                id="new-sd"
-                (click)="openForm2()"
-                class="btn btn-primary active btn-sm ml-3 disabled">
-                Nuevo
+                type="button"
+                tooltip="Nuevo"
+                containerClass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm2()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
           </div>
         </div>
-        <div class="pt-3" [class]="loading ? 'table-loading' : ''">
+        <div class="pt-3" [class]="loading1 ? 'table-loading' : ''">
           <div class="table-responsive">
             <ng2-smart-table
               [settings]="settings2"
-              [source]="subDelegationList"
+              [source]="data1"
               (delete)="showDeleteAlert2($event.data)"
               (edit)="openForm2($event.data)"></ng2-smart-table>
           </div>

@@ -388,7 +388,7 @@ export class FormalizeProgrammingFormComponent
         //this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getInfoGoodsProgramming());
+          .subscribe(() => this.getInfoReceptionGood());
       });
   }
 
@@ -490,6 +490,34 @@ export class FormalizeProgrammingFormComponent
       });
   } */
 
+  getInfoReceptionGood() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    this.programmingService
+      .getGoodsProgramming(params.getValue())
+      .subscribe(data => {
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.filterStatusReception(data.data));
+
+        /* this.paramsGuard
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.filterStatusGuard(data.data));
+
+        this.paramsGoodsWarehouse
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.filterStatusWarehouse(data.data));
+
+        this.paramsReprog
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.filterStatusReprog(data.data));
+
+        this.filterStatusCancel(data.data); */
+        /*
+         */
+      });
+  }
+
   getInfoGoodsProgramming() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
@@ -520,6 +548,32 @@ export class FormalizeProgrammingFormComponent
 
   filterStatusReception(data: IGoodProgramming[]) {
     const goodsInfoRecep: any[] = [];
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.status'] = 'EN_RECEPCION';
+    this.programmingService
+      .getGoodsProgramming(params.getValue())
+      .subscribe(data => {
+        data.data.map(items => {
+          this.goodService.getGoodByIds(items.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              // queda pendiente mostrar el alías del almacén //
+
+              goodsInfoRecep.push(response);
+              this.goodsRecepcion.load(goodsInfoRecep);
+              this.totalItemsReception = this.goodsRecepcion.count();
+              //this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+            },
+          });
+        });
+      });
+    /*const goodsInfoRecep: any[] = [];
     const goodsRecep = data.filter(items => {
       return items.status == 'EN_RECEPCION';
     });
@@ -541,8 +595,9 @@ export class FormalizeProgrammingFormComponent
           //this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
         },
       });
-    });
+    }); */
   }
+
   filterStatusGuard(data: IGoodProgramming[]) {
     const goodsInfoGuard: any[] = [];
     const goodsTrans = data.filter(items => {

@@ -228,6 +228,11 @@ export class RegisterKeysLogicalTablesComponent
     this.form.controls['tableType'].setValue(tablesChange.tableType);
     this.form.controls['table'].setValue(tablesChange.table);
     // this.tableSelect = new DefaultSelect();
+    /*if (this.form.controls['tableType'].value == 1){
+      this.showNullRegister();
+    } else if (this.form.controls['tableType'].value == 5){
+      this.showNullRegister1();
+    }*/
     this.tdescCve = [];
     this.getKeys();
   }
@@ -268,25 +273,55 @@ export class RegisterKeysLogicalTablesComponent
     this.countTable = 0;
     let _id = this.form.controls['table'].value;
     this.loading2 = true;
-    this.tdescCveService
-      .getById(_id)
-      .pipe(
-        map((data2: any) => {
-          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
-          const array2: ITdescCve[] = [{ ...data2 }];
-          list.data = array2;
-          return list;
-        })
-      )
-      .subscribe({
-        next: response => {
-          this.tdescCve = response.data;
-          this.countTable = response.count;
-          this.totalItems2 = response.count;
-          this.loading2 = false;
-        },
-        error: error => (this.showNullRegister(), (this.loading2 = false)),
-      });
+
+    console.log(this.form.controls['tableType'].value);
+    if (this.form.controls['tableType'].value == 1) {
+      this.tdescCveService
+        .getById(_id)
+        .pipe(
+          map((data2: any) => {
+            let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+            const array2: ITdescCve[] = [{ ...data2 }];
+            list.data = array2;
+            return list;
+          })
+        )
+        .subscribe({
+          next: response => {
+            this.tdescCve = response.data;
+            this.countTable = response.count;
+            this.totalItems2 = response.count;
+            this.loading2 = false;
+          },
+          error: error => {
+            this.loading2 = false;
+            this.showNullRegister();
+          },
+        });
+    } else if (this.form.controls['tableType'].value == 5) {
+      this.tdescCveService
+        .getById(_id)
+        .pipe(
+          map((data2: any) => {
+            let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+            const array2: ITdescCve[] = [{ ...data2 }];
+            list.data = array2;
+            return list;
+          })
+        )
+        .subscribe({
+          next: response => {
+            this.tdescCve = response.data;
+            this.countTable = response.count;
+            this.totalItems2 = response.count;
+            this.loading2 = false;
+          },
+          error: error => {
+            this.loading2 = false;
+            this.showNullRegister1();
+          },
+        });
+    }
   }
 
   //Para editar la descripción de atributos con 5 clave
@@ -337,6 +372,18 @@ export class RegisterKeysLogicalTablesComponent
     });
   }
 
+  showNullRegister1() {
+    this.alertQuestion(
+      'warning',
+      'Tabla sin claves',
+      '¿Desea agregarlos ahora?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.openForm();
+      }
+    });
+  }
+
   //Msj de alerta para borrar clave 1
   showDeleteAlert1(tdescCve?: ITdescCve) {
     this.alertQuestion(
@@ -352,23 +399,55 @@ export class RegisterKeysLogicalTablesComponent
 
   //método para borrar transferente
   delete(id: number) {
-    const idCve = { ...this.descriptionCve };
-    this.tdescCveService.remove(id).subscribe({
-      next: () => {
-        const idCve = { ...this.descriptionCve };
-        this.params2
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getKeys(idCve.table));
-        this.alert('success', 'Clave para tabla lógica', 'Borrado');
-      },
-      error: err => {
-        this.alert(
-          'warning',
-          'Clave para tabla lógica',
-          'No se puede eliminar el objeto debido a una relación con otra tabla.'
-        );
-      },
-    });
+    if (this.form.controls['tableType'].value == 1) {
+      const idCve = { ...this.descriptionCve };
+      this.tdescCveService.remove(id).subscribe({
+        next: () => {
+          const idCve = { ...this.descriptionCve };
+          this.alert(
+            'success',
+            'Clave para Tabla Lógica con 1 Clave',
+            'Borrado Correctamente'
+          );
+          setTimeout(() => {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getKeys(idCve.table));
+          }, 3000);
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Clave para tabla lógica',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
+      });
+    } else if (this.form.controls['tableType'].value == 5) {
+      const idCve = { ...this.descriptionCve };
+      this.tdescCveService.remove(id).subscribe({
+        next: () => {
+          const idCve = { ...this.descriptionCve };
+          this.alert(
+            'success',
+            'Claves para Tabla Lógica con 5 Claves',
+            'Borrado Correctamente'
+          );
+          setTimeout(() => {
+            this.params2
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getKeys(idCve.table));
+          }, 3000);
+        },
+        error: err => {
+          this.alert(
+            'warning',
+            'Clave para tabla lógica',
+            'No se puede eliminar el objeto debido a una relación con otra tabla.'
+          );
+        },
+      });
+    }
   }
 
   //Muestra información de la fila seleccionada de tablas

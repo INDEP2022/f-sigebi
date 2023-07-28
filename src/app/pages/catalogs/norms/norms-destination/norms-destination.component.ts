@@ -36,7 +36,7 @@ export class NormsDestinationComponent extends BasePage implements OnInit {
       actions: false,
       columns: NORMS_DETINATION_COLUMNS,
       selectedRowIndex: -1,
-      hideSubHeader: false,
+      hideSubHeader: true,
     };
   }
 

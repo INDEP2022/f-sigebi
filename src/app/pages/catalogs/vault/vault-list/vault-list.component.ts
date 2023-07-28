@@ -58,7 +58,7 @@ export class VaultListComponent extends BasePage implements OnInit {
             console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'idSafe':
@@ -109,7 +109,7 @@ export class VaultListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll2(params).subscribe({
+    this.safeService.getAll(params).subscribe({
       next: response => {
         //this.getManager(response);
         this.totalItems = response.count;

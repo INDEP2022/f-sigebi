@@ -5,7 +5,7 @@ export const ORIGIN_COLUMNS = {
     sort: false,
   },
   idTransferer: {
-    title: 'Id Transferencia',
+    title: 'No. Transferente',
     type: 'number',
     sort: false,
   },

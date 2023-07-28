@@ -8,3 +8,8 @@ export interface IMunicipality {
   risk?: string;
   version?: number;
 }
+
+export interface IMunicipalityGetAll {
+  idMunicipality?: string;
+  nameMunicipality?: string;
+}

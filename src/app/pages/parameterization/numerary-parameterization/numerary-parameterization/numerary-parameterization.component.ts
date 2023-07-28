@@ -129,7 +129,7 @@ export class NumeraryParameterizationComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(event);
@@ -141,13 +141,17 @@ export class NumeraryParameterizationComponent
       .remove3(JSON.stringify(event))
       .subscribe({
         next: () => {
-          this.alert('success', 'Parametrización de numerario', 'Borrado');
+          this.alert(
+            'success',
+            'Parametrización de Numerario',
+            'Borrado Correctamente'
+          );
           this.getValuesAll();
         },
         error: err => {
           this.alert(
             'warning',
-            'Parametrización de numerario',
+            'Parametrización de Numerario',
             'No se puede eliminar el objeto debido a una relación con otra tabla.'
           );
         },

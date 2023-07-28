@@ -8,6 +8,7 @@ import {
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -50,7 +51,8 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-
+  delegationId: string;
+  subdelegationId: string;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -116,6 +118,9 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
           this.getDepartmentByIds();
         }
       });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDepartmentByIds());
   }
 
   private prepareForm() {
@@ -147,6 +152,8 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   }
 
   onDelegationsChange(element: any) {
+    console.log(element.id);
+    this.delegationId = element.id;
     this.resetFields([this.delegation]);
     this.subdelegations = new DefaultSelect([], 0, true);
     this.form.controls['subdelegation'].setValue('');
@@ -189,6 +196,8 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
   }
 
   onSubDelegationsChange(element: any) {
+    console.log(element.id);
+    this.subdelegationId = element.id;
     this.resetFields([this.subdelegation]);
     this.getDepartmentByIds();
     this.params
@@ -227,20 +236,40 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
+    /*this.departmentService
+      .getAll(params)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.departments = response.data;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count | 0;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });*/
   }
 
   openForm(department?: IDepartment) {
-    const idDelegation = { ...this.delegation.value };
-    const idSubDelegation = { ...this.subdelegation.value };
-    const modalConfig = {
+    /*const idDelegation = { ...this.delegation.value };
+    const idSubDelegation = { ...this.subdelegation.value };*/
+
+    const idDelegation = this.delegationId;
+    const idSubDelegation = this.subdelegationId;
+    console.log(this.delegationId, this.subdelegationId);
+    const modalConfig = MODAL_CONFIG;
+    /*const modalConfig = {
       idDelegation,
       idSubDelegation,
       initialState: {},
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    };
+    };*/
     modalConfig.initialState = {
       department,
+      idDelegation,
+      idSubDelegation,
       callback: (next: boolean) => {
         if (next) this.getDepartmentByIds();
       },

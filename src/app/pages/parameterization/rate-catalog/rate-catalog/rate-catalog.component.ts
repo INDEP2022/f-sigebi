@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IRateCatalog } from 'src/app/core/models/catalogs/rate-catalog.model';
 import { ParameterBaseCatService } from 'src/app/core/services/catalogs/rate-catalog.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalRatesCatalogComponent } from '../modal-rates-catalog/modal-rates-catalog.component';
@@ -26,6 +27,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
 
   constructor(
     private modalService: BsModalService,
+    private modalRef: BsModalRef,
     private rateCatalogService: ParameterBaseCatService
   ) {
     super();
@@ -107,6 +109,8 @@ export class RateCatalogComponent extends BasePage implements OnInit {
       if (next) {
         this.getData();
         this.alert('success', 'Guardado Correctamente', '');
+        this.modalRef.content.callback(true);
+        this.modalRef.hide();
       }
     });
   }
@@ -132,6 +136,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
       next: response => {
         console.log('TESDSASD', response);
         this.paragraphs = response.data;
+        this.data.load(response.data);
         this.totalItems = response.count || 0;
         this.loading = false;
       },
@@ -159,7 +164,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
   //   },
   // ];
 
-  delete(event: any) {
+  delete(rate: IRateCatalog) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -167,7 +172,12 @@ export class RateCatalogComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.alert('success', 'Eliminado correctamente', '');
+        this.rateCatalogService.remove(rate).subscribe({
+          next: () => {
+            this.getExample();
+            this.alert('success', 'Tasa', 'Borrada correctamente');
+          },
+        });
       }
     });
   }

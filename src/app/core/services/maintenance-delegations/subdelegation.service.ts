@@ -25,7 +25,8 @@ export class SubDelegationService extends HttpService {
   ): Observable<IListResponse<ISubdelegation>> {
     return this.subDelegationRepository.getById(
       `catalog/api/v1/${this.route.SubDelegation}`,
-      id
+      id,
+      params
     );
   }
 
