@@ -10,6 +10,7 @@ import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-c
 import { addDays, subDays } from 'date-fns';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
+import { IGoodCharge } from 'src/app/core/models/ms-good/good';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { ComerSaleService } from 'src/app/core/services/ms-comersale/comer-sale.service';
@@ -17,8 +18,7 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
-import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
-import { IChargeSpent } from 'src/app/core/services/ms-spent/spents-model';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-consultation-goods-commercial-sales',
@@ -30,14 +30,18 @@ export class ConsultationGoodsCommercialSalesComponent
   implements OnInit
 {
   form = new FormGroup(new CommercialSalesForm());
-  params = new BehaviorSubject<ListParams>(new ListParams());
   goodControl = new FormControl<string>({ value: null, disabled: true });
   eventControl = new FormControl<string>({ value: null, disabled: true });
-  totalItems: number = 0;
   selectedGood: any = null;
   eventTypes = new DefaultSelect();
   transferents = new DefaultSelect();
   delegations = new DefaultSelect();
+
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  newLimit = new FormControl(10)
+
+  dataGoods = new LocalDataSource()
 
   get controls() {
     return this.form.controls;
@@ -51,8 +55,7 @@ export class ConsultationGoodsCommercialSalesComponent
     private comerEventService: ComerEventosService,
     private comerTypeEventService: ComerTpEventosService,
     private transferentService: TransferenteService,
-    private delegationService: DelegationService,
-    private spentService: SpentService
+    private delegationService: DelegationService
   ) {
     super();
     this.settings = {
@@ -201,95 +204,140 @@ export class ConsultationGoodsCommercialSalesComponent
 
   //Funciones Grigork
   //Gets
-  get goodNumber(){
-    return this.form.get('goodNumber')
+  get goodNumber() {
+    return this.form.get('goodNumber');
   }
 
-  get descGood(){
-    return this.form.get('descGood')
+  get descGood() {
+    return this.form.get('descGood');
   }
 
-  get expedientNumber(){
-    return this.form.get('expedientNumber')
+  get expedientNumber() {
+    return this.form.get('expedientNumber');
   }
 
-  get serieNumber(){
-    return this.form.get('serieNumber')
+  get serieNumber() {
+    return this.form.get('serieNumber');
   }
 
-  get mandate(){
-    return this.form.get('mandate')
+  get mandate() {
+    return this.form.get('mandate');
   }
 
-  get descMandate(){
-    return this.form.get('descMandate')
+  get descMandate() {
+    return this.form.get('descMandate');
   }
 
-  get lot(){
-    return this.form.get('lot')
+  get lot() {
+    return this.form.get('lot');
   }
 
-  get rfc(){
-    return this.form.get('rfc')
+  get rfc() {
+    return this.form.get('rfc');
   }
 
-  get eventId(){
-    return this.form.get('eventId')
+  get eventId() {
+    return this.form.get('eventId');
   }
 
-  get descEvent(){
-    return this.form.get('descEvent')
+  get descEvent() {
+    return this.form.get('descEvent');
   }
 
-  get eventTp(){
-    return this.form.get('eventTp')
+  get eventTp() {
+    return this.form.get('eventTp');
   }
 
-  get desctTypeEvent(){
-    return this.form.get('descTypeEvent')
+  get desctTypeEvent() {
+    return this.form.get('descTypeEvent');
   }
 
-  get price(){
-    return this.form.get('price')
+  get price() {
+    return this.form.get('price');
   }
 
-  get regc(){
-    return this.form.get('regc')
+  get regc() {
+    return this.form.get('regc');
   }
 
-  get descord(){
-    return this.form.get('descord')
+  get descord() {
+    return this.form.get('descord');
   }
 
-  get facture(){
-    return this.form.get('facture')
+  get facture() {
+    return this.form.get('facture');
   }
 
-  get reference(){
-    return this.form.get('reference')
+  get reference() {
+    return this.form.get('reference');
   }
 
-  get dateInit(){
-    return this.form.get('dateInit')
+  get dateInit() {
+    return this.form.get('dateInit');
   }
 
-  get dateFinal(){
-    return this.form.get('dateFinal')
+  get dateFinal() {
+    return this.form.get('dateFinal');
+  }
+
+  get oi() {
+    return this.form.get('oi');
+  }
+
+  //Limpiar Filtros
+  cleanFilters(){
+    this.form.reset()
+    this.dataGoods.load([])
+    this.totalItems = 0
   }
 
   //Ejecutar Consulta
-  executeConsult(){
-    let model: IChargeSpent = {
-      
-    }
+  executeConsult() {
+    let model: IGoodCharge = {};
 
-    this.goodNumber.value != null ? model.goodNumber = this.goodNumber.value : '';
-    //Descripción de bien
-    //Número de expediente
-    //Número de serie
-    this.mandate.value != null ? model.mandate = this.mandate.value : '';
-    //Descripción de mandato
-    //Lote
-    
+    this.goodNumber.value != null
+      ? (model.goodNumber = this.goodNumber.value)
+      : '';
+    this.descGood.value != null
+      ? (model.descriptionGood = this.descGood.value)
+      : '';
+    this.expedientNumber.value != null
+      ? (model.expedientNumber = this.expedientNumber.value)
+      : '';
+    this.serieNumber.value != null
+      ? (model.serieNumber = this.serieNumber.value)
+      : '';
+    this.mandate.value != null ? (model.mandate = this.mandate.value) : '';
+    //this.descMandate != null ? model. Descripción de mandato
+    this.lot.value != null ? (model.lot = this.lot.value) : '';
+    this.rfc.value != null ? (model.rfc = this.rfc.value) : '';
+    this.eventId.value != null ? (model.eventId = this.eventId.value) : '';
+    //Descripción del evento
+    //Cliente
+    this.eventTp.value != null ? (model.typeEvent = this.eventTp.value) : '';
+    //Descripción de evento
+    this.price.value != null ? (model.price = this.price.value) : '';
+    this.oi.value != null ? (model.entryOrderId = this.oi.value) : '';
+    this.regc.value != null ? (model.delegationNumber = this.regc.value) : '';
+    //Descripción de delegación
+    this.facture.value != null ? (model.invoice = this.facture.value) : '';
+    this.reference.value != null
+      ? (model.reference = this.reference.value)
+      : '';
+    this.dateInit.value != null ? (model.startDate = this.dateInit.value) : '';
+    this.dateFinal.value != null ? (model.endDate = this.dateFinal.value) : '';
+  
+    console.log(model)
+
+    this.goodService.chargeGoods(model).subscribe(
+      res => {
+        console.log(res)
+        this.dataGoods.load(res.data)
+        this.totalItems = res.count
+      },
+      err => {
+        console.log(err)
+      }
+    )
   }
 }
