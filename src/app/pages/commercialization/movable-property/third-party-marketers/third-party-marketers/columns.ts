@@ -71,13 +71,25 @@ export const COMI_XTHIRC_COLUMNS = {
   startingAmount: {
     title: 'Monto Inicial',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return text ? Number(text).toString() : null;
+    },
   },
   pctCommission: {
     title: 'PCT Comisión',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return text ? Number(text).toString() : null;
+    },
   },
   finalAmount: {
     title: 'Monto Final',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return text ? Number(text).toString() : null;
+    },
   },
 };

@@ -296,6 +296,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       P_ID_PROGRAMACION: this.recepiptGood.id_programacion,
       P_USUARIO_CREACION: localStorage.getItem('username'),
     };
+    console.log(data);
     this.programmingGoodReceiptService
       .postGoodsProgramingReceipts(data)
       .subscribe({

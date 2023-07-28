@@ -50,13 +50,25 @@ export const NORMS_COLUMNS = {
     title: 'Destino',
     type: 'string',
     sort: false,
-    filterFunction(cell?: any, search?: string): boolean {
+    /*filterFunction(cell?: any, search?: string): boolean {
       let column = cell.name;
       if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
         return true;
       } else {
         return false;
       }
+    },*/
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Destino',
+        list: [
+          { value: 'ADMINISTRACIÓN', title: 'ADMINISTRACIÓN' },
+          { value: 'DESTRUCCIÓN', title: 'DESTRUCCIÓN' },
+          { value: 'DONACIÓN', title: 'DONACIÓN' },
+          { value: 'VENTA1', title: 'VENTA' },
+        ],
+      },
     },
   },
   condition: {

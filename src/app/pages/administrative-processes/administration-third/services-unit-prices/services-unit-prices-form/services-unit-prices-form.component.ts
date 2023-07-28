@@ -75,7 +75,11 @@ export class ServicesUnitPricesFormComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert(
+      'success',
+      this.edit ? '' : this.title,
+      `${message} Correctamente`
+    );
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

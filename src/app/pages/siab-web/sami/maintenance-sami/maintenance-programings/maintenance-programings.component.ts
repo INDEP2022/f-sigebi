@@ -7,7 +7,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-maintenance-programings',
   templateUrl: './maintenance-programings.component.html',
-  styleUrls: ['./maintenance-programings.component.css'],
+  styleUrls: ['./maintenance-programings.component.scss'],
 })
 export class MaintenanceProgramingsComponent
   extends BasePage
@@ -15,6 +15,7 @@ export class MaintenanceProgramingsComponent
 {
   form: FormGroup;
   idDisabled = true;
+  disabledDates = true;
   constructor(private fb: FormBuilder) {
     super();
     this.form = this.fb.group({

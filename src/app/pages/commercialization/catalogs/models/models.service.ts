@@ -24,7 +24,7 @@ export class ModelsService extends HttpService {
     modelName: string,
     params?: ListParams | string
   ): Observable<IListResponse<IParameterComer>> {
-    const route = `${this.route}?filter.modelComment=$ilike:${modelName}`;
+    const route = `${this.route}?filter.id=$ilike:${modelName}`;
     return this.get<IListResponse<IParameterComer>>(route, params);
   }
 

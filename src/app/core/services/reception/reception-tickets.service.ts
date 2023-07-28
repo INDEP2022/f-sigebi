@@ -12,10 +12,10 @@ export class ReceptionTicketsService extends HttpService {
     this.microservice = ReceptionGoodEndpoint.BasePath;
   }
 
-  getAll(params: _Params) {
+  getAll(params: { folio: string; params: _Params }) {
     return this.get<IListResponseMessage<any>>(
-      ReceptionGoodEndpoint.ReceiptTickets,
-      params
+      ReceptionGoodEndpoint.ReceiptTickets + '/' + params.folio,
+      params.params
     );
   }
 }
