@@ -71,10 +71,17 @@ export class RegistrationOfInterestModalComponent
         [
           Validators.pattern(NUM_POSITIVE),
           Validators.min(1),
-          Validators.max(99),
+          Validators.max(31),
         ],
       ],
-      tiieMonth: [null, [Validators.pattern(NUM_POSITIVE), Validators.max(99)]],
+      tiieMonth: [
+        null,
+        [
+          Validators.pattern(NUM_POSITIVE),
+          Validators.min(1),
+          Validators.max(12),
+        ],
+      ],
       // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       tiieYear: [
         null,
@@ -166,7 +173,7 @@ export class RegistrationOfInterestModalComponent
             'duplicate key value violates unique constraint'
           )
         ) {
-          errorFixed = 'Mes y año tiie duplicado';
+          errorFixed = 'Mes y Año TIIE Duplicado';
         } else {
           if (Array.isArray(error.error.message)) {
             errorFixed = error.error.message[0];
@@ -184,7 +191,7 @@ export class RegistrationOfInterestModalComponent
     this.alertQuestion(
       'warning',
       'Actualizar',
-      'Desea actualizar este registro?'
+      'Desea Actualizar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterTiieService
@@ -199,7 +206,7 @@ export class RegistrationOfInterestModalComponent
                   'duplicate key value violates unique constraint'
                 )
               ) {
-                errorFixed = 'Mes y año tiie duplicado';
+                errorFixed = 'Mes y Año TIIE Duplicado';
               } else {
                 if (Array.isArray(error.error.message)) {
                   errorFixed = error.error.message[0];
