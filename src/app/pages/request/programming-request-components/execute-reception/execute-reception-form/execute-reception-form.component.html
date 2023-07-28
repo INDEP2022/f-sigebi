@@ -75,16 +75,18 @@
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
+
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
+
             <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -515,30 +517,30 @@
                       </td>
                       <td class="text-center align-baseline text-nowrap">
                         <a class="text-center">
-                          <i
+                          <button
                             (click)="showGood(good.value)"
-                            class="fa fa-file mr-2"
-                            style="cursor: pointer">
-                            Ver Etiqueta</i
-                          >
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="bx bx-show-alt bx-sm float-icon"></i>
+                          </button>
                         </a>
 
-                        <a class="text-center">
-                          <i
+                        <a class="text-center ml-2 mr-2">
+                          <button
                             (click)="editGood(good.value)"
-                            class="fa fa-pencil-alt mr-2"
-                            style="cursor: pointer">
-                            Editar</i
-                          >
+                            type="button"
+                            class="btn btn-info active btn-sm">
+                            <i class="fa fa-pencil-alt bx-sm float-icon"></i>
+                          </button>
                         </a>
 
                         <a class="text-center">
-                          <i
+                          <button
                             (click)="updateInfo(good.value)"
-                            class="fa fa-retweet mr-2"
-                            style="cursor: pointer">
-                            Actualizar</i
-                          >
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fas fa-sync-alt"></i>
+                          </button>
                         </a>
                       </td>
                     </ng-container>
@@ -570,6 +572,10 @@
             </table>
           </div>
         </form>
+
+        <app-pagination
+          [params]="paramsTransportableGoods"
+          [totalItems]="totalItemsTransportableGoods"></app-pagination>
       </div>
 
       <!--Bienes seleccionados-->
@@ -587,34 +593,29 @@
               <div *ngIf="!formLoadingReceipt">
                 <div
                   class="row pt-3"
-                  *ngIf="receiptData?.statusReceipt == 'ABIERTO'">
-                  <div class="d-flex justify-content-end">
-                    <app-columns-select
-                      [(settings)]="settingsReceipt"></app-columns-select>
+                  *ngIf="
+                    receiptData?.statusReceipt == 'ABIERTO' ||
+                    receiptData?.statusReceipt == null
+                  ">
+                  <div class="form-inline justify-content-end">
+                    <div class="btn-toolbar">
+                      <button
+                        (click)="showReceiptClose()"
+                        class="btn btn-primary btn-sm active mr-2">
+                        Recibos cerrados <i class="fa fa-eye"></i>
+                      </button>
+
+                      <app-columns-select
+                        [(settings)]="settingsReceipt"></app-columns-select>
+                    </div>
                   </div>
+
                   <ng2-smart-table
                     [attr.class]="'table-bordered pt-3'"
                     [settings]="settingsReceipt"
                     [source]="receipts"
                     (edit)="createReceipt($event.data)"
                     (delete)="delete($event.data)">
-                  </ng2-smart-table>
-                  <app-pagination
-                    [params]="paramsReceipts"
-                    [totalItems]="totalItemsReceipt"></app-pagination>
-                </div>
-                <div
-                  class="row"
-                  *ngIf="receiptData?.statusReceipt == 'CERRADO'">
-                  <div class="d-flex justify-content-end">
-                    <app-columns-select
-                      [(settings)]="settingsReceiptClose"></app-columns-select>
-                  </div>
-                  <ng2-smart-table
-                    [attr.class]="'table-bordered pt-3'"
-                    [settings]="settingsReceiptClose"
-                    [source]="receipts"
-                    (edit)="showReceipt($event.data)">
                   </ng2-smart-table>
                   <app-pagination
                     [params]="paramsReceipts"
@@ -711,7 +712,7 @@
                     <app-columns-select
                       [(settings)]="settingsGuardGoods"></app-columns-select>
                   </div>
-                  <div class="row pt-3" *ngIf="!formLoading">
+                  <div class="row pt-3">
                     <form [formGroup]="receptionForm">
                       <div class="table-responsive">
                         <table class="table table-bordered">
@@ -944,21 +945,32 @@
                                   <td
                                     class="text-center align-baseline text-nowrap">
                                     <a class="text-center">
-                                      <i
+                                      <button
                                         (click)="showGood(good.value)"
-                                        class="fa fa-file mr-2"
-                                        style="cursor: pointer">
-                                        Ver Etiqueta</i
-                                      >
+                                        type="button"
+                                        class="btn btn-primary active btn-sm">
+                                        <i
+                                          class="bx bx-show-alt bx-sm float-icon"></i>
+                                      </button>
+                                    </a>
+
+                                    <a class="text-center ml-2 mr-2">
+                                      <button
+                                        (click)="editGoodReception(good.value)"
+                                        type="button"
+                                        class="btn btn-info active btn-sm">
+                                        <i
+                                          class="fa fa-pencil-alt bx-sm float-icon"></i>
+                                      </button>
                                     </a>
 
                                     <a class="text-center">
-                                      <i
+                                      <button
                                         (click)="updateInfo(good.value)"
-                                        class="fa fa-retweet mr-2"
-                                        style="cursor: pointer">
-                                        Actualizar</i
-                                      >
+                                        type="button"
+                                        class="btn btn-primary active btn-sm">
+                                        <i class="fas fa-sync-alt"></i>
+                                      </button>
                                     </a>
                                   </td>
                                 </ng-container>
@@ -991,6 +1003,10 @@
                         </table>
                       </div>
                     </form>
+
+                    <app-pagination
+                      [params]="paramsReception"
+                      [totalItems]="totalItemsReception"></app-pagination>
                   </div>
                 </div>
               </div>
@@ -1101,7 +1117,15 @@
                 <app-columns-select
                   [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
-              <div>
+
+              <div
+                class="row"
+                *ngIf="formLoadingGuard"
+                style="margin-bottom: 5rem">
+                <form-loader *ngIf="formLoadingGuard"></form-loader>
+              </div>
+
+              <div *ngIf="!formLoadingGuard">
                 <form [formGroup]="goodsGuardForm">
                   <div class="table-responsive pt-3">
                     <table class="table table-bordered">
@@ -1127,7 +1151,7 @@
                           <th scope="col" class="text-nowrap">
                             Descripci&oacute;n Transferente
                           </th>
-                          <th scope="col" style="width: 90%">
+                          <th scope="col" class="text-nowrap">
                             Descripci&oacute;n INDEP
                           </th>
                           <th scope="col" class="text-nowrap">
@@ -1312,30 +1336,32 @@
                               <td
                                 class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
-                                  <i
+                                  <button
                                     (click)="showGood(good.value)"
-                                    class="fa fa-file mr-2"
-                                    style="cursor: pointer">
-                                    Ver Etiqueta</i
-                                  >
+                                    type="button"
+                                    class="btn btn-primary active btn-sm">
+                                    <i
+                                      class="bx bx-show-alt bx-sm float-icon"></i>
+                                  </button>
+                                </a>
+
+                                <a class="text-center ml-2 mr-2">
+                                  <button
+                                    (click)="editGoodGuard(good.value)"
+                                    type="button"
+                                    class="btn btn-info active btn-sm">
+                                    <i
+                                      class="fa fa-pencil-alt bx-sm float-icon"></i>
+                                  </button>
                                 </a>
 
                                 <a class="text-center">
-                                  <i
-                                    (click)="editGood(good.value)"
-                                    class="fa fa-pencil-alt mr-2"
-                                    style="cursor: pointer">
-                                    Editar</i
-                                  >
-                                </a>
-
-                                <a class="text-center">
-                                  <i
+                                  <button
                                     (click)="updateInfo(good.value)"
-                                    class="fa fa-retweet mr-2"
-                                    style="cursor: pointer">
-                                    Actualizar</i
-                                  >
+                                    type="button"
+                                    class="btn btn-primary active btn-sm">
+                                    <i class="fas fa-sync-alt"></i>
+                                  </button>
                                 </a>
                               </td>
                             </ng-container>
@@ -1357,6 +1383,8 @@
 
                           <td class="text-left align-baseline"></td>
                           <td class="text-center align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
+                          <td class="text-center align-baseline"></td>
                           <td
                             class="text-center align-baseline"
                             class="text-nowrap"></td>
@@ -1365,6 +1393,10 @@
                     </table>
                   </div>
                 </form>
+
+                <app-pagination
+                  [params]="paramsGuardGoods"
+                  [totalItems]="totalItemsGuard"></app-pagination>
               </div>
               <div
                 class="row pt-5"
@@ -1496,240 +1528,293 @@
                 <app-columns-select
                   [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
-              <div class="row pt-3">
-                <form [formGroup]="goodsWarehouseForm">
-                  <div class="table-responsive">
-                    <table class="table table-bordered">
-                      <col style="width: 60%" />
-                      <col style="width: 80%" />
-                      <col style="width: 60%" />
-                      <thead>
-                        <tr>
-                          <th scope="col" class="text-center">
-                            <input
-                              type="checkbox"
-                              class="form-control ng-pristine ng-valid ng-touched"
-                              ng-reflect-model="true" />
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            No. Gesti&oacute;n
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Clave &Uacute;nica
-                          </th>
-                          <th scope="col" class="text-nowrap">Expediente</th>
-                          <th scope="col" class="text-nowrap">
-                            Descripci&oacute;n Transferente
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Descripci&oacute;n INDEP
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Cantidad Transferente
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Cantidad INDEP
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Unidad Medida Transferente
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Unidad Medida INDEP
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Estado F&iacute;sico Transferente
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Estado F&iacute;sico INDEP
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Conservaci&oacute;n Transferente
-                          </th>
-                          <th scope="col" class="text-nowrap">
-                            Estado Conservaci&oacute;n INDEP
-                          </th>
-                          <th scope="col" class="text-nowrap text-center">
-                            Acciones
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <ng-container
-                          formArrayName="goodsWarehouse"
-                          *ngIf="showWarehouse">
-                          <tr
-                            *ngFor="
-                              let good of goodsWarehouse.controls;
-                              let i = index
-                            ">
-                            <ng-container [formGroupName]="i">
-                              <th scope="row" class="align-baseline">
-                                <input
-                                  type="checkbox"
-                                  (click)="goodSelect(good.value)"
-                                  class="form-control ng-pristine ng-valid ng-touched"
-                                  ng-reflect-model="true" />
-                              </th>
-                              <td scope="row" class="align-baseline">
-                                {{ good.get('goodId')?.value }}
-                              </td>
-                              <td class="align-baseline text-nowrap">
-                                {{ good.get('uniqueKey')?.value }}
-                              </td>
-                              <td class="align-baseline">
-                                {{ good.get('fileNumber')?.value }}
-                              </td>
-                              <td class="align-baseline">
-                                {{ good.get('goodDescription')?.value }}
-                              </td>
-                              <td>
-                                <form-field
-                                  [control]="
-                                    goodsWarehouseForm.get('descriptionGoodSae')
-                                  ">
-                                  <input
-                                    type="text"
-                                    class="form-control"
-                                    maxlength="100"
-                                    formControlName="descriptionGoodSae" />
-                                </form-field>
-                              </td>
-                              <td class="text-left align-baseline">
-                                <div class="align-items">
-                                  {{ good.get('quantity').value }}
-                                </div>
-                              </td>
-                              <td>
-                                <form-field
-                                  [control]="
-                                    goodsWarehouseForm.get('quantitySae')
-                                  ">
-                                  <input
-                                    type="number"
-                                    class="form-control"
-                                    maxlength="50"
-                                    formControlName="quantitySae" />
-                                </form-field>
-                              </td>
-                              <td class="text-left align-baseline">
-                                {{ good.get('unitMeasure')?.value }}
-                              </td>
-                              <td>
-                                <select
-                                  [value]="
-                                    goodsWarehouseForm.get('saeMeasureUnit')
-                                      .value
-                                  "
-                                  class="form-select"
-                                  style="
-                                    width: 150px;
-                                    height: 40px;
-                                    font-size: 13px !important;
-                                  "
-                                  formControlName="saeMeasureUnit">
-                                  <option
-                                    *ngFor="let measureUnit of measureUnits"
-                                    [value]="measureUnit.uomCode">
-                                    {{ measureUnit.measureTlUnit }}
-                                  </option>
-                                </select>
-                              </td>
-                              <td class="text-left align-baseline">
-                                {{ good.get('physicalStatusName')?.value }}
-                              </td>
-                              <td>
-                                <select
-                                  [value]="
-                                    goodsWarehouseForm.get('saePhysicalState')
-                                      .value
-                                  "
-                                  class="form-select"
-                                  style="
-                                    width: 150px;
-                                    height: 40px;
-                                    font-size: 13px !important;
-                                  "
-                                  formControlName="saePhysicalState">
-                                  <option
-                                    *ngFor="let statusPhys of statusPhysical"
-                                    [value]="statusPhys.keyId">
-                                    {{ statusPhys.description }}
-                                  </option>
-                                </select>
-                              </td>
 
-                              <td class="text-left align-baseline">
-                                {{ good.get('stateConservationName')?.value }}
-                              </td>
-                              <td class="text-center align-baseline">
-                                <select
-                                  [value]="
-                                    goodsWarehouseForm.get(
-                                      'stateConservationSae'
-                                    ).value
-                                  "
-                                  class="form-select"
-                                  style="
-                                    height: 40px;
-                                    font-size: 13px !important;
-                                  "
-                                  formControlName="stateConservationSae">
-                                  <option
-                                    *ngFor="let stateCon of stateConservation"
-                                    [value]="stateCon.keyId">
-                                    {{ stateCon.description }}
-                                  </option>
-                                </select>
-                              </td>
-                              <td
-                                class="text-center align-baseline text-nowrap">
-                                <a class="text-center">
-                                  <i
-                                    (click)="showGood(good.value)"
-                                    class="fa fa-file mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
-
-                                <a class="text-center">
-                                  <i
-                                    (click)="editGood(good.value)"
-                                    class="fa fa-pencil-alt mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
-
-                                <a class="text-center">
-                                  <i
-                                    (click)="updateInfo(good.value)"
-                                    class="fa fa-retweet mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
-                              </td>
-                            </ng-container>
+              <div
+                class="row"
+                *ngIf="formLoadingWarehouse"
+                style="margin-bottom: 5rem">
+                <form-loader *ngIf="formLoadingWarehouse"></form-loader>
+              </div>
+              <div *ngIf="!formLoadingWarehouse">
+                <div class="row pt-3">
+                  <form [formGroup]="goodsWarehouseForm">
+                    <div class="table-responsive">
+                      <table class="table table-bordered">
+                        <col style="width: 60%" />
+                        <col style="width: 80%" />
+                        <col style="width: 60%" />
+                        <thead>
+                          <tr>
+                            <th scope="col" class="text-center">
+                              <input
+                                type="checkbox"
+                                class="form-control ng-pristine ng-valid ng-touched"
+                                ng-reflect-model="true" />
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              No. Gesti&oacute;n
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Clave &Uacute;nica
+                            </th>
+                            <th scope="col" class="text-nowrap">Expediente</th>
+                            <th scope="col" class="text-nowrap">
+                              Descripci&oacute;n Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Descripci&oacute;n INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Cantidad Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Cantidad INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Unidad Medida Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Unidad Medida INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Estado F&iacute;sico Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Estado F&iacute;sico INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Conservaci&oacute;n Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
+                              Estado Conservaci&oacute;n INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap">Observación</th>
+                            <th scope="col" class="text-nowrap">
+                              Destino INDEP
+                            </th>
+                            <th scope="col" class="text-nowrap text-center">
+                              Acciones
+                            </th>
                           </tr>
-                        </ng-container>
+                        </thead>
+                        <tbody>
+                          <ng-container
+                            formArrayName="goodsWarehouse"
+                            *ngIf="showWarehouse">
+                            <tr
+                              *ngFor="
+                                let good of goodsWarehouse.controls;
+                                let i = index
+                              ">
+                              <ng-container [formGroupName]="i">
+                                <th scope="row" class="align-baseline">
+                                  <input
+                                    type="checkbox"
+                                    (click)="goodSelect(good.value)"
+                                    class="form-control ng-pristine ng-valid ng-touched"
+                                    ng-reflect-model="true" />
+                                </th>
+                                <td scope="row" class="align-baseline">
+                                  {{ good.get('goodId')?.value }}
+                                </td>
+                                <td class="align-baseline text-nowrap">
+                                  {{ good.get('uniqueKey')?.value }}
+                                </td>
+                                <td class="align-baseline">
+                                  {{ good.get('fileNumber')?.value }}
+                                </td>
+                                <td class="align-baseline">
+                                  {{ good.get('goodDescription')?.value }}
+                                </td>
+                                <td>
+                                  <form-field
+                                    [control]="
+                                      goodsWarehouseForm.get(
+                                        'descriptionGoodSae'
+                                      )
+                                    ">
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      maxlength="100"
+                                      formControlName="descriptionGoodSae" />
+                                  </form-field>
+                                </td>
+                                <td class="text-left align-baseline">
+                                  <div class="align-items">
+                                    {{ good.get('quantity').value }}
+                                  </div>
+                                </td>
+                                <td>
+                                  <form-field
+                                    [control]="
+                                      goodsWarehouseForm.get('quantitySae')
+                                    ">
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      maxlength="50"
+                                      formControlName="quantitySae" />
+                                  </form-field>
+                                </td>
+                                <td class="text-left align-baseline">
+                                  {{ good.get('unitMeasure')?.value }}
+                                </td>
+                                <td>
+                                  <select
+                                    [value]="
+                                      goodsWarehouseForm.get('saeMeasureUnit')
+                                        .value
+                                    "
+                                    class="form-select"
+                                    style="
+                                      width: 150px;
+                                      height: 40px;
+                                      font-size: 13px !important;
+                                    "
+                                    formControlName="saeMeasureUnit">
+                                    <option
+                                      *ngFor="let measureUnit of measureUnits"
+                                      [value]="measureUnit.uomCode">
+                                      {{ measureUnit.measureTlUnit }}
+                                    </option>
+                                  </select>
+                                </td>
+                                <td class="text-left align-baseline">
+                                  {{ good.get('physicalStatusName')?.value }}
+                                </td>
+                                <td>
+                                  <select
+                                    [value]="
+                                      goodsWarehouseForm.get('saePhysicalState')
+                                        .value
+                                    "
+                                    class="form-select"
+                                    style="
+                                      width: 150px;
+                                      height: 40px;
+                                      font-size: 13px !important;
+                                    "
+                                    formControlName="saePhysicalState">
+                                    <option
+                                      *ngFor="let statusPhys of statusPhysical"
+                                      [value]="statusPhys.keyId">
+                                      {{ statusPhys.description }}
+                                    </option>
+                                  </select>
+                                </td>
 
-                        <tr *ngIf="!showWarehouse">
-                          <td scope="row" class="align-baseline"></td>
-                          <td class="align-baseline"></td>
-                          <td class="align-baseline"></td>
-                          <td class="align-baseline"></td>
-                          <td></td>
-                          <td class="text-left align-baseline"></td>
-                          <td></td>
-                          <td class="text-left align-baseline"></td>
-                          <td></td>
-                          <td class="text-left align-baseline"></td>
-                          <td></td>
+                                <td class="text-left align-baseline">
+                                  {{ good.get('stateConservationName')?.value }}
+                                </td>
+                                <td class="text-center align-baseline">
+                                  <select
+                                    [value]="
+                                      goodsWarehouseForm.get(
+                                        'stateConservationSae'
+                                      ).value
+                                    "
+                                    class="form-select"
+                                    style="
+                                      height: 40px;
+                                      font-size: 13px !important;
+                                    "
+                                    formControlName="stateConservationSae">
+                                    <option
+                                      *ngFor="let stateCon of stateConservation"
+                                      [value]="stateCon.keyId">
+                                      {{ stateCon.description }}
+                                    </option>
+                                  </select>
+                                </td>
 
-                          <td class="text-left align-baseline"></td>
-                          <td class="text-center align-baseline"></td>
-                          <td
-                            class="text-center align-baseline text-nowrap"></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </form>
+                                <td class="text-center align-baseline">
+                                  {{ good.get('observations')?.value }}
+                                </td>
+                                <td class="text-center align-baseline">
+                                  <select
+                                    [value]="
+                                      executeForm.get('transferentDestiny')
+                                        .value
+                                    "
+                                    class="form-select"
+                                    style="
+                                      width: 150px;
+                                      height: 40px;
+                                      font-size: 13px !important;
+                                    "
+                                    formControlName="transferentDestiny">
+                                    <option
+                                      *ngFor="
+                                        let transfer of transfersDestinity
+                                      "
+                                      [value]="transfer.keyId">
+                                      {{ transfer.description }}
+                                    </option>
+                                  </select>
+                                </td>
+                                <td
+                                  class="text-center align-baseline text-nowrap">
+                                  <a class="text-center">
+                                    <button
+                                      (click)="showGood(good.value)"
+                                      type="button"
+                                      class="btn btn-primary active btn-sm">
+                                      <i
+                                        class="bx bx-show-alt bx-sm float-icon"></i>
+                                    </button>
+                                  </a>
+
+                                  <a class="text-center ml-2 mr-2">
+                                    <button
+                                      (click)="editGoodReception(good.value)"
+                                      type="button"
+                                      class="btn btn-info active btn-sm">
+                                      <i
+                                        class="fa fa-pencil-alt bx-sm float-icon"></i>
+                                    </button>
+                                  </a>
+
+                                  <a class="text-center">
+                                    <button
+                                      (click)="updateInfo(good.value)"
+                                      type="button"
+                                      class="btn btn-primary active btn-sm">
+                                      <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                  </a>
+                                </td>
+                              </ng-container>
+                            </tr>
+                          </ng-container>
+
+                          <tr *ngIf="!showWarehouse">
+                            <td scope="row" class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td class="align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+                            <td class="text-left align-baseline"></td>
+                            <td></td>
+
+                            <td class="text-left align-baseline"></td>
+                            <td class="text-center align-baseline"></td>
+                            <td
+                              class="text-center align-baseline text-nowrap"></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </form>
+
+                  <app-pagination
+                    [params]="paramsGoodsWarehouse"
+                    [totalItems]="totalItemsWarehouse"></app-pagination>
+                </div>
               </div>
 
               <div
@@ -1924,6 +2009,8 @@
                             <th scope="col" class="text-nowrap">
                               Estado Conservaci&oacute;n INDEP
                             </th>
+
+                            <th scope="col" class="text-nowrap">Observación</th>
                             <th scope="col" class="text-nowrap text-center">
                               Acciones
                             </th>
@@ -2059,27 +2146,40 @@
                                     </option>
                                   </select>
                                 </td>
+
                                 <td class="text-center align-baseline">
+                                  {{ good.get('observations')?.value }}
+                                </td>
+                                <td
+                                  class="text-center align-baseline text-nowrap">
                                   <a class="text-center">
-                                    <i
+                                    <button
                                       (click)="showGood(good.value)"
-                                      class="fa fa-file mr-2"
-                                      style="cursor: pointer"></i
-                                  ></a>
+                                      type="button"
+                                      class="btn btn-primary active btn-sm">
+                                      <i
+                                        class="bx bx-show-alt bx-sm float-icon"></i>
+                                    </button>
+                                  </a>
+
+                                  <a class="text-center ml-2 mr-2">
+                                    <button
+                                      (click)="editGoodReprog(good.value)"
+                                      type="button"
+                                      class="btn btn-info active btn-sm">
+                                      <i
+                                        class="fa fa-pencil-alt bx-sm float-icon"></i>
+                                    </button>
+                                  </a>
 
                                   <a class="text-center">
-                                    <i
-                                      (click)="editGood(good.value)"
-                                      class="fa fa-pencil-alt mr-2"
-                                      style="cursor: pointer"></i
-                                  ></a>
-
-                                  <a class="text-center">
-                                    <i
+                                    <button
                                       (click)="updateInfo(good.value)"
-                                      class="fa fa-retweet mr-2"
-                                      style="cursor: pointer"></i
-                                  ></a>
+                                      type="button"
+                                      class="btn btn-primary active btn-sm">
+                                      <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                  </a>
                                 </td>
                               </ng-container>
                             </tr>
@@ -2099,6 +2199,7 @@
                             <td></td>
 
                             <td class="text-left align-baseline"></td>
+                            <td class="text-left align-baseline"></td>
                             <td class="text-center align-baseline"></td>
                             <td class="text-center align-baseline"></td>
                           </tr>
@@ -2106,6 +2207,9 @@
                       </table>
                     </div>
                   </form>
+                  <app-pagination
+                    [params]="paramsReprogGoods"
+                    [totalItems]="totalItemsReprog"></app-pagination>
                 </div>
               </div>
             </tab>
@@ -2253,6 +2357,8 @@
                           <th scope="col" class="text-nowrap">
                             Estado Conservaci&oacute;n INDEP
                           </th>
+
+                          <th scope="col" class="text-nowrap">Observación</th>
                           <th scope="col" class="text-nowrap text-center">
                             Acciones
                           </th>
@@ -2386,28 +2492,39 @@
                                   </option>
                                 </select>
                               </td>
+                              <td class="text-center align-baseline">
+                                {{ good.get('observations')?.value }}
+                              </td>
                               <td
                                 class="text-center align-baseline text-nowrap">
                                 <a class="text-center">
-                                  <i
+                                  <button
                                     (click)="showGood(good.value)"
-                                    class="fa fa-file mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    type="button"
+                                    class="btn btn-primary active btn-sm">
+                                    <i
+                                      class="bx bx-show-alt bx-sm float-icon"></i>
+                                  </button>
+                                </a>
+
+                                <a class="text-center ml-2 mr-2">
+                                  <button
+                                    (click)="editGoodReception(good.value)"
+                                    type="button"
+                                    class="btn btn-info active btn-sm">
+                                    <i
+                                      class="fa fa-pencil-alt bx-sm float-icon"></i>
+                                  </button>
+                                </a>
 
                                 <a class="text-center">
-                                  <i
-                                    (click)="editGood(good.value)"
-                                    class="fa fa-pencil-alt mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
-
-                                <a class="text-center">
-                                  <i
+                                  <button
                                     (click)="updateInfo(good.value)"
-                                    class="fa fa-retweet mr-2"
-                                    style="cursor: pointer"></i
-                                ></a>
+                                    type="button"
+                                    class="btn btn-primary active btn-sm">
+                                    <i class="fas fa-sync-alt"></i>
+                                  </button>
+                                </a>
                               </td>
                             </ng-container>
                           </tr>
@@ -2419,6 +2536,7 @@
                           <td class="align-baseline"></td>
                           <td class="align-baseline"></td>
                           <td></td>
+                          <td class="text-left align-baseline"></td>
                           <td class="text-left align-baseline"></td>
                           <td></td>
                           <td class="text-left align-baseline"></td>
@@ -2435,6 +2553,10 @@
                     </table>
                   </div>
                 </form>
+
+                <app-pagination
+                  [params]="paramsReprogGoods"
+                  [totalItems]="totalItemsCancelation"></app-pagination>
               </div>
             </tab>
           </tabset>
