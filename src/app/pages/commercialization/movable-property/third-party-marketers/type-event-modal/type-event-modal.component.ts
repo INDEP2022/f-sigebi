@@ -171,7 +171,7 @@ export class TypeEventModalComponent extends BasePage implements OnInit {
         },
         error: error => {
           if (error.error.message == 'Ya existe un registro') {
-            this.alert('warning', 'Ya Existe un Registro con estos Datos', '');
+            this.alert('warning', 'Ya Existe un Registro con Estos Datos', '');
           } else {
             this.handleError();
           }

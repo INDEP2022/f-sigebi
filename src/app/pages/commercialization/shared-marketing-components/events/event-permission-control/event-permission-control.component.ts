@@ -133,6 +133,8 @@ export class EventPermissionControlComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getcomerUsersAutxEvent());
+
+    this.getComerEvents(new ListParams(), 'si');
   }
 
   prepareForm(): void {
@@ -150,6 +152,7 @@ export class EventPermissionControlComponent
     this.comerUsuaTxEvent.refresh();
     this.totalItems = 0;
     this.event_ = null;
+    this.getComerEvents(new ListParams(), 'o');
   }
 
   getEventByID(): void {
@@ -212,34 +215,52 @@ export class EventPermissionControlComponent
   }
 
   // -------------------- WILMER -------------------- //
-  getComerEvents(lparams: ListParams) {
+  getComerEvents(lparams: ListParams, filter: any) {
     const params = new FilterParams();
 
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    // if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+    if (lparams.text)
+      params.addFilter('id_evento', lparams.text, SearchFilter.EQ);
     let obj = {
       p_direccion: this.layout,
       toolbar_usuario: this.token.decodeToken().preferred_username,
       usuario: this.token.decodeToken().preferred_username,
-      perPage: lparams.limit,
-      page: lparams.page,
     };
-    this.comerEventosService.getAppGetfComer(obj).subscribe({
-      next: data => {
-        // let result = data.data.map(item => {
-        //   item['bindlabel_'] = item.id + ' - ' + item.description;
-        // });
-        // Promise.all(result).then(resp => {
-        console.log('EVENT', data);
-        this.comerEventSelect = new DefaultSelect(data.data, data.count);
-        // });
-      },
-      error: err => {
-        this.comerEventSelect = new DefaultSelect();
-      },
-    });
+    this.comerEventosService
+      .getAppGetfComer(obj, params.getParams())
+      .subscribe({
+        next: data => {
+          console.log('EVENT', data);
+          this.comerEventSelect = new DefaultSelect(data.data, data.count);
+        },
+        error: err => {
+          if (filter == 'o') {
+            this.comerEventSelect = new DefaultSelect();
+
+            return;
+          }
+          if (filter != 'x') {
+            this.alertInfo(
+              'warning',
+              'No se Encontraron Eventos Asociados',
+              ''
+            ).then(question => {
+              if (question.isConfirmed) {
+                if (filter == 'si') {
+                  this.getComerEvents(new ListParams(), 'o');
+                }
+              }
+            });
+            this.comerEventSelect = new DefaultSelect();
+          } else {
+            this.alert('warning', 'No se Encontraron Eventos', '');
+            this.comerEventSelect = new DefaultSelect();
+            this.getComerEvents(new ListParams(), 'o');
+          }
+        },
+      });
   }
 
   setValuesForm($event: any) {
@@ -251,7 +272,7 @@ export class EventPermissionControlComponent
         address: $event.direccion,
       });
     } else {
-      this.getComerEvents(new ListParams());
+      this.getComerEvents(new ListParams(), 'no');
     }
   }
 

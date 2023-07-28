@@ -4,4 +4,5 @@ export enum PaymentEndPoints {
   CreateHeader = 'application/createHeader',
   CreateHeaderFcomer113 = 'application/createHeaderFcomer113',
   SendReadSirsaeFcomer113 = 'application/sendReadSirsaeFcomer113',
+  SendSirsaeFcomer112 = 'application/sendSirsaeFcomer112',
 }
