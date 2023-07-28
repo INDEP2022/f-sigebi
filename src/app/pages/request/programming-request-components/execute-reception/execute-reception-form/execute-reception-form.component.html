@@ -77,7 +77,7 @@
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -225,6 +225,15 @@
             class="dropdown-menu fix text-small shadow dropdown-menu-right"
             role="menu"
             aria-labelledby="button-split">
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="showLabelTDRProgramming()"
+                ><i class="fa fa-file-archive"></i> Visualizar etiquetas
+                programación</a
+              >
+            </li>
             <li role="menuitem">
               <a
                 class="dropdown-item"

@@ -53,4 +53,34 @@ export class ComerClientsService extends HttpService {
   getById_(id?: any): Observable<IListResponse<IComerClients>> {
     return this.get<IListResponse<IComerClients>>(`${this.endpoint}/${id}`);
   }
+
+  getAll_XEvent(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEvent,
+      params
+    );
+  }
+
+  createClientXEvent(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEvent,
+      params
+    );
+  }
+
+  updateClientXEvent(params: any): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEvent,
+      params
+    );
+  }
+
+  getComerClientsXEventgetAllV2(
+    params?: _Params
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEventgetAllV2,
+      params
+    );
+  }
 }
