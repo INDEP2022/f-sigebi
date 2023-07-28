@@ -14,3 +14,9 @@ export interface IDictationXGood1 {
   good?: IGood;
   dictation?: IDictation;
 }
+
+export interface IDataBienes {
+  count: number;
+  data: IDictationXGood1[];
+  message: string[];
+}

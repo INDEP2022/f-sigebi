@@ -7,12 +7,12 @@
       <form [formGroup]="form" class="form-material" (ngSubmit)="onSubmit()">
         <div class="form-inline mb-4">
           <div class="form-group mr-4">
-            <form-field [control]="form.get('modelComment')">
+            <form-field [control]="form.get('id')">
               <input
                 type="text"
                 class="form-control"
                 style="width: 200px"
-                formControlName="modelComment"
+                formControlName="id"
                 maxlength="50" />
             </form-field>
           </div>
