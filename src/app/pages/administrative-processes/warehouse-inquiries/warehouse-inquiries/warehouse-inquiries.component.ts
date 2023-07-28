@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -41,9 +42,23 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
   warehouses: any[] = [];
+  origin: string = '';
   dataFactGen: LocalDataSource = new LocalDataSource();
+  origin2: string = '';
+  origin3: string = '';
+  origin4: string = '';
+  screenKey = 'FGERADBALMACENES';
+  paramsScreen: IParamsWare = {
+    origin: '',
+    PAR_MASIVO: '', // PAQUETE
+  };
   columnFilters: any = [];
+  @Input() PAR_MASIVO: string;
+  @ViewChild('goodNumber') goodNumber: ElementRef;
+
   constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private modalService: BsModalService,
     private warehouseService: WarehouseService
   ) {
@@ -64,9 +79,39 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getWarehouses());
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        console.log(this.paramsScreen);
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params[key] ?? null;
+          }
+        }
+        this.origin = params['origin2']
+          ? params['origin2']
+          : params['origin'] ?? null;
+        this.origin2 = params['origin3'] ?? null;
+        this.origin3 = params['origin4'] ?? null;
+        this.origin4 = params['origin5'] ?? null;
+        this.PAR_MASIVO = params['PAR_MASIVO'] ?? null;
+        if (this.origin && this.paramsScreen.PAR_MASIVO != null) {
+          // this.btnSearchAppointment();
+        }
+        console.log(params, this.paramsScreen);
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.getWarehouses();
+      } else {
+        console.log('SIN PARAMETROS');
+        if (!this.origin) {
+          console.log(this.origin);
+        }
+      }
+    }
     this.dataFactGen
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -151,4 +196,20 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
+  goBack() {
+    this.router.navigate(['/pages/administrative-processes/location-goods'], {
+      queryParams: {
+        origin2: this.screenKey,
+        PAR_MASIVO: this.goodNumber,
+        origin: 'FACTADBUBICABIEN',
+        origin3: 'FACTGENACTDATEX',
+        origin4: 'FCONADBALMACENES',
+        ...this.paramsScreen,
+      },
+    });
+  }
+}
+export interface IParamsWare {
+  origin: string;
+  PAR_MASIVO: string;
 }

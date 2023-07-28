@@ -50,6 +50,7 @@
             [settings]="settings"
             [source]="data"
             (edit)="edit($event.data)"
+            (userRowSelect)="rowsSelected($event)"
             (delete)="questionDelete($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
@@ -62,8 +63,12 @@
     <div class="row text-center">
       <div>
         <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3 mt-3"> -->
-        <button (click)="enviarSIRSAE()" class="btn btn btn-info active btn-sm">
-          Enviar SIRSAE
+        <button
+          [ngClass]="{ loading: loadingBtn }"
+          [disabled]="!valAcc || loadingBtn"
+          (click)="enviarSIRSAE()"
+          class="btn btn btn-primary active btn-sm">
+          Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
         </button>
         <!-- </div> -->
       </div>

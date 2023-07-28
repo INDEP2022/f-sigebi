@@ -1,10 +1,10 @@
 export const COLUMNS = {
-  modelComment: {
-    title: 'Comentario Modelo',
+  id: {
+    title: 'Modelo',
     sort: false,
   },
-  nbOrigin: {
-    title: 'Origen',
+  modelComment: {
+    title: 'Comentario Modelo',
     sort: false,
   },
 };

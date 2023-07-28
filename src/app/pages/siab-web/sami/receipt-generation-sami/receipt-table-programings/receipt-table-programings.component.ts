@@ -1,10 +1,16 @@
 import { Component, Input } from '@angular/core';
-import { takeUntil } from 'rxjs';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { EReceiptType } from '../models/eReceiptType';
 import { ReceiptGenerationDataService } from '../services/receipt-generation-data.service';
-import { COLUMNS } from './columns';
+import { COLUMNS, COLUMNS1 } from './columns';
 
 @Component({
   selector: 'app-receipt-table-programings',
@@ -13,11 +19,18 @@ import { COLUMNS } from './columns';
 })
 export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFiltersExtra<any> {
   @Input() id_programacion: string;
+  @Input() folio: string;
+  @Input() type: string;
+  settings2: any;
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems1: number = 0;
+  data1: LocalDataSource = new LocalDataSource();
   // pageSizeOptions = [5, 10, 20, 25];
   // limit: FormControl = new FormControl(5);
   constructor(
     private dataService: ReceiptGenerationDataService,
-    private receptionTicketsService: ReceptionTicketsService
+    private receptionTicketsService: ReceptionTicketsService,
+    private receptionGoodService: ReceptionGoodService
   ) {
     super();
     this.service = this.receptionTicketsService;
@@ -33,24 +46,34 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       //   return row.data.notSelect ? 'notSelect' : '';
       // },
     };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      columns: {
+        ...COLUMNS1,
+      },
+    };
     this.dataService.refreshTableProgrammings
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           if (response) {
             this.getData();
+            this.data1.load([]);
+            this.data1.refresh();
           }
         },
       });
     this.dataService.refreshAll.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: response => {
         if (response) {
-          this.getData();
+          this.data1.load([]);
+          this.data1.refresh();
         }
       },
     });
   }
-
   get typeReceiptSelected() {
     return this.dataService.typeReceiptSelected;
   }
@@ -72,15 +95,51 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     let newColumnFilters = this.columnFilters;
     if (this.id_programacion) {
       newColumnFilters['filter.id_programacion'] =
-        '$eq:' + this.id_programacion;
+        SearchFilter.EQ + ':' + this.id_programacion;
     }
     if (this.typeReceiptSelected) {
       newColumnFilters['filter.tipo_recibo'] =
-        '$eq:' + this.typeReceiptSelected;
+        SearchFilter.EQ + ':' + this.typeReceiptSelected;
     }
+    // if (this.folio) {
+    //   newColumnFilters['filter.folio'] = this.folio;
+    // }
     return {
-      ...this.params.getValue(),
-      ...newColumnFilters,
+      folio: this.folio,
+      params: {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      },
     };
+  }
+  selectGoodstickets(data: any) {
+    this.loading = true;
+    console.log(data);
+    let datos = {
+      programmingId: data.data.id_programacion,
+      actId: data.data.id_acta,
+      ticketId: data.data.id_recibo,
+      typeTicket: data.data.tipo_recibo,
+    };
+    console.log(datos);
+    this.receptionGoodService.createQueryGoodsTickets(datos).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.data1.load(resp.data);
+        this.data1.refresh();
+        this.totalItems1 = resp.count;
+        this.loading = false;
+      },
+      error: eror => {
+        this.data1.load([]);
+        this.data1.refresh();
+        this.alert(
+          'warning',
+          'Generación de Recibos',
+          'No se encontraron Bienes'
+        );
+        this.loading = false;
+      },
+    });
   }
 }

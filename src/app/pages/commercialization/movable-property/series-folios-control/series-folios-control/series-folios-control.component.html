@@ -36,6 +36,12 @@
           >
         </h5>
       </div>
+      <div class="d-flex justify-content-end mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"
+          [defaultColumns]="7"></app-columns-select>
+      </div>
       <form-loader *ngIf="loading"></form-loader>
       <div>
         <ng2-smart-table
