@@ -7,9 +7,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
-import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
@@ -28,8 +26,11 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   title: string = 'Mantenimiento de Areas';
   edit: boolean = false;
 
-  idDelegation: IDelegation;
-  idSubDelegation: ISubdelegation;
+  /*idDelegation: IDelegation;
+  idSubDelegation: ISubdelegation;*/
+
+  idDelegation: string;
+  idSubDelegation: string;
 
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
@@ -108,7 +109,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       this.edit = true;
       console.log(this.department);
       this.departmentForm.patchValue(this.department);
-      this.idDelegation = this.department.delegation as unknown as IDelegation;
+      /*this.idDelegation = this.department.delegation as unknown as IDelegation;
       this.idSubDelegation = this.department
         .numSubDelegation as unknown as ISubdelegation;
 
@@ -117,7 +118,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       );
       this.departmentForm.controls['numSubDelegation'].setValue(
         this.idSubDelegation.id
-      );
+      );*/
       this.departmentForm.controls['numDelegation'].disable();
       this.departmentForm.controls['numSubDelegation'].disable();
       this.departmentForm.controls['id'].disable();
@@ -142,6 +143,10 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
     } else {
       this.getSubDelegations({ page: 1, limit: 10, text: '' });
     }
+    this.departmentForm.controls['numSubDelegation'].setValue(
+      this.idSubDelegation
+    );
+    this.departmentForm.controls['numDelegation'].setValue(this.idDelegation);
   }
 
   getDelegations(lparams: ListParams) {
@@ -228,28 +233,43 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    this.loading = true;
-    this.departmentService
-      .update2(this.departmentForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.departmentForm.controls['description'].value.trim() === '' ||
+      this.departmentForm.controls['dsarea'].value.trim() === '' ||
+      (this.departmentForm.controls['description'].value.trim() == '' &&
+        this.departmentForm.controls['dsarea'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', '');
+      return;
+    } else {
+      this.loading = true;
+      this.departmentService
+        .update2(this.departmentForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   create() {
     if (
       this.departmentForm.controls['description'].value.trim() === '' ||
-      this.departmentForm.controls['dsarea'].value.trim() === ''
+      this.departmentForm.controls['dsarea'].value.trim() === '' ||
+      (this.departmentForm.controls['description'].value.trim() == '' &&
+        this.departmentForm.controls['dsarea'].value.trim() == '')
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', '');
       return;
+    } else {
+      this.loading = true;
+      this.departmentService
+        .create(this.departmentForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
     }
-    this.loading = true;
-    this.departmentService.create(this.departmentForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
   }
 
   handleSuccess() {
