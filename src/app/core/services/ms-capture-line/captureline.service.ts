@@ -23,6 +23,13 @@ export class CapturelineService extends HttpService {
     return this.get<IListResponse<ICaptureLinesMain>>(this.route, params);
   }
 
+  getAll2(params?: string): Observable<IListResponse<ICaptureLinesMain>> {
+    return this.get<IListResponse<ICaptureLinesMain>>(
+      `${this.route}/get-all-with-processkey`,
+      params
+    );
+  }
+
   getAllDetCaptureLines(
     captureLinesId: number | string,
     params?: string
