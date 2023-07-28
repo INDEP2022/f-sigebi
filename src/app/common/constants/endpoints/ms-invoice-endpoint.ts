@@ -8,4 +8,6 @@ export enum ENDPOINT_INVOICE {
   UpdateStatusImg = 'application/update-status-invoice-img',
   UpdateByEvemt = 'application/update-by-idevent',
   CopyInvoice = 'ctrl-invoice/copy-invoice',
+  ComerRectInvoice = 'comer-rectinvoices',
+  ComerDetInvoice = 'comer-direct-fac',
 }
