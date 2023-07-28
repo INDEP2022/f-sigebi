@@ -73,7 +73,12 @@ export class MoreInformationComponent
   }
 
   create() {
-    this.jobDictumTextsService.create(this.form.value).subscribe({
+    console.log(this.form.value);
+    const payload = {
+      ...this.form.value,
+      recordNumber: null,
+    };
+    this.jobDictumTextsService.create(payload).subscribe({
       next: data => {
         this.alert(
           'success',
@@ -82,6 +87,7 @@ export class MoreInformationComponent
         );
       },
       error: err => {
+        console.log(err);
         this.alert('error', 'No se ha podido agregar la información', '');
       },
     });
