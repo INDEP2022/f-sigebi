@@ -37,6 +37,8 @@ export interface IReport {
   styleUrls: ['release-letter-report.component.scss'],
 })
 export class ReleaseLetterReportComponent extends BasePage implements OnInit {
+  comerLibsForm: FormGroup;
+  bienesLotesForm: FormGroup;
   goodList: IGood;
   dataGood: any;
   totalItems: number = 0;
@@ -60,6 +62,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   department: string = '';
   delegation: string = '';
   userName: string = '';
+  letterDefault: any = null;
   subDelegation: string = '';
   carta: string;
   desType: string;
@@ -115,9 +118,6 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   get description() {
     return this.bienesLotesForm.get('description');
   }
-
-  comerLibsForm: FormGroup;
-  bienesLotesForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -209,7 +209,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     // console.log(this.comerLibsForm.value);
 
     let params = {
-      DESTYPE: this.comerLibsForm.controls['descEvent'].value,
+      DESTYPE: this.comerLibsForm.controls['description'].value,
       ID_LOTE: this.comerLibsForm.controls['lote'].value,
       OFICIO_CARTALIB: this.comerLibsForm.controls['oficio'].value,
       DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
@@ -272,9 +272,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLetterService.getById(id).subscribe({
       next: data => {
         this.loading = false;
-        this.datePipe.transform(this.dateLetter, 'dd/MM/yyyy');
-        console.log(data);
         this.letter = data;
+        this.carta = this.datePipe.transform(
+          this.letter.invoiceDate,
+          'dd/MM/yyyy'
+        );
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
         this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
         this.comerLibsForm.get('puesto').setValue(this.letter.position);
@@ -282,9 +284,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerLibsForm.get('parrafo2').setValue(this.letter.paragraph2);
         this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
-        this.comerLibsForm
-          .get('fechaFactura')
-          .setValue(this.letter.invoiceDate);
+        this.comerLibsForm.get('fechaFactura').setValue(this.carta);
         this.comerLibsForm.get('ccp1').setValue(this.letter.ccp1);
         this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
         this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
@@ -309,6 +309,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       modalConfig
     );
     modalRef.content.onSave.subscribe((next: any) => {
+      this.letterDefault = next;
       console.log(next.id);
       this.getComerLetterById(next.id);
     });
@@ -378,8 +379,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
     this.carta = this.datePipe.transform(carta, 'dd/MM/yyyy');
     let params = {
-      DESTYPE: this.comerLibsForm.controls['evento'].value,
-      ID_LOTE: this.comerLibsForm.controls['lote'].value,
+      DESTYPE: this.bienesLotesForm.controls['description'].value,
+      ID_LOTE: this.bienesLotesForm.controls['lote'].value,
       OFICIO_CARTALIB: this.comerLibsForm.controls['oficio'].value,
       DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
       PUESTO: this.comerLibsForm.controls['puesto'].value,
@@ -431,6 +432,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
         this.comerLotes = data;
+        this.bienesLotesForm.get('lote').setValue(data.idLot);
+        this.bienesLotesForm.get('description').setValue(data.description);
+        this.bienesLotesForm.get('evento').setValue(data.idEvent);
         console.log(this.comerLotes);
       },
       error: error => {
@@ -441,6 +445,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.comerLibsForm.reset();
+    this.bienesLotesForm.reset();
   }
   goBack() {}
+
+  actualizarLetter() {}
 }
