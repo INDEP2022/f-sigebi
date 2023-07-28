@@ -23,7 +23,29 @@ import { SIRSAE_MOVEMENT_SENDING_COLUMNS } from './sirsae-movement-sending-colum
 @Component({
   selector: 'app-sirsae-movement-sending-main',
   templateUrl: './sirsae-movement-sending-main.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class SirsaeMovementSendingMainComponent
   extends BasePage
@@ -129,6 +151,7 @@ export class SirsaeMovementSendingMainComponent
   columnFilters: any = [];
   acordionOpen: boolean = false;
   disabledBtnCerrar: boolean = false;
+  loadingBtn: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -504,16 +527,21 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    if (this.data.count() == 0) {
-      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
-      return;
-    }
+    // if (this.data.count() == 0) {
+    //   this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+    //   return;
+    // }
 
     // await this.validaPagos()
 
     const data: any = this.data.getAll().then(async resp => {
-      if (resp.length > 0) this.loading = true;
+      if (resp.length > 0) {
+        this.loading = true;
+        this.loadingBtn = true;
+      }
+      let arr: any = [];
       let result = resp.map(async (item: any) => {
+        const rfc = item.rfc;
         // VALIDA_PAGOS
         const valid1 = await this.validPayments(item);
         if (valid1 == 0) {
@@ -522,38 +550,61 @@ export class SirsaeMovementSendingMainComponent
             `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
             ''
           );
+
           item.sendSirsae = 'N';
           delete item.rfc;
           delete item.name;
           await this.update(item);
         }
-        // ENVIAR_SIRSAE
-        await this.sendSirsae(1, item);
+
+        let obj = {
+          sendSirsae: item.sendSirsae,
+          sentSirsae: item.sendedSirsae,
+          rfc: rfc,
+          customer: item.clientId,
+        };
+        arr.push(obj);
       });
 
-      // ACT_EST_EVE
-      const valid2 = await this.actEstEve();
-      if (valid2 == 0) {
-        let obj = {
-          statusVtaId: 'CONC',
-          id: this.eventSelected.id,
-          eventTpId: this.eventSelected.eventTpId,
-        };
+      Promise.all(result).then(async resp => {
+        const resss = await this.sendSirsae(1, arr);
 
-        await this.updateEvents(this.eventSelected.id, obj);
-      } else {
-        let obj = {
-          statusVtaId: 'PCON',
-          id: this.eventSelected.id,
-          eventTpId: this.eventSelected.eventTpId,
-        };
-        await this.updateEvents(this.eventSelected.id, obj);
-      }
+        if (
+          resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms'
+        ) {
+          this.alert(
+            'error',
+            'Error de Conexión, No se Pudo Conectar a la Base de Datos (SIRSAE)',
+            ''
+          );
+          this.loadingBtn = false;
+          await this.getComerClientsXEvent('no');
+        } else {
+          // ACT_EST_EVE
+          const valid2 = await this.actEstEve();
+          if (valid2 == 0) {
+            let obj = {
+              statusVtaId: 'CONC',
+              id: this.eventSelected.id,
+              eventTpId: this.eventSelected.eventTpId,
+            };
 
-      Promise.all(result).then(resp => {
-        this.alert('success', 'Proceso Terminado Correctamente', '');
-        // this.loading = false;
-        this.getComerClientsXEvent('no');
+            await this.updateEvents(this.eventSelected.id, obj);
+          } else {
+            let obj = {
+              statusVtaId: 'PCON',
+              id: this.eventSelected.id,
+              eventTpId: this.eventSelected.eventTpId,
+            };
+            await this.updateEvents(this.eventSelected.id, obj);
+          }
+
+          this.alert('success', 'Proceso Terminado Correctamente', '');
+          this.loadingBtn = false;
+          await this.getComerClientsXEvent('no');
+        }
       });
     });
   }
@@ -586,25 +637,6 @@ export class SirsaeMovementSendingMainComponent
       });
     });
   }
-  // PROCEDURE ACT_EST_EVE IS
-  // CONT	NUMBER(4):= 0;
-  // BEGIN
-  // SELECT	COUNT(*)
-  // INTO		CONT
-  // FROM		COMER_CLIENTESXEVENTO CXC
-  // WHERE		CXC.ID_EVENTO = :BLK_CTRL.EVENTO
-  // AND			CXC.ENVIADO_SIRSAE = 'N';
-  // IF CONT = 0 THEN
-  // 	UPDATE	COMER_EVENTOS EVE
-  // 	SET			ID_ESTATUSVTA = 'CONC'
-  // 	WHERE		ID_EVENTO = :BLK_CTRL.EVENTO;
-  // ELSE
-  // 	UPDATE	COMER_EVENTOS EVE
-  // 	SET			ID_ESTATUSVTA = 'PCON'
-  // 	WHERE		ID_EVENTO = :BLK_CTRL.EVENTO;
-  // END IF;
-  // END;
-  // VALIDA_PAGOS
   async validaPagos() {
     const data: any = this.data.getAll().then(resp => {
       let result = resp.map(async (item: any) => {
@@ -640,11 +672,16 @@ export class SirsaeMovementSendingMainComponent
   async sendSirsae(process: any, data: any) {
     let obj = {
       process: process,
-      event: data.eventId,
-      sendSirsae: data.sendSirsae,
-      sentSirsae: data.sendedSirsae,
-      rfc: data.rfc,
+      event: this.eventSelected.id,
+      customerXevent: data,
     };
+    // {
+    //   process: process,
+    //   event: data.eventId,
+    //   sendSirsae: data.sendSirsae,
+    //   sentSirsae: data.sendedSirsae,
+    //   rfc: data.rfc,
+    // };
     return new Promise((resolve, reject) => {
       this.paymentService.sendSirsaeFcomer112(obj).subscribe({
         next: response => {
@@ -653,47 +690,51 @@ export class SirsaeMovementSendingMainComponent
           // this.getPayments();
         },
         error: error => {
-          if (
-            error.error.message ==
-            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms'
-          ) {
-            this.alert(
-              'error',
-              'Error de Conexión, No se Pudo Conectar a la Base de Datos (SIRSAE)',
-              ''
-            );
-            resolve(error.status);
-            return;
-          }
-
-          if (error.error.message == 'ERROR EN LA CONEXION A SIRSAE') {
-            this.alert(
-              'error',
-              'Error de Conexión, No se Pudo Conectar a la Base de Datos (SIRSAE)',
-              ''
-            );
-            resolve(error.status);
-            return;
-          }
           console.log('error', error);
-          resolve(error.status);
+          resolve(error.error.message);
         },
       });
     });
   }
 
   obtenerOI() {
+    if (!this.eventSelected) {
+      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      return;
+    }
+
     const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
-      let result = resp.map(async (item: any) => {
-        await this.sendSirsae(2, item);
-      });
 
-      Promise.all(result).then(resp => {
+      // let arr: any = []
+      // let result = resp.map(async (item: any) => {
+      //   const rfc = item.rfc;
+      //   let obj = {
+      //     sendSirsae: item.sendSirsae,
+      //     sentSirsae: item.sendedSirsae,
+      //     rfc: rfc,
+      //     customer: item.clientId
+      //   }
+
+      //   arr.push(obj)
+      // });
+
+      // Promise.all(result).then(async resp => {
+      const resss = await this.sendSirsae(2, []);
+      if (resss == 'ERROR EN LA CONEXION A SIRSAE') {
+        this.alert(
+          'error',
+          'Error de Conexión, No se pudo Conectar a la Base de Datos (SIRSAE)',
+          ''
+        );
+        await this.getComerClientsXEvent('no');
+      } else {
         this.alert('success', 'Proceso Terminado Correctamente', '');
         // this.loading = false;
-        this.getComerClientsXEvent('no');
-      });
+        await this.getComerClientsXEvent('no');
+      }
+
+      // });
     });
   }
 }
