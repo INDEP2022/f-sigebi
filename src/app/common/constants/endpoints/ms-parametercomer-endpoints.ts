@@ -12,4 +12,5 @@ export enum ParameterComerEndpoints {
   ComerModels = 'comer-models',
   Entities = 'type-entity-gov',
   ApplicationUser = 'aplication/get-lval-usu',
+  ApplicationSigna = 'aplication/get-full-signatories',
 }
