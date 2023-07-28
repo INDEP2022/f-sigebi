@@ -218,7 +218,7 @@ export class NotificationAssetsTabComponent
         data.data.map(data => {
           this.transferentName(data?.transferenceId);
           this.regDelName(data?.regionalDelegationId);
-          this.stationName(data?.stationId);
+          this.stationName(data?.transferenceId, data?.stationId);
           this.stateName(data?.keyStateOfRepublic);
           this.authorityName(
             data.transferenceId,
@@ -251,10 +251,11 @@ export class NotificationAssetsTabComponent
     });
   }
 
-  stationName(idStation: string | number) {
+  stationName(idTransferent: string | number, idStation: string | number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
       params['filter.id'] = `$eq:${idStation}`;
+      params['filter.idTransferent'] = `$eq:${idTransferent}`;
       this.stationService.getAll(params).subscribe({
         next: data => {
           this.nameStation = data.data[0].stationName;
@@ -1439,7 +1440,8 @@ export class NotificationAssetsTabComponent
   }
 
   endClarification() {
-    this.data.getElements().then(data => {
+    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+    /*this.data.getElements().then(data => {
       data.map((good: IGoodresdev) => {
         if (
           good.clarificationstatus == 'ACLARADO' ||
@@ -1483,7 +1485,7 @@ export class NotificationAssetsTabComponent
           );
         }
       });
-    });
+    });*/
   }
 
   //Cambia el State a FINALIZADA
