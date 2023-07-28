@@ -695,7 +695,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   /*----------Show info goods programming --------- */
-  getInfoGoodsProgramming() {
+  /*showDataProgramming() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     this.goodsTransportable.reset();
     params.getValue()['filter.programmingId'] = this.programmingId;
@@ -709,7 +709,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         //this.filterStatusReprog(data.data);
         //this.filterStatusCancelation(data.data);
       });
-  }
+  } */
 
   getInfoGoodsTransportable() {
     this.formLoadingTrans = true;
@@ -773,9 +773,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     });
                     this.goodsTransportable.push(form);
                     this.formLoadingTrans = false;
-
                     this.showTransportable = true;
                   });
+                },
+                error: error => {
+                  this.formLoadingTrans = false;
                 },
               });
           });
@@ -786,6 +788,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
         error: error => {
           console.log('data bienes Prog', error);
+          this.formLoadingTrans = false;
         },
       });
 
@@ -2007,7 +2010,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.goodsReprog.clear();
-                    this.getInfoGoodsProgramming();
+                    this.showDataProgramming();
                     this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
                   },
                   error: error => {},
@@ -2042,7 +2045,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.goodsCancelation.clear();
-                    this.getInfoGoodsProgramming();
+                    this.showDataProgramming();
                     this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
                   },
                   error: error => {},
@@ -2141,7 +2144,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 this.goodsGuards.clear();
                 this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                 this.getReceiptsGuard();
-                this.getInfoGoodsProgramming();
+                this.showDataProgramming();
                 this.formLoadingGuard = false;
               }
             }
@@ -2173,7 +2176,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     this.goodsGuards.clear();
                     this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
-                    this.getInfoGoodsProgramming();
+                    this.showDataProgramming();
 
                     this.formLoadingGuard = false;
                   }
@@ -2205,7 +2208,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   this.goodsWarehouse.clear();
                   this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
                   this.getReceiptsGuard();
-                  this.getInfoGoodsProgramming();
+                  this.showDataProgramming();
                 }
               }
             }
@@ -2237,7 +2240,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     this.goodsWarehouse.clear();
                     this.headingWarehouse = `Almacén(${this.goodsWarehouse.length})`;
                     this.getReceiptsGuard();
-                    this.getInfoGoodsProgramming();
+                    this.showDataProgramming();
                     this.formLoadingGuard = false;
                   }
                 }
@@ -2778,7 +2781,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               this.uplodadReceiptDelivery();
             } else {
               this.getReceipts();
-              this.getInfoGoodsProgramming();
+              this.showDataProgramming();
               this.goodsReception.clear();
             }
           }
@@ -2800,7 +2803,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       callback: (data: boolean) => {
         if (data) {
           this.getReceipts();
-          this.getInfoGoodsProgramming();
+          this.showDataProgramming();
           this.goodsReception.clear();
         }
       },
@@ -2958,7 +2961,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
       const showGoods: any = await this.getFilterGood('EN_RECEPCION_TMP');
       if (showGoods) {
-        this.getInfoGoodsProgramming();
+        this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
       }
@@ -2981,7 +2984,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
       const showGoods: any = await this.getFilterGood('EN_RESGUARDO_TMP');
       if (showGoods) {
-        this.getInfoGoodsProgramming();
+        this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
         this.headingGuard = `Resguardo(${this.goodsGuards.length})`;
@@ -3069,7 +3072,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
       const showGoods: any = await this.getFilterGood('EN_PROGRAMACION_TMP');
       if (showGoods) {
-        this.getInfoGoodsProgramming();
+        this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
         this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
@@ -3080,7 +3083,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   cancel() {
     this.goodsTransportable.clear();
     this.searchGoodForm.reset();
-    this.getInfoGoodsProgramming();
+    this.showDataProgramming();
   }
 
   changeStatusGoodWarehouse(good: IGood) {
@@ -3099,7 +3102,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
       const showGoods: any = await this.getFilterGood('EN_ALMACEN_TMP');
       if (showGoods) {
-        this.getInfoGoodsProgramming();
+        this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
         this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
@@ -3123,7 +3126,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       });
       const showGoods: any = await this.getFilterGood('EN_CANCELACION_TMP');
       if (showGoods) {
-        this.getInfoGoodsProgramming();
+        this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
         this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
@@ -3158,7 +3161,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (next: boolean) => {
           if (next) {
             this.goodsTransportable.clear();
-            this.getInfoGoodsProgramming();
+            this.showDataProgramming();
           }
         },
       };
@@ -3350,7 +3353,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
-            this.getInfoGoodsProgramming();
+            this.showDataProgramming();
           },
         });
       });
@@ -3405,7 +3408,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (next: boolean) => {
           if (next) {
             this.goodsTransportable.clear();
-            this.getInfoGoodsProgramming();
+            this.showDataProgramming();
           }
         },
       };
@@ -4080,6 +4083,30 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
   }
 
+  showLabelTDRProgramming() {
+    if (this.goodsTransportable.value.length) {
+      let config: ModalOptions = {
+        initialState: {
+          showTDR: true,
+          programming: this.programming,
+          callback: (next: boolean) => {
+            if (next) {
+            }
+          },
+        },
+        class: 'modal-xl modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+      this.modalService.show(ShowReportComponentComponent, config);
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'No hay etiquetas que visualizar'
+      );
+    }
+  }
+
   showLabelTDRReception() {
     if (this.goodsReception.value.length) {
       this.goodsReception.value.map((good: IGood) => {
@@ -4349,7 +4376,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
-            this.goodId = '';
           }
         },
       },
