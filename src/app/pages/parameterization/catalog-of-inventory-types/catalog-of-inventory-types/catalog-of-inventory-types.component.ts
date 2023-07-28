@@ -16,7 +16,7 @@ export class CatalogOfInventoryTypesComponent
 {
   form: FormGroup = new FormGroup({});
   edit: boolean = false;
-  title: string = 'TIPO DE INVENTARIO';
+  title: string = 'Tipo de Inventario';
   allotment: any;
   constructor(
     private fb: FormBuilder,
@@ -70,13 +70,12 @@ export class CatalogOfInventoryTypesComponent
         next: () => {
           this.alert(
             'error',
-            `La clave ${cveTypeInventory} ya existe, favor de verificar.`,
+            `El Tipo de Inventario: ${cveTypeInventory}, ya fue registrado.`,
             ''
           );
         },
         error: err => {
           if (err.status === 400) {
-            this.alert('info', `La clave ${cveTypeInventory} es valida`, '');
             this.insert();
           }
         },
@@ -86,9 +85,9 @@ export class CatalogOfInventoryTypesComponent
 
   insert() {
     if (this.edit) {
-      const { cveTypeInventory } = this.form.value;
+      const { cveTypeInventory } = this.form.getRawValue();
       this.inventoryServ
-        .updateInventory(cveTypeInventory, this.form.value)
+        .updateInventory(cveTypeInventory, this.form.getRawValue())
         .subscribe({
           next: () => {
             this.handleSuccess();
@@ -98,7 +97,15 @@ export class CatalogOfInventoryTypesComponent
           },
         });
     } else {
-      this.inventoryServ.createInventory(this.form.value).subscribe({
+      if (
+        this.form.controls['description'].value.trim() === '' ||
+        this.form.controls['cveTypeInventory'].value.trim() === ''
+      ) {
+        this.alert('warning', 'No se puede guardar campos vacíos', '');
+        return;
+      }
+      this.loading = true;
+      this.inventoryServ.createInventory(this.form.getRawValue()).subscribe({
         next: () => {
           this.handleSuccess();
         },
@@ -117,7 +124,11 @@ export class CatalogOfInventoryTypesComponent
       if (question.isConfirmed) {
         this.inventoryServ.remove(event).subscribe({
           next: () => {
-            this.alert('success', 'Eliminado correctamente', '');
+            this.alert(
+              'success',
+              'Tipo de Inventario',
+              'Eliminado correctamente'
+            );
           },
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
