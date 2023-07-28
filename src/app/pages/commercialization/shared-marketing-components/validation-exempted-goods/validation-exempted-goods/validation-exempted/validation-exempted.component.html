@@ -1,17 +1,16 @@
-<app-card [header]="true" [footer]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Bienes exentos de verificación</h5>
+<app-card>
+  <div header>
+    <h5 class="title">{{ title }}</h5>
   </div>
   <div body>
-    <!--TABLE GOODS-->
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
-            [source]="goods"
-            (userRowSelect)="rowsSelected($event)">
+            [source]="data"
+            (edit)="openForm($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -19,7 +18,5 @@
     <app-pagination
       [params]="params"
       [totalItems]="totalItems"></app-pagination>
-    <app-validation-exempted
-      [proccessList]="proccessList"></app-validation-exempted>
   </div>
 </app-card>

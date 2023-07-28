@@ -43,11 +43,6 @@ export class ModelsListComponent extends BasePage implements OnInit {
     this.settings.actions.position = 'right';
   }
 
-  form = this.fb.group({
-    id: [null],
-    modelComment: [null],
-  });
-
   ngOnInit(): void {
     this.data
       .onChanged()
@@ -98,38 +93,12 @@ export class ModelsListComponent extends BasePage implements OnInit {
     this.modelServices.getAll(params).subscribe({
       next: response => {
         this.parameterComer = response.data;
-        this.totalItems = response.count || 0;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
-  }
-
-  onSubmit() {
-    this.modelName = this.form.get('id').value;
-    this.loading = true;
-    let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
-    };
-    this.modelServices.getAll2(this.modelName, params).subscribe({
-      next: response => {
-        this.parameterComer = response.data;
         this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
-      error: error => {
-        (this.loading = false),
-          this.alert(
-            'warning',
-            'No se Encontraron Modelos con el Parámetro de Búsqueda',
-            ''
-          );
-      },
+      error: error => (this.loading = false),
     });
   }
 
@@ -149,7 +118,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este modelo?'
+      '¿Desea Eliminar este Modelo?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(parameterComer.id);
@@ -164,10 +133,5 @@ export class ModelsListComponent extends BasePage implements OnInit {
         this.alert('success', 'Modelo Borrado Correctamente', '');
       },
     });
-  }
-
-  cleandInfo() {
-    this.form.reset();
-    this.getModels();
   }
 }
