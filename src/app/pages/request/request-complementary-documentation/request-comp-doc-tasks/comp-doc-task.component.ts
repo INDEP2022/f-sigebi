@@ -15,7 +15,9 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract expRequest: boolean;
   protected abstract selectGoodForEyeVisit: boolean;
   protected abstract validateGoodForEyeVisit: boolean;
+  protected abstract resultVisits: boolean;
   protected abstract viewSelectedGoods: boolean;
+  protected abstract resultEyeVisitReport: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
   protected abstract saveRequest: boolean;
@@ -25,6 +27,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract title: string;
   protected abstract complementaryDoc: boolean;
   protected abstract requestInfo: IRequest;
+  protected abstract typeVisit: string;
 
   private rejectedService = inject(RejectedGoodService);
 
@@ -166,89 +169,56 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         this.createReport = true;
         this.rejectReq = true;
-
         break;
       case 'BSRegistroSolicitudes':
         //registro del formulario
         this.regDocForm = true;
-        this.regDocView = false;
         //buscar solicitudes de bienes
         this.searchRequestSimGoods = true;
         //seleccionar bienes
         this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
-        this.docRequest = false;
         //expedientes
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-        this.selectGoodForEyeVisit = false;
-        this.validateGoodForEyeVisit = false;
-
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
         break;
       case 'BSNotificarTransferente':
-        this.regDocForm = false;
         //ver registro
         this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
         //visualizar los bienes seleccioandos
         this.viewSelectedGoods = true;
-        this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
         this.notifyReport = true;
-        this.selectGoodForEyeVisit = false;
-        this.validateGoodForEyeVisit = false;
-
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
         break;
       case 'BSVisitaOcular':
-        this.regDocForm = false;
+        this.typeVisit = 'selectGood';
         this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
         this.selectGoodForEyeVisit = true;
-        this.validateGoodForEyeVisit = false;
-
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
         break;
       case 'BSValidarVisitaOcular':
-        this.regDocForm = false;
         this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-        this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = true;
-
+        this.resultEyeVisitReport = true;
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
+        break;
+      case 'BSElaborarOficioRespuesta':
+        this.typeVisit = 'resultGood';
+        this.regDocView = true;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.resultVisits = true;
+        this.turnReq = true;
         break;
       case 'RERegistroDocComplementaria':
         this.regDocForm = true;
@@ -329,6 +299,8 @@ export abstract class CompDocTasksComponent extends BasePage {
     this.dictumValidate = false;
     this.notifyReport = false;
     this.selectGoodForEyeVisit = false;
+    this.validateGoodForEyeVisit = false;
+    this.resultEyeVisitReport = false;
     this.turnReq = false;
     this.createReport = false;
     this.rejectReq = false;

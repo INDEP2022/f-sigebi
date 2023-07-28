@@ -771,3 +771,8 @@ custom-view-component {
   background: white !important;
   // opacity: 1 !important;
 }
+
+//remover si afecta visualizacion
+.main-content {
+  overflow: visible;
+}
