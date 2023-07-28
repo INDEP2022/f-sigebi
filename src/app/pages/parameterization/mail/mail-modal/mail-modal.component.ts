@@ -26,7 +26,7 @@ export class MailModalComponent extends BasePage implements OnInit {
   segUsers: ISegUsers;
   delegationNumber: IUserAccessAreas;
 
-  title: string = 'Mantenimiento de correo';
+  title: string = 'Mantenimiento de Correo';
   edit: boolean = false;
 
   constructor(
@@ -60,7 +60,14 @@ export class MailModalComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      rfc: [null, [Validators.maxLength(13), Validators.pattern(RFC_PATTERN)]],
+      rfc: [
+        null,
+        [
+          Validators.maxLength(13),
+          Validators.pattern(RFC_PATTERN),
+          Validators.required,
+        ],
+      ],
       curp: [
         null,
         [Validators.maxLength(20), Validators.pattern(CURP_PATTERN)],
@@ -83,7 +90,7 @@ export class MailModalComponent extends BasePage implements OnInit {
       ],
       phone: [
         null,
-        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(20), Validators.pattern(NUMBERS_PATTERN)],
       ],
       profession: [
         null,
@@ -93,7 +100,10 @@ export class MailModalComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
       ],
-      firstTimeLoginDate: [null, [Validators.pattern(STRING_PATTERN)]],
+      firstTimeLoginDate: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.required],
+      ],
       daysValidityPass: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
@@ -156,12 +166,14 @@ export class MailModalComponent extends BasePage implements OnInit {
     });
     if (this.segUsers != null) {
       this.delegationNumber = this.segUsers.usuario as IUserAccessAreas;
+
       this.edit = true;
       const formatFec = this.segUsers.firstTimeLoginDate;
       const fechaObjeto = new Date(formatFec);
       const format = this.datePipe.transform(formatFec, 'yyyy/MM/dd');
       this.form.patchValue(this.segUsers);
       this.form.controls['firstTimeLoginDate'].setValue(format);
+      console.log(this.form.controls['firstTimeLoginDate'].setValue(format));
       /*this.form.controls['usuario'].setValue(
         this.delegationNumber.delegationNumber
       );*/
@@ -177,10 +189,22 @@ export class MailModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.form.controls['name'].value.trim() === '' ||
+      this.form.controls['userSirsae'].value.trim() === '' ||
+      this.form.controls['id'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
+
     this.loading = true;
     this.usersService.create(this.form.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.alert('error', error.error.message, '');
+        this.loading = false;
+      },
     });
   }
 
@@ -194,7 +218,7 @@ export class MailModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;

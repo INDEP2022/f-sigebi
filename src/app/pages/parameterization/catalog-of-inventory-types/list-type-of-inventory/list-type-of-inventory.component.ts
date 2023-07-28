@@ -69,15 +69,26 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'cveTypeInventory':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getInventory();
         }
       });
@@ -94,15 +105,34 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'noTypeInventory':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'attributeInventory':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'typeData':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'typesInventory':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.description`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters1[field];
             }
           });
+          this.params1 = this.pageFilter(this.params1);
           this.getInventoryType();
         }
       });
@@ -121,14 +151,13 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.dataInventory = response.data;
-        this.data.load(this.dataInventory);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
       error: err => {
         this.loading = false;
-        this.alert('error', err.error.message, '');
       },
     });
   }
@@ -142,14 +171,13 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.dataInventoryType = response.data;
-        this.data1.load(this.dataInventoryType);
+        this.data1.load(response.data);
         this.data1.refresh();
         this.totalItems1 = response.count;
         this.loading = false;
       },
       error: err => {
         this.loading = false;
-        this.alert('error', err.error.message, '');
       },
     });
   }
@@ -181,7 +209,11 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
                   .removeInventory(type.cveTypeInventory)
                   .subscribe({
                     next: () => {
-                      this.alert('success', 'Ha sido eliminado', '');
+                      this.alert(
+                        'success',
+                        'Tipo de Inventario',
+                        'Eliminado correctamente'
+                      );
                       this.params
                         .pipe(takeUntil(this.$unSubscribe))
                         .subscribe(() => this.getInventory());
@@ -204,7 +236,11 @@ export class ListTypeOfInventoryComponent extends BasePage implements OnInit {
         this.inventoryServ.remove(typeDetail.noTypeInventory).subscribe({
           next: () => {
             this.params1 = new BehaviorSubject<ListParams>(new ListParams());
-            this.alert('success', 'Registro Eliminado Correctamente', '');
+            this.alert(
+              'success',
+              'Tipo de Inventario Detallado',
+              'Eliminado Correctamente'
+            );
             this.getInventoryType();
           },
           error: err => this.alert('error', err.error.message, ''),
