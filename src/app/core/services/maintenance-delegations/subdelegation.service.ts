@@ -30,6 +30,13 @@ export class SubDelegationService extends HttpService {
     );
   }
 
+  getAll(params?: ListParams): Observable<IListResponse<ISubdelegation>> {
+    return this.subDelegationRepository.getAll(
+      this.route.SubDelegation,
+      params
+    );
+  }
+
   create(model: ISubdelegation): Observable<ISubdelegation> {
     return this.subDelegationRepository.create(this.route.SubDelegation, model);
   }

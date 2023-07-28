@@ -18,7 +18,7 @@ export const NORMS_COLUMNS = {
   },
   type: {
     title: 'Tipo',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
   characteristics: {

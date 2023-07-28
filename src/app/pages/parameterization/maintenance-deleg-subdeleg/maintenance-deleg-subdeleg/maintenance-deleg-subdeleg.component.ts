@@ -229,7 +229,10 @@ export class MaintenanceDelegSubdelegComponent
 
   //Con el id seleccionado de delegaciones se obtienen sus subdelegaciones
   getSubDelegations(delegation: IDelegation) {
-    this.loading2 = true;
+    this.loading = true;
+    /*if (delegation) {
+      this.params2.getValue()['filter.delegationNumber'] = delegation.id;
+    }*/
     let params1 = {
       ...this.params2.getValue(),
       ...this.columnFilters1,
@@ -239,15 +242,21 @@ export class MaintenanceDelegSubdelegComponent
         if (response.data.length > 0) {
           this.subDelegationList = response.data;
           this.data1.load(response.data);
+          this.data1.refresh();
           this.totalItems2 = response.count;
-          this.loading2 = false;
+          this.loading = false;
         } else {
           this.subDelegationList = [];
           this.totalItems2 = 0;
-          this.loading2 = false;
+          this.loading = false;
         }
       },
-      error: error => (this.loading2 = false),
+      error: error => {
+        this.loading = false;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems2 = 0;
+      },
     });
   }
 

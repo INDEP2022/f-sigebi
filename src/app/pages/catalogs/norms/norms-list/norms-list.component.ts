@@ -59,9 +59,8 @@ export class NormsListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'type ':
+              case 'type':
                 searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}`;
                 break;
               case 'name':
                 searchFilter = SearchFilter.ILIKE;
