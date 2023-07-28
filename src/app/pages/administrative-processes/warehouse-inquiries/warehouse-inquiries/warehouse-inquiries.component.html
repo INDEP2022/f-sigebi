@@ -1,9 +1,14 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Consulta de Almacénes</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select [(settings)]="settings"></app-columns-select>
-      <div></div>
+    <div class="d-flex justify-content-end">
+      <div class="d-inline mr-2">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
     </div>
   </div>
 

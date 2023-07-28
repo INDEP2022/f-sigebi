@@ -15,6 +15,7 @@ import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
 export interface IReport {
   data: File;
 }
@@ -34,10 +35,72 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   idLot: number = 0;
   idGood: number = null;
   valid: boolean = false;
+  validPermisos: boolean = false;
   start: string;
   carta: string;
   desType: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
+
+  get oficio() {
+    return this.comerLibsForm.get('oficio');
+  }
+
+  get diridoA() {
+    return this.comerLibsForm.get('diridoA');
+  }
+  get puesto() {
+    return this.comerLibsForm.get('puesto');
+  }
+  get parrafo1() {
+    return this.comerLibsForm.get('parrafo1');
+  }
+
+  get adjudicatorio() {
+    return this.comerLibsForm.get('adjudicatorio');
+  }
+  get factura() {
+    return this.comerLibsForm.get('factura');
+  }
+  get fechaFactura() {
+    return this.comerLibsForm.get('fechaFactura');
+  }
+  get parrafo2() {
+    return this.comerLibsForm.get('parrafo2');
+  }
+  get firmante() {
+    return this.comerLibsForm.get('firmante');
+  }
+  get ccp1() {
+    return this.comerLibsForm.get('ccp1');
+  }
+  get puestoCcp1() {
+    return this.comerLibsForm.get('puestoCcp1');
+  }
+  get ccp2() {
+    return this.comerLibsForm.get('ccp2');
+  }
+  get puestoCcp2() {
+    return this.comerLibsForm.get('puestoCcp2');
+  }
+
+  get lote() {
+    return this.bienesLotesForm.get('lote');
+  }
+  get description() {
+    return this.bienesLotesForm.get('description');
+  }
+
+  // ccp4
+  // lote
+  // fechaCarta
+  // fechaFallo
+  // cveProceso
+  // descEvent
+  // nombreFirma
+  // puestoFirma
+  // nombreCcp1
+  // nombreCcp2
+
   settings1 = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -60,14 +123,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     },
     noDataMessage: 'No se encontrarón registros',
   };
-  settings2 = {
-    ...this.settings,
-    actions: false,
-    columns: { ...RELEASE_REPORT_COLUMNS },
-  };
 
-  data = EXAMPLE_DATA;
-  form: FormGroup;
+  comerLibsForm: FormGroup;
+  bienesLotesForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -83,14 +141,13 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getEvent(this.params.getValue());
-    this.getLot(this.params.getValue());
+    this.bienlotForm();
+    // this.getEvent(this.params.getValue());
+    // this.getLot(this.params.getValue());
   }
 
   prepareForm() {
-    this.form = this.fb.group({
-      evento: [null],
-      lote: [null],
+    this.comerLibsForm = this.fb.group({
       oficio: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
@@ -104,70 +161,94 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      adjudicatorio: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      factura: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
+      factura: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       fechaFactura: [null, [Validators.required]],
-      parrafo2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      firmante: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      ccp1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      ccp2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      parrafo2: [null, [Validators.pattern(STRING_PATTERN)]],
+      firmante: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp1: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp2: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp3: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp4: [null, [Validators.pattern(STRING_PATTERN)]],
       fechaCarta: [null],
+      fechaFallo: [null],
+      cveProceso: [null],
+      descEvent: [null],
+      nombreFirma: [null],
       puestoFirma: [null],
+      nombreCcp1: [null],
       puestoCcp1: [null],
+      nombreCcp2: [null],
       puestoCcp2: [null],
+    });
+  }
+  bienlotForm() {
+    this.bienesLotesForm = this.fb.group({
+      evento: [null],
+      description: [null],
     });
   }
 
   confirm(): void {
-    console.log(this.form.value);
+    // console.log(this.comerLibsForm.value);
 
     let params = {
-      DESTYPE: this.form.controls['evento'].value,
-      ID_LOTE: this.form.controls['lote'].value,
-      OFICIO_CARTALIB: this.form.controls['oficio'].value,
-      DIRIGIDO_A: this.form.controls['diridoA'].value,
-      PUESTO: this.form.controls['puesto'].value,
-      PARRAFO1: this.form.controls['parrafo1'].value,
-      ADJUDICATARIO: this.form.controls['adjudicatorio'].value,
-      NO_FACTURA: this.form.controls['factura'].value,
-      FECHA_FACTURA: this.form.controls['fechaFactura'].value,
-      PARRAFO2: this.form.controls['parrafo2'].value,
-      FIRMANTE: this.form.controls['firmante'].value,
-      PUESTOFIRMA: this.form.controls['puestoFirma'].value,
-      CCP1: this.form.controls['ccp1'].value,
-      CCP2: this.form.controls['ccp1'].value,
-      PUESTOCCP1: this.form.controls['puestoCcp1'].value,
-      PUESTOCCP2: this.form.controls['puestoCcp2'].value,
-      FECHA_CARTA: this.form.controls['fechaCarta'].value,
+      DESTYPE: this.comerLibsForm.controls['descEvent'].value,
+      ID_LOTE: this.comerLibsForm.controls['lote'].value,
+      OFICIO_CARTALIB: this.comerLibsForm.controls['oficio'].value,
+      DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
+      PUESTO: this.comerLibsForm.controls['puesto'].value,
+      PARRAFO1: this.comerLibsForm.controls['parrafo1'].value,
+      ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
+      NO_FACTURA: this.comerLibsForm.controls['factura'].value,
+      FECHA_FACTURA: this.comerLibsForm.controls['fechaFactura'].value,
+      PARRAFO2: this.comerLibsForm.controls['parrafo2'].value,
+      FIRMANTE: this.comerLibsForm.controls['firmante'].value,
+      PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
+      CCP1: this.comerLibsForm.controls['ccp1'].value,
+      CCP2: this.comerLibsForm.controls['ccp1'].value,
+      PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
+      PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
+      FECHA_CARTA: this.comerLibsForm.controls['fechaCarta'].value,
     };
 
     console.log(params);
-    // open the window
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCOMERCARTALIB.pdf?ID_LOTE=${params.ID_LOTE}&OFICIO_CARTALIB=${params.OFICIO_CARTALIB}&DIRIGIDO_A=${params.DIRIGIDO_A}&PUESTO=${params.PUESTO}&PARRAFO1=${params.PARRAFO1}&ADJUDICATARIO=${params.ADJUDICATARIO}&NO_FACTURA=${params.NO_FACTURA}&FECHA_FACTURA=${params.FECHA_FACTURA}&PARRAFO2=${params.PARRAFO2}&FIRMANTE=${params.FIRMANTE}&PARRAFO2=${params.PARRAFO2}&PUESTOFIRMA=${params.PUESTOFIRMA}&CCP1=${params.CCP1}&CCP2=${params.CCP2}&CCP1=${params.CCP1}&PUESTOCCP1=${params.PUESTOCCP1}&PUESTOCCP2=${params.PUESTOCCP2}&FECHA_CARTA=${params.FECHA_CARTA}`;
-
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-    setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
-    }, 2000);
-
-    window.open(pdfurl, 'RCOMERCARTALIB.pdf');
-    this.loading = false;
-    this.cleanForm();
+    this.siabService
+      // .fetchReport('RGERADBCONCNUMEFE', params)
+      .fetchReportBlank('blank')
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
   }
 
   getGood(search: any) {
@@ -222,27 +303,28 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
 
   Generar() {
-    const start = this.form.get('fechaFactura').value;
-    const carta = this.form.get('fechaCarta').value;
+    this.loading = true;
+    const start = this.comerLibsForm.get('fechaFactura').value;
+    const carta = this.comerLibsForm.get('fechaCarta').value;
     this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
     this.carta = this.datePipe.transform(carta, 'dd/MM/yyyy');
     let params = {
-      DESTYPE: this.form.controls['evento'].value,
-      ID_LOTE: this.form.controls['lote'].value,
-      OFICIO_CARTALIB: this.form.controls['oficio'].value,
-      DIRIGIDO_A: this.form.controls['diridoA'].value,
-      PUESTO: this.form.controls['puesto'].value,
-      PARRAFO1: this.form.controls['parrafo1'].value,
-      ADJUDICATARIO: this.form.controls['adjudicatorio'].value,
-      NO_FACTURA: this.form.controls['factura'].value,
+      DESTYPE: this.comerLibsForm.controls['evento'].value,
+      ID_LOTE: this.comerLibsForm.controls['lote'].value,
+      OFICIO_CARTALIB: this.comerLibsForm.controls['oficio'].value,
+      DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
+      PUESTO: this.comerLibsForm.controls['puesto'].value,
+      PARRAFO1: this.comerLibsForm.controls['parrafo1'].value,
+      ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
+      NO_FACTURA: this.comerLibsForm.controls['factura'].value,
       FECHA_FACTURA: this.start,
-      PARRAFO2: this.form.controls['parrafo2'].value,
-      FIRMANTE: this.form.controls['firmante'].value,
-      PUESTOFIRMA: this.form.controls['puestoFirma'].value,
-      CCP1: this.form.controls['ccp1'].value,
-      CCP2: this.form.controls['ccp1'].value,
-      PUESTOCCP1: this.form.controls['puestoCcp1'].value,
-      PUESTOCCP2: this.form.controls['puestoCcp2'].value,
+      PARRAFO2: this.comerLibsForm.controls['parrafo2'].value,
+      FIRMANTE: this.comerLibsForm.controls['firmante'].value,
+      PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
+      CCP1: this.comerLibsForm.controls['ccp1'].value,
+      CCP2: this.comerLibsForm.controls['ccp1'].value,
+      PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
+      PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
       FECHA_CARTA: this.carta,
     };
 
@@ -250,6 +332,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       .fetchReport('FCOMERCARTALIB', params)
       .subscribe(response => {
         if (response !== null) {
+          this.loading = false;
           const blob = new Blob([response], { type: 'application/pdf' });
           const url = URL.createObjectURL(blob);
           let config = {
@@ -275,23 +358,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
 
   cleanForm(): void {
-    this.form.reset();
-  }
-  preview(url: string, params: ListParams) {
-    try {
-      this.reportService.download(url, params).subscribe(response => {
-        if (response !== null) {
-          let blob = new Blob([response], { type: 'application/pdf' });
-          const fileURL = URL.createObjectURL(blob);
-          window.open(fileURL);
-        }
-      });
-    } catch (e) {
-      console.error(e);
-    }
+    this.comerLibsForm.reset();
   }
 }
-
 export const RELEASE_REPORT_COLUMNS = {
   goodNumber: {
     title: 'Bien',

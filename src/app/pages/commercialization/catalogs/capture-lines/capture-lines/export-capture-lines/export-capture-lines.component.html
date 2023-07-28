@@ -1,10 +1,7 @@
-<app-card>
-  <div header>
-    <h5 class="modal-title">{{ title }}</h5>
-  </div>
+<app-modal>
   <div body>
     <div class="ch-content">
-      <h5 class="title"></h5>
+      <h5 class="title">{{ title }}</h5>
       <div class="col-md-5 buttons">
         <div>
           <button
@@ -15,7 +12,6 @@
         </div>
       </div>
     </div>
-
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -31,7 +27,6 @@
       [params]="params"
       [totalItems]="totalItems"></app-pagination>
   </div>
-
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
@@ -41,4 +36,4 @@
       </div>
     </div>
   </div>
-</app-card>
+</app-modal>
