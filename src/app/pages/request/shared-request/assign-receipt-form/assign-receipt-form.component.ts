@@ -60,10 +60,9 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   getReceipts() {
     this.loadingTable = true;
     this.params.getValue()['filter.programmingId'] = this.programming.id;
-    this.params.getValue()['filter.statusReceipt'] = 'ABIERTO';
+
     this.receptionGoodService.getReceipt(this.params.getValue()).subscribe({
       next: response => {
-        console.log('');
         this.receipts = response.data;
         this.loadingTable = false;
       },
@@ -86,6 +85,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   receiptSelect(receipt: IReceipt) {
+    console.log('receipt', receipt);
     this.receiptId = receipt.id;
     this.actId = receipt.actId;
     this.statusReceipt = receipt.statusReceipt;
@@ -192,22 +192,12 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   createReceipt() {
-    console.log('this.receipts', this.receipts);
-    if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
-      this.alertInfo(
-        'info',
+    if (this.receipts[this.receipts.length]?.statusReceipt == 'ABIERTO') {
+      this.alert(
+        'warning',
         'Acción Inválida',
         'Aún se encuentran recibos abiertos'
       );
-    } else if (this.receipts.length == 0) {
-    }
-
-    /*if (this.receipts[0]?.statusReceipt == 'ABIERTO') {
-      this.alertInfo(
-        'info',
-        'Acción Inválida',
-        'Aún se encuentran recibos abiertos'
-      ).then();
     } else {
       if (this.proceedign?.proceedingStatus == 'ABIERTO') {
         const receiptForm: Object = {
@@ -228,7 +218,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         });
       } else {
         const form: Object = {
-          minutesId: '1',
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
         };
@@ -237,12 +226,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
             const createKeyAct = await this.createKeyAct(response);
             if (createKeyAct == true) {
               const receiptForm: Object = {
-                id: 1,
+                id: this.receipts.length + 1,
                 actId: response.id,
                 programmingId: this.programming.id,
                 statusReceipt: 'ABIERTO',
               };
-
               this.receptionGoodService.createReceipt(receiptForm).subscribe({
                 next: async response => {
                   const folioReceipt = await this.createKeyReceipt(response);
@@ -257,7 +245,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       }
-    } */
+    }
   }
 
   createKeyAct(act: IProceedings) {

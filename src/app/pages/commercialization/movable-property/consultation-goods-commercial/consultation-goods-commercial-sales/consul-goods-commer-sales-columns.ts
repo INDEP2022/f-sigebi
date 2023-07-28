@@ -19,10 +19,10 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
       instance.toggle.subscribe((data: any) => {
         if (data.toggle) {
           console.log(goodCheck);
-          goodCheck.push(data);
+          goodCheck.push(data.row);
         } else {
           goodCheck = goodCheck.filter(
-            valor => valor.row.idordeningreso != data.row.idordeningreso
+            valor => valor.idordeningreso != data.row.idordeningreso
           );
         }
       });

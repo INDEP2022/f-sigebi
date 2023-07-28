@@ -550,7 +550,6 @@ export class SirsaeMovementSendingMainComponent
             `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
             ''
           );
-
           item.sendSirsae = 'N';
           delete item.rfc;
           delete item.name;
