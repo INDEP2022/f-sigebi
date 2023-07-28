@@ -66,7 +66,7 @@ export class CourtListComponent extends BasePage implements OnInit {
             filter.field == 'city'
               ? (field = `filter.${filter.field}.nameCity`)
               : (field = `filter.${filter.field}`);
-            filter.field == 'id'
+            filter.field == 'id' || filter.field == 'zipCode'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -123,7 +123,7 @@ export class CourtListComponent extends BasePage implements OnInit {
           if (response.data.length > 0) {
             this.alert(
               'info',
-              'Juzgado con ciudades',
+              'Juzgado con Ciudades',
               'Debe eliminar primero las ciudades asignadas de dicho juzgado'
             );
           } else {
@@ -135,13 +135,17 @@ export class CourtListComponent extends BasePage implements OnInit {
               if (question.isConfirmed) {
                 this.courtService.remove(id).subscribe({
                   next: () => {
-                    this.alert('success', 'Registro de juzgado', 'Borrado');
+                    this.alert(
+                      'success',
+                      'Registro de Juzgado',
+                      'Borrado Correctamente'
+                    );
                     this.getCourts();
                   },
                   error: err => {
                     this.alert(
                       'warning',
-                      'Juzgado con ciudades',
+                      'Juzgado con Ciudades',
                       'No se puede eliminar el objeto debido a una relación con otra tabla.'
                     );
                   },

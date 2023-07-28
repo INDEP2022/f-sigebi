@@ -82,8 +82,8 @@ export class ManagementFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', 'Getión', `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.alert('success', 'Gestión', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

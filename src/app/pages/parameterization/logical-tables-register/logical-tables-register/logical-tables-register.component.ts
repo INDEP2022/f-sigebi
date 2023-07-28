@@ -62,11 +62,15 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'id':
-                searchFilter = SearchFilter.EQ;
-                field = `filter.${filter.field}.id`;
+              case 'name':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
                 break;
               case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'tableType':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}`;
                 break;

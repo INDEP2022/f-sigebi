@@ -43,6 +43,7 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
           Validators.maxLength(4),
         ],
       ],
@@ -130,7 +131,7 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
     }
     this.loading = true;
     this.docCompensationService
-      .create(this.docCompensationForm.value)
+      .create(this.docCompensationForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
