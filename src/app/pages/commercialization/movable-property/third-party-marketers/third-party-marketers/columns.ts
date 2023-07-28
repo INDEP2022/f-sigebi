@@ -51,9 +51,9 @@ export const TYPE_EVENT_THIRD_COLUMNS = {
     title: 'Descripción',
     sort: false,
     width: '70%',
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.eventDetail ? row.eventDetail.description : null;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.eventDetail ? row.eventDetail.description : null;
+    // },
   },
 };
 

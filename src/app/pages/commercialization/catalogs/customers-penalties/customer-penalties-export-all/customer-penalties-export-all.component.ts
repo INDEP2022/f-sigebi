@@ -71,10 +71,20 @@ export class CustomersPenaltiesExportAllComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'startDate':
-                searchFilter = SearchFilter.ILIKE;
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
                 break;
               case 'endDate':
-                searchFilter = SearchFilter.ILIKE;
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
                 break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
@@ -83,7 +93,12 @@ export class CustomersPenaltiesExportAllComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'penaltiDate':
-                searchFilter = SearchFilter.ILIKE;
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -102,6 +117,17 @@ export class CustomersPenaltiesExportAllComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getCustomers());
+  }
+
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${year}-${month}-${day}`;
   }
 
   //Trae todos los clintes penalizados
