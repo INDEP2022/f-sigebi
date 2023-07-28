@@ -209,8 +209,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
-        data.startDate = moment(data.startDate).format('YYYY-MM-DD HH:mm:ss');
-        data.endDate = moment(data.endDate).format('YYYY-MM-DD HH:mm:ss');
+        data.startDate = moment(data.startDate).format('DD/MM/YYYY HH:mm:ss');
+        data.endDate = moment(data.endDate).format('DD/MM/YYYY HH:mm:ss');
         this.programming = data;
 
         this.idTransferent = data.tranferId;
@@ -800,6 +800,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
         }
       });
     } else {
@@ -876,8 +879,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
     const dataEmail = {
       folio: this.programming.folio,
-      startDate: this.programming.startDate,
-      endDate: this.programming.endDate,
+      startDate: moment(this.programming.startDate).format(
+        'YYYY-MM-DD HH:mm:ss'
+      ),
+      endDate: moment(this.programming.endDate).format('YYYY-MM-DD HH:mm:ss'),
       city: this.programming.city,
       address: this.programming.address,
       usersProg: this.infoUsers,
@@ -889,11 +894,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.emailService
       .createEmailProgramming(JSON.stringify(dataEmail))
       .subscribe({
-        next: () => {
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
-        },
+        next: () => {},
         error: error => {},
       });
   }
