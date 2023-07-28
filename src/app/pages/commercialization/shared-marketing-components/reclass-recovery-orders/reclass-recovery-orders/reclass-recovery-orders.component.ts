@@ -175,7 +175,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     this.amount.setValue(data.parentTotalAmount);
     this.reference.setValue(data.reference);
     this.idPayment.setValue(data.paymentId);
-    this.idEvent.setValue(data.idEvent);
+    this.idEvent.setValue(data.idEvent)
     this.identifier = data.identifier;
     this.idEventParams = data.idEvent;
     this.referenceOriDat = data.reference;
