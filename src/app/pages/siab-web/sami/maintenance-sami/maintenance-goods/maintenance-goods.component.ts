@@ -6,7 +6,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-maintenance-goods',
   templateUrl: './maintenance-goods.component.html',
-  styleUrls: ['./maintenance-goods.component.css'],
+  styleUrls: ['./maintenance-goods.component.scss'],
 })
 export class MaintenanceGoodsComponent extends BasePage implements OnInit {
   form: FormGroup;
