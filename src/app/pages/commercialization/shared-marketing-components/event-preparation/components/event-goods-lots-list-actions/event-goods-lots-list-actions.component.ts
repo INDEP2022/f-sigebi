@@ -56,11 +56,15 @@ export class EventGoodsLotsListActionsComponent
   invoiceDataInput: ElementRef<HTMLInputElement>;
   @ViewChild('saleBaseInput', { static: true })
   saleBaseInput: ElementRef<HTMLInputElement>;
+  @ViewChild('customersBaseInput', { static: true })
+  customersBaseInput: ElementRef<HTMLInputElement>;
   @Input() params: BehaviorSubject<FilterParams>;
   goodsLotifyControl = new FormControl(null);
   customersImportControl = new FormControl(null);
   invoiceControl = new FormControl(null);
   invoiceDataControl = new FormControl(null);
+  saleBasesControl = new FormControl(null);
+  customersBasecontrol = new FormControl(null);
   @Input() onlyBase = false;
   get controls() {
     return this.eventForm.controls;
@@ -660,6 +664,7 @@ export class EventGoodsLotsListActionsComponent
 
   loadSaleBases(event: Event) {
     if (!this.isValidFile(event)) {
+      this.saleBasesControl.reset();
       return;
     }
     this.impExcelBase();
@@ -667,5 +672,35 @@ export class EventGoodsLotsListActionsComponent
 
   impExcelBase() {
     console.warn('PUP_IMP_EXCEL_BASES');
+  }
+
+  // ? -------------- CARGA CLIENTES BASE
+  onLoadBaseCustomers() {
+    const { statusVtaId } = this.controls;
+    const valid = this.consignment();
+    const canContinue =
+      (valid && this.parameters.pValids) || statusVtaId.value == 'CONC';
+    if (!canContinue) {
+      this.alert(
+        'error',
+        'Error',
+        'Este tipo de evento no permite esta funcionalidad o Usted no tiene permisos'
+      );
+      return;
+    }
+
+    this.customersBaseInput.nativeElement.click();
+  }
+
+  loadCustomersBase(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.saleBasesControl.reset();
+      return;
+    }
+    this.impBaseCustomers();
+  }
+
+  impBaseCustomers() {
+    console.warn('PUP_IMP_EXCEL_BASES_CLIENTE');
   }
 }

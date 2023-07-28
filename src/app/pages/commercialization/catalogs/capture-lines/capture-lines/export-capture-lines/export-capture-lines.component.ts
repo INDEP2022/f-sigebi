@@ -26,6 +26,8 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   edit: boolean = false;
   captureLinesId: number;
+  captureId: number;
+
   constructor(
     private capturelineService: CapturelineService,
     private excelService: ExcelService,
@@ -38,7 +40,6 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.captureLinesId);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -62,6 +63,7 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -75,7 +77,7 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
       .subscribe(() => this.getData());
   }
 
-  //Tabla con todos los clientes
+  //Tabla con todos los eventos para exportar
   getData() {
     this.data = new LocalDataSource();
     let params = {
@@ -83,13 +85,13 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     this.capturelineService
-      .getAllDetCaptureLines(this.captureLinesId, params)
+      .getAllDetCaptureLines(this.captureId, params)
       .subscribe({
         next: response => {
           this.captureLinesMain = response.data;
           this.data.load(response.data);
           this.data.refresh();
-          this.totalItems = response.data.length;
+          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => (this.loading = false),

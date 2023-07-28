@@ -91,10 +91,10 @@ export class ReceiptTableGoodsComponent
     if (!this.selectEnabled) {
       this.fillSelectedRows();
     }
-    if (this.estatus_bien_programacion === 'CANCELADO_TMP') {
+    if (this.estatus_bien_programacion === 'CANCELADO') {
       this.dataService.cancelacion = this.totalItems;
     }
-    if (this.estatus_bien_programacion === 'EN_PROGRAMACION_TMP') {
+    if (this.estatus_bien_programacion === 'EN_PROGRAMACION') {
       this.dataService.programacion = this.totalItems;
     }
   }
@@ -139,7 +139,7 @@ export class ReceiptTableGoodsComponent
           const item = this.selectedGoods.find(
             x => x.id_bien === selected.id_bien
           );
-          if (!item) {
+          if (!item && selected.guardado === '0') {
             this.selectedGoods.push(selected);
           }
         });
@@ -156,7 +156,7 @@ export class ReceiptTableGoodsComponent
           const item = this.selectedGoods.find(
             x => x.id_bien === selected.id_bien
           );
-          if (!item) {
+          if (!item && selected.guardado === '0') {
             this.selectedGoods.push(selected);
           }
         });

@@ -138,6 +138,4 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.UsersTracking}${this.uName}${uName}`
     );
   }
-
-  
 }

@@ -181,10 +181,15 @@
 
   <div class="row text-center">
     <div class="col">
-      <button class="btn btn-danger btn-sm active mr-3">
+      <button
+        class="btn btn-danger btn-sm active mr-3"
+        (click)="cleanFilters()">
         Limpiar Filtros <i class="fas fa-eraser"> </i>
       </button>
-      <button type="button" class="btn btn-primary active btn-sm">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="executeConsult()">
         Ejecutar consulta
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
@@ -200,15 +205,23 @@
     </div>
   </div>
   <div class="row pt-3">
-    <ng2-smart-table [settings]="settings"> </ng2-smart-table>
+    <ng2-smart-table [settings]="settings" [source]="dataGoods">
+    </ng2-smart-table>
   </div>
-  <div class="row text-center mt-5">
+  <app-pagination
+    [params]="params"
+    [totalItems]="totalItems"
+    [limit]="newLimit"></app-pagination>
+
+  <hr class="row mb-5 mt-5" />
+
+  <div class="row text-center">
     <div class="col">
       <button class="btn btn-sm btn-success active mr-3">
         Exportar a Excel Todos
         <i class="bx bx-download float-icon"></i>
       </button>
-      <button class="btn btn-sm btn-success active">
+      <button class="btn btn-sm btn-success active" (click)="exportSelected()">
         Exportar a Excel Seleccionados
         <i class="bx bx-download float-icon"></i>
       </button>
