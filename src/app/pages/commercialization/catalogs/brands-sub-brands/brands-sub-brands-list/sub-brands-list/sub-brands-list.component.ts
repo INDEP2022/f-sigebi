@@ -120,11 +120,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.alert(
-            'warning',
-            'Cliente no Tiene un Histórico de Penalización',
-            ''
-          );
+          this.alert('warning', 'No Existe una Submarca Asociada', '');
         },
       });
     }
@@ -155,7 +151,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar esta sub marca?'
+      '¿Desea Eliminar esta Submarca?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(model);
@@ -167,7 +163,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
     this.brandService.removeSubBrand(model).subscribe({
       next: () => {
         this.getData();
-        this.alert('success', 'Sub Marca Borrada Correctamente', '');
+        this.alert('success', 'Submarca Borrada Correctamente', '');
       },
     });
   }
