@@ -17,6 +17,15 @@
             </ngx-select> -->
           </form-field>
         </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('code')" label="Código">
+            <input
+              maxlength="4"
+              type="text"
+              class="form-control"
+              formControlName="code" />
+          </form-field>
+        </div>
         <div class="col-md-6 mt-3">
           <form-field
             [control]="form.get('movementNumber')"
@@ -107,15 +116,7 @@
               formControlName="dateOi" />
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('code')" label="Código">
-            <input
-              maxlength="4"
-              type="text"
-              class="form-control"
-              formControlName="code" />
-          </form-field>
-        </div>
+
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
             <input

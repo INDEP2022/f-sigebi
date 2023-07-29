@@ -5,9 +5,13 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
-import { CONSUL_GOODS_COMMER_SALES_COLUMNS, goodCheck } from './consul-goods-commer-sales-columns';
+import {
+  CONSUL_GOODS_COMMER_SALES_COLUMNS,
+  goodCheck,
+} from './consul-goods-commer-sales-columns';
 
 import { addDays, format, subDays } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 import { IGoodCharge } from 'src/app/core/models/ms-good/good';
@@ -18,7 +22,6 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { CommercialSalesForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-sales-form';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-consultation-goods-commercial-sales',
@@ -39,9 +42,9 @@ export class ConsultationGoodsCommercialSalesComponent
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  newLimit = new FormControl(10)
+  newLimit = new FormControl(10);
 
-  dataGoods = new LocalDataSource()
+  dataGoods = new LocalDataSource();
   goodCheck: any;
 
   get controls() {
@@ -286,15 +289,15 @@ export class ConsultationGoodsCommercialSalesComponent
   }
 
   //Limpiar Filtros
-  cleanFilters(){
-    this.form.reset()
-    this.dataGoods.load([])
-    this.totalItems = 0
+  cleanFilters() {
+    this.form.reset();
+    this.dataGoods.load([]);
+    this.totalItems = 0;
   }
 
   //Exportar select excel
   exportSelected() {
-    console.log('Entra')
+    console.log('Entra');
     const today = format(new Date(), 'yyyy-MM-dd');
     const filename = `Ventas_${today}`;
     const data = goodCheck.map((row: any) => this.transFormColums(row));
@@ -322,7 +325,7 @@ export class ConsultationGoodsCommercialSalesComponent
       'Descripción de Tipo Evento': row.descripcion_tipo_evento,
       Evento: row.evento_comer_eventos,
       'Precio final Bienes por Lote': row.precio_final_bienes_x_lote,
-      'Precio final Comer Lotes': row.precio_final_comer_lotes
+      'Precio final Comer Lotes': row.precio_final_comer_lotes,
     };
   }
 
@@ -361,25 +364,33 @@ export class ConsultationGoodsCommercialSalesComponent
       : '';
     this.dateInit.value != null ? (model.startDate = this.dateInit.value) : '';
     this.dateFinal.value != null ? (model.endDate = this.dateFinal.value) : '';
-  
-    console.log(model)
 
-    if(Object.keys(model).length === 0){
-      this.alert('warning','Debe especificar al menos un parámetro de búsqueda','')
-    }else{
+    console.log(model);
+
+    if (Object.keys(model).length === 0) {
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+    } else {
       this.goodService.chargeGoods(model).subscribe(
         res => {
-          console.log(res)
-          this.dataGoods.load(res.data)
-          this.totalItems = res.count
+          console.log(res);
+          this.dataGoods.load(res.data);
+          this.totalItems = res.count;
         },
         err => {
-          this.alert('error','Se presentó un error inesperado al obtener los Bienes','')
-          this.dataGoods.load([])
-          this.totalItems = 0
-          console.log(err)
+          this.alert(
+            'error',
+            'Se presentó un error inesperado al obtener los Bienes',
+            ''
+          );
+          this.dataGoods.load([]);
+          this.totalItems = 0;
+          console.log(err);
         }
-      )
-    }    
+      );
+    }
   }
 }
