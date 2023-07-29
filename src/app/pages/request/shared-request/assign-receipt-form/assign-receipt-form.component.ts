@@ -199,7 +199,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
         'Aún se encuentran recibos abiertos'
       );
     } else {
-      if (this.proceedign.proceedingStatus == 'ABIERTO') {
+      if (this.proceedign?.proceedingStatus == 'ABIERTO') {
         const receiptForm: Object = {
           id: 1,
           actId: this.proceedign.id,

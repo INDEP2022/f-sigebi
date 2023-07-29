@@ -33,3 +33,11 @@
 .form-control {
   text-decoration: none;
 }
+
+ng2-smart-table a {
+  color: black;
+}
+
+:host ::ng-deep .ng2-smart-sort-link {
+  color: black !important;
+}

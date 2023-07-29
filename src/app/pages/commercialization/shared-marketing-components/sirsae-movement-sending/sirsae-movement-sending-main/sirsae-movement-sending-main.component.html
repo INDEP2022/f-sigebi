@@ -22,7 +22,7 @@
                 </ngx-select>
               </form-field>
             </div>
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-4 col-md-4">
               <form-field
                 [control]="form.get('description')"
                 label="Descripción">
@@ -52,6 +52,14 @@
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
+            <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                [disabled]="loading || loadingBtn"
+                (click)="obtenerOI()"
+                class="w-100 btn btn-sm btn-block btn-info active">
+                Obtener OI
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -63,28 +71,19 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>CLIENTES DEL EVENTO</h5>
         </div>
-        <div class="row mt-4 d-flex justify-content-center">
+        <!-- <div class="row mt-4 d-flex justify-content-center">
           <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-            <button
-              [disabled]="loading"
-              (click)="obtenerOI()"
-              class="w-100 btn btn-sm btn-block btn-info active">
+            <button [disabled]="loading" (click)="obtenerOI()" class="w-100 btn btn-sm btn-block btn-info active">
               Obtener OI
             </button>
           </div>
           <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-            <button
-              [disabled]="loading"
-              *ngIf="layout == 'M'"
-              type="button"
-              class="btn w-100 btn-primary btn-sm active"
-              tooltip="Enviar a SIRSAE"
-              containerClass="tooltip-style"
-              (click)="enviarSIRSAE()">
+            <button [disabled]="loading" *ngIf="layout == 'M'" type="button" class="btn w-100 btn-primary btn-sm active"
+              tooltip="Enviar a SIRSAE" containerClass="tooltip-style" (click)="enviarSIRSAE()">
               Enviar <i class="bx bx-send"></i>
             </button>
           </div>
-        </div>
+        </div> -->
         <div class="row mt-4 d-flex justify-content-end">
           <div class="ch-content justify-content-end">
             <!-- <h5 class="title">Clientes del Evento</h5> -->
@@ -101,6 +100,19 @@
                   Enviar <i class="bx bx-send"></i>
                 </button>
               </div> -->
+              <div>
+                <button
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="loading || loadingBtn"
+                  *ngIf="layout == 'M'"
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  tooltip=""
+                  containerClass="tooltip-style"
+                  (click)="enviarSIRSAE()">
+                  Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+                </button>
+              </div>
               <div>
                 <button
                   (click)="add()"
@@ -136,7 +148,7 @@
           <div class="col-4"></div>
           <div class="col-md-2">
             <button
-              [disabled]="loading"
+              [disabled]="loading || loadingBtn"
               (click)="allNo()"
               type="button"
               tooltip="Cambiar Todos a NO"
@@ -148,7 +160,7 @@
           </div>
           <div class="col-md-2">
             <button
-              [disabled]="loading"
+              [disabled]="loading || loadingBtn"
               (click)="allYes()"
               type="button"
               tooltip="Cambiar Todos a SI"

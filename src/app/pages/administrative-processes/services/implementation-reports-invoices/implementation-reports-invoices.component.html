@@ -86,14 +86,11 @@
             <form-field
               [control]="invoiceDetailsForm.get('observations')"
               label="Observaciones">
-              <textarea
+              <input
                 class="form-control"
                 type="text"
-                rows="2"
                 formControlName="observations"
-                [attr.disabled]="
-                  billId === null || billId ? true : null
-                "></textarea>
+                [attr.disabled]="billId === null || billId ? true : null" />
             </form-field>
           </div>
         </div>
