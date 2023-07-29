@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { FilterDatePickerComponent } from '../filter-date-picker/filter-date-picker.component';
 
 export const COUNT_TIIE_COLUMNS = {
   // id: {
@@ -7,7 +8,7 @@ export const COUNT_TIIE_COLUMNS = {
   //   sort: false,
   // },
   tiieDays: {
-    title: 'Dias Tiie',
+    title: 'Días TIIE',
     type: 'number',
     sort: true,
     valuePrepareFunction: (dias: number) => {
@@ -16,7 +17,7 @@ export const COUNT_TIIE_COLUMNS = {
     },
   },
   tiieAverage: {
-    title: 'Promedio Tiie',
+    title: 'Promedio TIIE',
     type: 'number',
     sort: true,
     valuePrepareFunction: (avg: number) => {
@@ -25,12 +26,12 @@ export const COUNT_TIIE_COLUMNS = {
     },
   },
   tiieMonth: {
-    title: 'Mes Tiie',
+    title: 'Mes TIIE',
     type: 'number',
     sort: true,
   },
   tiieYear: {
-    title: 'Año Tiie',
+    title: 'Año TIIE',
     type: 'number',
     sort: true,
   },
@@ -40,7 +41,7 @@ export const COUNT_TIIE_COLUMNS = {
     sort: true,
   },
   registryDate: {
-    title: 'Fecha de registro',
+    title: 'Fecha de Registro',
     type: 'string',
     sort: true,
     valuePrepareFunction: (date: Date) => {
@@ -48,6 +49,22 @@ export const COUNT_TIIE_COLUMNS = {
 
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let value = new DatePipe('en-EN').transform(cell, 'dd/MM/yyyy', 'UTC');
+      var formatted = new DatePipe('en-EN').transform(
+        search,
+        'dd/MM/yyyy',
+        'UTC'
+      );
+      console.log('filtro');
+      console.log(value);
+      console.log(formatted);
+      return formatted.indexOf(formatted) >= 0;
+    },
+    filter: {
+      type: 'custom',
+      component: FilterDatePickerComponent,
     },
   },
 };
