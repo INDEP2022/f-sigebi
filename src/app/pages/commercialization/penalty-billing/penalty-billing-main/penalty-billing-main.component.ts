@@ -383,7 +383,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Facturación de Penalización',
-            'Creado correctamente'
+            'Creado Correctamente'
           );
         },
         error: err => {
@@ -415,7 +415,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Facturación de Penalización',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
         },
         error: err => {
@@ -601,7 +601,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
     this.comerInvoice.deleteFolio({ eventId, invoiceId: billId }).subscribe({
       next: () => {
-        this.alert('success', 'Folios', 'Eliminado correctamente');
+        this.alert('success', 'Folios', 'Eliminado Correctamente');
         const dataUpdate = this.billingForm.value;
 
         dataUpdate.impressionDate = dataUpdate.impressionDate
@@ -812,7 +812,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         CF_NUEVAFACT = await this.copyInovice(body);
 
         if (CF_NUEVAFACT > 0) {
-          this.alert('success', 'Factura Cancelada', 'Procesado correctamente');
+          this.alert('success', 'Factura Cancelada', 'Procesado Correctamente');
 
           const dataUpdate = this.billingForm.value;
 

@@ -44,8 +44,7 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
       }
     },
   },
-  sendSirsae1: {
-    // ! Error
+  sendSirsae: {
     title: 'Enviar SIRSAE',
     type: 'string',
     sort: false,
@@ -68,10 +67,5 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
         return row.sendSirsae;
       }
     },
-  },
-  sendSirsae: {
-    title: 'Enviar SIRSAE',
-    type: 'string',
-    sort: false,
   },
 };
