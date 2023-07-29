@@ -12,6 +12,7 @@ export class ReceptionGoodService extends HttpService {
   private readonly receiptRoute = ReceptionGoodEndpoint.Receipt;
   private readonly ReceiptGood = ReceptionGoodEndpoint.ReceiptGood;
   private readonly ReceiptWitness = ReceptionGoodEndpoint.ReceiptWitness;
+  private readonly QueryGoodsTickets = ReceptionGoodEndpoint.QueryGoodsTickets;
   constructor() {
     super();
     this.microservice = ReceptionGoodEndpoint.BasePath;
@@ -74,6 +75,9 @@ export class ReceptionGoodService extends HttpService {
 
   createReceiptWitness(formData: Object) {
     return this.post(`${this.ReceiptWitness}`, formData);
+  }
+  createQueryGoodsTickets(formData: Object) {
+    return this.post(`${this.QueryGoodsTickets}`, formData);
   }
 
   deleteReceiptWitness(formData: Object) {

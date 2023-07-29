@@ -20,6 +20,10 @@ export class ComerInvoiceService extends HttpService {
     return this.post(ENDPOINT_INVOICE.ComerInovice, data);
   }
 
+  update(data: any) {
+    return this.put(ENDPOINT_INVOICE.ComerInovice, data);
+  }
+
   getPenalizeData(idEvent: number, idLote: number) {
     return this.get(
       `${ENDPOINT_INVOICE.ApplicationImpPenalize}?idEvent=${idEvent}&idLot=${idLote}`
@@ -41,5 +45,17 @@ export class ComerInvoiceService extends HttpService {
     idFact: number;
   }) {
     return this.put(ENDPOINT_INVOICE.UpdateStatusImg, data);
+  }
+
+  updateByEvent(eventId: number) {
+    return this.get(`${ENDPOINT_INVOICE.UpdateByEvemt}/${eventId}`);
+  }
+
+  copyInvoice(data: Object) {
+    return this.post(ENDPOINT_INVOICE.CopyInvoice, data);
+  }
+
+  getValidPayments(params?: _Params) {
+    return this.get(ENDPOINT_INVOICE.ComerHeadboard, params);
   }
 }

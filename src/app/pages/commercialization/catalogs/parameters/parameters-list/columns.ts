@@ -1,14 +1,20 @@
 export const COLUMNS = {
   parameter: {
     title: 'Parámetro',
+    width: '5%',
     sort: false,
   },
   description: {
     title: 'Descripción',
+    width: '30%',
     sort: false,
   },
   value: {
     title: 'Valor',
+    width: '20%',
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.replace(/,/g, ', ') : ''}`;
+    },
     sort: false,
   },
   address: {

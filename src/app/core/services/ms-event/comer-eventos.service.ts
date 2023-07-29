@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IComerEvent } from './../../models/ms-event/event.model';
 
@@ -65,5 +65,9 @@ export class ComerEventosService extends HttpService {
 
   validUser(body: { event: number | string; user: string; address: string }) {
     return this.post(EventEndpoints.ComerE + '/valid-user', body);
+  }
+
+  getAppGetfComer(body: any, params?: _Params) {
+    return this.post(EventEndpoints.AppGetfComer, body, params);
   }
 }

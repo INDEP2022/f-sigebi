@@ -25,4 +25,8 @@ export class ParameterInvoiceService extends HttpService {
   update(data: any) {
     return this.put(`${ParameterInvoiceEndpoint.ComerRebil}/${data.id}`, data);
   }
+
+  remove(id: number) {
+    return this.delete(`${ParameterInvoiceEndpoint.ComerRebil}/${id}`);
+  }
 }

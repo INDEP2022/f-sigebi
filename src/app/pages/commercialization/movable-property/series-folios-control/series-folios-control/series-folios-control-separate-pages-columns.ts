@@ -1,3 +1,4 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { ComerF } from 'src/app/core/models/ms-invoicefolio/invoicefolio.model';
 
 export const SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS = {
@@ -20,6 +21,11 @@ export const SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS = {
   recordDate: {
     title: 'Fecha Registro',
     type: 'string',
+    width: '200px',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
 };

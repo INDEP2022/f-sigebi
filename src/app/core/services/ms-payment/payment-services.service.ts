@@ -19,4 +19,35 @@ export class PaymentService extends HttpService {
   remove(id: any) {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
+
+  getComerReldisDisp() {
+    return this.get(`comer-reldis-disp`);
+  }
+  createHeader(params: any) {
+    return this.post(PaymentEndPoints.CreateHeaderFcomer113, params);
+  }
+
+  create(params: any) {
+    return this.post(PaymentEndPoints.ComerPaymentRef, params);
+  }
+
+  update(id: any, params: any) {
+    return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+  }
+
+  sendReadSirsaeFcomer113(params: any) {
+    return this.post(PaymentEndPoints.SendReadSirsaeFcomer113, params);
+  }
+
+  sendSirsaeFcomer112(params: any) {
+    return this.post(PaymentEndPoints.SendSirsaeFcomer112, params);
+  }
+
+  getLoadPayment(id: number, params: any) {
+    return this.get(`load-payments/${id}`, params);
+  }
+
+  getComerPaymentRefGetAllV2(params: _Params) {
+    return this.get(PaymentEndPoints.GetAllV2, params);
+  }
 }

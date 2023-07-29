@@ -49,6 +49,8 @@ export class RequestCompDocTasksComponent
   notifyReport: boolean = false;
   selectGoodForEyeVisit: boolean = false;
   validateGoodForEyeVisit: boolean = false;
+  resultEyeVisitReport: boolean = false;
+  resultVisits: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
@@ -57,7 +59,7 @@ export class RequestCompDocTasksComponent
   createReport: boolean = false;
   rejectReq: boolean = false;
 
-  requestId: number = 0;
+  requestId: number = null;
   contributor: string = '';
   processDetonate: string = '';
   process: string = '';
@@ -69,6 +71,7 @@ export class RequestCompDocTasksComponent
   typeModule: string = '';
   displayExpedient: boolean = false;
   complementaryDoc: boolean = false;
+  typeVisit: string = '';
 
   /* INJECTIONS
   ============== */
@@ -93,10 +96,10 @@ export class RequestCompDocTasksComponent
   }
 
   ngOnInit(): void {
-    const requestId = Number(this.route.snapshot.paramMap.get('request'));
+    this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
-    if (requestId) {
-      this.getRequestInfo(requestId);
+    if (this.requestId) {
+      this.getRequestInfo(this.requestId);
     }
     this.expedientEventTrigger();
   }
@@ -114,7 +117,7 @@ export class RequestCompDocTasksComponent
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
-        this.requestId = resp.data[0].id;
+        //this.requestId = resp.data[0].id;
         this.mapTask(this.process, resp.data[0].affair);
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
@@ -315,6 +318,18 @@ export class RequestCompDocTasksComponent
         }
       });
       resolve(count);
+    });
+  }
+
+  reportResultEyeVisit(context?: Partial<CreateReportComponent>): void {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+      } //this.getCities();
     });
   }
 }

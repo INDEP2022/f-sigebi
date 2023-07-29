@@ -7,8 +7,25 @@
 <div class="row pt-5">
   <div class="d-flex">
     <div class="p-2">
-      <button class="btn btn-primary btn-sm active mb-3">
-        Modificar Fechas <i class="fa fa-calendar" aria-hidden="true"></i>
+      <button
+        class="btn btn-primary btn-sm active mb-3"
+        (click)="seeExpedients()">
+        Ver Expediente
+      </button>
+    </div>
+    <div class="p-2">
+      <button
+        class="btn btn-success btn-sm active mb-3"
+        (click)="validateVisitResult()">
+        Resultado Visita <i class="fa fa-check" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="p-2">
+      <button
+        class="btn btn-success btn-sm active mb-3"
+        (click)="approveAcceptProvioning()">
+        Aprobar Bien Aceptado Provisionamiento en Otro Almacen
+        <i class="fa fa-check-circle" aria-hidden="true"></i>
       </button>
     </div>
     <!-- <div class="ml-auto p-2">

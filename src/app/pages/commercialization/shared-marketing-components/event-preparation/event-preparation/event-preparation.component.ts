@@ -48,7 +48,6 @@ export class EventPreparationComponent
 {
   eventForm = this.fb.group(new ComerEventForm());
   stadisticsForm = this.fb.group(new EventStadisticsForm());
-  onlyBase = false;
   @ViewChild('tasksTabs', { static: true }) tasksTabs?: TabsetComponent;
   get eventControls() {
     return this.eventForm.controls;
@@ -218,7 +217,7 @@ export class EventPreparationComponent
           'Error',
           'Para trabajar los lotes requiere tener un evento abierto'
         );
-      }, 500);
+      });
       return;
     }
     this.defaultMenu();
@@ -244,13 +243,14 @@ export class EventPreparationComponent
   }
 
   openExistingEvent() {
-    this.onlyBase = false;
+    // this.onlyBase = false;
     const { eventTpId, id } = this.eventControls;
     if (eventTpId.value == 11) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
       this.eventFormVisual.thirdId = false;
-      this.onlyBase = true;
+      // TODO: MADAR AL TAB CORRESPONDIENTE
+      // this.onlyBase = true;
     } else if (eventTpId.value == 6) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
@@ -306,7 +306,7 @@ export class EventPreparationComponent
       );
       setTimeout(() => {
         this.selectTab(TABS.OPEN_TAB);
-      }, 500);
+      });
       return;
     }
     this.comerCustomersListParams.next(new FilterParams());
@@ -342,5 +342,60 @@ export class EventPreparationComponent
       },
     };
     this.parameters.pValids = grant ? 1 : 0;
+  }
+
+  availableGoods() {
+    const { eventTpId, statusVtaId, id } = this.eventControls;
+    if (!id.value) {
+      this.canNotSeeAvailableGoods('Debe tener Evento Abierto');
+      return;
+    }
+    if (eventTpId.value == 9) {
+      this.canNotSeeAvailableGoods(
+        'Opción no disponible para este tipo de evento,lotifique desde archivo'
+      );
+      return;
+    }
+
+    if (!this.consignment()) {
+      this.canNotSeeAvailableGoods(
+        'Este tipo de Evento no permite esta funcionalidad'
+      );
+      return;
+    }
+
+    if (statusVtaId.value != 'PREP') {
+      this.canNotSeeAvailableGoods(
+        'Este tipo de Evento ya no admite incorporacion de bienes'
+      );
+      return;
+    }
+
+    if (!this.lotSelected) {
+      this.canNotSeeAvailableGoods(
+        'Debe tener un lote seleccionado',
+        TABS.LOTES_TAB
+      );
+      return;
+    }
+
+    this.preparation = !(eventTpId.value == 10);
+  }
+
+  /** REMESA */
+  consignment() {
+    const { eventTpId } = this.eventControls;
+    return !(eventTpId.value == 6);
+  }
+
+  canNotSeeAvailableGoods(reason: string, tab: TABS = TABS.OPEN_TAB) {
+    this.alert('error', 'Error', reason);
+    setTimeout(() => {
+      this.selectTab(tab);
+    });
+  }
+
+  exitConsignment() {
+    this.selectTab(TABS.LOTES_TAB);
   }
 }
