@@ -91,14 +91,14 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
   getUserInfo() {
     this.programmingRequestService.getUserInfo().subscribe((data: any) => {
       this.username = data.username;
-      console.log(this.username);
+      console.log('Usuario logueado: ', this.username);
       const userprueba = 'HTORTOLERO';
       this.dictaminaService.getUserLevel(this.username).subscribe({
         next: data => {
           this.nivel_usuar = data.nivel_usar;
         },
-        error: error => {
-          console.log(error);
+        error: () => {
+          this.nivel_usuar = '1';
         },
       });
     });
@@ -116,6 +116,7 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
         };
         this.dictaminaService.getDictamina(params).subscribe({
           next: (data: any) => {
+            console.log(data);
             this.data = data.data;
             this.totalItems = data.count;
             this.loading = false;
