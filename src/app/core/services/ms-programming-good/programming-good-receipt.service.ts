@@ -8,6 +8,7 @@ import {
   IUpdateDateProgramingReceptionDTO,
   IUpdateGoodDTO,
 } from 'src/app/pages/siab-web/sami/receipt-generation-sami/receipt-table-goods/ireceipt';
+import { environment } from 'src/environments/environment';
 import { IListResponseMessage } from '../../interfaces/list-response.interface';
 
 @Injectable({
@@ -60,5 +61,9 @@ export class ProgrammingGoodReceiptService extends HttpService {
 
   postGoodsProgramingReceipts(data: any) {
     return this.post('programminggood/apps/goods-programming-receipts', data);
+  }
+  create(data: any) {
+    const route = `${environment.API_URL}catalog/api/v1/apps/getProgrammingGoodsIn`;
+    return this.httpClient.post(route, data);
   }
 }

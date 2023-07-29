@@ -110,13 +110,13 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
               move: () => (searchFilter = SearchFilter.EQ),
               date: () => (searchFilter = SearchFilter.EQ),
               amount: () => (searchFilter = SearchFilter.EQ),
-              bankKey: () => (searchFilter = SearchFilter.EQ),
+              bankKey: () => (searchFilter = SearchFilter.ILIKE),
               entryOrderId: () => (searchFilter = SearchFilter.EQ),
               lotPub: () => (searchFilter = SearchFilter.EQ),
               event: () => (searchFilter = SearchFilter.EQ),
               clientId: () => (searchFilter = SearchFilter.EQ),
-              rfc: () => (searchFilter = SearchFilter.EQ),
-              name: () => (searchFilter = SearchFilter.EQ),
+              rfc: () => (searchFilter = SearchFilter.ILIKE),
+              name: () => (searchFilter = SearchFilter.ILIKE),
               appliedTo: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
@@ -167,14 +167,43 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       // delete params['filter.date'];
     }
 
+    if (params['filter.name']) {
+      params['filter.customers.nomRazon'] = params['filter.name'];
+      delete params['filter.name'];
+    }
+
+    if (params['filter.rfc']) {
+      params['filter.customers.rfc'] = params['filter.rfc'];
+      delete params['filter.rfc'];
+    }
+
+    if (params['filter.lotPub']) {
+      params['filter.lots.lotPublic'] = params['filter.lotPub'];
+      delete params['filter.lotPub'];
+    }
+
+    if (params['filter.event']) {
+      params['filter.lots.idEvent'] = params['filter.event'];
+      delete params['filter.event'];
+    }
+
+    if (params['filter.move']) {
+      params['filter.ctrl.description'] = params['filter.move'];
+      delete params['filter.move'];
+    }
+
     params['filter.entryOrderId'] = `$null`;
-    this.paymentService.getComerPaymentRef(params).subscribe({
+    params['sortBy'] = `paymentId:DESC`;
+    this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
         let result = response.data.map(async (item: any) => {
-          const client: any = await this.getClients(item.clientId);
-          item['rfc'] = client ? client.rfc : null;
-          item['name'] = client ? client.reasonName : null;
+          // const client: any = await this.getClients(item.clientId);
+          item['rfc'] = item.customers ? item.customers.rfc : null;
+          item['name'] = item.customers ? item.customers.nomRazon : null;
+          item['event'] = item.lots ? item.lots.idEvent : null;
+          item['lotPub'] = item.lots ? item.lots.lotPublic : null;
+          item['move'] = item.ctrl ? item.ctrl.description : null;
         });
         Promise.all(result).then(resp => {
           this.data.load(response.data);
@@ -253,8 +282,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   async enviarSIRSAE() {
     if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
 
-    if (!this.valAcc.comerLots)
-      return this.alert('warning', 'Este Pago No tiene Lote Asociado', '');
+    // if (!this.valAcc.lots)
+    //   return this.alert('warning', 'Este Pago No tiene Lote Asociado', '');
 
     this.loadingBtn = true;
     // CREA_CABECERA;
@@ -262,27 +291,29 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     // ENVIA_LEE_SIRSAE(1, NULL);
     const b = await this.enviaLeeSirsae(1, null);
 
-    if (!a && !b) {
-      this.alert('error', 'Ocurrió un Error al Ejecutar realizar el Envío', '');
+    if (b == null) {
+      this.loadingBtn = false;
+      // this.alert('error', 'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)', '')
+      return;
     } else {
+      this.loadingBtn = false;
       this.alert('success', 'Proceso Ejecutado Correctamente', '');
     }
     // else if (a && b) {
     //   this.alert('success', 'Procesos Ejecutados Correctamente', '');
     // }
-
-    this.loadingBtn = false;
   }
+
   async creaCabecera() {
     let obj = {
       user: this.token.decodeToken().preferred_username,
       idPay: this.valAcc.paymentId,
-      idEvent: this.valAcc.comerLots ? this.valAcc.comerLots.idEvent : null,
+      idEvent: this.valAcc.lots ? this.valAcc.lots.idEvent : null,
       pAddress: this.layout,
       idLot: this.valAcc.idLot,
       appliedA: this.valAcc.appliedTo,
       amount: this.valAcc.amount,
-      idLotPub: this.valAcc.comerLots ? this.valAcc.comerLots.lotPublic : null,
+      idLotPub: this.valAcc.lots ? this.valAcc.lots.lotPublic : null,
     };
     return new Promise((resolve, reject) => {
       this.paymentService.createHeader(obj).subscribe({
@@ -303,7 +334,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     let obj = {
       pmodo: item1,
       plote: item2,
-      idEvent: this.valAcc.comerLots ? this.valAcc.comerLots.idEvent : null,
+      idEvent: this.valAcc.lots ? this.valAcc.lots.idEvent : null,
       idPay: this.valAcc.paymentId,
     };
     return new Promise((resolve, reject) => {
@@ -314,8 +345,29 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
           // this.getPayments();
         },
         error: error => {
-          resolve(null);
-          // this.alert('error', 'Ocurrió un Error al Intentar Ejecutar el Proceso', error.error.message);
+          console.log('error', error);
+          if (
+            error.error.message ==
+            'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+          ) {
+            console.log('si');
+            this.loadingBtn = false;
+            this.alert(
+              'error',
+              'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)',
+              ''
+            );
+            resolve(null);
+            return;
+          } else {
+            resolve(null);
+            this.alert(
+              'error',
+              'Ocurrió un Error al Intentar Ejecutar el Proceso',
+              error.error.message
+            );
+            return;
+          }
         },
       });
     });

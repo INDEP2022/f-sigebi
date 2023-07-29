@@ -43,8 +43,8 @@ export class ComerClientsService extends HttpService {
     return this.delete(route);
   }
 
-  getComerCustomerEvent(params?: string){
-    return this.get('comer-clientsxevent', params)
+  getComerCustomerEvent(params?: string) {
+    return this.get('comer-clientsxevent', params);
   }
   getAll_(params?: _Params): Observable<IListResponse<IComerClients>> {
     return this.get<IListResponse<IComerClients>>(this.endpoint, params);
@@ -52,5 +52,40 @@ export class ComerClientsService extends HttpService {
 
   getById_(id?: any): Observable<IListResponse<IComerClients>> {
     return this.get<IListResponse<IComerClients>>(`${this.endpoint}/${id}`);
+  }
+
+  getClientEventId(id: number | string) {
+    const route = `${CustomersEndpoints.ComerClients}/${id}`;
+    return this.get(route);
+  }
+
+  getAll_XEvent(params?: _Params): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEvent,
+      params
+    );
+  }
+
+  createClientXEvent(params: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEvent,
+      params
+    );
+  }
+
+  updateClientXEvent(params: any): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEvent,
+      params
+    );
+  }
+
+  getComerClientsXEventgetAllV2(
+    params?: _Params
+  ): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      CustomersEndpoints.ComerClientsXEventgetAllV2,
+      params
+    );
   }
 }

@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { format } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGoodSpent } from 'src/app/core/models/ms-spent/good-spent.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodSpentService } from 'src/app/core/services/ms-spent/good-spent.service';
+import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
+import { IChargeSpent } from 'src/app/core/services/ms-spent/spents-model';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
@@ -24,17 +27,20 @@ export class ConsultationGoodsCommercialBillsComponent
   implements OnInit
 {
   form = this.fb.group(new CommercialSpentForm());
-  params = new BehaviorSubject<ListParams>(new ListParams());
   transferents = new DefaultSelect();
-  data: IGoodSpent[] = [];
-  totalItems = 0;
+  data = new LocalDataSource();
   selectedRows: IGoodSpent[] = [];
+
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  newLimit = new FormControl(10);
 
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
     private goodSpentService: GoodSpentService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private spentService: SpentService
   ) {
     super();
     this.settings = {
@@ -109,7 +115,7 @@ export class ConsultationGoodsCommercialBillsComponent
       .getGoodSpents(this.form.value, this.params.getValue())
       .subscribe({
         next: response => {
-          this.data = response.data;
+          this.data.load(response.data);
           this.totalItems = response.count;
         },
         error: error => {
@@ -150,15 +156,15 @@ export class ConsultationGoodsCommercialBillsComponent
 
   exportAll() {}
 
-  private transFormColums(row: IGoodSpent) {
+  private transFormColums(row: any) {
     return {
       'No. SIAB': row.no_bien,
-      Descripción: row.descripcion,
+      Descripción: row.bien_descripcion,
       Expediente: row.no_expediente,
       Estatus: row.estatus,
       Cantidad: row.cantidad,
       Mandato: row.cvman,
-      'Clave Transferente': row.clave,
+      'Clave Transferente': row.no_transferente,
       'Sol. Pago': row.id_solicitudpago,
       Beneficiario: row.nombreprov,
       'Importe Gasto': row['?column?'],
@@ -168,5 +174,112 @@ export class ConsultationGoodsCommercialBillsComponent
       Autorizó: row.nom_empl_autoriza,
       Capturó: row.nom_empl_captura,
     };
+  }
+
+  //Funciones agregadas por Grigork
+  //Gets
+  get good() {
+    return this.form.get('good');
+  }
+
+  get beneficiary() {
+    return this.form.get('beneficiary');
+  }
+
+  get mandate() {
+    return this.form.get('mandate');
+  }
+
+  get descMandate() {
+    return this.form.get('descMandate');
+  }
+
+  get paymentRequest() {
+    return this.form.get('paymentRequest');
+  }
+
+  get invoice() {
+    return this.form.get('invoice');
+  }
+
+  get importeF() {
+    return this.form.get('importeF');
+  }
+
+  get folatenclie() {
+    return this.form.get('folatenclie');
+  }
+
+  get concept() {
+    return this.form.get('concept');
+  }
+
+  get descConcept() {
+    return this.form.get('descConcept');
+  }
+
+  get capture() {
+    return this.form.get('capture');
+  }
+
+  get request() {
+    return this.form.get('request');
+  }
+
+  get authority() {
+    return this.form.get('authority');
+  }
+
+  //Ejecutar consulta
+  executeConsult() {
+    let model: IChargeSpent = {};
+
+    this.good.value != null ? (model.goodNumber = this.good.value) : '';
+    this.beneficiary.value != null
+      ? (model.beneficiary = this.beneficiary.value)
+      : '';
+    this.mandate.value != null ? (model.mandate = this.mandate.value) : '';
+    //Descripción de mandato
+    this.paymentRequest.value != null
+      ? (model.paymentRequest = this.paymentRequest.value)
+      : '';
+    this.invoice.value != null ? (model.invoice = this.invoice.value) : '';
+    // this.importeF.value != null ? model Importe Factura
+    this.folatenclie.value != null
+      ? (model.clientFolio = this.folatenclie.value)
+      : '';
+    this.concept.value != null ? (model.conceptId = this.concept.value) : '';
+    //Descripción de concepto
+    this.capture.value != null ? (model.userCaptured = this.capture.value) : '';
+    this.request.value != null ? (model.userRequests = this.request.value) : '';
+    this.authority.value != null
+      ? (model.userAuthorize = this.authority.value)
+      : '';
+
+    if (Object.keys(model).length === 0) {
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+    } else {
+      this.spentService.getChargeSpents(model).subscribe(
+        res => {
+          console.log(res);
+          this.data.load(res.data);
+          this.totalItems = res.count;
+        },
+        err => {
+          this.alert(
+            'error',
+            'Se presentó un error inesperado al obtener los Bienes',
+            ''
+          );
+          console.log(err);
+          this.data.load([]);
+          this.totalItems = 0;
+        }
+      );
+    }
   }
 }
