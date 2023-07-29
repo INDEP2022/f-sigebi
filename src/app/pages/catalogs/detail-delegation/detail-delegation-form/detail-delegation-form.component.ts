@@ -63,7 +63,11 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
       ],
       address: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(80)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+          Validators.required,
+        ],
       ],
       position: [
         null,

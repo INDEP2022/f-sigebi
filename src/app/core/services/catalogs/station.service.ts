@@ -7,7 +7,11 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IStation, IStation2 } from '../../models/catalogs/station.model';
+import {
+  IStation,
+  IStation2,
+  IStation3,
+} from '../../models/catalogs/station.model';
 import { ITransferente } from '../../models/catalogs/transferente.model';
 @Injectable({
   providedIn: 'root',
@@ -43,7 +47,15 @@ export class StationService
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.stationRepository.remove(this.route, id);
+    return this.stationRepository.remove2(this.route, id);
+  }
+
+  remove5(id: string | number, idTrans: number): Observable<Object> {
+    return this.stationRepository.remove5(this.route, id, idTrans);
+  }
+
+  remove3(model: IStation3): Observable<Object> {
+    return this.stationRepository.remove3(this.route, model);
   }
 
   getAllFilter(params?: _Params) {

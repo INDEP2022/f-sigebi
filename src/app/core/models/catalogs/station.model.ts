@@ -13,9 +13,14 @@ export interface IStation {
   nameAndId?: string;
 }
 
+export interface IStation3 {
+  id: number | null;
+  idTransferent: number;
+}
+
 export interface IStation2 {
   id?: number;
-  idTransferent?: number;
+  idTransferent?: number | null;
   stationName?: string;
   userCreation?: string;
   creationDate?: Date;

@@ -1,5 +1,5 @@
 export interface IPenalty {
-  id: number;
+  id?: number;
   serviceType?: string;
   penaltyPercentage: number;
   equivalentDays: number;
@@ -7,7 +7,7 @@ export interface IPenalty {
   creationDate?: Date;
   userModification?: string;
   modificationDate?: Date;
-  status: number;
+  status?: number;
   contractNumber: string;
-  version: number;
+  version?: number;
 }

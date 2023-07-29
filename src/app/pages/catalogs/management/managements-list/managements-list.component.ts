@@ -116,7 +116,7 @@ export class ManagementsListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.managementService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Gestión', 'Borrado Correctamente');
+        this.alert('success', 'Gestión', 'Borrada Correctamente');
         this.getManagements();
       },
       err => {

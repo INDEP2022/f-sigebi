@@ -1244,7 +1244,6 @@ export class PerformProgrammingFormComponent
       statusGood: 'APROBADO',
     };
 
-    console.log('filterColumns', filterColumns);
     this.loadingGoods = true;
 
     this.goodsQueryService
@@ -2383,12 +2382,12 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format('YYYY-MM-DD HH:mm:ssZ')
+          moment(this.dataProgramming.startDate).format('DD/MM/YYYY HH:mm:ssZ')
         );
       this.performForm
         .get('endDate')
         .setValue(
-          moment(this.dataProgramming.endDate).format('YYYY-MM-DD HH:mm:ssZ')
+          moment(this.dataProgramming.endDate).format('DD/MM/YYYY HH:mm:ssZ')
         );
 
       this.transferentId = this.dataProgramming.tranferId;
