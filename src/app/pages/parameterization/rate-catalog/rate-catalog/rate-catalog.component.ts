@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -77,13 +78,23 @@ export class RateCatalogComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'coinType' ||
-            filter.field == 'year' ||
-            filter.field == 'month' ||
-            filter.field == 'rate'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'year':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'month':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'rate':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -116,7 +127,16 @@ export class RateCatalogComponent extends BasePage implements OnInit {
   }
 
   openForm(allotment?: any) {
-    this.openModal({ allotment });
+    const modalConfig = MODAL_CONFIG;
+    allotment;
+    modalConfig.initialState = {
+      allotment,
+      callback: (next: boolean) => {
+        if (next) this.getExample();
+      },
+    };
+    this.modalService.show(ModalRatesCatalogComponent, modalConfig);
+    //this.openModal({ allotment });
   }
 
   getData() {
@@ -137,10 +157,16 @@ export class RateCatalogComponent extends BasePage implements OnInit {
         console.log('TESDSASD', response);
         this.paragraphs = response.data;
         this.data.load(response.data);
+        this.data.refresh();
         this.totalItems = response.count || 0;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 

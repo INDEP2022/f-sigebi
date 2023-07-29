@@ -1,6 +1,7 @@
 export enum GoodEndpoints {
   Good = `good`,
   GoodGetSiab = `goods-siab`,
+  GoodFraction = 'good/queryFraction',
   GetGoodById = `good/getGoodById`,
   GoodGetDat = `good/getData`,
   Domicilies = `domicilies`,
@@ -37,6 +38,7 @@ export enum GoodEndpoints {
 
 export enum GoodProcessPoints {
   basepath = `goodprocess`,
+  updateFractions = 'application/pa-update-fraction-goods',
   cuValNume = `application/cuValNume`,
   cuValOtro = `application/cuValotro`,
   vnNumerario = `application/getVnNumerario`,

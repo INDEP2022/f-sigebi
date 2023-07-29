@@ -81,8 +81,12 @@ export class BankAccountService
     return this.put(this.api, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.repository.remove(`${this.microservice}/${this.api}`, id);
+  update1(model: IBankAccount): Observable<Object> {
+    return this.put(this.api, model);
+  }
+
+  remove(body: any): Observable<Object> {
+    return this.repository.remove3(`${this.microservice}/${this.api}`, body);
   }
 
   getDetail(data: Object) {

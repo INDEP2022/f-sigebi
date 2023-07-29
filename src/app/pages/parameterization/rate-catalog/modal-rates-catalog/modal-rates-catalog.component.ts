@@ -91,6 +91,9 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
       this.edit = true;
       console.log(this.allotment);
       this.form.patchValue(this.allotment);
+      this.form.controls['month'].disable();
+      this.form.controls['year'].disable();
+      this.form.controls['coinType'].disable();
     }
   }
 
@@ -102,42 +105,70 @@ export class ModalRatesCatalogComponent extends BasePage implements OnInit {
     if (
       this.form.controls['coinType'].value.trim() === '' ||
       this.form.controls['userClosingRate'].value.trim() === '' ||
-      this.form.controls['closed'].value.trim() === ''
+      this.form.controls['closed'].value.trim() === '' ||
+      (this.form.controls['coinType'].value.trim() == '' &&
+        this.form.controls['userClosingRate'].value.trim() == '' &&
+        this.form.controls['closed'].value.trim() == '')
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', '');
       return;
+    } else {
+      this.loading = true;
+      let year = this.form.value.year;
+      var date = new Date(year);
+      year = date.getFullYear();
+      //this.form.value.year = year;
+      this.form.controls['year'].setValue(year);
+
+      let month = this.form.value.month;
+      var date = new Date(month);
+      month = date.getMonth() + 1;
+      //this.form.value.month = month;
+      this.form.controls['month'].setValue(month);
+
+      this.parameterCatService.newItem(this.form.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
     }
-    this.loading = true;
-    let year = this.form.value.year;
-    var date = new Date(year);
-    year = date.getFullYear();
-    //this.form.value.year = year;
-    this.form.controls['year'].setValue(year);
-
-    let month = this.form.value.month;
-    var date = new Date(month);
-    month = date.getMonth() + 1;
-    //this.form.value.month = month;
-    this.form.controls['month'].setValue(month);
-
-    this.parameterCatService.newItem(this.form.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-
-    this.close();
   }
 
   update() {
-    this.loading = true;
-    this.parameterCatService.update(this.form.getRawValue()).subscribe({
-      next: data => {
-        this.modalRef.hide();
-        this.handleSuccess();
-      },
-      error: error => (this.loading = false),
-    });
+    if (
+      this.form.controls['coinType'].value.trim() === '' ||
+      this.form.controls['userClosingRate'].value.trim() === '' ||
+      this.form.controls['closed'].value.trim() === '' ||
+      (this.form.controls['coinType'].value.trim() == '' &&
+        this.form.controls['userClosingRate'].value.trim() == '' &&
+        this.form.controls['closed'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    } else {
+      /*let year = this.form.value.year;
+      var date = new Date(year);
+      year = date.getFullYear();
+      //this.form.value.year = year;
+      this.form.controls['year'].setValue(String(year));
+
+      let month = this.form.value.month;
+      var date = new Date(month);
+      month = date.getMonth() + 1;
+      //this.form.value.month = month;
+      this.form.controls['month'].setValue(String(month));
+      this.form.controls['year'].setValue(String(year))*/
+
+      this.loading = true;
+      this.parameterCatService.update(this.form.getRawValue()).subscribe({
+        next: data => {
+          //this.modalRef.hide();
+          this.handleSuccess();
+        },
+        error: error => (this.loading = false),
+      });
+    }
   }
+
   close() {
     this.modalRef.hide();
   }

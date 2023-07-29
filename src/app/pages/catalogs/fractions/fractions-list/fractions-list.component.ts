@@ -60,6 +60,9 @@ export class FractionsListComponent extends BasePage implements OnInit {
               case 'fractionCode':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'siabClasification':
                 field = `filter.${filter.field}.sssubtypeDescription`;
                 searchFilter = SearchFilter.ILIKE;

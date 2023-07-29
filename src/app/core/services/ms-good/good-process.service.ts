@@ -26,6 +26,10 @@ export class GoodProcessService extends HttpService {
     this.microservice = GoodProcessPoints.basepath;
   }
 
+  updateFraction(body: { newFraction: string; goodNum: number }) {
+    return this.post(GoodProcessPoints.updateFractions, body);
+  }
+
   getValNume(model: IValNumeOtro) {
     return this.post<IResponse>(GoodProcessPoints.cuValNume, model);
   }
