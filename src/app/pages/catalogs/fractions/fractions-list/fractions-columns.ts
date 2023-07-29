@@ -103,6 +103,17 @@ export const FRACTIONS_COLUMNS = {
     title: 'Estado',
     type: 'string',
     sort: false,
+
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Estado',
+        list: [
+          { value: '2', title: 'Activo' },
+          { value: '1', title: 'Inactivo' },
+        ],
+      },
+    },
   },
 
   fractionCode: {

@@ -90,7 +90,7 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodSsubtypeService.getAll1(params).subscribe({
+    this.goodSsubtypeService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;
@@ -98,7 +98,12 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
