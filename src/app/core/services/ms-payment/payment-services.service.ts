@@ -42,4 +42,8 @@ export class PaymentService extends HttpService {
   sendSirsaeFcomer112(params: any) {
     return this.post(PaymentEndPoints.SendSirsaeFcomer112, params);
   }
+
+  getLoadPayment(id: number, params: any) {
+    return this.get(`load-payments/${id}`, params);
+  }
 }
