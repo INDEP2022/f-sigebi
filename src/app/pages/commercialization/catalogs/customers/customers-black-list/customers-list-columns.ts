@@ -3,10 +3,6 @@ export const CUSTOMERS_LIST_COLUMNS = {
     title: 'Clave Representante',
     sort: false,
   },
-  // id: {
-  //   title: 'Clave Cliente',
-  //   sort: false,
-  // },
   reasonName: {
     title: 'Nombre o Razón Social',
     sort: false,

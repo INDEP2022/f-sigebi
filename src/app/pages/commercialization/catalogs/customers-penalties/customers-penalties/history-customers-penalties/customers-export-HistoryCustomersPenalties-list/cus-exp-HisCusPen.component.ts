@@ -10,7 +10,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryCustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS2 } from '../../columns';
+import { COLUMNS3 } from '../../columns';
 
 @Component({
   selector: 'app-customers-export-HistoryCustomersPenalties-list.component',
@@ -36,7 +36,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
     private modalRef: BsModalRef
   ) {
     super();
-    this.settings.columns = COLUMNS2;
+    this.settings.columns = COLUMNS3;
     this.settings.hideSubHeader = false;
     this.settings.actions = false;
   }

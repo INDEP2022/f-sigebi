@@ -90,7 +90,6 @@ export class CustomersListComponent extends BasePage implements OnInit {
               case 'sellerId':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-
               case 'phone':
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -258,30 +257,8 @@ export class CustomersListComponent extends BasePage implements OnInit {
     });
   }
 
-  //Exportar todos los clientes
-  // exportAllClients(): void {
-  //   this.massiveClientService.exportAllClients().subscribe({
-  //     next: (data: any) => {
-  //       if (data.file.base64) {
-  //         this.downloadFile(
-  //           data.file.base64,
-  //           `TotalClientes${new Date().getTime()}`
-  //         );
-  //       } else {
-  //         this.alert('warning', 'Exporta Todos los Clientes', '');
-  //       }
-  //       this.downloading = false;
-  //     },
-  //     error: error => {
-  //       this.downloading = false;
-  //       this.errorGet(error);
-  //     },
-  //   });
-  // }
-
   //Modal para crear o editar clientes
   openFormClients(customers?: any) {
-    console.log(customers);
     const modalConfig = MODAL_CONFIG;
     if (customers) {
       customers = { ...customers, sellerId: customers.sellerId?.id ?? null };
@@ -329,11 +306,10 @@ export class CustomersListComponent extends BasePage implements OnInit {
   }
 
   showDeleteAlert(customer: ICustomer) {
-    console.log(customer);
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este cliente?'
+      '¿Desea Eliminar Este Cliente?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(customer);
@@ -342,7 +318,6 @@ export class CustomersListComponent extends BasePage implements OnInit {
   }
 
   delete(customer: ICustomer) {
-    console.log(customer);
     this.customerService.remove(customer.id).subscribe({
       next: response => {
         this.alert('success', 'Cliente Eliminado Correctamente', '');
