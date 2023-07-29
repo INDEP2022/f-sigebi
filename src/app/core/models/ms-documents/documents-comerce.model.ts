@@ -29,3 +29,20 @@ export interface ComerceDocumentsXmlT {
     signatoryTypeId: string;
   };
 }
+
+export interface ComerceDocumentsXmlH {
+  documentsXMLId: number;
+  originId: number;
+  referenceId: string;
+  documentId: string;
+  qualification: string;
+  xmlBase: string;
+  xmlFinal: string;
+  creationDate: Date;
+  documentStatus: number;
+  pathNamePdf: string;
+  motcancel: string;
+  cancelDate: Date;
+  shipmentDate: Date;
+  recordNumber: number;
+}

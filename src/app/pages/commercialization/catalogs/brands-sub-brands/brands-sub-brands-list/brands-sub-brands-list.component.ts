@@ -88,7 +88,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.brandService.getAll(params).subscribe({
       next: response => {
         this.brandsSubBrands = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -113,7 +113,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar esta marca?'
+      '¿Desea Eliminar esta Marca?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(brandsSubBrands.id);

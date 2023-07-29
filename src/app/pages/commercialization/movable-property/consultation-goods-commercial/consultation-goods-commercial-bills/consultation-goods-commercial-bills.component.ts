@@ -3,20 +3,20 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { format } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGoodSpent } from 'src/app/core/models/ms-spent/good-spent.model';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodSpentService } from 'src/app/core/services/ms-spent/good-spent.service';
+import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
+import { IChargeSpent } from 'src/app/core/services/ms-spent/spents-model';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { isEmpty } from 'src/app/utils/validations/is-empty';
 import { CommercialSpentForm } from '../../consultation-goods-commercial-process-tabs/utils/commercial-spents.form';
 import { CONSULTATION_GOODS_BILLS_COLUMNS } from './consultation-goods-commercial-bills-columns';
-import { IChargeSpent } from 'src/app/core/services/ms-spent/spents-model';
-import { SpentService } from 'src/app/core/services/ms-spent/spent.service';
-import { LocalDataSource } from 'ng2-smart-table';
 @Component({
   selector: 'app-consultation-goods-commercial-bills',
   templateUrl: './consultation-goods-commercial-bills.component.html',
@@ -28,12 +28,12 @@ export class ConsultationGoodsCommercialBillsComponent
 {
   form = this.fb.group(new CommercialSpentForm());
   transferents = new DefaultSelect();
-  data = new LocalDataSource()
+  data = new LocalDataSource();
   selectedRows: IGoodSpent[] = [];
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  newLimit = new FormControl(10)
+  newLimit = new FormControl(10);
 
   constructor(
     private fb: FormBuilder,
@@ -178,94 +178,108 @@ export class ConsultationGoodsCommercialBillsComponent
 
   //Funciones agregadas por Grigork
   //Gets
-  get good(){
-    return this.form.get('good')
+  get good() {
+    return this.form.get('good');
   }
 
-  get beneficiary(){
-    return this.form.get('beneficiary')
+  get beneficiary() {
+    return this.form.get('beneficiary');
   }
 
-  get mandate(){
-    return this.form.get('mandate')
+  get mandate() {
+    return this.form.get('mandate');
   }
 
-  get descMandate(){
-    return this.form.get('descMandate')
+  get descMandate() {
+    return this.form.get('descMandate');
   }
 
-  get paymentRequest(){
-    return this.form.get('paymentRequest')
+  get paymentRequest() {
+    return this.form.get('paymentRequest');
   }
 
-  get invoice(){
-    return this.form.get('invoice')
+  get invoice() {
+    return this.form.get('invoice');
   }
 
-  get importeF(){
-    return this.form.get('importeF')
+  get importeF() {
+    return this.form.get('importeF');
   }
 
-  get folatenclie(){
-    return this.form.get('folatenclie')
+  get folatenclie() {
+    return this.form.get('folatenclie');
   }
 
-  get concept(){
-    return this.form.get('concept')
+  get concept() {
+    return this.form.get('concept');
   }
 
-  get descConcept(){
-    return this.form.get('descConcept')
+  get descConcept() {
+    return this.form.get('descConcept');
   }
 
-  get capture(){
-    return this.form.get('capture')
+  get capture() {
+    return this.form.get('capture');
   }
 
-  get request(){
-    return this.form.get('request')
+  get request() {
+    return this.form.get('request');
   }
 
-  get authority(){
-    return this.form.get('authority')
+  get authority() {
+    return this.form.get('authority');
   }
 
   //Ejecutar consulta
-  executeConsult(){
-    let model: IChargeSpent = {
+  executeConsult() {
+    let model: IChargeSpent = {};
 
-    }
-
-    this.good.value != null ? model.goodNumber = this.good.value : '';
-    this.beneficiary.value != null ? model.beneficiary = this.beneficiary.value : '';
-    this.mandate.value != null ? model.mandate = this.mandate.value : '';
+    this.good.value != null ? (model.goodNumber = this.good.value) : '';
+    this.beneficiary.value != null
+      ? (model.beneficiary = this.beneficiary.value)
+      : '';
+    this.mandate.value != null ? (model.mandate = this.mandate.value) : '';
     //Descripción de mandato
-    this.paymentRequest.value != null ? model.paymentRequest = this.paymentRequest.value : '';
-    this.invoice.value != null ? model.invoice = this.invoice.value : '';
+    this.paymentRequest.value != null
+      ? (model.paymentRequest = this.paymentRequest.value)
+      : '';
+    this.invoice.value != null ? (model.invoice = this.invoice.value) : '';
     // this.importeF.value != null ? model Importe Factura
-    this.folatenclie.value != null ? model.clientFolio = this.folatenclie.value : '';
-    this.concept.value != null ? model.conceptId = this.concept.value : '';
+    this.folatenclie.value != null
+      ? (model.clientFolio = this.folatenclie.value)
+      : '';
+    this.concept.value != null ? (model.conceptId = this.concept.value) : '';
     //Descripción de concepto
-    this.capture.value != null ? model.userCaptured = this.capture.value : '';
-    this.request.value != null ? model.userRequests = this.request.value : '';
-    this.authority.value != null ? model.userAuthorize = this.authority.value : '';
-  
-    if(Object.keys(model).length === 0){
-      this.alert('warning','Debe especificar al menos un parámetro de búsqueda','')
-    }else{
+    this.capture.value != null ? (model.userCaptured = this.capture.value) : '';
+    this.request.value != null ? (model.userRequests = this.request.value) : '';
+    this.authority.value != null
+      ? (model.userAuthorize = this.authority.value)
+      : '';
+
+    if (Object.keys(model).length === 0) {
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+    } else {
       this.spentService.getChargeSpents(model).subscribe(
         res => {
-          console.log(res)
-          this.data.load(res.data)
-          this.totalItems = res.count
+          console.log(res);
+          this.data.load(res.data);
+          this.totalItems = res.count;
         },
         err => {
-          this.alert('error','Se presentó un error inesperado al obtener los Bienes','')
-          console.log(err)
-          this.data.load([])
-          this.totalItems = 0
+          this.alert(
+            'error',
+            'Se presentó un error inesperado al obtener los Bienes',
+            ''
+          );
+          console.log(err);
+          this.data.load([]);
+          this.totalItems = 0;
         }
-      )
+      );
     }
   }
 }
