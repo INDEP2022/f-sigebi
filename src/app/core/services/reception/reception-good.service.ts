@@ -13,6 +13,8 @@ export class ReceptionGoodService extends HttpService {
   private readonly ReceiptGood = ReceptionGoodEndpoint.ReceiptGood;
   private readonly ReceiptWitness = ReceptionGoodEndpoint.ReceiptWitness;
   private readonly QueryGoodsTickets = ReceptionGoodEndpoint.QueryGoodsTickets;
+  private readonly QueryAllTicketsInt =
+    ReceptionGoodEndpoint.QueryAllTicketsInt;
   constructor() {
     super();
     this.microservice = ReceptionGoodEndpoint.BasePath;
@@ -24,6 +26,9 @@ export class ReceptionGoodService extends HttpService {
 
   getReceipt(params: ListParams) {
     return this.get(this.receiptRoute, params);
+  }
+  getqueryAllTicketsInt(id: number, params: ListParams) {
+    return this.get(`${this.QueryAllTicketsInt}/${id}`, params);
   }
 
   deleteReceipt(formData: Object) {
