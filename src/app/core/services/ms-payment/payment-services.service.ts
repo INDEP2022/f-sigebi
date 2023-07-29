@@ -46,4 +46,8 @@ export class PaymentService extends HttpService {
   getLoadPayment(id: number, params: any) {
     return this.get(`load-payments/${id}`, params);
   }
+
+  getComerPaymentRefGetAllV2(params: _Params) {
+    return this.get(PaymentEndPoints.GetAllV2, params);
+  }
 }
