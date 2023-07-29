@@ -2,39 +2,34 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { UsrRelLogService } from 'src/app/core/services/ms-audit/usrrel-log.service';
-import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { RequestsService } from 'src/app/core/services/requests/requests.service';
 import { BasePage } from 'src/app/core/shared';
 import {
-  NUMBERS_POINT_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-maintenance-fraction',
-  templateUrl: './maintenance-fraction.component.html',
-  styleUrls: ['./maintenance-fraction.component.scss'],
+  selector: 'app-maintenance-aclaration',
+  templateUrl: './maintenance-aclaration.component.html',
+  styleUrls: ['./maintenance-aclaration.component.scss'],
 })
-export class MaintenanceFractionComponent extends BasePage implements OnInit {
+export class MaintenanceAclarationComponent extends BasePage implements OnInit {
   form: FormGroup;
   readOnlyJustify = true;
-  goodNumber: number = null;
-  fractionCod: string = null;
+  solicitudTable: null;
   constructor(
     private fb: FormBuilder,
-    private goodProcessService: GoodProcessService,
+    private requestService: RequestsService,
     private auditService: UsrRelLogService
   ) {
     super();
     this.form = this.fb.group({
-      gestion: [
+      solicitud: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      newFraction: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
-      ],
+      estatus: [null, [Validators.required]],
       justify: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -42,62 +37,55 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
     });
   }
 
-  ngOnInit() {}
-
-  get gestion() {
-    return this.form.get('gestion');
+  get solicitud() {
+    return this.form.get('solicitud');
   }
 
-  get newFraction() {
-    return this.form.get('newFraction');
+  get estatus() {
+    return this.form.get('estatus');
   }
 
   get justify() {
     return this.form.get('justify');
   }
 
-  fillGoodNumber() {
-    if (this.gestion.valid) {
-      this.goodNumber = this.gestion.value;
-    }
-  }
+  ngOnInit() {}
 
-  fillFraction() {
-    if (this.newFraction.valid) {
-      this.fractionCod = this.newFraction.value;
+  fillSolicitud() {
+    if (this.solicitud.valid) {
+      this.solicitudTable = this.solicitud.value;
+      this.readOnlyJustify = false;
     }
   }
 
   async update() {
     this.alertQuestion(
       'question',
-      'Se actualizará la fracción arancelaria',
+      'Se actualizará el estatus',
       '¿Desea continuar?',
       'Continuar'
     ).then(async question => {
       if (question.isConfirmed) {
         this.loader.load = true;
         const res = await firstValueFrom(
-          this.goodProcessService
-            .updateFraction({
-              goodNum: this.gestion.value,
-              newFraction: this.newFraction.value,
+          this.requestService
+            .spMantenimeto({
+              parameter: '1',
+              data: this.solicitud.value,
+              valueNumber: this.estatus.value,
+              charValue: '',
             })
             .pipe(catchError(x => of(null)))
         );
         if (!res) {
+          this.alert('error', 'Actualización de estatus', 'No realizada');
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Actualización de fracción arancelaria',
-            'No realizada'
-          );
           return;
         }
         const res2 = await firstValueFrom(
           this.auditService
             .saveMotiveChangeLogBook({
-              gestionNumber: this.gestion.value,
+              gestionNumber: this.solicitud.value,
               reasonChange: this.justify.value + ' ' + res,
               userMovement: localStorage.getItem('username'),
             })
@@ -105,16 +93,12 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert(
-            'error',
-            'Actualización de fracción arancelaria',
-            'No realizada'
-          );
+          this.alert('error', 'Actualización de estatus', 'No realizada');
           return;
         } else {
           this.alert(
             'success',
-            'Actualización de fracción arancelaria',
+            'Actualización de estatus',
             'Realizada exitosamente'
           );
           this.clear();
@@ -127,7 +111,6 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
   clear() {
     this.form.reset();
     this.readOnlyJustify = true;
-    this.goodNumber = null;
-    this.fractionCod = null;
+    this.solicitudTable = null;
   }
 }
