@@ -195,4 +195,5 @@ export enum ENDPOINT_LINKS {
   Process = 'strategy/strategy-process',
   SubTypeGood = 'fractions?search=&filter.id=',
   FractionS = 'catalog',
+  Departamentuser = 'departament',
 }

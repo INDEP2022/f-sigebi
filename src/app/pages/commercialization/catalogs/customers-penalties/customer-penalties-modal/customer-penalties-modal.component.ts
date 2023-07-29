@@ -1,9 +1,11 @@
+import { formatDate } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-customer-penalties-modal',
@@ -40,20 +42,64 @@ export class CustomerPenaltiesModalComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      typeProcess: [null],
-      event: [null],
-      eventKey: [null],
-      lotId: [null],
+      typeProcess: [
+        null,
+        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      event: [
+        null,
+        [Validators.maxLength(7), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      eventKey: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      lotId: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+      ],
       startDate: [null],
       endDate: [null],
-      refeOfficeOther: [null],
-      userPenalty: [null],
+      refeOfficeOther: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
+      userPenalty: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
       penaltiDate: [null],
     });
     if (this.customersPenalties != null) {
       this.edit = true;
       this.form.patchValue(this.customersPenalties);
+
+      const dbStartDate = this.form.get('startDate').value;
+      const dbEndDate = this.form.get('endDate').value;
+      const dbPenaltiDate = this.form.get('penaltiDate').value;
+
+      const formattedDate1 = formatDate(dbStartDate, 'dd/MM/yyyy', 'en-US'); //
+      const formattedDate2 = formatDate(dbEndDate, 'dd/MM/yyyy', 'en-US'); //
+      const formattedDate3 = formatDate(dbPenaltiDate, 'dd/MM/yyyy', 'en-US'); //
+
+      this.form.get('startDate').setValue(formattedDate1);
+      this.form.get('endDate').setValue(formattedDate2);
+      this.form.get('penaltiDate').setValue(formattedDate3);
+
+      this.form
+        .get('startDate')
+        .setValue(this.addDays(new Date(dbStartDate), 1)); //
+      this.form.get('endDate').setValue(this.addDays(new Date(dbEndDate), 1)); //
+      this.form
+        .get('penaltiDate')
+        .setValue(this.addDays(new Date(dbPenaltiDate), 1)); //
     }
+  }
+
+  addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
   }
 
   close() {
@@ -66,19 +112,15 @@ export class CustomerPenaltiesModalComponent
 
   update() {
     this.loading = true;
-    console.log(this.customersPenalties.clientId.id);
-    this.clientPenaltyService
-      .updateCustomers(this.form.value)
-      // .updateCustomers(this.customersPenalties.clientId.id, this.form.value)
-      .subscribe({
-        next: data => {
-          this.handleSuccess(), this.modalRef.hide();
-        },
-        error: (error: any) => {
-          this.alert('warning', `No es Posible Actualizar el Cliente`, '');
-          this.modalRef.hide();
-        },
-      });
+    this.clientPenaltyService.updateCustomers(this.form.value).subscribe({
+      next: data => {
+        this.handleSuccess(), this.modalRef.hide();
+      },
+      error: (error: any) => {
+        this.alert('warning', `No es Posible Actualizar el Cliente`, '');
+        this.modalRef.hide();
+      },
+    });
     this.modalRef.hide();
   }
 
