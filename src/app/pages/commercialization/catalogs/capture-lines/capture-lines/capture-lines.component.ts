@@ -126,7 +126,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
     if (!this.capture) {
       this.alert(
         'warning',
-        'Selecciona Primero un Evento Para Exportar sus Detalles de Eventos',
+        'Selecciona Primero un Evento Para Exportar sus Detalles',
         ''
       );
     } else {

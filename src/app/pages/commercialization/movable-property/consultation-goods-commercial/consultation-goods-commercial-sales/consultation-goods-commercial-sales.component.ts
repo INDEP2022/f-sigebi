@@ -5,9 +5,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
-import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
+import {
+  CONSUL_GOODS_COMMER_SALES_COLUMNS,
+  goodCheck,
+} from './consul-goods-commer-sales-columns';
 
-import { addDays, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
@@ -42,6 +45,7 @@ export class ConsultationGoodsCommercialSalesComponent
   newLimit = new FormControl(10);
 
   dataGoods = new LocalDataSource();
+  goodCheck: any;
 
   get controls() {
     return this.form.controls;
@@ -291,6 +295,40 @@ export class ConsultationGoodsCommercialSalesComponent
     this.totalItems = 0;
   }
 
+  //Exportar select excel
+  exportSelected() {
+    console.log('Entra');
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const filename = `Ventas_${today}`;
+    const data = goodCheck.map((row: any) => this.transFormColums(row));
+    this.excelService.export(data, { filename });
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Id Orden': row.idordeningreso,
+      'No. SIAB': row.no_bien,
+      Descripción: row.descripcion_bien,
+      Expediente: row.no_expediente,
+      Estatus: row.estatus,
+      'Descripción de Estatus': row.descripcion_estatus_bien,
+      Cantidad: row.cantidad,
+      Mandato: row.cvman,
+      'Clave Transferente': row.no_transferente,
+      'Sol. Pago': row.id_solicitudpago,
+      Beneficiario: row.nombreprov,
+      'Importe Gasto': row['?column?'],
+      'No. Factura': row.no_factura,
+      'Fecha Factura': row.fecha_factura,
+      'Descripción de Almacen': row.descripcion_almacen,
+      'Descripción de Delegación': row.descripcion_delegacion,
+      'Descripción de Tipo Evento': row.descripcion_tipo_evento,
+      Evento: row.evento_comer_eventos,
+      'Precio final Bienes por Lote': row.precio_final_bienes_x_lote,
+      'Precio final Comer Lotes': row.precio_final_comer_lotes,
+    };
+  }
+
   //Ejecutar Consulta
   executeConsult() {
     let model: IGoodCharge = {};
@@ -329,15 +367,30 @@ export class ConsultationGoodsCommercialSalesComponent
 
     console.log(model);
 
-    this.goodService.chargeGoods(model).subscribe(
-      res => {
-        console.log(res);
-        this.dataGoods.load(res.data);
-        this.totalItems = res.count;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (Object.keys(model).length === 0) {
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+    } else {
+      this.goodService.chargeGoods(model).subscribe(
+        res => {
+          console.log(res);
+          this.dataGoods.load(res.data);
+          this.totalItems = res.count;
+        },
+        err => {
+          this.alert(
+            'error',
+            'Se presentó un error inesperado al obtener los Bienes',
+            ''
+          );
+          this.dataGoods.load([]);
+          this.totalItems = 0;
+          console.log(err);
+        }
+      );
+    }
   }
 }

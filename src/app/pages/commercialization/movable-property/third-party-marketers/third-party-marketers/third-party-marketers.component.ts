@@ -178,11 +178,12 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
+              thirdPartyId: () => (searchFilter = SearchFilter.EQ),
               typeEventId: () => (searchFilter = SearchFilter.EQ),
               description: () => (searchFilter = SearchFilter.ILIKE),
             };
 
-            search[filter.field];
+            search[filter.field]();
 
             if (filter.search !== '') {
               // this.columnFilters[field] = `${filter.search}`;
@@ -215,7 +216,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   // MONTOS //
   getAmountsFilters() {
     this.loading3 = false;
-    this.thirdPartyList
+    this.amountList
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
@@ -230,31 +231,32 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
+              idThirdParty: () => (searchFilter = SearchFilter.EQ),
               startingAmount: () => (searchFilter = SearchFilter.EQ),
-              pctCommission: () => (searchFilter = SearchFilter.ILIKE),
+              pctCommission: () => (searchFilter = SearchFilter.EQ),
               finalAmount: () => (searchFilter = SearchFilter.EQ),
             };
 
-            search[filter.field];
+            search[filter.field]();
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${filter.search}`;
-              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters3[field] = `${searchFilter}:${filter.search}`;
 
               // console.log(
               //   'this.columnFilters[field]',
               //   this.columnFilters[field]
               // );
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilters3[field];
             }
           });
-          this.params = this.pageFilter(this.params);
+          this.params3 = this.pageFilter(this.params3);
           //Su respectivo metodo de busqueda de datos
           this.getAmount(this.thirPartys);
         }
       });
-    this.params
+    this.params3
       .pipe(
         skip(1),
         tap(() => {
@@ -273,7 +275,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.thirdPartyService.getAllFindItemV2(params).subscribe({
+    this.thirdPartyService.getFindItemCustom(params).subscribe({
       next: response => {
         console.log(response);
         this.thirdPartyList.load(response.data);
@@ -321,28 +323,40 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   getTypeEvent(thirdParty?: IThirdParty) {
-    this.loading2 = true;
     let params = {
       ...this.params2.getValue(),
       ...this.columnFilters2,
     };
 
+    if (params['filter.thirdPartyId']) return;
+
+    this.loading2 = true;
+    this.totalItems2 = 0;
+
     if (!thirdParty) {
       this.loading2 = false;
       return;
+    }
+    if (params['filter.description']) {
+      params['filter.eventDetail.description'] = params['filter.description'];
+      delete params['filter.description'];
     }
 
     params['filter.thirdPartyId'] = `$eq:${thirdParty.id}`;
     this.typeEventXterComerService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-
-        // Promise.all(result).then(resp => {
-        this.typeEventList.load(response.data);
-        this.typeEventList.refresh;
-        this.totalItems2 = response.count;
-        this.loading2 = false;
-        // });
+        let result = response.data.map((item: any) => {
+          item['description'] = item.eventDetail
+            ? item.eventDetail.description
+            : null;
+        });
+        Promise.all(result).then(resp => {
+          this.typeEventList.load(response.data);
+          this.typeEventList.refresh;
+          this.totalItems2 = response.count;
+          this.loading2 = false;
+        });
       },
       error: error => {
         this.typeEventList.load([]);
@@ -386,11 +400,16 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
   }
 
   getAmount(IThirdParty?: IThirdParty) {
-    this.loading3 = true;
     let params = {
       ...this.params3.getValue(),
       ...this.columnFilters3,
     };
+
+    if (params['filter.idThirdParty']) return;
+
+    this.loading3 = true;
+    this.totalItems3 = 0;
+
     if (!IThirdParty) {
       this.loading3 = false;
       return;
@@ -407,7 +426,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
       error: error => {
         this.amountList.load([]);
         this.amountList.refresh;
-        this.totalItems2 = 0;
+        this.totalItems3 = 0;
         this.loading3 = false;
       },
     });
@@ -518,8 +537,8 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
             ) {
               this.alert(
                 'error',
-                'Error al Eliminar, El Registro Tiene Montos o Tipos de Eventos Relacionados',
-                ''
+                'Error al Eliminar',
+                'El Registro tiene Montos o tipos de Eventos relacionados'
               );
             } else {
               this.alert(
@@ -549,7 +568,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
           next: response => {
             this.alert(
               'success',
-              'El Tipo De Evento se Eliminó Correctamente',
+              'El tipo de Evento se Eliminó Correctamente',
               ''
             );
             this.rowsSelectedGetTypeEvent(this.thirPartys);
@@ -557,7 +576,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
           error: error => {
             this.alert(
               'error',
-              'Ocurrió un Error al Eliminar el Tipo De Evento',
+              'Ocurrió un Error al Eliminar el tipo de Evento',
               ''
             );
           },

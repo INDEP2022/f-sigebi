@@ -25,20 +25,33 @@
             </button>
           </div>
         </div> -->
-        <div class="col-md-4">
-          <!-- <form-field [control]="providerForm.get('user')" label="Selecciona usuario&#58;">
+        <div class="row mb-5">
+          <div class="col-md-6">
+            <!-- <form-field [control]="providerForm.get('user')" label="Selecciona usuario&#58;">
             <input type="number" class="form-control" formControlName="tiieDays" /> </form-field>-->
-          <ngx-select
-            [form]="providerForm"
-            control="user"
-            (fetchItems)="searchUser($event)"
-            [showTooltip]="true"
-            [data]="selectUser"
-            bindLabel="name"
-            label="User"
-            value="id"></ngx-select>
+            <ngx-select
+              [form]="providerForm"
+              control="user"
+              (fetchItems)="searchUser($event)"
+              [showTooltip]="true"
+              [data]="selectUser"
+              bindLabel="name"
+              label="Usuario"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="providerForm.get('tiieAverage')"
+              label="Promedio TIIE">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="tiieAverage" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2"></div>
+        <div class="col-md-2">
           <form-field
             [control]="providerForm.get('tiieDays')"
             label="Días TIIE">
@@ -48,17 +61,7 @@
               formControlName="tiieDays" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="providerForm.get('tiieAverage')"
-            label="Promedio TIIE">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="tiieAverage" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
           <form-field
             [control]="providerForm.get('tiieMonth')"
             label="Mes TIIE">
@@ -69,9 +72,7 @@
               formControlName="tiieMonth" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="providerForm.get('tiieYear')" label="Año TIIE">
             <input
               type="number"
