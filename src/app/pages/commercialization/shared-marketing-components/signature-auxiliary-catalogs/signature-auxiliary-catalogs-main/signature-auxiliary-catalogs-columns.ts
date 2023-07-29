@@ -1,20 +1,20 @@
 export const ELECTRONIC_SIGNATURE_REPORT_COLUMNS = {
-  screen: {
+  screenKey: {
     title: 'Pantalla',
     type: 'string',
     sort: false,
   },
-  signerQuantity: {
+  signatoriesNumber: {
     title: 'Número de Firmantes.',
     type: 'number',
     sort: false,
   },
-  title: {
+  description: {
     title: 'Título del Reporte (XML)',
     type: 'string',
     sort: false,
   },
-  report: {
+  reportKey: {
     title: 'Reporte Asociado (XML)',
     type: 'string',
     sort: false,

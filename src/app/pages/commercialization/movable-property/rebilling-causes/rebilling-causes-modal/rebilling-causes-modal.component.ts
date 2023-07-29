@@ -63,7 +63,7 @@ export class RebillingCausesModalComponent extends BasePage implements OnInit {
         : '';
       this.comerRebilService.update(sendData).subscribe({
         next: () => {
-          this.alert('success', 'Refacturación', 'Actualizado correctamente');
+          this.alert('success', 'Refacturación', 'Actualizado Correctamente');
           this.modalRef.hide();
           this.modalRef.content.callback(true);
         },
@@ -84,7 +84,7 @@ export class RebillingCausesModalComponent extends BasePage implements OnInit {
       this.comerRebilService.create(sendData).subscribe({
         next: () => {
           this.loading = false;
-          this.alert('success', 'Refacturación', 'Creado correctamente');
+          this.alert('success', 'Refacturación', 'Creado Correctamente');
           this.modalRef.hide();
           this.modalRef.content.callback(true);
         },

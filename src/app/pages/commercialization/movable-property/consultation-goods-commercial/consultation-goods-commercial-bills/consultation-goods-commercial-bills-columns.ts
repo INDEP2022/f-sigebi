@@ -3,7 +3,7 @@ export const CONSULTATION_GOODS_BILLS_COLUMNS = {
     sort: false,
     title: 'No. SIAB',
   },
-  descripcion: {
+  bien_descripcion: {
     sort: false,
     title: 'Descripción',
   },
@@ -23,7 +23,7 @@ export const CONSULTATION_GOODS_BILLS_COLUMNS = {
     sort: false,
     title: 'Mandato',
   },
-  clave: {
+  no_transferente: {
     sort: false,
     title: 'Clave Transferente',
   },
