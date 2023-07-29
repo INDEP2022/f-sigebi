@@ -9,7 +9,7 @@
       <div class="md-tabs">
         <tabset>
           <tab heading="Orígenes" id="originsTab">
-            <div class="row mt-3">
+            <!-- <div class="row mt-3">
               <div class="col-sm-12 col-md-6 col-lg-6">
                 <div class="form-material">
                   <search-bar [params]="reportParams"></search-bar>
@@ -27,7 +27,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
             <ng-scrollbar
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
@@ -36,22 +36,22 @@
                 <ng2-smart-table
                   id="reportTable"
                   [settings]="reportSettings"
-                  [source]="reportColumns"
+                  [source]="dataTableReport"
                   (userRowSelect)="selectReport($event.selected)">
                 </ng2-smart-table>
               </div>
             </ng-scrollbar>
             <app-pagination
-              [params]="reportParams"
-              [totalItems]="reportTotalItems">
+              [params]="dataTableParamsReport"
+              [totalItems]="totalReport">
             </app-pagination>
-            <div class="row mt-5">
+            <!-- <div class="row mt-5">
               <div class="col-sm-12 col-md-12 col-lg-6">
                 <div class="form-material">
                   <search-bar [params]="addresseeParams"></search-bar>
                 </div>
               </div>
-            </div>
+            </div> -->
             <ng-scrollbar
               [track]="'horizontal'"
               [autoHeightDisabled]="false"
@@ -60,13 +60,13 @@
                 <ng2-smart-table
                   id="addresseeTable"
                   [settings]="addresseeSettings"
-                  [source]="addresseeColumns">
+                  [source]="dataTableAddresee">
                 </ng2-smart-table>
               </div>
             </ng-scrollbar>
             <app-pagination
-              [params]="reportParams"
-              [totalItems]="reportTotalItems">
+              [params]="dataTableParamsAddresee"
+              [totalItems]="totalAddresee">
             </app-pagination>
           </tab>
           <tab heading="Tipos de Firmantes" id="typesTab">

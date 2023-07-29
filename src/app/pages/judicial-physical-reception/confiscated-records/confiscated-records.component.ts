@@ -1523,7 +1523,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         const acta = this.form.get('acta2').value;
         const arrAct = acta.split('/');
         const valAct = arrAct[0];
-        if (['NA', 'ND'].includes(valAct)) {
+        if (!['NA', 'ND'].includes(valAct)) {
           if (res != null && res != undefined && res.numberDelegation2) {
             if (res.numberDelegation2 != this.delUser) {
               this.alert(
