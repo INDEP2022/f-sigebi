@@ -3,7 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CONCILIATION_EXECUTION_COLUMNS } from './conciliation-execution-columns';
@@ -114,7 +119,12 @@ export class ConciliationExecutionMainComponent
     },
   ];
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder) {
+  comerEventSelect = new DefaultSelect();
+  constructor(
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private comerEventService: ComerEventService
+  ) {
     super();
     this.conciliationSettings.columns = CONCILIATION_EXECUTION_COLUMNS;
   }
@@ -140,6 +150,7 @@ export class ConciliationExecutionMainComponent
   private prepareForm(): void {
     this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
+      description: [null],
       date: [null, [Validators.required]],
       phase: [null, [Validators.required]],
       batch: [null],
@@ -189,4 +200,33 @@ export class ConciliationExecutionMainComponent
   modify() {}
 
   cancel() {}
+
+  // ----------------------- WILMER ----------------------- //
+  getComerEvents(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+
+    params.addFilter('address', `M`, SearchFilter.EQ);
+    params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
+    params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
+
+    this.comerEventService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        // let result = data.data.map(item => {
+        //   item['bindlabel_'] = item.id + ' - ' + item.description;
+        // });
+        // Promise.all(result).then(resp => {
+        console.log('EVENT', data);
+        this.comerEventSelect = new DefaultSelect(data.data, data.count);
+        // });
+      },
+      error: err => {
+        this.comerEventSelect = new DefaultSelect();
+      },
+    });
+  }
 }
