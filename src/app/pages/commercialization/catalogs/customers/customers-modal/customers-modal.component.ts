@@ -49,6 +49,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.customerForm);
     this.prepareForm();
     this.agentId = this.customerForm.value.agentId?.id;
     this.penaltyId = this.customerForm.value.penaltyId?.penaltyId;
