@@ -230,7 +230,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     if (
       this.idTypeDoc == 185 ||
       this.idTypeDoc == 186 ||
-      this.typeFirm == 'autograf'
+      this.typeFirm == 'autograf' ||
+      this.typeFirm == 'autografa'
     ) {
       this.modalRef.content.callback(true);
       this.modalRef.hide();

@@ -83,6 +83,12 @@
       Exportar a Excel
     </button>
   </li>
+
+  <li role="menuitem">
+    <button type="button" (click)="onLoadBaseSales()" class="dropdown-item">
+      Carga Venta de Bases
+    </button>
+  </li>
 </ng-container>
 
 <input
@@ -122,14 +128,15 @@
 <input
   type="file"
   (change)="loadSaleBases($event)"
-  [formControl]="invoiceDataControl"
+  [formControl]="saleBasesControl"
   [style.display]="'none'"
   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   #saleBaseInput />
 
 <input
   type="file"
-  [formControl]="invoiceDataControl"
+  [formControl]="customersBasecontrol"
+  (change)="loadCustomersBase($event)"
   [style.display]="'none'"
   accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
   #customersBaseInput />

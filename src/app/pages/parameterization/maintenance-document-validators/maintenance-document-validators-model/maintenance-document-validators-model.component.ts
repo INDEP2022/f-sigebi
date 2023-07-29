@@ -99,7 +99,10 @@ export class MaintenanceDocumentValidatorsModalComponent
       .create(this.validatorsProceedingsForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.alert('error', 'El Tipo de Acta ya fue registrado', '');
+          this.loading = false;
+        },
       });
   }
   update() {

@@ -19,7 +19,10 @@ import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IAuthority2 } from 'src/app/core/models/catalogs/authority.model';
-import { IStation2 } from 'src/app/core/models/catalogs/station.model';
+import {
+  IStation2,
+  IStation3,
+} from 'src/app/core/models/catalogs/station.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -254,15 +257,35 @@ export class CatTransferentComponent extends BasePage implements OnInit {
             }
           });
           this.params2 = this.pageFilter(this.params2);
-          this.getStationByTransferent(this.transferents);
+          this.getStationByTransferent1(this.transferents);
         }
       });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getStationByTransferent(idTrans.id));
+      .subscribe(() => this.getStationByTransferent1(idTrans.id));
   }
 
   //trae las emisoras de un transferente seleccionado
+  getStationByTransferent1(id?: any) {
+    this.loading2 = true;
+    const idTrans = { ...this.transferents };
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
+
+    this.stationService.getStationByTransferent(idTrans.id, params2).subscribe({
+      next: response => {
+        this.stationList = response.data;
+        this.totalItems2 = response.count;
+        this.data1.load(response.data);
+        this.data1.refresh();
+        this.loading2 = false;
+      },
+      error: error => (this.loading2 = false),
+    });
+  }
+
   getStationByTransferent(id?: any) {
     this.loading2 = true;
     const idTrans = { ...this.transferents };
@@ -302,24 +325,28 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   }
 
   //msj de alerta al borrar emisora
-  showDeleteAlert2(station?: IStation2) {
+  showDeleteAlert2(station?: IStation3) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete2(station.id);
+        const idTrans = { ...this.transferents };
+        console.log(station.id);
+        this.delete2(station);
       }
     });
   }
 
   //método para borrar emisora
-  delete2(id: number) {
-    this.stationService.remove(id).subscribe({
+  delete2(id: IStation3) {
+    this.stationService.remove3(id).subscribe({
       next: () => {
-        this.getStationByTransferent();
-        this.alert('success', 'Emisora', 'Borrado Correctamente');
+        this.getStationByTransferent1();
+        this.data1.load([]);
+        this.loading2 = false;
+        this.alert('success', 'Emisora', 'Borrada Correctamente');
       },
       error: err => {
         this.alert(
@@ -390,7 +417,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
             }
           });
           this.params3 = this.pageFilter(this.params3);
-          this.getAuthorityByTransferent(this.stations);
+          this.getAuthorityByTransferent1(this.stations);
         }
       });
     this.params3
@@ -426,6 +453,27 @@ export class CatTransferentComponent extends BasePage implements OnInit {
       });
   }
 
+  getAuthorityByTransferent1(id?: any) {
+    this.loading3 = true;
+    const idEmi = { ...this.stations };
+    const idTrans = { ...this.transferents };
+    let params3 = {
+      ...this.params3.getValue(),
+      ...this.columnFilters2,
+    };
+    this.authorityService
+      .getAuthorityByTransferent(idEmi.id, idTrans.id, params3)
+      .subscribe({
+        next: response => {
+          this.authorityList = response.data;
+          this.totalItems3 = response.count;
+          this.data2.load(response.data);
+          this.data2.refresh();
+          this.loading3 = false;
+        },
+        error: error => (this.loading3 = false),
+      });
+  }
   // modal para editar autoridades
   openForm3(authority?: IAuthority2) {
     const idAuth = { ...this.stations };
@@ -452,16 +500,21 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete3(authority.idAuthority, authority);
-        this.alert('success', 'Autoridad', `Borrado Correctamente`);
+        this.getAuthorityByTransferent1();
         //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   //Método para borrar las autoridades
-  delete3(id?: number, authority?: IAuthority2) {
-    this.authorityService.remove2(id, authority).subscribe({
-      next: () => this.getAuthorityByTransferent(),
+  delete3(idAuthority?: number, authority?: IAuthority2) {
+    this.authorityService.remove2(idAuthority, authority).subscribe({
+      next: () => {
+        this.alert('success', 'Autoridad', `Borrado Correctamente`);
+        this.getAuthorityByTransferent1();
+        this.data2.load([]);
+        this.loading3 = false;
+      },
     });
   }
 
@@ -469,7 +522,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   showNullRegister1() {
     this.alertQuestion(
       'warning',
-      'Transferente sin emisoras',
+      'Transferente sin Emisoras',
       '¿Desea agregarlas ahora?'
     ).then(question => {
       if (question.isConfirmed) {
