@@ -43,6 +43,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   goodList: IGood;
   dataGood: any;
   totalItems: number = 0;
+  bienesLoading: boolean = false;
   idEvent: number = 0;
   comerLots: IComerLotsEG;
   dataTableGood: LocalDataSource = new LocalDataSource();
@@ -295,7 +296,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
         this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
         this.getComerLotes(this.letter.lotsId);
-        // this.bienesLotesForm.get('description').setValue(this.letter.lots);
+        this.comerBienesLetter(this.params.getValue());
       },
       error: () => {
         console.log('error');
@@ -432,7 +433,12 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       });
   }
 
-  comerBienesLetter(params: ListParams) {}
+  comerBienesLetter(params: ListParams) {
+    this.bienesLoading = true;
+    console.log('ejecutado servicio de bienes lotes');
+    this.bienesLoading = false;
+  }
+
   getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
