@@ -155,7 +155,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar esta sub marca?'
+      'Desea eliminar esta submarca?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(model);
@@ -167,7 +167,7 @@ export class SubBrandsListComponent extends BasePage implements OnInit {
     this.brandService.removeSubBrand(model).subscribe({
       next: () => {
         this.getData();
-        this.alert('success', 'Sub Marca Borrada Correctamente', '');
+        this.alert('success', 'Submarca Borrada Correctamente', '');
       },
     });
   }
