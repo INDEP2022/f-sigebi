@@ -25,11 +25,11 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
   username: string = '';
   lv_par_anio: number;
   lv_par_mes: number;
-  lv_par_coor: number;
-  nivel_usuar: number;
+  lv_par_coor: string = '0';
+  nivel_usuar: string;
   no_deleg: number;
-  params_no_delegacion: number;
-  toolbar_no_delegacion: number;
+  params_no_delegacion: string = '2';
+  toolbar_no_delegacion: string = '2';
   lv_totreg: number;
 
   totalItems: number = 0;
@@ -51,12 +51,11 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    //Consumir servicios de consulta de nivel de usuario
+    this.getUserInfo();
 
     this.paramsFilter$
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(paramsFilter => {
-        console.log(paramsFilter);
         if (paramsFilter) {
           this.params.next(new ListParams());
           this.getDataForTable(paramsFilter);
@@ -66,92 +65,103 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
   }
 
   validateUser() {
-    this.lv_par_coor = 0;
-    if (this.nivel_usuar === 1) {
-      this.lv_par_coor = 1;
-    } else if (this.nivel_usuar === 2) {
+    if (this.nivel_usuar === '1') {
+      this.lv_par_coor = '1';
+    } else if (this.nivel_usuar === '2') {
       if (
-        this.params_no_delegacion === (2 || 3) &&
-        this.toolbar_no_delegacion === (2 || 3)
+        this.params_no_delegacion === ('2' || '3') &&
+        this.toolbar_no_delegacion === ('2' || '3')
       ) {
-        this.lv_par_coor = 1;
+        this.lv_par_coor = '1';
+        this.alert('success', 'Se procede a generar el reporte', '');
       } else {
-        this.lv_par_coor = 0;
-        //'No tiene privilegios para generar el reporte de está Coordinación Regional'
+        this.lv_par_coor = '0';
+        this.alert(
+          'warning',
+          'No tiene privilegios para generar el reporte de está Coordinación Regional',
+          ''
+        );
       }
-    } else if (this.nivel_usuar === 3) {
-      //'No tiene privilegios para generar el reporte'
-      this.lv_par_coor = 0;
+    } else if (this.nivel_usuar === '3') {
+      this.alert('warning', 'No tiene privilegios para generar el reporte', '');
+      this.lv_par_coor = '0';
     }
   }
 
   getUserInfo() {
     this.programmingRequestService.getUserInfo().subscribe((data: any) => {
-      this.username = data.name;
-      console.log(data);
-    });
-  }
-  getUserSelect(user: ListParams) {}
-
-  getDataForTable(paramsFilter: any) {
-    this.loading = true;
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      let params = {
-        ...this.params.getValue(),
-        'filter.iniDate': `$btw:${paramsFilter.de},${paramsFilter.a}`,
-      };
-      this.dictaminaService.getDictamina(params).subscribe({
-        next: (data: any) => {
-          this.data = data.data;
-          this.totalItems = data.count;
-          this.loading = false;
+      this.username = data.username;
+      console.log(this.username);
+      const userprueba = 'HTORTOLERO';
+      this.dictaminaService.getUserLevel(this.username).subscribe({
+        next: data => {
+          this.nivel_usuar = data.nivel_usar;
         },
-        error: () => (this.loading = false),
+        error: error => {
+          console.log(error);
+        },
       });
     });
+  }
+
+  getDataForTable(paramsFilter: any) {
+    if (this.nivel_usuar !== '2') {
+      return;
+    } else {
+      this.loading = true;
+      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+        let params = {
+          ...this.params.getValue(),
+          'filter.iniDate': `$btw:${paramsFilter.de},${paramsFilter.a}`,
+        };
+        this.dictaminaService.getDictamina(params).subscribe({
+          next: (data: any) => {
+            this.data = data.data;
+            this.totalItems = data.count;
+            this.loading = false;
+          },
+          error: () => (this.loading = false),
+        });
+      });
+    }
   }
 
   getFilterParams() {
     this.dictaminaService.paramsDictamina.subscribe((data: any) => {
       this.paramsFilter$.next(data);
-      console.log(
-        'Ejecuta getFilterParams(): Data de params que estaba seteada antes de nueva consulta',
-        data
-      );
     });
   }
 
   generateReport(paramsSeleccion: any) {
-    console.log(paramsSeleccion);
-    const [year, month, day] = paramsSeleccion.de.split('-');
-    const P_ANIO = year;
-    const P_MES = month;
-    const P_COR_REG = '';
-    const P_FECHA1 = '';
-    console.log('Año:', P_ANIO, 'Mes:', P_MES);
+    console.log('Usuario:', this.username);
+    if (this.nivel_usuar !== '2') {
+      this.alert('warning', 'No tiene privilegios para generar el reporte', '');
+      return;
+    } else {
+      const [year, month, day] = paramsSeleccion.de.split('-');
+      const P_ANIO = year;
+      const P_MES = month;
+      const P_COR_REG = '';
+      const P_FECHA1 = '';
 
-    const params = {
-      // ...paramsSeleccion,
-      // P_ANIO,
-      // P_MES,
-      P_FECHA1: `${day}-${month}-${year}`,
-    };
+      const params = {
+        P_FECHA1: `${day}-${month}-${year}`,
+      };
 
-    const model: any = {};
-    this.documentsService.createCatDigitalizationTmp(model).subscribe({
-      next: resp => console.log(resp),
-      error: err => console.log(err),
-    });
-    console.log('Parametros pasados: ', params);
-    this.showReport(params);
+      const model: any = {};
+      this.documentsService.createCatDigitalizationTmp(model).subscribe({
+        next: resp => console.log(resp),
+        error: err => console.log(err),
+      });
+      this.showReport(params);
+    }
   }
 
   showReport(paramsSeleccion: any) {
-    console.log('Parametros recibidos: ', paramsSeleccion);
-    const reportName = 'RINDICA_0008';
+    const reportName = 'RINDICA_0008'; //Reporte no está habilitado, se envía blanco
     this.siabService.fetchReport('blank', paramsSeleccion).subscribe({
       next: response => {
-        console.log(response);
+        this.loading = true;
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         console.log(url);
@@ -168,9 +178,13 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
           class: 'modal-lg modal-dialog-centered',
           ignoreBackdropClick: true,
         };
+        this.loading = false;
         this.modalService.show(PreviewDocumentsComponent, config);
       },
-      error: error => console.log(error),
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
     });
   }
 }

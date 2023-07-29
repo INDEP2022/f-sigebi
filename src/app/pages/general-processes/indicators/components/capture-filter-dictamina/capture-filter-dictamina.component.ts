@@ -7,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { DictaminacionService } from 'src/app/common/services/dictaminacion.service';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DelegationSharedComponent } from '../../../../../@standalone/shared-forms/delegation-shared/delegation-shared.component';
@@ -30,8 +29,7 @@ export class CaptureFilterDictaminaComponent implements OnInit {
   form = this.fb.group({
     de: [null, [Validators.required]],
     a: [null, [Validators.required]],
-    // coordinador: [null, [Validators.required]],
-    // usuario: [null, [Validators.required]],
+    coordinador: [null, [Validators.required]],
   });
   flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   eventTypes = [
@@ -57,7 +55,6 @@ export class CaptureFilterDictaminaComponent implements OnInit {
     this.selectUsuario.data = ['Usuario1', 'Usuario2'];
     this.selectCoordinador.data = ['Coordinador1', 'Coordinador2'];
     this.setCustomValidators();
-    this.getUserInfo();
   }
 
   setCustomValidators(): void {
@@ -84,40 +81,27 @@ export class CaptureFilterDictaminaComponent implements OnInit {
 
     return null;
   }
-  getUserInfo() {
-    this.programmingRequestService.getUserInfo().subscribe((data: any) => {
-      console.log(data);
-    });
-  }
 
   onConsultar(): void {
     console.log(this.form);
     let paramsSeleccion = {
       de: this.datePipe.transform(this.form.value.de, 'yyyy-MM-dd'),
       a: this.datePipe.transform(this.form.value.a, 'yyyy-MM-dd'),
-      // coordinador: this.form.value.coordinador,
-      // usuario: this.form.value.usuario,
+      coordinador: this.form.value.coordinador,
     };
 
     this.dictaminaService.setParamsDictaminacion(paramsSeleccion);
   }
 
-  // onChangeUser(event: any) {
-  //   console.log(event);
-  //   this.form.get('usuario').patchValue(event.id);
-  // }
-
-  changeDelegation(event: IDelegation | null) {
-    console.log(event);
-    // this.form.get('coordinador').patchValue(event?.id);
+  changeDelegation(event: any) {
+    this.form.get('coordinador').patchValue(event?.id);
   }
 
   onClickReport() {
     let paramsSeleccion = {
       de: this.datePipe.transform(this.form.value.de, 'yyyy-MM-dd'),
       a: this.datePipe.transform(this.form.value.a, 'yyyy-MM-dd'),
-      // coordinador: this.form.value.coordinador,
-      // usuario: this.form.value.usuario,
+      coordinador: this.form.value.coordinador,
     };
 
     this.reportEmite.emit(paramsSeleccion);

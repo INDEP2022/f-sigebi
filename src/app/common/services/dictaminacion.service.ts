@@ -2,7 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IDictamina } from 'src/app/pages/general-processes/indicators/consolidated/consolidated/consolidated-columns';
+import {
+  IDictamina,
+  IUserLevelData,
+} from 'src/app/pages/general-processes/indicators/consolidated/consolidated/consolidated-columns';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../repository/interfaces/list-params';
 
@@ -25,5 +28,10 @@ export class DictaminacionService {
 
   setParamsDictaminacion(data: ListParams) {
     this.paramsToSend.next(data);
+  }
+
+  getUserLevel(params: string) {
+    const route = `users/api/v1/ind-user/get-inicializa-forma?toolbar_user=${params}`;
+    return this.http.get<IUserLevelData>(`${environment.API_URL}${route}`);
   }
 }

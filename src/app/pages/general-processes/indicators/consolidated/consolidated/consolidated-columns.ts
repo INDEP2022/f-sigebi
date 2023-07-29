@@ -41,6 +41,19 @@ export interface IDictamina {
   percentage: string;
 }
 
+export interface IUserLevel {
+  statusCode: string;
+  message: any[];
+  data: IUserLevelData;
+}
+
+export interface IUserLevelData {
+  lv_totreg: string;
+  t_regis: string;
+  t_tipusr: string | null;
+  t_tipus: string;
+  nivel_usar: string | null;
+}
 export const dataMock = [
   {
     no: '1',
