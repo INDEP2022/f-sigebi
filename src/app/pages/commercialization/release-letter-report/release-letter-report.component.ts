@@ -43,6 +43,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   dataGood: any;
   totalItems: number = 0;
   idEvent: number = 0;
+  comerLots: IComerLotsEG;
   selectEvent = new DefaultSelect<IComerLotsEG>();
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   selectLot = new DefaultSelect<IComerLotsEG>();
@@ -207,17 +208,18 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   confirm(): void {
     this.loading = true;
     // console.log(this.comerLibsForm.value);
-
+    this.carta = this.datePipe.transform(this.letter.invoiceDate, 'dd/MM/yyyy');
+    this.start = this.datePipe.transform(this.letter.invoiceDate, 'dd/MM/yyyy');
     let params = {
-      DESTYPE: this.comerLibsForm.controls['description'].value,
-      ID_LOTE: this.comerLibsForm.controls['lote'].value,
-      OFICIO_CARTALIB: this.comerLibsForm.controls['oficio'].value,
+      DESTYPE: this.bienesLotesForm.value.description,
+      ID_LOTE: this.bienesLotesForm.controls['lote'].value,
+      OFICIO_CARTALIB: this.comerLibsForm.value.oficio,
       DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
       PUESTO: this.comerLibsForm.controls['puesto'].value,
       PARRAFO1: this.comerLibsForm.controls['parrafo1'].value,
       ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
       NO_FACTURA: this.comerLibsForm.controls['factura'].value,
-      FECHA_FACTURA: this.comerLibsForm.controls['fechaFactura'].value,
+      FECHA_FACTURA: this.start,
       PARRAFO2: this.comerLibsForm.controls['parrafo2'].value,
       FIRMANTE: this.comerLibsForm.controls['firmante'].value,
       PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
@@ -225,12 +227,12 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       CCP2: this.comerLibsForm.controls['ccp1'].value,
       PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
       PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
-      FECHA_CARTA: this.comerLibsForm.controls['fechaCarta'].value,
+      FECHA_CARTA: this.carta,
     };
 
     console.log(params);
     this.siabService
-      // .fetchReport('RGERADBCONCNUMEFE', params)
+      // .fetchReport('RCOMERCARTALIB', params)
       .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
@@ -289,7 +291,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
         this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
         this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
-        this.comerLotes(this.letter.lotsId);
+        this.getComerLotes(this.letter.lotsId);
         // this.bienesLotesForm.get('description').setValue(this.letter.lots);
       },
       error: () => {
@@ -428,14 +430,14 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
 
   comerBienesLetter(params: ListParams) {}
-  comerLotes(id: number) {
+  getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
-        this.comerLotes = data;
+        this.comerLots = data;
         this.bienesLotesForm.get('lote').setValue(data.idLot);
         this.bienesLotesForm.get('description').setValue(data.description);
         this.bienesLotesForm.get('evento').setValue(data.idEvent);
-        console.log(this.comerLotes);
+        console.log(this.comerLots);
       },
       error: error => {
         console.error(error);

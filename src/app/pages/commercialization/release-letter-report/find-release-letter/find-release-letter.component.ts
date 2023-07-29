@@ -44,6 +44,7 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = false;
     this.providerForm.patchValue(this.provider);
     this.dataFactLetter
       .onChanged()
