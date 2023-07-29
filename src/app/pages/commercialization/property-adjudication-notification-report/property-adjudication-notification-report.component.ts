@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BatchService } from 'src/app/core/services/catalogs/batch.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //BasePage
 import { LocalDataSource } from 'ng2-smart-table';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -18,6 +18,7 @@ import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NotificationcomerService } from 'src/app/core/services/ms-notificationcomer/notificationcomer.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 @Component({
   selector: 'app-property-adjudication-notification-report',
@@ -40,6 +41,13 @@ export class PropertyAdjudicationNotificationReportComponent
   userDepartament: string;
   data = new LocalDataSource();
   nomCliente: any;
+  selectedNotifications: any[] = [];
+  source: LocalDataSource;
+  lotesSelected: any[] = [];
+  columnFilters: any = [];
+  inputValue: any;
+  neworconsult: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private batchService: BatchService,
@@ -57,21 +65,72 @@ export class PropertyAdjudicationNotificationReportComponent
   settings4 = {
     ...TABLE_SETTINGS,
     actions: false,
-    columns: { ...dataBatchColum },
-    noDataMessage: 'No se encontrarón registros',
+    columns: {
+      ...dataBatchColum,
+      name: {
+        title: 'Selección',
+        sort: false,
+        type: 'custom',
+        valuePrepareFunction: (value: boolean, seleLote: any) =>
+          this.isLoteSelected(seleLote),
+        renderComponent: CheckboxElementComponent,
+        onComponentInitFunction: (instance: CheckboxElementComponent) =>
+          this.onSelectLote(instance),
+      },
+    },
+    noDataMessage: 'No se encontraron registros',
   };
-
-  data4 = EXAMPLE_DAT4;
 
   ngOnInit(): void {
     this.prepareForm();
     this.getuser();
+    this.filterColumns();
+    this.source = new LocalDataSource([]);
+    this.neworconsult = true;
+    this.inicializarVisibilidadCampos();
+  }
+
+  inicializarVisibilidadCampos() {
+    this.disableCampo('claveOficio');
+    this.disableCampo('fechaFallo');
+    this.disableCampo('FechaLimPago');
+  }
+
+  enableInputs() {
+    this.enableCampo('claveOficio');
+    this.enableCampo('fechaFallo');
+    this.enableCampo('FechaLimPago');
+  }
+
+  disableCampo(campo: string) {
+    this.form.get(campo).disable();
+    this.form.get(campo).setValue('');
+  }
+  enableCampo(campo: string) {
+    this.form.get(campo).enable();
+  }
+
+  inicializarCampos() {
+    this.form.get('claveOficio').setValue('');
+    this.form.get('fechaFallo').setValue('');
+    this.form.get('claveOficio').setValue('');
+    this.form.get('FechaLimPago').setValue('');
+    this.form.get('texto1').setValue('');
+    this.form.get('texto2').setValue('');
+    this.form.get('texto3').setValue('');
+    this.form.get('texto4').setValue('');
+    this.form.get('firmante').setValue('');
+    this.form.get('elaboro').setValue('');
+    this.form.get('ccp1').setValue('');
+    this.form.get('ccp2').setValue('');
   }
 
   prepareForm() {
     this.form = this.fb.group({
       evento: [null, [Validators.required]],
-      claveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      descevento: [null, [Validators.required]],
+      description: [null, [Validators.required]],
+      claveOficio: [{ value: null }, [Validators.required]],
       fechaFallo: [null],
       FechaLimPago: [null],
       texto1: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -106,20 +165,24 @@ export class PropertyAdjudicationNotificationReportComponent
             .subscribe({
               next: resp => {
                 this.nomCliente = resp.reasonName;
-
                 let dataTable = {
-                  loPublico: response.data[i].lotPublic,
+                  lotPublic: response.data[i].lotPublic,
                   description: response.data[i].description,
                   cliente: this.nomCliente,
-                  num_oficio: response.data[i].description,
+                  num_oficio: response.data[i].noJobnNotifies,
                 };
+
                 this.dataBatch.push(dataTable);
                 this.data.load(this.dataBatch);
               },
             });
         }
       },
-      error: error => (this.loading = false),
+      error: error => (
+        this.inicializarVisibilidadCampos(),
+        (this.loading = false),
+        console.log('Entra a Error')
+      ),
     });
   }
 
@@ -195,76 +258,185 @@ export class PropertyAdjudicationNotificationReportComponent
     });
   }
   onInvoiceInputChange(event: Event) {
-    const inputValue = (event.target as HTMLInputElement).value;
-    this.getComerEvent(inputValue);
-    this.getBatch(inputValue);
+    this.inputValue = (event.target as HTMLInputElement).value;
+    let evento = this.form.get('evento').value;
+    this.getComerEvent(evento);
+    this.getBatch(evento);
+    this.getEvent(evento);
+    console.log('evento ', evento);
+  }
+
+  getEvent(id: string) {
+    this.comerEventService.geEventId(id).subscribe({
+      next: response => {
+        console.log('respuesta Event: ', response);
+        let dataform = {
+          descevento: response.processKey,
+          description: response.observations,
+        };
+        this.form.patchValue(dataform);
+      },
+    });
   }
 
   getComerEvent(id: string) {
     this.notificationcomerService.getcomer(id).subscribe({
       next: response => {
+        this.inicializarVisibilidadCampos();
+        this.inicializarCampos();
         console.log('Respuesta Comer Evento: ', response);
         let dataForm = {
-          claveOficio: response.numberJob,
-          fechaFallo: response.dateFailed,
-          FechaLimPago: response.dateLimit,
-          texto1: response.text1,
-          texto2: response.text2,
-          texto3: response.text3,
-          texto4: response.text4,
+          claveOficio: response.data[0].numberJob,
+          fechaFallo: response.data[0].dateFailed,
+          FechaLimPago: response.data[0].dateLimit,
+          texto1: response.data[0].text1,
+          texto2: response.data[0].text2,
+          texto3: response.data[0].text3,
+          texto4: response.data[0].text4,
+          firmante: response.data[0].signatory,
+          elaboro: response.data[0].elaborated,
+          ccp1: response.data[0].ccp1,
+          ccp2: response.data[0].ccp2,
         };
         this.form.patchValue(dataForm);
       },
+      error: err => {
+        console.log('Error: ', err);
+        this.inicializarCampos();
+        if (err.status == 400) {
+          this.enableInputs();
+        }
+      },
     });
   }
+
+  isLoteSelected(delegation: any) {
+    const exists = this.lotesSelected.find(lote => lote.id == delegation.id);
+    return exists ? true : false;
+  }
+  onSelectLote(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.selectLote(data.row, data.toggle),
+    });
+  }
+
+  selectLote(sele: any, selected: boolean) {
+    if (selected) {
+      this.lotesSelected.push(sele);
+    } else {
+      this.lotesSelected = this.lotesSelected.filter(
+        lote => lote.id == sele.id
+      );
+    }
+  }
+
+  filterColumns() {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'lotPublic':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cliente':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'num_oficio':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getBatch(this.inputValue);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getBatch(this.inputValue));
+  }
+
+  inputFechaFallo(event: Date) {
+    let inputDateF = event;
+    console.log('event: ', event);
+    let fecha1 = inputDateF;
+    const dia = fecha1.getDate();
+    const mes = fecha1.getMonth();
+    console.log('messsss1: ', mes);
+    let nombremes = this.obtenerNombreMes(mes);
+    console.log('Mes ', nombremes);
+  }
+
+  inputFechaLimite(event: Date) {
+    let inputDateL = event;
+    let fecha = new Date(inputDateL);
+    const dia = fecha.getDate();
+    const mes = fecha.getMonth();
+    console.log('messsss: ', mes);
+    let nombremes = this.obtenerNombreMes(mes);
+    console.log('Mes ', nombremes);
+  }
+
+  obtenerNombreMes(numeroMes: number): string {
+    switch (numeroMes) {
+      case 0:
+        return 'enero';
+      case 1:
+        return 'febrero';
+      case 2:
+        return 'marzo';
+      case 3:
+        return 'abril';
+      case 4:
+        return 'mayo';
+      case 5:
+        return 'junio';
+      case 6:
+        return 'julio';
+      case 7:
+        return 'agosto';
+      case 8:
+        return 'septiembre';
+      case 9:
+        return 'octubre';
+      case 10:
+        return 'noviembre';
+      case 11:
+        return 'diciembre';
+      default:
+        return 'Mes inválido';
+    }
+  }
+
+  DateTextut(dia: string, mes: string) {}
 }
 
-const EXAMPLE_DAT4 = [
-  {
-    lotePublico: 'prueba',
-    decripcion: 'descripción',
-    cliente: 'jose',
-    noOficio: 1,
-  },
-  {
-    lotePublico: 'prueba',
-    decripcion: 'descripción',
-    cliente: 'jose',
-    noOficio: 1,
-  },
-  {
-    lotePublico: 'prueba',
-    decripcion: 'descripción',
-    cliente: 'jose',
-    noOficio: 1,
-  },
-  {
-    lotePublico: 'prueba',
-    decripcion: 'descripción',
-    cliente: 'jose',
-    noOficio: 1,
-  },
-  {
-    lotePublico: 'prueba',
-    decripcion: 'descripción',
-    cliente: 'jose',
-    noOficio: 1,
-  },
-  {
-    lotePublico: 'prueba',
-    decripcion: 'descripción',
-    cliente: 'jose',
-    noOficio: 1,
-  },
-];
 export const dataBatchColum = {
-  loPublico: {
+  lotPublic: {
     title: 'Lote Público',
     type: 'string',
     sort: false,
   },
   description: {
-    title: 'Description',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
