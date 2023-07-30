@@ -463,4 +463,8 @@ export class GoodService extends HttpService {
   chargeGoods(body: IGoodCharge) {
     return this.post<any>('good/charge-goods', body);
   }
+
+  chargeGoodsExcel(body: IGoodCharge){
+    return this.post<any>('good/charge-goods-excel', body)
+  }
 }
