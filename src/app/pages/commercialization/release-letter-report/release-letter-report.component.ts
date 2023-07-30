@@ -12,14 +12,19 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IComerLetter } from 'src/app/core/models/ms-parametercomer/comer-letter';
 import { IComerLotsEG } from 'src/app/core/models/ms-parametercomer/parameter';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
 import { ComerLetterService } from 'src/app/core/services/ms-parametercomer/comer-letter.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -45,6 +50,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   bienesLoading: boolean = false;
   idEvent: number = 0;
+  descArea: string;
+  area: IDepartment;
   comerLots: IComerLotsEG;
   dataTableGood: LocalDataSource = new LocalDataSource();
   selectEvent = new DefaultSelect<IComerLotsEG>();
@@ -53,6 +60,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paramsBienes = new BehaviorSubject<ListParams>(new ListParams());
   idLot: number = 0;
+  bienes: any;
+  faEtapaCreada: number = 0;
   letter: IComerLetter;
   read: boolean = false;
   update: boolean = false;
@@ -67,6 +76,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   department: string = '';
   delegation: string = '';
   userName: string = '';
+  puestoUser: string = '';
   letterDefault: any = null;
   subDelegation: string = '';
   carta: string;
@@ -127,20 +137,24 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private securityService: SecurityService,
+    private departamentService: DepartamentService,
     private reportService: ReportService,
     private comerLotService: ComerLotService,
     private comerLetterService: ComerLetterService,
     private datePipe: DatePipe,
     private siabService: SiabService,
+    private subDelegationService: SubDelegationService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
     private authService: AuthService,
+    private comerEventService: ComerEventService,
     private router: Router
   ) {
     super();
     this.validPermisos = !this.validPermisos;
     this.settings = {
       ...TABLE_SETTINGS,
+      hideSubHeader: false,
       actions: false,
       columns: {
         ...COMEMR_BIENES_COLUMNS,
@@ -159,9 +173,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   prepareForm() {
     this.department = this.authService.decodeToken().department;
     this.delegation = this.authService.decodeToken().delegacionreg;
-    this.subDelegation = this.authService.decodeToken().sub;
+    this.subDelegation = this.authService.decodeToken().puesto;
+    this.puestoUser = this.authService.decodeToken().puesto;
     this.userName = this.authService.decodeToken().preferred_username;
-
     this.userTracker(
       this.screenKey,
       this.authService.decodeToken().preferred_username
@@ -169,26 +183,47 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLibsForm = this.fb.group({
       oficio: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(50)],
       ],
       diridoA: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
       ],
-      puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      puesto: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
       parrafo1: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
       ],
       adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
-      factura: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      factura: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+      ],
       fechaFactura: [null, [Validators.required]],
-      parrafo2: [null, [Validators.pattern(STRING_PATTERN)]],
+      parrafo2: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
+      ],
       firmante: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp1: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp2: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp3: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp4: [null, [Validators.pattern(STRING_PATTERN)]],
+      ccp1: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      ccp2: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      ccp3: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      ccp4: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
       fechaCarta: [null],
       fechaFallo: [null],
       cveProceso: [null],
@@ -286,6 +321,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
         this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
         this.comerLibsForm.get('puesto').setValue(this.letter.position);
+        this.comerLibsForm.get('firmante').setValue(this.puestoUser);
         this.comerLibsForm.get('parrafo1').setValue(this.letter.paragraph1);
         this.comerLibsForm.get('parrafo2').setValue(this.letter.paragraph2);
         this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
@@ -296,7 +332,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
         this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
         this.getComerLotes(this.letter.lotsId);
-        this.comerBienesLetter(this.params.getValue());
+        this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
       },
       error: () => {
         console.log('error');
@@ -433,11 +469,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       });
   }
 
-  comerBienesLetter(params: ListParams) {
-    this.bienesLoading = true;
-    console.log('ejecutado servicio de bienes lotes');
-    this.bienesLoading = false;
-  }
+  // comerBienesLetter(params: ListParams) {
+  //   this.bienesLoading = true;
+  //   console.log('ejecutado servicio de bienes lotes');
+  //   this.bienesLoading = false;
+  // }
 
   getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
@@ -461,4 +497,42 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   goBack() {}
 
   actualizarLetter() {}
+
+  // async getDepartment() {
+  //   const params = new ListParams();
+  //   params['filter.id'] = this.department;
+  //   params['filter.numDelegation'] = this.delegation;
+  //   params['filter.numSubDelegation'] = this.subDelegation;
+  //   params['filter.phaseEdo'] = this.faEtapaCreada;
+  //   this.departamentService.getbyDelegation(this.delegation, '').subscribe({
+  //     next: data => {
+  //       console.log(data)
+  //     }
+  //   })
+
+  // }
+
+  comerBienesLetter(lotId: number, params: ListParams) {
+    this.bienesLoading = true;
+    this.filterParams.getValue().removeAllFilters();
+    this.filterParams.getValue().page = params.page;
+    this.filterParams.getValue().search = params.text;
+    this.filterParams
+      .getValue()
+      .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
+    this.comerEventService
+      .getAllFilterLetter(lotId, this.params.getValue())
+      .subscribe({
+        next: data => {
+          this.bienesLoading = false;
+          this.bienes = data.data;
+          this.dataTableGood.load(this.bienes);
+          this.dataTableGood.refresh();
+          this.totalItems = data.count;
+        },
+        error: () => {
+          console.error('error al filtrar bienes');
+        },
+      });
+  }
 }
