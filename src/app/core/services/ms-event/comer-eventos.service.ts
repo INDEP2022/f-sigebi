@@ -70,4 +70,8 @@ export class ComerEventosService extends HttpService {
   getAppGetfComer(body: any, params?: _Params) {
     return this.post(EventEndpoints.AppGetfComer, body, params);
   }
+
+  getSelectComerEvent(params: _Params, goodType: any) {
+    return this.get(`application/selectComerEvent/${goodType}`, params);
+  }
 }
