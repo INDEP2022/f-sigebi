@@ -4,6 +4,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
+import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
+import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
+import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   CURP_PATTERN,
@@ -14,15 +18,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
-//Models
-import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
-import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
-
-//Services
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
-import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
-import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 
 @Component({
   selector: 'app-customers-modal',
@@ -47,14 +42,14 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private customerService: CustomerService,
-    private penaltyService: TPenaltyService,
-    private clientPenaltyService: ClientPenaltyService
+    private penaltyService: TPenaltyService
   ) {
     super();
     this.today = new Date();
   }
 
   ngOnInit(): void {
+    console.log(this.customerForm);
     this.prepareForm();
     this.agentId = this.customerForm.value.agentId?.id;
     this.penaltyId = this.customerForm.value.penaltyId?.penaltyId;
@@ -160,11 +155,11 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       penaltyId: [
         null,
         [Validators.maxLength(20), Validators.pattern(NUMBERS_PATTERN)],
-      ], //Llave
+      ],
       sellerId: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
-      ], //LLave
+      ],
       approvedRfc: [
         null,
         [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
@@ -172,7 +167,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       userFree: [
         null,
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
-      ], //Lave
+      ],
       freeDate: [null, [Validators.pattern(STRING_PATTERN)]],
       economicAgreementKey: [
         null,
@@ -403,8 +398,8 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente Actualizado(a)'
-      : 'Cliente Creado(a)';
+      ? 'Cliente Actualizado'
+      : 'Cliente Creado';
     this.alert('success', `${message} Correctamente`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -10,6 +10,13 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 //BasePage
+import { LocalDataSource } from 'ng2-smart-table';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { NotificationcomerService } from 'src/app/core/services/ms-notificationcomer/notificationcomer.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -24,14 +31,25 @@ export class PropertyAdjudicationNotificationReportComponent
   batchList: any;
   desc: any;
   descType: string;
-  dataBatch: any;
+  dataBatch: any[] = [];
   totalItems: number = 0;
   form: FormGroup;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  user: string;
+  userdelegacion: string;
+  userDepartament: string;
+  data = new LocalDataSource();
+  nomCliente: any;
   constructor(
     private fb: FormBuilder,
     private batchService: BatchService,
-    private reportService: ReportService
+    private reportService: ReportService,
+    private authService: AuthService,
+    private fractionsService: FractionsService,
+    private comerEventService: ComerEventService,
+    private notificationcomerService: NotificationcomerService,
+    private lotService: LotService,
+    private comerClientsService: ComerClientsService
   ) {
     super();
   }
@@ -47,7 +65,7 @@ export class PropertyAdjudicationNotificationReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getBatch();
+    this.getuser();
   }
 
   prepareForm() {
@@ -76,17 +94,41 @@ export class PropertyAdjudicationNotificationReportComponent
     });
   }
 
-  getBatch() {
+  getBatch(event: string | number) {
     this.loading = true;
-    this.batchService.getAll(this.params.getValue()).subscribe({
-      next: data => {
-        this.batchList = data;
-        this.dataBatch = this.batchList.data;
-        this.totalItems = data.count;
-        console.log(this.dataBatch);
-        this.loading = false;
+    this.lotService.getLotbyEvent(event, this.params.getValue()).subscribe({
+      next: response => {
+        this.totalItems = response.count;
+        for (let i = 0; i < response.data.length; i++) {
+          console.log('respuesta Batch: ', response.data[i]);
+          this.comerClientsService
+            .getClientEventId(response.data[i].idClient)
+            .subscribe({
+              next: resp => {
+                this.nomCliente = resp.reasonName;
+
+                let dataTable = {
+                  loPublico: response.data[i].lotPublic,
+                  description: response.data[i].description,
+                  cliente: this.nomCliente,
+                  num_oficio: response.data[i].description,
+                };
+                this.dataBatch.push(dataTable);
+                this.data.load(this.dataBatch);
+              },
+            });
+        }
       },
       error: error => (this.loading = false),
+    });
+  }
+
+  getClientEvent(id: string | number) {
+    this.comerClientsService.getClientEventId(id).subscribe({
+      next: response => {
+        console.log('response cliente: ', response);
+        this.nomCliente = response.reasonName;
+      },
     });
   }
 
@@ -134,6 +176,47 @@ export class PropertyAdjudicationNotificationReportComponent
   cleanForm(): void {
     this.form.reset();
   }
+
+  getuser() {
+    let token = this.authService.decodeToken();
+    this.user = token.name.toUpperCase();
+    this.userdelegacion = token.delegacionreg.toUpperCase();
+    let userDepartament = token.department.toUpperCase();
+    this.getdepartament(userDepartament);
+    console.log('User: ', token);
+  }
+
+  getdepartament(id: number | string) {
+    this.fractionsService.getDepartament(id).subscribe({
+      next: response => {
+        this.userDepartament = response.data[0].description;
+        console.log('respuesta Departament ', response.data[0]);
+      },
+    });
+  }
+  onInvoiceInputChange(event: Event) {
+    const inputValue = (event.target as HTMLInputElement).value;
+    this.getComerEvent(inputValue);
+    this.getBatch(inputValue);
+  }
+
+  getComerEvent(id: string) {
+    this.notificationcomerService.getcomer(id).subscribe({
+      next: response => {
+        console.log('Respuesta Comer Evento: ', response);
+        let dataForm = {
+          claveOficio: response.numberJob,
+          fechaFallo: response.dateFailed,
+          FechaLimPago: response.dateLimit,
+          texto1: response.text1,
+          texto2: response.text2,
+          texto3: response.text3,
+          texto4: response.text4,
+        };
+        this.form.patchValue(dataForm);
+      },
+    });
+  }
 }
 
 const EXAMPLE_DAT4 = [
@@ -175,8 +258,8 @@ const EXAMPLE_DAT4 = [
   },
 ];
 export const dataBatchColum = {
-  id: {
-    title: 'id Lote',
+  loPublico: {
+    title: 'Lote Público',
     type: 'string',
     sort: false,
   },
@@ -185,13 +268,13 @@ export const dataBatchColum = {
     type: 'string',
     sort: false,
   },
-  numRegister: {
-    title: 'Número de registro',
+  cliente: {
+    title: 'Cliente',
     type: 'number',
     sort: false,
   },
-  status: {
-    title: 'Estatus',
+  num_oficio: {
+    title: 'No. Oficio',
     type: 'string',
     sort: false,
   },

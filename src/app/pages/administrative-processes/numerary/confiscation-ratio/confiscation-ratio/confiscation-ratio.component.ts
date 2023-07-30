@@ -37,8 +37,14 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   dataTemplate = this.fb.group({
     noGood: [null, Validators.required],
-    criminalCase: [null, Validators.required],
-    preliminaryInvestigation: [null, Validators.required],
+    criminalCase: [
+      null,
+      [Validators.pattern(/^[0-9/]+$/), Validators.required],
+    ],
+    preliminaryInvestigation: [
+      null,
+      [Validators.pattern(/^[0-9/]+$/), Validators.required],
+    ],
     dateTesofe: [null, Validators.required],
     jobTesofe: [null, Validators.required],
     authority: [null, Validators.required],
@@ -189,8 +195,14 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           this.data.push(
             this.fb.group({
               noGood: [null, Validators.required],
-              criminalCase: [null, Validators.required],
-              preliminaryInvestigation: [null, Validators.required],
+              criminalCase: [
+                null,
+                [Validators.pattern(/^[0-9/]+$/), Validators.required],
+              ],
+              preliminaryInvestigation: [
+                null,
+                [Validators.pattern(/^[0-9/]+$/), Validators.required],
+              ],
               dateTesofe: [null, Validators.required],
               jobTesofe: [null, Validators.required],
               authority: [null, Validators.required],
@@ -295,5 +307,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
         console.log(err);
       },
     });
+  }
+  openFile() {
+    console.log('asd');
+    document.getElementById('uploadfile').click();
   }
 }

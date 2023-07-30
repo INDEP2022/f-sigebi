@@ -9,4 +9,5 @@ export enum IGoodsinvEndpoint {
   GetCodePostalByParams = 'views/cat-postal-codes-view-sb-one',
   GetCatBrandWithFilter = 'views/cat-auto-brands-view-sb',
   GetCatSubBrandWithFilter = 'views/cat-auto-sub-brands-view-sb',
+  GetDescription = 'application/query-description',
 }

@@ -40,6 +40,7 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.captureId);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -63,7 +64,6 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -89,6 +89,7 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.captureLinesMain = response.data;
+          console.log(this.captureLinesMain);
           this.data.load(response.data);
           this.data.refresh();
           this.totalItems = response.count;
@@ -99,11 +100,22 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   }
 
   //Exportar lista blanca de clientes
-  exportcaptureLinesMain(): void {
+  exportSelected(): void {
+    const data = this.captureLinesMain.map((row: any) =>
+      this.transFormColums(row)
+    );
     this.excelService.exportAsExcelFile(
-      this.captureLinesMain,
+      data,
       'DetallesDeBusquedaYProcesamientoDePagos'
     );
+  }
+
+  private transFormColums(row: any) {
+    return {
+      Evento: row.eventId,
+      'No. Paleta': row.pallette,
+      'Línea Captura': row.captureLine,
+    };
   }
 
   close() {

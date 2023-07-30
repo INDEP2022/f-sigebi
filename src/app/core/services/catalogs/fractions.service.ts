@@ -21,4 +21,7 @@ export class FractionsService extends HttpService {
     const route = `${this.endpoint}`;
     return this.put(route, fraction);
   }
+  getDepartament(id: number | string) {
+    return this.get(`${ENDPOINT_LINKS.Departamentuser}?filter.id=$eq:${id}`);
+  }
 }

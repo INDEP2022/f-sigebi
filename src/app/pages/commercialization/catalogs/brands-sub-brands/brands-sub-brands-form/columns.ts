@@ -1,6 +1,6 @@
 export const COLUMNS = {
   idSubBrand: {
-    title: 'Sub Marca',
+    title: 'Submarca',
     sort: false,
     filter: false,
     editable: true,
