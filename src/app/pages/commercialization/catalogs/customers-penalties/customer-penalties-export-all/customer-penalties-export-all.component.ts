@@ -150,11 +150,28 @@ export class CustomersPenaltiesExportAllComponent
   }
 
   //Exportar todos los clientes con penalizaciones
-  exportClientsPenalize(): void {
-    this.excelService.exportAsExcelFile(
-      this.customersPenalties,
-      'PenalizacionesDeCliente'
+  exportSelected(): void {
+    const data = this.customersPenalties.map((row: any) =>
+      this.transFormColums(row)
     );
+    this.excelService.exportAsExcelFile(data, 'PenalizacionesDelCliente');
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.typeProcess,
+      'Clave Evento': row.eventId,
+      Lote: row.publicLot,
+      'Fecha Inicial': row.startDate,
+      'Fecha Final': row.endDate,
+      'Motivo Penalización': row.refeOfficeOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+      'Fecha Penaliza': row.penalizesDate,
+      'No. Registro': row.registernumber,
+      'Fecha Libera': row.releasesDate,
+    };
   }
 
   close() {
