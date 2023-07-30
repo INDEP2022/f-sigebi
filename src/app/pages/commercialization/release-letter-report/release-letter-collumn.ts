@@ -58,12 +58,12 @@ export const COMEMR_BIENES_COLUMNS = {
     type: 'text',
     sort: false,
   },
-  description: {
+  lotDescription: {
     title: 'Descripcion',
     type: 'text',
     sort: false,
   },
-  amount: {
+  baseValue: {
     title: 'Valor',
     type: 'text',
     sort: false,

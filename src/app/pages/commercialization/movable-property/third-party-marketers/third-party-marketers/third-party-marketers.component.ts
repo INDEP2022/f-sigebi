@@ -346,7 +346,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     this.typeEventXterComerService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        let result = response.data.map((item: any) => {
+        const result = response.data.map((item: any) => {
           item['description'] = item.eventDetail
             ? item.eventDetail.description
             : null;

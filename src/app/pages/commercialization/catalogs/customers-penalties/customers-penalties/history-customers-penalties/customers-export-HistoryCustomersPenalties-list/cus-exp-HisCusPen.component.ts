@@ -28,6 +28,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
+
   clientId: number;
 
   constructor(
@@ -52,6 +53,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            console.log('Hola');
             switch (filter.field) {
               case 'processType':
                 searchFilter = SearchFilter.EQ;
@@ -80,6 +82,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -95,7 +98,8 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
 
   //Tabla con todos los clientes
   getData() {
-    this.data = new LocalDataSource();
+    // this.data = new LocalDataSource();
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -107,7 +111,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
           this.customersPenalties = response.data;
           this.data.load(response.data);
           this.data.refresh();
-          this.totalItems = response.data.length;
+          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => (this.loading = false),
