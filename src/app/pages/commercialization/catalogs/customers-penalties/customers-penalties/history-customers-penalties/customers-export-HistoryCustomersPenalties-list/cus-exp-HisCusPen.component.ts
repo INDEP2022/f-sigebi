@@ -115,11 +115,26 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
   }
 
   //Exportar lista blanca de clientes
-  exportClientsWhiteList(): void {
+  exportSelected(): void {
+    const data = this.customersPenalties.map((row: any) =>
+      this.transFormColums(row)
+    );
     this.excelService.exportAsExcelFile(
-      this.customersPenalties,
+      data,
       'TodosLosRepresentantesDelCliente'
     );
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.processType,
+      'Clave Evento': row.eventId,
+      Lote: row.batchPublic,
+      'Motivo Penalización': row.referenceJobOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+    };
   }
 
   close() {
