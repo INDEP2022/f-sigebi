@@ -135,7 +135,6 @@ export class HistoryCustomersPenaltiesComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -231,7 +230,6 @@ export class HistoryCustomersPenaltiesComponent
   openFormHistoryCustomersPenalties(
     iHistoryCustomersPenalties?: IHistoryCustomersPenalties
   ) {
-    console.log(iHistoryCustomersPenalties);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       iHistoryCustomersPenalties,

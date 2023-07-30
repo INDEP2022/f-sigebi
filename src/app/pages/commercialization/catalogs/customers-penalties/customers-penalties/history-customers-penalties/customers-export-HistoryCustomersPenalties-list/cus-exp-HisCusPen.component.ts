@@ -10,7 +10,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryCustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS2 } from '../../columns';
+import { COLUMNS3 } from '../../columns';
 
 @Component({
   selector: 'app-customers-export-HistoryCustomersPenalties-list.component',
@@ -28,6 +28,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
+
   clientId: number;
 
   constructor(
@@ -36,7 +37,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
     private modalRef: BsModalRef
   ) {
     super();
-    this.settings.columns = COLUMNS2;
+    this.settings.columns = COLUMNS3;
     this.settings.hideSubHeader = false;
     this.settings.actions = false;
   }
@@ -52,6 +53,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            console.log('Hola');
             switch (filter.field) {
               case 'processType':
                 searchFilter = SearchFilter.EQ;
@@ -80,6 +82,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -95,7 +98,8 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
 
   //Tabla con todos los clientes
   getData() {
-    this.data = new LocalDataSource();
+    // this.data = new LocalDataSource();
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -107,7 +111,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
           this.customersPenalties = response.data;
           this.data.load(response.data);
           this.data.refresh();
-          this.totalItems = response.data.length;
+          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => (this.loading = false),
@@ -115,11 +119,26 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
   }
 
   //Exportar lista blanca de clientes
-  exportClientsWhiteList(): void {
+  exportSelected(): void {
+    const data = this.customersPenalties.map((row: any) =>
+      this.transFormColums(row)
+    );
     this.excelService.exportAsExcelFile(
-      this.customersPenalties,
+      data,
       'TodosLosRepresentantesDelCliente'
     );
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.processType,
+      'Clave Evento': row.eventId,
+      Lote: row.batchPublic,
+      'Motivo Penalización': row.referenceJobOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+    };
   }
 
   close() {
