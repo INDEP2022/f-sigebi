@@ -133,6 +133,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   get description() {
     return this.bienesLotesForm.get('description');
   }
+  get cveProceso() {
+    return this.bienesLotesForm.get('cveProceso');
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -241,6 +244,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       lote: [null],
       evento: [null],
       description: [null],
+      cveProceso: [null],
     });
   }
 
@@ -318,15 +322,20 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           this.letter.invoiceDate,
           'dd/MM/yyyy'
         );
+        this.start = this.datePipe.transform(
+          this.letter.invoiceDate,
+          'dd/MM/yyyy'
+        );
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
+        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        this.comerLibsForm.get('fechaFallo').setValue(this.carta);
         this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
         this.comerLibsForm.get('puesto').setValue(this.letter.position);
         this.comerLibsForm.get('firmante').setValue(this.puestoUser);
-        this.comerLibsForm.get('parrafo1').setValue(this.letter.paragraph1);
         this.comerLibsForm.get('parrafo2').setValue(this.letter.paragraph2);
         this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
-        this.comerLibsForm.get('fechaFactura').setValue(this.carta);
+        this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.comerLibsForm.get('ccp1').setValue(this.letter.ccp1);
         this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
         this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
@@ -469,12 +478,6 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       });
   }
 
-  // comerBienesLetter(params: ListParams) {
-  //   this.bienesLoading = true;
-  //   console.log('ejecutado servicio de bienes lotes');
-  //   this.bienesLoading = false;
-  // }
-
   getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
@@ -482,6 +485,21 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.bienesLotesForm.get('lote').setValue(data.idLot);
         this.bienesLotesForm.get('description').setValue(data.description);
         this.bienesLotesForm.get('evento').setValue(data.idEvent);
+        this.bienesLotesForm.get('cveProceso').setValue(data.cveProceso);
+        // this.letter.dateFail = new Date().toLocaleString();
+        // const vFechaFallo = this.datePipe.transform(this.letter.dateFail, 'dd/MM/yyyy');
+        // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
+        this.comerLibsForm.value.parrafo1 =
+          'Derivado de la ' +
+          this.bienesLotesForm.get('description').value +
+          ' para la enajenación de vehiculos y/o bienes diversos ' +
+          this.bienesLotesForm.get('cveProceso').value +
+          ' celebrada el dia ' +
+          '' +
+          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
+        this.comerLibsForm
+          .get('parrafo1')
+          .setValue(this.comerLibsForm.value.parrafo1);
         console.log(this.comerLots);
       },
       error: error => {

@@ -12,14 +12,13 @@
           <div class="d-inline mr-2">
             Fecha:
             <span class="ml-3 mr-3" style="display: initial !important">
-              {{ carta || '00/00/0000' }}
+              <!-- {{ carta | date:'dd \'de\' MMMM \'del año\' yyyy' }} -->
+              {{ carta }}
             </span>
-            <button
-              class="btn btn-primary active btn-sm m-2"
-              (click)="goBack()">
+            <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
               Regresar
               <i class="fas fa-arrow-circle-left"></i>
-            </button>
+            </button> -->
             <!-- <button (click)="searchComer()" class="btn btn-primary btn-sm active m-1" tooltip="Cartas de Liberación"
               containerClass="tooltip-style">
               <i class="bx bx-list-plus bx-sm float-icon"></i>
