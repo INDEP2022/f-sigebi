@@ -61,6 +61,9 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'pallette':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -91,7 +94,6 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
