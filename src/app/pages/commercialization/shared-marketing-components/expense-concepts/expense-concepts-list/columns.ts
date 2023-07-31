@@ -69,7 +69,7 @@ export const COLUMNS = {
     sort: false,
   },
   numerary: {
-    title: 'Afecta Num.',
+    title: 'Afecta No.',
     type: 'custom',
     sort: false,
     renderComponent: CheckboxDisabledElementComponent,

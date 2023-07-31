@@ -28,6 +28,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract complementaryDoc: boolean;
   protected abstract requestInfo: IRequest;
   protected abstract typeVisit: string;
+  protected abstract listGoodSelectedTitle: string;
 
   private rejectedService = inject(RejectedGoodService);
 
@@ -183,6 +184,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         break;
       case 'BSNotificarTransferente':
+        this.listGoodSelectedTitle = 'Bienes Seleccionados';
         //ver registro
         this.regDocView = true;
         //visualizar los bienes seleccioandos

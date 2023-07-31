@@ -8,7 +8,7 @@ export const PROOF_DELIVERY_COLUMNS = {
     sort: false,
   },
   cveEvento: {
-    title: 'CVE Evento',
+    title: 'Cve. Evento',
     sort: false,
   },
   lp: {

@@ -228,13 +228,13 @@ export class DispersionPaymentComponent implements OnInit {
     paramsF.addFilter('EventId', this.event.value);
     this.comerTpEventsService.getTpEvent(paramsF.getParams()).subscribe(
       res => {
-        console.log(res)
-        this.dataCustomer.load(res.data)
-        this.totalIncome = res.count
+        console.log(res);
+        this.dataCustomer.load(res.data);
+        this.totalIncome = res.count;
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
 }
