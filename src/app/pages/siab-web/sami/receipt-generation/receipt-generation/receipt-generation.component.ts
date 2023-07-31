@@ -79,7 +79,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   dataExcel: IReceiptExceltem[];
   goodsTable: IReceiptGoodItem;
   goodsDownload: IReceiptGoodItem[];
-  goodsDownloadExcel: IReceiptExceltem[];
+  goodsDownloadExcel: IReceiptExceltem[] = [];
   goodsDownloadPrograming: IReceiptExceltem[];
   goods: any = [];
   downloadResults: boolean = false;
@@ -222,7 +222,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.programmingGoodReceiptService.getProgrammingGoods(data).subscribe({
         next: resp => {
           console.log(resp);
-          if (resp) {
+          if (resp.data) {
             this.id_programacion = resp.data[0].id_programacion;
           } else {
             this.id_programacion = null;
@@ -449,38 +449,50 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 this.acceptMassive()
                   .then(result => {
                     console.log(result);
+                    this.loader.load = false;
                     this.goodsDownloadExcel = [];
                     console.log(this.goodsDownload);
-                    this.goodsDownload.forEach(element => {
+                    for (let i = 0; i < this.goodsDownload.length; i++) {
                       this.goodsDownloadExcel.push({
-                        ID: Number(element.id_recorrido),
-                        ID_BIEN: Number(element.id_bien),
-                        CLAVE_UNICA: element.clave_unica,
-                        NO_EXPEDIENTE: element.no_expediente,
-                        DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-                        DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
-                        CANTIDAD_TRASFERENTE: element.cantidad.toString(),
-                        CANTIDAD_SAE: element.cantidad_sae.toString(),
-                        UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
-                        UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                        ID: Number(this.goodsDownload[i].id_recorrido),
+                        ID_BIEN: Number(this.goodsDownload[i].id_bien),
+                        CLAVE_UNICA: this.goodsDownload[i].clave_unica,
+                        NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
+                        DESCRIPCION_BIEN_TASFERENTE:
+                          this.goodsDownload[i].descripcion_bien,
+                        DESCRIPCION_BIEN_SAE:
+                          this.goodsDownload[i].descripcion_bien_sae,
+                        CANTIDAD_TRASFERENTE:
+                          this.goodsDownload[i].cantidad.toString(),
+                        CANTIDAD_SAE:
+                          this.goodsDownload[i].cantidad_sae.toString(),
+                        UNIDAD_MEDIDA_TRASFERENTE:
+                          this.goodsDownload[i].unidad_medida,
+                        UNIDAD_MEDIDA_SAE:
+                          this.goodsDownload[i].unidad_medida_sae,
                         ESTADO_FISICO_TRASFERENTE:
-                          element.estado_fisico.toString(),
+                          this.goodsDownload[i].estado_fisico.toString(),
                         ESTADO_FISICO_SAE:
-                          element.estado_conservacion_sae.toString(),
+                          this.goodsDownload[
+                            i
+                          ].estado_conservacion_sae.toString(),
                         ESTADO_CONSERVACION_TRASFERENTE:
-                          element.estado_conservacion.toString(),
+                          this.goodsDownload[i].estado_conservacion.toString(),
                         ESTADO_CONSERVACION_SAE:
-                          element.estado_conservacion_sae.toString(),
-                        DESTINO: element.destino.toString(),
+                          this.goodsDownload[
+                            i
+                          ].estado_conservacion_sae.toString(),
+                        DESTINO: this.goodsDownload[i].destino.toString(),
                         DESTINO_TRASFERENTE:
-                          element.destino_transferente.toString(),
-                        DESTINO_SAE: element.destino_sae.toString(),
-                        ID_PROGRAMACION: element.id_programacion,
-                        OBSERVACIONES: element.observaciones,
+                          this.goodsDownload[i].destino_transferente.toString(),
+                        DESTINO_SAE:
+                          this.goodsDownload[i].destino_sae.toString(),
+                        ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
+                        OBSERVACIONES: this.goodsDownload[i].observaciones,
                       });
-                    });
+                      console.log(this.goodsDownloadExcel);
+                    }
                     setTimeout(() => {
-                      this.loader.load = false;
                       this.downloadResults = true;
                       this.data1.load(this.goodsDownloadExcel);
                       this.data1.refresh();
@@ -523,35 +535,69 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 .then(result => {
                   console.log(result);
                   console.log(this.goodsDownload);
+                  this.loader.load = false;
                   this.goodsDownloadExcel = [];
-                  this.goodsDownload.forEach(element => {
+                  for (const item of this.goodsDownload) {
+                    console.log(item);
                     this.goodsDownloadExcel.push({
-                      ID: Number(element.id_recorrido),
-                      ID_BIEN: Number(element.id_bien),
-                      CLAVE_UNICA: element.clave_unica,
-                      NO_EXPEDIENTE: element.no_expediente,
-                      DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-                      DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
-                      CANTIDAD_TRASFERENTE: element.cantidad.toString(),
-                      CANTIDAD_SAE: element.cantidad_sae.toString(),
-                      UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
-                      UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
-                      ESTADO_FISICO_TRASFERENTE:
-                        element.estado_fisico.toString(),
+                      ID: Number(item.id_recorrido),
+                      ID_BIEN: Number(item.id_bien),
+                      CLAVE_UNICA: item.clave_unica,
+                      NO_EXPEDIENTE: item.no_expediente,
+                      DESCRIPCION_BIEN_TASFERENTE: item.descripcion_bien,
+                      DESCRIPCION_BIEN_SAE: item.descripcion_bien_sae,
+                      CANTIDAD_TRASFERENTE: item.cantidad.toString(),
+                      CANTIDAD_SAE: item.cantidad_sae.toString(),
+                      UNIDAD_MEDIDA_TRASFERENTE: item.unidad_medida,
+                      UNIDAD_MEDIDA_SAE: item.unidad_medida_sae,
+                      ESTADO_FISICO_TRASFERENTE: item.estado_fisico.toString(),
                       ESTADO_FISICO_SAE:
-                        element.estado_conservacion_sae.toString(),
+                        item.estado_conservacion_sae.toString(),
                       ESTADO_CONSERVACION_TRASFERENTE:
-                        element.estado_conservacion.toString(),
+                        item.estado_conservacion.toString(),
                       ESTADO_CONSERVACION_SAE:
-                        element.estado_conservacion_sae.toString(),
-                      DESTINO: element.destino.toString(),
-                      DESTINO_TRASFERENTE:
-                        element.destino_transferente.toString(),
-                      DESTINO_SAE: element.destino_sae.toString(),
-                      ID_PROGRAMACION: element.id_programacion,
-                      OBSERVACIONES: element.observaciones,
+                        item.estado_conservacion_sae.toString(),
+                      DESTINO: item.destino.toString(),
+                      DESTINO_TRASFERENTE: item.destino_transferente.toString(),
+                      DESTINO_SAE: item.destino_sae.toString(),
+                      ID_PROGRAMACION: item.id_programacion,
+                      OBSERVACIONES: item.observaciones,
                     });
-                  });
+                  }
+                  // for (let i = 0; i < this.goodsDownload.length; i++) {
+                  //   console.log(this.goodsDownload[i]);
+                  //   this.goodsDownloadExcel.push({
+                  //     ID: Number(this.goodsDownload[i].id_recorrido),
+                  //     ID_BIEN: Number(this.goodsDownload[i].id_bien),
+                  //     CLAVE_UNICA: this.goodsDownload[i].clave_unica,
+                  //     NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
+                  //     DESCRIPCION_BIEN_TASFERENTE:
+                  //       this.goodsDownload[i].descripcion_bien,
+                  //     DESCRIPCION_BIEN_SAE:
+                  //       this.goodsDownload[i].descripcion_bien_sae,
+                  //     CANTIDAD_TRASFERENTE:
+                  //       this.goodsDownload[i].cantidad.toString(),
+                  //     CANTIDAD_SAE: this.goodsDownload[i].cantidad_sae.toString(),
+                  //     UNIDAD_MEDIDA_TRASFERENTE:
+                  //       this.goodsDownload[i].unidad_medida,
+                  //     UNIDAD_MEDIDA_SAE: this.goodsDownload[i].unidad_medida_sae,
+                  //     ESTADO_FISICO_TRASFERENTE:
+                  //       this.goodsDownload[i].estado_fisico.toString(),
+                  //     ESTADO_FISICO_SAE:
+                  //       this.goodsDownload[i].estado_conservacion_sae.toString(),
+                  //     ESTADO_CONSERVACION_TRASFERENTE:
+                  //       this.goodsDownload[i].estado_conservacion.toString(),
+                  //     ESTADO_CONSERVACION_SAE:
+                  //       this.goodsDownload[i].estado_conservacion_sae.toString(),
+                  //     DESTINO: this.goodsDownload[i].destino.toString(),
+                  //     DESTINO_TRASFERENTE:
+                  //       this.goodsDownload[i].destino_transferente.toString(),
+                  //     DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
+                  //     ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
+                  //     OBSERVACIONES: this.goodsDownload[i].observaciones,
+                  //   });
+                  // }
+                  console.log(this.goodsDownload.length);
                   setTimeout(() => {
                     this.loader.load = false;
                     this.downloadResults = true;
@@ -596,35 +642,48 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                   .then(result => {
                     console.log(result);
                     console.log(this.goodsDownload);
+                    this.loader.load = false;
                     this.goodsDownloadExcel = [];
-                    this.goodsDownload.forEach(element => {
+                    console.log(this.goodsDownload.length);
+                    for (let i = 0; i < this.goodsDownload.length; i++) {
                       this.goodsDownloadExcel.push({
-                        ID: Number(element.id_recorrido),
-                        ID_BIEN: Number(element.id_bien),
-                        CLAVE_UNICA: element.clave_unica,
-                        NO_EXPEDIENTE: element.no_expediente,
-                        DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-                        DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
-                        CANTIDAD_TRASFERENTE: element.cantidad.toString(),
-                        CANTIDAD_SAE: element.cantidad_sae.toString(),
-                        UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
-                        UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                        ID: Number(this.goodsDownload[i].id_recorrido),
+                        ID_BIEN: Number(this.goodsDownload[i].id_bien),
+                        CLAVE_UNICA: this.goodsDownload[i].clave_unica,
+                        NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
+                        DESCRIPCION_BIEN_TASFERENTE:
+                          this.goodsDownload[i].descripcion_bien,
+                        DESCRIPCION_BIEN_SAE:
+                          this.goodsDownload[i].descripcion_bien_sae,
+                        CANTIDAD_TRASFERENTE:
+                          this.goodsDownload[i].cantidad.toString(),
+                        CANTIDAD_SAE:
+                          this.goodsDownload[i].cantidad_sae.toString(),
+                        UNIDAD_MEDIDA_TRASFERENTE:
+                          this.goodsDownload[i].unidad_medida,
+                        UNIDAD_MEDIDA_SAE:
+                          this.goodsDownload[i].unidad_medida_sae,
                         ESTADO_FISICO_TRASFERENTE:
-                          element.estado_fisico.toString(),
+                          this.goodsDownload[i].estado_fisico.toString(),
                         ESTADO_FISICO_SAE:
-                          element.estado_conservacion_sae.toString(),
+                          this.goodsDownload[
+                            i
+                          ].estado_conservacion_sae.toString(),
                         ESTADO_CONSERVACION_TRASFERENTE:
-                          element.estado_conservacion.toString(),
+                          this.goodsDownload[i].estado_conservacion.toString(),
                         ESTADO_CONSERVACION_SAE:
-                          element.estado_conservacion_sae.toString(),
-                        DESTINO: element.destino.toString(),
+                          this.goodsDownload[
+                            i
+                          ].estado_conservacion_sae.toString(),
+                        DESTINO: this.goodsDownload[i].destino.toString(),
                         DESTINO_TRASFERENTE:
-                          element.destino_transferente.toString(),
-                        DESTINO_SAE: element.destino_sae.toString(),
-                        ID_PROGRAMACION: element.id_programacion,
-                        OBSERVACIONES: element.observaciones,
+                          this.goodsDownload[i].destino_transferente.toString(),
+                        DESTINO_SAE:
+                          this.goodsDownload[i].destino_sae.toString(),
+                        ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
+                        OBSERVACIONES: this.goodsDownload[i].observaciones,
                       });
-                    });
+                    }
                     setTimeout(() => {
                       this.loader.load = false;
                       this.downloadResults = true;
@@ -659,35 +718,47 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 .then(result => {
                   console.log(result);
                   console.log(this.goodsDownload);
+                  this.loader.load = false;
                   this.goodsDownloadExcel = [];
-                  this.goodsDownload.forEach(element => {
+                  console.log(this.goodsDownload.length);
+                  for (let i = 0; i < this.goodsDownload.length; i++) {
                     this.goodsDownloadExcel.push({
-                      ID: Number(element.id_recorrido),
-                      ID_BIEN: Number(element.id_bien),
-                      CLAVE_UNICA: element.clave_unica,
-                      NO_EXPEDIENTE: element.no_expediente,
-                      DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-                      DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
-                      CANTIDAD_TRASFERENTE: element.cantidad.toString(),
-                      CANTIDAD_SAE: element.cantidad_sae.toString(),
-                      UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
-                      UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                      ID: Number(this.goodsDownload[i].id_recorrido),
+                      ID_BIEN: Number(this.goodsDownload[i].id_bien),
+                      CLAVE_UNICA: this.goodsDownload[i].clave_unica,
+                      NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
+                      DESCRIPCION_BIEN_TASFERENTE:
+                        this.goodsDownload[i].descripcion_bien,
+                      DESCRIPCION_BIEN_SAE:
+                        this.goodsDownload[i].descripcion_bien_sae,
+                      CANTIDAD_TRASFERENTE:
+                        this.goodsDownload[i].cantidad.toString(),
+                      CANTIDAD_SAE:
+                        this.goodsDownload[i].cantidad_sae.toString(),
+                      UNIDAD_MEDIDA_TRASFERENTE:
+                        this.goodsDownload[i].unidad_medida,
+                      UNIDAD_MEDIDA_SAE:
+                        this.goodsDownload[i].unidad_medida_sae,
                       ESTADO_FISICO_TRASFERENTE:
-                        element.estado_fisico.toString(),
+                        this.goodsDownload[i].estado_fisico.toString(),
                       ESTADO_FISICO_SAE:
-                        element.estado_conservacion_sae.toString(),
+                        this.goodsDownload[
+                          i
+                        ].estado_conservacion_sae.toString(),
                       ESTADO_CONSERVACION_TRASFERENTE:
-                        element.estado_conservacion.toString(),
+                        this.goodsDownload[i].estado_conservacion.toString(),
                       ESTADO_CONSERVACION_SAE:
-                        element.estado_conservacion_sae.toString(),
-                      DESTINO: element.destino.toString(),
+                        this.goodsDownload[
+                          i
+                        ].estado_conservacion_sae.toString(),
+                      DESTINO: this.goodsDownload[i].destino.toString(),
                       DESTINO_TRASFERENTE:
-                        element.destino_transferente.toString(),
-                      DESTINO_SAE: element.destino_sae.toString(),
-                      ID_PROGRAMACION: element.id_programacion,
-                      OBSERVACIONES: element.observaciones,
+                        this.goodsDownload[i].destino_transferente.toString(),
+                      DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
+                      ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
+                      OBSERVACIONES: this.goodsDownload[i].observaciones,
                     });
-                  });
+                  }
                   setTimeout(() => {
                     this.loader.load = false;
                     this.downloadResults = true;
@@ -726,35 +797,47 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 .then(result => {
                   console.log(result);
                   console.log(this.goodsDownload);
+                  this.loader.load = false;
                   this.goodsDownloadExcel = [];
-                  this.goodsDownload.forEach(element => {
+                  console.log(this.goodsDownload.length);
+                  for (let i = 0; i < this.goodsDownload.length; i++) {
                     this.goodsDownloadExcel.push({
-                      ID: Number(element.id_recorrido),
-                      ID_BIEN: Number(element.id_bien),
-                      CLAVE_UNICA: element.clave_unica,
-                      NO_EXPEDIENTE: element.no_expediente,
-                      DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-                      DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
-                      CANTIDAD_TRASFERENTE: element.cantidad.toString(),
-                      CANTIDAD_SAE: element.cantidad_sae.toString(),
-                      UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
-                      UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                      ID: Number(this.goodsDownload[i].id_recorrido),
+                      ID_BIEN: Number(this.goodsDownload[i].id_bien),
+                      CLAVE_UNICA: this.goodsDownload[i].clave_unica,
+                      NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
+                      DESCRIPCION_BIEN_TASFERENTE:
+                        this.goodsDownload[i].descripcion_bien,
+                      DESCRIPCION_BIEN_SAE:
+                        this.goodsDownload[i].descripcion_bien_sae,
+                      CANTIDAD_TRASFERENTE:
+                        this.goodsDownload[i].cantidad.toString(),
+                      CANTIDAD_SAE:
+                        this.goodsDownload[i].cantidad_sae.toString(),
+                      UNIDAD_MEDIDA_TRASFERENTE:
+                        this.goodsDownload[i].unidad_medida,
+                      UNIDAD_MEDIDA_SAE:
+                        this.goodsDownload[i].unidad_medida_sae,
                       ESTADO_FISICO_TRASFERENTE:
-                        element.estado_fisico.toString(),
+                        this.goodsDownload[i].estado_fisico.toString(),
                       ESTADO_FISICO_SAE:
-                        element.estado_conservacion_sae.toString(),
+                        this.goodsDownload[
+                          i
+                        ].estado_conservacion_sae.toString(),
                       ESTADO_CONSERVACION_TRASFERENTE:
-                        element.estado_conservacion.toString(),
+                        this.goodsDownload[i].estado_conservacion.toString(),
                       ESTADO_CONSERVACION_SAE:
-                        element.estado_conservacion_sae.toString(),
-                      DESTINO: element.destino.toString(),
+                        this.goodsDownload[
+                          i
+                        ].estado_conservacion_sae.toString(),
+                      DESTINO: this.goodsDownload[i].destino.toString(),
                       DESTINO_TRASFERENTE:
-                        element.destino_transferente.toString(),
-                      DESTINO_SAE: element.destino_sae.toString(),
-                      ID_PROGRAMACION: element.id_programacion,
-                      OBSERVACIONES: element.observaciones,
+                        this.goodsDownload[i].destino_transferente.toString(),
+                      DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
+                      ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
+                      OBSERVACIONES: this.goodsDownload[i].observaciones,
                     });
-                  });
+                  }
                   setTimeout(() => {
                     this.loader.load = false;
                     this.downloadResults = true;
@@ -834,7 +917,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.goodsTable,
                       0
                     );
-                    if (result.statusCode == '200') {
+                    console.log(result);
+                    if (result == 'success') {
                       console.log(
                         '<<<<<<<<<<<res performOperation>>>>>>>>>>>' + result
                       );
@@ -842,24 +926,30 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         this.goodsTable.id_bien,
                         idProgramacion
                       );
+                      console.log(receipGood);
                       this.goodsTable.observaciones =
                         'ACTUALIZADO CORRECTAMENTE' +
+                        receipGood[0].typeReceipt +
                         ' ' +
-                        receipGood.typeReceipt +
-                        receipGood.idReceipt +
+                        receipGood[0].idReceipt +
+                        ' ' +
                         'Y ID ACTA' +
-                        receipGood.idMinutes;
+                        ' ' +
+                        receipGood[0].idMinutes;
                     } else {
                       this.goodsTable.observaciones = 'ERROR AL ACTUALIZAR';
                     }
                   } else {
+                    console.log(receipGood);
                     this.goodsTable.observaciones =
                       'ACTUALIZADO ANTERIORMENTE AL ' +
+                      receipGood[0].typeReceipt +
                       ' ' +
-                      receipGood.typeReceipt +
-                      receipGood.idReceipt +
+                      receipGood[0].idReceipt +
+                      ' ' +
                       'Y ID ACTA' +
-                      receipGood.idMinutes;
+                      ' ' +
+                      receipGood[0].idMinutes;
                   }
                 } else {
                   let result: any = await this.updateInfoAssets(
@@ -1057,15 +1147,31 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       if (data.ID_PROGRAMACION) {
         good.id_programacion = data.ID_PROGRAMACION;
       }
-      good.destino_letra = data.DESTINO;
-      good.destino_sae_letra = data.DESTINO_SAE;
-      good.destino_transferente_letra = data.DESTINO_TRASFERENTE;
-      good.estado_conservacion_letra = data.ESTADO_CONSERVACION_TRASFERENTE;
-      good.estado_conservacion_sae_letra = data.ESTADO_CONSERVACION_SAE;
-      good.estado_fisico_letra = data.ESTADO_FISICO_TRASFERENTE;
-      good.estado_fisico_sae_letra = data.ESTADO_FISICO_SAE;
-      good.unidad_medida_letra = data.UNIDAD_MEDIDA_TRASFERENTE;
-      good.unidad_medida_sae_letra = data.UNIDAD_MEDIDA_SAE;
+      good.destino_letra = data.DESTINO != undefined ? data.DESTINO : '';
+      good.destino_sae_letra =
+        data.DESTINO_SAE != undefined ? data.DESTINO_SAE : '';
+      good.destino_transferente_letra =
+        data.DESTINO_TRASFERENTE != undefined ? data.DESTINO_TRASFERENTE : '';
+      good.estado_conservacion_letra =
+        data.ESTADO_CONSERVACION_TRASFERENTE != undefined
+          ? data.ESTADO_CONSERVACION_TRASFERENTE
+          : '';
+      good.estado_conservacion_sae_letra =
+        data.ESTADO_CONSERVACION_SAE != undefined
+          ? data.ESTADO_CONSERVACION_SAE
+          : '';
+      good.estado_fisico_letra =
+        data.ESTADO_FISICO_TRASFERENTE != undefined
+          ? data.ESTADO_FISICO_TRASFERENTE
+          : '';
+      good.estado_fisico_sae_letra =
+        data.ESTADO_FISICO_SAE != undefined ? data.ESTADO_FISICO_SAE : '';
+      good.unidad_medida_letra =
+        data.UNIDAD_MEDIDA_TRASFERENTE != undefined
+          ? data.UNIDAD_MEDIDA_TRASFERENTE
+          : '';
+      good.unidad_medida_sae_letra =
+        data.UNIDAD_MEDIDA_SAE != undefined ? data.UNIDAD_MEDIDA_SAE : '';
       console.log(good);
       res(good);
     });
@@ -1126,10 +1232,13 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         P_DESTINO_SAE: good.destino_sae,
         P_ESTADO_CONSERVACION_SAE: good.estado_conservacion_sae,
         P_ESTADO_FISICO_SAE: good.estado_fisico_sae,
-        P_UNIDAD_MEDIDA_SAE: good.unidad_medida_sae,
+        P_UNIDAD_MEDIDA_SAE:
+          good.unidad_medida_sae != '' ? good.unidad_medida_sae : ' ',
         P_DESCRIPCION_BIEN_SAE:
           good.descripcion_bien_sae != undefined
-            ? good.descripcion_bien_sae
+            ? good.descripcion_bien_sae != ''
+              ? good.descripcion_bien_sae
+              : ' '
             : ' ',
         P_ID_BIEN: good.id_bien,
         P_ID_PROGRAMACION: good.id_programacion,
@@ -1139,10 +1248,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.programmingGoodReceiptService
         .postGoodsProgramingReceipts(data)
         .subscribe({
-          next: resp => {
-            console.log(resp);
+          next: response => {
+            console.log(response);
             // this.alert('success', `Bien Agregado a ${operation}`, '');
-            resp(resp.data);
+            res('success');
           },
           error: eror => {
             this.loader.load = false;
@@ -1250,19 +1359,20 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           CLAVE_UNICA: element.clave_unica,
           NO_EXPEDIENTE: element.no_expediente,
           DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-          DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
+          DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae_letra,
           CANTIDAD_TRASFERENTE: element.cantidad.toString(),
           CANTIDAD_SAE: element.cantidad_sae.toString(),
-          UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
-          UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
-          ESTADO_FISICO_TRASFERENTE: element.estado_fisico.toString(),
-          ESTADO_FISICO_SAE: element.estado_conservacion_sae.toString(),
+          UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida_letra,
+          UNIDAD_MEDIDA_SAE: element.unidad_medida_sae_letra,
+          ESTADO_FISICO_TRASFERENTE: element.estado_fisico_letra.toString(),
+          ESTADO_FISICO_SAE: element.estado_conservacion_sae_letra.toString(),
           ESTADO_CONSERVACION_TRASFERENTE:
-            element.estado_conservacion.toString(),
-          ESTADO_CONSERVACION_SAE: element.estado_conservacion_sae.toString(),
-          DESTINO: element.destino.toString(),
-          DESTINO_TRASFERENTE: element.destino_transferente.toString(),
-          DESTINO_SAE: element.destino_sae.toString(),
+            element.estado_conservacion_letra.toString(),
+          ESTADO_CONSERVACION_SAE:
+            element.estado_conservacion_sae_letra.toString(),
+          DESTINO: element.destino_letra.toString(),
+          DESTINO_TRASFERENTE: element.destino_transferente_letra.toString(),
+          DESTINO_SAE: element.destino_sae_letra.toString(),
           ID_PROGRAMACION: element.id_programacion,
         });
       }
