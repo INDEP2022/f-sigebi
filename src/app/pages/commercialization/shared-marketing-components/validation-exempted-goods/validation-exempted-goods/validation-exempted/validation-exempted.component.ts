@@ -79,7 +79,6 @@ export class ValidationExemptedListComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -129,7 +128,6 @@ export class ValidationExemptedListComponent
   }
 
   openForm(goodsTransAva?: IGoodsTransAva) {
-    console.log(goodsTransAva);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       goodsTransAva,

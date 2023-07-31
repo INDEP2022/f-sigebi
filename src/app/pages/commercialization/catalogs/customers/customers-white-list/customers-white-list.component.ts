@@ -25,6 +25,7 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
+  customersWhiteList: any;
 
   constructor(
     private customerService: CustomerService,
@@ -103,11 +104,56 @@ export class CustomersWhiteListComponent extends BasePage implements OnInit {
   }
 
   //Exportar lista blanca de clientes
-  exportClientsWhiteList(): void {
-    this.excelService.exportAsExcelFile(
-      this.customers,
-      'ClientesEnListaBlanca'
-    );
+  exportSelected(): void {
+    const data = this.customers.map((row: any) => this.transFormColums(row));
+    this.excelService.exportAsExcelFile(data, 'ClientesEnListaBlanca');
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Clave Cliente': row.id,
+      'Nombre o Razón Social': row.reasonName,
+      RFC: row.rfc,
+      Calle: row.street,
+      Ciudad: row.city,
+      Colonia: row.colony,
+      Delegación: row.delegation,
+      'Código Postal': row.zipCode,
+      País: row.country,
+      Fax: row.fax,
+      'Clave Vendedor': row.sellerId,
+      Teléfono: row.phone,
+      'E-mail': row.mailWeb,
+      Estado: row.state,
+      CURP: row.curp,
+      'Lista Negra': row.blackList,
+      'Apellido Paterno': row.paternalSurname,
+      'Apellido Materno': row.maternalSurname,
+      'Clave Municipal': row.municipalityId,
+      'Clave Estatal': row.stateId,
+      'Fecha de Lista Negra': row.blackListDate,
+      'Fecha de Liberación': row.releaseDate,
+      'Clave de Penalización': row.penaltyId,
+      'Tipo de Persona': row.personType,
+      'RFC Aprobado': row.approvedRfc,
+      'Usuario Liberado': row.userFree,
+      'Fecha Libera': row.freeDate,
+      'No. Registro': row.registryNumber,
+      'Clave de Actividad Económica': row.economicAgreementKey,
+      'Tipo de Identificación': row.identificationType,
+      'No. Identificación': row.identificationNumber,
+      'Clave de Representante': row.agentId,
+      'No. Exterior': row.outsideNumber,
+      'No. Interior': row.insideNumber,
+      Contraseña: row.password,
+      Usuario: row.user,
+      'CLABE Interbancaria': row.interbankKey,
+      Banco: row.bank,
+      Sucursal: row.branch,
+      'Cuenta de Cheques': row.checksAccount,
+      'Fecha Inicial de Penalización': row.penaltyInitDate,
+      'Usuario Penalizado': row.penalizeUser,
+    };
   }
 
   close() {
