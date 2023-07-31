@@ -62,7 +62,7 @@ export class EvenPermissionControlModalComponent
     this.comerUserForm = this.fb.group({
       idEvent: [null, [Validators.required]],
       username: [null, [Validators.required]],
-      date: [null, [Validators.required]],
+      date: [new Date(), [Validators.required]],
     });
     if (this.comerUser != null) {
       this.edit = true;
