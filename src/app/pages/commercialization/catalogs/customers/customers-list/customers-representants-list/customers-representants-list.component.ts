@@ -57,7 +57,6 @@ export class CustomersRepresentantsListComponent
   }
 
   override getData() {
-    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,

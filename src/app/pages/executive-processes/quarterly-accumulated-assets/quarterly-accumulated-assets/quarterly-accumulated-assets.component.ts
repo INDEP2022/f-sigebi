@@ -154,7 +154,11 @@ export class QuarterlyAccumulatedAssetsComponent
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
-          error = err.message;
+          this.onLoadToast(
+            'error',
+            'Esta delegacion no tiene subdelegaciones',
+            ''
+          );
         }
 
         this.onLoadToast('error', 'Error', error);

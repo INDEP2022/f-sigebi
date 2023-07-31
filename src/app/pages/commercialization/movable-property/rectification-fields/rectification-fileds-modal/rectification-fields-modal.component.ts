@@ -4,6 +4,7 @@ import { Params } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { RectifitationFieldsService } from 'src/app/core/services/ms-parameterinvoice/rectification-fields.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -37,8 +38,11 @@ export class RectificationFieldsModalComponent
   private prepareForm() {
     this.form = this.fb.group({
       columnId: [null, Validators.required],
-      invoiceFieldId: [null, Validators.required],
-      table: [null, Validators.required],
+      invoiceFieldId: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      table: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
     if (this.allotment != null) {
       this.edit = true;
@@ -61,7 +65,7 @@ export class RectificationFieldsModalComponent
           this.alert(
             'success',
             'Rectificación de Facturas',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
         },
         error: err => {
@@ -86,7 +90,7 @@ export class RectificationFieldsModalComponent
           this.alert(
             'success',
             'Rectificación de Facturas',
-            'Creado correctamente'
+            'Creado Correctamente'
           );
         },
         error: err => {

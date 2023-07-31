@@ -22,7 +22,7 @@
                   label="Evento"
                   [control]="'eventId'"
                   [searchOnInit]="true"
-                  [searchable]="false"
+                  [searchable]="true"
                   (change)="checkEvent($event)"
                   termMaxLength="30"
                   [labelTemplate]="eventT"
@@ -39,7 +39,7 @@
               </form-field>
             </div>
             <div class="col-md-6">
-              <form-field [control]="billingForm.get('lotId')">
+              <form-field [control]="billingForm.get('batchId')">
                 <ngx-select
                   (fetchItems)="getLoteByEvent($event)"
                   [data]="dataLote"
@@ -47,7 +47,7 @@
                   value="idLot"
                   bindLabel="description"
                   label="Lote"
-                  [control]="'lotId'"
+                  [control]="'batchId'"
                   [searchOnInit]="true"
                   [searchable]="false"
                   termMaxLength="30"
@@ -56,11 +56,11 @@
                   [optionTemplate]="lotDesc">
                 </ngx-select>
                 <ng-template #lotE let-item="item">
-                  {{ item.idLot }} - {{ item.description }}
+                  {{ item.lotPublic }} - {{ item.description }}
                 </ng-template>
                 <ng-template #lotDesc let-item="item">
-                  <div [title]="item.idLot + '-' + item.description">
-                    {{ item.idLot }} - {{ item.description }}
+                  <div [title]="item.lotPublic + '-' + item.description">
+                    {{ item.lotPublic }} - {{ item.description }}
                   </div>
                 </ng-template>
               </form-field>
@@ -79,52 +79,52 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('serie')" label="Serie">
+              <form-field [control]="billingForm.get('series')" label="Serie">
                 <input
                   type="text"
-                  formControlName="serie"
+                  formControlName="series"
                   class="form-control"
                   oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)" />
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('folio')" label="Folio">
+              <form-field [control]="billingForm.get('Invoice')" label="Folio">
                 <input
                   type="text"
-                  formControlName="folio"
+                  formControlName="Invoice"
                   class="form-control"
                   oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)" />
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
               <form-field
-                [control]="billingForm.get('invoiceStatusId')"
+                [control]="billingForm.get('factstatusId')"
                 label="Estatus">
                 <input
                   type="text"
-                  formControlName="invoiceStatusId"
+                  formControlName="factstatusId"
                   class="form-control"
                   oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4)" />
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
               <form-field
-                [control]="billingForm.get('voucherType')"
+                [control]="billingForm.get('vouchertype')"
                 label="Tipo">
                 <input
                   type="text"
-                  formControlName="voucherType"
+                  formControlName="vouchertype"
                   class="form-control"
                   oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4)" />
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
               <form-field
-                [control]="billingForm.get('printDate')"
+                [control]="billingForm.get('impressionDate')"
                 label="Fecha Impresión">
                 <input
                   type="text"
-                  formControlName="printDate"
+                  formControlName="impressionDate"
                   class="form-control"
                   [maxDate]="maxDate"
                   bsDatepicker
@@ -132,27 +132,28 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('transferenceNumber')">
+              <form-field [control]="billingForm.get('cvman')">
                 <ngx-select
                   (fetchItems)="getTransferentData($event)"
                   label="Transferente"
                   [data]="dataTransferent"
                   [form]="billingForm"
-                  value="id"
-                  bindLabel="id"
-                  [control]="'transferenceNumber'"
+                  value="cvman"
+                  bindLabel="nameTransferent"
+                  [control]="'cvman'"
                   [searchOnInit]="true"
                   [searchable]="true"
                   termMaxLength="30"
+                  (change)="selectedTrans($event)"
                   [labelTemplate]="trans"
                   [optionTemplate]="transDesc">
                 </ngx-select>
                 <ng-template #trans let-item="item">
-                  {{ item.id }} - {{ item.nameTransferent }}
+                  {{ item.cvman }} - {{ item.nameTransferent }}
                 </ng-template>
                 <ng-template #transDesc let-item="item">
-                  <div [title]="item.id">
-                    {{ item.id }} - {{ item.nameTransferent }}
+                  <div [title]="item.cvman">
+                    {{ item.cvman }} - {{ item.nameTransferent }}
                   </div>
                 </ng-template>
               </form-field>
@@ -183,7 +184,7 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('authorize')">
+              <form-field [control]="billingForm.get('Iauthorize')">
                 <ngx-select
                   (fetchItems)="getComerClientsData($event)"
                   label="Autoriza"
@@ -191,7 +192,7 @@
                   [form]="billingForm"
                   value="reasonName"
                   bindLabel="reasonName"
-                  [control]="'authorize'"
+                  [control]="'Iauthorize'"
                   [searchOnInit]="true"
                   [searchable]="true"
                   termMaxLength="30"
@@ -219,23 +220,16 @@
                 </textarea>
               </form-field>
             </div>
-            <div class="col-sm-12 col-md-12">
-              <form-field
-                [control]="billingForm.get('any')"
-                label="Causa Cancelación">
-                <input type="text" formControlName="any" class="form-control" />
-              </form-field>
-            </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('client')">
+              <form-field [control]="billingForm.get('customer')">
                 <ngx-select
                   (fetchItems)="getComerClientsData2($event)"
                   label="Cliente"
                   [data]="dataClient2"
                   [form]="billingForm"
-                  value="id"
+                  value="reasonName"
                   bindLabel="reasonName"
-                  [control]="'client'"
+                  [control]="'customer'"
                   [searchOnInit]="true"
                   [searchable]="true"
                   termMaxLength="30"
@@ -244,11 +238,11 @@
                   [optionTemplate]="clientDesc">
                 </ngx-select>
                 <ng-template #cliented let-item="item">
-                  {{ item.id }} - {{ item.reasonName }}
+                  {{ item.reasonName }}
                 </ng-template>
                 <ng-template #clientDesc let-item="item">
-                  <div [title]="item.id + '-' + item.reasonName">
-                    {{ item.id }} - {{ item.reasonName }}
+                  <div [title]="item.reasonName">
+                    {{ item.reasonName }}
                   </div>
                 </ng-template>
               </form-field>
@@ -264,11 +258,11 @@
             </div>
             <div class="col-sm-12 col-md-6">
               <form-field
-                [control]="billingForm.get('colonia')"
+                [control]="billingForm.get('cologne')"
                 label="Colonia">
                 <input
                   type="text"
-                  formControlName="colonia"
+                  formControlName="cologne"
                   class="form-control"
                   oninput="if(this.value.length > 60) this.value = this.value.slice(0, 60)" />
               </form-field>
@@ -283,7 +277,9 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('municipality')">
+              <form-field
+                [control]="billingForm.get('municipality')"
+                label="Municipio Delegación">
                 <input
                   type="text"
                   formControlName="municipality"
@@ -292,7 +288,7 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-md-6">
-              <form-field [control]="billingForm.get('state')">
+              <form-field [control]="billingForm.get('state')" label="Estado">
                 <input
                   type="text"
                   formControlName="state"
@@ -301,10 +297,10 @@
               </form-field>
             </div>
             <div class="col-sm-4 col-md-3">
-              <form-field [control]="billingForm.get('zipCode')" label="C.P.">
+              <form-field [control]="billingForm.get('cop')" label="C.P.">
                 <input
                   type="text"
-                  formControlName="zipCode"
+                  formControlName="cop"
                   class="form-control"
                   oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)" />
               </form-field>
@@ -339,23 +335,37 @@
                   oninput="if(this.value.length > 21) this.value = this.value.slice(0, 21)" />
               </form-field>
             </div>
+            <div class="col-md-12">
+              <div class="d-flex justify-content-center">
+                <div class="d-inline">
+                  <confirm-button
+                    [className]="'btn-primary mb-3'"
+                    [disabled]="!billingForm.valid"
+                    [btnSmall]="true"
+                    [loading]="loading"
+                    (confirm)="saveData()"></confirm-button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-md-3">
           <div class="row">
             <div class="col-12">
-              <confirm-button
-                [className]="'btn-primary w-100 mb-3'"
-                [disabled]="!billingForm.valid"
-                [btnSmall]="true"
-                [loading]="loading"
-                (confirm)="(null)"></confirm-button>
+              <div class="d-inline">
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm active w-100 mb-3"
+                  (click)="newInvoice()">
+                  Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                </button>
+              </div>
             </div>
             <div class="col-12">
               <button
                 class="btn btn-sm btn-primary btn-block active me-2 mb-3"
                 (click)="generateFolios()">
-                Genera Folios
+                Genera Folios <i class="fa fa-file" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12">
@@ -364,36 +374,65 @@
                 (click)="openFolioModal()"
                 [disabled]="">
                 Asig. Manual Folios
+                <i class="fa fa-file" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12">
               <button
-                class="btn btn-sm btn-warning btn-block active me-2 mb-3"
+                class="btn btn-red btn-sm active me-2 mb-3 w-100"
                 (click)="deleteFolios()"
                 [disabled]="">
-                Eliminar Folios
+                Eliminar Folios <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12">
               <button
                 class="btn btn-sm btn-secondary btn-block active me-2 mb-3"
                 (click)="getImage()">
-                Obtener Imagen
+                Obtener Imagen <i class="fa fa-image" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12">
               <button
                 class="btn btn-sm btn-success btn-block active me-2 mb-3"
                 (click)="openPrevInvoice()">
-                Visualizar Factura
+                Visualizar e Imprimir Factura
+                <i class="fa fa-print" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12">
               <button
                 class="btn btn-sm btn-danger btn-block active me-2 mb-3"
-                (click)="openCancelModal()">
-                Cancelar Factura
+                (click)="cancelInvoice()">
+                Cancelar Factura <i class="fa fa-file" aria-hidden="true"></i>
               </button>
+            </div>
+            <div class="col-sm-12 col-md-12 mt-3" *ngIf="displayCancel">
+              <form-field [control]="billingForm.get('causerebillId')">
+                <ngx-select
+                  (fetchItems)="getRebillData($event)"
+                  label="Causa Cancelación"
+                  [data]="dataRebill"
+                  [form]="billingForm"
+                  value="id"
+                  bindLabel="id"
+                  [control]="'causerebillId'"
+                  [searchOnInit]="true"
+                  [searchable]="true"
+                  (change)="setRefacture($event)"
+                  termMaxLength="30"
+                  [labelTemplate]="rebill"
+                  [optionTemplate]="rebillDesc">
+                </ngx-select>
+                <ng-template #rebill let-item="item">
+                  {{ item.id }} - {{ item.description }}
+                </ng-template>
+                <ng-template #rebillDesc let-item="item">
+                  <div [title]="item.id + ' - ' + item.description">
+                    {{ item.id }} - {{ item.description }}
+                  </div>
+                </ng-template>
+              </form-field>
             </div>
           </div>
         </div>

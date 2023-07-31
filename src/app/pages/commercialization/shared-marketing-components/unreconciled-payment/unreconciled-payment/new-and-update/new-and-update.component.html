@@ -4,39 +4,197 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="form.get('idEvent')" label="Id Evento">
-            <input type="text" class="form-control" formControlName="idEvent" />
-          </form-field>
-        </div>
-        <!-- <div class="col-md-6">
-                    <form-field [control]="form.get('idEvent')">
-                        <ngx-select [searchOnInit]="true" [form]="form" control="idEvent" [data]="events"
-                            value="idEvent" bindLabel="idEvent" label="Id Evento" (fetchItems)="getEvents($event)">
-                        </ngx-select>
-                    </form-field>
-                </div> -->
-        <div class="col-md-6">
-          <form-field [control]="form.get('lotePublico')" label="Lote Público">
+      <div class="row p-1" style="height: 300px; overflow-y: scroll">
+        <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('bankKey')" label="Banco">
             <input
+              maxlength="10"
               type="text"
               class="form-control"
-              formControlName="lotePublico" />
+              formControlName="bankKey" />
+            <!-- <ngx-select [searchOnInit]="true" [form]="form" control="bankKey" [data]="banks" value="cveBank"
+              bindLabel="bankAndNumber" label="Banco" (fetchItems)="getBanks($event)">
+            </ngx-select> -->
           </form-field>
         </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('idLot')" label="Id Lote">
-            <input type="text" class="form-control" formControlName="idLot" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('garantia')" label="Garantía">
+        <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('code')" label="Código">
             <input
+              maxlength="4"
               type="text"
               class="form-control"
-              formControlName="garantia" />
+              formControlName="code" />
           </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field
+            [control]="form.get('movementNumber')"
+            label="No. Movimiento">
+            <input
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="movementNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('date')" label="Fecha">
+            <input
+              [ngClass]="{ 'bg-gray': disabledSend }"
+              [readonly]="disabledSend"
+              maxlength="11"
+              bsDatepicker
+              type="text"
+              class="form-control"
+              formControlName="date" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('appliedTo')" label="Aplicado a:">
+            <ng-select formControlName="appliedTo" class="form-control pt-1">
+              <ng-option value="D">Devolución</ng-option>
+              <ng-option value="P">Penalización</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('clientId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="clientId"
+              [data]="clients"
+              value="id"
+              bindLabel="id"
+              label="Cliente"
+              (fetchItems)="getClients($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('lotId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="lotId"
+              [data]="lotes"
+              value="idLot"
+              bindLabel="idLot"
+              label="Lote"
+              (fetchItems)="getLotes($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('amount')" label="Monto">
+            <input
+              maxlength="17"
+              type="text"
+              class="form-control"
+              formControlName="amount" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('dateOi')" label="Fecha OI">
+            <input
+              [ngClass]="{ 'bg-gray': disabledSend }"
+              [readonly]="disabledSend"
+              bsDatepicker
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="dateOi" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('recordDate')" label="Fecha Registro">
+            <input
+              bsDatepicker
+              [readonly]="true"
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="recordDate" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field
+            [control]="form.get('referenceOri')"
+            label="Referencia Ori">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="referenceOri" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('branchOffice')" label="Sucursal">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="branchOffice" />
+          </form-field>
+        </div>
+        <div class="col-md-3 mt-2">
+          <form-field
+            [control]="form.get('validSystem')"
+            label="Sistema Válido">
+            <input
+              maxlength="1"
+              type="text"
+              class="form-control"
+              formControlName="validSystem" />
+          </form-field>
+        </div>
+        <div class="col-md-3 mt-2">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input
+              maxlength="1"
+              type="text"
+              class="form-control"
+              formControlName="type" />
+          </form-field>
+        </div>
+
+        <div class="col-12">
+          <div class="row">
+            <div class="col-md-6 mt-2">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripción">
+                <textarea
+                  maxlength="200"
+                  class="form-control"
+                  cols="5"
+                  rows="5"
+                  formControlName="description"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-6 mt-2">
+              <form-field [control]="form.get('result')" label="Resultado">
+                <textarea
+                  maxlength="200"
+                  type="text"
+                  cols="5"
+                  rows="5"
+                  class="form-control"
+                  formControlName="result"></textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
       </div>
     </form>
@@ -45,7 +203,15 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="form.invalid"
+          [disabled]="!form.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
+          [disabled]="form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
@@ -54,7 +220,7 @@
           <span *ngIf="!edit"
             ><i aria-hidden="true" class="fa fa-save"></i
           ></span>
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button

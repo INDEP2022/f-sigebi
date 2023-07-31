@@ -21,6 +21,7 @@ import { environment } from './../../../../environments/environment';
 import {
   GoodGetData,
   IGood,
+  IGoodCharge,
   IGoodSami,
   IValidaCambioEstatus,
   IVban,
@@ -464,5 +465,12 @@ export class GoodService extends HttpService {
       GoodEndpoints.TmpTotGoodsProgrammed,
       params
     );
+  }
+  chargeGoods(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods', body);
+  }
+
+  chargeGoodsExcel(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods-excel', body);
   }
 }

@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mt-3">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             label="Tipo de Penalización"
             [control]="form.get('typeProcess')">
@@ -18,7 +18,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field label="Evento" [control]="form.get('event')">
             <input
               type="number"
@@ -29,7 +29,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field label="Clave Evento" [control]="form.get('eventKey')">
             <input
               type="text"
@@ -38,8 +38,10 @@
               maxlength="60" />
           </form-field>
         </div>
+      </div>
 
-        <div class="col-md-3">
+      <div class="row mt-3">
+        <div class="col-md-4">
           <form-field label="Lote" [control]="form.get('lotId')">
             <input
               type="number"
@@ -49,10 +51,8 @@
               oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-      </div>
 
-      <div class="row mt-3">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field label="Fecha Inicial" [control]="form.get('startDate')">
             <input
               type="text"
@@ -63,10 +63,21 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
+            <i
+              *ngIf="form.get('startDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('startDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
           </form-field>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field label="Fecha Final" [control]="form.get('endDate')">
             <input
               type="text"
@@ -77,10 +88,23 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
+            <i
+              *ngIf="form.get('endDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('endDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
           </form-field>
         </div>
+      </div>
 
-        <div class="col-md-3">
+      <div class="row mt-3">
+        <div class="col-md-8">
           <form-field
             label="Referencia/Oficio/Otros"
             [control]="form.get('refeOfficeOther')">
@@ -91,8 +115,7 @@
               maxlength="200" />
           </form-field>
         </div>
-
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             label="Usuario Penaliza"
             [control]="form.get('userPenalty')">
@@ -119,6 +142,17 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
+            <i
+              *ngIf="form.get('penaltiDate').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('penaltiDate')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
           </form-field>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { DictationEndpoints } from 'src/app/common/constants/endpoints/ms-dictation-endpoint';
@@ -32,6 +33,12 @@ export class DictationService extends HttpService {
   params = new BehaviorSubject<ListParams>(new ListParams());
   private readonly route = DictationEndpoints;
   private readonly routeN = DictationEndpoints.DictamenDelegation;
+
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Access-Control-Allow-Origin': '*',
+    }),
+  };
 
   constructor() {
     super();

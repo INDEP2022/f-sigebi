@@ -1,6 +1,8 @@
+export let customersWhiteList: any[] = [];
+
 export const CUSTOMERS_LIST_COLUMNS = {
   id: {
-    title: 'Clave Cliente',
+    title: 'Clave Representante',
     sort: false,
   },
   reasonName: {

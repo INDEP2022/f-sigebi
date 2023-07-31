@@ -50,6 +50,7 @@
             [settings]="settings"
             [source]="data"
             (edit)="edit($event.data)"
+            (userRowSelect)="rowsSelected($event)"
             (delete)="questionDelete($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
@@ -62,11 +63,17 @@
     <div class="row text-center">
       <div>
         <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3 mt-3"> -->
-        <button class="btn btn btn-info active btn-sm">Enviar SIRSAE</button>
+        <button
+          [ngClass]="{ loading: loadingBtn }"
+          [disabled]="!valAcc || loadingBtn"
+          (click)="enviarSIRSAE()"
+          class="btn btn btn-primary active btn-sm">
+          Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+        </button>
         <!-- </div> -->
       </div>
     </div>
-    <form class="form-material" [formGroup]="form">
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="row mt-5">
         <div class="col-12">
           <form-field [control]="form.get('cadena')" label="Cadena">
@@ -78,7 +85,7 @@
           </form-field>
         </div>
       </div>
-    </form>
+    </form> -->
   </div>
   <!-- <div body>
     <div class="row mb-3 mt-3 justify-content-end">

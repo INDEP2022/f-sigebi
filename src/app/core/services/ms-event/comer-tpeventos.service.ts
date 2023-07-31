@@ -92,4 +92,12 @@ export class ComerTpEventosService extends HttpService {
   getAll_(params?: _Params): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(EventEndpoints.ComerTevents, params);
   }
+
+  getTpEvent2(params?: string) {
+    return this.get<any>(`application/get-tp-event2`, params);
+  }
+
+  getTpEvent(body: { pDirection: string; pEventKey: string | number }) {
+    return this.post<any>(`application/get-tp-event`, body);
+  }
 }

@@ -8,6 +8,7 @@ import { ComerEventosXSerieService } from 'src/app/core/services/ms-event/comer-
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-series-event-modal',
@@ -40,7 +41,7 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       idTpevent: [null, Validators.required],
-      commentary: [null],
+      commentary: [null, Validators.pattern(STRING_PATTERN)],
       idInvoiceFolio: [this.folio.folioinvoiceId, Validators.required],
     });
     if (this.allotment != null) {
@@ -65,7 +66,7 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Tipo de Evento por Serie',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
         },
         error: () => {
@@ -86,7 +87,7 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Tipo de Evento por Serie',
-            'Creado correctamente'
+            'Creado Correctamente'
           );
         },
         error: () => {

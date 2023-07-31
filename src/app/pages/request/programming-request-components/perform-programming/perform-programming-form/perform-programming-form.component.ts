@@ -130,6 +130,8 @@ export class PerformProgrammingFormComponent
   loadingGoods: boolean = false;
   formLoading: boolean = false;
   loadingReport: boolean = false;
+  loadingTrans: boolean = false;
+  loadingGuard: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paramsState = new BehaviorSubject<ListParams>(new ListParams());
@@ -153,6 +155,10 @@ export class PerformProgrammingFormComponent
   loadGoods: boolean = false;
   dataProg: boolean = false;
   newTransferent: boolean = true;
+  loadingWarehouse: boolean = true;
+  formLoadingWarehouse: boolean = false;
+  formLoadingTransportable: boolean = false;
+  formLoadingGuard: boolean = false;
   delegationId: number = 0;
   delRegUserLog: string = '';
   delegation: string = '';
@@ -195,7 +201,7 @@ export class PerformProgrammingFormComponent
     ...settingWarehouseClose,
   };
 
-  transferentId: string | number;
+  transferentId: number;
   stationId: string | number;
   autorityId: string | number;
 
@@ -1217,14 +1223,29 @@ export class PerformProgrammingFormComponent
   //Visualizar bienes transportables //
 
   getProgGoods() {
-    this.loadingGoods = true;
+    let tranferent: number = 0;
+    let typeRelevant: number = 0;
+
+    if (this.transferentId) {
+      tranferent = this.transferentId;
+    } else if (this.dataProgramming.tranferId)
+      tranferent = this.dataProgramming.tranferId;
+
+    if (this.idTypeRelevant) {
+      typeRelevant = this.idTypeRelevant;
+    } else if (this.dataProgramming.typeRelevantId) {
+      typeRelevant = this.dataProgramming.typeRelevantId;
+    }
+
     const filterColumns: Object = {
-      regionalDelegation: Number(this.delegationId),
-      transferent: Number(this.transferentId),
-      // transferent: Number(760),
-      relevantType: Number(this.idTypeRelevant),
+      regionalDelegation: Number(this.dataProgramming.regionalDelegationNumber),
+      transferent: tranferent,
+      relevantType: typeRelevant,
       statusGood: 'APROBADO',
     };
+
+    this.loadingGoods = true;
+
     this.goodsQueryService
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
@@ -1246,14 +1267,6 @@ export class PerformProgrammingFormComponent
           //goodsFilter = goodsFilter.filter(item => item);
           this.totalItems = response.count;
           this.filterGoodsProgramming(goodsFilter);
-
-          /*this.goodsProgCopy = goodsFilter;
-          this.goodsProg = goodsFilter;
-
-          this.estatesList.load(goodsFilter);
-          this.totalItems = response.count;
-           */
-          //
         },
         error: error => (this.loadingGoods = false),
       });
@@ -1273,7 +1286,7 @@ export class PerformProgrammingFormComponent
       .subscribe(data => {
         const filter = goods.filter(good => {
           const index = data.data.findIndex(
-            _good => _good.goodId == good.goodNumber
+            _good => _good?.goodId == good?.goodNumber
           );
           return index >= 0 ? false : true;
         });
@@ -1287,7 +1300,7 @@ export class PerformProgrammingFormComponent
           this.alert(
             'warning',
             'Advertencía',
-            'No hay bienes disponibles para programar'
+            'No hay Bienes disponibles para programar'
           );
           this.estatesList.load([]);
           this.loadingGoods = false;
@@ -1306,28 +1319,35 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los bienes seleccionados serán enviados a transportable'
+        'Los Bienes seleccionados serán enviados a transportable'
       ).then(async question => {
         if (question.isConfirmed) {
           const createProgGood = await this.insertGoodsProgTrans();
-
+          console.log('createProgGood', createProgGood);
           if (createProgGood) {
             const updateGood: any = await this.changeStatusGoodTrans();
-
+            console.log('updateGood', updateGood);
             if (updateGood) {
               const showGoods: any = await this.getFilterGood(
                 'EN_TRANSPORTABLE'
               );
-
+              console.log('showGoods', showGoods);
               if (showGoods) {
-                const _showGoods = await this.showGoodsTransportable(showGoods);
+                //const _showGoods = await this.showGoodsTransportable(showGoods);
 
-                if (_showGoods) {
-                  this.params
-                    .pipe(takeUntil(this.$unSubscribe))
-                    .subscribe(() => this.getProgGoods());
-                  this.goodSelect = [];
-                }
+                /*this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getProgGoods()); */
+
+                this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getProgGoods());
+                this.paramsTransportableGoods
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.showTrans());
+                this.goodSelect = [];
+                /*if (_showGoods) {
+                } */
               }
             }
           }
@@ -1405,10 +1425,10 @@ export class PerformProgrammingFormComponent
                 if (item.statePhysicalSae == 2)
                   item['statePhysicalSae'] = 'MALO';
                 showTransportable.push(item);
-                this.goodsTranportables.load(showTransportable);
-                this.totalItemsTransportableGoods =
-                  this.goodsTranportables.count();
-                this.headingTransportable = `Transportable (${this.goodsTranportables.count()})`;
+                //this.goodsTranportables.load(showTransportable);
+                //this.totalItemsTransportableGoods =
+                //this.goodsTranportables.count();
+
                 resolve(true);
               });
             },
@@ -1464,7 +1484,7 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los bienes seleccionados serán enviados a resguardo'
+        'Los Bienes seleccionados serán enviados a resguardo'
       ).then(async question => {
         if (question.isConfirmed) {
           const params = new ListParams();
@@ -1496,26 +1516,31 @@ export class PerformProgrammingFormComponent
               callback: async (data: any) => {
                 if (data) {
                   const createProgGood = await this.addGoodsGuards();
-
+                  console.log('createProgGood', createProgGood);
                   if (createProgGood) {
                     const updateGood: any = await this.changeStatusGoodGuard(
                       data
                     );
-
+                    console.log('updateGood', updateGood);
                     if (updateGood) {
                       const showGoods: any = await this.getFilterGood(
                         'EN_RESGUARDO_TMP'
                       );
-
+                      console.log('showGoods', showGoods);
                       if (showGoods) {
-                        const _showGoods = await this.showGoodsGuard(showGoods);
-
+                        this.params
+                          .pipe(takeUntil(this.$unSubscribe))
+                          .subscribe(() => this.getProgGoods());
+                        this.paramsGuardGoods
+                          .pipe(takeUntil(this.$unSubscribe))
+                          .subscribe(() => this.showGuard());
+                        this.goodSelect = [];
+                        //const _showGoods = await this.showGoodsGuard(showGoods);
+                        /*console.log('showGoods', _showGoods);
+                        
                         if (_showGoods) {
-                          this.params
-                            .pipe(takeUntil(this.$unSubscribe))
-                            .subscribe(() => this.getProgGoods());
-                          this.goodSelect = [];
-                        }
+                          
+                        } */
                       }
                     }
                   }
@@ -1598,7 +1623,7 @@ export class PerformProgrammingFormComponent
 
               this.goodsGuards.load(showGuards);
               this.totalItemsTransportableGuard = this.goodsGuards.count();
-              this.headingGuard = `Resguardo (${this.goodsGuards.count()})`;
+              //this.headingGuard = `Resguardo (${this.goodsGuards.count()})`;
               resolve(true);
             });
           },
@@ -1613,7 +1638,7 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los bienes seleccionados serán enviado a almacén'
+        'Los Bienes seleccionados serán enviados a Almacén'
       ).then(question => {
         if (question.isConfirmed) {
           let config = {
@@ -1640,16 +1665,17 @@ export class PerformProgrammingFormComponent
                     );
 
                     if (showGoods) {
-                      const _showGoods = await this.showGoodsWarehouse(
+                      /* const _showGoods = await this.showGoodsWarehouse(
                         showGoods
-                      );
+                      ); */
 
-                      if (_showGoods) {
-                        this.params
-                          .pipe(takeUntil(this.$unSubscribe))
-                          .subscribe(() => this.getProgGoods());
-                        this.goodSelect = [];
-                      }
+                      this.params
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.getProgGoods());
+                      this.paramsWarehouseGoods
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.showWarehouseGoods());
+                      this.goodSelect = [];
                     }
                   }
                 }
@@ -1735,7 +1761,7 @@ export class PerformProgrammingFormComponent
               this.goodsWarehouse.load(showWarehouse);
               this.totalItemsTransportableWarehouse =
                 this.goodsWarehouse.count();
-              this.headingWarehouse = `Almacén INDEP (${this.goodsWarehouse.count()})`;
+              //this.headingWarehouse = `Almacén INDEP (${this.goodsWarehouse.count()})`;
               resolve(true);
             });
           },
@@ -1776,7 +1802,7 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea eliminar el bien de transportable?'
+      '¿Desea Eliminar el Bien de transportable?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.goodsTranportables.remove(item);
@@ -1792,7 +1818,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'Bien eliminado de transportable correctamente'
+                'El Bien se Elimino de la sección de transportable'
               );
               const deleteGood = this.goodsTranportables.count();
               this.headingTransportable = `Transportable(${deleteGood})`;
@@ -1828,7 +1854,7 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea eliminar el bien de resguardo?'
+      '¿Desea Eliminar el Bien de resguardo?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.goodsGuards.remove(item);
@@ -1844,7 +1870,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'Bien eliminado de resguardo correctamente'
+                'El Bien se elimino de la sección de resguardo'
               );
               const deleteGood = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${deleteGood})`;
@@ -1862,7 +1888,7 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea eliminar el bien de almacén?'
+      '¿Desea Eliminar el Bien de almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.goodsWarehouse.remove(item);
@@ -1878,7 +1904,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'Bien eliminado de alamcén correctamente'
+                'El Bien se Elimino de la sección de almacén'
               );
               const deleteGood = this.goodsWarehouse.count();
               this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
@@ -1942,6 +1968,7 @@ export class PerformProgrammingFormComponent
 
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
+          console.log('this.performForm.value', this.performForm.value);
           this.programmingGoodService
             .updateProgramming(this.idProgramming, this.performForm.value)
             .subscribe({
@@ -1977,7 +2004,20 @@ export class PerformProgrammingFormComponent
 
   updateWarehouseGood() {
     return new Promise((resolve, reject) => {
-      this.goodsTranportables.getElements().then(data => {
+      const data = {
+        programmingId: this.idProgramming,
+        status: 'EN_TRANSPORTABLE',
+        storeNumber: this.warehouseId,
+      };
+      this.goodProcessService.updateMassiveStore(data).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+      /*this.goodsTranportables.getElements().then(data => {
         if (data.length > 0) {
           data.map((good: IGood) => {
             const object = {
@@ -1995,7 +2035,7 @@ export class PerformProgrammingFormComponent
         } else {
           resolve(true);
         }
-      });
+      }); */
     });
   }
 
@@ -2366,12 +2406,12 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format('YYYY-MM-DD HH:mm:ssZ')
+          moment(this.dataProgramming.startDate).format('DD/MM/YYYY HH:mm:ssZ')
         );
       this.performForm
         .get('endDate')
         .setValue(
-          moment(this.dataProgramming.endDate).format('YYYY-MM-DD HH:mm:ssZ')
+          moment(this.dataProgramming.endDate).format('DD/MM/YYYY HH:mm:ssZ')
         );
 
       this.transferentId = this.dataProgramming.tranferId;
@@ -2381,19 +2421,30 @@ export class PerformProgrammingFormComponent
 
       this.delegationId = this.dataProgramming.regionalDelegationNumber;
       this.dataProg = true;
-      this.paramsTransportableGoods.getValue()['filter.programmingId'] =
-        this.idProgramming;
 
-      this.programmingService
-        .getGoodsProgramming(this.paramsTransportableGoods.getValue())
-        .subscribe({
-          next: async data => {
-            this.showTransportable(data.data);
-            this.showGuard(data.data);
-            this.showWarehouseGoods(data.data);
-          },
-          error: error => {},
-        });
+      this.paramsGuardGoods
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.showGuard());
+
+      this.paramsTransportableGoods
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.showTrans());
+
+      this.paramsWarehouseGoods
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.showWarehouseGoods());
+      /*const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.idProgramming;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+         this.paramsTransportableGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.showTransportable(data.data, data.count)); 
+
+          this.showGuard(data.data, data.count);
+        },
+        error: error => {},
+      }); */
 
       if (this.dataProgramming.storeId > 0) {
         this.warehouseService.getById(this.dataProgramming.storeId).subscribe({
@@ -2446,38 +2497,54 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  showTransportable(goodsProg: IGoodProgramming[]) {
-    const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_TRANSPORTABLE';
-    });
-    const showTransportable: any = [];
-    filterTrans.map((item: IGoodProgramming) => {
-      this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
-      this.goodService
-        .getAll(this.paramsShowTransportable.getValue())
-        .subscribe({
-          next: async data => {
-            data.data.map(async item => {
-              const aliasWarehouse: any = await this.getAliasWarehouse(
-                item.addressId
-              );
-              item['aliasWarehouse'] = aliasWarehouse;
+  showTrans() {
+    this.formLoadingTransportable = true;
 
-              if (item.physicalStatus == 1) item['physicalStatus'] = 'BUENO';
-              if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
-              showTransportable.push(item);
+    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+      this.idProgramming;
+    this.paramsTransportableGoods.getValue()['filter.status'] =
+      'EN_TRANSPORTABLE';
+    this.programmingService
+      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+      .subscribe({
+        next: async data => {
+          console.log('data', data);
+          this.totalItemsTransportableGoods = data.count;
+          this.headingTransportable = `Transportable(${data.count})`;
+          const showTransportable: any = [];
+          data.data.map((item: IGoodProgramming) => {
+            this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+            this.goodService
+              .getAll(this.paramsShowTransportable.getValue())
+              .subscribe({
+                next: async data => {
+                  data.data.map(async item => {
+                    const aliasWarehouse: any = await this.getAliasWarehouse(
+                      item.addressId
+                    );
+                    item['aliasWarehouse'] = aliasWarehouse;
 
-              this.goodsTranportables.load(showTransportable);
-              this.totalItemsTransportableGoods =
-                this.goodsTranportables.count();
-              this.headingTransportable = `Transportable(${this.goodsTranportables.count()})`;
-            });
-          },
-        });
-    });
-  }
+                    if (item.physicalStatus == 1)
+                      item['physicalStatus'] = 'BUENO';
+                    if (item.physicalStatus == 2)
+                      item['physicalStatus'] = 'MALO';
+                    showTransportable.push(item);
 
-  showGuard(goodsProg: IGoodProgramming[]) {
+                    this.goodsTranportables.load(showTransportable);
+                    this.formLoadingTransportable = false;
+                  });
+                },
+              });
+          });
+        },
+        error: error => {
+          console.log('data bienes Prog', error);
+        },
+      });
+
+    /*console.log('goodsProg', goodsProg);
+    console.log('count', count);
+    this.formLoadingGuard = true;
     const filterTrans = goodsProg.filter(item => {
       return item.status == 'EN_RESGUARDO_TMP';
     });
@@ -2499,19 +2566,131 @@ export class PerformProgrammingFormComponent
               if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
               showGuard.push(item);
               this.goodsGuards.load(showGuard);
-              this.totalItemsTransportableGuard = this.goodsGuards.count();
-              this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              this.totalItemsTransportableGuard = count;
+              this.headingGuard = `Resguardo(${count})`;
+              this.formLoadingGuard = false;
             });
           },
         });
+    }); */
+  }
+
+  showGuard() {
+    this.formLoadingGuard = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsTransportableGuard = data.count;
+        this.headingGuard = `Resguardo(${data.count})`;
+        const showGuard: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowTransportable.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
+
+                  if (item.statePhysicalSae == 1)
+                    item['statePhysicalSae'] = 'BUENO';
+                  if (item.statePhysicalSae == 2)
+                    item['statePhysicalSae'] = 'MALO';
+                  showGuard.push(item);
+                  this.goodsGuards.load(showGuard);
+                  this.formLoadingGuard = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        console.log('data bienes Prog', error);
+      },
     });
+
+    /*console.log('goodsProg', goodsProg);
+    console.log('count', count);
+    this.formLoadingGuard = true;
+    const filterTrans = goodsProg.filter(item => {
+      return item.status == 'EN_RESGUARDO_TMP';
+    });
+    const showGuard: any = [];
+    filterTrans.map((item: IGoodProgramming) => {
+      this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+      this.goodService
+        .getAll(this.paramsShowTransportable.getValue())
+        .subscribe({
+          next: async data => {
+            data.data.map(async item => {
+              const aliasWarehouse: any = await this.getAliasWarehouse(
+                item.addressId
+              );
+              item['aliasWarehouse'] = aliasWarehouse;
+
+              if (item.statePhysicalSae == 1)
+                item['statePhysicalSae'] = 'BUENO';
+              if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
+              showGuard.push(item);
+              this.goodsGuards.load(showGuard);
+              this.totalItemsTransportableGuard = count;
+              this.headingGuard = `Resguardo(${count})`;
+              this.formLoadingGuard = false;
+            });
+          },
+        });
+    }); */
   }
 
   goodsSelect(data: any) {
     this.goodSelect = data;
   }
 
-  showWarehouseGoods(goodsProg: IGoodProgramming[]) {
+  showWarehouseGoods() {
+    this.formLoadingWarehouse = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.idProgramming;
+    params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsTransportableWarehouse = data.count;
+        this.headingWarehouse = `Almacén INDEP(${data.count})`;
+        const showWarehouse: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowWarehouse.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowWarehouse.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
+
+                  if (item.statePhysicalSae == 1)
+                    item['statePhysicalSae'] = 'BUENO';
+                  if (item.statePhysicalSae == 2)
+                    item['statePhysicalSae'] = 'MALO';
+                  showWarehouse.push(item);
+                  this.goodsWarehouse.load(showWarehouse);
+                  this.formLoadingWarehouse = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        console.log('data bienes Prog', error);
+      },
+    });
+    /*this.formLoadingWarehouse = true;
     const filterTrans = goodsProg.filter(item => {
       return item.status == 'EN_ALMACEN_TMP';
     });
@@ -2530,12 +2709,13 @@ export class PerformProgrammingFormComponent
             if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
             showWarehouse.push(item);
             this.goodsWarehouse.load(showWarehouse);
-            this.totalItemsTransportableWarehouse = this.goodsWarehouse.count();
-            this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+            this.totalItemsTransportableWarehouse = count;
+            this.headingWarehouse = `Almacén INDEP(${count})`;
+            this.formLoadingWarehouse = false;
           });
         },
       });
-    });
+    }); */
   }
 
   msgGuardado(icon: any, title: string, message: string) {
@@ -2562,12 +2742,13 @@ export class PerformProgrammingFormComponent
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
       'YYYY/MM/DD HH:mm:ss'
     );
-    const date = moment(new Date()).format('YYYY/MM/DD');
-
+    const date = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+    const hour = new Date().getHours();
+    const minute = new Date().getMinutes();
     const formData = {
       days: 5,
-      hours: 0,
-      minutes: 0,
+      hours: hour,
+      minutes: minute,
       date: date,
     };
 
@@ -2592,9 +2773,7 @@ export class PerformProgrammingFormComponent
           this.performForm.markAllAsTouched();
           //this.performForm.reset();
           const endDate = this.performForm.get('endDate').value;
-          const _endDateFormat = moment(endDate).format(
-            'DD/MMMM/YYYY, h:mm:ss a'
-          );
+          const _endDateFormat = moment(endDate).format('DD/MM/YYYY, HH:mm:ss');
           if (correctDate > _endDateFormat) {
             this.performForm.get('endDate').clearValidators();
             this.performForm

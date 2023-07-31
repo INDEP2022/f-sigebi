@@ -11,6 +11,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 //Services
+import { formatDate } from '@angular/common';
 import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -39,6 +40,7 @@ export class RepresentativesModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.representativeForm);
   }
 
   private prepareForm() {
@@ -85,10 +87,24 @@ export class RepresentativesModalComponent extends BasePage implements OnInit {
     });
     if (this.representative != null) {
       this.edit = true;
-      this.representativeForm.patchValue({
-        ...this.representative,
-      });
+      this.representativeForm.patchValue(this.representative);
+      const dbDateBorn = this.representativeForm.get('dateBorn').value;
+      const formattedDate1 = formatDate(dbDateBorn, 'dd/MM/yyyy', 'en-US');
+      this.representativeForm.get('dateBorn').setValue(formattedDate1);
+      this.representativeForm
+        .get('dateBorn')
+        .setValue(this.addDays(new Date(dbDateBorn), 1));
     }
+  }
+
+  addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  clearFreeDate(propertyName: string) {
+    this.representativeForm.get(propertyName).setValue(null);
   }
 
   close() {

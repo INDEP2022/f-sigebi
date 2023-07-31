@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
@@ -8,7 +8,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './customers-list-columns';
@@ -29,13 +28,10 @@ export class CustomersPenaltiesExportAllComponent
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
-  tableData: any[] = [];
 
   constructor(
-    private modalService: BsModalService,
-    private customerService: CustomerService,
-    private excelService: ExcelService,
     private clientPenaltyService: ClientPenaltyService,
+    private excelService: ExcelService,
     private modalRef: BsModalRef
   ) {
     super();
@@ -56,17 +52,8 @@ export class CustomersPenaltiesExportAllComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'clientId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'reasonName':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'rfc':
-                searchFilter = SearchFilter.ILIKE;
-                break;
               case 'typeProcess':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
                 searchFilter = SearchFilter.ILIKE;
@@ -74,19 +61,10 @@ export class CustomersPenaltiesExportAllComponent
               case 'publicLot':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'startDate':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'endDate':
-                searchFilter = SearchFilter.ILIKE;
-                break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'userPenalty':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'penaltiDate':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -108,6 +86,17 @@ export class CustomersPenaltiesExportAllComponent
       .subscribe(() => this.getCustomers());
   }
 
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${year}-${month}-${day}`;
+  }
+
   //Trae todos los clintes penalizados
   getCustomers() {
     this.loading = true;
@@ -118,31 +107,38 @@ export class CustomersPenaltiesExportAllComponent
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
-        this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
 
-  // all(customersPenalties?: ICustomersPenalties) {
-  //   console.log('Exportar Todos');
-  //   const modalConfig = MODAL_CONFIG;
-  //   modalConfig.initialState = {
-  //     customersPenalties,
-  //     callback: (next: boolean) => {
-  //       if (next) this.getCustomers();
-  //     },
-  //   };
-  //   this.modalService.show(CustomersPenaltiesExportAllComponent, modalConfig);
-  // }
-  exportClientsPenalize(): void {
-    this.excelService.exportAsExcelFile(
-      this.customersPenalties,
-      'PenalizacionesDeCliente'
+  //Exportar todos los clientes con penalizaciones
+  exportSelected(): void {
+    const data = this.customersPenalties.map((row: any) =>
+      this.transFormColums(row)
     );
+    this.excelService.exportAsExcelFile(data, 'PenalizacionesDelCliente');
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.typeProcess,
+      'Clave Evento': row.eventId,
+      Lote: row.publicLot,
+      'Fecha Inicial': row.startDate,
+      'Fecha Final': row.endDate,
+      'Motivo Penalización': row.refeOfficeOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+      'Fecha Penaliza': row.penalizesDate,
+      'No. Registro': row.registernumber,
+      'Fecha Libera': row.releasesDate,
+    };
   }
 
   close() {

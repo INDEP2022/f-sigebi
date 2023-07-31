@@ -10,10 +10,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import {
-  FilterParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
@@ -68,12 +65,12 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     const params = new FilterParams();
     params.limit = 100;
     // ? Si se filtra con el null no aparecen los mismos registros
-    params.addFilter('use', SearchFilter.NULL, SearchFilter.NULL);
+    // params.addFilter('use', SearchFilter.NULL, SearchFilter.NULL);
     return this.comerTpEventosService
       .getAllComerTpEvent(params.getParams())
       .pipe(
         catchError(error => {
-          this.eventTypes = new DefaultSelect();
+          this.eventTypes = new DefaultSelect([], 0);
           return throwError(() => error);
         }),
         tap(response => {

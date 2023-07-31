@@ -36,20 +36,29 @@
           >
         </h5>
       </div>
+      <div class="d-flex justify-content-end mb-3">
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"
+          [defaultColumns]="7"></app-columns-select>
+      </div>
       <form-loader *ngIf="loading"></form-loader>
-      <div *ngIf="!loading">
+      <div>
         <ng2-smart-table
+          [ngStyle]="{ height: loading ? '0px' : 'auto' }"
           [attr.class]="'table-bordered table-responsive mb-4'"
           [settings]="settings"
-          [source]="data"
+          [source]="dataFilter"
           (edit)="openForm($event.data)"
           (userRowSelect)="
             getInvoiceFolioSeparate($event.data); getEventXSerie($event.data)
-          ">
+          "
+          (delete)="remove('folio', $event.data)">
         </ng2-smart-table>
       </div>
-      <app-pagination [filterParams]="filter" [totalItems]="totalItems">
+      <app-pagination [params]="paramsList" [totalItems]="totalItems">
       </app-pagination>
+      <!-- <app-pagination [filterParams]="filter" [totalItems]="totalItems"></app-pagination> -->
     </div>
     <div class="row pt-5" #content>
       <div class="col-md-6">
@@ -67,15 +76,17 @@
           <h5 class="title">Tipo de Eventos por Serie</h5>
         </div>
         <form-loader *ngIf="loading3"></form-loader>
-        <div *ngIf="!loading3">
+        <div>
           <ng2-smart-table
+            [ngStyle]="{ height: loading ? '0px' : 'auto' }"
             [attr.class]="'table-bordered table-responsive mb-4'"
             [settings]="settings1"
-            [source]="data3"
-            (edit)="openFormEvent($event.data)">
+            [source]="dataFilter3"
+            (edit)="openFormEvent($event.data)"
+            (delete)="remove('serie', $event.data)">
           </ng2-smart-table>
         </div>
-        <app-pagination [filterParams]="filter3" [totalItems]="totalItems3">
+        <app-pagination [params]="paramsList3" [totalItems]="totalItems3">
         </app-pagination>
       </div>
       <div class="col-md-6">
@@ -93,15 +104,17 @@
           <h5 class="title">Folios Apartados</h5>
         </div>
         <form-loader *ngIf="loading2"></form-loader>
-        <div *ngIf="!loading2">
+        <div>
           <ng2-smart-table
+            [ngStyle]="{ height: loading ? '0px' : 'auto' }"
             [attr.class]="'table-bordered table-responsive mb-4'"
             [settings]="settings2"
-            [source]="data2"
-            (edit)="openFormSeparate($event.data)">
+            [source]="dataFilter2"
+            (edit)="openFormSeparate($event.data)"
+            (delete)="remove('apartado', $event.data)">
           </ng2-smart-table>
         </div>
-        <app-pagination [filterParams]="filter2" [totalItems]="totalItems2">
+        <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
         </app-pagination>
       </div>
     </div>

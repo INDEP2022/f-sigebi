@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IParameterComer } from 'src/app/core/models/catalogs/parameter-comer.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ModelsFormComponent } from '../models-form/models-form.component';
 import { ModelsService } from '../models.service';
 import { COLUMNS } from './columns';
-//Components
-//Provisional Data
-import { DATA } from './data';
 
 @Component({
   selector: 'app-models-list',
@@ -17,190 +19,117 @@ import { DATA } from './data';
   styles: [],
 })
 export class ModelsListComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-
-  // data: LocalDataSource = new LocalDataSource();
-  dataBrands = DATA;
-
+  parameterComer: IParameterComer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
-  rowSelected: boolean = false;
-  selectedRow: any = null;
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+  select: IParameterComer;
+  searchText: string = '';
+  modelName: string;
 
   constructor(
-    private fb: FormBuilder,
     private modalService: BsModalService,
     private modelServices: ModelsService
   ) {
     super();
-    this.settings = {
-      ...this.settings,
-      actions: {
-        ...this.settings.actions,
-        add: true,
-        edit: true,
-        delete: true,
-      },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      add: {
-        addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent:
-          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate: true,
-      },
-      mode: 'inline',
-      hideSubHeader: false,
-      columns: COLUMNS,
-    };
+    this.settings.columns = COLUMNS;
+    this.settings.hideSubHeader = false;
+    this.settings.actions.add = false;
+    this.settings.actions.edit = true;
+    this.settings.actions.delete = true;
+    this.settings.actions.position = 'right';
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    this.searchParams();
-  }
-
-  searchParams() {
-    this.params.subscribe({
-      next: resp => {
-        // this.dataBrands = [];
-        if (resp.text !== '') {
-          this.modelServices.getModels(resp.text).subscribe({
-            next: brands => {
-              // if (searchModel) {
-              //   this.dataBrands.push({
-              //     model: searchModel.id,
-              //   });
-              // }
-              this.dataBrands = [...brands.data];
-              this.totalItems = brands.count;
-              // this.data.load(brands);
-            },
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'modelComment':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
           });
-        } else {
+          this.params = this.pageFilter(this.params);
           this.getModels();
         }
-      },
-    });
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getModels());
+  }
+
+  rowsSelected(event: any) {
+    this.select = event.data;
   }
 
   getModels() {
-    // this.dataBrands = [];
-    this.modelServices.getModels().subscribe({
-      next: resp => {
-        if (resp.data) {
-          resp.data.forEach((item: any) => {
-            this.dataBrands.push({
-              model: item.id,
-            });
-          });
-        }
-        this.dataBrands = [...resp.data];
-        this.totalItems = resp.count;
-        // this.data.load(this.dataBrands);
-      },
-    });
-  }
-
-  private prepareForm(): void {
-    this.form = this.fb.group({
-      brand: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-    });
-  }
-
-  onSaveConfirm(event: any) {
-    console.log(event);
-    const body = {
-      id: event.data.id,
-      modelComment: event.newData.modelComment,
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
     };
-    this.modelServices.PutModel(event.data.id, body).subscribe({
-      next: (resp: any) => {
-        if (resp.statusCode === 200) {
-          event.confirm.resolve();
-          this.onLoadToast('success', 'Elemento Actualizado', '');
-          this.getModels();
-        }
+    this.modelServices.getAll(params).subscribe({
+      next: response => {
+        this.parameterComer = response.data;
+        this.totalItems = response.count;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
       },
+      error: error => (this.loading = false),
     });
   }
 
-  onAddConfirm(event: any) {
-    console.log(event);
-    const body = {
-      id: event.newData.modelComment,
-      modelComment: event.newData.modelComment,
+  //Modal para crear o editar clientes penalizados
+  openForm(parameterComer?: IParameterComer) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      parameterComer,
+      callback: (next: boolean) => {
+        if (next) this.getModels();
+      },
     };
-    this.modelServices.postModel(body).subscribe({
-      next: (resp: any) => {
-        if (resp) {
-          event.confirm.resolve();
-          this.onLoadToast('success', 'Elemento Creado', '');
-          this.getModels();
-        }
-      },
-    });
-    /**
-     * CALL SERVICE
-     * */
+    this.modalService.show(ModelsFormComponent, modalConfig);
   }
 
-  onDeleteConfirm(event: any) {
+  showDeleteAlert(parameterComer?: IParameterComer) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Modelo?'
     ).then(question => {
-      console.log(event);
       if (question.isConfirmed) {
-        this.modelServices.deleteModelForId(event.data.id).subscribe({
-          next: (resp: any) => {
-            event.confirm.resolve();
-            this.onLoadToast('success', 'Elemento Eliminado', '');
-            this.getModels();
-          },
-        });
+        this.delete(parameterComer.id);
       }
     });
   }
 
-  /*openModal(context?: Partial<ModelsFormComponent>) {
-    const modalRef = this.modalService.show(ModelsFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+  delete(id: number) {
+    this.modelServices.remove(id).subscribe({
+      next: () => {
+        this.getModels();
+        this.alert('success', 'Modelo Borrado Correctamente', '');
+      },
     });
   }
-
-  add() {
-    this.openModal();
-  }
-
-  openForm(model: any) {
-    this.openModal({ edit: true, model });
-  }
-
-  delete(model: any) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-      }
-    });
-  }*/
 }

@@ -1,8 +1,10 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Catálogo de servicios para precios unitarios</h5>
-    <div class="col-md-5 buttons">
-      <div>
+  </div>
+  <div body>
+    <div class="row buttons">
+      <div class="ml-auto" style="width: auto">
         <button
           (click)="openForm()"
           type="button"
@@ -13,8 +15,6 @@
         </button>
       </div>
     </div>
-  </div>
-  <div body>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">

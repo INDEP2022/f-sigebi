@@ -11,7 +11,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -45,6 +48,10 @@ export class RequestCompDocTasksComponent
   dictumValidate: boolean = false;
   notifyReport: boolean = false;
   selectGoodForEyeVisit: boolean = false;
+  validateGoodForEyeVisit: boolean = false;
+  resultEyeVisitReport: boolean = false;
+  resultVisits: boolean = false;
+  listGoodSelectedTitle: string = 'Listado de Bienes';
   /**
    * SET STATUS ACTIONS
    **/
@@ -53,7 +60,7 @@ export class RequestCompDocTasksComponent
   createReport: boolean = false;
   rejectReq: boolean = false;
 
-  requestId: number = 0;
+  requestId: number = null;
   contributor: string = '';
   processDetonate: string = '';
   process: string = '';
@@ -65,13 +72,17 @@ export class RequestCompDocTasksComponent
   typeModule: string = '';
   displayExpedient: boolean = false;
   complementaryDoc: boolean = false;
+  typeVisit: string = '';
 
   /* INJECTIONS
   ============== */
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
+  //private rejectedService = inject(RejectedGoodService)
+
   /*  */
+
   constructor(
     private location: Location,
     private route: ActivatedRoute,
@@ -86,10 +97,10 @@ export class RequestCompDocTasksComponent
   }
 
   ngOnInit(): void {
-    const requestId = Number(this.route.snapshot.paramMap.get('request'));
+    this.requestId = Number(this.route.snapshot.paramMap.get('request'));
     this.process = this.route.snapshot.paramMap.get('process');
-    if (requestId) {
-      this.getRequestInfo(requestId);
+    if (this.requestId) {
+      this.getRequestInfo(this.requestId);
     }
     this.expedientEventTrigger();
   }
@@ -107,9 +118,9 @@ export class RequestCompDocTasksComponent
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
-        this.requestId = resp.data[0].id;
+        //this.requestId = resp.data[0].id;
         this.mapTask(this.process, resp.data[0].affair);
-        this.titleView(resp.data[0].affair);
+        this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
         this.closeSearchRequestSimGoodsTab(resp.data[0].recordId);
       },
@@ -169,7 +180,7 @@ export class RequestCompDocTasksComponent
       `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
       '',
       'Turnar'
-    ).then(question => {
+    ).then(async question => {
       if (question.isConfirmed) {
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
@@ -178,7 +189,10 @@ export class RequestCompDocTasksComponent
         } else if (this.process == 'BSNotificarTransferente') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'BSVisitaOcular') {
-          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+          const turn = await this.turnEyeVisitor();
+          if (turn == true) {
+            this.turnResquestMessage(this.requestId);
+          }
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
@@ -244,6 +258,71 @@ export class RequestCompDocTasksComponent
   }
 
   openNotifyReport(context?: Partial<CreateReportComponent>) {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+      } //this.getCities();
+    });
+  }
+
+  async turnEyeVisitor() {
+    return new Promise(async (resolve, reject) => {
+      console.log('verificando vienes oculares');
+      let end = true;
+      let _page: number = 1;
+      let _limit: number = 100;
+      let countLimit: number = 100;
+      let params = new ListParams();
+      params['filter.applicationId'] = `$eq:${this.requestId}`; //56817
+      params.limit = _limit;
+      let turnRequest: boolean = true;
+      do {
+        params.page = 1;
+        const GRDResult: any = await this.getGoodResDev(params);
+        const error: any = await this.verifyEyesVisit(GRDResult.data);
+        if (error > 0) {
+          end = false;
+          turnRequest = false;
+          this.onLoadToast(
+            'error',
+            'Es necesario establecer fechas/horas inicio y fin de la visita ocular'
+          );
+        }
+        if (GRDResult.count >= countLimit) {
+          _page = 2;
+          countLimit = countLimit + 100;
+        } else {
+          end = false;
+        }
+      } while (end);
+
+      resolve(turnRequest);
+    });
+  }
+
+  verifyEyesVisit(data: any) {
+    return new Promise((resolve, reject) => {
+      let count = 0;
+      data.map((item: any) => {
+        if (item.codeStore != null) {
+          if (
+            item.resultFinal != 'Y' ||
+            item.startVisitDate == null ||
+            item.endVisitDate == null
+          ) {
+            count++;
+          }
+        }
+      });
+      resolve(count);
+    });
+  }
+
+  reportResultEyeVisit(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',

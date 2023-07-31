@@ -201,17 +201,28 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaHasta').value != null
     ) {
       if (
-        this.form.get('desde').valid &&
-        this.form.get('hasta').valid &&
-        this.form.get('fechaDesde').valid &&
-        this.form.get('fechaHasta').valid
+        this.form.get('fechaDesde').value <= this.form.get('fechaHasta').value
       ) {
-        return true;
+        if (
+          this.form.get('desde').valid &&
+          this.form.get('hasta').valid &&
+          this.form.get('fechaDesde').valid &&
+          this.form.get('fechaHasta').valid
+        ) {
+          return true;
+        } else {
+          this.alert(
+            'warning',
+            'Debe registrar datos validos',
+            'Alguno de los campos que lleno no son válidos'
+          );
+          return false;
+        }
       } else {
         this.alert(
           'warning',
           'Debe registrar datos validos',
-          'Alguno de los campos que lleno no son válidos'
+          'La fecha inicial no puede ser mayor a la final'
         );
         return false;
       }
@@ -234,17 +245,28 @@ export class RecordsReportComponent extends BasePage implements OnInit {
       this.form.get('fechaHasta').value != null
     ) {
       if (
-        this.form.get('desde').valid &&
-        this.form.get('hasta').valid &&
-        this.form.get('fechaDesde').valid &&
-        this.form.get('fechaHasta').valid
+        this.form.get('fechaDesde').value <= this.form.get('fechaHasta').value
       ) {
-        return true;
+        if (
+          this.form.get('desde').valid &&
+          this.form.get('hasta').valid &&
+          this.form.get('fechaDesde').valid &&
+          this.form.get('fechaHasta').valid
+        ) {
+          return true;
+        } else {
+          this.alert(
+            'warning',
+            'Debe registrar datos validos',
+            'Alguno de los campos que lleno no son válidos'
+          );
+          return false;
+        }
       } else {
         this.alert(
           'warning',
           'Debe registrar datos validos',
-          'Alguno de los campos que lleno no son válidos'
+          'La fecha inicial no puede ser mayor a la final'
         );
         return false;
       }
@@ -358,8 +380,9 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     } else {
       const model: IGoodAndDetailProceeding = {
         pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-        pTiNumberSubdel: this.form.get('subdelegation').value.id,
+        pTiNumberSubdel: this.form.get('subdelegation').value,
       };
+
       this.serviceGoodProcess
         .getDetailProceedingGoodFilterNumber(model, params.text)
         .subscribe(
@@ -388,7 +411,7 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     } else {
       const model: IGoodAndDetailProceeding = {
         pTiNumberDeleg: this.form.get('delegacionRecibe').value,
-        pTiNumberSubdel: this.form.get('subdelegation').value.id,
+        pTiNumberSubdel: this.form.get('subdelegation').value,
       };
       console.log(model);
       this.serviceGoodProcess

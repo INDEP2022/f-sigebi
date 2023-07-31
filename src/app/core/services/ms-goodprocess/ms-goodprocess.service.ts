@@ -212,4 +212,17 @@ export class GoodprocessService extends HttpService {
   getDeleteStatusGoodnumber(body: any) {
     return this.post(GoodprocessEndpoints.DeleteStatusGoodnumber, body);
   }
+
+  exportRejectedGoods(eventId: string | number) {
+    return this.get<{ base64File: string }>(
+      `application/export-rejected/${eventId}`
+    );
+  }
+
+  setStatusToSale(body: { goods: (string | number)[] }) {
+    return this.post(
+      'application/comer-rejectedgoods-no-etq-3-when-button-pressed',
+      body
+    );
+  }
 }

@@ -38,6 +38,38 @@ export function secondFormatDate(value: Date) {
   }
 }
 
+export function secondFormatDateWidthTime(value: Date) {
+  if (value) {
+    let year: any = value.getFullYear();
+    if (year < 10) {
+      year = '0' + year;
+    }
+    let month: any = value.getMonth() + 1;
+    if (month < 10) {
+      month = '0' + month;
+    }
+    let day: any = value.getDate();
+    if (day < 10) {
+      day = '0' + day;
+    }
+    let hours: any = value.getHours();
+    if (hours < 10) {
+      hours = '0' + day;
+    }
+    let minutes: any = value.getMinutes();
+    if (minutes < 10) {
+      minutes = '0' + day;
+    }
+    let seconds: any = value.getSeconds();
+    if (seconds < 10) {
+      seconds = '0' + day;
+    }
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  } else {
+    return null;
+  }
+}
+
 export function dateToNewDatetime(value: Date) {
   if (value) {
     let year: any = value.getFullYear();
@@ -167,4 +199,15 @@ export function formatForIsoDate(
           ? ` ${values2[0]}:${values2[1]}:${values2[2].substring(0, 2)}`
           : '')
     : new Date(+values[0], +mes - 1, +values[2]);
+}
+
+export function secondFormatDateToDate2(date: string) {
+  if (date) {
+    console.log('DATE', date);
+    const array = date.split('-');
+    let aaa = Number(array[1]) - 1;
+    return new Date(+array[0], +aaa, +array[2]);
+  } else {
+    return null;
+  }
 }

@@ -185,7 +185,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   confirm() {
     let pass = this.fileForm.controls['pass'].value;
 
-    if (pass.length <= 10) {
+    if (pass.length <= 40) {
       const obj: Object = {
         cadena: pass,
       };

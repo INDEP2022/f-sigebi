@@ -66,6 +66,16 @@
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
+        <div class="mx-1" *ngIf="resultEyeVisitReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="reportResultEyeVisit()">
+            Reporte Resultado Visita Ocular
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="notifyReport">
           <button
             type="button"
@@ -201,11 +211,28 @@
           heading="Seleccionar Bienes"
           id="selectGoodsEyeVisitTab">
           <app-select-good-eye-visit
-            [idRequest]="requestId"></app-select-good-eye-visit>
+            [idRequest]="requestId"
+            [typeVisit]="typeVisit"></app-select-good-eye-visit>
+        </tab>
+
+        <tab
+          *ngIf="validateGoodForEyeVisit"
+          heading="Validar Resultado Visitas"
+          id="validateGoodsEyeVisitTab">
+          <app-validate-eye-visit
+            [idRequest]="requestId"></app-validate-eye-visit>
+        </tab>
+        <tab
+          *ngIf="resultVisits"
+          heading="Resultado Visitas"
+          id="resultVisitsTab">
+          <app-select-good-eye-visit
+            [idRequest]="requestId"
+            [typeVisit]="typeVisit"></app-select-good-eye-visit>
         </tab>
         <tab
           *ngIf="viewSelectedGoods"
-          heading="Listado de Bienes"
+          heading="{{ listGoodSelectedTitle }}"
           id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
         </tab>

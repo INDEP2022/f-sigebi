@@ -11,7 +11,7 @@ export const COLUMNS = {
 
 export const COLUMNS2 = {
   idSubBrand: {
-    title: 'Sub Marca',
+    title: 'Submarca',
     sort: false,
   },
   subBrandDescription: {

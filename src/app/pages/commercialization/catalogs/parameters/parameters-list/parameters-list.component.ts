@@ -95,7 +95,12 @@ export class ParametersListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -114,17 +119,13 @@ export class ParametersListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterModService.newRemove(parameter).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert(
-                'success',
-                'Parámetro Comercialización',
-                'Borrado Correctamente'
-              );
+              this.alert('success', 'Borrado Correctamente', '');
               this.getParameters();
             }
           },

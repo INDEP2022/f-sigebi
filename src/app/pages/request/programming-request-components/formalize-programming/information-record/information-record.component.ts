@@ -43,6 +43,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   receipts: LocalDataSource = new LocalDataSource();
   proceeding: IProceedings;
   tranType: string = '';
+  typeFirm: string = '';
 
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   constructor(
@@ -67,7 +68,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('proceeding', this.proceeding);
     this.prepareDevileryForm();
     this.typeTrans();
     this.getIdentification(new ListParams());
@@ -149,15 +149,148 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.programming.id;
+    params.getValue()['filter.idPrograming'] = this.programming.id;
+    params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
         console.log('acta', response);
-        this.infoForm.patchValue(response.data[0]);
+        this.infoForm.get('nameWorker1').setValue(response.data[0].nameWorker1);
+
+        if (response.data[0].electronicSignatureWorker1 == 1) {
+          this.infoForm
+            .get('electronicSignatureWorker1')
+            .setValue(response.data[0].electronicSignatureWorker1);
+        }
+
+        this.infoForm
+          .get('positionWorker1')
+          .setValue(response.data[0].positionWorker1);
+        this.infoForm
+          .get('residentialWorker1')
+          .setValue(response.data[0].residentialWorker1);
+
+        this.infoForm
+          .get('idCatWorker1')
+          .setValue(response.data[0].idCatWorker1);
+
+        this.infoForm.get('idNoWorker1').setValue(response.data[0].idNoWorker1);
+        this.infoForm
+          .get('idExpWorker1')
+          .setValue(response.data[0].idExpWorker1);
+        this.infoForm
+          .get('emailWorker1')
+          .setValue(response.data[0].emailWorker1);
+
+        this.infoForm.get('nameWorker2').setValue(response.data[0].nameWorker2);
+
+        if (response.data[0].electronicSignatureWorker2 == 1) {
+          this.infoForm
+            .get('electronicSignatureWorker2')
+            .setValue(response.data[0].electronicSignatureWorker2);
+        }
+
+        this.infoForm
+          .get('positionWorker2')
+          .setValue(response.data[0].positionWorker2);
+
+        this.infoForm
+          .get('idCatWorker2')
+          .setValue(response.data[0].idCatWorker2);
+
+        this.infoForm.get('idNoWorker2').setValue(response.data[0].idNoWorker2);
+        this.infoForm
+          .get('idExpWorker2')
+          .setValue(response.data[0].idExpWorker2);
+        this.infoForm
+          .get('emailWorker2')
+          .setValue(response.data[0].emailWorker2);
+
+        this.infoForm
+          .get('nameWitness1')
+          .setValue(response.data[0].nameWitness1);
+
+        if (response.data[0].electronicSignatureWitness1 == 1) {
+          this.infoForm
+            .get('electronicSignatureWitness1')
+            .setValue(response.data[0].electronicSignatureWitness1);
+        }
+        this.infoForm
+          .get('idCatWitness1')
+          .setValue(response.data[0].idCatWitness1);
+        this.infoForm
+          .get('idNoWitness1')
+          .setValue(response.data[0].idNoWitness1);
+        this.infoForm
+          .get('emailWitness1')
+          .setValue(response.data[0].emailWitness1);
+
+        this.infoForm
+          .get('nameWitness2')
+          .setValue(response.data[0].nameWitness2);
+
+        if (response.data[0].electronicSignatureWitness2 == 1) {
+          this.infoForm
+            .get('electronicSignatureWitness2')
+            .setValue(response.data[0].electronicSignatureWitness2);
+        }
+        this.infoForm
+          .get('idCatWitness2')
+          .setValue(response.data[0].idCatWitness2);
+        this.infoForm
+          .get('idNoWitness2')
+          .setValue(response.data[0].idNoWitness2);
+        this.infoForm
+          .get('emailWitness2')
+          .setValue(response.data[0].emailWitness2);
+
+        this.infoForm.get('nameWorker3').setValue(response.data[0].nameWorker3);
+        this.infoForm
+          .get('nameWorkerOic')
+          .setValue(response.data[0].nameWorkerOic);
+
+        if (response.data[0].electronicSignatureOic == 1) {
+          this.infoForm
+            .get('electronicSignatureOic')
+            .setValue(response.data[0].electronicSignatureOic);
+        }
+
+        this.infoForm
+          .get('positionWorkerOic')
+          .setValue(response.data[0].positionWorkerOic);
+        this.infoForm
+          .get('idCatWorkerOic')
+          .setValue(response.data[0].idCatWorkerOic);
+        this.infoForm
+          .get('idNoWorkerOic')
+          .setValue(response.data[0].idNoWorkerOic);
+        this.infoForm
+          .get('idExpWorkerOic')
+          .setValue(response.data[0].idExpWorkerOic);
+        this.infoForm.get('emailOic').setValue(response.data[0].emailOic);
+        this.infoForm.get('nameWorker4').setValue(response.data[0].nameWorker4);
+        this.infoForm
+          .get('positionWorker4')
+          .setValue(response.data[0].positionWorker4);
+        this.infoForm
+          .get('nameWorkerUvfv')
+          .setValue(response.data[0].nameWorkerUvfv);
+        this.infoForm
+          .get('positionWorkerUvfv')
+          .setValue(response.data[0].positionWorkerUvfv);
+        this.infoForm.get('emailUvfv').setValue(response.data[0].emailUvfv);
+        this.infoForm.get('otherFacts').setValue(response.data[0].otherFacts);
+        this.infoForm.get('evet').setValue(response.data[0].evet);
+        this.infoForm.get('startTime').setValue(response.data[0].startTime);
+        this.infoForm.get('bases').setValue(response.data[0].bases);
+        this.infoForm.get('celebrates').setValue(response.data[0].celebrates);
+
+        //this.infoForm.patchValue(response.data[0]);
       },
       error: error => {},
     });
   }
+
   confirm() {
     this.loading = true;
     if (this.infoForm.get('electronicSignatureWorker1').value == 1) {
@@ -193,17 +326,135 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     this.infoForm.get('startTime').setValue(this.horaActual);
     this.infoForm.get('idPrograming').setValue(this.programming.id);
 
-    console.log('this.infoForm.value', this.infoForm.value);
-    this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
-      next: response => {
-        console.log('this.proceeding', this.proceeding);
-        this.loading = false;
-        this.close();
-        this.modalRef.content.callback(this.proceeding, this.tranType);
-        //this.processInfoProceeding();
-      },
-      error: error => {},
-    });
+    if (
+      this.infoForm.get('electronicSignatureWorker1').value == 1 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
+      this.alert(
+        'error',
+        'Acción Invalida',
+        'Todas las firmas deben ser electronícas'
+      );
+      this.loading = false;
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 1 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
+      this.alert(
+        'error',
+        'Acción Invalida',
+        'Todas las firmas deben ser electronícas'
+      );
+      this.loading = false;
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 1 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
+      this.alert(
+        'error',
+        'Acción Invalida',
+        'Todas las firmas deben ser electronícas'
+      );
+      this.loading = false;
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 1 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
+      this.alert(
+        'error',
+        'Acción Invalida',
+        'Todas las firmas deben ser electronícas'
+      );
+      this.loading = false;
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 1
+    ) {
+      this.alert(
+        'error',
+        'Acción Invalida',
+        'Todas las firmas deben ser electronícas'
+      );
+      this.loading = false;
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
+      this.typeFirm = 'autografa';
+      this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
+        next: response => {
+          this.loading = false;
+          this.close();
+          this.modalRef.content.callback(
+            this.proceeding,
+            this.tranType,
+            this.typeFirm
+          );
+          //this.processInfoProceeding();
+        },
+        error: error => {
+          console.log('errror update', error);
+        },
+      });
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 1 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 1 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 1 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 1 &&
+      this.infoForm.get('electronicSignatureOic').value == 1
+    ) {
+      this.typeFirm = 'electronica';
+      this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
+        next: response => {
+          this.loading = false;
+          this.close();
+          this.modalRef.content.callback(
+            this.proceeding,
+            this.tranType,
+            this.typeFirm
+          );
+          //this.processInfoProceeding();
+        },
+        error: error => {
+          console.log('errror update', error);
+        },
+      });
+    }
+
+    /*if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
+      
+    } else {
+      this.alert(
+        'error',
+        'Acción Invalida',
+        'Todas las firmas deben ser autografas'
+      );
+      this.loading = false;
+    } */
   }
 
   createDocument() {
@@ -233,7 +484,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           // xFolioProgramacion: this.programming.folio,
         };
         //this.wContentService.addDocumentToContent();
-        console.log('modelReport', modelReport);
       },
       error: error => {},
     });
@@ -244,6 +494,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
   getIdentification(params: ListParams) {
     params['filter.name'] = 'Identificaciones';
+    params['sortBy'] = 'keyId:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
         console.log('response', response);

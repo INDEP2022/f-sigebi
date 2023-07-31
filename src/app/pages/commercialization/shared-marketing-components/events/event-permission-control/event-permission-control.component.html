@@ -6,12 +6,23 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-1">
-          <form-field [control]="form.get('id')" label="Evento">
-            <input formControlName="id" type="number" class="form-control" />
+        <div class="col-md-3">
+          <form-field [control]="form.get('id')">
+            <!-- [searchOnInit]="false" -->
+            <ngx-select
+              (change)="setValuesForm($event)"
+              [form]="form"
+              control="id"
+              [data]="comerEventSelect"
+              value="id_evento"
+              bindLabel="id_evento"
+              label="Evento"
+              (fetchItems)="getComerEvents($event, 'x')">
+            </ngx-select>
+            <!-- <input formControlName="id" type="number" class="form-control" /> -->
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('processKey')" label="Cve Proceso">
             <input
               formControlName="processKey"
@@ -20,7 +31,7 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('username')" label="Usuario">
             <input
               formControlName="username"
@@ -29,7 +40,7 @@
               readonly />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('address')" label="Área">
             <ng-select
               formControlName="address"
@@ -40,47 +51,62 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-1">
+      </div>
+      <div class="row text-center justify-content-center">
+        <div class="col-6">
           <button
-            class="btn btn-sm btn-primary active"
+            style="float: right"
+            type="button"
             [disabled]="!form.valid"
-            (click)="getEventByID()">
-            Buscar
+            (click)="getcomerUsersAutxEvent()"
+            class="btn btn-primary active btn-sm">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-1">
+        <div class="col-6">
           <button
+            style="float: left"
             (click)="cleanForm()"
             type="button"
             class="btn btn-sm btn-danger active">
-            Limpiar
+            Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
       </div>
     </form>
-    <div class="row pt-4" *ngIf="form.get('processKey').value !== null">
+    <div class="row mt-4">
       <div class="ch-content" header>
         <h5 class="title">Usuarios por eventos</h5>
         <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
           <div>
             <button
               (click)="openForm()"
-              class="btn btn-primary active btn-sm ml-3">
-              Nuevo
+              type="button"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mb-3">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
           </div>
         </div>
       </div>
+    </div>
+    <div class="row">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="comerUsuaTxEvent"
-            (edit)="openForm($event.data)">
+            (delete)="questionDelete($event.data)">
           </ng2-smart-table>
-        </div>
+        </ng-scrollbar>
+        <!-- <div [class]="loading ? 'table-loading' : ''">
+            </div> -->
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>

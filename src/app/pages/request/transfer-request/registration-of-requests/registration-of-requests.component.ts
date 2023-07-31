@@ -749,13 +749,20 @@ export class RegistrationOfRequestsComponent
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
     /* trae solicitudes actualizadas */
-    const request = await this.getAsyncRequestById();
+    const request: any = await this.getAsyncRequestById();
     if (request) {
       /* valida campos */
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
-        /* abre modal del elegir usuario */
-        this.cambiarTipoUsuario(this.requestData);
+        /* actualizamos el campo  fileNumber (expediente) de bienes*/
+        const expUpdated = await this.registrationHelper.updateExpedient(
+          request.id,
+          request.recordId
+        );
+        if (expUpdated) {
+          /* abre modal del elegir usuario */
+          this.cambiarTipoUsuario(this.requestData);
+        }
       }
     }
   }
@@ -1002,7 +1009,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
-        `Se Turno la solicitud con el folio: ${this.requestData.id}`
+        `Se turnó la solicitud con el folio: ${this.requestData.id}`
       );
       console.log('Tarea Cerrada');
     }

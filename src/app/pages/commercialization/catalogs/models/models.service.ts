@@ -1,38 +1,49 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
+import { ParameterComerEndpoints } from 'src/app/common/constants/endpoints/ms-parametercomer-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { HttpService } from 'src/app/common/services/http.service';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IParameterComer } from 'src/app/core/models/catalogs/parameter-comer.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ModelsService {
-  constructor(private htpp: HttpClient) {}
-
-  getModels(text = '') {
-    let url = `${environment.API_URL}parametercomer/api/v1/comer-models`;
-    if (text) {
-      url = url + '?filter.modelComment=$ilike:' + text;
-    }
-    return this.htpp.get<{ data: any[]; count: number }>(url);
+export class ModelsService extends HttpService {
+  private readonly route: string = ParameterComerEndpoints.ComerModels;
+  constructor() {
+    super();
+    this.microservice = ParameterComerEndpoints.BasePath;
   }
 
-  PutModel(idModel: string, body: any) {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-models/${idModel}`;
-    return this.htpp.put(url, body);
+  getAll(params?: string): Observable<IListResponse<IParameterComer>> {
+    return this.get<IListResponse<any>>(this.route, params);
   }
 
-  postModel(body: any) {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-models`;
-    return this.htpp.post(url, body);
+  getAll2(
+    modelName: string,
+    params?: ListParams | string
+  ): Observable<IListResponse<IParameterComer>> {
+    const route = `${this.route}?filter.id=$ilike:${modelName}`;
+    return this.get<IListResponse<IParameterComer>>(route, params);
   }
 
-  getModelForId(idModel: string) {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-models/id/${idModel}`;
-    return this.htpp.get(url);
+  getModels(text?: string) {
+    return this.get<IListResponse<any>>(this.route);
   }
 
-  deleteModelForId(idModel: string) {
-    const url = `${environment.API_URL}parametercomer/api/v1/comer-brands/id/${idModel}`;
-    return this.htpp.delete(url);
+  create(model: IParameterComer): Observable<IParameterComer> {
+    return this.post(this.route, model);
+  }
+
+  update(
+    id: string | number,
+    model: IParameterComer
+  ): Observable<IParameterComer> {
+    return this.put(`${this.route}/${id}`, model);
+  }
+
+  remove(id: string | number): Observable<Object> {
+    return this.delete(`${this.route}/${id}`);
   }
 }

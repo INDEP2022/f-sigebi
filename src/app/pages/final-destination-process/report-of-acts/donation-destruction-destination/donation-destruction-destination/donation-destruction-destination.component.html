@@ -1,12 +1,132 @@
-<app-impression-of-acts
-  [title]="
-    'Impresi&oacute;n de &Aacute;ctas de Destrucci&oacute;n/Donaci&oacute;n/Destino'
-  "
-  [labelDelegation1]="'No. Delegaci&oacute;n'"
-  [labelDescripDelegation1]="'Descripci&oacute;n Delegaci&oacute;n'"
-  [labelDelegation2]="'No. Sub-Delegaci&oacute;n'"
-  [labelDescripDelegation2]="'Descripci&oacute;n Sub-Delegaci&oacute;n'"
-  [labelDate1]="'Fecha Inicial Evento'"
-  [labelDate2]="'Fecha Final Evento'"
-  [father]="'donation-destruction-destination'">
-</app-impression-of-acts>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Impresi&oacute;n de Actas de Destrucci&oacute;n/Donaci&oacute;n/Destino
+    </h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="flatFileGoodForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <app-delegation-shared
+          (click)="loadDelegation('Recibe')"
+          [form]="flatFileGoodForm"
+          [showDelegation]="true"
+          [delegationField]="'delegation'"
+          labelDelegation="Delegación:"
+          [subdelegationField]="'subdelegation'"
+          labelSubdelegation="Sub-Delegración:"
+          [showSubdelegation]="true"></app-delegation-shared>
+      </div>
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('expedienteI')"
+            label="No. Expediente Desde el:">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedienteI" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('expedienteF')"
+            label="Hasta el:">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedienteF" />
+          </form-field>
+        </div>
+        <br />
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('actaI')"
+            label="No. de Acta Desde el:">
+            <input type="number" class="form-control" formControlName="actaI" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('actaF')"
+            label="Hasta el:">
+            <input type="number" class="form-control" formControlName="actaF" />
+          </form-field>
+        </div>
+        <br />
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('statusActa')"
+            label="Estatus Acta:">
+            <input
+              type="text"
+              formControlName="statusActa"
+              placeholder=""
+              class="form-control" />
+          </form-field>
+        </div>
+        <br />
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('tipoActa')"
+            label="Tipo de Acta:">
+            <input
+              type="text"
+              formControlName="tipoActa"
+              placeholder=""
+              class="form-control" />
+          </form-field>
+        </div>
+        <br />
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('initialDate')"
+            label="Fecha del Evento:">
+            <input
+              type="text"
+              formControlName="initialDate"
+              placeholder="Fecha Inicial"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('finalDate')"
+            label="Hasta el:">
+            <input
+              type="text"
+              formControlName="finalDate"
+              placeholder="Fecha Final"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="onSubmit()"
+            [disabled]="!flatFileGoodForm.valid">
+            Reporte
+          </button>
+        </div>
+      </div>
+      <div class="row mt-5"></div>
+    </form>
+  </div>
+</app-card>

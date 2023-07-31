@@ -8,5 +8,8 @@ export enum StrategyEndpoints {
   TmpStrategyCost = 'tmp-strategy-cost',
   ZCenterOperationRegional = 'z-center-operation-regional/getAllDescriptionCenterZOperationRegional',
   getStrategy = 'aplication/getStrategy',
+  StrategySum = 'aplication/getSumStrategy',
   StrategyAmount = 'strategy-rep-amounts',
+  StrategyAdmin = 'strategies-admin',
+  getbyStatus = 'aplication/getStrategyStatus',
 }
