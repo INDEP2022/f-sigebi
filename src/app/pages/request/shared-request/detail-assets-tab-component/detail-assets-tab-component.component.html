@@ -858,7 +858,7 @@
                 type="text"
                 class="form-control"
                 formControlName="operationalState"
-                [readOnly]="false" />
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
           </div>
         </div>
@@ -882,7 +882,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="engineNumber" />
             </form-field>
@@ -906,7 +906,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="enginesNumber" />
             </form-field>
           </div>
@@ -933,7 +933,7 @@
                 type="string"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="tuition" />
             </form-field>
           </div>
@@ -956,7 +956,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="5"
                 formControlName="flag" />
             </form-field>
@@ -983,7 +983,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="cabin" />
             </form-field>
           </div>
@@ -1006,7 +1006,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="openwork" />
             </form-field>
@@ -1033,7 +1033,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="volume" />
             </form-field>
           </div>
@@ -1057,7 +1057,7 @@
                 type="string"
                 class="form-control"
                 maxlenght="40"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="length" />
             </form-field>
           </div>
@@ -1083,7 +1083,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="origin" />
             </form-field>
@@ -1107,7 +1107,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="sleeve" />
             </form-field>
@@ -1134,7 +1134,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="useType" />
             </form-field>
@@ -1158,7 +1158,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="70"
                 formControlName="shipName" />
             </form-field>
@@ -1185,7 +1185,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="manufacturingYear" />
             </form-field>
           </div>
@@ -1209,7 +1209,7 @@
                 type="text"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="publicRegistry" />
             </form-field>
           </div>
@@ -1236,7 +1236,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="capacity"
                 oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);" />
             </form-field>
@@ -1260,7 +1260,7 @@
               <input
                 type="string"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="ships" />
             </form-field>
@@ -1302,7 +1302,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="caratage" />
             </form-field>
           </div>
@@ -1324,7 +1324,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="material" />
             </form-field>
           </div>
@@ -1347,7 +1347,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="weight" />
             </form-field>
           </div>
@@ -1392,7 +1392,7 @@
                 type="checkbox"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="armor"
-                [disabled]="false"
+                [disabled]="isGoodTypeReadOnly"
                 (change)="handleArmor($event)" />
             </form-check>
           </div>
@@ -1415,7 +1415,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="manufacturingYear" />
             </form-field>
           </div>
@@ -1441,7 +1441,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="model" />
             </form-field>
           </div>
@@ -1463,7 +1463,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="operationalState" />
             </form-field>
           </div>
@@ -1490,7 +1490,7 @@
                 type="text"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="engineNumber" />
             </form-field>
           </div>
@@ -1513,7 +1513,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="enginesNumber" />
             </form-field>
           </div>
@@ -1540,7 +1540,7 @@
                 type="text"
                 class="form-control"
                 maxlength="40"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="tuition" />
             </form-field>
           </div>
@@ -1562,7 +1562,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="dgacRegistry" />
             </form-field>
           </div>
@@ -1587,7 +1587,7 @@
                 type="text"
                 class="form-control"
                 formControlName="serie"
-                [readOnly]="false" />
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
           </div>
           <div class="col-md-4">
@@ -1608,7 +1608,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="airplaneType" />
             </form-field>
           </div>
@@ -1635,7 +1635,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="origin" />
             </form-field>
@@ -1661,7 +1661,7 @@
                 class="form-control"
                 formControlName="flag"
                 maxlength="5"
-                [readOnly]="false" />
+                [readOnly]="isGoodTypeReadOnly" />
             </form-field>
           </div>
         </div>
@@ -1685,7 +1685,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 maxlength="40"
                 formControlName="useType" />
             </form-field>
@@ -1727,7 +1727,7 @@
               <textarea
                 class="form-control"
                 formControlName="description"
-                [readOnly]="false"></textarea>
+                [readOnly]="isGoodTypeReadOnly"></textarea>
             </form-field>
           </div>
           <div class="col-md-5">
@@ -1748,7 +1748,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="guardCustody" />
             </form-field>
           </div>
@@ -1773,7 +1773,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="status" />
             </form-field>
           </div>
@@ -1795,7 +1795,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="vigilanceRequired" />
             </form-field>
           </div>
@@ -1820,7 +1820,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="propertyType" />
             </form-field>
           </div>
@@ -1842,7 +1842,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="vigilanceLevel" />
             </form-field>
           </div>
@@ -1868,7 +1868,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="surfaceMts" />
             </form-field>
           </div>
@@ -1890,7 +1890,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="mtsOfiWarehouse" />
             </form-field>
           </div>
@@ -1916,7 +1916,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="consSurfaceMts" />
             </form-field>
           </div>
@@ -1938,7 +1938,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="bedrooms" />
             </form-field>
           </div>
@@ -1963,7 +1963,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="publicDeed" />
             </form-field>
           </div>
@@ -1985,7 +1985,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="bathroom" />
             </form-field>
           </div>
@@ -2010,7 +2010,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="pubRegProperty" />
             </form-field>
           </div>
@@ -2032,7 +2032,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="kitchen" />
             </form-field>
           </div>
@@ -2058,7 +2058,7 @@
               <input
                 type="number"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="appraisalValue" />
             </form-field>
           </div>
@@ -2080,7 +2080,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="livingRoom" />
             </form-field>
           </div>
@@ -2110,7 +2110,7 @@
                 class="form-control"
                 [bsValue]="bsEvaluoDate"
                 #dp="bsDatepicker"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 bsDatepicker
                 (bsValueChange)="changeDateEvaluoEvent($event)" />
             </form-field>
@@ -2133,7 +2133,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="diningRoom" />
             </form-field>
           </div>
@@ -2158,7 +2158,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="certLibLien" />
             </form-field>
           </div>
@@ -2180,7 +2180,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="study" />
             </form-field>
           </div>
@@ -2205,7 +2205,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="espPark" />
             </form-field>
           </div>
@@ -2231,7 +2231,7 @@
                 type="text"
                 class="form-control"
                 [bsValue]="bsPffDate"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 #dp="bsDatepicker"
                 bsDatepicker
                 (bsValueChange)="changeCertiviffDateEvent($event)" />
@@ -2263,7 +2263,7 @@
                 class="form-control"
                 [bsValue]="bsCertifiDate"
                 #dp="bsDatepicker"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 bsDatepicker
                 (bsValueChange)="changeCertiviDateEvent($event)" />
             </form-field>
@@ -2286,7 +2286,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="attachment" />
             </form-field>
           </div>
@@ -2311,7 +2311,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="gravFavorThird" />
             </form-field>
           </div>
@@ -2333,7 +2333,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="coOwnership" />
             </form-field>
           </div>
@@ -2358,7 +2358,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="lien" />
             </form-field>
           </div>
@@ -2380,7 +2380,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="gravPleaseTrans" />
             </form-field>
           </div>
@@ -2405,7 +2405,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="embFavorThird" />
             </form-field>
           </div>
@@ -2427,7 +2427,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="decreeExproProc" />
             </form-field>
           </div>
@@ -2452,7 +2452,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="ownershipPercentage" />
             </form-field>
           </div>
@@ -2474,7 +2474,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="declareRemediation" />
             </form-field>
           </div>
@@ -2498,7 +2498,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="decreeExproSupe" />
             </form-field>
           </div>
@@ -2520,7 +2520,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="assurance" />
             </form-field>
           </div>
@@ -2544,7 +2544,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="heritage" />
             </form-field>
           </div>
@@ -2566,7 +2566,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="propTitleFolio" />
             </form-field>
           </div>
@@ -2591,7 +2591,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="echoForecast" />
             </form-field>
           </div>
@@ -2614,7 +2614,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="echoForecastPercentage" />
             </form-field>
           </div>
@@ -2647,7 +2647,7 @@
                 rows="2"
                 formControlName="measuresAdjacent"
                 class="form-control"
-                [readOnly]="false">
+                [readOnly]="isGoodTypeReadOnly">
               </textarea>
               <!-- <input
                 type="text"
@@ -2674,7 +2674,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="vouchersWater" />
             </form-field>
           </div>
@@ -2698,7 +2698,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="debts" />
             </form-field>
           </div>
@@ -2720,7 +2720,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="physicalPossession" />
             </form-field>
           </div>
@@ -2744,7 +2744,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="closed" />
             </form-field>
           </div>
@@ -2766,7 +2766,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="familyHeritage" />
             </form-field>
           </div>
@@ -2790,7 +2790,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="problemDesc" />
             </form-field>
           </div>
@@ -2812,7 +2812,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="forProblems" />
             </form-field>
           </div>
@@ -2836,7 +2836,7 @@
               <input
                 type="text"
                 class="form-control"
-                [readOnly]="false"
+                [readOnly]="isGoodTypeReadOnly"
                 formControlName="photosAttached" />
             </form-field>
           </div>
