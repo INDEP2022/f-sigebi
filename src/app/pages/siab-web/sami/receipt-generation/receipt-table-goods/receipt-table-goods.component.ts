@@ -217,7 +217,7 @@ export class ReceiptTableGoodsComponent
   }
 
   override getData() {
-    debugger;
+    // debugger;
     this.loading = true;
     let params = this.getParams();
     const programmingId = this.id_programacion;
