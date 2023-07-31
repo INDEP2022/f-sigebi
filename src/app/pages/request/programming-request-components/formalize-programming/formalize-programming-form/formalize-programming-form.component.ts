@@ -1274,48 +1274,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
-    /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.idPrograming'] = this.programmingId;
-    params.getValue()['filter.statusProceeedings'] = 'CERRADO';
-    this.proceedingService.getProceedings(params.getValue()).subscribe({
-      next: async response => {
-        if (response.data.length > 0) {
-          console.log('actas', response.data[0]);
-          const showBase64: any = await this.showBase64(
-            response.data[0].id_content
-          );
-          const data = {
-            recipients: 'al221810743@gmail.com',
-            message: `Le informamos que el acta con folio: ${response.data[0].folioProceedings}, terminó satisfactoriamente.`,
-            userCreation: 'dr_sigebi',
-            dateCreation: '2023-07-31',
-            userModification: 'dr_sigebi',
-            dateModification: '2023-07-31',
-            version: '2',
-            subject: 'Notificación de cierre de acta de entrega recepción',
-            nameAtt: response.data[0].folioProceedings,
-            typeAtt: 'application/pdf;',
-            //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
-            process: 'FORMALIZAR',
-            fileB64: showBase64,
-          };
-
-          this.emailService.createEmailNotify(data).subscribe({
-            next: response => {
-              console.log('response', response);
-            },
-          });
-        } else {
-          this.alert(
-            'error',
-            'Acción Invalida',
-            'Se necesita tener un acta cerrada para terminar la tarea'
-          );
-        }
-      },
-      error: error => {},
-    }); */
-
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1341,6 +1299,50 @@ export class FormalizeProgrammingFormComponent
           ).then(question => {
             if (question.isConfirmed) {
               this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+              const params = new BehaviorSubject<ListParams>(new ListParams());
+              params.getValue()['filter.idPrograming'] = this.programmingId;
+              params.getValue()['filter.statusProceeedings'] = 'CERRADO';
+              this.proceedingService
+                .getProceedings(params.getValue())
+                .subscribe({
+                  next: async response => {
+                    if (response.data.length > 0) {
+                      console.log('actas', response.data[0]);
+                      const showBase64: any = await this.showBase64(
+                        response.data[0].id_content
+                      );
+                      const data = {
+                        recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
+                        message: `Le informamos que el acta con folio: ${response.data[0].folioProceedings}, terminó satisfactoriamente.`,
+                        userCreation: 'dr_sigebi',
+                        dateCreation: '2023-07-31',
+                        userModification: 'dr_sigebi',
+                        dateModification: '2023-07-31',
+                        version: '2',
+                        subject:
+                          'Notificación de cierre de acta de entrega recepción',
+                        nameAtt: response.data[0].folioProceedings,
+                        typeAtt: 'application/pdf;',
+                        //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
+                        process: 'FORMALIZAR',
+                        fileB64: showBase64,
+                      };
+                      console.log('data', data);
+                      this.emailService.createEmailNotify(data).subscribe({
+                        next: response => {
+                          console.log('response', response);
+                        },
+                      });
+                    } else {
+                      this.alert(
+                        'error',
+                        'Acción Invalida',
+                        'Se necesita tener un acta cerrada para terminar la tarea'
+                      );
+                    }
+                  },
+                  error: error => {},
+                });
             }
           });
         }
