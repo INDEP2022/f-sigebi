@@ -212,7 +212,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     },
   },
   descentfed: {
-    title: 'Desc.Entidad Fed.',
+    title: 'Desc. Entidad Fed.',
     sort: false,
     editable: false,
   },
@@ -295,7 +295,7 @@ export const WORK_MAILBOX_COLUMNS2 = {
     },
   },
   takePressureDate: {
-    title: 'Fecha Toma Poseción',
+    title: 'Fecha Toma Posesión',
     sort: false,
     filter: false,
     editable: false,

@@ -155,7 +155,7 @@ export class CustomerPenaltiesModalComponent
   handleSuccess() {
     const message: string = this.edit
       ? 'Penalización Actualizada'
-      : 'Penalización Creadoa';
+      : 'Penalización Creada';
     this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);

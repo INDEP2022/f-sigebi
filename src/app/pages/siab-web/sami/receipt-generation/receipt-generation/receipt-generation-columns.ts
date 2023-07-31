@@ -78,11 +78,11 @@ export const WISTNESS_COLUMNS = {
     sort: false,
   },
   witnessName: {
-    title: 'Nombre del testigo',
+    title: 'Nombre del Testigo',
     sort: false,
   },
   witnessCharge: {
-    title: 'Cargo del testigo',
+    title: 'Cargo del Testigo',
     sort: false,
   },
   column0: {
