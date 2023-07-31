@@ -22,6 +22,7 @@ export class ReceiptTableGoodsComponent
   extends BasePageWidhtDinamicFiltersExtra<IReceiptItem>
   implements OnInit
 {
+  @Input() id_programacion: string;
   @Input() folio: string; // = 'R-METROPOLITANA-SAT-24-OS';
   @Input() estatus_bien_programacion: string = null;
   @Input() override haveInitialCharge = false;
@@ -37,7 +38,7 @@ export class ReceiptTableGoodsComponent
     private receiptService: ProgrammingGoodReceiptService
   ) {
     super();
-    this.service = this.receiptService;
+    // this.service = this.receiptService;
     // this.params.value.limit = 5;
     // this.haveInitialCharge = false;
     this.settings = {
@@ -73,7 +74,7 @@ export class ReceiptTableGoodsComponent
     if (
       (changes['estatus_bien_programacion'] &&
         changes['estatus_bien_programacion'].currentValue) ||
-      (changes['folio'] && changes['folio'].currentValue)
+      (changes['id_programacion'] && changes['id_programacion'].currentValue)
     ) {
       console.log('ngOnChanges Table Goods');
       this.getData();
@@ -202,9 +203,9 @@ export class ReceiptTableGoodsComponent
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;
-    if (this.folio) {
-      newColumnFilters['filter.folio'] = '$eq:' + this.folio;
-    }
+    // if (this.folio) {
+    //   newColumnFilters['filter.folio'] = '$eq:' + this.folio;
+    // }
     if (this.estatus_bien_programacion) {
       newColumnFilters['filter.estatus_bien_programacion'] =
         '$eq:' + this.estatus_bien_programacion;
@@ -213,5 +214,29 @@ export class ReceiptTableGoodsComponent
       ...this.params.getValue(),
       ...newColumnFilters,
     };
+  }
+
+  override getData() {
+    debugger;
+    this.loading = true;
+    let params = this.getParams();
+    const programmingId = this.id_programacion;
+    this.receiptService
+      .getProgrammingGoods({ programmingId }, params)
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response) {
+            this.totalItems = response.count || 0;
+            this.data.load(response.data);
+            this.data.refresh();
+            this.loading = false;
+            this.extraOperationsGetData();
+          }
+        },
+        error: err => {
+          this.dataNotFound();
+        },
+      });
   }
 }
