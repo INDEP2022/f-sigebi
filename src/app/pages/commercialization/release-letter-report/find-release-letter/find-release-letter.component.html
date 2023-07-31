@@ -14,18 +14,18 @@
     <form-loader *ngIf="loading"></form-loader>
     <div class="table-padding"></div>
     <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-      <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          class="table-responsive"
-          [attr.class]="'table-responsive table-bordered'"
-          [settings]="settings"
-          [source]="dataFactLetter"
-          (userRowSelect)="onUserRowSelect($event)">
-        </ng2-smart-table>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
-        <div class="table-padding"></div>
-      </div>
+      <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+      <ng2-smart-table
+        class="table-responsive"
+        [attr.class]="'table-responsive table-bordered'"
+        [settings]="settings"
+        [source]="dataFactLetter"
+        (userRowSelect)="onUserRowSelect($event)">
+      </ng2-smart-table>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+      <div class="table-padding"></div>
+      <!-- </div> -->
     </ng-scrollbar>
   </div>
   <div footer>

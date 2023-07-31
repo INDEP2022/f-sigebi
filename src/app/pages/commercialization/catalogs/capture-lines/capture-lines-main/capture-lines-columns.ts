@@ -44,6 +44,11 @@ export const EVENT_COLUMNS = {
 };
 
 export const CAPTURE_LINES_COLUMNS = {
+  eventId: {
+    title: 'Evento',
+    type: 'number',
+    sort: false,
+  },
   pallette: {
     title: 'No. Paleta',
     type: 'number',

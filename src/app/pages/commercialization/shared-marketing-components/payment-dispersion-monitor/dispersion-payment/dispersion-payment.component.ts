@@ -340,7 +340,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: eventTpId,
     };
 
-    this.comerTpEventsService.getTpEvent(model).subscribe(
+    this.comerTpEventsService.getTpEvent(model).subscribe()
+  }
+  //Data de COMER_CLIENTESXEVENTO
+  getDateComerCustomer() {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('EventId', this.event.value);
+    this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
       res => {
         console.log(res.data[0].id_tipo_disp);
         const id_tipo_disp = res.data[0].id_tipo_disp;

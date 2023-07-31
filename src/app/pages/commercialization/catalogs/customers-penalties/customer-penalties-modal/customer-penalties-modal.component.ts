@@ -78,9 +78,9 @@ export class CustomerPenaltiesModalComponent
       const dbEndDate = this.form.get('endDate').value;
       const dbPenaltiDate = this.form.get('penaltiDate').value;
 
-      const formattedDate1 = formatDate(dbStartDate, 'dd/MM/yyyy', 'en-US'); //
-      const formattedDate2 = formatDate(dbEndDate, 'dd/MM/yyyy', 'en-US'); //
-      const formattedDate3 = formatDate(dbPenaltiDate, 'dd/MM/yyyy', 'en-US'); //
+      const formattedDate1 = formatDate(dbStartDate, 'dd/MM/yyyy', 'en-US');
+      const formattedDate2 = formatDate(dbEndDate, 'dd/MM/yyyy', 'en-US');
+      const formattedDate3 = formatDate(dbPenaltiDate, 'dd/MM/yyyy', 'en-US');
 
       this.form.get('startDate').setValue(formattedDate1);
       this.form.get('endDate').setValue(formattedDate2);
@@ -88,11 +88,11 @@ export class CustomerPenaltiesModalComponent
 
       this.form
         .get('startDate')
-        .setValue(this.addDays(new Date(dbStartDate), 1)); //
-      this.form.get('endDate').setValue(this.addDays(new Date(dbEndDate), 1)); //
+        .setValue(this.addDays(new Date(dbStartDate), 1));
+      this.form.get('endDate').setValue(this.addDays(new Date(dbEndDate), 1));
       this.form
         .get('penaltiDate')
-        .setValue(this.addDays(new Date(dbPenaltiDate), 1)); //
+        .setValue(this.addDays(new Date(dbPenaltiDate), 1));
     }
   }
 
@@ -100,6 +100,10 @@ export class CustomerPenaltiesModalComponent
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
+  }
+
+  clearFreeDate(propertyName: string) {
+    this.form.get(propertyName).setValue(null);
   }
 
   close() {
@@ -151,7 +155,7 @@ export class CustomerPenaltiesModalComponent
   handleSuccess() {
     const message: string = this.edit
       ? 'Penalización Actualizada'
-      : 'Penalización Creadoa';
+      : 'Penalización Creada';
     this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);

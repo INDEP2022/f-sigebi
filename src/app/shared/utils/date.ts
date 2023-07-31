@@ -203,6 +203,7 @@ export function formatForIsoDate(
 
 export function secondFormatDateToDate2(date: string) {
   if (date) {
+    console.log('DATE', date);
     const array = date.split('-');
     let aaa = Number(array[1]) - 1;
     return new Date(+array[0], +aaa, +array[2]);
