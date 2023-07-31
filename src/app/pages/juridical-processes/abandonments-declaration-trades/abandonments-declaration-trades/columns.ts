@@ -20,7 +20,7 @@ export const COLUMNS_BIENES = {
     sort: false,
   },
   status: {
-    title: 'Est',
+    title: 'Estatus',
     type: 'string',
     sort: false,
   },
@@ -51,7 +51,7 @@ export const COLUMNS_GOOD_JOB_MANAGEMENT = {
 
 export const COLUMNS_DOCUMENTS = {
   cveDocument: {
-    title: 'CVE. Documento',
+    title: 'Cve. Documento',
     type: 'string',
     sort: false,
   },
@@ -64,7 +64,7 @@ export const COLUMNS_DOCUMENTS = {
 
 export const COLUMNS_DOCUMENTS2 = {
   cveDocument: {
-    title: 'CVE. Documento',
+    title: 'Cve. Documento',
     type: 'string',
     sort: false,
   },
@@ -82,7 +82,7 @@ export const COLUMNS_DICTUMS = {
     sort: false,
   },
   passOfficeArmy: {
-    title: 'Clave Oficio',
+    title: 'Clave de Oficio',
     type: 'string',
     sort: false,
   },
@@ -92,7 +92,7 @@ export const COLUMNS_DICTUMS = {
     sort: false,
   },
   dateDicta: {
-    title: 'Fecha Dictamen',
+    title: 'Fecha de Dictamen',
     type: 'string',
     sort: false,
   },
@@ -105,7 +105,7 @@ export const COLUMNS_OFICIO = {
     sort: false,
   },
   cveManagement: {
-    title: 'Clave Oficio',
+    title: 'Clave de Oficio',
     type: 'string',
     sort: false,
   },
@@ -115,7 +115,7 @@ export const COLUMNS_OFICIO = {
     sort: false,
   },
   dateOficio: {
-    title: 'Fecha Captura',
+    title: 'Fecha de Captura',
     type: 'string',
     sort: false,
   },
@@ -123,12 +123,12 @@ export const COLUMNS_OFICIO = {
 
 export const EXTERNOS_COLUMS_OFICIO = {
   personExtInt_: {
-    title: 'Tipo persona',
+    title: 'Tipo de persona',
     type: 'string',
     sort: false,
   },
   userOrPerson: {
-    title: 'Nombre persona',
+    title: 'Nombre de la Persona',
     type: 'string',
     sort: false,
   },

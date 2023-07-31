@@ -42,6 +42,17 @@ export class RecordAccountStatementsService
       params
     );
   }
+
+  getAllDinamicBankCode(
+    name: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IRecordAccountStatements>> {
+    const route = `${this.route}?filter.bankCode=$ilike:${name}`;
+    return this.recordAccountStatementsServiceRepository.getAllPaginated(
+      route,
+      params
+    );
+  }
 }
 
 //http://sigebimsqa.indep.gob.mx/catalog/api/v1/bank
