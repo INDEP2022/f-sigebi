@@ -1,7 +1,7 @@
 export interface IComerEvent {
   id?: number;
   tpeventoId?: number;
-  StatusvtaId?: string;
+  statusVtaId?: string;
   processKey?: string;
   observations?: string;
   address?: string;
