@@ -14,10 +14,12 @@ export const COLUMNS = {
   estatus_recibo: {
     title: 'Estatus Recibo',
     sort: false,
+    filter: false,
   },
   tipo_recibo: {
     title: 'Tipo Recibo',
     sort: false,
+    filter: false,
   },
 };
 export const COLUMNS1 = {
