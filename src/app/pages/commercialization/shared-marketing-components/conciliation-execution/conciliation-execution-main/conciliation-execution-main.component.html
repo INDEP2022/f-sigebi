@@ -83,7 +83,7 @@
                   value="idLot"
                   bindLabel="idLot"
                   label="Lote"
-                  (fetchItems)="getLotes($event)"
+                  (fetchItems)="getLotes($event, 'no')"
                   control="batch"
                   (change)="selectBatch($event)">
                 </ngx-select>
@@ -117,7 +117,6 @@
                 [disabled]="!selectedEvent"
                 class="btn btn-sm btn-block btn-primary active font-size-14"
                 (click)="execute()"
-                [disabled]=""
                 tooltip="Ejecutar para Conciliar Pagos"
                 containerClass="tooltip-style">
                 Ejecutar
@@ -128,7 +127,6 @@
                 [disabled]="!selectedEvent"
                 class="btn btn-sm btn-block btn-info active font-size-14"
                 (click)="modify()"
-                [disabled]=""
                 tooltip="Modificar Estatus de Bienes"
                 containerClass="tooltip-style">
                 Modificar
@@ -139,7 +137,6 @@
                 [disabled]="!selectedEvent"
                 class="btn btn-sm btn-block btn-danger active font-size-14"
                 (click)="cancel()"
-                [disabled]=""
                 tooltip="Eliminar toda la Dispersión"
                 containerClass="tooltip-style">
                 Deshacer

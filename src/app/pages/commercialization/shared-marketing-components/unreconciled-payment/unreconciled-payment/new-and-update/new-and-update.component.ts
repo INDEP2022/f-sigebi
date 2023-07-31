@@ -209,7 +209,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       error: error => {
         // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
         this.alert(
-          'warning',
+          'error',
           'Ocurrió un Error al Guardar el Registro',
           error.error.message
         );

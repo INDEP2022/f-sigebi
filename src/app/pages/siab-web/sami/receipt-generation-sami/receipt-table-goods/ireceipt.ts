@@ -32,7 +32,62 @@ export interface IReceiptItem {
   destino_sae: string;
   destino_sae_letra: string;
 }
-
+export interface IReceiptExceltem {
+  ID: number;
+  ID_BIEN: number;
+  CLAVE_UNICA: string;
+  NO_EXPEDIENTE: string;
+  DESCRIPCION_BIEN_TASFERENTE: string;
+  DESCRIPCION_BIEN_SAE: string;
+  CANTIDAD_TRASFERENTE: string;
+  CANTIDAD_SAE: string;
+  UNIDAD_MEDIDA_TRASFERENTE: string;
+  UNIDAD_MEDIDA_SAE: string;
+  ESTADO_FISICO_TRASFERENTE: string;
+  ESTADO_FISICO_SAE: string;
+  ESTADO_CONSERVACION_TRASFERENTE: string;
+  ESTADO_CONSERVACION_SAE: string;
+  DESTINO: string;
+  DESTINO_TRASFERENTE: string;
+  DESTINO_SAE: string;
+  ID_PROGRAMACION: number;
+  OBSERVACIONES: string;
+}
+export interface IReceiptGoodItem {
+  id_recorrido?: string;
+  guardado?: string;
+  seleccionar?: number;
+  id_bien?: string;
+  clave_unica?: string;
+  no_expediente?: string;
+  descripcion_bien?: string;
+  descripcion_bien_sae?: any;
+  cantidad?: number;
+  cantidad_sae?: number;
+  estatus_bien_programacion?: string;
+  estatus_bien_bien?: string;
+  estatus_programacion_bien?: string;
+  unidad_medida?: string;
+  unidad_medida_letra?: string;
+  unidad_medida_sae?: string;
+  unidad_medida_sae_letra?: any;
+  id_programacion?: number;
+  estado_fisico?: number;
+  estado_fisico_letra?: string;
+  estado_fisico_sae?: number;
+  estado_fisico_sae_letra?: string;
+  estado_conservacion?: number;
+  estado_conservacion_letra?: string;
+  estado_conservacion_sae?: number;
+  estado_conservacion_sae_letra?: string;
+  destino?: number;
+  destino_letra?: string;
+  destino_transferente?: number;
+  destino_transferente_letra?: string;
+  destino_sae?: number;
+  destino_sae_letra?: string;
+  observaciones?: string;
+}
 export interface IProgramingReception {
   id: number;
   typeGoodId?: any;
