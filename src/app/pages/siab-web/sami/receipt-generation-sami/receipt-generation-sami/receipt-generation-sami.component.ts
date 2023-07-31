@@ -93,6 +93,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         'Generación de Recibos',
         'Ingresa una Programación'
       );
+      this.loader.load = false;
       return;
     }
     this.programmingGoodReceiptService.getAll(params).subscribe({
@@ -328,7 +329,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['cancellation'].value != null) {
       this.alertQuestion(
         'question',
-        'Se Cancelará la programació',
+        'Se Cancelará la programación',
         '¿Deseas continuar?',
         'Continuar'
       ).then(q => {
@@ -371,7 +372,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['reprogramming'].value != null) {
       this.alertQuestion(
         'question',
-        'Se ará una Reprogramación',
+        'Se hará una Reprogramación',
         '¿Deseas continuar?',
         'Continuar'
       ).then(q => {
@@ -405,7 +406,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debes Seleccionar el Motivo, de la Reprogramación'
+        'Debes Seleccionar el Motivo de la Reprogramación'
       );
       return;
     }
