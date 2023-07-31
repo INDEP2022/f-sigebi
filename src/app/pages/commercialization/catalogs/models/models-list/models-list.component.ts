@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -31,8 +30,7 @@ export class ModelsListComponent extends BasePage implements OnInit {
 
   constructor(
     private modalService: BsModalService,
-    private modelServices: ModelsService,
-    private fb: FormBuilder
+    private modelServices: ModelsService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -55,10 +53,10 @@ export class ModelsListComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'modelComment':
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'nbOrigin':
+              case 'modelComment':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:

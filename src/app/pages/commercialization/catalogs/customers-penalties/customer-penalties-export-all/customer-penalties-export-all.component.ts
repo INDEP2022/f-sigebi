@@ -52,17 +52,8 @@ export class CustomersPenaltiesExportAllComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'clientId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'reasonName':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'rfc':
-                searchFilter = SearchFilter.ILIKE;
-                break;
               case 'typeProcess':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
                 searchFilter = SearchFilter.ILIKE;
@@ -70,35 +61,11 @@ export class CustomersPenaltiesExportAllComponent
               case 'publicLot':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'startDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;
-              case 'endDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'userPenalty':
                 searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'penaltiDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
