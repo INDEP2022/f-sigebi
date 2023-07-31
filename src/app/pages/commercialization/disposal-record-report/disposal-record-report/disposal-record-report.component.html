@@ -15,36 +15,39 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_EXPINI')"
-            label="Fecha de Expediente Inicial">
+            label="No. Expediente Inicial">
             <input
               formControlName="PN_EXPINI"
               class="form-control"
-              bsDatepicker />
+              type="number" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_EXPFIN')"
-            label="Fecha de Expediente Final">
+            label="No. Expediente Final">
             <input
               formControlName="PN_EXPFIN"
               class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('noActa')" label="No. Acta">
-            <input type="text" class="form-control" formControlName="noActa" />
+              type="number" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="form.get('PN_ACTAINI')"
-            label="Fecha Inicial de Acta">
+            [control]="form.get('estatusActa')"
+            label="Estado del Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="estatusActa" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('PN_ACTAINI')" label="Del Acta">
             <input
               formControlName="PN_ACTAINI"
               class="form-control"
-              bsDatepicker />
+              type="number" />
           </form-field>
         </div>
       </div>
@@ -55,11 +58,9 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_ACTAFIN')"
-            label="Fecha Final de Acta">
-            <input
-              formControlName="PN_ACTAFIN"
-              class="form-control"
-              bsDatepicker />
+            label="Hasta el Acta"
+            type="number">
+            <input formControlName="PN_ACTAFIN" class="form-control" />
           </form-field>
         </div>
         <div class="col-md-3">

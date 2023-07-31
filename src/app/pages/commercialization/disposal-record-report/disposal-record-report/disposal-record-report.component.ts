@@ -5,7 +5,6 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-disposal-record-report',
   templateUrl: './disposal-record-report.component.html',
@@ -18,7 +17,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   maxDate: Date;
   minDate: Date;
   params: any;
-
+  estatus: any;
   pdfurl =
     'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
@@ -44,10 +43,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       // noFile: [null],
       PN_EXPINI: [null, [Validators.required]],
       PN_EXPFIN: [null, [Validators.required]],
-      noActa: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      estatusActa: [null],
       PF_ELABIN: [null, [Validators.required]],
       PF_ELABFIN: [null, [Validators.required]],
       PN_ACTAINI: [null, [Validators.required]],
@@ -60,13 +56,21 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
 
     const ELABFIN = new Date(this.form.controls['PF_ELABFIN'].value);
     const formattedELABFIN = this.formatDate(ELABFIN);
+    if (
+      this.form.controls['estatusActa'].value == null ||
+      this.form.controls['estatusActa'].value == 'TODOS'
+    ) {
+      this.estatus = 'null';
+    } else {
+      this.estatus = this.form.controls['estatusActa'].value;
+    }
 
     this.params = {
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PN_EXPINI: this.form.controls['PN_EXPINI'].value,
       PN_EXPFIN: this.form.controls['PN_EXPFIN'].value,
-      PC_ACTA: this.form.controls['noActa'].value,
+      PC_ACTA: this.estatus,
       PF_ELABIN: formattedELABIN,
       PF_ELABFIN: formattedELABFIN,
       PN_ACTAINI: this.form.controls['PN_ACTAINI'].value,
@@ -75,11 +79,11 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     };
 
     console.log(this.params);
-    const startEx = new Date(this.form.get('PN_EXPINI').value);
-    const endEx = new Date(this.form.get('PN_EXPFIN').value);
+    const startEx = this.form.get('PN_EXPINI').value;
+    const endEx = this.form.get('PN_EXPFIN').value;
 
-    const startAc = new Date(this.form.get('PN_ACTAINI').value);
-    const endAc = new Date(this.form.get('PN_ACTAFIN').value);
+    const startAc = this.form.get('PN_ACTAINI').value;
+    const endAc = this.form.get('PN_ACTAFIN').value;
 
     const startEl = new Date(this.form.get('PF_ELABIN').value);
     const endEl = new Date(this.form.get('PF_ELABFIN').value);
@@ -88,7 +92,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'fecha final de expediente debe ser mayor a la fecha inicial'
+        'El expediente final debe ser mayor al inicial'
       );
       return;
     }
@@ -97,7 +101,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'fecha final de acta debe ser mayor a la fecha inicial'
+        'El acta final debe ser mayor a la inicial'
       );
       return;
     }
