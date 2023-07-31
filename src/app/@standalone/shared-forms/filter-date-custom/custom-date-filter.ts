@@ -11,7 +11,7 @@ import { DefaultFilter } from 'ng2-smart-table';
         [ngModel]="query"
         [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
         (ngModelChange)="onChange($event)"
-        placeholder="Fecha"
+        [placeholder]="column.title"
         style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
         <i
