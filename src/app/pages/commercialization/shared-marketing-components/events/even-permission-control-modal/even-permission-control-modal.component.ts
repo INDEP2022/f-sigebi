@@ -114,6 +114,12 @@ export class EvenPermissionControlModalComponent
   }
 
   create() {
+    console.log(this.comerUserForm.get('date').value);
+    if (!this.comerUserForm.get('date').value) {
+      this.alert('warning', 'Debe Especificar la Fecha', '');
+      this.comerUserForm.get('date').markAsTouched();
+      return;
+    }
     let params = {
       eventId: this.comerUserForm.value.idEvent,
       user: this.comerUserForm.value.username,
@@ -135,6 +141,11 @@ export class EvenPermissionControlModalComponent
   }
 
   update() {
+    if (!this.comerUserForm.get('date').value) {
+      this.alert('warning', 'Debe Especificar la Fecha', '');
+      this.comerUserForm.get('date').markAsTouched();
+      return;
+    }
     let params = {
       eventId: this.comerUserForm.value.idEvent,
       user: this.comerUserForm.value.username,

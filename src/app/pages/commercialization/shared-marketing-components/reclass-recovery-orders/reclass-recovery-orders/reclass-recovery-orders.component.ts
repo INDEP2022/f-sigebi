@@ -119,8 +119,10 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     this.getOI({ page: 1, text: '' });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
-      this.limit = new FormControl(params.limit);
-      this.getDetails();
+      if (this.dataComerDetails['data'].length > 0) {
+        this.limit = new FormControl(params.limit);
+        this.getDetails();
+      }
     });
   }
   private prepareForm() {
@@ -147,18 +149,22 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
 
   //Busqueda por el id OI
   searchOI() {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('recordedOrderId', this.idOI.value);
-    this.invoiceService.getComerHeadboard(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res['data'][0]);
-        this.refe_ori = 'NADA';
-        this.fillIncomeDataOI(res['data'][0]);
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    if (this.idOI.value != null) {
+      const paramsF = new FilterParams();
+      paramsF.addFilter('recordedOrderId', this.idOI.value);
+      this.invoiceService.getComerHeadboard(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res['data'][0]);
+          this.refe_ori = 'NADA';
+          this.fillIncomeDataOI(res['data'][0]);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    } else {
+      this.alert('warning', 'No ingresó ningún OI', '');
+    }
   }
 
   //Llenar los datos traidos
