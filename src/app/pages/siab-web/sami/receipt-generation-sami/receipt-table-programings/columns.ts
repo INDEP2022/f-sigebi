@@ -46,39 +46,39 @@ export const COLUMNS1 = {
     sort: false,
   },
   unidad_medida_letra: {
-    title: 'Unidad Medida Letra',
+    title: 'Unidad Medida',
     sort: false,
   },
   unidad_medida_sae_letra: {
-    title: 'Unidad Medida INDEP Letra',
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
   estado_fisico_letra: {
-    title: 'Estado Fisico Letra',
+    title: 'Estado Fisico',
     sort: false,
   },
   estado_fisico_sae_letra: {
-    title: 'Estado Fisico INDEP Letra',
+    title: 'Estado Fisico INDEP',
     sort: false,
   },
   estado_conservacion_letra: {
-    title: 'Estado Conservación Letra',
+    title: 'Estado Conservación',
     sort: false,
   },
   estado_conservacion_sae_letra: {
-    title: 'Estado Conservación INDEP Letra',
+    title: 'Estado Conservación INDEP',
     sort: false,
   },
   destino_letra: {
-    title: 'Destino Letra',
+    title: 'Destino',
     sort: false,
   },
   destino_transferente_letra: {
-    title: 'Destino Transferente Letra',
+    title: 'Destino Transferente',
     sort: false,
   },
   destino_sae_letra: {
-    title: 'Destino INDEP Letra',
+    title: 'Destino INDEP',
     sort: false,
   },
   id_recorrido: {

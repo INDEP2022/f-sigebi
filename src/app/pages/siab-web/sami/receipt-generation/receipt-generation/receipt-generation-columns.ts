@@ -1,5 +1,9 @@
 export const RECEIPTGENERATION_COLUMNS = {
-  goods: {
+  ID: {
+    title: 'Id Recorrido',
+    sort: false,
+  },
+  ID_BIEN: {
     title: 'Bien',
     sort: false,
   },
@@ -7,23 +11,23 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Clave Única',
     sort: false,
   },
-  noProceedings: {
-    title: 'N.Expediente',
+  NO_EXPEDIENTE: {
+    title: 'No. Expediente',
     sort: false,
   },
-  descriptionGood: {
+  DESCRIPCION_BIEN_TASFERENTE: {
     title: 'Descripción Bien',
     sort: false,
   },
-  descriptionGoodSae: {
+  DESCRIPCION_BIEN_SAE: {
     title: 'Descripción Bien INDEP',
     sort: false,
   },
-  amount: {
+  CANTIDAD_TRASFERENTE: {
     title: 'Cantidad',
     sort: false,
   },
-  amountSae: {
+  CANTIDAD_SAE: {
     title: 'Cantidad INDEP',
     sort: false,
   },
@@ -43,28 +47,28 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Estado Físico INDEP',
     sort: false,
   },
-  stateConservation: {
+  ESTADO_CONSERVACION_TRASFERENTE: {
     title: 'Estado Conservación',
     sort: false,
   },
-  stateConservationSae: {
+  ESTADO_CONSERVACION_SAE: {
     title: 'Estado Conservación INDEP',
     sort: false,
   },
-  destiny: {
+  DESTINO: {
     title: 'Destino',
     sort: false,
   },
-  transferDestination: {
+  DESTINO_TRASFERENTE: {
     title: 'Destino Transferente',
     sort: false,
   },
-  destinySae: {
+  DESTINO_SAE: {
     title: 'Destino INDEP',
     sort: false,
   },
-  route: {
-    title: 'Id Recorrido',
+  OBSERVACIONES: {
+    title: 'Observaciones',
     sort: false,
   },
 };

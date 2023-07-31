@@ -93,6 +93,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
         'Generación de Recibos',
         'Ingresa una Programación'
       );
+      this.loader.load = false;
       return;
     }
     this.programmingGoodReceiptService.getAll(params).subscribe({

@@ -4,9 +4,12 @@
   </div>
   <div body>
     <div class="form-inline justify-content-end btn-toolbar">
-      <button (click)="createReceipt()" class="btn btn-info btn-sm active">
-        Nuevo recibo <i class="bx bx-plus bx-sm float-icon"></i>
-      </button>
+      <confirm-button
+        [loading]="loadingCreateReceipt"
+        [text]="'Nuevo recibo'"
+        [loadingText]="'Generando recibo'"
+        [btnSmall]="true"
+        (click)="createReceipt()"></confirm-button>
     </div>
     <div class="row pt-2">
       <div [class]="loadingTable ? 'table-loading' : ''">
