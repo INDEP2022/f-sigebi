@@ -7,8 +7,8 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Bien',
     sort: false,
   },
-  CLAVE_UNICA: {
-    title: 'Clave única',
+  uniqueKey: {
+    title: 'Clave Única',
     sort: false,
   },
   NO_EXPEDIENTE: {
@@ -31,20 +31,20 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Cantidad INDEP',
     sort: false,
   },
-  UNIDAD_MEDIDA_TRASFERENTE: {
-    title: 'Unidad medida',
+  unitMeasure: {
+    title: 'Unidad Medida',
     sort: false,
   },
-  UNIDAD_MEDIDA_SAE: {
-    title: 'Unidad medida INDEP',
+  unitMeasureSae: {
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
-  ESTADO_FISICO_TRASFERENTE: {
-    title: 'Estado físico',
+  physicalState: {
+    title: 'Estado Físico',
     sort: false,
   },
-  ESTADO_FISICO_SAE: {
-    title: 'Estado físico INDEP',
+  physicalStateSae: {
+    title: 'Estado Físico INDEP',
     sort: false,
   },
   ESTADO_CONSERVACION_TRASFERENTE: {
@@ -78,11 +78,11 @@ export const WISTNESS_COLUMNS = {
     sort: false,
   },
   witnessName: {
-    title: 'Nombre del testigo',
+    title: 'Nombre del Testigo',
     sort: false,
   },
   witnessCharge: {
-    title: 'Cargo del testigo',
+    title: 'Cargo del Testigo',
     sort: false,
   },
   column0: {
