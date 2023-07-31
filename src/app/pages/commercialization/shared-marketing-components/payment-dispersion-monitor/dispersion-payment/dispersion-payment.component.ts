@@ -34,17 +34,17 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   settingsCustomer = this.settings;
   settingsLotEvent = this.settings;
   settingsDesertedLots = this.settings;
-  settingsCustomerBanks = this.settings
-  settingsLotsBanks = this.settings
-  settingsPaymentLots = this.settings
+  settingsCustomerBanks = this.settings;
+  settingsLotsBanks = this.settings;
+  settingsPaymentLots = this.settings;
 
   form: FormGroup;
   formCustomerEvent: FormGroup;
   formLotEvent: FormGroup;
   formDesertLots: FormGroup;
-  formCustomerBanks: FormGroup
-  formLotsBanks: FormGroup
-  formPaymentLots: FormGroup
+  formCustomerBanks: FormGroup;
+  formLotsBanks: FormGroup;
+  formPaymentLots: FormGroup;
 
   statusEvent: string = null;
   eventType: string = null;
@@ -234,20 +234,20 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
     this.formCustomerBanks = this.fb.group({
       validAmount: [null],
-      total: [null]
-    })
+      total: [null],
+    });
     //PAGOS RECIBIDOS EN EL BANCO POR LOTE
     this.formLotsBanks = this.fb.group({
       validAmount: [null],
-      total: [null]
-    })
+      total: [null],
+    });
     //COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTES
     this.formPaymentLots = this.fb.group({
       totalWithIva: [null],
       totalIva: [null],
       totalWithoutIva: [null],
-      totalSum: [null]
-    })
+      totalSum: [null],
+    });
   }
 
   //Gets
@@ -340,7 +340,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: eventTpId,
     };
 
-    this.comerTpEventsService.getTpEvent(model).subscribe()
+    this.comerTpEventsService.getTpEvent(model).subscribe();
   }
   //Data de COMER_CLIENTESXEVENTO
   getDateComerCustomer() {

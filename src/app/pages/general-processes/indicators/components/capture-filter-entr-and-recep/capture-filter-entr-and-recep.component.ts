@@ -1,22 +1,25 @@
 import { Location } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
-import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-  selector: 'capture-filter-dict',
-  templateUrl: './capture-filter-dict.component.html',
+  selector: 'capture-filter-entr-and-recep',
+  templateUrl: './capture-filter-entr-and-recep.component.html',
   standalone: true,
   imports: [
     SharedModule,
@@ -26,10 +29,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
   ],
   styles: [],
 })
-export class CaptureFilterDictComponent extends BasePage implements OnInit {
-  @Input() isOpinion: boolean = false;
-  @Input() isReceptionStrategies: boolean = false;
-  @Input() isReceptionAndDelivery: boolean = false;
+export class CaptureFilterEntrAndRecepComponent
+  extends BasePage
+  implements OnInit
+{
   @Output() consultEmmit = new EventEmitter<FormGroup>();
   @Output() reportEmmit = new EventEmitter<FormGroup>();
   @Output() exportEmmit = new EventEmitter<FormGroup>();
@@ -83,20 +86,16 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private authorityService: AuthorityService,
     private stationService: StationService,
-    private location: Location,
-    private authService: AuthService,
-    private eventProgrammingService: EventProgrammingService
+    private location: Location
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    /* console.log(this.authUser);
-    if(this.isOpinion){
-      this.initForm();
-    } */
+    this.initForm();
   }
+
   //Desahogo
   private prepareForm() {
     this.form = this.fb.group({
@@ -111,7 +110,7 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
       emisora: [null],
       autoridad: [null],
       tipoVolante: [null],
-      tipoEvento: [null],
+      tipoEvento: [null, Validators.required],
       numeroVolante: [null],
       fechaVolante: [null],
     });
@@ -119,10 +118,6 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
 
   get fechaInicio() {
     return this.form.get('fechaInicio');
-  }
-
-  get authUser() {
-    return this.authService.decodeToken().preferred_username;
   }
 
   validarFechas(control: AbstractControl) {
@@ -183,16 +178,13 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
   }
 
   consult() {
-    console.log(this.alMenosUnaPropiedadTieneValor());
-    if (this.isOpinion) {
-      if (!this.alMenosUnaPropiedadTieneValor()) {
-        this.alert(
-          'warning',
-          'Indicador de Dictaminación',
-          'Debe seleccionar al menos un filtro'
-        );
-        return;
-      }
+    if (this.form.get('tipoEvento').value === null) {
+      this.alert(
+        'warning',
+        'Indicador de Entrega y Recepción',
+        'Debe seleccionar un tipo de evento'
+      );
+      return;
     }
     this.consultEmmit.emit(this.form);
   }
@@ -215,46 +207,27 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
     this.cleanEmmit.emit(this.form);
   }
 
-  alMenosUnaPropiedadTieneValor(): boolean {
-    const formValues = this.form.value;
-    return Object.values(formValues).some(
-      value => value !== null && value !== ''
-    );
-  }
-
   async initForm() {
-    const V_INDICADOR: number = await this.faValUserInd(this.authUser, 1);
-    if (V_INDICADOR === 0) {
-      this.alert(
-        'warning',
-        'El usuario no tiene privilegios para esta pantalla.',
-        ''
-      );
+    /* const V_INDICADOR: number = 2//await this.vIndicador();
+    if(V_INDICADOR === null){
+      this.alert('warning', 'Indicador de Entrega y Recepción', 'No se encontró el nivel de usuario.');
       this.location.back();
-    } else if (V_INDICADOR === 2) {
+    }
+    if(V_INDICADOR === 0){
+      this.alert('warning', 'Indicador de Entrega y Recepción', 'El usuario no tiene privilegios para esta pantalla.');
+      this.location.back();
+    }else if(V_INDICADOR === 2){
       this.form.get('cordinador').setValue(2);
       this.form.get('cordinador').disable();
-    } else if (V_INDICADOR === 3) {
-      this.form.get('usuario').setValue(this.authUser);
+    }else if(V_INDICADOR === 3){
+      this.form.get('usuario').setValue(2);
       this.form.get('cordinador').disable();
-    }
+    } */
   }
 
-  async faValUserInd(user: string, indicator: number): Promise<number> {
-    return new Promise<number>((res, rej) => {
-      const model = {
-        user,
-        indicator,
-      };
-      this.eventProgrammingService.faValUserInd(model).subscribe({
-        next: resp => {
-          console.log(resp);
-          res(resp.data[0]);
-        },
-        error: err => {
-          res(0);
-        },
-      });
+  vIndicador() {
+    return new Promise<number>((resolve, reject) => {
+      resolve(null);
     });
   }
 }
