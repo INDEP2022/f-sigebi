@@ -232,7 +232,7 @@
         </tab>
         <tab
           *ngIf="viewSelectedGoods"
-          heading="Listado de Bienes"
+          heading="{{ listGoodSelectedTitle }}"
           id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
         </tab>

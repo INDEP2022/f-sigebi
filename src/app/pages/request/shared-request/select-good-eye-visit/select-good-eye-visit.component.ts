@@ -1,8 +1,15 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import * as moment from 'moment';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -47,16 +54,16 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   constructor() {
     super();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.typeVisit);
     if (this.typeVisit === 'selectGood') {
       this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
     } else {
       this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
     }
   }
-
-  /*ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.typeVisit);
-  }*/
 
   goodTestData = [
     {
@@ -134,7 +141,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       };
     }
     //id de prueba borrar
-    //this.idRequest = 56817;
+    this.idRequest = 56817;
     //
     this.selectedGoodParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -148,50 +155,57 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   getData(params: ListParams) {
     this.loading = true;
     params['filter.applicationId'] = `$eq:${this.idRequest}`;
-    this.rejectedGoodService.getAll(params).subscribe({
-      next: resp => {
-        setTimeout(() => {
-          const result = resp.data.map(async (item: any) => {
-            if (item.resultFinal != null) {
-              if (item.resultFinal != 'N') {
-                const column = this.tableGoods.grid.getColumns();
-                const maneuverReqColumn = column.find(
-                  x => x.id == 'maneuverRequired'
-                );
-                maneuverReqColumn.hide = true;
+    this.rejectedGoodService
+      .getAll(params)
+      .pipe(
+        catchError(err => {
+          return of({ data: [], count: 0 });
+        })
+      )
+      .subscribe({
+        next: resp => {
+          setTimeout(() => {
+            const result = resp.data.map(async (item: any) => {
+              if (item.resultFinal != null) {
+                if (item.resultFinal != 'N') {
+                  const column = this.tableGoods.grid.getColumns();
+                  const maneuverReqColumn = column.find(
+                    x => x.id == 'maneuverRequired'
+                  );
+                  maneuverReqColumn.hide = true;
+                }
               }
-            }
 
-            item['maneuverRequired'] =
-              item.requiresManeuver == 'Y' ? true : false;
+              item['maneuverRequired'] =
+                item.requiresManeuver == 'Y' ? true : false;
 
-            item.startVisitDate = item.startVisitDate
-              ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
-              : null;
-            item.endVisitDate = item.endVisitDate
-              ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
-              : null;
-            item['unitExtentDescrip'] = await this.getDescripUnit(
-              item.unitExtent
-            );
-            item['delegationDescrip'] = await this.getDelegation(
-              item.delegationRegionalId,
-              item.cveState
-            );
-            item['fractionDescrip'] = await this.getFraction(item.fractionId);
-          });
+              item.startVisitDate = item.startVisitDate
+                ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+                : null;
+              item.endVisitDate = item.endVisitDate
+                ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+                : null;
+              item['unitExtentDescrip'] = await this.getDescripUnit(
+                item.unitExtent
+              );
+              item['delegationDescrip'] = await this.getDelegation(
+                item.delegationRegionalId,
+                item.cveState
+              );
+              item['fractionDescrip'] = await this.getFraction(item.fractionId);
+            });
 
-          Promise.all(result).then(x => {
-            this.selectedGoodColumns.load(resp.data);
-            this.selectedGoodTotalItems = resp.count;
-            this.loading = false;
-            setTimeout(() => {
-              this.centerExpedientButton();
-            }, 200);
-          });
-        }, 600);
-      },
-    });
+            Promise.all(result).then(x => {
+              this.selectedGoodColumns.load(resp.data);
+              this.selectedGoodTotalItems = resp.count;
+              this.loading = false;
+              setTimeout(() => {
+                this.centerExpedientButton();
+              }, 200);
+            });
+          }, 600);
+        },
+      });
   }
 
   viewFile(file: any) {

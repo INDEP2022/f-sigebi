@@ -48,6 +48,9 @@ export class ClassifyAssetsTabComponent
   @Input() domicilieObject: IDomicilies;
   @Input() process: string = '';
   @Input() goodSelect: any;
+  @Input() typeOfTransfer?: string = '';
+  @Output() updateClassifyAssetTableEvent?: EventEmitter<any> =
+    new EventEmitter();
   @Output() classifyChildSaveFraction?: EventEmitter<any> = new EventEmitter();
 
   classiGoodsForm: IFormGroup<IGood>; //bien
@@ -74,6 +77,7 @@ export class ClassifyAssetsTabComponent
   statusTask: any = '';
   childSaveAction: boolean = false;
   canClean: boolean = false;
+  typeTransfer: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -92,7 +96,7 @@ export class ClassifyAssetsTabComponent
 
   ngOnInit(): void {
     this.task = JSON.parse(localStorage.getItem('Task'));
-
+    this.typeTransfer = this.typeOfTransfer;
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
@@ -114,7 +118,8 @@ export class ClassifyAssetsTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (this.process === 'classify-assets') {
+    this.typeTransfer = this.typeOfTransfer;
+    if (this.process === 'classify-assets' && this.typeTransfer != 'MANUAL') {
       this.isClassifyAsset = true;
     }
 
@@ -900,33 +905,34 @@ export class ClassifyAssetsTabComponent
     goods.duplicity = goods.duplicity == null ? 'N' : goods.duplicity;
 
     //se modifica el estadus del bien
-    goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
-    let goodResult: any = null;
+    if (this.process == 'classify-assets') {
+      goods.processStatus = 'CLASIFICAR_BIEN';
+    } else {
+      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    }
 
+    let goodResult: any = null;
     if (goods.goodId === null) {
       goods.requestId = Number(goods.requestId);
       goods.addressId = Number(goods.addressId);
+
       goodResult = await this.createGood(goods);
       this.updateGoodFindRecord(goodResult.result);
       //manda a guardar los campos de los bienes, domicilio, inmueble
-      //if (this.process != 'classify-assets') {
       this.childSaveAction = true;
-      //}
     } else {
       goodResult = await this.updateGood(goods);
       this.updateGoodFindRecord(goodResult.result);
       //manda a actualizar los campos de los bienes, domicilio, inmueble
-      // if (this.process != 'classify-assets') {
       this.childSaveAction = true;
-      //}
     }
-
-    /*if(this.process === 'classify-assets'){
-      this.classifyChildSaveFraction.emit(goodResult)
-    }*/
-    setTimeout(() => {
-      this.refreshTable(true);
-    }, 5000);
+    if (this.process === 'classify-assets') {
+      this.classifyChildSaveFraction.emit(goodResult.result);
+    } else {
+      setTimeout(() => {
+        this.refreshTable(true);
+      }, 5000);
+    }
   }
 
   createGood(good: any) {
@@ -1357,5 +1363,9 @@ export class ClassifyAssetsTabComponent
 
   refreshTable(refresh: boolean) {
     this.requestHelperService.isComponentSaving(refresh);
+  }
+
+  getDetailInfoEvent(event: any) {
+    this.updateClassifyAssetTableEvent.emit(event);
   }
 }

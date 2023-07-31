@@ -83,6 +83,7 @@ export class ClassificationAssetsTabComponent
   columns = REQUEST_OF_ASSETS_COLUMNS;
   isGoodSelected: boolean = false;
   goodForClarifi: IGood[] = [];
+  typeTransfer: string = '';
 
   constructor(
     private goodService: GoodService,
@@ -113,6 +114,7 @@ export class ClassificationAssetsTabComponent
     };*/
     this.initForm();
     this.request = this.requestObject.getRawValue();
+    this.typeTransfer = this.request.typeOfTransfer;
   }
 
   prepareForm() {
@@ -201,7 +203,9 @@ export class ClassificationAssetsTabComponent
       } else if (index != -1 && data.toggle == false) {
         this.goodSelect.splice(index, 1);
       }*/
+    //this.typeDoc = '';
     this.goodSelect = [];
+    //this.goodObject = null;
     this.goodSelect.push(event);
 
     this.formLoading = true;
@@ -210,13 +214,16 @@ export class ClassificationAssetsTabComponent
     this.goodForClarifi = this.goodSelect;
     this.assetsId = this.goodSelect[0] ? this.goodSelect[0].id : null;
     if (this.goodSelect.length === 1) {
-      setTimeout(() => {
+      setTimeout(async () => {
         this.goodSelect[0].quantity = Number(this.goodSelect[0].quantity);
         this.detailArray.patchValue(this.goodSelect[0] as IGood);
-        this.getDomicilieGood(this.goodSelect[0].addressId);
+        this.domicilieObject = await this.getDomicilieGood(
+          this.goodSelect[0].addressId
+        );
         if (this.detailArray.controls['id'].value !== null) {
           this.isGoodSelected = true;
         }
+        //this.typeDoc = 'classify-assets';
         this.formLoading = false;
       }, 1000);
     } else if (this.goodSelect.length > 1) {
@@ -236,15 +243,19 @@ export class ClassificationAssetsTabComponent
   }
 
   getDomicilieGood(id: number) {
-    this.goodDomicilieService.getById(id).subscribe({
-      next: resp => {
-        this.domicilieObject = resp as IDomicilies;
-      },
+    return new Promise((resolve, reject) => {
+      this.goodDomicilieService.getById(id).subscribe({
+        next: resp => {
+          resolve(resp as IDomicilies);
+        },
+      });
     });
   }
 
   updateTableEvent(event: any) {
-    this.paragraphs.getElements().then((data: any) => {
+    this.goodSelect = [];
+    this.getData();
+    /*this.paragraphs.getElements().then((data: any) => {
       data.map(async (item: any) => {
         if (item.id === event.id) {
           item.ligieSection = event.ligiesSection;
@@ -256,13 +267,14 @@ export class ClassificationAssetsTabComponent
           item.fractionId = event.fractionId;
           item.fractionCode = event.fractionCode;
           item.ligieUnit = event.ligieUnit;
+          item.goodTypeId = event.goodTypeId;
           item.goodClassNumber = event.goodClassNumber;
           const goodTypeName = await this.getTypeGood(item.goodTypeId);
           item['goodTypeName'] = goodTypeName;
         }
       });
       this.paragraphs.load(data);
-    });
+    });*/
   }
 
   updateStatusGood(event: any) {

@@ -354,8 +354,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
             this.loadingBtn = false;
             this.alert(
               'error',
-              'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)',
-              ''
+              'Error de Conexión',
+              'No se ha podido Conectar a la Base de Datos (SIRSAE)'
             );
             resolve(null);
             return;
