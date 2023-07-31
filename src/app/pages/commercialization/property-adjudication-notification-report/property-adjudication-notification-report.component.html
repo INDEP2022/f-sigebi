@@ -1,6 +1,27 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Datos del usuario</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-4">
+        <h6>Usuario:</h6>
+        {{ user }}
+      </div>
+      <div class="col-md-4">
+        <h6>Delegación:</h6>
+        {{ userdelegacion }}
+      </div>
+      <div class="col-md-4">
+        <h6>Departamento:</h6>
+        {{ userDepartament }}
+      </div>
+    </div>
+  </div>
+</app-card>
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte De Notificacion De Adjudicacion Inmuebles</h5>
+    <h5 class="title">Reporte De Notificación De Adjudicación Inmuebles</h5>
   </div>
 
   <div body>
@@ -9,10 +30,14 @@
         <div class="col-md-4">
           <form-field [control]="form.get('evento')" label="Evento">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="evento"
-              placeholder="Evento" />
+              min="1"
+              (input)="onInvoiceInputChange($event)" />
+            <!-- <div *ngIf="billId" class="text-danger">
+              Ese ID de factura ya existe.
+            </div> -->
           </form-field>
         </div>
         <div class="col-md-4">
@@ -21,7 +46,8 @@
               type="text"
               class="form-control"
               formControlName="claveOficio"
-              placeholder="Clave Oficio" />
+              placeholder="Clave Oficio"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -30,7 +56,8 @@
               bsDatepicker
               class="form-control"
               formControlName="fechaFallo"
-              placeholder="Fecha Fallo" />
+              placeholder="Fecha Fallo"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -44,7 +71,8 @@
               bsDatepicker
               class="form-control"
               formControlName="FechaLimPago"
-              placeholder="Fecha Limite de Pago" />
+              placeholder="Fecha Limite de Pago"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -53,7 +81,8 @@
               rows="2"
               class="form-control"
               formControlName="texto1"
-              placeholder="texto 1"></textarea>
+              placeholder="texto 1"
+              readonly></textarea>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -62,7 +91,8 @@
               rows="2"
               class="form-control"
               formControlName="texto2"
-              placeholder="texto 2"></textarea>
+              placeholder="texto 2"
+              readonly></textarea>
           </form-field>
         </div>
       </div>
@@ -76,7 +106,8 @@
               rows="2"
               class="form-control"
               formControlName="texto3"
-              placeholder="texto 3"></textarea>
+              placeholder="texto 3"
+              readonly></textarea>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -85,7 +116,8 @@
               rows="2"
               class="form-control"
               formControlName="texto4"
-              placeholder="texto 4"></textarea>
+              placeholder="texto 4"
+              readonly></textarea>
           </form-field>
         </div>
       </div>
@@ -110,7 +142,7 @@
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings4"
-            [source]="dataBatch"></ng2-smart-table>
+            [source]="data"></ng2-smart-table>
         </div>
         <div class="row mt-5 d-flex justify-content-center">
           <app-pagination

@@ -5,9 +5,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
-import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
+import {
+  CONSUL_GOODS_COMMER_SALES_COLUMNS,
+  goodCheck,
+} from './consul-goods-commer-sales-columns';
 
-import { addDays, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { maxDate, minDate } from 'src/app/common/validations/date.validators';
@@ -42,6 +45,8 @@ export class ConsultationGoodsCommercialSalesComponent
   newLimit = new FormControl(10);
 
   dataGoods = new LocalDataSource();
+  goodCheck: any;
+  modelSave: any;
 
   get controls() {
     return this.form.controls;
@@ -289,10 +294,74 @@ export class ConsultationGoodsCommercialSalesComponent
     this.form.reset();
     this.dataGoods.load([]);
     this.totalItems = 0;
+    this.modelSave = null
+  }
+
+  //Exportar select excel
+  exportSelected() {
+    if (goodCheck.length > 0) {
+      console.log('Entra');
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const filename = `Ventas_${today}`;
+      const data = goodCheck.map((row: any) => this.transFormColums(row));
+      this.excelService.export(data, { filename });
+    } else {
+      this.alert('warning', 'No Seleccionó ningún Registro', '');
+    }
+  }
+
+  private transFormColums(row: any) {
+    return {
+      Evento: row.evento_comer_eventos,
+      Lote: row.lote_publico,
+      Expediente: row.no_expediente,
+      'No. Siab': row.no_bien,
+      Cantidad: row.cantidad,
+      'Evento Comer': row.evento_comer_eventos,
+      'Lote Comer': row.lote_publico,
+      Estatus: row.estatus,
+      Mandato: row.cvman,
+      'Precio Bien': row.precio_final_bienes_x_lote,
+      'Precio Lote': row.precio_final_comer_lotes,
+      Serie: '',
+      Cliente: '',
+      OI: row.idordeningreso,
+      Factura: row.no_factura,
+      'Fecha Factura': row.fecha_factura,
+      'Coordinación Captura': row.descripcion_delegacion,
+      'Coordinación Administra': row.descripcion_delegacion,
+      'Referencia Garantía': row.referenciag,
+      'Referencia Liquidación': row.referencial,
+      Ubicación: '',
+    };
+  }
+
+  //Exportar Excel todo
+  exportAll() {
+    this.loading = true;
+    if (this.modelSave != null) {
+      this.goodService.chargeGoodsExcel(this.modelSave).subscribe(
+        res => {
+          this.downloadDocument('TODO_VENTAS', 'excel', res.base64File);
+        },
+        err => {
+          this.loading = false;
+          console.log(err);
+        }
+      );
+    } else {
+      this.loading = false;
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+    }
   }
 
   //Ejecutar Consulta
   executeConsult() {
+    this.loading = true;
     let model: IGoodCharge = {};
 
     this.goodNumber.value != null
@@ -328,16 +397,81 @@ export class ConsultationGoodsCommercialSalesComponent
     this.dateFinal.value != null ? (model.endDate = this.dateFinal.value) : '';
 
     console.log(model);
+    this.modelSave = model;
 
-    this.goodService.chargeGoods(model).subscribe(
-      res => {
-        console.log(res);
-        this.dataGoods.load(res.data);
-        this.totalItems = res.count;
-      },
-      err => {
-        console.log(err);
-      }
+    if (Object.keys(model).length === 0) {
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+      this.loading = false
+    } else {
+      this.goodService.chargeGoods(model).subscribe(
+        res => {
+          console.log(res);
+          this.dataGoods.load(res.data);
+          this.totalItems = res.count;
+          this.loading = false;
+        },
+        err => {
+          this.alert(
+            'error',
+            'Se presentó un error inesperado al obtener los Bienes',
+            ''
+          );
+          this.dataGoods.load([]);
+          this.totalItems = 0;
+          this.modelSave = null;
+          this.loading = false;
+          console.log(err);
+        }
+      );
+    }
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    console.log(this.form.value);
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 }

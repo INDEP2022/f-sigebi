@@ -18,13 +18,6 @@
                 oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
             </form-field>
           </div>
-          <div class="col-1">
-            <button class="btn btn-danger btn-sm" (click)="lock = !lock">
-              <i
-                class="bx bx-sm float-icon"
-                [ngClass]="{ 'bx-lock': lock, 'bx-lock-open': !lock }"></i>
-            </button>
-          </div>
           <div class="col-md-2">
             <form-radio label="M.N">
               <input type="radio" formControlName="check" value="PESOS" />
@@ -38,15 +31,16 @@
           </div>
           <div class="col-md-7">
             <div class="row">
-              <div class="col-1">
+              <div class="col-2">
                 <button
                   type="button"
+                  tooltip="Genera reporte de relación de decomiso."
                   class="btn btn-primary active btn-sm"
                   (click)="callReport()">
-                  <i class="bx bx-printer bx-sm float-icon"></i>
+                  Imprimir<i class="bx bx-printer bx-sm float-icon"></i>
                 </button>
               </div>
-              <div class="col-5">
+              <div class="col-2">
                 <form-field [control]="form.get('import')" label="Importe">
                   <input
                     type="number"
@@ -102,7 +96,22 @@
               formControlName="recordRead" />
           </div>-->
           <div class="col-md-4">
-            <input type="file" (change)="onCsvSelected($event)" />
+            <input
+              id="uploadfile"
+              style="display: none"
+              type="file"
+              (change)="onCsvSelected($event)" />
+            <button
+              _ngcontent-odc-c183=""
+              type="submit"
+              class="btn btn-primary active">
+              Subir Archivo
+              <i
+                _ngcontent-odc-c183=""
+                aria-hidden="true"
+                class="fa fa-upload"
+                (click)="openFile()"></i>
+            </button>
           </div>
           <div class="col-md-2">
             <form-field
@@ -165,7 +174,7 @@
             <div class="col-md-2">
               <form-field [control]="d.get('criminalCase')" label="Causa Penal">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
                   formControlName="criminalCase" />
               </form-field>
@@ -175,11 +184,9 @@
                 [control]="d.get('preliminaryInvestigation')"
                 label="Averiguación Previa">
                 <input
-                  type="number"
+                  type="text"
                   class="form-control"
-                  formControlName="preliminaryInvestigation"
-                  min="1"
-                  pattern="^[0-9]+" />
+                  formControlName="preliminaryInvestigation" />
               </form-field>
             </div>
             <div class="col-md-2">
@@ -213,7 +220,7 @@
             <div class="col-md-2">
               <form-field
                 [control]="d.get('dateTreasury')"
-                label="Fecha Tesoreria">
+                label="Fecha Tesorería">
                 <input
                   type="date"
                   class="form-control"
@@ -233,7 +240,7 @@
             <div class="col-md-2">
               <form-field
                 [control]="d.get('appraisalValue')"
-                label="Valor Avaluo">
+                label="Valor Avalúo">
                 <input
                   type="number"
                   class="form-control"

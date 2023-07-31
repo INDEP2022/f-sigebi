@@ -346,7 +346,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
     this.typeEventXterComerService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        let result = response.data.map((item: any) => {
+        const result = response.data.map((item: any) => {
           item['description'] = item.eventDetail
             ? item.eventDetail.description
             : null;
@@ -538,7 +538,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Error al Eliminar',
-                'El Registro Tiene Montos o Tipos de Eventos Relacionados'
+                'El Registro tiene Montos o tipos de Eventos relacionados'
               );
             } else {
               this.alert(
@@ -568,7 +568,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
           next: response => {
             this.alert(
               'success',
-              'El Tipo De Evento se Eliminó Correctamente',
+              'El tipo de Evento se Eliminó Correctamente',
               ''
             );
             this.rowsSelectedGetTypeEvent(this.thirPartys);
@@ -576,7 +576,7 @@ export class ThirdPartyMarketersComponent extends BasePage implements OnInit {
           error: error => {
             this.alert(
               'error',
-              'Ocurrió un Error al Eliminar el Tipo De Evento',
+              'Ocurrió un Error al Eliminar el tipo de Evento',
               ''
             );
           },
