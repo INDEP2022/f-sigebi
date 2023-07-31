@@ -48,34 +48,6 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
   capturasDig: ICaptureDigFilter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  // get cvCoors() {
-  //   return this.formCapture.get('cvCoors');
-  // }
-  // get cveJobExternal() {
-  //   return this.formCapture.get('cveJobExternal');
-  // }
-  // get user() {
-  //   return this.formCapture.get('user');
-  // }
-  // get fecStart() {
-  //   return this.formCapture.get('fecStart');
-  // }
-  // get fecEnd() {
-  //   return this.formCapture.get('fecEnd');
-  // }
-  // get tipoVolante() {
-  //   return this.formCapture.get('tipoVolante');
-  // }
-  // get noTransfere() {
-  //   return this.formCapture.get('noTransfere');
-  // }
-  // get noStation() {
-  //   return this.formCapture.get('noStation');
-  // }
-  // get noAuthority() {
-  //   return this.formCapture.get('noAuthority');
-  // }
-
   flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
   eventTypes = [
     'Entrega-Comercialización',
@@ -216,15 +188,6 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
       'dd/MM/yyyy'
     );
 
-    // let params = {
-    //   P_T_CUMP: this.formCapture.controls['delegation'].value
-    //   P_T_NO_CUMP:
-    //     P_CUMP:
-    //   P_USR: this.formCapture.controls['delegation'].value
-    // };
-
-    // console.log('params', params);
-
     this.siabService
       // .fetchReport('RGERADBCONCNUMEFE', params)
       .fetchReportBlank('blank')
@@ -263,16 +226,6 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
       });
   }
 
-  // find(find: ICaptureDig) {
-  //   this.documentsService.getDocCapture(find).subscribe({
-  //     next: data => {
-  //       this.capturasDig = data.data;
-  //       this.consultEmmit.emit(this.formCapture);
-  //       console.log(this.capturasDig);
-  //     },
-  //   });
-  // }
-
   find() {
     const params = new ListParams();
 
@@ -288,11 +241,8 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
       station: 'filter.no_emisora',
       authority: 'filter.no_autoridad',
     };
-
-    // Iterar sobre el objeto de mapeo
     for (const controlName in controlParamMap) {
       if (this.formCapture.controls[controlName].value != null) {
-        // Verificar si se necesita convertir la fecha
         const value = controlName.includes('fin')
           ? this.convertDate(this.formCapture.controls[controlName].value)
           : this.formCapture.controls[controlName].value;
