@@ -140,7 +140,7 @@ export class CustomersPenaltiesExportAllComponent
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;

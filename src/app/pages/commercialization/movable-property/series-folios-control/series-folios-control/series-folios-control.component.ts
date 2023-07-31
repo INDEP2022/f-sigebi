@@ -464,7 +464,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este registro?'
     ).then(answ => {
       if (answ.isConfirmed) {
         switch (type) {
@@ -473,7 +473,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
               .deleteFolio(Number(data.folioinvoiceId))
               .subscribe({
                 next: () => {
-                  this.alert('success', 'Folio', 'Eliminado correctamente');
+                  this.alert('success', 'Folio', 'Eliminado Correctamente');
                   this.getInvoiceFolio();
                 },
                 error: err => {
@@ -506,7 +506,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                   this.alert(
                     'success',
                     'Tipo de Evento por Serie',
-                    'Eliminado correctamente'
+                    'Eliminado Correctamente'
                   );
                   this.getEventXSerie();
                 },
@@ -541,7 +541,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
                   this.alert(
                     'success',
                     'Folio Apartado',
-                    'Eliminado correctamente'
+                    'Eliminado Correctamente'
                   );
                   this.getInvoiceFolioSeparate();
                 },

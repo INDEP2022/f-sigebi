@@ -50,7 +50,6 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.capture);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -74,7 +73,6 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -93,7 +91,6 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    console.log('Hola');
     this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
@@ -112,7 +109,6 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
           next: response => {
             this.captureLinesMain = response.data;
             this.data.load(response.data);
-            console.log(this.data);
             this.data.refresh();
             this.totalItems = response.count;
             this.loading = false;
@@ -130,7 +126,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
     if (!this.capture) {
       this.alert(
         'warning',
-        'Selecciona Primero un Evento Para Exportar sus Detalles de Eventos',
+        'Selecciona Primero un Evento Para Exportar sus Detalles',
         ''
       );
     } else {

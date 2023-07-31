@@ -53,7 +53,15 @@
         </div>
         <div class="col-md-6 pt-4">
           <form-field [control]="form.get('closed')" label="Cerrado">
-            <input type="text" class="form-control" formControlName="closed" />
+            <ng-select
+              formControlName="closed"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">SI</ng-option>
+              <ng-option value="N">NO</ng-option>
+            </ng-select>
+            <!--<input type="text" class="form-control" formControlName="closed" />-->
           </form-field>
         </div>
 
@@ -115,7 +123,11 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button (confirm)="confirm()"> </confirm-button>
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

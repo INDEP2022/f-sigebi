@@ -92,6 +92,11 @@ export class MaintenanceIndividualsAndCompaniesComponent
       this.form.controls['federative'].setValue(
         this.dataPerson.state.descCondition
       );
+
+      this.form.controls['curriculumV'].setValue(
+        this.dataPerson.curriculum == 'N' ? false : true
+      );
+
       if (this.form.controls['typePerson'].value === 'M') {
         this.form
           .get('manager')
