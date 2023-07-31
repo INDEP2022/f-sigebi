@@ -27,7 +27,11 @@
           </button>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-sm btn-success active">
+          <button
+            type="button"
+            class="btn btn-sm btn-success active"
+            (click)="dowloadGoods()"
+            [disabled]="!downloadResultsGoods">
             Descargar bienes <i class="bi bi-file-earmark-excel-fill"></i>
           </button>
         </div>
@@ -166,7 +170,8 @@
         <button
           type="button"
           class="btn btn-success active btn-sm"
-          [disabled]="!downloadResults">
+          [disabled]="!downloadResults"
+          (click)="goodsDownloadResults()">
           Descargar Resultados <i class="bi bi-file-earmark-excel-fill"></i>
         </button>
       </div>
@@ -450,6 +455,9 @@
         </div>
       </form>
     </div>
-    <!-- <app-receipt-tables [folio]="folio" [count]="count" [id_programacion]="id_programacion"></app-receipt-tables> -->
+    <app-receipt-tables
+      [folio]="folio"
+      [count]="count"
+      [id_programacion]="id_programacion"></app-receipt-tables>
   </div>
 </app-card>
