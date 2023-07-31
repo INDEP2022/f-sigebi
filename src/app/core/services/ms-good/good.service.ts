@@ -458,4 +458,11 @@ export class GoodService extends HttpService {
   pupValidMasiv(body: any) {
     return this.post<any>('good/pupValidMasiv2', body);
   }
+
+  getRegistrosProgramados(params: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodEndpoints.TmpTotGoodsProgrammed,
+      params
+    );
+  }
 }

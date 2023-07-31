@@ -428,4 +428,8 @@ export class DictationService extends HttpService {
   applicationPufRefCentral(data: Object) {
     return this.post(DictationEndpoints.ApplicationPufRefCentral, data);
   }
+
+  pupReport(data: Object) {
+    return this.post(DictationEndpoints.PupReport, data);
+  }
 }
