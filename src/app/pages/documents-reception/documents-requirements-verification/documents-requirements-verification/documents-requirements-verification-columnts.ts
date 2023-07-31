@@ -1,6 +1,6 @@
 export const DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS = {
   cve: {
-    title: 'CVE Documento',
+    title: 'Cve. Documento',
     sort: false,
   },
   descripcion: {

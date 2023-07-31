@@ -130,7 +130,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
       error: err => {
         this.alert(
           'warning',
-          'No se Puede Eliminar el Porque se Encuentra Registrada en Otra Tabla',
+          'No se Puede Eliminar la Marca Porque se Encuentra Registrada en Otra Tabla',
           ''
         );
       },

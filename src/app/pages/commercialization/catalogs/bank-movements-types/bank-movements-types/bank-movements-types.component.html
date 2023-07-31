@@ -1,6 +1,77 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">TIPOS MOVIMIENTO BANCO</h5>
+  </div>
+  <div body>
+    <form action="" class="form-material" [formGroup]="form">
+      <div class="ch-content">
+        <div class="d-flex justify-content-between align-items-center">
+          <div style="width: 500px" class="d-flex justify-content-between">
+            <div class="col-6">
+              <form-field [control]="form.get('bankSelect')">
+                <ngx-select
+                  [data]="banks"
+                  [form]="form"
+                  bindLabel="name"
+                  style="width: 240px"
+                  label="Seleccione un Banco"
+                  [control]="'bankSelect'"
+                  (change)="onBankSelectChange($event)"
+                  (fetchItems)="searchBanks($event)"
+                  (input)="onSearchName($event.target)"></ngx-select>
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <button
+                type="button"
+                class="btn btn-sm btn-info active mr-4"
+                style="width: 110px; background-color: #9d2449">
+                Consultar <i class="bx bx-search float-icon"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-info active"
+                style="width: 90px; background-color: #b38e5d"
+                (click)="cleandInfoDate()">
+                Limpiar <i class="fa fa-eraser"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-0 mb-5">
+            <button class="btn btn-info btn-sm active" (click)="openForm()">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!--MODELS TABLE-->
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (create)="openForm()"
+            (delete)="showDeleteAlert($event.data)"
+            (userRowSelect)="rowsSelected($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</app-card>
+
+<!-- 
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">TIPOS MOVIMIENTO BANCO</h5>
     <div>
       <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
         Nuevo
@@ -9,9 +80,7 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <!-- <label>Filtrar</label> -->
       <div class="row mb-3 mt-3">
-        <!--Banks Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
           <app-banks-shared [form]="form"></app-banks-shared>
         </div>
@@ -55,7 +124,6 @@
       </div>
     </form>
 
-    <!--BANKS MOVEMENTS TABLE-->
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -73,3 +141,4 @@
     </app-pagination>
   </div>
 </app-card>
+-->
