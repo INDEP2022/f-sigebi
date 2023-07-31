@@ -11,6 +11,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -159,7 +160,8 @@ export class SirsaeMovementSendingMainComponent
     private comerClientsService: ComerClientsService,
     private modalService: BsModalService,
     private comerInvoiceService: ComerInvoiceService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.settings = {
@@ -423,6 +425,7 @@ export class SirsaeMovementSendingMainComponent
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
     this.eventSelected = null;
+    this.getComerEvents(new ListParams());
   }
   edit(event: any) {
     console.log('aaa', event);
@@ -461,24 +464,25 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    const data: any = this.data.getAll().then(resp => {
+    const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
 
-      let result = resp.map(async (item: any) => {
-        item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
-        if (item.sendedSirsae != 'S') {
-          item.sendSirsae = 'N';
-          delete item.rfc;
-          delete item.name;
-          await this.update(item);
-        }
-      });
+      // let result = resp.map(async (item: any) => {
+      //   item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
+      //   if (item.sendedSirsae != 'S') {
+      //     item.sendSirsae = 'N';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update(this.eventSelected.id, 'N');
+      //   }
+      // });
 
-      Promise.all(result).then(resp => {
-        // this.loading = false;
-        this.getComerClientsXEvent('no');
-        // this.data.refresh()
-      });
+      // Promise.all(result).then(resp => {
+      // this.loading = false;
+      await this.update(this.eventSelected.id, 'N');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
     });
   }
   allYes() {
@@ -492,30 +496,46 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    const data: any = this.data.getAll().then(resp => {
+    const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
-      let result = resp.map(async (item: any) => {
-        item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
-        if (item.sendedSirsae != 'S') {
-          item.sendSirsae = 'S';
-          delete item.rfc;
-          delete item.name;
-          await this.update(item);
-        }
-      });
+      // let result = resp.map(async (item: any) => {
+      //   item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
+      //   if (item.sendedSirsae != 'S') {
+      //     item.sendSirsae = 'S';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update(item, 'S');
+      //   }
+      // });
 
-      Promise.all(result).then(async resp => {
-        // this.loading = false;
-        await this.getComerClientsXEvent('no');
-        // this.data.refresh()
-      });
+      // Promise.all(result).then(async resp => {
+      // this.loading = false;
+      await this.update(this.eventSelected.id, 'S');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
     });
   }
 
   // UPDATE CLIENTES X EVENTOS //
-  async update(body: any) {
+  async update(event: any, type: any) {
     return new Promise((resolve, reject) => {
-      this.comerClientsService.updateClientXEvent(body).subscribe({
+      this.comerDetailsService.pFmcomr612ClientxEvent2(event, type).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  // PARA ELIMINAR //
+  async update_(data: any) {
+    return new Promise((resolve, reject) => {
+      this.comerClientsService.updateClientXEvent(data).subscribe({
         next: response => {
           resolve(true);
         },
@@ -560,7 +580,7 @@ export class SirsaeMovementSendingMainComponent
           item.sendSirsae = 'N';
           delete item.rfc;
           delete item.name;
-          await this.update(item);
+          await this.update_(item);
         }
 
         let obj = {

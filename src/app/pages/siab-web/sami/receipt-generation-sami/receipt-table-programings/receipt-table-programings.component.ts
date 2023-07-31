@@ -86,7 +86,7 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       this.dataService.resguardo = this.totalItems;
     }
     if (this.typeReceiptSelected === EReceiptType.Almacen) {
-      this.dataService.resguardo = this.totalItems;
+      this.dataService.almacen = this.totalItems;
     }
   }
 
@@ -101,6 +101,7 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       newColumnFilters['filter.tipo_recibo'] =
         SearchFilter.EQ + ':' + this.typeReceiptSelected;
     }
+    newColumnFilters['filter.estatus_recibo'] = SearchFilter.EQ + ':ABIERTO';
     // if (this.folio) {
     //   newColumnFilters['filter.folio'] = this.folio;
     // }
