@@ -268,7 +268,7 @@ export class ConciliationExecutionMainComponent
     this.selectedEvent = event;
     if (event) {
       this.conciliationForm.get('description').setValue(event.cve_proceso);
-      this.getLotes(new ListParams());
+      this.getLotes(new ListParams(), 'si');
     }
   }
 
@@ -629,7 +629,7 @@ export class ConciliationExecutionMainComponent
     });
   }
 
-  getLotes(lparams: ListParams) {
+  getLotes(lparams: ListParams, filter: any) {
     const params = new FilterParams();
 
     params.page = lparams.page;
@@ -662,7 +662,10 @@ export class ConciliationExecutionMainComponent
         });
       },
       error: err => {
-        this.lotes = new DefaultSelect();
+        if (filter == 'si') {
+          this.alert('warning', 'No hay Lotes Asociados a este Evento', '');
+        }
+        this.lotes = new DefaultSelect([], 0);
       },
     });
   }

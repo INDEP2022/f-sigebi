@@ -148,7 +148,7 @@ export const ACTAS_CONVERSION_SEARCH_COLUMNS = {
     sort: false,
   },
   expedientTransferenceNumber: {
-    title: 'Exp. Transfer',
+    title: 'Exp. Transferente',
     type: 'string',
     sort: false,
   },

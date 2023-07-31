@@ -43,7 +43,7 @@ export const ASSETS_COLUMNS = {
     sort: false,
   },
   measureUnitLigie: {
-    title: 'Unidad de Medida Ligia',
+    title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },

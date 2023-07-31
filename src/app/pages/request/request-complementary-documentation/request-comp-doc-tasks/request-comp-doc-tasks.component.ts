@@ -51,6 +51,7 @@ export class RequestCompDocTasksComponent
   validateGoodForEyeVisit: boolean = false;
   resultEyeVisitReport: boolean = false;
   resultVisits: boolean = false;
+  listGoodSelectedTitle: string = 'Listado de Bienes';
   /**
    * SET STATUS ACTIONS
    **/
