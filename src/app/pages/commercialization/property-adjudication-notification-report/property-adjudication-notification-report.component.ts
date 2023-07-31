@@ -47,6 +47,8 @@ export class PropertyAdjudicationNotificationReportComponent
   columnFilters: any = [];
   inputValue: any;
   neworconsult: boolean = true;
+  descevento: any;
+  description: any;
 
   constructor(
     private fb: FormBuilder,
@@ -258,18 +260,24 @@ export class PropertyAdjudicationNotificationReportComponent
     });
   }
   onInvoiceInputChange(event: Event) {
-    this.inputValue = (event.target as HTMLInputElement).value;
-    let evento = this.form.get('evento').value;
-    this.getComerEvent(evento);
-    this.getBatch(evento);
-    this.getEvent(evento);
-    console.log('evento ', evento);
+    if (this.form.get('evento').value == null || '') {
+      return;
+    } else {
+      this.inputValue = (event.target as HTMLInputElement).value;
+      let evento = this.form.get('evento').value;
+      this.getComerEvent(evento);
+      this.getBatch(evento);
+      this.getEvent(evento);
+      console.log('evento ', evento);
+    }
   }
 
   getEvent(id: string) {
     this.comerEventService.geEventId(id).subscribe({
       next: response => {
         console.log('respuesta Event: ', response);
+        this.descevento = response.processKey;
+        this.description = response.observations;
         let dataform = {
           descevento: response.processKey,
           description: response.observations,
@@ -383,16 +391,22 @@ export class PropertyAdjudicationNotificationReportComponent
     console.log('messsss1: ', mes);
     let nombremes = this.obtenerNombreMes(mes);
     console.log('Mes ', nombremes);
+    this.DateTextut(dia, nombremes);
   }
 
   inputFechaLimite(event: Date) {
-    let inputDateL = event;
-    let fecha = new Date(inputDateL);
-    const dia = fecha.getDate();
-    const mes = fecha.getMonth();
-    console.log('messsss: ', mes);
-    let nombremes = this.obtenerNombreMes(mes);
-    console.log('Mes ', nombremes);
+    if (this.form.get('FechaLimPago').value == null || '') {
+      return;
+    } else {
+      let inputDateL = event;
+      let fecha = new Date(inputDateL);
+      const dia = fecha.getDate();
+      const mes = fecha.getMonth();
+      console.log('messsss: ', mes);
+      let nombremes = this.obtenerNombreMes(mes);
+      console.log('Mes ', nombremes);
+      this.DateTextdc(dia, nombremes);
+    }
   }
 
   obtenerNombreMes(numeroMes: number): string {
@@ -426,7 +440,50 @@ export class PropertyAdjudicationNotificationReportComponent
     }
   }
 
-  DateTextut(dia: string, mes: string) {}
+  DateTextut(dia: number, mes: string) {
+    let text1 =
+      'Por este medio me permito informale que su propuesta económica presentada el pasado ' +
+      dia +
+      ' de ' +
+      mes +
+      ' para participar en la ' +
+      this.descevento +
+      ' ' +
+      this.description +
+      ', relativo a el(la) ';
+
+    let text3 =
+      'resultó ganadora, por lo que deberá realizar los pagos de acuerdo a lo siguiente:';
+
+    let dataform = {
+      texto1: text1,
+      texto3: text3,
+    };
+    this.form.patchValue(dataform);
+  }
+
+  DateTextdc(dia: number, mes: string) {
+    let text2 =
+      'El depósito deberá ser efectuado a más tardar el próximo ' +
+      dia +
+      ' de ' +
+      mes +
+      ', a nombre de Servicio de Administración y Enajenación ' +
+      'de Bienes, SAE, Banco BANAMEX, Sucursal 0266 Cuenta No. 6968940 con la referencia ';
+
+    let text4 =
+      'y remitir vía fax al Tel.:17 19 19 30 confirmando a los teléfonos 17 19 19 26 y 17 19 18 87 ' +
+      'el comrobante de pago, junto con los datos del Notario que elevará a escritura la operación  ' +
+      'de compraventa, éste puede ser de cualquier entidad federativa, pero la firma de las escrituras ' +
+      'es en las oficinas centrales del SAE, en la Ciudad de México.';
+    if (this.form.get('FechaLimPago').value != '') {
+      let dataform = {
+        texto2: text2,
+        texto4: text4,
+      };
+      this.form.patchValue(dataform);
+    }
+  }
 }
 
 export const dataBatchColum = {
