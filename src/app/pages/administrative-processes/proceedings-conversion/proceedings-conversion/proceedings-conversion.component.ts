@@ -222,7 +222,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   loadingSend = false;
   userRes: string;
   trasnfer: any;
-  screenKey = 'FACTDBCONVBIEN';
+  screenKey = 'FCOMERCARTALIB_I';
   dataTableGoodsConvertion: LocalDataSource = new LocalDataSource();
   copyActa: any[] = [];
   dataGoodFilter: IGood[] = [];

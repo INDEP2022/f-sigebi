@@ -15,7 +15,7 @@ import { CAPTURE_LINES_COLUMNS } from '../../capture-lines-main/capture-lines-co
 @Component({
   selector: 'app-export-capture-lines',
   templateUrl: './export-capture-lines.component.html',
-  styles: [], //
+  styles: [],
 })
 export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   title: string = 'Detalle de Captura';
@@ -51,6 +51,9 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'pallette':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -78,7 +81,6 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
 
   //Tabla con todos los eventos para exportar
   getData() {
-    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -98,11 +100,22 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   }
 
   //Exportar lista blanca de clientes
-  exportcaptureLinesMain(): void {
+  exportSelected(): void {
+    const data = this.captureLinesMain.map((row: any) =>
+      this.transFormColums(row)
+    );
     this.excelService.exportAsExcelFile(
-      this.captureLinesMain,
+      data,
       'DetallesDeBusquedaYProcesamientoDePagos'
     );
+  }
+
+  private transFormColums(row: any) {
+    return {
+      Evento: row.eventId,
+      'No. Paleta': row.pallette,
+      'Línea Captura': row.captureLine,
+    };
   }
 
   close() {
