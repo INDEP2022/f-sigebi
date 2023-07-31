@@ -42,6 +42,7 @@
             label="Fecha de Ejecución"
             [control]="form.get('executionDate')">
             <input
+              (ngModelChange)="dateMovementFin($event)"
               [ngClass]="{ 'bg-gray': disabledSend }"
               [readonly]="disabledSend"
               type="text"
@@ -58,7 +59,11 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!form.valid"
+          [disabled]="
+            !form.valid ||
+            form.get('executionDate').value == undefined ||
+            form.get('executionDate').value == null
+          "
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
