@@ -111,7 +111,7 @@ export class MailComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'registryNumber':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'curp':
                 searchFilter = SearchFilter.ILIKE;
