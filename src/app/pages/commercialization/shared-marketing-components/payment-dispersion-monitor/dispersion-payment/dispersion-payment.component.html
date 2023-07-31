@@ -157,6 +157,13 @@
     </form>
   </div>
 </app-card>
+
+<!-- CLIENTES PARTICIPANTES EN EL EVENTO -->
+
+<app-customers
+  [dataIncome]="dataCustomer"
+  [totalIncome]="totalIncome"></app-customers>
+
 <!--Tabs-->
 <app-card>
   <div body>
@@ -196,11 +203,6 @@
     </div>
     <div class="md-tabs mb-3 mt-3">
       <tabset [justified]="true">
-        <tab heading="Clientes Participantes" id="tab1">
-          <app-customers
-            [dataIncome]="dataCustomer"
-            [totalIncome]="totalIncome"></app-customers>
-        </tab>
         <tab heading="Pagos Recibidos/Cliente" id="tab2">
           <app-customers-payments></app-customers-payments>
         </tab>

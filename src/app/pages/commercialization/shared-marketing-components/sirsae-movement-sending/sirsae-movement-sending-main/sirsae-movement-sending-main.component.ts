@@ -344,7 +344,7 @@ export class SirsaeMovementSendingMainComponent
       params['filter.customers.rfc'] = params['filter.rfc'];
       delete params['filter.rfc'];
     }
-
+    params['sortBy'] = 'customerId:DESC';
     this.comerClientsService.getComerClientsXEventgetAllV2(params).subscribe({
       next: response => {
         console.log(response);
@@ -358,6 +358,7 @@ export class SirsaeMovementSendingMainComponent
           this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;
+          this.clickSearch = false;
         });
       },
       error: err => {
@@ -373,6 +374,7 @@ export class SirsaeMovementSendingMainComponent
         this.data.refresh();
         this.totalItems = 0;
         this.loading = false;
+        this.clickSearch = false;
       },
     });
   }
@@ -391,20 +393,23 @@ export class SirsaeMovementSendingMainComponent
     });
   }
 
+  clickSearch: boolean = false;
   search() {
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Debe Seleccionar un Evento para Consultar',
+        'Es Necesario Especificar un Evento para Consultar',
         ''
       );
 
     this.disabledBtnCerrar = true;
     this.acordionOpen = true;
     this.totalItems = 0;
+    this.clickSearch = true;
     // this.amountList = [];
     // this.typeEvents = event.data;
-
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getComerClientsXEvent('si'));
@@ -417,6 +422,7 @@ export class SirsaeMovementSendingMainComponent
     this.totalItems = 0;
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
+    this.eventSelected = null;
   }
   edit(event: any) {
     console.log('aaa', event);
@@ -427,7 +433,7 @@ export class SirsaeMovementSendingMainComponent
   }
   openForm(data: any, editVal: boolean) {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
     const modalConfig = MODAL_CONFIG;
@@ -446,7 +452,7 @@ export class SirsaeMovementSendingMainComponent
 
   allNo() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 
@@ -477,7 +483,7 @@ export class SirsaeMovementSendingMainComponent
   }
   allYes() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 
@@ -523,7 +529,7 @@ export class SirsaeMovementSendingMainComponent
 
   async enviarSIRSAE() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 
@@ -537,8 +543,9 @@ export class SirsaeMovementSendingMainComponent
     const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) {
         this.loading = true;
-        this.loadingBtn = true;
       }
+      this.loadingBtn = true;
+
       let arr: any = [];
       let result = resp.map(async (item: any) => {
         const rfc = item.rfc;
@@ -698,7 +705,7 @@ export class SirsaeMovementSendingMainComponent
 
   obtenerOI() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 

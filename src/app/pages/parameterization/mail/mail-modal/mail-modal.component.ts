@@ -25,7 +25,7 @@ export class MailModalComponent extends BasePage implements OnInit {
   form: ModelForm<ISegUsers>;
   segUsers: ISegUsers;
   delegationNumber: IUserAccessAreas;
-
+  value: string;
   title: string = 'Mantenimiento de Correo';
   edit: boolean = false;
 
@@ -176,6 +176,7 @@ export class MailModalComponent extends BasePage implements OnInit {
       /*this.form.controls['usuario'].setValue(
         this.delegationNumber.delegationNumber
       );*/
+      this.form.controls['id'].disable();
     }
   }
 
@@ -205,7 +206,7 @@ export class MailModalComponent extends BasePage implements OnInit {
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
-          this.alert('warning', 'RFC Duplicado', ``);
+          this.alert('warning', error.error.message, ``);
         },
       });
     }
@@ -216,21 +217,24 @@ export class MailModalComponent extends BasePage implements OnInit {
       this.form.controls['id'].value.trim() == '' ||
       this.form.controls['name'].value.trim() == '' ||
       this.form.controls['userSirsae'].value.trim() == '' ||
-      (this.form.controls['id'].value.trim() == '' &&
-        this.form.controls['name'].value.trim() == '' &&
-        this.form.controls['userSirsae'].value.trim() == '')
+      this.form.controls['id'].value.trim() == '' ||
+      this.form.controls['name'].value.trim() == '' ||
+      this.form.controls['userSirsae'].value.trim() == ''
     ) {
       this.alert('warning', 'No se puede actualizar campos vacíos', ``);
       this.loading = false;
       return;
     } else {
       this.loading = true;
-      console.log(this.form.controls['firstTimeLoginDate'].value);
-      const date = this.form.controls['firstTimeLoginDate'].value;
-      this.form.controls['firstTimeLoginDate'].setValue(new Date(date));
+
       this.usersService.update(this.form.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.alert('error', error.error.message, '');
+          console.log(error);
+
+          this.loading = false;
+        },
       });
     }
   }

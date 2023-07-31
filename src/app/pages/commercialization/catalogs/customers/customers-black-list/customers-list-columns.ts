@@ -1,3 +1,5 @@
+export let customersWhiteList: any[] = [];
+
 export const CUSTOMERS_LIST_COLUMNS = {
   id: {
     title: 'Clave Representante',

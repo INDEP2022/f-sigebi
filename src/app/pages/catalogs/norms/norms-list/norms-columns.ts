@@ -67,7 +67,7 @@ export const NORMS_COLUMNS = {
           { value: 'ADMINISTRACIÓN', title: 'ADMINISTRACIÓN' },
           { value: 'DESTRUCCIÓN', title: 'DESTRUCCIÓN' },
           { value: 'DONACIÓN', title: 'DONACIÓN' },
-          { value: 'VENTA1', title: 'VENTA' },
+          { value: 'VENTA', title: 'VENTA' },
         ],
       },
     },
