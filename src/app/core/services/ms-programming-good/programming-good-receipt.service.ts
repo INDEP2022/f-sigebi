@@ -67,6 +67,9 @@ export class ProgrammingGoodReceiptService extends HttpService {
   postGoodsProgramingReceipts(data: any) {
     return this.post('programminggood/apps/goods-programming-receipts', data);
   }
+  postUpdateInfoAssets(data: any) {
+    return this.post('programminggood/apps/p-act-info-good', data);
+  }
   getProgrammingGoods(data: any, _params?: _Params) {
     const params = this.getParams(_params);
     const route = `${environment.API_URL}catalog/api/v1/apps/getProgrammingGoodsIn`;

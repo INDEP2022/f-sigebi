@@ -8,4 +8,5 @@ export enum ReceptionGoodEndpoint {
   ReceiptTickets = 'reception-good/apps/query-all-tickets',
   QueryGoodsTickets = 'reception-good/apps/query-goods-tickets',
   QueryAllTicketsInt = 'reception-good/apps/query-all-tickets-int',
+  GetRecibos = 'reception-good/apps/get-Recibos',
 }

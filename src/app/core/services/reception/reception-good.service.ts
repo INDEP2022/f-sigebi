@@ -15,6 +15,7 @@ export class ReceptionGoodService extends HttpService {
   private readonly QueryGoodsTickets = ReceptionGoodEndpoint.QueryGoodsTickets;
   private readonly QueryAllTicketsInt =
     ReceptionGoodEndpoint.QueryAllTicketsInt;
+  private readonly GetRecibos = ReceptionGoodEndpoint.GetRecibos;
   constructor() {
     super();
     this.microservice = ReceptionGoodEndpoint.BasePath;
@@ -45,6 +46,9 @@ export class ReceptionGoodService extends HttpService {
 
   createReceiptGoodGuard(formData: Object) {
     return this.post(this.receiptGuardGoods, formData);
+  }
+  getReceiptsGood(formData: Object) {
+    return this.post(this.GetRecibos, formData);
   }
 
   getReceiptGood(params: ListParams) {

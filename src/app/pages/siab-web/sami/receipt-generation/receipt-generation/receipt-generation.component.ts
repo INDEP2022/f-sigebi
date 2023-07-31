@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -43,12 +44,13 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   receiptForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
   goodsList = new DefaultSelect();
-  data1: any[] = [];
+  data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   programmingForm: FormGroup;
   fileProgrammingForm: FormGroup;
   folio: string;
+  id_programacion: string;
   count = 0;
 
   cancellationList = new DefaultSelect();
@@ -71,9 +73,15 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   destinoTransferenteLetra: string;
   cancellationView: boolean = false;
   reprogramingView: boolean = false;
+  cancellationView1: boolean = false;
+  reprogramingView1: boolean = false;
   fileName: string;
   dataExcel: IReceiptExceltem[];
   goodsTable: IReceiptGoodItem;
+  goodsDownload: IReceiptGoodItem[];
+  goodsDownloadExcel: IReceiptExceltem[];
+  downloadResults: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private programmingGoodReceiptService: ProgrammingGoodReceiptService,
@@ -171,11 +179,18 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         CLAVE_UNICA: element.CLAVE_UNICA,
         NO_EXPEDIENTE: element.NO_EXPEDIENTE,
         DESCRIPCION_BIEN_TASFERENTE: element.DESCRIPCION_BIEN_TASFERENTE,
-        DESCRIPCION_BIEN_SAE: element.DESCRIPCION_BIEN_SAE,
+        DESCRIPCION_BIEN_SAE:
+          element.DESCRIPCION_BIEN_SAE != undefined
+            ? element.DESCRIPCION_BIEN_SAE
+            : '',
         CANTIDAD_TRASFERENTE: element.CANTIDAD_TRASFERENTE,
-        CANTIDAD_SAE: element.CANTIDAD_SAE,
+        CANTIDAD_SAE:
+          element.CANTIDAD_SAE != undefined ? element.CANTIDAD_SAE : '',
         UNIDAD_MEDIDA_TRASFERENTE: element.UNIDAD_MEDIDA_TRASFERENTE,
-        UNIDAD_MEDIDA_SAE: element.UNIDAD_MEDIDA_SAE,
+        UNIDAD_MEDIDA_SAE:
+          element.UNIDAD_MEDIDA_SAE != undefined
+            ? element.UNIDAD_MEDIDA_SAE
+            : '',
         ESTADO_FISICO_TRASFERENTE: element.ESTADO_FISICO_TRASFERENTE,
         ESTADO_FISICO_SAE: element.ESTADO_FISICO_SAE,
         ESTADO_CONSERVACION_TRASFERENTE:
@@ -185,7 +200,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         DESTINO_TRASFERENTE: element.DESTINO_TRASFERENTE,
         DESTINO_SAE: element.DESTINO_SAE,
         ID_PROGRAMACION: element.ID_PROGRAMACION,
-        OBSERVACIONES: element.OBSERVACIONES,
+        OBSERVACIONES:
+          element.OBSERVACIONES != undefined ? element.OBSERVACIONES : '',
       });
     });
     console.log(this.dataExcel);
@@ -199,9 +215,15 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       let data = {
         programmingId: this.programmingForm.controls['programmingId'].value,
       };
+      this.folio = this.programmingForm.controls['programmingId'].value.trim();
       this.programmingGoodReceiptService.getProgrammingGoods(data).subscribe({
         next: resp => {
           console.log(resp);
+          if (resp) {
+            this.id_programacion = resp.data[0].id_programacion;
+          } else {
+            this.id_programacion = null;
+          }
           this.goodsList = new DefaultSelect(resp.data, resp.count);
           this.count = resp.count ?? 0;
           this.programmingForm.controls['managementId'].enable();
@@ -342,8 +364,58 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           'Continuar'
         ).then(q => {
           if (q.isConfirmed) {
-            console.log('data');
-            this.acceptMassive();
+            this.acceptMassive()
+              .then(result => {
+                console.log(result);
+                console.log(this.goodsDownload);
+                this.loader.load = false;
+                this.goodsDownloadExcel = [];
+                console.log(this.goodsDownload.length);
+                for (let i = 0; i < this.goodsDownload.length; i++) {
+                  this.goodsDownloadExcel.push({
+                    ID: Number(this.goodsDownload[i].id_recorrido),
+                    ID_BIEN: Number(this.goodsDownload[i].id_bien),
+                    CLAVE_UNICA: this.goodsDownload[i].clave_unica,
+                    NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
+                    DESCRIPCION_BIEN_TASFERENTE:
+                      this.goodsDownload[i].descripcion_bien,
+                    DESCRIPCION_BIEN_SAE:
+                      this.goodsDownload[i].descripcion_bien_sae,
+                    CANTIDAD_TRASFERENTE:
+                      this.goodsDownload[i].cantidad.toString(),
+                    CANTIDAD_SAE: this.goodsDownload[i].cantidad_sae.toString(),
+                    UNIDAD_MEDIDA_TRASFERENTE:
+                      this.goodsDownload[i].unidad_medida,
+                    UNIDAD_MEDIDA_SAE: this.goodsDownload[i].unidad_medida_sae,
+                    ESTADO_FISICO_TRASFERENTE:
+                      this.goodsDownload[i].estado_fisico.toString(),
+                    ESTADO_FISICO_SAE:
+                      this.goodsDownload[i].estado_conservacion_sae.toString(),
+                    ESTADO_CONSERVACION_TRASFERENTE:
+                      this.goodsDownload[i].estado_conservacion.toString(),
+                    ESTADO_CONSERVACION_SAE:
+                      this.goodsDownload[i].estado_conservacion_sae.toString(),
+                    DESTINO: this.goodsDownload[i].destino.toString(),
+                    DESTINO_TRASFERENTE:
+                      this.goodsDownload[i].destino_transferente.toString(),
+                    DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
+                    ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
+                    OBSERVACIONES: this.goodsDownload[i].observaciones,
+                  });
+                }
+                setTimeout(() => {
+                  this.downloadResults = true;
+                  this.data1.load(this.goodsDownloadExcel);
+                  this.data1.refresh();
+                  this.totalItems = this.goodsDownloadExcel.length;
+                  this.alert(
+                    'success',
+                    `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                    ''
+                  );
+                }, 1000);
+              })
+              .catch(error => {});
           }
         });
       } else if (
@@ -369,7 +441,53 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               'Continuar'
             ).then(q => {
               if (q.isConfirmed) {
-                this.acceptMassive();
+                this.acceptMassive()
+                  .then(result => {
+                    console.log(result);
+                    this.goodsDownloadExcel = [];
+                    console.log(this.goodsDownload);
+                    this.goodsDownload.forEach(element => {
+                      this.goodsDownloadExcel.push({
+                        ID: Number(element.id_recorrido),
+                        ID_BIEN: Number(element.id_bien),
+                        CLAVE_UNICA: element.clave_unica,
+                        NO_EXPEDIENTE: element.no_expediente,
+                        DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
+                        DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
+                        CANTIDAD_TRASFERENTE: element.cantidad.toString(),
+                        CANTIDAD_SAE: element.cantidad_sae.toString(),
+                        UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
+                        UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                        ESTADO_FISICO_TRASFERENTE:
+                          element.estado_fisico.toString(),
+                        ESTADO_FISICO_SAE:
+                          element.estado_conservacion_sae.toString(),
+                        ESTADO_CONSERVACION_TRASFERENTE:
+                          element.estado_conservacion.toString(),
+                        ESTADO_CONSERVACION_SAE:
+                          element.estado_conservacion_sae.toString(),
+                        DESTINO: element.destino.toString(),
+                        DESTINO_TRASFERENTE:
+                          element.destino_transferente.toString(),
+                        DESTINO_SAE: element.destino_sae.toString(),
+                        ID_PROGRAMACION: element.id_programacion,
+                        OBSERVACIONES: element.observaciones,
+                      });
+                    });
+                    setTimeout(() => {
+                      this.loader.load = false;
+                      this.downloadResults = true;
+                      this.data1.load(this.goodsDownloadExcel);
+                      this.data1.refresh();
+                      this.totalItems = this.goodsDownloadExcel.length;
+                      this.alert(
+                        'success',
+                        `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                        ''
+                      );
+                    }, 1000);
+                  })
+                  .catch(error => {});
               }
             });
           })
@@ -396,9 +514,53 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               '¿Desea continuar?',
               'Continuar'
             ).then(q => {
-              if (q.isConfirmed) {
-                this.acceptMassive();
-              }
+              this.acceptMassive()
+                .then(result => {
+                  console.log(result);
+                  console.log(this.goodsDownload);
+                  this.goodsDownloadExcel = [];
+                  this.goodsDownload.forEach(element => {
+                    this.goodsDownloadExcel.push({
+                      ID: Number(element.id_recorrido),
+                      ID_BIEN: Number(element.id_bien),
+                      CLAVE_UNICA: element.clave_unica,
+                      NO_EXPEDIENTE: element.no_expediente,
+                      DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
+                      DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
+                      CANTIDAD_TRASFERENTE: element.cantidad.toString(),
+                      CANTIDAD_SAE: element.cantidad_sae.toString(),
+                      UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
+                      UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                      ESTADO_FISICO_TRASFERENTE:
+                        element.estado_fisico.toString(),
+                      ESTADO_FISICO_SAE:
+                        element.estado_conservacion_sae.toString(),
+                      ESTADO_CONSERVACION_TRASFERENTE:
+                        element.estado_conservacion.toString(),
+                      ESTADO_CONSERVACION_SAE:
+                        element.estado_conservacion_sae.toString(),
+                      DESTINO: element.destino.toString(),
+                      DESTINO_TRASFERENTE:
+                        element.destino_transferente.toString(),
+                      DESTINO_SAE: element.destino_sae.toString(),
+                      ID_PROGRAMACION: element.id_programacion,
+                      OBSERVACIONES: element.observaciones,
+                    });
+                  });
+                  setTimeout(() => {
+                    this.loader.load = false;
+                    this.downloadResults = true;
+                    this.data1.load(this.goodsDownloadExcel);
+                    this.data1.refresh();
+                    this.totalItems = this.goodsDownloadExcel.length;
+                    this.alert(
+                      'success',
+                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                      ''
+                    );
+                  }, 1000);
+                })
+                .catch(error => {});
             });
           })
           .catch(error => {});
@@ -425,7 +587,53 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               'Continuar'
             ).then(q => {
               if (q.isConfirmed) {
-                this.acceptMassive();
+                this.acceptMassive()
+                  .then(result => {
+                    console.log(result);
+                    console.log(this.goodsDownload);
+                    this.goodsDownloadExcel = [];
+                    this.goodsDownload.forEach(element => {
+                      this.goodsDownloadExcel.push({
+                        ID: Number(element.id_recorrido),
+                        ID_BIEN: Number(element.id_bien),
+                        CLAVE_UNICA: element.clave_unica,
+                        NO_EXPEDIENTE: element.no_expediente,
+                        DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
+                        DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
+                        CANTIDAD_TRASFERENTE: element.cantidad.toString(),
+                        CANTIDAD_SAE: element.cantidad_sae.toString(),
+                        UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
+                        UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                        ESTADO_FISICO_TRASFERENTE:
+                          element.estado_fisico.toString(),
+                        ESTADO_FISICO_SAE:
+                          element.estado_conservacion_sae.toString(),
+                        ESTADO_CONSERVACION_TRASFERENTE:
+                          element.estado_conservacion.toString(),
+                        ESTADO_CONSERVACION_SAE:
+                          element.estado_conservacion_sae.toString(),
+                        DESTINO: element.destino.toString(),
+                        DESTINO_TRASFERENTE:
+                          element.destino_transferente.toString(),
+                        DESTINO_SAE: element.destino_sae.toString(),
+                        ID_PROGRAMACION: element.id_programacion,
+                        OBSERVACIONES: element.observaciones,
+                      });
+                    });
+                    setTimeout(() => {
+                      this.loader.load = false;
+                      this.downloadResults = true;
+                      this.data1.load(this.goodsDownloadExcel);
+                      this.data1.refresh();
+                      this.totalItems = this.goodsDownloadExcel.length;
+                      this.alert(
+                        'success',
+                        `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                        ''
+                      );
+                    }, 1000);
+                  })
+                  .catch(error => {});
               }
             });
           })
@@ -442,7 +650,53 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
-              this.acceptMassive();
+              this.acceptMassive()
+                .then(result => {
+                  console.log(result);
+                  console.log(this.goodsDownload);
+                  this.goodsDownloadExcel = [];
+                  this.goodsDownload.forEach(element => {
+                    this.goodsDownloadExcel.push({
+                      ID: Number(element.id_recorrido),
+                      ID_BIEN: Number(element.id_bien),
+                      CLAVE_UNICA: element.clave_unica,
+                      NO_EXPEDIENTE: element.no_expediente,
+                      DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
+                      DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
+                      CANTIDAD_TRASFERENTE: element.cantidad.toString(),
+                      CANTIDAD_SAE: element.cantidad_sae.toString(),
+                      UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
+                      UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                      ESTADO_FISICO_TRASFERENTE:
+                        element.estado_fisico.toString(),
+                      ESTADO_FISICO_SAE:
+                        element.estado_conservacion_sae.toString(),
+                      ESTADO_CONSERVACION_TRASFERENTE:
+                        element.estado_conservacion.toString(),
+                      ESTADO_CONSERVACION_SAE:
+                        element.estado_conservacion_sae.toString(),
+                      DESTINO: element.destino.toString(),
+                      DESTINO_TRASFERENTE:
+                        element.destino_transferente.toString(),
+                      DESTINO_SAE: element.destino_sae.toString(),
+                      ID_PROGRAMACION: element.id_programacion,
+                      OBSERVACIONES: element.observaciones,
+                    });
+                  });
+                  setTimeout(() => {
+                    this.loader.load = false;
+                    this.downloadResults = true;
+                    this.data1.load(this.goodsDownloadExcel);
+                    this.data1.refresh();
+                    this.totalItems = this.goodsDownloadExcel.length;
+                    this.alert(
+                      'success',
+                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                      ''
+                    );
+                  }, 1000);
+                })
+                .catch(error => {});
             }
           });
         } else {
@@ -463,7 +717,53 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
-              this.acceptMassive();
+              this.acceptMassive()
+                .then(result => {
+                  console.log(result);
+                  console.log(this.goodsDownload);
+                  this.goodsDownloadExcel = [];
+                  this.goodsDownload.forEach(element => {
+                    this.goodsDownloadExcel.push({
+                      ID: Number(element.id_recorrido),
+                      ID_BIEN: Number(element.id_bien),
+                      CLAVE_UNICA: element.clave_unica,
+                      NO_EXPEDIENTE: element.no_expediente,
+                      DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
+                      DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae,
+                      CANTIDAD_TRASFERENTE: element.cantidad.toString(),
+                      CANTIDAD_SAE: element.cantidad_sae.toString(),
+                      UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida,
+                      UNIDAD_MEDIDA_SAE: element.unidad_medida_sae,
+                      ESTADO_FISICO_TRASFERENTE:
+                        element.estado_fisico.toString(),
+                      ESTADO_FISICO_SAE:
+                        element.estado_conservacion_sae.toString(),
+                      ESTADO_CONSERVACION_TRASFERENTE:
+                        element.estado_conservacion.toString(),
+                      ESTADO_CONSERVACION_SAE:
+                        element.estado_conservacion_sae.toString(),
+                      DESTINO: element.destino.toString(),
+                      DESTINO_TRASFERENTE:
+                        element.destino_transferente.toString(),
+                      DESTINO_SAE: element.destino_sae.toString(),
+                      ID_PROGRAMACION: element.id_programacion,
+                      OBSERVACIONES: element.observaciones,
+                    });
+                  });
+                  setTimeout(() => {
+                    this.loader.load = false;
+                    this.downloadResults = true;
+                    this.data1.load(this.goodsDownloadExcel);
+                    this.data1.refresh();
+                    this.totalItems = this.goodsDownloadExcel.length;
+                    this.alert(
+                      'success',
+                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                      ''
+                    );
+                  }, 1000);
+                })
+                .catch(error => {});
             }
           });
         } else {
@@ -481,268 +781,438 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert('warning', 'Seleccione Algun Archivo', '');
     }
   }
-  acceptMassive() {
+  async acceptMassive() {
     if (this.dataExcel.length > 0) {
       console.log(this.dataExcel.length);
       let idProgramacion: number = 0;
       idProgramacion = this.programmingForm.controls['programmingId'].value;
-      this.dataExcel.forEach(element => {
-        this.loader.load = true;
-        this.comeBackGoodExcel(element)
-          .then(result => {
-            this.loader.load = false;
-            this.goodsTable = result;
-            try {
-              if (this.goodsTable.observaciones == null) {
-                if (idProgramacion == this.goodsTable.id_programacion) {
-                  this.performValidationsFor(this.goodsTable)
-                    .then(result => {
-                      this.goodsTable.observaciones = result;
-                      if (this.goodsTable.observaciones != '') {
-                        element.OBSERVACIONES =
-                          'Error: ' + this.goodsTable.observaciones;
-                      } else {
-                        if (
-                          this.receiptGenerationForm.controls['operation']
-                            .value != 'ACTUALIZA'
-                        ) {
-                        } else {
-                        }
-                      }
-                    })
-                    .catch(error => {
-                      console.log(error);
-                    });
-                } else {
-                  element.OBSERVACIONES =
-                    element.OBSERVACIONES + 'Programacion diferente';
-                }
-              } else {
-                element.OBSERVACIONES =
-                  element.OBSERVACIONES +
-                  ' ' +
-                  this.goodsTable.observaciones.substring(
-                    1,
-                    this.goodsTable.observaciones.length - 1
-                  );
-              }
-            } catch (error) {
-              element.OBSERVACIONES = element.OBSERVACIONES + '' + error;
-            }
+      this.goodsDownload = [];
+      this.loader.load = true;
+      for (let i = 0; i < this.dataExcel.length; i++) {
+        // }
+        // this.dataExcel.forEach(async (element, index) => {
 
+        let receipGood: any = [];
+        let goods: any = await this.comeBackGoodExcel(this.dataExcel[i]);
+        this.goodsTable = goods;
+
+        console.log(
+          idProgramacion +
+            '<<<<<<<<<<<>>>>>>>>' +
+            this.goodsTable.id_programacion
+        );
+        try {
+          if (this.goodsTable.observaciones == null) {
             console.log(this.goodsTable);
-          })
-          .catch(error => {
-            console.log(error);
-            this.loader.load = false;
-          });
-      });
+            if (idProgramacion == this.goodsTable.id_programacion) {
+              console.log(this.goodsTable);
+              let desc: any = '';
+              console.log(this.performValidationsFor(this.goodsTable));
+              desc = await this.performValidationsFor(this.goodsTable);
+              console.log(desc);
+              this.goodsTable.observaciones = desc;
+              if (this.goodsTable.observaciones != '') {
+                this.goodsTable.observaciones =
+                  'Error: ' + this.goodsTable.observaciones;
+              } else {
+                if (
+                  this.receiptGenerationForm.controls['operation'].value !=
+                  'ACTUALIZA'
+                ) {
+                  receipGood = await this.checkReceiptGood(
+                    this.goodsTable.id_bien,
+                    idProgramacion
+                  );
+                  console.log(receipGood.length);
+                  if (receipGood.length == 0) {
+                    let result: any = await this.performOperation(
+                      this.goodsTable,
+                      0
+                    );
+                    if (result.statusCode == '200') {
+                      console.log(
+                        '<<<<<<<<<<<res performOperation>>>>>>>>>>>' + result
+                      );
+                      receipGood = await this.checkReceiptGood(
+                        this.goodsTable.id_bien,
+                        idProgramacion
+                      );
+                      this.goodsTable.observaciones =
+                        'ACTUALIZADO CORRECTAMENTE' +
+                        ' ' +
+                        receipGood.typeReceipt +
+                        receipGood.idReceipt +
+                        'Y ID ACTA' +
+                        receipGood.idMinutes;
+                    } else {
+                      this.goodsTable.observaciones = 'ERROR AL ACTUALIZAR';
+                    }
+                  } else {
+                    this.goodsTable.observaciones =
+                      'ACTUALIZADO ANTERIORMENTE AL ' +
+                      ' ' +
+                      receipGood.typeReceipt +
+                      receipGood.idReceipt +
+                      'Y ID ACTA' +
+                      receipGood.idMinutes;
+                  }
+                } else {
+                  let result: any = await this.updateInfoAssets(
+                    this.goodsTable
+                  );
+                  console.log(result);
+                  if (result.statusCode == '200') {
+                    console.log(
+                      '<<<<<<<<<<<res updateInfoAssets>>>>>>>>>>>' + result
+                    );
+                    this.goodsTable.observaciones = 'ACTUALIZADO CORRECTAMENTE';
+                  } else {
+                    this.goodsTable.observaciones = 'ERROR AL ACTUALIZAR';
+                  }
+                }
+              }
+            } else {
+              this.goodsTable.observaciones =
+                (this.goodsTable.observaciones != null
+                  ? this.goodsTable.observaciones
+                  : '') + 'Programación diferente';
+            }
+          } else {
+            this.goodsTable.observaciones =
+              this.goodsTable.observaciones +
+              ' ' +
+              this.goodsTable.observaciones.substring(
+                1,
+                this.goodsTable.observaciones.length - 1
+              );
+          }
+        } catch (error) {
+          this.goodsTable.observaciones =
+            this.goodsTable.observaciones + '' + error;
+        }
+
+        console.log(this.goodsTable);
+        await this.goodsDownload.push(this.goodsTable);
+        // if (i === this.dataExcel.length - 1) {
+        //   console.log("Es el último elemento:", this.dataExcel[i]);
+        //   console.log(this.goodsDownload);
+        //   return this.goodsDownload;
+        // }
+      }
+      return this.goodsDownload;
     } else {
       this.alert('warning', 'El Archivo no tiene Bienes', '');
     }
+    return await this.goodsDownload;
+  }
+  async checkReceiptGood(good: string, idProgramacion: number) {
+    return new Promise((res, rej) => {
+      let data = {
+        idBien: good,
+        idProgramacion: idProgramacion,
+      };
+      this.receptionGoodService.getReceiptsGood(data).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp.data);
+        },
+        error: eror => {
+          console.log(eror);
+          res([]);
+        },
+      });
+    });
   }
   async comeBackGoodExcel(data: IReceiptExceltem) {
-    let good: IReceiptGoodItem = {};
-    good.id_recorrido = data.ID.toString();
-    good.id_bien = data.ID_BIEN.toString();
-    good.clave_unica = data.CLAVE_UNICA;
-    good.no_expediente = data.NO_EXPEDIENTE;
-    good.descripcion_bien = data.DESCRIPCION_BIEN_TASFERENTE;
-    good.descripcion_bien_sae = data.DESCRIPCION_BIEN_SAE;
-    if (data.CANTIDAD_TRASFERENTE) {
-      try {
-        good.cantidad = Number(data.CANTIDAD_TRASFERENTE);
-      } catch (error) {
-        good.cantidad = 0;
-      }
-    }
-    if (data.CANTIDAD_SAE) {
-      try {
-        good.cantidad_sae = Number(data.CANTIDAD_SAE);
-      } catch (error) {
-        good.cantidad_sae = 0;
-        good.observaciones =
-          good.observaciones + ',No se puede convertir la cantidad INDEP';
-      }
-    } else {
-      good.cantidad_sae = 0;
-    }
-    if (data.UNIDAD_MEDIDA_TRASFERENTE) {
-      this.unitMeasures(data.UNIDAD_MEDIDA_TRASFERENTE)
-        .then(result => {
-          good.unidad_medida = result;
-        })
-        .catch(error => {});
-
-      // unidad =
-    } else {
-      good.unidad_medida = '';
-    }
-    if (data.UNIDAD_MEDIDA_SAE) {
-      this.unitMeasures(data.UNIDAD_MEDIDA_SAE)
-        .then(result => {
-          if (result == '0') {
-            good.unidad_medida_sae = '';
-            good.observaciones =
-              good.observaciones + ', Se Necesita una unidad de Medida SAE';
-          } else {
-            good.unidad_medida_sae = result;
-          }
-        })
-        .catch(error => {});
-    } else {
-      good.unidad_medida_sae = '';
-    }
-    if (data.ESTADO_FISICO_TRASFERENTE) {
-      this.obtCat('Estado Fisico', data.ESTADO_FISICO_TRASFERENTE)
-        .then(result => {
-          good.estado_fisico = result;
-        })
-        .catch(error => {});
-    }
-    if (data.ESTADO_FISICO_SAE) {
-      this.obtCat('Estado Fisico', data.ESTADO_FISICO_SAE)
-        .then(result => {
-          good.estado_fisico_sae = result;
-        })
-        .catch(error => {});
-    } else {
-      good.estado_fisico_sae = 0;
-    }
-    if (data.ESTADO_CONSERVACION_TRASFERENTE) {
-      this.obtCat('Estado Conservacion', data.ESTADO_CONSERVACION_TRASFERENTE)
-        .then(result => {
-          good.estado_conservacion = result;
-        })
-        .catch(error => {});
-    }
-    if (data.ESTADO_CONSERVACION_SAE) {
-      this.obtCat('Estado Conservacion', data.ESTADO_CONSERVACION_SAE)
-        .then(result => {
-          if (result > 0) {
-            good.estado_conservacion_sae = result;
-          } else {
-            good.observaciones =
-              good.observaciones +
-              ', No se encuentra el estado de conservación SAE';
-            good.estado_conservacion_sae = 0;
-          }
-        })
-        .catch(error => {});
-    } else {
-      good.estado_conservacion_sae = 0;
-    }
-    if (data.DESTINO) {
-      this.obtCat('Destino', data.DESTINO)
-        .then(result => {
-          good.destino = result;
-        })
-        .catch(error => {});
-    }
-    if (data.DESTINO_TRASFERENTE) {
-      this.obtCat('Destino', data.DESTINO_TRASFERENTE)
-        .then(result => {
-          good.destino_transferente = result;
-        })
-        .catch(error => {});
-    }
-    if (data.DESTINO_SAE) {
-      this.obtCat('Destino', data.DESTINO_SAE)
-        .then(result => {
-          if (result > 0) {
-            good.destino_sae = result;
-          } else {
-            good.observaciones =
-              good.observaciones + ', No se encuentra destino SAE';
-            good.destino_sae = 0;
-          }
-        })
-        .catch(error => {});
-    } else {
-      good.destino_sae = 0;
-    }
-    if (data.ID_PROGRAMACION) {
-      good.id_programacion = data.ID_PROGRAMACION;
-    }
-    good.destino_letra = data.DESTINO;
-    good.destino_sae_letra = data.DESTINO_SAE;
-    good.destino_transferente_letra = data.DESTINO_TRASFERENTE;
-    good.estado_conservacion_letra = data.ESTADO_CONSERVACION_TRASFERENTE;
-    good.estado_conservacion_sae_letra = data.ESTADO_CONSERVACION_SAE;
-    good.estado_fisico_letra = data.ESTADO_FISICO_TRASFERENTE;
-    good.estado_fisico_sae_letra = data.ESTADO_FISICO_SAE;
-    good.unidad_medida_letra = data.UNIDAD_MEDIDA_TRASFERENTE;
-    good.unidad_medida_sae_letra = data.UNIDAD_MEDIDA_SAE;
-    return good;
-  }
-  async performValidationsFor(data: IReceiptGoodItem) {
-    let result: string = '';
-    let coma: string = '';
-    if (
-      data.unidad_medida_sae.toUpperCase() != 'KG' ||
-      data.unidad_medida_sae.toUpperCase() != 'LT'
-    ) {
-      let cantidasae: number = 0;
-      cantidasae = parseInt(data.cantidad_sae.toString(), 10);
-      if (isNaN(cantidasae)) {
-        if (result) {
-          coma = ', ';
-        } else {
-          coma = '';
+    return new Promise(async (res, rej) => {
+      let good: IReceiptGoodItem = { observaciones: null };
+      let estado_fisico: any = '';
+      good.id_recorrido = data.ID.toString();
+      good.id_bien = data.ID_BIEN.toString();
+      good.clave_unica = data.CLAVE_UNICA;
+      good.no_expediente = data.NO_EXPEDIENTE;
+      good.descripcion_bien = data.DESCRIPCION_BIEN_TASFERENTE;
+      good.descripcion_bien_sae = data.DESCRIPCION_BIEN_SAE;
+      if (data.CANTIDAD_TRASFERENTE) {
+        try {
+          good.cantidad = Number(data.CANTIDAD_TRASFERENTE);
+        } catch (error) {
+          good.cantidad = 0;
         }
-        result = result + coma + 'La cantidad debe ser enteros';
       }
-      let unitMeasureSaeLetter: string = '';
-      if (data.unidad_medida_letra) {
-        unitMeasureSaeLetter = data.unidad_medida_letra.toUpperCase();
+      if (data.CANTIDAD_SAE) {
+        try {
+          good.cantidad_sae = Number(data.CANTIDAD_SAE);
+        } catch (error) {
+          good.cantidad_sae = 0;
+          good.observaciones =
+            good.observaciones + ',No se puede convertir la cantidad INDEP';
+          console.log(good.observaciones);
+        }
       } else {
-        unitMeasureSaeLetter = data.unidad_medida_sae_letra.toUpperCase();
+        good.cantidad_sae = 0;
       }
-      if (data.unidad_medida_letra.toUpperCase() == unitMeasureSaeLetter) {
-        if (data.cantidad < data.cantidad_sae) {
+      if (data.UNIDAD_MEDIDA_TRASFERENTE) {
+        let unidad: any = '';
+        unidad = await this.unitMeasures(data.UNIDAD_MEDIDA_TRASFERENTE);
+        good.unidad_medida = unidad;
+      } else {
+        good.unidad_medida = '';
+      }
+      if (data.UNIDAD_MEDIDA_SAE) {
+        let unidadSae: any = '';
+        unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_TRASFERENTE);
+        if (unidadSae == '0') {
+          good.unidad_medida_sae = '';
+          good.observaciones =
+            good.observaciones + ', Se Necesita una unidad de Medida SAE';
+          console.log(good.observaciones);
+        } else {
+          good.unidad_medida_sae = unidadSae;
+        }
+      } else {
+        good.unidad_medida_sae = '';
+      }
+      if (data.ESTADO_FISICO_TRASFERENTE) {
+        estado_fisico = await this.obtCat(
+          'Estado Fisico',
+          data.ESTADO_FISICO_TRASFERENTE
+        );
+        if (estado_fisico != '0') {
+          good.estado_fisico = Number(estado_fisico);
+        } else {
+          good.estado_fisico = 0;
+        }
+      }
+      if (data.ESTADO_FISICO_SAE) {
+        let fisicoSae: any = '';
+        fisicoSae = await this.obtCat('Estado Fisico', data.ESTADO_FISICO_SAE);
+        if (fisicoSae != '0') {
+          good.estado_fisico_sae = Number(fisicoSae);
+        } else {
+          good.estado_fisico_sae = 0;
+        }
+      } else {
+        good.estado_fisico_sae = 0;
+      }
+      if (data.ESTADO_CONSERVACION_TRASFERENTE) {
+        let estadoConservacion: any = '';
+        estadoConservacion = await this.obtCat(
+          'Estado Conservacion',
+          data.ESTADO_CONSERVACION_TRASFERENTE
+        );
+        good.estado_conservacion = Number(estadoConservacion);
+      }
+      if (data.ESTADO_CONSERVACION_SAE) {
+        let estadoConservacionSae: any = '';
+        estadoConservacionSae = await this.obtCat(
+          'Estado Conservacion',
+          data.ESTADO_CONSERVACION_SAE
+        );
+        console.log(estadoConservacionSae);
+        if (estadoConservacionSae > 0) {
+          good.estado_conservacion_sae = estadoConservacionSae;
+        } else {
+          good.observaciones =
+            good.observaciones +
+            ', No se encuentra el estado de converción SAE';
+          good.estado_conservacion_sae = 0;
+          console.log(good.observaciones);
+        }
+      } else {
+        good.estado_conservacion_sae = 0;
+      }
+      if (data.DESTINO) {
+        let destino: any = await this.obtCat('Destino', data.DESTINO);
+        good.destino = destino;
+      }
+      if (data.DESTINO_TRASFERENTE) {
+        let destinoTransferente: any = await this.obtCat(
+          'Destino',
+          data.DESTINO_TRASFERENTE
+        );
+        good.destino_transferente = destinoTransferente;
+      }
+      if (data.DESTINO_SAE) {
+        let destinoSae: any = '';
+        destinoSae = await this.obtCat('Destino', data.DESTINO_SAE);
+        console.log(destinoSae);
+
+        if (destinoSae > 0) {
+          good.destino_sae = destinoSae;
+        } else {
+          good.observaciones =
+            good.observaciones + ', No se encuentra destino SAE';
+          good.destino_sae = 0;
+          console.log(good.observaciones);
+        }
+      } else {
+        good.destino_sae = 0;
+      }
+      if (data.ID_PROGRAMACION) {
+        good.id_programacion = data.ID_PROGRAMACION;
+      }
+      good.destino_letra = data.DESTINO;
+      good.destino_sae_letra = data.DESTINO_SAE;
+      good.destino_transferente_letra = data.DESTINO_TRASFERENTE;
+      good.estado_conservacion_letra = data.ESTADO_CONSERVACION_TRASFERENTE;
+      good.estado_conservacion_sae_letra = data.ESTADO_CONSERVACION_SAE;
+      good.estado_fisico_letra = data.ESTADO_FISICO_TRASFERENTE;
+      good.estado_fisico_sae_letra = data.ESTADO_FISICO_SAE;
+      good.unidad_medida_letra = data.UNIDAD_MEDIDA_TRASFERENTE;
+      good.unidad_medida_sae_letra = data.UNIDAD_MEDIDA_SAE;
+      console.log(good);
+      res(good);
+    });
+  }
+  async performValidationsFor(data: IReceiptGoodItem): Promise<string> {
+    return new Promise((res, rej) => {
+      let result: string = '';
+      let coma: string = '';
+      if (
+        data.unidad_medida_sae.toUpperCase() != 'KG' ||
+        data.unidad_medida_sae.toUpperCase() != 'LT'
+      ) {
+        let cantidasae: number = 0;
+        cantidasae = parseInt(data.cantidad_sae.toString(), 10);
+        if (isNaN(cantidasae)) {
           if (result) {
             coma = ', ';
           } else {
             coma = '';
           }
-          result =
-            result +
-            coma +
-            'La cantidad debe ser menor o igual que a la trasferente';
+          result = result + coma + 'La cantidad debe ser enteros';
+          console.log(result);
+          res(result);
+        }
+        let unitMeasureSaeLetter: string = '';
+        if (data.unidad_medida_letra) {
+          unitMeasureSaeLetter = data.unidad_medida_letra.toUpperCase();
+        } else {
+          unitMeasureSaeLetter = data.unidad_medida_sae_letra.toUpperCase();
+        }
+        if (data.unidad_medida_letra.toUpperCase() == unitMeasureSaeLetter) {
+          if (data.cantidad < data.cantidad_sae) {
+            if (result) {
+              coma = ', ';
+            } else {
+              coma = '';
+            }
+            result =
+              result +
+              coma +
+              'La cantidad debe ser menor o igual que a la trasferente';
+            console.log(result);
+
+            res(result);
+          }
         }
       }
-    }
-    return result;
+      res('');
+    });
+  }
+  async performOperation(good: IReceiptGoodItem, reasonCanRep: number) {
+    return new Promise((res, rej) => {
+      let data = {
+        P_TIPO_OPERACION:
+          this.receiptGenerationForm.controls['operation'].value,
+        P_MOTIVOCAN: reasonCanRep,
+        P_CANTIDAD_SAE: good.cantidad_sae,
+        P_DESTINO_SAE: good.destino_sae,
+        P_ESTADO_CONSERVACION_SAE: good.estado_conservacion_sae,
+        P_ESTADO_FISICO_SAE: good.estado_fisico_sae,
+        P_UNIDAD_MEDIDA_SAE: good.unidad_medida_sae,
+        P_DESCRIPCION_BIEN_SAE:
+          good.descripcion_bien_sae != undefined
+            ? good.descripcion_bien_sae
+            : ' ',
+        P_ID_BIEN: good.id_bien,
+        P_ID_PROGRAMACION: good.id_programacion,
+        P_USUARIO_CREACION: localStorage.getItem('username'),
+      };
+      console.log(data);
+      this.programmingGoodReceiptService
+        .postGoodsProgramingReceipts(data)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            // this.alert('success', `Bien Agregado a ${operation}`, '');
+            resp(resp.data);
+          },
+          error: eror => {
+            this.loader.load = false;
+            res(eror);
+
+            // this.alert(
+            //   'warning',
+            //   'Generación de Recibos',
+            //   'No se pudo Agregar el Bien al Recibo'
+            // );
+          },
+        });
+    });
+  }
+  async updateInfoAssets(good: IReceiptGoodItem) {
+    return new Promise((res, rej) => {
+      let data = {
+        pAmountSae: good.cantidad_sae,
+        pDestinationSae: good.destino_sae,
+        pStateConservationSae: good.estado_conservacion_sae,
+        pStatePhysicalSae: good.estado_fisico_sae,
+        pInitExtentSae: good.unidad_medida_sae,
+        pDescriptionGoodSae: good.descripcion_bien_sae,
+        pIdGood: good.id_bien,
+      };
+      console.log(data);
+      this.programmingGoodReceiptService.postUpdateInfoAssets(data).subscribe({
+        next: resp => {
+          console.log(resp);
+          res(resp);
+          // this.alert('success', `Bien Agregado a ${operation}`, '');
+        },
+        error: eror => {
+          this.loader.load = false;
+          res(eror);
+          // this.alert(
+          //   'warning',
+          //   'Generación de Recibos',
+          //   'No se pudo Agregar el Bien al Recibo'
+          // );
+        },
+      });
+    });
   }
   async unitMeasures(type: string) {
-    const params = new ListParams();
-    params['filter.unit_of_measure_tl'] = `$eq:${type}`;
-    let unit: string = '';
-    this.applicationGoodsQueryService.getAllUnitsQ(params).subscribe({
-      next: resp => {
-        unit = resp.data[0].uom_code;
-      },
-      error: eror => {
-        unit = '0';
-        console.log(eror);
-      },
+    return new Promise((res, rej) => {
+      const params = new ListParams();
+      params['filter.unit_of_measure_tl'] = `$eq:${type}`;
+      this.applicationGoodsQueryService.getAllUnitsQ(params).subscribe({
+        next: resp => {
+          res(resp.data[0].uom_code);
+        },
+        error: eror => {
+          res('0');
+          console.log(eror);
+        },
+      });
     });
-    return unit;
   }
   async obtCat(name: string, description: string) {
-    const params = new ListParams();
-    params['filter.name'] = name;
-    params['filter.description'] = description;
-    let keyId: number = 0;
-    this.genericService.getAll(params).subscribe({
-      next: resp => {
-        keyId = resp.data[0].keyId;
-      },
-      error: eror => {
-        keyId = 0;
-      },
+    return new Promise((res, rej) => {
+      const params = new ListParams();
+      params['filter.name'] = name;
+      params['filter.description'] = description;
+      this.genericService.getAll(params).subscribe({
+        next: resp => {
+          res(resp.data[0].keyId);
+        },
+        error: eror => {
+          res(0);
+        },
+      });
     });
-    return keyId;
+
+    // return keyId;
   }
 
   async receiptOpen(operationType: string, params: ListParams) {
@@ -787,5 +1257,202 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.cancellationView = true;
       this.reprogramingView = false;
     }
+  }
+  assignReceiptOne(sender: number) {
+    if (
+      this.indepForm.controls['unidad_medida_sae'].value != 'KG' ||
+      this.indepForm.controls['unidad_medida_sae'].value != 'LT'
+    ) {
+      let cantidasae: number = 0;
+      cantidasae = parseInt(this.indepForm.controls['cantidad_sae'].value, 10);
+      if (isNaN(cantidasae)) {
+        this.alert(
+          'warning',
+          'Generación de Recibos',
+          'La Cantidad debe ser Enteros'
+        );
+        return;
+      }
+    }
+    this.cancellationView1 = false;
+    this.reprogramingView1 = false;
+    if (sender == 0) {
+      this.alertQuestion(
+        'question',
+        '¿Desea registrar los bienes con tipo RECIBO?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperationSec('UNO', 'RECIBO', 0);
+        }
+      });
+    } else if (sender == 1) {
+      this.alertQuestion(
+        'question',
+        '¿Desea registrar los bienes con tipo RESGUARDO?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperationSec('UNO', 'RESGUARDO', 0);
+        }
+      });
+    } else if (sender == 2) {
+      this.alertQuestion(
+        'question',
+        '¿Desea registrar los bienes con tipo ALMACÉN?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          this.performOperationSec('UNO', 'ALMACEN', 0);
+        }
+      });
+    }
+  }
+  performOperationSec(type: string, operation: string, reasonCanRep: number) {
+    let data = {
+      P_TIPO_OPERACION: operation,
+      P_MOTIVOCAN: reasonCanRep,
+      P_CANTIDAD_SAE: this.indepForm.controls['cantidad_sae'].value,
+      P_DESTINO_SAE: this.indepForm.controls['destino_sae'].value,
+      P_ESTADO_CONSERVACION_SAE:
+        this.indepForm.controls['estado_conservacion_sae'].value,
+      P_ESTADO_FISICO_SAE: this.indepForm.controls['estado_fisico_sae'].value,
+      P_UNIDAD_MEDIDA_SAE: this.indepForm.controls['unidad_medida_sae'].value,
+      P_DESCRIPCION_BIEN_SAE:
+        this.indepForm.controls['descripcion_bien_sae'].value,
+      P_ID_BIEN: this.recepiptGood.id_bien,
+      P_ID_PROGRAMACION: this.recepiptGood.id_programacion,
+      P_USUARIO_CREACION: localStorage.getItem('username'),
+    };
+    console.log(data);
+    this.programmingGoodReceiptService
+      .postGoodsProgramingReceipts(data)
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          this.alert('success', `Bien Agregado a ${operation}`, '');
+          this.cleanInsert();
+        },
+        error: eror => {
+          this.alert(
+            'warning',
+            'Generación de Recibos',
+            'No se pudo Agregar el Bien al Recibo'
+          );
+        },
+      });
+  }
+  acceptCancellation() {
+    if (this.indepForm.controls['cancellation'].value != null) {
+      this.alertQuestion(
+        'question',
+        'Se Cancelará la programació',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (
+            this.indepForm.controls['unidad_medida_sae'].value != 'KG' ||
+            this.indepForm.controls['unidad_medida_sae'].value != 'LT'
+          ) {
+            let cantidasae: number = 0;
+            cantidasae = parseInt(
+              this.indepForm.controls['cantidad_sae'].value,
+              10
+            );
+            if (isNaN(cantidasae)) {
+              this.alert(
+                'warning',
+                'Generación de Recibos',
+                'La Cantidad debe ser Enteros'
+              );
+              return;
+            }
+          }
+          this.performOperationSec(
+            'UNO',
+            'CANCELACION',
+            this.indepForm.controls['cancellation'].value
+          );
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Generación de Recibos',
+        'Debes Seleccionar el Motivo, de la Cancelación'
+      );
+      return;
+    }
+  }
+  acceptReprogramming() {
+    if (this.indepForm.controls['reprogramming'].value != null) {
+      this.alertQuestion(
+        'question',
+        'Se ará una Reprogramación',
+        '¿Deseas continuar?',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          if (
+            this.indepForm.controls['unidad_medida_sae'].value != 'KG' ||
+            this.indepForm.controls['unidad_medida_sae'].value != 'LT'
+          ) {
+            let cantidasae: number = 0;
+            cantidasae = parseInt(
+              this.indepForm.controls['cantidad_sae'].value,
+              10
+            );
+            if (isNaN(cantidasae)) {
+              this.alert(
+                'warning',
+                'Generación de Recibos',
+                'La Cantidad debe ser Enteros'
+              );
+              return;
+            }
+          }
+          this.performOperationSec(
+            'UNO',
+            'REPROGRAMACION',
+            this.indepForm.controls['reprogramming'].value
+          );
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Generación de Recibos',
+        'Debes Seleccionar el Motivo, de la Reprogramación'
+      );
+      return;
+    }
+  }
+  reprogrammingOne() {
+    this.getGenericR(new ListParams());
+    this.cancellationView1 = false;
+    this.reprogramingView1 = true;
+  }
+  cancellationOne() {
+    this.getGenericC(new ListParams());
+    this.cancellationView1 = true;
+    this.reprogramingView1 = false;
+  }
+  cleanInsert() {
+    this.programmingForm.controls['managementId'].setValue('');
+    this.goodID = '';
+    this.uniqueKey = '';
+    this.noFile = '';
+    this.descriptionGood = '';
+    this.quantity = '';
+    this.unitMeasure = '';
+    this.physicalStateLetter = '';
+    this.letterConservationStatus = '';
+    this.destinationLetter = '';
+    this.destinoTransferenteLetra = '';
+    this.indepForm.reset();
   }
 }
