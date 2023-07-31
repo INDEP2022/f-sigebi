@@ -7,8 +7,8 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Bien',
     sort: false,
   },
-  uniqueKey: {
-    title: 'Clave Única',
+  CLAVE_UNICA: {
+    title: 'Clave única',
     sort: false,
   },
   NO_EXPEDIENTE: {
@@ -31,20 +31,20 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Cantidad INDEP',
     sort: false,
   },
-  unitMeasure: {
-    title: 'Unidad Medida',
+  UNIDAD_MEDIDA_TRASFERENTE: {
+    title: 'Unidad medida',
     sort: false,
   },
-  unitMeasureSae: {
-    title: 'Unidad Medida INDEP',
+  UNIDAD_MEDIDA_SAE: {
+    title: 'Unidad medida INDEP',
     sort: false,
   },
-  physicalState: {
-    title: 'Estado Físico',
+  ESTADO_FISICO_TRASFERENTE: {
+    title: 'Estado físico',
     sort: false,
   },
-  physicalStateSae: {
-    title: 'Estado Físico INDEP',
+  ESTADO_FISICO_SAE: {
+    title: 'Estado físico INDEP',
     sort: false,
   },
   ESTADO_CONSERVACION_TRASFERENTE: {
