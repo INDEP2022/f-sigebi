@@ -75,7 +75,7 @@ export class TradedGoodsComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'fecha de final no puede ser menor a fecha inicial'
+        'La fecha final no puede ser menor a fecha inicial'
       );
       return;
     }
