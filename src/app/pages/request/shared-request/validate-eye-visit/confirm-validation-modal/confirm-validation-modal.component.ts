@@ -71,7 +71,7 @@ export class ConfirmValidationModalComponent implements OnInit {
   async confirm() {
     const form = this.confirmForm.value;
     if (form.resultTaxpayer == 'ACEPTADO') {
-      const resultadoFinal = 'y';
+      const resultadoFinal = 'Y';
       const agrupador = this.goods.goodGrouper;
       const idBien = this.goods.goodresdevId;
 
