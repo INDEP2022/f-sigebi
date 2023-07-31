@@ -53,7 +53,7 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
         .getReceptionGoods(this.params.getValue())
         .subscribe({
           next: response => {
-            console.log('response guard', response);
+            this.totalItems = response.count;
             const goodsGuard: IGood[] = [];
             response.data.map((item: IRecepitGuard) => {
               this.paramsGuardGood.getValue()['filter.id'] = item.idGood;
@@ -76,6 +76,7 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
                     goodsGuard.push(response.data[0]);
                     console.log('goodsGuard', goodsGuard);
                     this.goodsReceiptGuards.load(goodsGuard);
+                    this.totalItems = goodsGuard.length;
                     this.loading = false;
                   },
                   error: error => {
@@ -118,8 +119,9 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
                       response.data[0].stateConservationName = 'MALO';
                     }
                     goodsGuard.push(response.data[0]);
-                    console.log('goodsGuard', goodsGuard);
+
                     this.goodsReceiptGuards.load(goodsGuard);
+                    this.totalItems = goodsGuard.length;
                     this.loading = false;
                   },
                   error: error => {

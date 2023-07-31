@@ -70,6 +70,7 @@ export enum GoodProcessPoints {
   PubPrevieData = 'application/pupPreviewData',
   ProcedureStatusGood = 'application/procedure-status-good',
   UpdateProcedingNumber = 'application/updateProceedingsNumber',
+  UpdateMassiveStore = 'application/updateMassiveStore',
 }
 
 export enum GoodFinderEndpoint {
