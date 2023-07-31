@@ -57,7 +57,6 @@ export class CustomersRepresentantsListComponent
   }
 
   override getData() {
-    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -128,7 +127,6 @@ export class CustomersRepresentantsListComponent
   }
 
   openFormRepresentative(representative?: IRepresentative) {
-    console.log(representative);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       representative,

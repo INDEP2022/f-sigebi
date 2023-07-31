@@ -315,7 +315,7 @@ export class ConsultationGoodsCommercialSalesComponent
       Evento: row.evento_comer_eventos,
       Lote: row.lote_publico,
       Expediente: row.no_expediente,
-      'No. Siab': row.no_bien,
+      'No. Bien': row.no_bien,
       Cantidad: row.cantidad,
       'Evento Comer': row.evento_comer_eventos,
       'Lote Comer': row.lote_publico,

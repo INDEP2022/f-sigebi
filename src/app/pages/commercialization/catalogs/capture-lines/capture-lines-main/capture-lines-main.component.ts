@@ -49,7 +49,7 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'customerBmx':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'userCreated':
                 searchFilter = SearchFilter.ILIKE;
@@ -111,7 +111,6 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
     this.capturelineService.getAll2(params).subscribe({
       next: response => {
         this.captureLinesMain = response.data;
-        console.log(this.captureLinesMain);
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
