@@ -294,7 +294,7 @@ export class ConsultationGoodsCommercialSalesComponent
     this.form.reset();
     this.dataGoods.load([]);
     this.totalItems = 0;
-    this.modelSave = null;
+    this.modelSave = null
   }
 
   //Exportar select excel
@@ -315,7 +315,7 @@ export class ConsultationGoodsCommercialSalesComponent
       Evento: row.evento_comer_eventos,
       Lote: row.lote_publico,
       Expediente: row.no_expediente,
-      'No. Siab': row.no_bien,
+      'No. Bien': row.no_bien,
       Cantidad: row.cantidad,
       'Evento Comer': row.evento_comer_eventos,
       'Lote Comer': row.lote_publico,
@@ -405,7 +405,7 @@ export class ConsultationGoodsCommercialSalesComponent
         'Debe especificar al menos un parámetro de búsqueda',
         ''
       );
-      this.loading = false;
+      this.loading = false
     } else {
       this.goodService.chargeGoods(model).subscribe(
         res => {
