@@ -31,6 +31,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   data: any;
   event: any;
   disabledSend: boolean = true;
+  dateMovemInicio: string = '';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -53,6 +54,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     });
     if (this.data != null) {
       this.edit = true;
+      this.dateMovemInicio = this.data.executionDate;
       this.form.patchValue({
         eventId: this.data.eventId,
         customerId: this.data.customerId,
@@ -77,6 +79,12 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.form.value.executionDate = this.dateMovemInicio;
+    if (!this.form.get('executionDate').value) {
+      this.alert('warning', 'Debe Especificar la Fecha de Ejecución', '');
+      this.form.get('executionDate').markAsTouched();
+      return;
+    }
     this.comerClientsService.updateClientXEvent(this.form.value).subscribe({
       next: response => {
         this.handleSuccess();
@@ -93,6 +101,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (!this.form.get('executionDate').value) {
+      this.alert('warning', 'Debe Especificar la Fecha de Ejecución', '');
+      this.form.get('executionDate').markAsTouched();
+      return;
+    }
     this.comerClientsService.createClientXEvent(this.form.value).subscribe({
       next: response => {
         this.handleSuccess();
@@ -153,5 +166,13 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         this.clients = new DefaultSelect();
       },
     });
+  }
+
+  dateMovementFin(event: any) {
+    this.dateMovemInicio = event;
+    console.log('ev', event);
+    console.log('dateMovem', this.dateMovemInicio);
+    // this.calcularSaldo()
+    // this.dateMovem = event.target.value;
   }
 }
