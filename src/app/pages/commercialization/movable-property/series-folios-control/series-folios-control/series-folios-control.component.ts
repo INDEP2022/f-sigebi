@@ -322,9 +322,9 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
               );
             } else {
               this.alert(
-                'error',
-                'Error',
-                `No se encontraron Folios Apartados para este Id Folio: ${this.isSelect.folioinvoiceId}`
+                'warning',
+                'Folios Apartados',
+                `No se encontraron registros para este Id Folio: ${this.isSelect.folioinvoiceId}`
               );
             }
           }
@@ -368,9 +368,9 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
             );
           } else {
             this.alert(
-              'error',
-              'Error',
-              `No se encontraron Tipos de Eventos por Serie para este Id Folio: ${this.isSelect.folioinvoiceId}`
+              'warning',
+              'Eventos por Serie',
+              `No se encontraron registros para este Id Folio: ${this.isSelect.folioinvoiceId}`
             );
           }
         }
