@@ -101,4 +101,12 @@ export class LotService extends HttpService {
   incVXRGoods(body: { goods: (string | number)[]; user: string }) {
     return this.post('apps/rejected-good', body);
   }
+
+  getPagosRefMonto(body: any) {
+    return this.post('apps/get-pagos-ref-monto', body);
+  }
+
+  getPagosRefMontoTipod(body: any) {
+    return this.post('apps/get-pagos-ref-monto-tipo-d', body);
+  }
 }
