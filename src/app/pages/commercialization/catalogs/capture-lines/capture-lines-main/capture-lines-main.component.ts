@@ -111,6 +111,7 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
     this.capturelineService.getAll2(params).subscribe({
       next: response => {
         this.captureLinesMain = response.data;
+        console.log(this.captureLinesMain);
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;

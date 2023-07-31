@@ -28,7 +28,7 @@ export const PROCCESS_COLUMNS = {
     sort: false,
   },
   registryNumber: {
-    title: 'Número de Registro',
+    title: 'No. de Registro',
     type: 'string',
     sort: false,
   },

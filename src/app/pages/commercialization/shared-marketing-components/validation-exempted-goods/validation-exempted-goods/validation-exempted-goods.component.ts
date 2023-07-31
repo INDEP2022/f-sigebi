@@ -61,7 +61,6 @@ export class ValidationExemptedGoodsComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -77,7 +76,6 @@ export class ValidationExemptedGoodsComponent
 
   rowsSelected(event: any) {
     this.proccessList = event.data;
-    console.log(this.proccessList);
   }
 
   getGoods() {
@@ -89,10 +87,8 @@ export class ValidationExemptedGoodsComponent
     this.goodService.getAll(params).subscribe({
       next: response => {
         this.goods.load(response.data);
-        console.log(this.goods);
         this.goods.refresh();
         this.totalItems = response.count;
-        console.log(this.totalItems);
         this.loading = false;
       },
       error: error => (this.loading = false),

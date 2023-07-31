@@ -225,8 +225,8 @@ export class DispersionPaymentComponent implements OnInit {
   //Data de COMER_CLIENTESXEVENTO
   getDateComerCustomer() {
     const paramsF = new FilterParams();
-    paramsF.addFilter('eventId', this.event.value);
-    this.customersService.getComerCustomerEvent(paramsF.getParams()).subscribe(
+    paramsF.addFilter('EventId', this.event.value);
+    this.comerTpEventsService.getTpEvent(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
         this.dataCustomer.load(res.data);

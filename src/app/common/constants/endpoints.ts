@@ -55,6 +55,7 @@ export enum ENDPOINT_LINKS {
   IndicatorDeadline = 'catalog/indicator-deadlines',
   Indiciados = 'catalog/indiciados',
   IndicatorReport = 'catalog/indicator-report',
+  IndicatorGood = 'indicatorgood/api/v1/ind-consolid',
   InstitutionClasification = 'catalog/institution-classification',
   IssuingInstitution = 'catalog/issuing-institution',
   LabelOkey = 'catalog/label-good',
@@ -171,6 +172,7 @@ export enum ENDPOINT_LINKS {
   NumeraryCategoriesAutom = 'categorization-autom-numerary',
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/application/paComerUsuxtpevents',
+  UserLevel = 'ind-user/get-inicializa-forma',
   security = 'security/tracking-profile',
 
   //request
