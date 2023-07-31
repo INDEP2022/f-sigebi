@@ -41,6 +41,7 @@ export class ReceiptTableGoodsComponent
     // this.service = this.receiptService;
     // this.params.value.limit = 5;
     // this.haveInitialCharge = false;
+    this.ilikeFilters = ['descripcion_bien'];
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
