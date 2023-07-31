@@ -64,7 +64,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      reference: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       movementNumber: [
         null,
 
@@ -73,12 +76,12 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       date: [null, Validators.required],
       amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
       bankKey: [null, [Validators.required]],
-      code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      lotId: [null],
+      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      lotId: [null, Validators.required],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
       recordDate: [new Date()],
-      referenceOri: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      referenceOri: [null, [Validators.pattern(STRING_PATTERN)]],
       dateOi: [null],
       entryOrderId: [null, Validators.pattern(NUMBERS_PATTERN)],
       validSystem: [null, Validators.pattern(STRING_PATTERN)],
@@ -204,7 +207,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // this.alert('success', 'El Registro se Eliminó Correctamente', '');
       },
       error: error => {
-        this.handleError();
+        // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
+        this.alert(
+          'error',
+          'Ocurrió un Error al Guardar el Registro',
+          error.error.message
+        );
+        // }
+        // this.handleError();
         // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
       },
     });

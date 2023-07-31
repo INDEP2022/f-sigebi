@@ -460,7 +460,11 @@ export class GoodService extends HttpService {
     return this.post<any>('good/pupValidMasiv2', body);
   }
 
-  chargeGoods(body: IGoodCharge){
-    return this.post<any>('good/charge-goods', body)
+  chargeGoods(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods', body);
+  }
+
+  chargeGoodsExcel(body: IGoodCharge){
+    return this.post<any>('good/charge-goods-excel', body)
   }
 }

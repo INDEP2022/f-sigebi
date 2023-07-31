@@ -135,7 +135,6 @@ export class HistoryCustomersPenaltiesComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -165,7 +164,6 @@ export class HistoryCustomersPenaltiesComponent
   }
 
   getData() {
-    this.data2 = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -188,16 +186,13 @@ export class HistoryCustomersPenaltiesComponent
             this.customersPenalties = response.data;
             this.data2.load(response.data);
             this.data2.refresh();
-            this.totalItems = response.data.length;
+            this.totalItems = response.count;
+            console.log(this.data2);
+            console.log(this.totalItems);
             this.loading = false;
           },
           error: error => {
             this.loading = false;
-            this.alert(
-              'warning',
-              'Cliente no Tiene un Histórico de Penalización',
-              ''
-            );
           },
         });
     }
@@ -231,7 +226,6 @@ export class HistoryCustomersPenaltiesComponent
   openFormHistoryCustomersPenalties(
     iHistoryCustomersPenalties?: IHistoryCustomersPenalties
   ) {
-    console.log(iHistoryCustomersPenalties);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       iHistoryCustomersPenalties,

@@ -14,7 +14,7 @@ import { ModelsService } from '../models.service';
 })
 export class ModelsFormComponent extends BasePage implements OnInit {
   modelForm: ModelForm<IParameterComer>;
-  title: string = 'Modelos';
+  title: string = 'Modelo';
   edit: boolean = false;
   parameterComer: IParameterComer;
 
