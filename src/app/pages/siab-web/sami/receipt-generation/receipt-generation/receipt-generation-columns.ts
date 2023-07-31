@@ -4,7 +4,7 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   uniqueKey: {
-    title: 'Clave única',
+    title: 'Clave Única',
     sort: false,
   },
   noProceedings: {
@@ -28,19 +28,19 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   unitMeasure: {
-    title: 'Unidad medida',
+    title: 'Unidad Medida',
     sort: false,
   },
   unitMeasureSae: {
-    title: 'Unidad medida INDEP',
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
   physicalState: {
-    title: 'Estado físico',
+    title: 'Estado Físico',
     sort: false,
   },
   physicalStateSae: {
-    title: 'Estado físico INDEP',
+    title: 'Estado Físico INDEP',
     sort: false,
   },
   stateConservation: {
@@ -74,11 +74,11 @@ export const WISTNESS_COLUMNS = {
     sort: false,
   },
   witnessName: {
-    title: 'Nombre del testigo',
+    title: 'Nombre del Testigo',
     sort: false,
   },
   witnessCharge: {
-    title: 'Cargo del testigo',
+    title: 'Cargo del Testigo',
     sort: false,
   },
   column0: {

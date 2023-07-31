@@ -1009,7 +1009,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
-        `Se Turno la solicitud con el folio: ${this.requestData.id}`
+        `Se turnó la solicitud con el folio: ${this.requestData.id}`
       );
       console.log('Tarea Cerrada');
     }

@@ -42,7 +42,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   cantidad_sae: {
-    title: 'Cantidad SAE',
+    title: 'Cantidad INDEP',
     sort: false,
   },
   unidad_medida_letra: {
@@ -50,7 +50,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   unidad_medida_sae_letra: {
-    title: 'Unidad Medida SAE Letra',
+    title: 'Unidad Medida INDEP Letra',
     sort: false,
   },
   estado_fisico_letra: {
@@ -58,7 +58,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   estado_fisico_sae_letra: {
-    title: 'Estado Fisico SAE Letra',
+    title: 'Estado Fisico INDEP Letra',
     sort: false,
   },
   estado_conservacion_letra: {
@@ -66,7 +66,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   estado_conservacion_sae_letra: {
-    title: 'Estado Conservación SAE Letra',
+    title: 'Estado Conservación INDEP Letra',
     sort: false,
   },
   destino_letra: {
@@ -78,7 +78,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   destino_sae_letra: {
-    title: 'Destino SAE Letra',
+    title: 'Destino INDEP Letra',
     sort: false,
   },
   id_recorrido: {
