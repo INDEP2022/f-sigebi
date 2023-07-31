@@ -230,7 +230,7 @@ export class ConsultationGoodsCommercialBillsComponent
 
   private transFormColums(row: any) {
     return {
-      'No. SIAB': row.no_bien,
+      'No. Bien': row.no_bien,
       Descripción: row.bien_descripcion,
       Expediente: row.no_expediente,
       Estatus: row.estatus,

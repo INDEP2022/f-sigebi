@@ -6,6 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { TextAreaRenderComponent } from 'src/app/shared/render-components/text-area-render/text-area-render.component';
 import { CopyParametersConceptsModalComponent } from './expense-concepts-list/copy-parameters-modal/copy-parameters-modal.component';
+import { ExpenseConceptsListModalComponent } from './expense-concepts-list/expense-concepts-list-modal/expense-concepts-list-modal.component';
 import { ExpenseConceptsListComponent } from './expense-concepts-list/expense-concepts-list.component';
 import { ExpenseConceptsRoutingModule } from './expense-concepts-routing.module';
 import { ExpenseConceptsComponent } from './expense-concepts/expense-concepts.component';
@@ -21,6 +22,7 @@ import { ParamsConceptsModalComponent } from './params-conceps-list/params-conce
     ParamsConcepsListComponent,
     ParamsConceptsModalComponent,
     CopyParametersConceptsModalComponent,
+    ExpenseConceptsListModalComponent,
   ],
   imports: [
     CommonModule,
