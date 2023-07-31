@@ -237,4 +237,9 @@ export class GoodProcessService extends HttpService {
       return this.put(`${route}/${requestId}`);
     }
   }
+
+  updateMassiveStore(form: Object) {
+    const route = GoodProcessPoints.UpdateMassiveStore;
+    return this.put(route, form);
+  }
 }

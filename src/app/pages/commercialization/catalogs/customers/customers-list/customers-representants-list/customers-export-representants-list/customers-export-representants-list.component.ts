@@ -81,7 +81,6 @@ export class CustomersExportRepresentantsListComponent
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -97,7 +96,6 @@ export class CustomersExportRepresentantsListComponent
 
   //Tabla con todos los clientes
   getRepresentats() {
-    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
