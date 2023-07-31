@@ -707,7 +707,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
                 this.router.navigateByUrl('/pages/juridical/juridical-ruling/');
               } else {
                 this.alert(
-                  'info',
+                  'warning',
                   `${resp.data[0].screenKey}`,
                   'No se encuentra disponible en este momento'
                 );
@@ -730,12 +730,12 @@ export class PartOggiceComponent extends BasePage implements OnInit {
             } else {
               resp.data[0].screenKey !== null
                 ? this.alert(
-                    'info',
+                    'warning',
                     `${resp.data[0].screenKey}`,
                     'No se encuentra disponible en este momento'
                   )
                 : this.alert(
-                    'info',
+                    'warning',
                     `Pantalla`,
                     'No disponible en este momento'
                   );
@@ -767,7 +767,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
                 folio !== 0
                   ? this.work2()
                   : this.alert(
-                      'info',
+                      'warning',
                       'Este trámite es un asunto SAT',
                       'No se puede trabajar hasta que se genere un folio de recepción'
                     );
@@ -776,7 +776,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
                 folio !== 0
                   ? this.work2()
                   : this.alert(
-                      'info',
+                      'warning',
                       'Este trámite es un asunto PGR',
                       'No se puede trabajar hasta que se genere un folio de recepción'
                     );
@@ -790,7 +790,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
             //this.router.navigateByUrl('/pages/documents-reception/flyers-registration')
           } else {
             this.alert(
-              'info',
+              'warning',
               'Proceso incompleto',
               'Este trámite no se puede trabajar'
             );
@@ -798,7 +798,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
           this.loading = false;
           /*} else {
             this.alert(
-              'info',
+              'warning',
               'Sin clave de pantalla',
               'La clave de pantalla no ha sido encontrada'
             );
@@ -808,7 +808,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
       });
     } else {
       this.alert(
-        'info',
+        'warning',
         'No permitido',
         'Este oficio no se puede trabajar, el estatus está finalizado'
       );
@@ -1427,7 +1427,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   notAvailable(): void {
     this.alertQuestion(
-      'info',
+      'warning',
       'No disponible',
       'Funcionalidad no disponible en este momento'
     );
@@ -1453,7 +1453,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
           break;
         default:
           this.alertQuestion(
-            'info',
+            'warning',
             'No disponible',
             'Funcionalidad no disponible en este momento'
           );
@@ -1461,7 +1461,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
       }
     } else {
       this.alertQuestion(
-        'info',
+        'warning',
         'No ha seleccionao ningún registro',
         'Por favor seleccione un registro, para poder ejecutar la acción'
       );
