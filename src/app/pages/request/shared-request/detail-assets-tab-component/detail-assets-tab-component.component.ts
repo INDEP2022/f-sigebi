@@ -212,6 +212,7 @@ export class DetailAssetsTabComponentComponent
       );
     }
     if (this.process == 'classify-assets') {
+      this.initForm();
       if (this.domicilieObject) {
         this.setGoodDomicilieSelected(this.domicilieObject);
       }
@@ -223,7 +224,11 @@ export class DetailAssetsTabComponentComponent
         this.brandId = brand;
         this.getSubBrand(new ListParams(), brand);
       }
-      this.isGoodTypeReadOnly = true;
+      if (this.typeOfRequest == 'MANUAL') {
+        this.isGoodTypeReadOnly = false;
+      } else {
+        this.isGoodTypeReadOnly = true;
+      }
     }
 
     if (this.typeDoc === 'clarification') {
@@ -720,7 +725,6 @@ export class DetailAssetsTabComponentComponent
         this.onLoadToast('success', 'Actualizado', 'Formulario actualizado');
       },
       error: error => {
-        debugger;
         this.onLoadToast(
           'error',
           'Error',
@@ -1410,6 +1414,12 @@ export class DetailAssetsTabComponentComponent
           `Se reguiqere ingresar el domicilio del bien`
         );
       } else {
+        if (this.goodDomicilieForm.invalid == true) {
+          setTimeout(() => {
+            this.onLoadToast('info', 'Recuerda llenar los campos faltantes');
+          }, 1000);
+          return;
+        }
         if (!this.goodDomicilieForm.controls['id'].value) {
           await this.saveGoodRealState();
         } else {
