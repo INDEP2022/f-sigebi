@@ -249,41 +249,41 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (sender == 0) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo RECIBO?',
+        '¿Desea registrar los bienes con tipo Recibo?',
         '',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
-          this.performOperation('UNO', 'RECIBO', 0);
+          this.performOperation('UNO', 'Recibo', 0);
         }
       });
     } else if (sender == 1) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo RESGUARDO?',
+        '¿Desea registrar los bienes con tipo Resguardo?',
         '',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
-          this.performOperation('UNO', 'RESGUARDO', 0);
+          this.performOperation('UNO', 'Resguardo', 0);
         }
       });
     } else if (sender == 2) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo ALMACÉN?',
+        '¿Desea registrar los bienes con tipo Almacén?',
         '',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
-          this.performOperation('UNO', 'ALMACEN', 0);
+          this.performOperation('UNO', 'Almacen', 0);
         }
       });
     }
   }
   performOperation(type: string, operation: string, reasonCanRep: number) {
     let data = {
-      P_TIPO_OPERACION: operation,
+      P_TIPO_OPERACION: operation.toUpperCase(),
       P_MOTIVOCAN: reasonCanRep,
       P_CANTIDAD_SAE: this.indepForm.controls['cantidad_sae'].value,
       P_DESTINO_SAE: this.indepForm.controls['destino_sae'].value,
@@ -303,6 +303,9 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log(resp);
+          if (operation === 'Almacen') {
+            operation = 'Almacén';
+          }
           this.alert('success', `Bien Agregado a ${operation}`, '');
           this.cleanInsert();
         },
