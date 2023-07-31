@@ -1,4 +1,5 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
 
 export const SERIES_FOLIOS_CONTROL_COLUMNS = {
   folioinvoiceId: {
@@ -6,12 +7,20 @@ export const SERIES_FOLIOS_CONTROL_COLUMNS = {
     width: '200px',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   delegationNumber: {
     title: 'Coordinación',
     type: 'string',
     sort: false,
     width: '200px',
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   // catDelegation: {
   //   title: 'Regional',
@@ -31,12 +40,20 @@ export const SERIES_FOLIOS_CONTROL_COLUMNS = {
     type: 'string',
     sort: false,
     width: '200px',
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   invoiceEnd: {
     title: 'Folio Final',
     type: 'string',
     sort: false,
     width: '200px',
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   validity: {
     title: 'Validez',

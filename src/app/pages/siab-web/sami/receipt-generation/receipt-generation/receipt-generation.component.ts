@@ -79,7 +79,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   dataExcel: IReceiptExceltem[];
   goodsTable: IReceiptGoodItem;
   goodsDownload: IReceiptGoodItem[];
-  goodsDownloadExcel: IReceiptExceltem[] = [];
+  goodsDownloadExcel: IReceiptExceltem[];
   goodsDownloadPrograming: IReceiptExceltem[];
   goods: any = [];
   downloadResults: boolean = false;
