@@ -203,9 +203,9 @@ export class ReceiptTableGoodsComponent
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;
-    if (this.folio) {
-      newColumnFilters['filter.folio'] = '$eq:' + this.folio;
-    }
+    // if (this.folio) {
+    //   newColumnFilters['filter.folio'] = '$eq:' + this.folio;
+    // }
     if (this.estatus_bien_programacion) {
       newColumnFilters['filter.estatus_bien_programacion'] =
         '$eq:' + this.estatus_bien_programacion;
