@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
@@ -16,6 +17,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   today: Date;
   maxDate: Date;
   minDate: Date;
+  params: any;
 
   pdfurl =
     'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
@@ -23,7 +25,8 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService
   ) {
     super();
     this.today = new Date();
@@ -52,20 +55,26 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
-    let params = {
+    const ELABIN = new Date(this.form.controls['PF_ELABIN'].value);
+    const formattedELABIN = this.formatDate(ELABIN);
+
+    const ELABFIN = new Date(this.form.controls['PF_ELABFIN'].value);
+    const formattedELABFIN = this.formatDate(ELABFIN);
+
+    this.params = {
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PN_EXPINI: this.form.controls['PN_EXPINI'].value,
       PN_EXPFIN: this.form.controls['PN_EXPFIN'].value,
       PC_ACTA: this.form.controls['noActa'].value,
-      PF_ELABIN: this.form.controls['PF_ELABIN'].value,
-      PF_ELABFIN: this.form.controls['PF_ELABFIN'].value,
+      PF_ELABIN: formattedELABIN,
+      PF_ELABFIN: formattedELABFIN,
       PN_ACTAINI: this.form.controls['PN_ACTAINI'].value,
       PN_ACTAFIN: this.form.controls['PN_ACTAFIN'].value,
       // noFile: this.form.controls['noFile'].value,
     };
 
-    console.log(params);
+    console.log(this.params);
     const startEx = new Date(this.form.get('PN_EXPINI').value);
     const endEx = new Date(this.form.get('PN_EXPFIN').value);
 
@@ -101,19 +110,55 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       );
       return;
     }
-
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FGERDESACTAENAJEN.pdf?PN_DELEGACION=${params.PN_DELEGACION}&PN_SUBDELEGACION=${paramsPN_SUBDELEGACION}&PN_EXPINI=${params.PN_EXPINI}&PN_EXPFIN=${params.PN_EXPFIN}&PC_ACTA=${params.PC_ACTA}&PF_ELABIN=${params.PF_ELABIN}&PF_ELABFIN=${params.PF_ELABFIN}&PN_ACTAINI=${params.PN_ACTAINI}&PN_ACTAFIN=${params.PN_ACTAFIN}&PN_ACTAFIN=${params.PN_ACTAFIN}`;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, 'FGERDESACTAENAJEN.pdf');
+    this.onSubmit();
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
 
     this.loading = false;
     this.cleanForm();
+  }
+  onSubmit() {
+    if (this.params != null) {
+      this.siabService.fetchReport('RGERDESACTAENAJEN', this.params).subscribe({
+        next: res => {
+          if (res !== null) {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        },
+        error: (error: any) => {
+          console.log('error', error);
+        },
+      });
+    }
   }
 
   cleanForm(): void {
@@ -135,5 +180,12 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${day}-${month}-${year}`;
   }
 }

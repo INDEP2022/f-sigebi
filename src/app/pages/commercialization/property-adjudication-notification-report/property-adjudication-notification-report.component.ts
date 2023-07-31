@@ -10,9 +10,13 @@ import { BatchService } from 'src/app/core/services/catalogs/batch.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //BasePage
+import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NotificationcomerService } from 'src/app/core/services/ms-notificationcomer/notificationcomer.service';
@@ -36,6 +40,7 @@ export class PropertyAdjudicationNotificationReportComponent
   totalItems: number = 0;
   form: FormGroup;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  parametros: any;
   user: string;
   userdelegacion: string;
   userDepartament: string;
@@ -59,7 +64,10 @@ export class PropertyAdjudicationNotificationReportComponent
     private comerEventService: ComerEventService,
     private notificationcomerService: NotificationcomerService,
     private lotService: LotService,
-    private comerClientsService: ComerClientsService
+    private comerClientsService: ComerClientsService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -175,6 +183,7 @@ export class PropertyAdjudicationNotificationReportComponent
                 };
 
                 this.dataBatch.push(dataTable);
+                this.data.refresh();
                 this.data.load(this.dataBatch);
               },
             });
@@ -198,13 +207,13 @@ export class PropertyAdjudicationNotificationReportComponent
   }
 
   confirm(): void {
-    let params = {
+    this.parametros = {
       DESTYPE: this.descType,
       P_EVENTO: this.form.controls['evento'].value,
     };
 
     //this.showSearch = true;
-    console.log(params);
+    console.log(this.parametros);
     const start = new Date(this.form.get('fechaFallo').value);
     const end = new Date(this.form.get('FechaLimPago').value);
 
@@ -227,9 +236,7 @@ export class PropertyAdjudicationNotificationReportComponent
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
     }, 1000);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/FCOMERNOTIFICAINMU.pdf?DESTYPE=${params.DESTYPE}&P_EVENTO=${params.P_EVENTO}`;
-    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, ' FCOMERNOTIFICAINMU.pdf');
+    this.onSubmit();
     setTimeout(() => {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
@@ -238,8 +245,54 @@ export class PropertyAdjudicationNotificationReportComponent
     this.cleanForm();
   }
 
+  onSubmit() {
+    if (this.parametros != null) {
+      this.siabService
+        //RCOMERNOTIFICAINMU
+        .fetchReport('blank', this.parametros)
+        .subscribe({
+          next: res => {
+            if (res !== null) {
+              const blob = new Blob([res], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+            } else {
+              const blob = new Blob([res], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+            }
+          },
+          error: (error: any) => {
+            console.log('error', error);
+          },
+        });
+    }
+  }
   cleanForm(): void {
     this.form.reset();
+    this.data.load([]);
   }
 
   getuser() {

@@ -15,7 +15,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_EXPINI')"
-            label="Fecha de expediente inicial">
+            label="Fecha de Expediente Inicial">
             <input
               formControlName="PN_EXPINI"
               class="form-control"
@@ -25,7 +25,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_EXPFIN')"
-            label="Fecha de expediente final">
+            label="Fecha de Expediente Final">
             <input
               formControlName="PN_EXPFIN"
               class="form-control"
@@ -40,7 +40,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_ACTAINI')"
-            label="Fecha inicial de acta">
+            label="Fecha Inicial de Acta">
             <input
               formControlName="PN_ACTAINI"
               class="form-control"
@@ -49,13 +49,13 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" style="margin-top: -1%">
           <app-delegation-shared [form]="form"></app-delegation-shared>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('PN_ACTAFIN')"
-            label="Fecha final de acta">
+            label="Fecha Final de Acta">
             <input
               formControlName="PN_ACTAFIN"
               class="form-control"
@@ -65,7 +65,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PF_ELABIN')"
-            label="Fecha inicial de elaboración">
+            label="Fecha Inicial de Elaboración">
             <input
               formControlName="PF_ELABIN"
               class="form-control"
@@ -75,7 +75,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('PF_ELABFIN')"
-            label="Fecha final de elaboración">
+            label="Fecha Final de Elaboración">
             <input
               formControlName="PF_ELABFIN"
               class="form-control"
@@ -88,19 +88,21 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          text="Imprimir"
-          [disabled]="form.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm"
+          [disabled]="!form.valid"
+          (click)="confirm()">
+          Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+        </button>
       </div>
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger active"
-          (click)="cleanForm()">
-          Limpiar
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="cleanForm()"
+          [disabled]="!form.valid">
+          Limpiar<i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
