@@ -77,6 +77,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    console.log('Información de la solicitud', this.infoRequest);
     this.modalService.onHide.subscribe(key => {});
 
     this.dictamenSeq();
@@ -592,21 +593,27 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   //Variables temporales para respuesta del SAT
-  transferente: string = 'Administración General de Aduanas';
-  idOficioAclaracion: string = 'AGA-SA24130-803-5230';
-  oficio: string = '104-01-04-00-00-2022-2365';
-  fechaOficio: string = '22/07/2022';
-  oficio2: string = 'DCCR/DECRE/CRSEP/OARSE/475/2022';
-  nombreDestinatario: string =
-    this.clarificationForm.controls['addresseeName'].value;
-  puestoDestinatario: string =
-    this.clarificationForm.controls['positionAddressee'].value;
 
   updateChatClarification(
     chatClarifications: IChatClarifications,
     xml: string
   ) {
-    this.xmlRespSat = `<OficioAclaracion><IdOficioAclaracion>${this.idOficioAclaracion}</IdOficioAclaracion><VersionOficio>1.0</VersionOficio><AdministracionGeneral>${this.transferente}</AdministracionGeneral><UnidadTransferente>Aduana de Ciudad Hidalgo</UnidadTransferente><IdUnidadTransferente>803</IdUnidadTransferente><NoOficio>${this.oficio}</NoOficio><FechaOficio>${this.fechaOficio}</FechaOficio><Asunto>Aclaración en atención al oficio ${this.oficio2} de fecha ${this.fechaOficio}.</Asunto><LugarFechaEmision>Cd. Hidalgo, Chis., a 22 de julio de 2022.</LugarFechaEmision><LeyendaAnioOficial></LeyendaAnioOficial><NombreDestinatario>${this.nombreDestinatario}</NombreDestinatario><PuestoDestinatario>${this.puestoDestinatario}</PuestoDestinatario><DireccionDestinatario>11 Poniente Norte No. 319,\nCol. Moctezuma, C.P. 29030,\nTuxtla Gutiérrez, Chiapas</DireccionDestinatario><RegionalSAE>Sureste</RegionalSAE><Titular>MARIA DE LOURDES AREVALO DAMIAN</Titular><RFCTitular>AEDL7001109G8</RFCTitular><CargoTitular>Subdirector</CargoTitular><PieOficio1>Carretera Federal 200 Tepic-Talismán, Km. 24+400m Tramo Tapachula - Ciudad Hidalgo, Municipio de Suchiate, C.P. 30840, Ciudad Hidalgo, Chiapas</PieOficio1><PieOficio2>Tel.: 01(962) 6202000   sat.gob.mx   youtube/satmx  twitter.com/satmx.</PieOficio2><Parrafo>En atención al oficio número ${this.oficio2} de fecha ${this.fechaOficio}, el cual hace referencia al oficio de transferencia Aduana-de-Cd-Hidalgo-2022-334 de fecha 30 de noviembre de 1999, dirigido al Servicio de Administración y Enajenación de Bienes, mediante el cual se puso a disposición diversos bienes, afectos al(os) expediente(s) A-108/20 y donde se acredita que han pasado a propiedad del Fisco Federal o estan disponibles para su transferencia.\n\nEn virtud de lo anterior, le informo que se anexa ACUERDO DE ADJUDICACION DELAS MERCANCIAS A-108/20, MEDIANTE EL CUAL SE PASO A PROPIEDAD DEL FISCO FEDERAL LA MERCANCIA..\n\n1.- ACUERDO DE ADJUDICACION\n\n\nSin otro asunto en particular, le envío un cordial saludo.</Parrafo><Suplencia>En suplencia por ausencia del Administrador de la Aduana de Ciudad Hidalgo, con fundamento en los artículos 1, 2, primer párrafo, apartado D, segundo párrafo; 4, sexto párrafo; 5, último párrafo; 7 primer párrafo fracción XII y último párrafo, 19 párrafos primero, segundo y tercero, numeral 9, y 21 primer párrafo, apartado A, fracción I y último párrafo del Reglamento Interior del Servicio de Administración Tributaria publicado en el Diario Oficial de la Federación el 24 de agosto de 2015, firma el  de la Aduana.</Suplencia><DocumentosAdjuntos><Documento><DocAdjunto>ACUERDO DE ADJUDICACION</DocAdjunto><ArchivoDocAdjunto>SA24130-5230-8900.pdf</ArchivoDocAdjunto><AlgoritmoHashDocAdjunto>SHA1</AlgoritmoHashDocAdjunto><HashDocAdjunto>6935cc0476c76a19178f1d8b0572dfeefbb1e6aa</HashDocAdjunto></Documento></DocumentosAdjuntos><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+    const transferente = this.infoRequest.transferent.name;
+    const idOficioAclaracion: string = 'AGA-SA24130-803-5230';
+    const oficio = this.infoRequest.paperNumber;
+    const fechaOficio = this.infoRequest.paperDate;
+    const nombreDestinatario: string =
+      this.clarificationForm?.controls['addresseeName'].value;
+    const puestoDestinatario: string =
+      this.clarificationForm?.controls['positionAddressee'].value;
+    const estado = this.infoRequest.regionalDelegation.keyState;
+    const ciudad = this.infoRequest.regionalDelegation.city;
+    const direccion = this.infoRequest.regionalDelegation.officeAddress;
+    const regional = this.infoRequest.regionalDelegation.description;
+    const cargoTitular = this.clarificationForm.controls['senderCharge'].value;
+    const titular = this.clarificationForm.controls['senderName'].value;
+
+    this.xmlRespSat = `<OficioAclaracion><IdOficioAclaracion>${idOficioAclaracion}</IdOficioAclaracion><VersionOficio>1.0</VersionOficio><AdministracionGeneral>${transferente}</AdministracionGeneral><UnidadTransferente>Transferente de ${estado}</UnidadTransferente><IdUnidadTransferente>803</IdUnidadTransferente><NoOficio>${oficio}</NoOficio><FechaOficio>${fechaOficio}</FechaOficio><Asunto>Aclaración en atención al oficio ${this.folioReporte} de fecha ${fechaOficio}.</Asunto><LugarFechaEmision>${ciudad}, ${estado}, a 01 de agosto de 2023.</LugarFechaEmision><LeyendaAnioOficial></LeyendaAnioOficial><NombreDestinatario>${nombreDestinatario}</NombreDestinatario><PuestoDestinatario>${puestoDestinatario}</PuestoDestinatario><DireccionDestinatario>${direccion}, ${ciudad}, Chiapas</DireccionDestinatario><RegionalSAE>${regional}</RegionalSAE><Titular>${titular}</Titular><RFCTitular>AEDL7001109G8</RFCTitular><CargoTitular>${cargoTitular}</CargoTitular><PieOficio1>Carretera Federal 200 Tepic-Talismán, Km. 24+400m Tramo Tapachula - Ciudad Hidalgo, Municipio de Suchiate, C.P. 30840, Ciudad Hidalgo, Chiapas</PieOficio1><PieOficio2>Tel.: 01(962) 6202000   sat.gob.mx   youtube/satmx  twitter.com/satmx.</PieOficio2><Parrafo>En atención al oficio número ${this.folioReporte} de fecha ${fechaOficio}, el cual hace referencia al oficio de transferencia Aduana-de-Cd-Hidalgo-2022-334 de fecha 30 de noviembre de 1999, dirigido al Servicio de Administración y Enajenación de Bienes, mediante el cual se puso a disposición diversos bienes, afectos al(os) expediente(s) A-108/20 y donde se acredita que han pasado a propiedad del Fisco Federal o estan disponibles para su transferencia.\n\nEn virtud de lo anterior, le informo que se anexa ACUERDO DE ADJUDICACION DELAS MERCANCIAS A-108/20, MEDIANTE EL CUAL SE PASO A PROPIEDAD DEL FISCO FEDERAL LA MERCANCIA..\n\n1.- ACUERDO DE ADJUDICACION\n\n\nSin otro asunto en particular, le envío un cordial saludo.</Parrafo><Suplencia>En suplencia por ausencia del Administrador de la Aduana de Ciudad Hidalgo, con fundamento en los artículos 1, 2, primer párrafo, apartado D, segundo párrafo; 4, sexto párrafo; 5, último párrafo; 7 primer párrafo fracción XII y último párrafo, 19 párrafos primero, segundo y tercero, numeral 9, y 21 primer párrafo, apartado A, fracción I y último párrafo del Reglamento Interior del Servicio de Administración Tributaria publicado en el Diario Oficial de la Federación el 24 de agosto de 2015, firma el  de la Aduana.</Suplencia><DocumentosAdjuntos><Documento><DocAdjunto>ACUERDO DE ADJUDICACION</DocAdjunto><ArchivoDocAdjunto>SA24130-5230-8900.pdf</ArchivoDocAdjunto><AlgoritmoHashDocAdjunto>SHA1</AlgoritmoHashDocAdjunto><HashDocAdjunto>6935cc0476c76a19178f1d8b0572dfeefbb1e6aa</HashDocAdjunto></Documento></DocumentosAdjuntos><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
 <ds:SignedInfo>
 <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
 <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
