@@ -102,11 +102,12 @@ export class ComerTpEventosService extends HttpService {
     return this.get<IListResponse<any>>(EventEndpoints.ComerTevents, params);
   }
 
-  getTpEvent2(params?: string) {
-    return this.get<any>(`application/get-tp-event2`, params);
+  getTpEvent2(params?: string){
+    return this.get<any>(`application/get-tp-event2`, params)
   }
 
-  getTpEvent(body: { pDirection: string; pEventKey: string | number }) {
-    return this.post<any>(`application/get-tp-event`, body);
+  getTpEvent(body: {pDirection: string, pEventKey: string | number}){
+    return this.post<any>(`application/get-tp-event`,body)
   }
+
 }
