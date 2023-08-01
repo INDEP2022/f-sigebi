@@ -51,19 +51,34 @@
             </div>
           </div>
           <div class="col-md-3">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
+            <div class="mb-3">
+              <app-delegation-shared
+                class="col"
+                [form]="form"
+                control="coordinador"
+                [delegationField]="'coordinador'"
+                [labelDelegation]="'Coordinador Regional'"
+                [showSubdelegation]="false"
+                [delegationChange]="false"
+                (emitDelegation)="changeDelegation($event)">
+              </app-delegation-shared>
+              <!-- <form-field
                 [control]="form.get('regionalCoord')"
                 label="Coord. Regional">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="regionalCoord" />
-              </form-field>
+              </form-field> -->
             </div>
           </div>
           <div class="col-md-2 text-center text-md-right">
-            <button class="btn btn-primary btn-sm active">Buscar</button>
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="onSubmit()"
+              [disabled]="nivel_usuario !== '2'">
+              Buscar
+            </button>
           </div>
         </div>
       </form>
@@ -93,7 +108,9 @@
       </app-pagination>
       <div class="row justify-content-center">
         <div class="col-md-2 text-center">
-          <button class="btn btn-secondary btn-sm active">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="onRevisionFichas()">
             Revisi&oacute;n de Fichas
           </button>
         </div>
