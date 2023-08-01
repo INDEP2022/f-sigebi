@@ -59,7 +59,7 @@ export const COMEMR_BIENES_COLUMNS = {
     sort: false,
   },
   lotDescription: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'text',
     sort: false,
   },

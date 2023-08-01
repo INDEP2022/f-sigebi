@@ -60,9 +60,7 @@ export const COLUMNSCUSTOMER = {
   },
 };
 
-export const COLUMNS_LOT_EVENT = {
-    
-}
+export const COLUMNS_LOT_EVENT = {};
 
 //FUNCIONES
 export function setCheckHide(hideValue: boolean) {

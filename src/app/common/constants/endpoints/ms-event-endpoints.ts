@@ -1,6 +1,8 @@
 export enum EventEndpoints {
   BasePath = 'event',
+  BasePathTwo = 'prepareevent',
   ComerE = 'comer-event',
+  ComerEventAll = 'comer-event/getEatEvents',
   ComerEvents = `comer-events-rel`, // comer_eventos
   ComerTEvents = 'comer-event-tprocess', // comer_tpeventos
   ComerStatusVta = 'comer-statusvta', // comer_satusvta
