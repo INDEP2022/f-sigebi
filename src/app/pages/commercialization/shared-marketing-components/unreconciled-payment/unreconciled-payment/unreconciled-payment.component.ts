@@ -67,7 +67,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...COLUMNS },
@@ -105,7 +105,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               paymentId: () => (searchFilter = SearchFilter.EQ),
-              reference: () => (searchFilter = SearchFilter.EQ),
+              reference: () => (searchFilter = SearchFilter.ILIKE),
               movementNumber: () => (searchFilter = SearchFilter.EQ),
               move: () => (searchFilter = SearchFilter.EQ),
               date: () => (searchFilter = SearchFilter.EQ),
@@ -300,11 +300,24 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     // CREA_CABECERA;
     const a = await this.creaCabecera();
     // ENVIA_LEE_SIRSAE(1, NULL);
-    const b = await this.enviaLeeSirsae(1, null);
-
-    if (b == null) {
+    const resss = await this.enviaLeeSirsae(1, null);
+    if (
+      resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+    ) {
+      this.alert(
+        'error',
+        'Error de Conexión',
+        'No se pudo Conectar a la Base de Datos (SIRSAE)'
+      );
       this.loadingBtn = false;
-      // this.alert('error', 'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)', '')
       return;
     } else {
       this.loadingBtn = false;
@@ -351,34 +364,35 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.paymentService.sendReadSirsaeFcomer113(obj).subscribe({
         next: response => {
-          resolve(true);
+          resolve('OK');
           // this.alert('success', 'Proceso Ejecutado Correctamente', '');
           // this.getPayments();
         },
         error: error => {
           console.log('error', error);
-          if (
-            error.error.message ==
-            'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
-          ) {
-            console.log('si');
-            this.loadingBtn = false;
-            this.alert(
-              'error',
-              'Error de Conexión',
-              'No se ha podido Conectar a la Base de Datos (SIRSAE)'
-            );
-            resolve(null);
-            return;
-          } else {
-            resolve(null);
-            this.alert(
-              'error',
-              'Ocurrió un Error al Intentar Ejecutar el Proceso',
-              error.error.message
-            );
-            return;
-          }
+          // if (
+          //   error.error.message ==
+          //   'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+          // ) {
+          //   console.log('si');
+          //   this.loadingBtn = false;
+          //   this.alert(
+          //     'error',
+          //     'Error de Conexión',
+          //     'No se ha podido Conectar a la Base de Datos (SIRSAE)'
+          //   );
+          //   resolve(error.error.message);
+          //   return;
+          // } else {
+
+          // this.alert(
+          //   'error',
+          //   'Ocurrió un Error al Intentar Ejecutar el Proceso',
+          //   error.error.message
+          // );
+          resolve(error.error.message);
+          //   return;
+          // }
         },
       });
     });
