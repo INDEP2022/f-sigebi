@@ -42,7 +42,8 @@ export const TEST_NUMBER = '^[0-9]{1,3}([,][0-9]{3})*[.]?[0-9]{2}$';
 export const NUM_COMA_TWO_DECIMAL_PATTERN =
   '^[0-9]{1,3}([,][0-9]{3})*[.]?[0-9]{2}$';
 export const LATITUDE_LONGITUDE_PATTERN = '^[0-9.,]+';
-
+export const ADDRESS_PATTERN =
+  '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*';
 export const VALID_VALUE_REGEXP = (
   value: string,
   pattern: string | RegExp,
