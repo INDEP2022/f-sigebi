@@ -41,18 +41,38 @@
     <form-loader *ngIf="formLoading"></form-loader>
   </div>
   <!-- componentes para registro de solicitud y otras vistas -->
-  <div class="pt-4" [hidden]="formLoading || !goodObject">
+  <div
+    class="pt-4"
+    *ngIf="goodSelect.length === 1 && isGoodSelected === true && !formLoading">
     <tabset class="md-tabs">
-      <tab heading="Clasificación del Bien" id="tab1">
+      <tab
+        heading="Clasificación del Bien"
+        id="tab1"
+        *ngIf="typeTransfer == 'MANUAL'">
         <app-classify-assets-tab
+          [requestObject]="request"
+          [typeDoc]="typeDoc"
           [assetsId]="assetsId"
           [goodObject]="goodObject"
+          [domicilieObject]="domicilieObject"
+          [typeOfTransfer]="typeTransfer"
+          (updateClassifyAssetTableEvent)="updateTableInfo($event)"
           (classifyChildSaveFraction)="
             updateTableEvent($event)
           "></app-classify-assets-tab>
       </tab>
-
-      <tab heading="Atributos del Bien">
+      <tab
+        heading="Clasificación del Bien"
+        id="tab11"
+        *ngIf="typeTransfer != 'MANUAL'">
+        <app-classify-assets-tab
+          [assetsId]="assetsId"
+          [goodObject]="goodObject"
+          [process]="process"
+          (classifyChildSaveFraction)="updateTableEvent($event)"
+          [typeOfTransfer]="typeTransfer"></app-classify-assets-tab>
+      </tab>
+      <tab heading="Atributos del Bien" *ngIf="typeTransfer != 'MANUAL'">
         <div
           *ngIf="
             goodSelect.length === 1 && isGoodSelected === true && !formLoading

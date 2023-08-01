@@ -16,24 +16,36 @@
     <app-card [header]="false">
       <div body>
         <div class="row mb-3 mt-3 justify-content-end">
-          <div class="col-12 mb-3" style="text-align: right">
+          <div class="mb-3" style="text-align: right">
             <button
-              class="btn btn btn-success active btn-sm"
+              class="btn btn-primary btn-sm active"
               (click)="showCopyModal()"
               [disabled]="!haveParams">
               COPIAR PAR&Aacute;METROS DE {{ selectedConcept?.id }}
-              <i class="fa fa-copy text-success mx-2"></i>
+              <i class="bx bx-copy-alt"></i>
             </button>
           </div>
         </div>
         <!--Payment Concepts Table-->
 
-        <div class="d-flex justify-content-end">
-          <app-columns-select
-            [leftList]="true"
-            (settingsChange)="settingsChange($event)"
-            [settings]="settings"
-            class="row justify-content-end"></app-columns-select>
+        <div class="row">
+          <div class="col-6">
+            <button
+              (click)="add()"
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            <app-columns-select
+              [leftList]="true"
+              (settingsChange)="settingsChange($event)"
+              [settings]="settings"
+              class="row justify-content-end"></app-columns-select>
+          </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-12">
@@ -43,9 +55,7 @@
                 [settings]="settings"
                 [source]="data"
                 (rowSelect)="selectConcept($event.data)"
-                (deleteConfirm)="onDeleteConfirm($event)"
-                (createConfirm)="onAddConfirm($event)"
-                (editConfirm)="onEditConfirm($event)">
+                (edit)="edit($event.data)">
               </ng2-smart-table>
             </div>
           </div>

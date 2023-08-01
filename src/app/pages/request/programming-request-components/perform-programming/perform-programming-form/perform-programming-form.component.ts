@@ -1335,7 +1335,7 @@ export class PerformProgrammingFormComponent
               const showGoods: any = await this.getFilterGood(
                 'EN_TRANSPORTABLE'
               );
-
+              console.log('showGoods', showGoods);
               if (showGoods) {
                 //const _showGoods = await this.showGoodsTransportable(showGoods);
 

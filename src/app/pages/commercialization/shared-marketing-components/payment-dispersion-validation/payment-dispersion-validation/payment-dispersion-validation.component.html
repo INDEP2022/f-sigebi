@@ -124,14 +124,23 @@
     </div>
     <app-card>
       <div body>
-        <div class="row d-flex text-end justify-content-end pt-3 mb-3">
-          <app-columns-select [(settings)]="settingsLotes"></app-columns-select>
+        <div class="row">
+          <div class="col-md-12 text-end">
+            <div class="row">
+              <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <app-columns-select
+                  [(settings)]="settingsLotes"
+                  [leftList]="true"></app-columns-select>
+              </div>
+            </div>
+          </div>
         </div>
         <form-loader *ngIf="loading"></form-loader>
         <ng-scrollbar
           [track]="'all'"
           [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
+            #myTable
             [attr.class]="'table-bordered'"
             [settings]="settingsLotes"
             [source]="lotByEvent"
@@ -144,7 +153,7 @@
 
         <div class="row">
           <form class="form-material" [formGroup]="form2">
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-6 col-md-8">
               <form-field
                 [control]="form2.get('listaNegra')"
                 label="Lista Negra">
@@ -155,7 +164,7 @@
                   formControlName="listaNegra" />
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-3">
+            <div class="col-sm-4 col-md-2">
               <form-field
                 [control]="form2.get('montoDevolucion')"
                 label="Monto Devolución">
@@ -166,7 +175,7 @@
                   formControlName="montoDevolucion" />
               </form-field>
             </div>
-            <div class="col-sm-4 col-md-3">
+            <div class="col-sm-4 col-md-2">
               <form-field
                 [control]="form2.get('montoPenalizacion')"
                 label="Monto Penalización">
@@ -211,15 +220,23 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>BIENES QUE CONFORMAN EL LOTE</h5>
         </div>
-        <div class="row d-flex text-end justify-content-end pt-3 mb-3">
-          <app-columns-select
-            [(settings)]="settingsBienes"></app-columns-select>
+        <div class="row">
+          <div class="col-md-12 text-end">
+            <div class="row">
+              <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <app-columns-select
+                  [(settings)]="settingsBienes"
+                  [leftList]="true"></app-columns-select>
+              </div>
+            </div>
+          </div>
         </div>
         <form-loader *ngIf="loading2"></form-loader>
         <ng-scrollbar
           [track]="'all'"
           [ngStyle]="{ height: loading2 ? '0px' : '300px' }">
           <ng2-smart-table
+            #myTable2
             [attr.class]="'table-bordered'"
             [settings]="settingsBienes"
             [source]="dataBienes_">
@@ -237,15 +254,23 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>PAGOS RECIBIDOS EN EL BANCO</h5>
         </div>
-        <div class="row d-flex text-end justify-content-end pt-3 mb-3">
-          <app-columns-select
-            [(settings)]="settingsPagosBanco"></app-columns-select>
+        <div class="row">
+          <div class="col-md-12 text-end">
+            <div class="row">
+              <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <app-columns-select
+                  [(settings)]="settingsPagosBanco"
+                  [leftList]="true"></app-columns-select>
+              </div>
+            </div>
+          </div>
         </div>
         <form-loader *ngIf="loading3"></form-loader>
         <ng-scrollbar
           [track]="'all'"
           [ngStyle]="{ height: loading3 ? '0px' : '300px' }">
           <ng2-smart-table
+            #myTable3
             [attr.class]="'table-bordered'"
             [settings]="settingsPagosBanco"
             [source]="dataPagosBanco_">
@@ -263,15 +288,23 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>COMPOSICIÓN DE PAGOS RECIBIDOS</h5>
         </div>
-        <div class="row d-flex text-end justify-content-end pt-3 mb-3">
-          <app-columns-select
-            [(settings)]="settingsCompos"></app-columns-select>
+        <div class="row">
+          <div class="col-md-12 text-end">
+            <div class="row">
+              <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <app-columns-select
+                  [(settings)]="settingsCompos"
+                  [leftList]="true"></app-columns-select>
+              </div>
+            </div>
+          </div>
         </div>
         <form-loader *ngIf="loading4"></form-loader>
         <ng-scrollbar
           [track]="'all'"
           [ngStyle]="{ height: loading4 ? '0px' : '300px' }">
           <ng2-smart-table
+            #myTable4
             [attr.class]="'table-bordered'"
             [settings]="settingsCompos"
             [source]="dataCompos_">
@@ -283,55 +316,3 @@
     </accordion>
   </div>
 </app-card>
-
-<div *ngIf="false">
-  <app-card [header]="true">
-    <div header>
-      <div class="ch-content">
-        <h5 class="title">Bienes que conforman el lote</h5>
-        <div class="row justify-content-end pt-3 mr-3">
-          <app-columns-select
-            [(settings)]="settingsBienes"></app-columns-select>
-        </div>
-      </div>
-    </div>
-    <div body>
-      <ng2-smart-table [settings]="settingsBienes" [source]="dataBienes">
-      </ng2-smart-table>
-    </div>
-  </app-card>
-
-  <app-card [header]="true">
-    <div header>
-      <div class="ch-content">
-        <h5 class="title">Pagos recibidos en el Banco</h5>
-        <div class="row justify-content-end pt-3 mr-3">
-          <app-columns-select
-            [(settings)]="settingsPagosBanco"></app-columns-select>
-        </div>
-      </div>
-    </div>
-    <div body>
-      <ng2-smart-table
-        [settings]="settingsPagosBanco"
-        [source]="dataPagosBanco">
-      </ng2-smart-table>
-    </div>
-  </app-card>
-
-  <app-card [header]="true">
-    <div header>
-      <div class="ch-content">
-        <h5 class="title">Composición de pagos recibidos</h5>
-        <div class="row justify-content-end pt-3 mr-3">
-          <app-columns-select
-            [(settings)]="settingsCompos"></app-columns-select>
-        </div>
-      </div>
-    </div>
-    <div body>
-      <ng2-smart-table [settings]="settingsCompos" [source]="dataCompos">
-      </ng2-smart-table>
-    </div>
-  </app-card>
-</div>

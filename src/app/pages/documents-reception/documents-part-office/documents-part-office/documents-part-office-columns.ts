@@ -373,7 +373,7 @@ export const DOCUMENT_PART_OFFCIE_COLUMNS2 = {
     editable: false,
   },
   takePressureDate: {
-    title: 'Fecha Toma Poseción',
+    title: 'Fecha Toma Posesión',
     sort: false,
     filter: false,
     editable: false,

@@ -36,7 +36,6 @@
           <form-field label="Fecha" [control]="comerUserForm.get('date')">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
               type="text"
               class="form-control"
               formControlName="date"
@@ -52,7 +51,11 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!comerUserForm.valid"
+          [disabled]="
+            comerUserForm.invalid ||
+            comerUserForm.get('date').value == undefined ||
+            comerUserForm.get('date').value == null
+          "
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">

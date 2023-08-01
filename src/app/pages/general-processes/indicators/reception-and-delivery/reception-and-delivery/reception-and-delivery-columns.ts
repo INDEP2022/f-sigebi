@@ -23,26 +23,22 @@ export const GENERAL_PROCESSES_RECEPTION_AND_DELIVERY_COLUNNS = {
     title: 'Cantidad de Bienes',
     sort: false,
   },
-  page: {
-    title: 'Fecha page',
-    sort: false,
-  },
-  fin: {
-    title: 'Fecha Máxima',
+  inicio: {
+    title: 'Fecha Inicio',
     sort: false,
   },
   max: {
-    title: 'Fecha Termino',
+    title: 'Fecha Término',
     sort: false,
   },
   max2: {
     title: 'Fecha Máxima',
     sort: false,
   },
-  // cumplio: {
-  //     title: 'Cumplio',
-  //     sort: false
-  // },
+  cumplio: {
+    title: 'Cumplió',
+    sort: false,
+  },
 };
 function getData() {
   const data = [];
