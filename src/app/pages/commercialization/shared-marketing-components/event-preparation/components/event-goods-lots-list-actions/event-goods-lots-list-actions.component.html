@@ -48,7 +48,7 @@
     <button
       type="button"
       class="dropdown-item"
-      (click)="onLoadCustomersFroThird()">
+      (click)="onLoadCustomersFromThird()">
       Lotificar / Cargar Clientes desde Tabla Tercero
     </button>
   </li>
@@ -87,6 +87,43 @@
   <li role="menuitem">
     <button type="button" (click)="onLoadBaseSales()" class="dropdown-item">
       Carga Venta de Bases
+    </button>
+  </li>
+
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onRejectedGoods()">
+      Bienes no Cargados
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onLoadInvoices()">
+      Carga Facturas
+    </button>
+  </li>
+  <li role="menuitem">
+    <button
+      type="bulotifyGoodsChangetton"
+      class="dropdown-item"
+      (click)="onVerifyMandate()">
+      Verifica Mandado
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onTrasp()">
+      Traspasar Bienes
+    </button>
+  </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onInvoiceData()">
+      Datos para Facturación
+    </button>
+  </li>
+  <li role="menuitem">
+    <button
+      type="button"
+      class="dropdown-item"
+      (click)="onLoadCustomersFromThird()">
+      Lotificar / Cargar Clientes desde Tabla Tercero
     </button>
   </li>
 </ng-container>
