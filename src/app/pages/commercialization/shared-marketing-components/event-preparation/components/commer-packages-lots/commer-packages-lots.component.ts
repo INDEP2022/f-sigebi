@@ -128,7 +128,13 @@ export class CommerPackagesLotsComponent
           return throwError(() => error);
         }),
         tap(response => {
-          console.warn({ response });
+          if (response.data > 0) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Hubo Bienes Rechazados pulse el botón de Bienes no Cargados'
+            );
+          }
         })
       )
     );
