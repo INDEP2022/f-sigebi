@@ -7,6 +7,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
   providedIn: 'root',
 })
 export class LotService extends HttpService {
+  private readonly endpointComer: string = 'comer-lotes';
   constructor() {
     super();
     this.microservice = LotEndpoints.BasePath;
@@ -100,5 +101,10 @@ export class LotService extends HttpService {
 
   incVXRGoods(body: { goods: (string | number)[]; user: string }) {
     return this.post('apps/rejected-good', body);
+  }
+
+  getLotById(id: string | number) {
+    const route = `eat-lots/${id}`;
+    return this.get(route);
   }
 }
