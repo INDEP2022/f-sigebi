@@ -34,7 +34,7 @@ export const ALLOTMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,

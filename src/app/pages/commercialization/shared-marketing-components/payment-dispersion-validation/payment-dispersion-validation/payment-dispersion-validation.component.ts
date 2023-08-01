@@ -11,6 +11,7 @@ import {
 
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import {
   FilterParams,
@@ -107,6 +108,10 @@ export class PaymentDispersionValidationComponent
   @ViewChild('scrollContainer2') scrollContainer2!: ElementRef;
 
   layout: any = null;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
+  @ViewChild('myTable2', { static: false }) table2: TheadFitlersRowComponent;
+  @ViewChild('myTable3', { static: false }) table3: TheadFitlersRowComponent;
+  @ViewChild('myTable4', { static: false }) table4: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
@@ -366,7 +371,7 @@ export class PaymentDispersionValidationComponent
               amountAppVat: () => (searchFilter = SearchFilter.EQ),
               vat: () => (searchFilter = SearchFilter.EQ),
               amountNoAppVat: () => (searchFilter = SearchFilter.EQ),
-              transference: () => (searchFilter = SearchFilter.ILIKE),
+              transference: () => (searchFilter = SearchFilter.EQ),
               type: () => (searchFilter = SearchFilter.EQ),
               paymentId: () => (searchFilter = SearchFilter.EQ),
             };
@@ -398,10 +403,11 @@ export class PaymentDispersionValidationComponent
 
   loteSelected: any = null;
   rowsSelected(event: any) {
-    if (event.client) {
-      if (event.client.rfc) {
-        console.log('SI', event);
-        this.llenarInputs(event);
+    const data = event.data;
+    if (data.client) {
+      if (data.client.rfc) {
+        console.log('SI', data);
+        this.llenarInputs(data);
       } else {
         this.form2.patchValue({
           montoDevolucion: '',
@@ -452,9 +458,9 @@ export class PaymentDispersionValidationComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getCompos());
 
-    setTimeout(() => {
-      this.performScroll2();
-    }, 500);
+    // setTimeout(() => {
+    //   this.performScroll2();
+    // }, 500);
   }
 
   async llenarInputs(lote: any) {
@@ -476,7 +482,7 @@ export class PaymentDispersionValidationComponent
     } else {
       this.form2
         .get('listaNegra')
-        .setValue('El Cliente ' + lote.client.nomRazon + ' no Tiene Problemas');
+        .setValue('El Cliente ' + lote.client.nomRazon + ' no tiene Problemas');
     }
 
     this.form2.get('montoDevolucion').setValue(SPD);
@@ -485,8 +491,15 @@ export class PaymentDispersionValidationComponent
   getVal1(params: any) {
     return new Promise((resolve, reject) => {
       this.lotService.getPagosRefMonto(params).subscribe({
-        next: data => {
-          resolve(data);
+        next: async data => {
+          const valData = await this.esNumero(data);
+          if (valData) {
+            console.log('aaaaaaa1', data);
+            resolve(data);
+          } else {
+            console.log('aaaaaaa1', data);
+            resolve(data.data);
+          }
         },
         error: err => {
           resolve(null);
@@ -498,14 +511,25 @@ export class PaymentDispersionValidationComponent
   getVal2(params: any) {
     return new Promise((resolve, reject) => {
       this.lotService.getPagosRefMontoTipod(params).subscribe({
-        next: data => {
-          resolve(data);
+        next: async data => {
+          const valData = await this.esNumero(data);
+          if (valData) {
+            console.log('aaaaaaa1', data);
+            resolve(data);
+          } else {
+            console.log('aaaaaaa1', data);
+            resolve(data.data);
+          }
         },
         error: err => {
           resolve(null);
         },
       });
     });
+  }
+
+  async esNumero(elemento: any) {
+    return !isNaN(elemento);
   }
 
   filterField() {
@@ -742,6 +766,7 @@ export class PaymentDispersionValidationComponent
 
   // COMER_BIENESXLOTE
   getGoodByLotes(): void {
+    this.loading2 = true;
     let params2 = {
       ...this.params2.getValue(),
       ...this.columnFilters2,
@@ -756,12 +781,18 @@ export class PaymentDispersionValidationComponent
     this.comerGoodsRejectedService.getComerGoodXLote(params2).subscribe({
       next: response => {
         console.log(response);
+        let result = response.data.map(async (item: any) => {
+          item['description'] = item.good ? item.good.description : null;
+        });
         this.dataBienes_.load(response.data);
         this.dataBienes_.refresh();
         this.totalItems2 = response.count;
         this.loading2 = false;
       },
       error: error => {
+        this.dataBienes_.load([]);
+        this.dataBienes_.refresh();
+        this.totalItems2 = 0;
         this.loading2 = false;
       },
     });
@@ -823,12 +854,21 @@ export class PaymentDispersionValidationComponent
       ...this.columnFilters4,
     };
 
+    if (params4['filter.transference']) {
+      params4['filter.transferent.cvman'] = params4['filter.transference'];
+      delete params4['filter.transference'];
+    }
+
     params4['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
     params4['sortBy'] = `paymentId:ASC`;
-    this.spentService.getComerPaymentRefGens(params4).subscribe({
+    this.spentService.getComerPaymentRefGensV2(params4).subscribe({
       next: response => {
         console.log('PAYMENTS', response);
-        let result = response.data.map(async (item: any) => {});
+        let result = response.data.map(async (item: any) => {
+          item['transference'] = item.transferent
+            ? item.transferent.cvman
+            : null;
+        });
         Promise.all(result).then(resp => {
           this.dataCompos_.load(response.data);
           this.dataCompos_.refresh();
@@ -887,6 +927,30 @@ export class PaymentDispersionValidationComponent
 
     this.params4.getValue().page = 1;
     this.params4.getValue().limit = 10;
+
+    this.clearSubheaderFields();
+  }
+
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const subheaderFields2: any = this.table2.grid.source;
+    const subheaderFields3: any = this.table3.grid.source;
+    const subheaderFields4: any = this.table4.grid.source;
+
+    const filterConf = subheaderFields.filterConf;
+    const filterConf2 = subheaderFields2.filterConf;
+    const filterConf3 = subheaderFields3.filterConf;
+    const filterConf4 = subheaderFields4.filterConf;
+
+    filterConf.filters = [];
+    filterConf2.filters = [];
+    filterConf3.filters = [];
+    filterConf4.filters = [];
+
+    this.columnFilters = [];
+    this.columnFilters2 = [];
+    this.columnFilters3 = [];
+    this.columnFilters4 = [];
   }
 
   async search() {
