@@ -85,8 +85,8 @@ export class ReceptionGoodService extends HttpService {
   createReceiptWitness(formData: Object) {
     return this.post(`${this.ReceiptWitness}`, formData);
   }
-  createQueryGoodsTickets(formData: Object) {
-    return this.post(`${this.QueryGoodsTickets}`, formData);
+  createQueryGoodsTickets(formData: Object, params: ListParams) {
+    return this.post(`${this.QueryGoodsTickets}`, formData, params);
   }
 
   deleteReceiptWitness(formData: Object) {
