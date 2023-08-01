@@ -6,6 +6,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ComerDirectInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-detinvoice.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { RectifitationFieldsService } from 'src/app/core/services/ms-parameterinvoice/rectification-fields.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -28,7 +29,8 @@ export class ComerRediModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private retificationService: RectifitationFieldsService,
-    private comerDirectInovice: ComerDirectInvoiceService
+    private comerDirectInovice: ComerDirectInvoiceService,
+    private comerInvoiceService: ComerInvoiceService
   ) {
     super();
   }
@@ -117,6 +119,19 @@ export class ComerRediModalComponent extends BasePage implements OnInit {
   }
 
   changeField(data: any) {
+    console.log(data);
+    this.comerInvoiceService
+      .executeSQL({
+        eventId: Number(this.factura.eventId),
+        invoiceField: data.invoiceFieldId,
+        invoiceId: Number(this.factura.Invoice),
+        table: data.table,
+      })
+      .subscribe({
+        next: resp => {
+          this.form.get('worthCurrent').patchValue(resp.data);
+        },
+      });
     this.form.get('columnId').patchValue(data.columnId);
   }
 }
