@@ -16,6 +16,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IComerLetter } from 'src/app/core/models/ms-parametercomer/comer-letter';
 import { IComerLotsEG } from 'src/app/core/models/ms-parametercomer/parameter';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -51,6 +52,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   bienesLoading: boolean = false;
   idEvent: number = 0;
   descArea: string;
+  event: IComerEvent;
   area: IDepartment;
   comerLots: IComerLotsEG;
   dataTableGood: LocalDataSource = new LocalDataSource();
@@ -178,7 +180,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.delegation = this.authService.decodeToken().delegacionreg;
     this.subDelegation = this.authService.decodeToken().puesto;
     this.puestoUser = this.authService.decodeToken().puesto;
-    this.userName = this.authService.decodeToken().preferred_username;
+    this.userName = this.authService
+      .decodeToken()
+      .preferred_username.toUpperCase();
     this.userTracker(
       this.screenKey,
       this.authService.decodeToken().preferred_username
@@ -327,8 +331,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           'dd/MM/yyyy'
         );
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
-        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
-        this.comerLibsForm.get('fechaFallo').setValue(this.carta);
+        // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
         this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
         this.comerLibsForm.get('puesto').setValue(this.letter.position);
         this.comerLibsForm.get('firmante').setValue(this.puestoUser);
@@ -340,8 +344,20 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
         this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
         this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
+        this.bienesLotesForm.get('lote').setValue(this.letter.lotsId);
         this.getComerLotes(this.letter.lotsId);
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
+        this.comerLibsForm.value.parrafo1 =
+          'Derivado de la ' +
+          this.bienesLotesForm.get('description').value +
+          ' para la enajenación de vehiculos y/o bienes diversos ' +
+          this.bienesLotesForm.get('cveProceso').value +
+          ' celebrada el dia ' +
+          '' +
+          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
+        this.comerLibsForm
+          .get('parrafo1')
+          .setValue(this.comerLibsForm.value.parrafo1);
       },
       error: () => {
         console.log('error');
@@ -398,8 +414,20 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           ) {
             this.insert = true;
             this.validPermisos = true;
-            this.validPermisos = true;
+
             console.log('readNo and writeYes');
+          } else if (
+            filter.readingPermission == 'N' &&
+            filter.writingPermission == 'N'
+          ) {
+            this.read = false;
+            this.update = false;
+            this.delete = false;
+            this.insert = false;
+            this.validPermisos = false;
+            console.log(this.read);
+            console.log(this.insert);
+            console.log('readNo and writeNO');
           } else {
             this.alert(
               'info',
@@ -482,25 +510,30 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
         this.comerLots = data;
-        this.bienesLotesForm.get('lote').setValue(data.idLot);
         this.bienesLotesForm.get('description').setValue(data.description);
         this.bienesLotesForm.get('evento').setValue(data.idEvent);
-        this.bienesLotesForm.get('cveProceso').setValue(data.cveProceso);
-        // this.letter.dateFail = new Date().toLocaleString();
-        // const vFechaFallo = this.datePipe.transform(this.letter.dateFail, 'dd/MM/yyyy');
-        // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
-        this.comerLibsForm.value.parrafo1 =
-          'Derivado de la ' +
-          this.bienesLotesForm.get('description').value +
-          ' para la enajenación de vehiculos y/o bienes diversos ' +
-          this.bienesLotesForm.get('cveProceso').value +
-          ' celebrada el dia ' +
-          '' +
-          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
-        this.comerLibsForm
-          .get('parrafo1')
-          .setValue(this.comerLibsForm.value.parrafo1);
+        this.getComerEvent(data.idEvent);
         console.log(this.comerLots);
+      },
+      error: error => {
+        console.error(error);
+      },
+    });
+  }
+  getComerEvent(id: string) {
+    this.comerEventService.geEventId(id).subscribe({
+      next: data => {
+        this.event = data;
+        this.carta = this.datePipe.transform(
+          this.event.failedDate,
+          'dd/MM/yyyy'
+        );
+        this.bienesLotesForm.get('evento').setValue(this.event.id);
+        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
+        this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
+        // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
+        console.log(this.event);
       },
       error: error => {
         console.error(error);
