@@ -69,6 +69,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   update: boolean = false;
   delete: boolean = false;
   insert: boolean = false;
+  descriptionEvent: string = '';
+  cve: string = '';
+  fecha: string = '';
   lettersAll: IComerLetter[] = [];
   idGood: number = null;
   dateLetter = new Date();
@@ -351,11 +354,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
         this.comerLibsForm.value.parrafo1 =
           'Derivado de la ' +
-          this.bienesLotesForm.get('description').value +
+          this.bienesLotesForm.controls['description'].value +
           ' para la enajenación de vehiculos y/o bienes diversos ' +
-          this.bienesLotesForm.get('cveProceso').value +
+          this.cve +
           ' celebrada el dia ' +
-          '' +
+          this.fecha +
           '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
         this.comerLibsForm
           .get('parrafo1')
@@ -512,8 +515,12 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
         this.comerLots = data;
-        this.bienesLotesForm.get('description').setValue(data.description);
-        this.bienesLotesForm.get('evento').setValue(data.idEvent);
+        this.descriptionEvent = this.comerLots.description;
+        this.bienesLotesForm
+          .get('description')
+          .setValue(this.comerLots.description);
+        this.bienesLotesForm.get('evento').setValue(this.comerLots.event);
+        console.log();
         this.getComerEvent(data.idEvent);
         console.log(this.comerLots);
       },
@@ -526,15 +533,18 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.comerEventService.geEventId(id).subscribe({
       next: data => {
         this.event = data;
-        this.carta = this.datePipe.transform(
-          this.event.failedDate,
-          'dd/MM/yyyy'
+        this.fecha = this.datePipe.transform(
+          this.carta,
+          "dd 'de' MMMM 'del año' yyyy",
+          'es'
         );
         this.bienesLotesForm.get('evento').setValue(this.event.id);
         this.comerLibsForm.get('fechaCarta').setValue(this.carta);
         this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
         this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
-        // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
+        this.cve = this.event.processKey;
+        console.log(this.cve);
+        console.log(this.fecha);
         console.log(this.event);
       },
       error: error => {
