@@ -41,6 +41,7 @@ export class ReceiptTableGoodsComponent
     // this.service = this.receiptService;
     // this.params.value.limit = 5;
     // this.haveInitialCharge = false;
+    this.ilikeFilters = ['descripcion_bien'];
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -217,7 +218,7 @@ export class ReceiptTableGoodsComponent
   }
 
   override getData() {
-    debugger;
+    // debugger;
     this.loading = true;
     let params = this.getParams();
     const programmingId = this.id_programacion;
