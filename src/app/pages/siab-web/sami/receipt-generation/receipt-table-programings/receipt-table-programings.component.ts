@@ -114,7 +114,8 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       },
     };
   }
-  selectGoodstickets(data: any) {
+
+  selectGoodstickets(data: any, params?: ListParams) {
     this.loading = true;
     console.log(data);
     let datos = {
@@ -124,7 +125,7 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       typeTicket: data.data.tipo_recibo,
     };
     console.log(datos);
-    this.receptionGoodService.createQueryGoodsTickets(datos).subscribe({
+    this.receptionGoodService.createQueryGoodsTickets(datos, params).subscribe({
       next: resp => {
         console.log(resp);
         this.data1.load(resp.data);
