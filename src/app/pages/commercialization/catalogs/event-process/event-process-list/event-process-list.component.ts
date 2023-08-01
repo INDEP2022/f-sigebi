@@ -83,6 +83,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getEvents();
         }
       });
@@ -111,7 +112,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.comerEvent = response.data;
-          this.data.load(this.comerEvent);
+          this.data.load(response.data);
           this.totalItems = response.count;
           this.loading = false;
         },
