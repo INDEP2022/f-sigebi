@@ -36,18 +36,39 @@
               min="1"
               (input)="onInvoiceInputChange($event)" />
             <!-- <div *ngIf="billId" class="text-danger">
-              Ese ID de factura ya existe.
-            </div> -->
+                      Ese ID de factura ya existe.
+                    </div> -->
           </form-field>
         </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('descevento')" label="Desc. Evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descevento"
+              min="1"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('description')" label="Evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              min="1"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-4">
           <form-field [control]="form.get('claveOficio')" label="Clave Oficio">
             <input
               type="text"
               class="form-control"
               formControlName="claveOficio"
-              placeholder="Clave Oficio"
-              readonly />
+              placeholder="Clave Oficio" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -57,25 +78,24 @@
               class="form-control"
               formControlName="fechaFallo"
               placeholder="Fecha Fallo"
-              readonly />
+              (ngModelChange)="inputFechaFallo($event)" />
           </form-field>
         </div>
-      </div>
-      <br /><br />
-      <div class="row">
         <div class="col-md-4">
           <form-field
             [control]="form.get('FechaLimPago')"
-            label="Fecha Limite de Pago">
+            label="Fecha Límite de Pago">
             <input
               bsDatepicker
               class="form-control"
               formControlName="FechaLimPago"
               placeholder="Fecha Limite de Pago"
-              readonly />
+              (ngModelChange)="inputFechaLimite($event)" />
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row">
+        <div class="col-md-6">
           <form-field [control]="form.get('texto1')" label="Texto 1">
             <textarea
               rows="2"
@@ -85,7 +105,7 @@
               readonly></textarea>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="form.get('texto2')" label="Texto 2">
             <textarea
               rows="2"
@@ -100,7 +120,7 @@
       <div class="row">
         <br /><br />
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="form.get('texto3')" label="Texto 3">
             <textarea
               rows="2"
@@ -110,7 +130,7 @@
               readonly></textarea>
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <form-field [control]="form.get('texto4')" label="Texto 4">
             <textarea
               rows="2"
@@ -119,6 +139,17 @@
               placeholder="texto 4"
               readonly></textarea>
           </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mb-1" style="text-align: right">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="confirm()"
+            [disabled]="form.invalid">
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
       <br /><br />
@@ -160,7 +191,8 @@
               type="text"
               class="form-control"
               formControlName="firmante"
-              placeholder="Firmante" />
+              placeholder="Firmante"
+              readonly />
           </form-field>
         </div>
         <div class="col">
@@ -169,7 +201,8 @@
               type="text"
               class="form-control"
               formControlName="elaboro"
-              placeholder="Elaboro" />
+              placeholder="Elaboro"
+              readonly />
           </form-field>
         </div>
         <div class="col">
@@ -178,7 +211,8 @@
               type="text"
               class="form-control"
               formControlName="ccp1"
-              placeholder="Ccp1" />
+              placeholder="Ccp1"
+              readonly />
           </form-field>
         </div>
         <div class="col">
@@ -187,7 +221,8 @@
               type="text"
               class="form-control"
               formControlName="ccp1"
-              placeholder="Ccp2" />
+              placeholder="Ccp2"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -195,14 +230,6 @@
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          text="Imprimir"
-          [disabled]="form.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
-      </div>
       <div class="m-3">
         <button
           type="button"
