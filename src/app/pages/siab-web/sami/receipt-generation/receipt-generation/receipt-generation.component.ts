@@ -1018,11 +1018,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         error: eror => {
           this.loader.load = false;
           res(eror);
-          // this.alert(
-          //   'warning',
-          //   'Generación de Recibos',
-          //   'No se pudo Agregar el Bien al Recibo'
-          // );
         },
       });
     });
@@ -1191,7 +1186,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (sender == 0) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo RECIBO?',
+        '¿Desea Registrar los Bienes con tipo Recibo?',
         '',
         'Continuar'
       ).then(q => {
@@ -1202,7 +1197,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     } else if (sender == 1) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo RESGUARDO?',
+        '¿Desea Registrar los Bienes con tipo Resguardo?',
         '',
         'Continuar'
       ).then(q => {
@@ -1213,7 +1208,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     } else if (sender == 2) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo ALMACÉN?',
+        '¿Desea Registrar los Bienes con tipo Almacén?',
         '',
         'Continuar'
       ).then(q => {
