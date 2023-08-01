@@ -370,7 +370,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsTransportable: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [null, [Validators.maxLength(50)]],
       saeMeasureUnit: [null],
@@ -396,7 +396,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsReception: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -417,7 +417,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsGuard: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -436,7 +436,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -455,7 +455,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsReprog: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -474,7 +474,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsCancelation: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -514,6 +514,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   getReceiptsGuard() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
         //this.receiptGuardGood = response.data[0];
@@ -1804,6 +1805,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 const updateInfoGood = await this.updateInfoGoodAsignAct(good);
                 if (updateInfoGood) {
                   this.checkExistAct('resguardo');
+                  this.totalItemsGuard = 0;
                 }
               }
             });
@@ -2142,7 +2144,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        const formData: IProceedings = {
+        /*const formData: IProceedings = {
           minutesId: 1,
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
@@ -2176,9 +2178,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             }
           },
           error: error => {},
-        });
+        }); */
       }
     } else if (type == 'almacen') {
+      console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {
         this.receipts.getElements().then(async receipt => {
           const createReceiptGood: any = await this.createReceiptWarehouse(
@@ -2206,7 +2209,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        const formData: IProceedings = {
+        /*const formData: IProceedings = {
           minutesId: 1,
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
@@ -2239,7 +2242,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             }
           },
           error: error => {},
-        });
+        }); */
       }
     }
   }
@@ -3628,6 +3631,128 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodTransportable() {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    const saePhysicalState = this.goodsTransportable.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    //Validación estado de conservación
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsTransportable.value.map(
+      (good: any) => {
+        if (good.stateConservationSae == null) return good.goodId;
+      }
+    );
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    if (saePhysical && stateConservation) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsTransportable.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsTransportable.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*
     this.count = 0;
     this.goodsTransportable.value.map((good: IGood) => {
       this.count = this.count + 1;
@@ -3640,7 +3765,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       } else if (good.saePhysicalState == null) {
-        if (this.count == 1) {
+        if (this.count == ) {
           this.alert(
             'error',
             'Error de captura',
@@ -3656,61 +3781,129 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.count = 0;
-        if (this.goodsTransportable.value.length > 0) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            '¿Desea editar el bien?'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.goodsTransportable.value.map((good: IGood) => {
-                this.count = this.count + 1;
-                const info = {
-                  id: good.id,
-                  descriptionGoodSae: good.descriptionGoodSae,
-                  fileNumber: good.fileNumber,
-                  goodDescription: good.descriptionGood,
-                  goodId: good.goodId,
-                  physicalStatus: good.physicalStatus,
-                  quantity: good.quantity,
-                  quantitySae: good.quantitySae,
-                  regionalDelegationNumber: good.delegationNumber,
-                  saeMeasureUnit: good.saeMeasureUnit,
-                  saePhysicalState: good.saePhysicalState,
-                  stateConservation: good.stateConservation,
-                  stateConservationSae: good.stateConservationSae,
-                  uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
-                  saeDestiny: good.transferentDestiny,
-                };
-
-                if (this.count == 1) {
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Bien actualizado correctamente'
-                  );
-                }
-                this.goodService.updateByBody(info).subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-              });
-            }
-          });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'No se encontraron bienes para actualizar'
-          );
-        }
+       
       }
-    });
+    }); */
   }
 
   saveInfoGoodGuard() {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    const saePhysicalState = this.goodsGuards.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción no Permitida',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    this.count == 0;
+    this.goodId = '';
+
+    const stateConservationSae = this.goodsGuards.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    if (saePhysical && stateConservation) {
+      if (this.goodsGuards.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsGuards.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*
     this.count = 0;
     this.goodsGuards.value.map((good: IGood) => {
       this.count = this.count + 1;
@@ -3789,10 +3982,128 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   saveInfoGoodWarehouse() {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    const saePhysicalState = this.goodsWarehouse.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsWarehouse.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    if (saePhysical && stateConservation) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsWarehouse.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsWarehouse.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*
     this.count = 0;
     this.goodsWarehouse.value.map((good: IGood) => {
       this.count = this.count + 1;
@@ -3871,11 +4182,129 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   saveInfoGoodReprog() {
-    this.count = 0;
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    const saePhysicalState = this.goodsReprog.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    //Validación estado de conservación
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsReprog.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    if (saePhysical && stateConservation) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsReprog.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsReprog.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*this.count = 0;
     this.goodsReprog.value.map((good: IGood) => {
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
@@ -3953,11 +4382,129 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   saveInfoGoodCancelation() {
-    this.count = 0;
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    const saePhysicalState = this.goodsCancelation.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsCancelation.value.map(
+      (good: any) => {
+        if (good.stateConservationSae == null) return good.goodId;
+      }
+    );
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    if (saePhysical && stateConservation) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsCancelation.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsCancelation.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+    /*this.count = 0;
     this.goodsCancelation.value.map((good: IGood) => {
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
@@ -4035,7 +4582,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   showLabelTDRTransportable() {
@@ -4069,7 +4616,34 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   showLabelTDRProgramming() {
-    if (this.goodsTransportable.value.length) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue().limit = 100000;
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: response => {
+        response.data.map((good: any) => {
+          this.goodId += good.goodId + ',';
+        });
+        let config: ModalOptions = {
+          initialState: {
+            showTDR: true,
+            goodsId: this.goodId,
+            programming: this.programming,
+            callback: (next: boolean) => {
+              if (next) {
+                this.goodId = '';
+              }
+            },
+          },
+          class: 'modal-xl modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(ShowReportComponentComponent, config);
+        console.log('bienes prog', this.goodId);
+      },
+      error: error => {},
+    });
+    /*if (this.goodsTransportable.value.length) {
       let config: ModalOptions = {
         initialState: {
           showTDR: true,
@@ -4089,7 +4663,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Acción Invalida',
         'No hay etiquetas que visualizar'
       );
-    }
+    } */
   }
 
   showLabelTDRReception() {

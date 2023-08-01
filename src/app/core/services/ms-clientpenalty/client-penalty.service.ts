@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ClientPenaltyEndpoints } from 'src/app/common/constants/endpoints/ms-client-penalty';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
+  ICustomerPenaltiesModal,
   ICustomersPenalties,
   IHistoryCustomersPenalties,
 } from 'src/app/core/models/catalogs/customer.model';
@@ -52,13 +53,21 @@ export class ClientPenaltyService extends HttpService {
   }
 
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
-    return this.clientPenaltyRepository.create(this.route, model);
+    return this.clientPenaltyRepository.create(
+      `${this.route}/create-penalty`,
+      model
+    );
   }
 
   //ACTUALIZAR
   updateCustomers(customersPenalties: IHistoryCustomersPenalties) {
     console.log(customersPenalties);
-    return this.put(this.route2, customersPenalties);
+    return this.put(`${this.route}/update-penalty`, customersPenalties);
+  }
+
+  updateCustomers1(customersPenalties: ICustomerPenaltiesModal) {
+    console.log(customersPenalties);
+    return this.put(`${this.route}/update-penalty`, customersPenalties);
   }
 
   remove(id: string | number): Observable<Object> {
