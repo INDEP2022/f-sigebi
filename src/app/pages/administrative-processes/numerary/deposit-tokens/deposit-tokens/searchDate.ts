@@ -10,7 +10,7 @@ import { DefaultFilter } from 'ng2-smart-table';
         class="form-control"
         bsDatepicker
         [ngModel]="query"
-        [bsConfig]="{ dateInputFormat: 'dd/MM/yyyy' }"
+        [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY' }"
         (ngModelChange)="onChange($event)"
         style="border-radius: 5px;padding: 8px;border: 1px solid #ccc;" />
       <span class="input-group-addon" *ngIf="this.query">
