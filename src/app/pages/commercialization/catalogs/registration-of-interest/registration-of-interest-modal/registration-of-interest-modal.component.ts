@@ -62,9 +62,8 @@ export class RegistrationOfInterestModalComponent
     private parameterTiieService: ParameterTiieService,
     private programmingRequestService: ProgrammingRequestService,
     private modalService: BsModalService,
-    private usersService: UsersService
-  ) //private parameterTiieService: ParameterTiieService
-  {
+    private usersService: UsersService //private parameterTiieService: ParameterTiieService
+  ) {
     super();
     this.settings = {
       ...this.settings,
