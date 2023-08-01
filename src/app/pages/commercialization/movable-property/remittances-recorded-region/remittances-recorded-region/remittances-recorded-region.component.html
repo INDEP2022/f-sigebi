@@ -8,18 +8,26 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field
-            [control]="form.get('rangeDate')"
-            label="Seleccione fecha inicial y final">
+          <form-field [control]="form.get('f_ini')" label="Fecha Inicial">
             <input
               class="form-control"
-              formControlName="rangeDate"
-              ngModel
-              bsDaterangepicker
+              formControlName="f_ini"
+              bsDatepicker
               [maxDate]="today"
               [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY',
-                displayOneMonthRange: true
+                dateInputFormat: 'DD-MM-YYYY'
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('f_fin')" label="Fecha Final">
+            <input
+              class="form-control"
+              formControlName="f_fin"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY'
               }" />
           </form-field>
         </div>
@@ -27,12 +35,11 @@
           <form-field [control]="form.get('coordination')">
             <ngx-select
               [form]="form"
-              [data]="coordinationsItems"
-              label="Coordinación"
-              value="no_delegacion"
-              bindLabel="descripcion"
-              (fetchItems)="getCoordinations($event)"
-              (change)="selectCoordination($event)"
+              [data]="itemsDelegation"
+              label="Delegación"
+              value="id"
+              bindLabel="description"
+              (fetchItems)="getDelegations($event)"
               control="coordination">
             </ngx-select>
           </form-field>
@@ -40,10 +47,10 @@
         <div class="col-md-3">
           <button
             type="button"
-            class="btn btn-sm btn-primary active"
+            class="btn btn-primary active btn-sm"
             [disabled]="!form.valid"
             (click)="openPrevPdf()">
-            Imprimir
+            Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
       </div>
