@@ -62,9 +62,8 @@ export class RegistrationOfInterestModalComponent
     private parameterTiieService: ParameterTiieService,
     private programmingRequestService: ProgrammingRequestService,
     private modalService: BsModalService,
-    private usersService: UsersService
-  ) //private parameterTiieService: ParameterTiieService
-  {
+    private usersService: UsersService //private parameterTiieService: ParameterTiieService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -353,7 +352,7 @@ export class RegistrationOfInterestModalComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Este Registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterTiieService.remove(tiie.id).subscribe({

@@ -77,7 +77,7 @@
             [control]="providerForm.get('tiieDays')"
             label="Días TIIE">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="tiieDays" />
           </form-field>
@@ -97,6 +97,7 @@
                 dateInputFormat: 'MM',
                 displayMonths: 1
               }"
+              (bsValueChange)="validateDate($event)"
               bsDatepicker />
             <!--<input
               type="number"
@@ -109,9 +110,11 @@
           <form-field [control]="providerForm.get('tiieYear')" label="Año TIIE">
             <input
               type="text"
+              [minDate]="minDate"
               class="form-control"
               formControlName="tiieYear"
               [bsConfig]="bsConfig"
+              [maxDate]="maxDate"
               bsDatepicker />
             <!--<input
               type="number"
