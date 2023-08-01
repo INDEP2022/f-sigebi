@@ -162,7 +162,7 @@ export class ConsultationGoodsCommercialBillsComponent
 
   exportAll() {
     this.loading = true;
-    console.log(this.modelSave2);
+    console.log(this.modelSave2)
     if (this.modelSave2 != null) {
       this.spentService.getChargeSpentsExcel(this.modelSave2).subscribe(
         res => {
@@ -307,7 +307,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.form.reset();
     this.data.load([]);
     this.totalItems2 = 0;
-    this.modelSave2 = null;
+    this.modelSave2 = null
   }
 
   //Ejecutar consulta

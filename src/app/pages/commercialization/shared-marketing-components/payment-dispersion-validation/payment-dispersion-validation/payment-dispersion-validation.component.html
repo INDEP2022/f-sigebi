@@ -32,7 +32,7 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('address')" label="Area">
+          <form-field [control]="form.get('address')" label="Área">
             <ng-select
               formControlName="address"
               [searchable]="false"
@@ -148,10 +148,26 @@
             (userRowSelect)="rowsSelected($event)">
           </ng2-smart-table>
         </ng-scrollbar>
+        <div *ngIf="!loading" class="row mt-4">
+          <form [formGroup]="amountForm">
+            <div class="col-md-5"></div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm.get('tot_precio_final')">
+                <label for="">Total Precio Final</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_precio_final" />
+              </form-field>
+            </div>
+            <div class="col-md-5"></div>
+          </form>
+        </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
 
-        <div class="row">
+        <div class="row mt-2">
           <form class="form-material" [formGroup]="form2">
             <div class="col-sm-6 col-md-8">
               <form-field
@@ -242,6 +258,32 @@
             [source]="dataBienes_">
           </ng2-smart-table>
         </ng-scrollbar>
+        <div *ngIf="!loading2" class="row mt-4">
+          <form [formGroup]="amountForm2">
+            <div class="col-md-4"></div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm2.get('tot_precio_final')">
+                <label for="">Total Precio</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_precio_final" />
+              </form-field>
+            </div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm2.get('tot_iva_final')">
+                <label for="">Total IVA</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_iva_final" />
+              </form-field>
+            </div>
+            <div class="col-md-4"></div>
+          </form>
+        </div>
         <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
       </accordion-group>
@@ -276,6 +318,22 @@
             [source]="dataPagosBanco_">
           </ng2-smart-table>
         </ng-scrollbar>
+        <div *ngIf="!loading3" class="row mt-4">
+          <form [formGroup]="amountForm3">
+            <div class="col-md-5"></div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm3.get('tot_deposit')">
+                <label for="">Total Depósito</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_deposit" />
+              </form-field>
+            </div>
+            <div class="col-md-5"></div>
+          </form>
+        </div>
         <app-pagination [params]="params3" [totalItems]="totalItems3">
         </app-pagination>
       </accordion-group>
@@ -310,6 +368,52 @@
             [source]="dataCompos_">
           </ng2-smart-table>
         </ng-scrollbar>
+        <div *ngIf="!loading4" class="row mt-4">
+          <form [formGroup]="amountForm4">
+            <div class="col-md-2"></div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm4.get('tot_monto_con_iva')">
+                <label for="">Total Monto</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_monto_con_iva" />
+              </form-field>
+            </div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm4.get('tot_iva')">
+                <label for="">Total IVA</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_iva" />
+              </form-field>
+            </div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm4.get('tot_monto_sin_iva')">
+                <label for="">Total Monto Sin IVA</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="tot_monto_sin_iva" />
+              </form-field>
+            </div>
+            <div class="col-md-2 text-center">
+              <form-field [control]="amountForm4.get('suma_totales')">
+                <label for="">Suma Totales</label>
+                <input
+                  readonly
+                  type="text"
+                  class="form-control"
+                  formControlName="suma_totales" />
+              </form-field>
+            </div>
+            <div class="col-md-2"></div>
+          </form>
+        </div>
         <app-pagination [params]="params4" [totalItems]="totalItems4">
         </app-pagination>
       </accordion-group>
