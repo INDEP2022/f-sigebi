@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -141,6 +142,7 @@ export class ConciliationExecutionMainComponent
   acordionOpen: boolean = false;
   disabledBtnCerrar: boolean = false;
 
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -429,6 +431,14 @@ export class ConciliationExecutionMainComponent
     this.selectedEvent = null;
     this.globalFASES = null;
     this.getComerEvents(new ListParams());
+    this.clearSubheaderFields();
+  }
+
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
   }
   allNo() {
     if (!this.selectedEvent) {
