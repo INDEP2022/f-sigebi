@@ -74,4 +74,28 @@ export class ComerEventosService extends HttpService {
   getSelectComerEvent(params: _Params, goodType: any) {
     return this.get(`application/selectComerEvent/${goodType}`, params);
   }
+
+  getPaymentLots(id: any) {
+    return this.get(`application/get-lots-payments/${id}`);
+  }
+
+  pupExpExcel(body: any) {
+    // PUP_EXP_EXCEL
+    return this.post('application/pup-exp-excel', body);
+  }
+
+  pupExpxcVenvspag(body: any) {
+    //PUP_EXPEXC_VENVSPAG
+    return this.post('application/pup-expxc-venvspag', body);
+  }
+
+  pupExpPayModest(body: any) {
+    // PUP_EXPPAGOMODEST
+    return this.post('application/pup-exp-pay-modest', body);
+  }
+
+  pupExportDetpayments(body: any) {
+    // PUP_EXPORT_DETPAGOS
+    return this.post('application/pup-export-detpayments', body);
+  }
 }

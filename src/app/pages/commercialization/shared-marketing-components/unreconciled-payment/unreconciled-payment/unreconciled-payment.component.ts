@@ -267,11 +267,22 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
               this.getPayments();
             },
             error: error => {
-              this.alert(
-                'error',
-                'Ocurrió un Error al Eliminar el Registro',
-                ''
-              );
+              if (
+                error.error.message ==
+                'update or delete on table "comer_pagoref" violates foreign key constraint "comer_pagoref_obs_canc_pag_fk" on table "comer_pagoref_obs_canc"'
+              ) {
+                this.alert(
+                  'error',
+                  'Ocurrió un Error al Eliminar el Registro',
+                  'Tiene Registros Relacionados en Otras Tablas'
+                );
+              } else {
+                this.alert(
+                  'error',
+                  'Ocurrió un Error al Eliminar el Registro',
+                  ''
+                );
+              }
             },
           });
         }
@@ -354,8 +365,8 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
             this.loadingBtn = false;
             this.alert(
               'error',
-              'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)',
-              ''
+              'Error de Conexión',
+              'No se ha podido Conectar a la Base de Datos (SIRSAE)'
             );
             resolve(null);
             return;

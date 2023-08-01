@@ -572,7 +572,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motor" en Información de la Embarcación esta vacio.'
+                'El campo "No. Motor" en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.enginesNumber === null) {
@@ -581,7 +581,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motores" en Información de la Embarcación esta vacio.'
+                'El campo "No. Motores" en Información de la Embarcación esta vacio.'
               );
               break;
             } /* else if (good.origin === null) {
@@ -638,7 +638,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motor" en Información de Aereonave esta vacio.'
+                'El campo "No. Motor" en Información de Aereonave esta vacio.'
               );
               break;
             } else if (good.enginesNumber === null) {
@@ -647,7 +647,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motores" en Información de Aereonave esta vacio.'
+                'El campo "No. Motores" en Información de Aereonave esta vacio.'
               );
               break;
             } /* else if (good.origin === null) {

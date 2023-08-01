@@ -120,6 +120,7 @@
               [track]="'all'"
               [ngStyle]="{ height: loading ? '0px' : '300px' }">
               <ng2-smart-table
+                #myTable
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
                 [source]="data"

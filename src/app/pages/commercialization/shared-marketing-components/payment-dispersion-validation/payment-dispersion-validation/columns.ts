@@ -34,7 +34,7 @@ export const ALLOTMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -140,7 +140,7 @@ export const RECEIVED_COLUMNS = {
     sort: false,
   },
   amountNoAppVat: {
-    title: 'Monto no Aplica IVA',
+    title: 'Monto No Aplica IVA',
     type: 'string',
     sort: false,
   },

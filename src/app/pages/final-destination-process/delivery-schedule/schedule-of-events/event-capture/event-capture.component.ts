@@ -395,8 +395,8 @@ export class EventCaptureComponent
 
     const response = await this.alertQuestion(
       'question',
-      '¿Estas seguro?',
-      '¿Seguro que deseas eliminar el bien?'
+      'Atención',
+      '¿Seguro que desea eliminar el bien?'
     );
     if (response.isConfirmed) {
       this.loading = true;
@@ -2411,7 +2411,7 @@ export class EventCaptureComponent
         this.alert(
           'error',
           'El Programa es inconsistente en su estructura.',
-          'Valide que la CVE Acta este correcta'
+          'Valide que la Cve. del Acta este correcta'
         );
         return;
       }
@@ -2757,7 +2757,7 @@ export class EventCaptureComponent
         this.alert(
           'info',
           'Información',
-          'El Programa es inconsistente en su estructura, verifique que la CVE de Acta sea correcto'
+          'El Programa es inconsistente en su estructura, verifique que la Cve. de Acta sea correcto'
         );
         return;
       }

@@ -23,6 +23,7 @@ export interface IGood {
   dateVencim?: any;
   typeUbucation: string;
   status: string;
+  storeId: number;
   classificationGood?: any;
   remarksOrien?: any;
   physicalStatus?: number | string;
