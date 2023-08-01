@@ -494,7 +494,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
   getIdentification(params: ListParams) {
     params['filter.name'] = 'Identificaciones';
-    params['sortBy'] = 'keyId:ASC';
+    params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
         console.log('response', response);
