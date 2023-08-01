@@ -94,7 +94,7 @@ export class ReceiptTablesComponent extends BasePage {
     if (this.divcanmas) {
       this.alertQuestion(
         'question',
-        'Se Cancelará la programación',
+        'Se Cancelará la Programación',
         '¿Deseas continuar?',
         'Continuar'
       ).then(q => {
@@ -185,7 +185,7 @@ export class ReceiptTablesComponent extends BasePage {
         this.alert(
           'error',
           'Registro de Recibos ' + receiptType,
-          `No se pudieron registrar los recibos con bien° ${recibos}`
+          `No se Pudieron Registrar los Recibos con Bien ${recibos}`
         );
       },
     });
@@ -208,7 +208,7 @@ export class ReceiptTablesComponent extends BasePage {
     this.divrepmas = false;
     this.alertQuestion(
       'question',
-      '¿Desea registrar los bienes con tipo ' + receiptType + '?',
+      '¿Desea Registrar los Bienes con Tipo ' + receiptType + '?',
       ''
     ).then(question => {
       if (question.isConfirmed) {
@@ -244,7 +244,7 @@ export class ReceiptTablesComponent extends BasePage {
         this.alert(
           'error',
           'Registro de Recibos',
-          `No se pudieron registrar los recibos con No. Bien ${recibos}`
+          `No se Pudieron Registrar los Recibos con No. Bien ${recibos}`
         );
       }
     }

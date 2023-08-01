@@ -1,4 +1,4 @@
-export const RELEASE_REPORT_COLUMNS = {
+export const RESPO_REPORT_COLUMNS = {
   id: {
     title: 'Oficio',
     sort: false,
@@ -59,7 +59,7 @@ export const COMEMR_BIENES_COLUMNS = {
     sort: false,
   },
   lotDescription: {
-    title: 'Descripción',
+    title: 'Descripcion',
     type: 'text',
     sort: false,
   },
