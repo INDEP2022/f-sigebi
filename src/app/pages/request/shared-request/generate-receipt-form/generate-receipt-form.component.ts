@@ -389,7 +389,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
             if (createReceiptWitness) {
               this.modalRef.content.callback(
                 this.proceeding,
-                this.idProgramming
+                this.idProgramming,
+                'electronica'
               );
               this.close();
               this.loading = false;
