@@ -11,29 +11,35 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'Valor Base',
     sort: false,
   },
-  customerId: {
+  clientId: {
     title: 'ID Cliente',
     sort: false,
+    valuePrepareFunction: (value: any, row: any) => row?.client?.id ?? null,
   },
-  clasifAlterna: {
+  no_clasificacion_alterna: {
     title: 'No. Clasificación Alterna',
     sort: false,
   },
   rfc: {
-    title: 'R.F.C.',
+    title: 'RFC.',
     sort: false,
+    valuePrepareFunction: (value: any, row: any) => row?.client?.rfc ?? null,
   },
   razonSocial: {
     title: 'Razón Social',
     sort: false,
+    valuePrepareFunction: (value: any, row: any) =>
+      row?.client?.reasonName ?? null,
   },
   warrantyPrice: {
     title: 'Precio Garantía',
     sort: false,
   },
-  transferenceNumber: {
-    title: 'No. Transferente',
+  transferent: {
+    title: 'Transferente',
     sort: false,
+    valuePrepareFunction: (value: any) =>
+      `${value?.cvman} - ${value?.nameTransferent}`,
   },
   mandato: {
     title: 'Mandato',
