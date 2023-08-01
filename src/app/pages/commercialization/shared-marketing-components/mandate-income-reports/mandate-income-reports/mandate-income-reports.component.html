@@ -27,8 +27,20 @@
           </form-field>
         </div>
         <!--Events Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-events-shared [form]="form"></app-events-shared>
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="eventSelect"
+              [form]="form"
+              value="id"
+              bindLabel="processKey"
+              label="Evento"
+              control="event"
+              (change)="changeEvent($event)">
+            </ngx-select>
+          </form-field>
+          <!--<app-events-shared [form]="form"></app-events-shared>-->
         </div>
       </div>
       <div class="row mb-3 mt-3">
@@ -95,7 +107,10 @@
         </div>
         <div
           class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
-          <button type="button" class="btn btn-primary btn-sm active w-100">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active w-100"
+            (click)="report()">
             Imprimir
           </button>
         </div>

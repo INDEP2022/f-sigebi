@@ -88,7 +88,7 @@ export class GenerateReceiptGuardFormComponent
 
   confirm() {
     const now = moment(new Date().toLocaleString(), 'DD/MM/YYYY HH:mm:ss');
-
+    console.log('now', now);
     this.form.get('receiptDate').setValue(now);
     console.log('this.form', this.form.value);
     this.receptionGoodService
@@ -178,7 +178,6 @@ export class GenerateReceiptGuardFormComponent
           xFolioProgramacion: this.programming.folio,
         };
         //this.wContentService.addDocumentToContent();
-        console.log('modelReport', modelReport);
       },
       error: error => {},
     });
@@ -186,7 +185,7 @@ export class GenerateReceiptGuardFormComponent
 
   getIdentification(params: ListParams) {
     params['filter.name'] = 'Identificaciones';
-    params['orderBy'] = 'keyId:ASC';
+    params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
         this.identifications = new DefaultSelect(response.data, response.count);

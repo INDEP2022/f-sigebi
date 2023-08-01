@@ -208,7 +208,6 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
     }
 
     console.log(reportParams);
-    //Todo: Get Real Report
     this.getReport('RGERDIRCTRLXMES', reportParams);
     //this.getReportBlank('blank');
   }

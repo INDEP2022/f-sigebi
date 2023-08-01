@@ -14,7 +14,7 @@ export const COLUMNS = {
     sort: false,
   },
   movementNumber: {
-    title: 'No. Movto.',
+    title: 'No. Movimiento',
     // width: '15%',
     type: 'string',
     sort: false,

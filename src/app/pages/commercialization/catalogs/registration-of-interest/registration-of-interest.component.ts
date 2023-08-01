@@ -40,7 +40,7 @@ export class RegistrationOfInterestComponent
         position: 'right',
       },
       columns: { ...COUNT_TIIE_COLUMNS },
-      noDataMessage: 'No se encontrarón registros',
+      //noDataMessage: 'No se encontrarón registros',
     };
   }
 

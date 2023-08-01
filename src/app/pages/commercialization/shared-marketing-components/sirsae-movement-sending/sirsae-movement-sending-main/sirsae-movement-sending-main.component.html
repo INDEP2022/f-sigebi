@@ -39,7 +39,7 @@
             </div>
             <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
-                [disabled]="!eventSelected"
+                [disabled]="!eventSelected || loading || loadingBtn"
                 (click)="search()"
                 class="btn btn-sm btn-block btn-primary active">
                 Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -88,13 +88,13 @@
           <div class="col-sm-12 col-md-12 col-lg-12 col-xl-9">
             <div class="d-flex flex-row-reverse my-3">
               <div>
-                <button
+                <!-- <button
                   [disabled]="loading || loadingBtn"
                   (click)="add()"
                   type="button"
                   class="btn btn-info btn-sm active mb-3">
                   Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-                </button>
+                </button> -->
               </div>
               <div>
                 <button
@@ -106,7 +106,7 @@
                   tooltip="Enviar a SIRSAE"
                   containerClass="tooltip-style"
                   (click)="enviarSIRSAE()">
-                  Enviar <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+                  Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
                 </button>
               </div>
             </div>
@@ -120,6 +120,7 @@
               [track]="'all'"
               [ngStyle]="{ height: loading ? '0px' : '300px' }">
               <ng2-smart-table
+                #myTable
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
                 [source]="data"

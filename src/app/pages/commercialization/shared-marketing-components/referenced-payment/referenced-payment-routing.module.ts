@@ -4,7 +4,7 @@ import { ReferencedPaymentComponent } from './referenced-payment/referenced-paym
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':goodType',
     component: ReferencedPaymentComponent,
   },
 ];
