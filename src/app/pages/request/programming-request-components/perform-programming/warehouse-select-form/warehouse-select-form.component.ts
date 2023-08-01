@@ -58,8 +58,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       error: () => {
         this.alert(
           'error',
-          'Error de información',
-          'La transferente no cuenta con almacenes'
+          'Error de Información',
+          'La Transferente no cuenta con Almacenes'
         );
       },
     });
@@ -79,7 +79,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Advertencia',
-        '¿Desea asignar el almacén para bienes de resguardo?'
+        '¿Desea asignar los Bienes al Almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;
@@ -93,7 +93,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'warning',
         'Advertencia',
-        '¿Desea asignar el almacén para bienes de almacén?'
+        '¿Desea asignar los Bienes al Almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;

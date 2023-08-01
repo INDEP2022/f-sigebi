@@ -154,6 +154,8 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
+  countAclaraManual: number = 0;
+
   async confirm() {
     const typeTransference = this.infoRequest.typeOfTransfer;
     let generaXML: boolean = false;
@@ -170,6 +172,7 @@ export class NotifyAssetsImproprietyFormComponent
         (this.typeClarifications == 1 || this.typeClarifications == 2) &&
         typeTransference === 'MANUAL'
       ) {
+        this.countAclaraManual = this.countAclaraManual + 1;
         this.aclaracionTransferentesVoluntarias(); //Aclaración Manual tipo 2
       }
       const obtainTypeDocument = await this.obtainTypeDocument(
@@ -186,6 +189,7 @@ export class NotifyAssetsImproprietyFormComponent
           }
           case 'AclaracionTransferentesVoluntarias': {
             console.log('AclaracionTransferentesVoluntarias');
+            this.countAclaraManual = this.countAclaraManual + 1;
             this.aclaracionTransferentesVoluntarias(); //Aclaración  MANUAL tipo 1
 
             break;
@@ -513,57 +517,61 @@ export class NotifyAssetsImproprietyFormComponent
   }
 
   aclaracionTransferentesVoluntarias() {
-    //Recupera información del usuario logeando para luego registrarlo como firmante
-    let token = this.authService.decodeToken();
+    if (this.countAclaraManual === 1) {
+      //Recupera información del usuario logeando para luego registrarlo como firmante
+      let token = this.authService.decodeToken();
 
-    //Crear objeto para generar el reporte
-    const modelReport: IClarificationDocumentsImpro = {
-      clarification: this.clarificationForm.controls['clarification'].value,
-      sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
-      //foundation: ",",
-      //id: 1, //ID primaria
-      version: 1,
-      //transmitterId: ",",
-      paragraphInitial:
-        this.clarificationForm.controls['paragraphInitial'].value,
-      applicationId: this.idRequest,
-      positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
-      paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
-      consistentIn: this.clarificationForm.controls['consistentIn'].value,
-      managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
-      invoiceLearned: this.folioReporte,
-      //invoiceNumber: 1,
-      positionAddressee:
-        this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
-      modificationDate: new Date(),
-      creationUser: token.name,
-      documentTypeId: '213',
-      modificationUser: token.name,
-      //worthAppraisal: 1,
-      creationDate: new Date(),
-      //rejectNoticeId: 1,
-      assignmentInvoiceDate: new Date(),
-      mailNotification: this.clarificationForm.controls['webMail'].value,
-      areaUserCapture:
-        this.clarificationForm.controls['userAreaCaptures'].value,
-      rejectNoticeId: this.dataClarifications2.rejectNotificationId,
-    };
+      //Crear objeto para generar el reporte
+      const modelReport: IClarificationDocumentsImpro = {
+        clarification: this.clarificationForm.controls['clarification'].value,
+        sender: this.clarificationForm.controls['senderName'].value, //Nombre Remitente - DELEGADO
+        //foundation: ",",
+        //id: 1, //ID primaria
+        version: 1,
+        //transmitterId: ",",
+        paragraphInitial:
+          this.clarificationForm.controls['paragraphInitial'].value,
+        applicationId: this.idRequest,
+        positionSender: this.clarificationForm.controls['senderCharge'].value, //Cargo Remitente - DELEGADO
+        paragraphFinal: this.clarificationForm.controls['paragraphFinal'].value,
+        consistentIn: this.clarificationForm.controls['consistentIn'].value,
+        managedTo: this.clarificationForm.controls['addresseeName'].value, //Nombre destinatario - Titular de la solicitud
+        invoiceLearned: this.folioReporte,
+        //invoiceNumber: 1,
+        positionAddressee:
+          this.clarificationForm.controls['positionAddressee'].value, //Cargo destinatario - Titular de la solicitud
+        modificationDate: new Date(),
+        creationUser: token.name,
+        documentTypeId: '213',
+        modificationUser: token.name,
+        //worthAppraisal: 1,
+        creationDate: new Date(),
+        //rejectNoticeId: 1,
+        assignmentInvoiceDate: new Date(),
+        mailNotification: this.clarificationForm.controls['webMail'].value,
+        areaUserCapture:
+          this.clarificationForm.controls['userAreaCaptures'].value,
+        rejectNoticeId: this.dataClarifications2.rejectNotificationId,
+      };
 
-    this.loading = true;
-    this.documentService.createClarDocImp(modelReport).subscribe({
-      next: data => {
-        const createClarGoodDoc = this.createClarGoodDoc(data);
-        if (createClarGoodDoc) {
-          this.openReport(data);
+      this.loading = true;
+      this.documentService.createClarDocImp(modelReport).subscribe({
+        next: data => {
+          const createClarGoodDoc = this.createClarGoodDoc(data);
+          if (createClarGoodDoc) {
+            this.openReport(data);
+            this.loading = false;
+            this.close();
+          }
+        },
+        error: error => {
           this.loading = false;
-          this.close();
-        }
-      },
-      error: error => {
-        this.loading = false;
-        this.onLoadToast('error', 'No se pudo guardar', '');
-      },
-    });
+          this.onLoadToast('error', 'No se pudo guardar', '');
+        },
+      });
+    } else {
+      console.log('Ya se generó un reporte aclaracionTransferentesVoluntarias');
+    }
   }
 
   changeStatusAnswered(xml: string) {

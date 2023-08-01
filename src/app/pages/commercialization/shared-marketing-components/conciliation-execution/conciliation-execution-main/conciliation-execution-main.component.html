@@ -83,7 +83,7 @@
                   value="idLot"
                   bindLabel="idLot"
                   label="Lote"
-                  (fetchItems)="getLotes($event)"
+                  (fetchItems)="getLotes($event, 'no')"
                   control="batch"
                   (change)="selectBatch($event)">
                 </ngx-select>
@@ -117,10 +117,9 @@
                 [disabled]="!selectedEvent"
                 class="btn btn-sm btn-block btn-primary active font-size-14"
                 (click)="execute()"
-                [disabled]=""
                 tooltip="Ejecutar para Conciliar Pagos"
                 containerClass="tooltip-style">
-                Ejecutar
+                Ejecutar <i class="fa fa-check" aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12 mt-2">
@@ -128,10 +127,9 @@
                 [disabled]="!selectedEvent"
                 class="btn btn-sm btn-block btn-info active font-size-14"
                 (click)="modify()"
-                [disabled]=""
                 tooltip="Modificar Estatus de Bienes"
                 containerClass="tooltip-style">
-                Modificar
+                Modificar <i class="fa fa-pencil-alt"></i>
               </button>
             </div>
             <div class="col-12 mt-2">
@@ -139,23 +137,15 @@
                 [disabled]="!selectedEvent"
                 class="btn btn-sm btn-block btn-danger active font-size-14"
                 (click)="cancel()"
-                [disabled]=""
                 tooltip="Eliminar toda la Dispersión"
                 containerClass="tooltip-style">
-                Deshacer
+                Deshacer <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </div>
       </div>
       <div class="row mt-5 d-flex justify-content-center">
-        <!-- <div class="col-sm-6 col-lg-4">
-          <form-field [control]="conciliationForm.get('batch')">
-            <ngx-select [form]="conciliationForm" [data]="batchItems" value="id" bindLabel="id" label="Lote"
-              (fetchItems)="getBatches($event)" control="batch" (change)="selectBatch($event)">
-            </ngx-select>
-          </form-field>
-        </div> -->
         <div class="col-sm-6 col-md-6" *ngIf="layout == 'immovable'">
           <p class="mt-3" *ngIf="selectedBatch != null">
             {{ selectedBatch.description }}

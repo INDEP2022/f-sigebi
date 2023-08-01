@@ -27,7 +27,7 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
 
   comerEventRlForm: ModelForm<IComerTpEventFull>;
   comerEventForm: ModelForm<IComerTpEventId>;
-  comerEvent: IComerTpEventFull;
+  comerEvent: any;
 
   delegations = new DefaultSelect();
   typeEvent = new DefaultSelect();
@@ -46,7 +46,7 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log(this.comerEventForm);
+    console.log(this.comerEventRlForm);
   }
 
   private prepareForm() {
@@ -82,20 +82,28 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
     });
 
     this.comerEventRlForm = this.fb.group({
-      id: this.comerEventForm,
-      year: [null, [Validators.required]],
-      phase: [null, [Validators.required]],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      year: [
+        null,
+        [Validators.required, Validators.min(1970), Validators.max(3000)],
+      ],
+      phase: [
+        null,
+        [Validators.required, Validators.min(0), Validators.max(99)],
+      ],
       topost: [null],
-      warrantyDate: [null, [Validators.required]],
+      warrantyDate: [null, []],
     });
 
     if (this.comerEvent != null) {
       this.edit = true;
-      console.log(this.comerEvent);
+      console.log(this.comerEvent.id);
       this.comerEventRlForm.patchValue(this.comerEvent);
-      this.comerEventRlForm
-        .get('warrantyDate')
-        .setValue(addDays(new Date(this.comerEvent.warrantyDate), 1));
+      if (this.comerEvent.warrantyDate) {
+        this.comerEventRlForm
+          .get('warrantyDate')
+          .setValue(addDays(new Date(this.comerEvent.warrantyDate), 1));
+      }
       /*       this.comerEventForm.patchValue(this.comerEventRlForm.get('id').value); */
     }
   }
@@ -117,28 +125,41 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    if (this.comerEventRlForm.get('topost').value == false) {
-      this.comerEventRlForm.get('topost').setValue(null);
-    } else {
-      this.comerEventRlForm.get('topost').setValue(1);
-    }
+    console.log('t' + this.comerEventRlForm.get('topost').value);
 
-    const editTpEvent = {
-      id: this.comerEventForm.get('id').value,
+    let editTpEvent: any = {
+      id: this.comerEventRlForm.get('id').value,
       year: this.comerEventRlForm.get('year').value,
       phase: this.comerEventRlForm.get('phase').value,
       topost: this.comerEventRlForm.get('topost').value,
-      warrantyDate: format(
+    };
+    if (this.comerEventRlForm.get('topost').value == null) {
+    } else if (this.comerEventRlForm.get('topost').value == false) {
+      editTpEvent.topost = 0;
+    } else {
+      editTpEvent.topost = 1;
+    }
+
+    console.log('w ' + this.comerEventRlForm.get('warrantyDate').value);
+    if (
+      this.comerEventRlForm.get('warrantyDate').value != null &&
+      this.comerEventRlForm.get('warrantyDate').value != ''
+    ) {
+      editTpEvent['warrantyDate'] = format(
         this.comerEventRlForm.get('warrantyDate').value,
         'yyyy-MM-dd'
-      ),
-    };
+      );
+    }
     this.loading = true;
+    console.log('ed ' + JSON.stringify(editTpEvent));
     this.comerTpEventosService
-      .newUpdate(this.comerEvent.id.id, editTpEvent)
+      .newUpdate(this.comerEvent.id, editTpEvent)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          console.log(error);
+        },
       });
   }
 

@@ -1,7 +1,7 @@
 export const COLUMNS_DOCUMENTS = {
   key: {
     sort: false,
-    title: 'CVE',
+    title: 'Cve.',
     type: 'string',
     valuePrepareFunction: (cell: any, row: any) => {
       console.log('Info de ', row.documentDetails.key);

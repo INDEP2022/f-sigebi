@@ -1300,7 +1300,7 @@ export class PerformProgrammingFormComponent
           this.alert(
             'warning',
             'Advertencía',
-            'No hay bienes disponibles para programar'
+            'No hay Bienes disponibles para programar'
           );
           this.estatesList.load([]);
           this.loadingGoods = false;
@@ -1319,26 +1319,32 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los bienes seleccionados serán enviados a transportable'
+        'Los Bienes seleccionados serán enviados a transportable'
       ).then(async question => {
         if (question.isConfirmed) {
           const createProgGood = await this.insertGoodsProgTrans();
-
+          console.log('createProgGood', createProgGood);
           if (createProgGood) {
             const updateGood: any = await this.changeStatusGoodTrans();
-
+            console.log('updateGood', updateGood);
             if (updateGood) {
               const showGoods: any = await this.getFilterGood(
                 'EN_TRANSPORTABLE'
               );
-
+              console.log('showGoods', showGoods);
               if (showGoods) {
                 //const _showGoods = await this.showGoodsTransportable(showGoods);
+
+                /*this.params
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getProgGoods()); */
 
                 this.params
                   .pipe(takeUntil(this.$unSubscribe))
                   .subscribe(() => this.getProgGoods());
-                this.setDataProgramming();
+                this.paramsTransportableGoods
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.showTrans());
                 this.goodSelect = [];
                 /*if (_showGoods) {
                 } */
@@ -1478,7 +1484,7 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los bienes seleccionados serán enviados a resguardo'
+        'Los Bienes seleccionados serán enviados a resguardo'
       ).then(async question => {
         if (question.isConfirmed) {
           const params = new ListParams();
@@ -1525,7 +1531,9 @@ export class PerformProgrammingFormComponent
                         this.params
                           .pipe(takeUntil(this.$unSubscribe))
                           .subscribe(() => this.getProgGoods());
-                        this.setDataProgramming();
+                        this.paramsGuardGoods
+                          .pipe(takeUntil(this.$unSubscribe))
+                          .subscribe(() => this.showGuard());
                         this.goodSelect = [];
                         //const _showGoods = await this.showGoodsGuard(showGoods);
                         /*console.log('showGoods', _showGoods);
@@ -1630,7 +1638,7 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los bienes seleccionados serán enviado a almacén'
+        'Los Bienes seleccionados serán enviados a Almacén'
       ).then(question => {
         if (question.isConfirmed) {
           let config = {
@@ -1664,7 +1672,9 @@ export class PerformProgrammingFormComponent
                       this.params
                         .pipe(takeUntil(this.$unSubscribe))
                         .subscribe(() => this.getProgGoods());
-                      this.setDataProgramming();
+                      this.paramsWarehouseGoods
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.showWarehouseGoods());
                       this.goodSelect = [];
                     }
                   }
@@ -1792,7 +1802,7 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea eliminar el bien de transportable?'
+      '¿Desea Eliminar el Bien de transportable?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.goodsTranportables.remove(item);
@@ -1808,7 +1818,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'Bien eliminado de transportable correctamente'
+                'El Bien se Elimino de la sección de transportable'
               );
               const deleteGood = this.goodsTranportables.count();
               this.headingTransportable = `Transportable(${deleteGood})`;
@@ -1844,7 +1854,7 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea eliminar el bien de resguardo?'
+      '¿Desea Eliminar el Bien de resguardo?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.goodsGuards.remove(item);
@@ -1860,7 +1870,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'Bien eliminado de resguardo correctamente'
+                'El Bien se elimino de la sección de resguardo'
               );
               const deleteGood = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${deleteGood})`;
@@ -1878,7 +1888,7 @@ export class PerformProgrammingFormComponent
     this.alertQuestion(
       'question',
       'Confirmación',
-      '¿Desea eliminar el bien de almacén?'
+      '¿Desea Eliminar el Bien de almacén?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.goodsWarehouse.remove(item);
@@ -1894,7 +1904,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'Bien eliminado de alamcén correctamente'
+                'El Bien se Elimino de la sección de almacén'
               );
               const deleteGood = this.goodsWarehouse.count();
               this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
@@ -1958,6 +1968,7 @@ export class PerformProgrammingFormComponent
 
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
+          console.log('this.performForm.value', this.performForm.value);
           this.programmingGoodService
             .updateProgramming(this.idProgramming, this.performForm.value)
             .subscribe({
@@ -1993,7 +2004,20 @@ export class PerformProgrammingFormComponent
 
   updateWarehouseGood() {
     return new Promise((resolve, reject) => {
-      this.goodsTranportables.getElements().then(data => {
+      const data = {
+        programmingId: this.idProgramming,
+        status: 'EN_TRANSPORTABLE',
+        storeNumber: this.warehouseId,
+      };
+      this.goodProcessService.updateMassiveStore(data).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+      /*this.goodsTranportables.getElements().then(data => {
         if (data.length > 0) {
           data.map((good: IGood) => {
             const object = {
@@ -2011,7 +2035,7 @@ export class PerformProgrammingFormComponent
         } else {
           resolve(true);
         }
-      });
+      }); */
     });
   }
 
@@ -2475,42 +2499,48 @@ export class PerformProgrammingFormComponent
 
   showTrans() {
     this.formLoadingTransportable = true;
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.programmingId'] = this.idProgramming;
-    params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
-    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
-      next: async data => {
-        this.totalItemsTransportableGoods = data.count;
-        this.headingTransportable = `Transportable(${data.count})`;
-        const showTransportable: any = [];
-        data.data.map((item: IGoodProgramming) => {
-          this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
-          this.goodService
-            .getAll(this.paramsShowTransportable.getValue())
-            .subscribe({
-              next: async data => {
-                data.data.map(async item => {
-                  const aliasWarehouse: any = await this.getAliasWarehouse(
-                    item.addressId
-                  );
-                  item['aliasWarehouse'] = aliasWarehouse;
 
-                  if (item.physicalStatus == 1)
-                    item['physicalStatus'] = 'BUENO';
-                  if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
-                  showTransportable.push(item);
+    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+      this.idProgramming;
+    this.paramsTransportableGoods.getValue()['filter.status'] =
+      'EN_TRANSPORTABLE';
+    this.programmingService
+      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+      .subscribe({
+        next: async data => {
+          console.log('data', data);
+          this.totalItemsTransportableGoods = data.count;
+          this.headingTransportable = `Transportable(${data.count})`;
+          const showTransportable: any = [];
+          data.data.map((item: IGoodProgramming) => {
+            this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+            this.goodService
+              .getAll(this.paramsShowTransportable.getValue())
+              .subscribe({
+                next: async data => {
+                  data.data.map(async item => {
+                    const aliasWarehouse: any = await this.getAliasWarehouse(
+                      item.addressId
+                    );
+                    item['aliasWarehouse'] = aliasWarehouse;
 
-                  this.goodsTranportables.load(showTransportable);
-                  this.formLoadingTransportable = false;
-                });
-              },
-            });
-        });
-      },
-      error: error => {
-        console.log('data bienes Prog', error);
-      },
-    });
+                    if (item.physicalStatus == 1)
+                      item['physicalStatus'] = 'BUENO';
+                    if (item.physicalStatus == 2)
+                      item['physicalStatus'] = 'MALO';
+                    showTransportable.push(item);
+
+                    this.goodsTranportables.load(showTransportable);
+                    this.formLoadingTransportable = false;
+                  });
+                },
+              });
+          });
+        },
+        error: error => {
+          console.log('data bienes Prog', error);
+        },
+      });
 
     /*console.log('goodsProg', goodsProg);
     console.log('count', count);
@@ -2712,12 +2742,13 @@ export class PerformProgrammingFormComponent
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
       'YYYY/MM/DD HH:mm:ss'
     );
-    const date = moment(new Date()).format('YYYY/MM/DD');
-
+    const date = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+    const hour = new Date().getHours();
+    const minute = new Date().getMinutes();
     const formData = {
       days: 5,
-      hours: 0,
-      minutes: 0,
+      hours: hour,
+      minutes: minute,
       date: date,
     };
 
@@ -2742,9 +2773,7 @@ export class PerformProgrammingFormComponent
           this.performForm.markAllAsTouched();
           //this.performForm.reset();
           const endDate = this.performForm.get('endDate').value;
-          const _endDateFormat = moment(endDate).format(
-            'DD/MMMM/YYYY, h:mm:ss a'
-          );
+          const _endDateFormat = moment(endDate).format('DD/MM/YYYY, HH:mm:ss');
           if (correctDate > _endDateFormat) {
             this.performForm.get('endDate').clearValidators();
             this.performForm

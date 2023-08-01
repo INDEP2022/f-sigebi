@@ -210,13 +210,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     },
 
     edit: {
-      editButtonContent:
-        '<i class="fa fa-eye text-primary mx-2" > Ver Bienes</i>',
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2" > </i>',
     },
 
     delete: {
-      deleteButtonContent:
-        '<i class="fa fa-file text-info mx-2"> Generar Recibo Resguardo</i>',
+      deleteButtonContent: '<i class="fa fa-file text-info mx-2"> </i>',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -232,13 +230,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     },
 
     edit: {
-      editButtonContent:
-        '<i class="fa fa-eye text-primary mx-2" > Ver bienes</i>',
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2" > </i>',
     },
 
     delete: {
-      deleteButtonContent:
-        '<i class="fa fa-file text-info mx-2"> Ver Recibo</i>',
+      deleteButtonContent: '<i class="fa fa-file text-info mx-2"> </i>',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -255,12 +251,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     edit: {
       editButtonContent:
-        '<i class="fa fa-book" text-warning aria-hidden="true"></i> Ver bienes',
+        '<i class="fa fa-book" text-warning aria-hidden="true"></i>',
     },
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> Generar recibo',
+        '<i class="fa fa-file ml-4" text-primary aria-hidden="true"></i> ',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -277,12 +273,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     edit: {
       editButtonContent:
-        '<i class="fa fa-book" text-warning aria-hidden="true"></i> Ver bienes',
+        '<i class="fa fa-book" text-warning aria-hidden="true"></i>',
     },
 
     delete: {
       deleteButtonContent:
-        '<i class="fa fa-eye ml-4" text-primary aria-hidden="true"></i> Ver recibo',
+        '<i class="fa fa-eye ml-4" text-primary aria-hidden="true"></i>',
     },
 
     columns: RECEIPT_GUARD_COLUMNS,
@@ -501,7 +497,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         const receiptOpen = response.data.filter((receipt: IReceipt) => {
           return receipt.statusReceipt == 'ABIERTO';
         });
-        console.log('receiptOpen', receiptOpen);
+
         this.receiptData = receiptOpen[0];
         this.receipts.load(receiptOpen);
         this.totalItemsReceipt = this.receipts.count();
@@ -531,7 +527,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         });
 
         this.receiptWarehouseGood = infoWarehouse[0];
-        this.receiptWarehouse.load(infoWarehouse);
+
+        if (infoWarehouse.length > 0) {
+          infoWarehouse[0].receiptDate = moment(
+            infoWarehouse[0]?.receiptDate
+          ).format('DD/MM/YYYY');
+          this.receiptWarehouse.load(infoWarehouse);
+        }
 
         const filterGuard = response.data.map((item: any) => {
           if (item.typeReceipt == 'RESGUARDO') return item;
@@ -541,7 +543,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             return item;
           });
           this.receiptGuardGood = infoGuard[0];
-          this.receiptGuards.load(infoGuard);
+
+          if (infoGuard.length > 0) {
+            infoGuard[0].receiptDate = moment(infoGuard[0]?.receiptDate).format(
+              'DD/MM/YYYY'
+            );
+            this.receiptGuards.load(infoGuard);
+          }
         }
       },
       error: error => {},
@@ -771,6 +779,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
+
                     this.goodsTransportable.push(form);
                     this.formLoadingTrans = false;
                     this.showTransportable = true;
@@ -787,7 +796,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
          */
         },
         error: error => {
-          console.log('data bienes Prog', error);
           this.formLoadingTrans = false;
         },
       });
@@ -910,7 +918,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.transfersDestinity = response.data;
       },
       error: error => {},
@@ -970,7 +977,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                   });
                   this.goodsGuards.push(form);
-                  this.headingGuard = `En Resguardo(${data.count})`;
+                  this.headingGuard = `Resguardo(${data.count})`;
                   this.showGuard = true;
                   this.formLoadingGuard = false;
                 });
@@ -1056,7 +1063,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
-          console.log('data bienes Prog', error);
           this.formLoadingReceipt = false;
         },
       });
@@ -1198,7 +1204,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           });
         },
         error: error => {
-          console.log('data bienes Prog', error);
           this.formLoadingWarehouse = false;
         },
       });
@@ -1329,9 +1334,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             });
           });
         },
-        error: error => {
-          console.log('data bienes Prog', error);
-        },
+        error: error => {},
       });
   }
   /*filterStatusReprog(data: IGoodProgramming[]) {
@@ -1465,9 +1468,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             });
           });
         },
-        error: error => {
-          console.log('data bienes Prog', error);
-        },
+        error: error => {},
       });
   }
 
@@ -1540,7 +1541,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: resp => {
-          console.log('unit', resp);
           this.measureUnits = resp.data;
         },
         error: error => {},
@@ -1693,7 +1693,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   updateInfo(data: IGood) {
     if (Number(data.quantity) < Number(data.quantitySae)) {
-      console.log('Cantidad sae mayor que cantidad');
       this.alert(
         'error',
         'Error de captura',
@@ -2088,14 +2087,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               'error',
               'Error de captura',
               `Se debe capturar el estado de conservación indep ${good.goodId}`
-            );
-          }
-        } else if (this.goodsWarehouse.value[0].quantitySae == null) {
-          if (this.count == this.count) {
-            this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar la cantidad indep ${good.goodId}`
             );
           }
         } else {
@@ -2777,12 +2768,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         guardReception: this.goodsReception,
         callback: (next: boolean) => {
           if (next) {
-            if (typeFirm != 'electronic') {
+            if (typeFirm != 'electronica') {
               this.uplodadReceiptDelivery();
             } else {
               this.getReceipts();
               this.showDataProgramming();
               this.goodsReception.clear();
+              this.totalItemsReception = 0;
             }
           }
         },
@@ -2814,7 +2806,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   assignReceipt() {
     if (this.selectGood.length > 0) {
-      console.log('selectGood', this.selectGood);
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
@@ -2861,6 +2852,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   this.goodsTransportable.clear();
                   this.getReceipts();
                   this.showDataProgramming();
+                  this.totalItemsTransportableGoods = 0;
                 }
               },
             };
@@ -3581,12 +3573,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
           );
         }
-      } else if (good.quantitySae == null) {
-        this.alert(
-          'error',
-          'Error de captura',
-          `Se debe capturar la cantidad indep en el bien ${good.goodId}`
-        );
       } else {
         this.count = 0;
         if (this.goodsReception.value.length > 0) {
@@ -3727,7 +3713,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   saveInfoGoodGuard() {
     this.count = 0;
     this.goodsGuards.value.map((good: IGood) => {
-      console.log('good', good);
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
         if (this.count == 1) {

@@ -14,10 +14,12 @@ export const COLUMNS = {
   estatus_recibo: {
     title: 'Estatus Recibo',
     sort: false,
+    filter: false,
   },
   tipo_recibo: {
     title: 'Tipo Recibo',
     sort: false,
+    filter: false,
   },
 };
 export const COLUMNS1 = {
@@ -42,43 +44,43 @@ export const COLUMNS1 = {
     sort: false,
   },
   cantidad_sae: {
-    title: 'Cantidad SAE',
+    title: 'Cantidad INDEP',
     sort: false,
   },
   unidad_medida_letra: {
-    title: 'Unidad Medida Letra',
+    title: 'Unidad Medida',
     sort: false,
   },
   unidad_medida_sae_letra: {
-    title: 'Unidad Medida SAE Letra',
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
   estado_fisico_letra: {
-    title: 'Estado Fisico Letra',
+    title: 'Estado Fisico',
     sort: false,
   },
   estado_fisico_sae_letra: {
-    title: 'Estado Fisico SAE Letra',
+    title: 'Estado Fisico INDEP',
     sort: false,
   },
   estado_conservacion_letra: {
-    title: 'Estado Conservación Letra',
+    title: 'Estado Conservación',
     sort: false,
   },
   estado_conservacion_sae_letra: {
-    title: 'Estado Conservación SAE Letra',
+    title: 'Estado Conservación INDEP',
     sort: false,
   },
   destino_letra: {
-    title: 'Destino Letra',
+    title: 'Destino',
     sort: false,
   },
   destino_transferente_letra: {
-    title: 'Destino Transferente Letra',
+    title: 'Destino Transferente',
     sort: false,
   },
   destino_sae_letra: {
-    title: 'Destino SAE Letra',
+    title: 'Destino INDEP',
     sort: false,
   },
   id_recorrido: {

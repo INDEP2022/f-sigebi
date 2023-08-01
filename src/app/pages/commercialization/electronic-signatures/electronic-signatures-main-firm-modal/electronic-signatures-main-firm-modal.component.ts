@@ -130,8 +130,8 @@ export class ElectronicSignatureFirmModalComponent
   confirm() {
     this.alertQuestion(
       'question',
-      'Se va a comenzar el proceso del firmado electrónico. ¿Desea Continuar?',
-      ''
+      'Se va a comenzar el proceso del firmado electrónico.',
+      '¿Desea Continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.sendFormAndFilesToFirm();
@@ -167,7 +167,7 @@ export class ElectronicSignatureFirmModalComponent
           console.log(data);
           this.alertInfo(
             'success',
-            '¡Archivo Firmado Correctamente!',
+            'Archivo Firmado',
             'Se Realizó el Proceso de Firmar del Dictamen Correctamente'
             // data.message
           ).then(() => {
