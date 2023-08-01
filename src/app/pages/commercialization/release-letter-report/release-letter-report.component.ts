@@ -72,6 +72,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   lettersAll: IComerLetter[] = [];
   idGood: number = null;
   dateLetter = new Date();
+  dateNew: string = '';
   valid: boolean = false;
   validPermisos: boolean = false;
   start: string;
@@ -171,6 +172,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.bienlotForm();
+    this.dateNew = this.datePipe.transform(this.dateLetter, 'dd/MM/yyyy');
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
   }
@@ -544,6 +546,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   cleanForm(): void {
     this.comerLibsForm.reset();
     this.bienesLotesForm.reset();
+    this.bienes = [];
+    this.dataTableGood.load([]);
+    this.dataTableGood.refresh();
   }
   goBack() {}
 
@@ -582,6 +587,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           this.totalItems = data.count;
         },
         error: () => {
+          this.bienesLoading = false;
           console.error('error al filtrar bienes');
         },
       });
