@@ -1,3 +1,5 @@
+import { SaeInputComponent } from '../compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
+
 export const REQUEST_OF_ASSETS_COLUMNS = {
   /*select: {
     title: '',
@@ -21,9 +23,18 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionGoodSae: {
+  /* descriptionGoodSae: {
     title: 'Descripción Bien INDEP',
     type: 'string',
+    sort: false,
+  }, */
+  descriptionGoodSae: {
+    title: 'Descripción Bien INDEP',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: SaeInputComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   descriptionRelevantType: {

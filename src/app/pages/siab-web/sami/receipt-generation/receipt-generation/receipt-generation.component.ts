@@ -61,6 +61,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   detinationList = new DefaultSelect();
   recepiptGood: IReceiptItem;
   indepForm: FormGroup;
+  indepForm1: FormGroup;
   goodID: string;
   uniqueKey: string;
   noFile: string;
@@ -120,6 +121,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       estado_fisico_sae: [null, Validators.required],
       estado_conservacion_sae: [null, Validators.required],
       destino_sae: [null, Validators.required],
+      cancellation: [null],
+      reprogramming: [null],
+    });
+    this.indepForm1 = this.fb.group({
       cancellation: [null],
       reprogramming: [null],
     });
@@ -405,7 +410,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creara un Recibo Nuevo';
+                'Se Actualizará la Información de los Bienes y se Creará un Recibo Nuevo';
             }
             this.alertQuestion(
               'question',
@@ -453,7 +458,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creara un Recibo Almacén Nuevo';
+                'Se Actualizará la Información de los Bienes y se Creará un Recibo Almacén Nuevo';
             }
             this.alertQuestion(
               'question',
@@ -497,7 +502,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creara un Recibo Resguardo Nuevo';
+                'Se Actualizará la Información de los Bienes y se Creará un Recibo Resguardo Nuevo';
             }
             this.alertQuestion(
               'question',
@@ -533,15 +538,15 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.receiptGenerationForm.controls['operation'].value ==
         'REPROGRAMACION'
       ) {
-        if (this.indepForm.controls['reprogramming'].value != null) {
+        if (this.indepForm1.controls['reprogramming'].value != null) {
           this.alertQuestion(
             'question',
-            'Se Reprogramaran los Bienes',
+            'Se Reprogramarán los Bienes',
             '¿Desea continuar?',
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
-              this.acceptMassive()
+              this.acceptMassiveCan()
                 .then(result => {
                   console.log(result);
                   this.goodsDownloadExcel = [];
@@ -572,7 +577,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       } else if (
         this.receiptGenerationForm.controls['operation'].value == 'CANCELACION'
       ) {
-        if (this.indepForm.controls['cancellation'].value != null) {
+        if (this.indepForm1.controls['cancellation'].value != null) {
           this.alertQuestion(
             'question',
             'Se Cancelaran los Bienes',
@@ -580,7 +585,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
-              this.acceptMassive()
+              this.acceptMassiveCan()
                 .then(result => {
                   console.log(result);
                   this.goodsDownloadExcel = [];
@@ -613,7 +618,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.alert('warning', 'Seleccione una Opción', '');
       }
     } else {
-      this.alert('warning', 'Seleccione Algun Archivo', '');
+      this.alert('warning', 'Seleccione Algún Archivo', '');
     }
   }
   async acceptMassive() {
@@ -673,6 +678,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       console.log(receipGood);
                       this.dataExcel[i].OBSERVACIONES =
                         'ACTUALIZADO CORRECTAMENTE' +
+                        ' ' +
                         receipGood[0].typeReceipt +
                         ' ' +
                         receipGood[0].idReceipt +
@@ -704,9 +710,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     console.log(
                       '<<<<<<<<<<<res updateInfoAssets>>>>>>>>>>>' + result
                     );
-                    this.goodsTable.observaciones = 'ACTUALIZADO CORRECTAMENTE';
+                    this.dataExcel[i].OBSERVACIONES =
+                      'ACTUALIZADO CORRECTAMENTE';
                   } else {
-                    this.goodsTable.observaciones = 'ERROR AL ACTUALIZAR';
+                    this.dataExcel[i].OBSERVACIONES = 'ERROR AL ACTUALIZAR';
                   }
                 }
               }
@@ -733,6 +740,74 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         await this.dataExcel;
       }
       return this.dataExcel;
+    } else {
+      this.alert('warning', 'El Archivo no tiene Bienes', '');
+    }
+    return await this.dataExcel;
+  }
+  async acceptMassiveCan() {
+    if (this.dataExcel.length > 0) {
+      console.log(this.dataExcel.length);
+      let idProgramacion: number = 0;
+      idProgramacion = this.programmingForm.controls['programmingId'].value;
+      let motivCan: number = 0;
+      if (
+        this.receiptGenerationForm.controls['operation'].value == 'CANCELACION'
+      ) {
+        motivCan = this.indepForm1.controls['cancellation'].value;
+      } else if (
+        this.receiptGenerationForm.controls['operation'].value ==
+        'REPROGRAMACION'
+      ) {
+        motivCan = this.indepForm1.controls['reprogramming'].value;
+      }
+      // this.goodsDownload = [];
+      this.loader.load = true;
+      for (let i = 0; i < this.dataExcel.length; i++) {
+        let receipGood: any = [];
+        let goods: any = await this.comeBackGoodExcel(this.dataExcel[i]);
+        this.goodsTable = goods;
+        receipGood = await this.checkReceiptGood(
+          this.goodsTable.id_bien,
+          idProgramacion
+        );
+        try {
+          console.log(this.goodsTable);
+          if (idProgramacion == this.goodsTable.id_programacion) {
+            if (receipGood.length == 0) {
+              let result: any = await this.performOperation(
+                this.goodsTable,
+                motivCan
+              );
+              console.log(result);
+              if (result == 'success') {
+                console.log(
+                  '<<<<<<<<<<<res performOperation>>>>>>>>>>>' + result
+                );
+                console.log(receipGood);
+                this.dataExcel[i].OBSERVACIONES = 'ACTUALIZADO CORRECTAMENTE';
+              } else {
+                this.dataExcel[i].OBSERVACIONES = 'ERROR AL ACTUALIZAR';
+              }
+            } else {
+              this.dataExcel[i].OBSERVACIONES =
+                'AGREGADO ANTERIORMENTE AL' +
+                ' ' +
+                receipGood[0].typeReceipt +
+                ' ' +
+                receipGood[0].idReceipt;
+            }
+          } else {
+            this.dataExcel[i].OBSERVACIONES =
+              this.dataExcel[i].OBSERVACIONES + 'Programación diferente';
+          }
+        } catch (error) {
+          this.dataExcel[i].OBSERVACIONES =
+            this.dataExcel[i].OBSERVACIONES + '' + error;
+        }
+        await this.dataExcel;
+      }
+      return await this.dataExcel;
     } else {
       this.alert('warning', 'El Archivo no tiene Bienes', '');
     }
@@ -1371,5 +1446,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     this.data1.load([]);
     this.data1.refresh();
     this.totalItems = 0;
+    this.indepForm1.reset();
+    this.cancellationView = false;
+    this.reprogramingView = false;
   }
 }
