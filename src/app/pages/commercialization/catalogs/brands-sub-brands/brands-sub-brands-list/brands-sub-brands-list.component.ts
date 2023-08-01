@@ -127,6 +127,13 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
         this.getDeductives();
         this.alert('success', 'Marca Borrada Correctamente', '');
       },
+      error: err => {
+        this.alert(
+          'warning',
+          'No se Puede Eliminar la Marca Porque se Encuentra Registrada en Otra Tabla',
+          ''
+        );
+      },
     });
   }
 }

@@ -2,7 +2,7 @@
   <div class="row mb-3 mt-3">
     <form-field
       [control]="form.get('goodNumber')"
-      label="No.Siab"
+      label="No. Bien"
       class="col-md-2">
       <input
         type="number"
@@ -140,7 +140,7 @@
     <form-field
       [control]="form.get('descord')"
       class="col-md-6"
-      label="Descripcón Coordinación">
+      label="Descripción Coordinación">
       <input type="text" formControlName="descord" class="form-control" />
     </form-field>
     <form-field
@@ -183,12 +183,14 @@
     <div class="col">
       <button
         class="btn btn-danger btn-sm active mr-3"
+        [disabled]="loading"
         (click)="cleanFilters()">
         Limpiar Filtros <i class="fas fa-eraser"> </i>
       </button>
       <button
         type="button"
         class="btn btn-primary active btn-sm"
+        [disabled]="loading"
         (click)="executeConsult()">
         Ejecutar consulta
         <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -204,7 +206,7 @@
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
-  <div class="row pt-3">
+  <div [class]="loading ? 'table-loading row pt-3' : 'row pt-3'">
     <ng2-smart-table [settings]="settings" [source]="dataGoods">
     </ng2-smart-table>
   </div>
@@ -217,11 +219,17 @@
 
   <div class="row text-center">
     <div class="col">
-      <button class="btn btn-sm btn-success active mr-3">
+      <button
+        class="btn btn-sm btn-success active mr-3"
+        (click)="exportAll()"
+        [disabled]="loading">
         Exportar a Excel Todos
         <i class="bx bx-download float-icon"></i>
       </button>
-      <button class="btn btn-sm btn-success active" (click)="exportSelected()">
+      <button
+        class="btn btn-sm btn-success active"
+        (click)="exportSelected()"
+        [disabled]="loading">
         Exportar a Excel Seleccionados
         <i class="bx bx-download float-icon"></i>
       </button>

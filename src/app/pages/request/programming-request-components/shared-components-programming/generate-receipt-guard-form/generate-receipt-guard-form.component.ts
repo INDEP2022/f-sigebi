@@ -186,9 +186,9 @@ export class GenerateReceiptGuardFormComponent
 
   getIdentification(params: ListParams) {
     params['filter.name'] = 'Identificaciones';
+    params['orderBy'] = 'keyId:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
-        console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
       error: error => {},

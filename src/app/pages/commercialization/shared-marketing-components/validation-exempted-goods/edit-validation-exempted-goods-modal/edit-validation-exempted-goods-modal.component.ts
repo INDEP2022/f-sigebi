@@ -44,7 +44,6 @@ export class EditValidationExemptedGoodsModalComponent
     });
     if (this.goodsTransAva != null) {
       this.edit = true;
-      console.log(this.goodsTransAva);
       this.goodForm.patchValue(this.goodsTransAva);
     }
   }

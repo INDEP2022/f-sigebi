@@ -1,0 +1,13 @@
+:host ::ng-deep ng2-smart-table table tr {
+  &.notSelect {
+    td:first-child input {
+      display: none;
+    }
+  }
+
+  &.ng2-smart-filters {
+    th:first-child ng2-smart-table-filter {
+      display: none;
+    }
+  }
+}

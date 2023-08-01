@@ -153,6 +153,7 @@ export class ReadInfoGoodComponent
 
         console.log('getGood', resp.data[0]);
         const good = resp.data[0];
+        console.log('Fracción', good.fractionCodeFracction);
         this.goodType = good.descriptionRelevantType
           ? good.descriptionRelevantType
           : '';

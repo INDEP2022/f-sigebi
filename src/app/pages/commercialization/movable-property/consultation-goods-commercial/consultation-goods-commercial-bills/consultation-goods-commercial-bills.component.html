@@ -1,6 +1,6 @@
 <form class="form-material" [formGroup]="form" (submit)="getData()">
   <div class="row mb-3 mt-3">
-    <form-field [control]="form.get('good')" class="col-md-2" label="No. Siab">
+    <form-field [control]="form.get('good')" class="col-md-2" label="No. Bien">
       <input
         type="number"
         [min]="0"
@@ -95,12 +95,16 @@
   </div>
   <div class="row text-center">
     <div class="col">
-      <button class="btn btn-danger btn-sm active mr-3">
+      <button
+        class="btn btn-danger btn-sm active mr-3"
+        [disabled]="loading"
+        (click)="cleanFilters()">
         Limpiar Filtros <i class="fas fa-eraser"> </i>
       </button>
       <button
         type="button"
         class="btn btn-primary active btn-sm"
+        [disabled]="loading"
         (click)="executeConsult()">
         Ejecutar consulta
         <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -116,20 +120,26 @@
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
-  <div class="row pt-3">
+  <div [class]="loading ? 'table-loading row pt-3' : 'row pt-3'">
     <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
   </div>
   <app-pagination
-    [params]="params"
-    [totalItems]="totalItems"
-    [limit]="newLimit"></app-pagination>
+    [params]="params2"
+    [totalItems]="totalItems2"
+    [limit]="newLimit2"></app-pagination>
   <div class="row text-center mt-5">
     <div class="col">
-      <button class="btn btn-sm btn-success active mr-3">
+      <button
+        class="btn btn-sm btn-success active mr-3"
+        (click)="exportAll()"
+        [disabled]="loading">
         Exportar a Excel Todos
         <i class="bx bx-download float-icon"></i>
       </button>
-      <button class="btn btn-sm btn-success active" (click)="exportSelected()">
+      <button
+        class="btn btn-sm btn-success active"
+        (click)="exportSelected()"
+        [disabled]="loading">
         Exportar a Excel Seleccionados
         <i class="bx bx-download float-icon"></i>
       </button>
