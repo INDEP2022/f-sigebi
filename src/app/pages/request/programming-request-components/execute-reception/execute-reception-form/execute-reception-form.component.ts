@@ -514,6 +514,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   getReceiptsGuard() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
         //this.receiptGuardGood = response.data[0];
@@ -2143,7 +2144,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        const formData: IProceedings = {
+        /*const formData: IProceedings = {
           minutesId: 1,
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
@@ -2177,9 +2178,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             }
           },
           error: error => {},
-        });
+        }); */
       }
     } else if (type == 'almacen') {
+      console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {
         this.receipts.getElements().then(async receipt => {
           const createReceiptGood: any = await this.createReceiptWarehouse(
@@ -2207,7 +2209,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         });
       } else {
-        const formData: IProceedings = {
+        /*const formData: IProceedings = {
           minutesId: 1,
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
@@ -2240,7 +2242,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             }
           },
           error: error => {},
-        });
+        }); */
       }
     }
   }
