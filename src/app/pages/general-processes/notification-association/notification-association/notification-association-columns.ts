@@ -24,7 +24,7 @@ export const NOTIFICATION_ASSOCIATION_COLUMNS = {
     valuePrepareFunction: (date: string) => new Date(date).toLocaleDateString(),
   },
   protectionKey: {
-    title: 'CVE Amparo',
+    title: 'Cve. Amparo',
     sort: false,
   },
   preliminaryInquiry: {

@@ -4,20 +4,11 @@
   </div>
   <div body>
     <div class="ch-content">
-      <!-- <div class="row mt-3">
-        <div class="d-flex flex-row-reverse">
-          <div class="me-2 mb-4">
-            <button
-              class="btn btn-sm btn-primary active me-2 font-size-13"
-              >
-              Ejecutar <i class="bx bx-send text-light me-1 float-icon"></i>
-            </button>
-          </div>
-        </div>
-      </div> -->
-      <app-columns-select [(settings)]="settings"> </app-columns-select>
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="title">CAPTURA</h5>
+        <app-columns-select [(settings)]="settings"> </app-columns-select>
+      </div>
     </div>
-
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">

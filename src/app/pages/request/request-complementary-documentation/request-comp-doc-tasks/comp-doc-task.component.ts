@@ -1,4 +1,5 @@
 import { inject } from '@angular/core';
+import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -15,7 +16,9 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract expRequest: boolean;
   protected abstract selectGoodForEyeVisit: boolean;
   protected abstract validateGoodForEyeVisit: boolean;
+  protected abstract resultVisits: boolean;
   protected abstract viewSelectedGoods: boolean;
+  protected abstract resultEyeVisitReport: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
   protected abstract saveRequest: boolean;
@@ -25,6 +28,8 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract title: string;
   protected abstract complementaryDoc: boolean;
   protected abstract requestInfo: IRequest;
+  protected abstract typeVisit: string;
+  protected abstract listGoodSelectedTitle: string;
 
   private rejectedService = inject(RejectedGoodService);
 
@@ -166,89 +171,57 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.turnReq = true;
         this.createReport = true;
         this.rejectReq = true;
-
         break;
       case 'BSRegistroSolicitudes':
         //registro del formulario
         this.regDocForm = true;
-        this.regDocView = false;
         //buscar solicitudes de bienes
         this.searchRequestSimGoods = true;
         //seleccionar bienes
         this.selectGoods = true;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
-        this.docRequest = false;
         //expedientes
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-        this.selectGoodForEyeVisit = false;
-        this.validateGoodForEyeVisit = false;
-
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
         break;
       case 'BSNotificarTransferente':
-        this.regDocForm = false;
+        this.listGoodSelectedTitle = 'Bienes Seleccionados';
         //ver registro
         this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
         //visualizar los bienes seleccioandos
         this.viewSelectedGoods = true;
-        this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
         this.notifyReport = true;
-        this.selectGoodForEyeVisit = false;
-        this.validateGoodForEyeVisit = false;
-
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
         break;
       case 'BSVisitaOcular':
-        this.regDocForm = false;
+        this.typeVisit = 'selectGood';
         this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
         this.selectGoodForEyeVisit = true;
-        this.validateGoodForEyeVisit = false;
-
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
         break;
       case 'BSValidarVisitaOcular':
-        this.regDocForm = false;
         this.regDocView = true;
-        this.searchRequestSimGoods = false;
-        this.selectGoods = false;
-        this.viewSelectedGoods = false;
-        this.guidelines = false;
         this.docRequest = true;
         this.expRequest = true;
         this.saveRequest = true;
-        this.dictumValidate = false;
-        this.notifyReport = false;
-        this.selectGoodForEyeVisit = false;
         this.validateGoodForEyeVisit = true;
-
+        this.resultEyeVisitReport = true;
         this.turnReq = true;
-        this.createReport = false;
-        this.rejectReq = false;
+        break;
+      case 'BSElaborarOficioRespuesta':
+        this.typeVisit = 'resultGood';
+        this.regDocView = true;
+        this.docRequest = true;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.resultVisits = true;
+        this.turnReq = true;
         break;
       case 'RERegistroDocComplementaria':
         this.regDocForm = true;
@@ -288,20 +261,30 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   getGoodResDev(params: ListParams) {
     return new Promise((resolve, reject) => {
-      this.rejectedService.getAll(params).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {
-          reject(
-            'error no se pudo obtener los bienes de la tabla good-res-dev'
-          );
-        },
-      });
+      this.rejectedService
+        .getAll(params)
+        .pipe(
+          catchError(err => {
+            if (err.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw err;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(
+              'error no se pudo obtener los bienes de la tabla good-res-dev'
+            );
+          },
+        });
     });
   }
 
-  turnResquestMessage(requestId: number) {
+  turnResquestMessage(requestId: number, email?: string) {
     Swal.fire({
       title: `Desea turnar la solicitud con el folio: ${requestId}`,
       text: 'Usted va a transferir una solicitud que no es comercio exterior a un TE',
@@ -329,6 +312,8 @@ export abstract class CompDocTasksComponent extends BasePage {
     this.dictumValidate = false;
     this.notifyReport = false;
     this.selectGoodForEyeVisit = false;
+    this.validateGoodForEyeVisit = false;
+    this.resultEyeVisitReport = false;
     this.turnReq = false;
     this.createReport = false;
     this.rejectReq = false;

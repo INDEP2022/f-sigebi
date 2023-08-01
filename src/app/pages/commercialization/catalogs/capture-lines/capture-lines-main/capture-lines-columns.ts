@@ -6,11 +6,14 @@ export const EVENT_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  // cve: {//SALE DE LA TABLA COMER_EVENTOS
-  //   title: 'Clave',
-  //   type: 'string',
-  //   sort: false,
-  // },
+  eatEventDetail: {
+    title: 'Clave Procedimiento',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return cell.processKey;
+    },
+  },
   customerBmx: {
     title: 'Cliente Bmx',
     type: 'number',
@@ -41,6 +44,11 @@ export const EVENT_COLUMNS = {
 };
 
 export const CAPTURE_LINES_COLUMNS = {
+  eventId: {
+    title: 'Evento',
+    type: 'number',
+    sort: false,
+  },
   pallette: {
     title: 'No. Paleta',
     type: 'number',

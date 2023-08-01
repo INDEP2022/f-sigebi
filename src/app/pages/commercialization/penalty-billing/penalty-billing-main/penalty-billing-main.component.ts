@@ -321,7 +321,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     }
   }
 
-  getComerFacturas(id: number = 6) {
+  getComerFacturas(id: number = 3) {
     const filter = new FilterParams();
     filter.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
     filter.addFilter('billId', id, SearchFilter.EQ);
@@ -335,16 +335,19 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           ? value.impressionDate.split('-').reverse().join('/')
           : '';
         this.billingForm.patchValue(value);
-        this.getLoteByEvent(new ListParams());
         const params = new ListParams();
-        params.text = value.customer;
-        this.getComerClientsData2(params);
+        params.text = value.eventId;
+        this.getEventData(params);
+        this.getLoteByEvent(new ListParams());
         const params2 = new ListParams();
-        params2.text = value.causerebillId;
-        this.getRebillData(params2);
+        params2.text = value.customer;
+        this.getComerClientsData2(params2);
         const params3 = new ListParams();
-        params3.text = value.downloadcvman;
-        this.getTransferentData(params3);
+        params3.text = value.causerebillId;
+        this.getRebillData(params3);
+        const params4 = new ListParams();
+        params4.text = value.downloadcvman;
+        this.getTransferentData(params4);
       },
       error: () => {},
     });
@@ -380,7 +383,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Facturación de Penalización',
-            'Creado correctamente'
+            'Creado Correctamente'
           );
         },
         error: err => {
@@ -412,7 +415,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Facturación de Penalización',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
         },
         error: err => {
@@ -598,7 +601,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
     this.comerInvoice.deleteFolio({ eventId, invoiceId: billId }).subscribe({
       next: () => {
-        this.alert('success', 'Folios', 'Eliminado correctamente');
+        this.alert('success', 'Folios', 'Eliminado Correctamente');
         const dataUpdate = this.billingForm.value;
 
         dataUpdate.impressionDate = dataUpdate.impressionDate
@@ -765,8 +768,16 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     let CF_LEYENDA: string;
     let BORRA: string;
 
-    const { billId, causerebillId, series, Invoice, eventId, Iauthorize } =
-      this.billingForm.value;
+    const {
+      billId,
+      causerebillId,
+      series,
+      Invoice,
+      eventId,
+      Iauthorize,
+      batchId,
+      delegationNumber,
+    } = this.billingForm.value;
 
     if (!Invoice) {
       this.alert(
@@ -791,18 +802,45 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           pAuthorized: Iauthorize,
           pStatus: 'PREF',
           pImagen: null,
-          pCfdi: null,
-          pLot: null,
-          pCause: null,
-          pDeletedEmits: null,
+          pCfdi: 0,
+          pLot: Number(batchId),
+          pCause: Number(causerebillId),
+          pDeletedEmits: Number(delegationNumber),
           pOcionCan: null,
         };
 
         CF_NUEVAFACT = await this.copyInovice(body);
 
         if (CF_NUEVAFACT > 0) {
+          this.alert('success', 'Factura Cancelada', 'Procesado Correctamente');
+
+          const dataUpdate = this.billingForm.value;
+
+          dataUpdate.impressionDate = dataUpdate.impressionDate
+            ? typeof dataUpdate.impressionDate == 'string'
+              ? dataUpdate.impressionDate.split('/').reverse().join('-')
+              : dataUpdate.impressionDate
+            : null;
+
+          dataUpdate.eventDate = dataUpdate.eventDate
+            ? typeof dataUpdate.eventDate == 'string'
+              ? dataUpdate.eventDate.split('/').reverse().join('-')
+              : dataUpdate.eventDate
+            : null;
+
+          delete dataUpdate.descDelegation;
+          delete dataUpdate.any;
+
+          this.comerInvoice.update(this.billingForm.value).subscribe({
+            next: () => {
+              this.getComerFacturas(billId);
+            },
+            error: err => {
+              this.alert('error', 'Error', err.error.message);
+            },
+          });
         } else {
-          this.alert('error', 'Error', 'No se pudo generar copia factura');
+          this.alert('error', 'Error', 'No se pudo cancelar la factura');
         }
       } else if (this.refactureTemp == 'C') {
         this.cancelComerInovice();
@@ -813,7 +851,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   async copyInovice(data: Object) {
     return firstValueFrom<number>(
       this.comerInvoice.copyInvoice(data).pipe(
-        map(resp => resp.data),
+        map(resp => resp),
         catchError(() => of(0))
       )
     );

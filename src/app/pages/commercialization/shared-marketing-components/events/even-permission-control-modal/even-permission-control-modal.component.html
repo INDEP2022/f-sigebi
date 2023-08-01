@@ -36,7 +36,6 @@
           <form-field label="Fecha" [control]="comerUserForm.get('date')">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
               type="text"
               class="form-control"
               formControlName="date"
@@ -52,6 +51,18 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="
+            comerUserForm.invalid ||
+            comerUserForm.get('date').value == undefined ||
+            comerUserForm.get('date').value == null
+          "
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
           [disabled]="comerUserForm.invalid"
           type="button"
           class="btn btn-primary btn-sm active"
@@ -61,7 +72,7 @@
           <span *ngIf="!edit"
             ><i aria-hidden="true" class="fa fa-save"></i
           ></span>
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button

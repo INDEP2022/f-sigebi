@@ -14,7 +14,7 @@ export const COLUMNS = {
     sort: false,
   },
   movementNumber: {
-    title: 'No. Movto.',
+    title: 'No. Movimiento',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -24,9 +24,6 @@ export const COLUMNS = {
     // width: '15%',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.comerctrlpayments ? row.comerctrlpayments.description : null;
-    },
   },
   date: {
     title: 'Fecha',
@@ -65,18 +62,12 @@ export const COLUMNS = {
     // width: '15%',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.comerLots ? row.comerLots.idEvent : null;
-    },
   },
   lotPub: {
     title: 'Lote Pub.',
     // width: '15%',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.comerLots ? row.comerLots.lotPublic : null;
-    },
   },
 
   // dateOi: {

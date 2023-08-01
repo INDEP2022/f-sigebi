@@ -6,4 +6,6 @@ export enum ElectronicFirmEndpoint {
   ComerDocumentsXml = 'comer-dest-xml/comer-documents-xml',
   ComerUpdatePagosRefS = 'comer-dest-xml/update-comer-pagoref-s',
   ComerUpdatePagosRef = 'comer-dest-xml/update-comer-pagoref',
+  ComerOrigins = 'comer-origins',
+  ComerDestXML = 'comer-dest-xml',
 }

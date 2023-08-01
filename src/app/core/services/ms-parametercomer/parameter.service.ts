@@ -79,4 +79,10 @@ export class ParameterModService
   getParameterStatus(params?: string) {
     return this.get(`comer-status-vta`, params);
   }
+
+  getAsigna(user: string, adress: string) {
+    return this.get(
+      `${ParameterComerEndpoints.ApplicationSigna}?user=${user}&address=${adress}`
+    );
+  }
 }

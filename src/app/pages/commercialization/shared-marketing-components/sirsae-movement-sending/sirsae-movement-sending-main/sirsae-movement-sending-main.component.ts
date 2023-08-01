@@ -1,24 +1,53 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
+import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 import { SIRSAE_MOVEMENT_SENDING_COLUMNS } from './sirsae-movement-sending-columns';
 
 @Component({
   selector: 'app-sirsae-movement-sending-main',
   templateUrl: './sirsae-movement-sending-main.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class SirsaeMovementSendingMainComponent
   extends BasePage
@@ -121,11 +150,21 @@ export class SirsaeMovementSendingMainComponent
   ];
 
   comerEventSelect = new DefaultSelect();
+  columnFilters: any = [];
+  acordionOpen: boolean = false;
+  disabledBtnCerrar: boolean = false;
+  loadingBtn: boolean = false;
+
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private comerEventService: ComerEventService,
-    private comerClientsService: ComerClientsService
+    private comerClientsService: ComerClientsService,
+    private modalService: BsModalService,
+    private comerInvoiceService: ComerInvoiceService,
+    private paymentService: PaymentService,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.settings = {
@@ -161,7 +200,58 @@ export class SirsaeMovementSendingMainComponent
         this.navigateCount += 1;
       }
     });
+
     this.prepareForm();
+
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('SI');
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              customerId: () => (searchFilter = SearchFilter.EQ),
+              name: () => (searchFilter = SearchFilter.ILIKE),
+              rfc: () => (searchFilter = SearchFilter.ILIKE),
+              sendedSirsae: () => (searchFilter = SearchFilter.EQ),
+              sendSirsae: () => (searchFilter = SearchFilter.EQ),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          //Su respectivo metodo de busqueda de datos
+          this.getComerClientsXEvent('no');
+        }
+      });
+
+    this.params
+      .pipe(
+        skip(1),
+        tap(() => {
+          this.getComerClientsXEvent('no');
+        }),
+        takeUntil(this.$unSubscribe)
+      )
+      .subscribe(() => {});
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getComerClientsXEvent());
+
     this.getData();
   }
 
@@ -209,20 +299,6 @@ export class SirsaeMovementSendingMainComponent
     this.clientRows = rows;
   }
 
-  sendSirsae(type: string = '') {
-    switch (type) {
-      case 'BATCH':
-        console.log(this.clientRows);
-        break;
-      case 'CLIENT':
-        console.log(this.clientRows);
-        break;
-      default:
-        console.log(this.clientRows);
-        break;
-    }
-  }
-
   // ---------------------- WILMER ---------------------- //
 
   getComerEvents(lparams: ListParams) {
@@ -254,55 +330,473 @@ export class SirsaeMovementSendingMainComponent
   }
 
   // COMER_CLIENTESXEVENTO
-
-  getComerClientsXEvent() {
+  async getComerClientsXEvent(filter: any) {
     this.loading = true;
-    const params = new FilterParams();
-    params.addFilter('eventId', this.eventSelected.id, SearchFilter.EQ);
-    this.comerClientsService.getAll_(params.getParams()).subscribe({
-      next: data => {
-        this.data.load(data.data);
-        this.data.refresh();
-        this.totalItems = data.count;
-        this.loading = false;
+    this.totalItems = 0;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    params['filter.eventId'] = `$eq:${this.eventSelected.id}`;
+    // const params = new FilterParams();
+    // params.addFilter('eventId', this.eventSelected.id, SearchFilter.EQ);
+    if (params['filter.name']) {
+      params['filter.customers.reasonName'] = params['filter.name'];
+      delete params['filter.name'];
+    }
+
+    if (params['filter.rfc']) {
+      params['filter.customers.rfc'] = params['filter.rfc'];
+      delete params['filter.rfc'];
+    }
+    params['sortBy'] = 'customerId:DESC';
+    this.comerClientsService.getComerClientsXEventgetAllV2(params).subscribe({
+      next: response => {
+        console.log(response);
+        let result = response.data.map(async (item: any) => {
+          // const client: any = await this.getClients(item.customerId);
+          item['rfc'] = item.customers ? item.customers.rfc : null;
+          item['name'] = item.customers ? item.customers.reasonName : null;
+        });
+        Promise.all(result).then(resp => {
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+          this.clickSearch = false;
+        });
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se Encontraron Clientes para este Evento',
-          ''
-        );
+        if (filter == 'si') {
+          this.alert(
+            'warning',
+            'No se Encontraron Clientes para este Evento',
+            ''
+          );
+        }
+
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
         this.loading = false;
+        this.clickSearch = false;
       },
     });
   }
 
+  getClients(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerClientsService.getById_(id).subscribe({
+        next: data => {
+          console.log('dasadas', data);
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  clickSearch: boolean = false;
   search() {
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Debe Seleccionar un Evento para Consultar',
+        'Es Necesario Especificar un Evento para Consultar',
         ''
       );
 
+    this.disabledBtnCerrar = true;
+    this.acordionOpen = true;
     this.totalItems = 0;
+    this.clickSearch = true;
     // this.amountList = [];
     // this.typeEvents = event.data;
-
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getComerClientsXEvent());
+      .subscribe(() => this.getComerClientsXEvent('si'));
   }
 
-  edit($event: any) {}
+  clear() {
+    this.form.reset();
+    this.data.load([]);
+    this.data.refresh();
+    this.totalItems = 0;
+    this.disabledBtnCerrar = false;
+    this.acordionOpen = false;
+    this.eventSelected = null;
+    this.getComerEvents(new ListParams());
+    this.clearSubheaderFields();
+  }
 
-  openForm() {}
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
+  }
+  edit(event: any) {
+    console.log('aaa', event);
+    this.openForm(event, true);
+  }
+  add() {
+    this.openForm(null, false);
+  }
+  openForm(data: any, editVal: boolean) {
+    if (!this.eventSelected) {
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      return;
+    }
+    const modalConfig = MODAL_CONFIG;
+    let event = this.eventSelected;
 
-  enviarSIRSAE() {}
+    modalConfig.initialState = {
+      event,
+      data,
+      editVal,
+      callback: (next: boolean) => {
+        if (next) this.getComerClientsXEvent('no');
+      },
+    };
+    this.modalService.show(NewAndUpdateComponent, modalConfig);
+  }
 
-  allNo() {}
-  allYes() {}
+  allNo() {
+    if (!this.eventSelected) {
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      return;
+    }
+
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+      return;
+    }
+
+    const data: any = this.data.getAll().then(async resp => {
+      if (resp.length > 0) this.loading = true;
+
+      // let result = resp.map(async (item: any) => {
+      //   item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
+      //   if (item.sendedSirsae != 'S') {
+      //     item.sendSirsae = 'N';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update(this.eventSelected.id, 'N');
+      //   }
+      // });
+
+      // Promise.all(result).then(resp => {
+      // this.loading = false;
+      await this.update(this.eventSelected.id, 'N');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
+    });
+  }
+  allYes() {
+    if (!this.eventSelected) {
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      return;
+    }
+
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+      return;
+    }
+
+    const data: any = this.data.getAll().then(async resp => {
+      if (resp.length > 0) this.loading = true;
+      // let result = resp.map(async (item: any) => {
+      //   item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
+      //   if (item.sendedSirsae != 'S') {
+      //     item.sendSirsae = 'S';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update(item, 'S');
+      //   }
+      // });
+
+      // Promise.all(result).then(async resp => {
+      // this.loading = false;
+      await this.update(this.eventSelected.id, 'S');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
+    });
+  }
+
+  // UPDATE CLIENTES X EVENTOS //
+  async update(event: any, type: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.pFmcomr612ClientxEvent2(event, type).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  // PARA ELIMINAR //
+  async update_(data: any) {
+    return new Promise((resolve, reject) => {
+      this.comerClientsService.updateClientXEvent(data).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  async enviarSIRSAE() {
+    if (!this.eventSelected) {
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      return;
+    }
+
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+      return;
+    }
+
+    // await this.validaPagos()
+
+    const data: any = this.data.getAll().then(async resp => {
+      if (resp.length > 0) {
+        this.loading = true;
+      }
+      this.loadingBtn = true;
+
+      // let arr: any = [];
+      // let result = resp.map(async (item: any) => {
+      //   const rfc = item.rfc;
+      //   // VALIDA_PAGOS
+      //   const valid1 = await this.validPayments(item);
+      //   if (valid1 == 0) {
+      //     this.alert(
+      //       'warning',
+      //       `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
+      //       ''
+      //     );
+      //     item.sendSirsae = 'N';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update_(item);
+      //   }
+
+      //   let obj = {
+      //     sendSirsae: item.sendSirsae,
+      //     sentSirsae: item.sendedSirsae,
+      //     rfc: rfc,
+      //     customer: item.clientId,
+      //   };
+      //   arr.push(obj);
+      // });
+
+      // Promise.all(result).then(async resp => {
+      await this.pFmcomr612getAuxCount(this.eventSelected.id);
+
+      const resss = await this.sendSirsae(1, []);
+      console.log('RESS', resss);
+      if (
+        resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+      ) {
+        this.alert(
+          'error',
+          'Error de Conexión',
+          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+        );
+        this.loadingBtn = false;
+        await this.getComerClientsXEvent('no');
+        return;
+      } else {
+        // ACT_EST_EVE
+        await this.actEstEve(this.eventSelected.id);
+        this.loadingBtn = false;
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+        await this.getComerClientsXEvent('no');
+
+        // ACT_EST_EVE
+        // const valid2 = await this.actEstEve(this.eventSelected.id);
+        // if (valid2 == 0) {
+        //   let obj = {
+        //     statusVtaId: 'CONC',
+        //     id: this.eventSelected.id,
+        //     eventTpId: this.eventSelected.eventTpId,
+        //   };
+
+        //   await this.updateEvents(this.eventSelected.id, obj);
+        // } else {
+        //   let obj = {
+        //     statusVtaId: 'PCON',
+        //     id: this.eventSelected.id,
+        //     eventTpId: this.eventSelected.eventTpId,
+        //   };
+        //   await this.updateEvents(this.eventSelected.id, obj);
+        // }
+      }
+      // });
+    });
+  }
+
+  actEstEve(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.actEstEve(id).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  pFmcomr612getAuxCount(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.pFmcomr612getAuxCount(id).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  async updateEvents(id: any, body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventService.updateComerEvent(id, body).subscribe({
+        next: data => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+        },
+      });
+    });
+  }
+  async validaPagos() {
+    const data: any = this.data.getAll().then(resp => {
+      let result = resp.map(async (item: any) => {
+        const valid1 = await this.validPayments(item);
+        if (valid1 == 0) {
+          this.alert(
+            'warning',
+            `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
+            ''
+          );
+        }
+      });
+      this.data.refresh();
+    });
+  }
+
+  async validPayments(data: any) {
+    const params = new ListParams();
+    params['filter.idEvent'] = `$eq:${data.eventId}`;
+    params['filter.clientRfc'] = `$eq:${data.rfc}`;
+    return new Promise((resolve, reject) => {
+      this.comerInvoiceService.getValidPayments(params).subscribe({
+        next: response => {
+          resolve(response.count);
+        },
+        error: err => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  async sendSirsae(process: any, data: any) {
+    let obj = {
+      process: process,
+      event: this.eventSelected.id,
+      // customerXevent: data,
+    };
+    return new Promise((resolve, reject) => {
+      this.paymentService.sendSirsaeFcomer112(obj).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          console.log('error', error);
+          resolve(error.error.message);
+        },
+      });
+    });
+  }
+
+  obtenerOI() {
+    if (!this.eventSelected) {
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
+      return;
+    }
+
+    const data: any = this.data.getAll().then(async resp => {
+      if (resp.length > 0) this.loading = true;
+
+      // let arr: any = []
+      // let result = resp.map(async (item: any) => {
+      //   const rfc = item.rfc;
+      //   let obj = {
+      //     sendSirsae: item.sendSirsae,
+      //     sentSirsae: item.sendedSirsae,
+      //     rfc: rfc,
+      //     customer: item.clientId
+      //   }
+
+      //   arr.push(obj)
+      // });
+
+      // Promise.all(result).then(async resp => {
+      const resss = await this.sendSirsae(2, []);
+      if (
+        resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+      ) {
+        this.alert(
+          'error',
+          'Error de Conexión',
+          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+        );
+        await this.getComerClientsXEvent('no');
+        return;
+      } else {
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+        // this.loading = false;
+        await this.getComerClientsXEvent('no');
+      }
+
+      // });
+    });
+  }
 }

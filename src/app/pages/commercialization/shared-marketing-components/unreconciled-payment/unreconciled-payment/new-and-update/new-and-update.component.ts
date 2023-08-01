@@ -64,7 +64,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      reference: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       movementNumber: [
         null,
 
@@ -73,12 +76,12 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       date: [null, Validators.required],
       amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
       bankKey: [null, [Validators.required]],
-      code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      lotId: [null],
+      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      lotId: [null, Validators.required],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
-      recordDate: [new Date()],
-      referenceOri: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      recordDate: [null],
+      referenceOri: [null, [Validators.pattern(STRING_PATTERN)]],
       dateOi: [null],
       entryOrderId: [null, Validators.pattern(NUMBERS_PATTERN)],
       validSystem: [null, Validators.pattern(STRING_PATTERN)],
@@ -101,18 +104,18 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         code: this.data.code,
         type: this.data.type,
         result: this.data.result,
-        recordDate: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.recordDate)
-        ),
+        // recordDate: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.recordDate)
+        // ),
         referenceOri: this.data.referenceOri,
-        dateOi: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.dateOi)
-        ),
+        // dateOi: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.dateOi)
+        // ),
         entryOrderId: this.data.entryOrderId,
         validSystem: this.data.validSystem,
         description: this.data.description,
         branchOffice: this.data.branchOffice,
-        reconciled: this.data.reconciled,
+        // reconciled: this.data.reconciled,
         appliedTo: this.data.appliedTo,
         clientId: this.data.clientId,
         lotId: this.data.lotId,
@@ -152,14 +155,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       lotId: this.form.value.lotId,
       type: this.form.value.type,
       result: this.form.value.result,
-      recordDate: this.form.value.recordDate,
+      // recordDate: this.form.value.recordDate,
       referenceOri: this.form.value.referenceOri,
-      dateOi: this.form.value.dateOi,
+      // dateOi: this.form.value.dateOi,
       entryOrderId: this.form.value.entryOrderId,
       validSystem: this.form.value.validSystem,
       description: this.form.value.description,
       branchOffice: this.form.value.branchOffice,
-      reconciled: this.form.value.reconciled,
+      // reconciled: this.form.value.reconciled,
       appliedTo: this.form.value.appliedTo,
       clientId: this.form.value.clientId,
     };
@@ -204,7 +207,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // this.alert('success', 'El Registro se Eliminó Correctamente', '');
       },
       error: error => {
-        this.handleError();
+        // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
+        this.alert(
+          'error',
+          'Ocurrió un Error al Guardar el Registro',
+          error.error.message
+        );
+        // }
+        // this.handleError();
         // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
       },
     });
@@ -212,7 +222,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, this.title);
+    this.alert('success', `Registro ${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -220,7 +230,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, this.title);
+    this.alert('error', `Error al Intentar ${message} el Registro`, '');
     this.loading = false;
   }
 

@@ -1,4 +1,9 @@
 export const GOODS_EYE_VISIT_COLUMNS = {
+  resultTaxpayer: {
+    title: 'Resultado del Contribuyente',
+    type: 'string',
+    sort: false,
+  },
   goodGrouper: {
     title: 'Nombre del Bien Agrupador',
     type: 'string',
@@ -35,7 +40,7 @@ export const GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   numberGoodsiab: {
-    title: 'No. Sae',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },

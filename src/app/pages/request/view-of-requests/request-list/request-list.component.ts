@@ -279,6 +279,15 @@ var usuario: IRequestList[] = [
   },
   {
     title:
+      'BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: 56820, Contribuyente USARIO CARGIA, PAMA 159743CV',
+    noRequest: 56820,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'BSElaborarOficioRespuesta',
+  },
+  {
+    title:
       'RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: 44907',
     noRequest: 44907,
     numTask: 3405,
@@ -601,6 +610,13 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
       case 'GRAnalisisResarcimiento':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'BSElaborarOficioRespuesta':
         this.router.navigate([
           'pages/request/request-comp-doc/tasks',
           event.data.process,

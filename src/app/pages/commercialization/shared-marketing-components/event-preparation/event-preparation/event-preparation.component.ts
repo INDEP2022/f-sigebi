@@ -8,7 +8,6 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
-import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { EventPreparationService } from '../event-preparation.service';
@@ -60,8 +59,7 @@ export class EventPreparationComponent
     private comerEventosService: ComerEventosService,
     private lotService: LotService,
     private eventPreparationService: EventPreparationService,
-    private globalVarsService: GlobalVarsService,
-    private eventAppService: EventAppService
+    private globalVarsService: GlobalVarsService
   ) {
     super();
     // TODO: Recibir los parametros
@@ -78,23 +76,7 @@ export class EventPreparationComponent
     const { REL_BIENES } = global;
     if (REL_BIENES) {
       await this.onOpenEvent();
-      await this.verifyRejectedGoods();
     }
-  }
-
-  /**VERIFICARECHAZADOS */
-  async verifyRejectedGoods() {
-    const { id } = this.eventControls;
-    return firstValueFrom(
-      this.eventAppService.verifyRejectedGoods(id.value).pipe(
-        catchError(error => {
-          return throwError(() => error);
-        }),
-        tap(response => {
-          console.warn({ response });
-        })
-      )
-    );
   }
 
   async ngOnInit() {
@@ -262,12 +244,13 @@ export class EventPreparationComponent
 
   openExistingEvent() {
     // this.onlyBase = false;
+    let tab = TABS.LOTES_TAB;
     const { eventTpId, id } = this.eventControls;
     if (eventTpId.value == 11) {
       this.eventFormVisual.eventDate = false;
       this.eventFormVisual.failureDate = false;
       this.eventFormVisual.thirdId = false;
-      // TODO: MADAR AL TAB CORRESPONDIENTE
+      tab = TABS.BASE_TAB;
       // this.onlyBase = true;
     } else if (eventTpId.value == 6) {
       this.eventFormVisual.eventDate = false;
@@ -277,7 +260,7 @@ export class EventPreparationComponent
       this.eventFormVisual.failureDate = true;
     }
     this.resetTableFilters();
-    this.selectTab(TABS.LOTES_TAB);
+    this.selectTab(tab);
     const params = new FilterParams();
     this.comerLotsListParams.next(params);
   }
@@ -370,7 +353,7 @@ export class EventPreparationComponent
     }
     if (eventTpId.value == 9) {
       this.canNotSeeAvailableGoods(
-        'Opción no disponible para este tipo de evento,lotifique desde archivo'
+        'Opción no disponible para este tipo de evento, lotifique desde archivo'
       );
       return;
     }
@@ -381,10 +364,11 @@ export class EventPreparationComponent
       );
       return;
     }
+    console.log(statusVtaId.value);
 
     if (statusVtaId.value != 'PREP') {
       this.canNotSeeAvailableGoods(
-        'Este tipo de Evento ya no admite incorporacion de bienes'
+        'Este tipo de Evento ya no admite incorporación de bienes'
       );
       return;
     }
@@ -415,5 +399,32 @@ export class EventPreparationComponent
 
   exitConsignment() {
     this.selectTab(TABS.LOTES_TAB);
+  }
+
+  viewBase() {
+    const { id, eventTpId } = this.eventControls;
+    if (!id.value) {
+      this.alert(
+        'error',
+        ' Error',
+        'Para trabajar las bases requiere tener un evento abierto'
+      );
+      setTimeout(() => {
+        this.selectTab(TABS.OPEN_TAB);
+      });
+      return;
+    }
+    if (eventTpId.value != 11) {
+      this.alert(
+        'error',
+        'Error',
+        'Para trabajar las bases el tipo debe ser Venta de Bases'
+      );
+      setTimeout(() => {
+        this.selectTab(TABS.OPEN_TAB);
+      });
+      return;
+    }
+    this.fillStadistics();
   }
 }
