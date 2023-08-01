@@ -5,8 +5,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 //Services
-import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerEventosServiceTwo } from 'src/app/core/services/ms-event/comer-eventos-ms-new.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-authorization-keys',
@@ -15,12 +16,14 @@ import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-c
 })
 export class AuthorizationKeysComponent extends BasePage implements OnInit {
   eventForm: ModelForm<IComerEvent>;
-  event1: IComerEvent;
   form: FormGroup = new FormGroup({});
+  users = new DefaultSelect<IComerEvent>();
+  processKey: any;
+  observations: any;
 
   constructor(
     private fb: FormBuilder,
-    private comerEventosService: ComerEventosService,
+    private comerEventosService: ComerEventosServiceTwo,
     private utilComerV1Service: UtilComerV1Service
   ) {
     super();
@@ -33,7 +36,7 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.eventForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null, Validators.required],
       processKey: [null, []],
       observations: [null, []],
     });
@@ -46,27 +49,21 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
     });
   }
 
-  getEventById(): void {
-    let _id = this.eventForm.controls['id'].value;
-    console.log(_id);
-    this.loading = true;
-    this.comerEventosService.getById2(_id).subscribe(
-      response => {
-        //TODO: Validate Response
-        if (response !== null) {
-          this.eventForm.patchValue(response.data[0]['id']);
-          this.eventForm.updateValueAndValidity();
-          let key = this.eventForm.controls['id'].value;
-          this.form.controls['txtEncrip'].setValue(key);
-        } else {
-          //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontraron registros', '');
-        }
-
-        this.loading = false;
+  getByIdTwo(id: any): void {
+    this.comerEventosService.getByIdTwo(id).subscribe({
+      next: data => {
+        this.eventForm.controls['processKey'].setValue(data.processKey);
+        this.eventForm.controls['observations'].setValue(data.observations);
       },
-      error => (this.loading = false)
-    );
+      error: (error: any) => {
+        if (error.status == 400) {
+          this.alert('warning', 'Advertencia', 'No se encontraron registros');
+        }
+        this.eventForm.controls['processKey'].setValue('');
+        this.eventForm.controls['observations'].setValue('');
+        this.form.controls['encrip'].setValue('');
+      },
+    });
   }
 
   generateKey(): void {
@@ -74,8 +71,8 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
     this.form.controls['txtEncrip'].setValue(key);
     console.log(key);
     this.loading = true;
-    this.utilComerV1Service.encrypt(this.form.value).subscribe(
-      response => {
+    this.utilComerV1Service.encrypt(this.form.value).subscribe({
+      next: response => {
         //TODO: Validate Response
         if (response !== null) {
           console.log(response);
@@ -87,8 +84,10 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
 
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => {
+        this.loading = false;
+      },
+    });
     /*this.utilComerV1Service.encrypt(this.form.value).subscribe({
       next: data => this.onLoadToast('success', 'Solicitud finalizada con éxito', ''),
       error: error => (this.loading = false),
@@ -99,8 +98,8 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
     navigator.clipboard.writeText(this.form.value['encrip']);
     this.onLoadToast(
       'success',
-      'Clave de autorización',
-      'copiada al portapapeles'
+      'Clave de Autorización',
+      'Copiada Correctamente'
     );
   }
 }
