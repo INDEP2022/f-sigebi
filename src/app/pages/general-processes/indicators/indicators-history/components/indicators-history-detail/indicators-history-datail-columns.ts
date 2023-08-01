@@ -1,29 +1,29 @@
 export const INDICATORS_HISTORY_DETAIL_COLUMNS = {
-  column1: {
+  num: {
     title: 'No.',
     sort: false,
   },
-  column2: {
+  id: {
     title: 'Indicador',
     sort: false,
   },
-  column3: {
+  proceedingsNum: {
     title: 'Expediente',
     sort: false,
   },
-  column4: {
+  admissionDate: {
     title: 'Fecha Ingreso',
     sort: false,
   },
-  column5: {
+  workDate: {
     title: 'Fecha Trabajo',
     sort: false,
   },
-  column6: {
+  maxDate: {
     title: 'Fecha Maxima',
     sort: false,
   },
-  column7: {
+  complied: {
     title: 'Cumplio',
     sort: false,
   },

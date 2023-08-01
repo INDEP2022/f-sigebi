@@ -1,4 +1,4 @@
-import { CheckboxElementComponent } from "../checkbox-element/checkbox-element.component";
+import { CheckboxElementComponent } from '../checkbox-element/checkbox-element.component';
 
 export let goodCheckCustomer: any[] = [];
 
@@ -31,11 +31,13 @@ export const COLUMNS = {
   check: {
     title: 'Procesar',
     type: 'custom',
-    sort:false,
+    sort: false,
     show: false,
     renderComponent: CheckboxElementComponent,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return goodCheckCustomer.find((e: any) => e.row.ClientId == row.ClientId) ? true : false;
+      return goodCheckCustomer.find((e: any) => e.row.ClientId == row.ClientId)
+        ? true
+        : false;
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
@@ -43,11 +45,13 @@ export const COLUMNS = {
           console.log(goodCheckCustomer);
           goodCheckCustomer.push(data.row);
         } else {
-          goodCheckCustomer = goodCheckCustomer.filter(valor => valor.ClientId != data.row.ClientId);
+          goodCheckCustomer = goodCheckCustomer.filter(
+            valor => valor.ClientId != data.row.ClientId
+          );
         }
       });
     },
-  }
+  },
 };
 
 export function clearGoodCheckCustomer() {

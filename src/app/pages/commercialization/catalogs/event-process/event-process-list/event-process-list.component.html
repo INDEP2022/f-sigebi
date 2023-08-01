@@ -8,25 +8,18 @@
     </div> -->
   </div>
   <div body>
-    <!--   <form class="form-material" [formGroup]="form">
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
           <form-field label="Tipo" [control]="form.get('goodType')">
-            <ng-select
-              formControlName="goodType"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
+            <ng-select formControlName="goodType" [searchable]="false" class="form-control" [clearable]="false">
               <ng-option value="M">Mueble</ng-option>
               <ng-option value="I">Inmueble</ng-option>
             </ng-select>
           </form-field>
         </div>
         <div class="col-md-2">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
-            (click)="getEvents()">
+          <button class="btn btn-sm btn-primary active" [disabled]="!form.valid" (click)="getEvents()">
             Buscar
           </button>
         </div>

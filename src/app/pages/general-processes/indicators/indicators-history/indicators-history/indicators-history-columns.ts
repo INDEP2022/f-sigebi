@@ -52,3 +52,9 @@ export const INDICATORS_HISTORY_COLUMNS = {
     sort: false,
   },
 };
+
+export class Indicators {
+  onCustom(event: any) {
+    console.log('Seleccionamos la columna vamoooo');
+  }
+}
