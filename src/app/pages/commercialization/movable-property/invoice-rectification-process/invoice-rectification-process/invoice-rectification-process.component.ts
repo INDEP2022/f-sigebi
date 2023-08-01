@@ -101,6 +101,16 @@ export class InvoiceRectificationProcessComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          const { jobNot } = this.form.value;
+
+          if (!jobNot) {
+            this.alert(
+              'warning',
+              'Detalle Factura',
+              'Ingrese un Número de Oficio'
+            );
+            return;
+          }
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
@@ -178,7 +188,7 @@ export class InvoiceRectificationProcessComponent
       params['filter.expDate'] = `${SearchFilter.EQ}:${
         typeof expDate == 'string'
           ? expDate.split('/').reverse().join('-')
-          : expDate
+          : this.datePipe.transform(expDate, 'yyyy-MM-dd')
       }`;
     if (series) params['filter.series'] = `${SearchFilter.ILIKE}:${series}`;
     if (Invoice) params['filter.Invoice'] = `${SearchFilter.EQ}:${Invoice}`;
@@ -203,7 +213,6 @@ export class InvoiceRectificationProcessComponent
     };
     this.comerDirectInovice.getAll(params).subscribe({
       next: resp => {
-        console.log(resp);
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
         this.totalItems = resp.count;
@@ -268,11 +277,11 @@ export class InvoiceRectificationProcessComponent
     saveData.expDate =
       typeof saveData.expDate == 'string'
         ? saveData.expDate.split('/').reverse().join('-')
-        : saveData.expDate;
+        : this.datePipe.transform(saveData.expDate, 'yyyy-MM-dd');
     saveData.attentionDate =
       typeof saveData.attentionDate == 'string'
         ? saveData.attentionDate.split('/').reverse().join('-')
-        : saveData.attentionDate;
+        : this.datePipe.transform(saveData.attentionDate, 'yyyy-MM-dd');
 
     if (this.isSearch) {
       if (typeof saveData.hourAttention == 'string') {
@@ -416,6 +425,9 @@ export class InvoiceRectificationProcessComponent
     this.dataFilter.refresh();
     this.totalItems = 0;
     this.isSearch = false;
+    this.form.get('hourAttention').patchValue(`
+    ${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00
+    `);
   }
 
   cleanData() {
@@ -424,6 +436,9 @@ export class InvoiceRectificationProcessComponent
     this.dataFilter.refresh();
     this.totalItems = 0;
     this.isSearch = false;
+    this.form.get('hourAttention').patchValue(`
+    ${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00
+    `);
   }
 
   openModal(): void {
@@ -436,6 +451,13 @@ export class InvoiceRectificationProcessComponent
   openForm(data: any) {}
 
   openPrevPdf() {
+    const { jobNot } = this.form.value;
+
+    if (!jobNot) {
+      this.alert('error', 'Error', 'Ingrese un Número de Oficio');
+      return;
+    }
+
     this.jasperService.fetchReportBlank('blank').subscribe({
       next: resp => {
         const blob = new Blob([resp], { type: 'application/pdf' });
@@ -458,8 +480,6 @@ export class InvoiceRectificationProcessComponent
       error: () => {},
     });
   }
-
-  remove(data: any) {}
 
   postChangeFolio() {
     const { name, series, Invoice } = this.form.value;
@@ -512,7 +532,9 @@ export class InvoiceRectificationProcessComponent
     }
   }
 
-  async setParaghrapAll() {
+  async setParaghrapAll(val: any) {
+    if (!val) return;
+
     const {
       attentionDate,
       hourAttention,
@@ -561,15 +583,26 @@ export class InvoiceRectificationProcessComponent
     AUX_CADENA = parr1;
     AUX_FECHA = `${day} de ${months[Number(month - 1)]} del ${year}`;
     CADENA = AUX_CADENA.replace('&DIA', AUX_FECHA);
-    AUX_HORA = hourAttention;
+
+    AUX_HORA =
+      typeof hourAttention == 'string'
+        ? this.datePipe.transform(
+            new Date(
+              `${hourAttention.split(' ')[0].split('/').reverse().join('-')} ${
+                hourAttention.split(' ')[1]
+              }`
+            ),
+            'h:mm a'
+          ) //hourAttention.split(' ')[1]
+        : this.datePipe.transform(hourAttention, 'h:mm a');
     CADENA = CADENA.replace('&HORA', AUX_HORA);
 
     let interesado: string = '';
 
     if (inrepresentation) {
-      interesado = `${inrepresentation} EN REPRESENTACION DE ${name ?? ''} ${
-        lastnamePat ?? ''
-      } ${lastnameMat ?? ''}`;
+      interesado = `${inrepresentation ?? ''} EN REPRESENTACION DE ${
+        name ?? ''
+      } ${lastnamePat ?? ''} ${lastnameMat ?? ''}`;
     } else {
       interesado = `${name ?? ''} ${lastnamePat ?? ''} ${lastnameMat ?? ''}`;
     }
@@ -577,9 +610,9 @@ export class InvoiceRectificationProcessComponent
 
     AUX_INTERESADO = interesado;
     CADENA = CADENA.replace('&INTERESADO', AUX_INTERESADO);
-    CADENA = CADENA.replace('&FOLIO', InvoiceAttention);
-    CADENA = CADENA.replace('&SERIE', series);
-    CADENA = CADENA.replace('&NOFACT', Invoice);
+    CADENA = CADENA.replace('&FOLIO', InvoiceAttention ?? '');
+    CADENA = CADENA.replace('&SERIE', series ?? '');
+    CADENA = CADENA.replace('&NOFACT', Invoice ?? '');
 
     const year2 = billDate ? Number(billDate.split('/')[2]) : null;
     const month2 = billDate ? Number(billDate.split('/')[1]) : null;
@@ -588,7 +621,7 @@ export class InvoiceRectificationProcessComponent
     AUX_FECHAFACT = billDate
       ? `${day2} de ${months[Number(month2 - 1)]} de ${year2}`
       : '';
-    CADENA = CADENA.replace('&FECHAFACT', AUX_FECHAFACT);
+    CADENA = CADENA.replace('&FECHAFACT', billDate ? AUX_FECHAFACT : '');
 
     this.form.get('paragraph1').patchValue(CADENA);
     this.form.get('paragraph3').patchValue(parr3);
@@ -628,5 +661,43 @@ export class InvoiceRectificationProcessComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ComerRediModalComponent, config);
+  }
+
+  remove(data: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea Eliminar este registro?'
+    ).then(answ => {
+      if (answ.isConfirmed) {
+        this.comerDirectInovice
+          .remove({ year: data.year, row: data.row, notJob: data.notJob })
+          .subscribe({
+            next: () => {
+              this.alert(
+                'success',
+                'Detalle Facturación',
+                'Eliminado Correctamente'
+              );
+              this.getComerDirectInvoice();
+            },
+            error: err => {
+              if (err.status == 500) {
+                if (
+                  err.error.message.includes('violates foreign key constraint')
+                ) {
+                  this.alert(
+                    'error',
+                    'Error',
+                    'Debe eliminar las relaciones de este detalle facturación'
+                  );
+                  return;
+                }
+              }
+              this.alert('error', 'Error', err.error.message);
+            },
+          });
+      }
+    });
   }
 }
