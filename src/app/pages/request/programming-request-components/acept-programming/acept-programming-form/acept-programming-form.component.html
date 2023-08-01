@@ -4,48 +4,6 @@
       Aceptar programaci&oacute;n con folio&#58;
       {{ programming?.folio }}
     </h5>
-
-    <div class="justify-content-end" *ngIf="!formLoading">
-      <div class="mt-3 btn-toolbar">
-        <button
-          (click)="signOffice()"
-          class="btn btn-primary btn-sm active"
-          *ngIf="!programming?.contentId">
-          Firmar oficio <i class="bx bx-edit-alt"></i>
-        </button>
-
-        <button
-          (click)="viewOffice()"
-          class="btn btn-primary btn-sm active"
-          *ngIf="programming?.contentId">
-          Ver oficio <i class="fa fa-eye" aria-hidden="true"></i>
-        </button>
-
-        <button
-          (click)="aprobateProgramming()"
-          class="btn btn-primary btn-sm active"
-          *ngIf="!task?.State">
-          Aprobar <i class="fa fa-check" aria-hidden="true"></i>
-        </button>
-        <button
-          class="btn btn-primary btn-sm active disabled"
-          *ngIf="task?.State == 'FINALIZADA'">
-          Aprobar <i class="fa fa-check" aria-hidden="true"></i>
-        </button>
-        <button
-          (click)="rejectProgramming()"
-          class="btn btn-danger btn-sm active"
-          *ngIf="programming?.contentId == null">
-          Rechazar
-        </button>
-        <button
-          (click)="rejectProgramming()"
-          class="btn btn-danger disabled btn-sm active"
-          *ngIf="programming?.contentId">
-          Rechazar
-        </button>
-      </div>
-    </div>
   </div>
 
   <div body>
@@ -53,7 +11,48 @@
       <form-loader *ngIf="formLoading"></form-loader>
     </div>
     <div *ngIf="!formLoading">
-      <h5 class="title">Programaci&oacute;n</h5>
+      <div class="d-flex justify-content-end" *ngIf="!formLoading">
+        <div class="mt-3 btn-toolbar">
+          <button
+            (click)="signOffice()"
+            class="btn btn-primary btn-sm active"
+            *ngIf="!programming?.contentId">
+            Firmar oficio <i class="bx bx-edit-alt"></i>
+          </button>
+
+          <button
+            (click)="viewOffice()"
+            class="btn btn-primary btn-sm active"
+            *ngIf="programming?.contentId">
+            Ver oficio <i class="fa fa-eye" aria-hidden="true"></i>
+          </button>
+          <button
+            (click)="rejectProgramming()"
+            class="btn btn-danger btn-sm active"
+            *ngIf="programming?.contentId == null">
+            Rechazar
+          </button>
+          <button
+            (click)="rejectProgramming()"
+            class="btn btn-danger disabled btn-sm active"
+            *ngIf="programming?.contentId">
+            Rechazar
+          </button>
+          <button
+            (click)="aprobateProgramming()"
+            class="btn btn-primary btn-sm active"
+            *ngIf="!task?.State">
+            Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
+          <button
+            class="btn btn-primary btn-sm active disabled"
+            *ngIf="task?.State == 'FINALIZADA'">
+            Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <h5 class="title pt-5">Programaci&oacute;n</h5>
       <div class="row pt-2">
         <div class="col-md-4">
           <div class="form-group">
@@ -67,8 +66,8 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo Transferente&#58;</label>
-            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ nameState }} </span>
           </div>
         </div>
         <div class="col-md-4">
@@ -90,16 +89,14 @@
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate }}
             </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
-            <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
-            >
+            <span class="fs-4"> {{ programming?.endDate }}</span>
           </div>
         </div>
       </div>
@@ -111,21 +108,22 @@
             <span class="fs-4"> {{ nameStation }} </span>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Dirección&#58;</label>
             <span class="fs-4"> {{ programming?.address }} </span>
           </div>
         </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Tipo Relevante&#58;</label>
+            <span class="fs-3"> {{ typeRelevantName }} </span>
+          </div>
+        </div>
       </div>
 
       <div class="row pt-4">
-        <div class="col-md-4">
-          <div class="form-group">
-            <label class="text-right mr-2">Estado&#58;</label>
-            <span class="fs-4"> {{ nameState }} </span>
-          </div>
-        </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Autoridad&#58;</label>
@@ -134,17 +132,14 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Observación&#58;</label>
-            <span class="fs-4"> {{ programming?.observation }} </span>
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
         </div>
-      </div>
-
-      <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Tipo Relevante&#58;</label>
-            <span class="fs-3"> {{ typeRelevantName }} </span>
+            <label class="text-right mr-2">Observación&#58;</label>
+            <span class="fs-4"> {{ programming?.observation }} </span>
           </div>
         </div>
       </div>
@@ -170,7 +165,7 @@
       </div>
 
       <div class="row pt-5">
-        <h5 class="title">Bienes seleccionados</h5>
+        <h5 class="title">Bienes Seleccionados</h5>
         <div class="md-tabs">
           <tabset>
             <tab [heading]="headingTransportable" id="tab1">

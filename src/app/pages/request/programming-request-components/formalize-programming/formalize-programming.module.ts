@@ -9,11 +9,13 @@ import { FormalizeProgrammingFormComponent } from './formalize-programming-form/
 import { FormalizeProgrammingRoutingModule } from './formalize-programming-routing.module';
 import { InformationRecordComponent } from './information-record/information-record.component';
 import { PrintReportModalComponent } from './print-report-modal/print-report-modal.component';
+import { ShowProceedingCloseComponent } from './show-proceeding-close/show-proceeding-close.component';
 @NgModule({
   declarations: [
     FormalizeProgrammingFormComponent,
     InformationRecordComponent,
     PrintReportModalComponent,
+    ShowProceedingCloseComponent,
   ],
   imports: [
     CommonModule,

@@ -5,7 +5,7 @@ export const PROCEEDINGS_COLUMNS = {
     sort: false,
   },
   receiptCve: {
-    title: 'CVE DEL RECIBE',
+    title: 'Cve. del que Recibe',
     type: 'string',
     sort: false,
   },
@@ -51,6 +51,26 @@ export const PROCEEDINGS_COLUMNS = {
   },
   Observaciones: {
     title: 'observations',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const PROCEEDINGS_COLUMNS_CLOSE = {
+  id: {
+    title: 'No. Acta',
+    type: 'string',
+    sort: false,
+  },
+
+  statusProceeedings: {
+    title: 'Estatus Acta',
+    type: 'string',
+    sort: false,
+  },
+
+  observationProceedings: {
+    title: 'Observaciones',
     type: 'string',
     sort: false,
   },

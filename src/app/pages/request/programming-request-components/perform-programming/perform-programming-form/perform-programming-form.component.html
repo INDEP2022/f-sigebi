@@ -193,8 +193,8 @@
                   [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
-                    rangeInputFormat: 'YYYY/MM/DD HH:mm:ss',
-                    dateInputFormat: 'YYYY/MM/DD HH:mm:ss'
+                    rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                    dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
                   }"
                   bsDatepicker />
               </form-field>
@@ -211,8 +211,8 @@
                   [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
-                    rangeInputFormat: 'YYYY/MM/DD HH:mm:ss',
-                    dateInputFormat: 'YYYY/MM/DD HH:mm:ss'
+                    rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                    dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
                   }"
                   bsDatepicker />
               </form-field>
@@ -382,9 +382,9 @@
               class="mr-2 disabled"></confirm-button>
           </div>
 
-          <div class="row pt-5">
+          <div class="row">
             <h5 class="title">Almac&eacute;n</h5>
-            <div class="col-sm-12 pt-4">
+            <div class="col-sm-12">
               <form-field
                 [control]="performForm.get('storeId')"
                 *ngIf="showWarehouseInfo">
@@ -395,7 +395,6 @@
                   value="description"
                   bindLabel="description"
                   (change)="showWarehouse($event)"
-                  label="Selecciona un Almac&eacute;n"
                   (fetchItems)="getWarehouseSelect($event)"></ngx-select>
               </form-field>
               <form-field
@@ -407,8 +406,7 @@
                   [data]="warehouse"
                   [searchable]="showWarehouseInfo"
                   value="idWarehouse"
-                  bindLabel="description"
-                  label="Selecciona un almac&eacute;n"></ngx-select>
+                  bindLabel="description"></ngx-select>
               </form-field>
             </div>
           </div>

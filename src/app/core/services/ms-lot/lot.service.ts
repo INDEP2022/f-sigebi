@@ -127,4 +127,12 @@ export class LotService extends HttpService {
     formData.append('file', file);
     return this.post('apps/create-bases', formData);
   }
+
+  getPagosRefMonto(body: any) {
+    return this.post('apps/get-pagos-ref-monto', body);
+  }
+
+  getPagosRefMontoTipod(body: any) {
+    return this.post('apps/get-pagos-ref-monto-tipo-d', body);
+  }
 }

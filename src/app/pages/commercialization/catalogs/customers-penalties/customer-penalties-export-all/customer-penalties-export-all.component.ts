@@ -52,17 +52,8 @@ export class CustomersPenaltiesExportAllComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'clientId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'reasonName':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'rfc':
-                searchFilter = SearchFilter.ILIKE;
-                break;
               case 'typeProcess':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
                 searchFilter = SearchFilter.ILIKE;
@@ -70,19 +61,10 @@ export class CustomersPenaltiesExportAllComponent
               case 'publicLot':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'startDate':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'endDate':
-                searchFilter = SearchFilter.ILIKE;
-                break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'userPenalty':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'penaltiDate':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -104,6 +86,17 @@ export class CustomersPenaltiesExportAllComponent
       .subscribe(() => this.getCustomers());
   }
 
+  formatDate(dateString: string): string {
+    if (dateString === '') {
+      return '';
+    }
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    return `${year}-${month}-${day}`;
+  }
+
   //Trae todos los clintes penalizados
   getCustomers() {
     this.loading = true;
@@ -114,7 +107,7 @@ export class CustomersPenaltiesExportAllComponent
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -124,11 +117,28 @@ export class CustomersPenaltiesExportAllComponent
   }
 
   //Exportar todos los clientes con penalizaciones
-  exportClientsPenalize(): void {
-    this.excelService.exportAsExcelFile(
-      this.customersPenalties,
-      'PenalizacionesDeCliente'
+  exportSelected(): void {
+    const data = this.customersPenalties.map((row: any) =>
+      this.transFormColums(row)
     );
+    this.excelService.exportAsExcelFile(data, 'PenalizacionesDelCliente');
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.typeProcess,
+      'Clave Evento': row.eventId,
+      Lote: row.publicLot,
+      'Fecha Inicial': row.startDate,
+      'Fecha Final': row.endDate,
+      'Motivo Penalización': row.refeOfficeOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+      'Fecha Penaliza': row.penalizesDate,
+      'No. Registro': row.registernumber,
+      'Fecha Libera': row.releasesDate,
+    };
   }
 
   close() {

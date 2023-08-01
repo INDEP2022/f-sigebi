@@ -5,6 +5,7 @@ export interface IComerLetter {
   position: string;
   paragraph1: string;
   invoiceNumber: string;
+  dateFail: string;
   invoiceDate: string;
   paragraph2: string;
   signatory: string;

@@ -58,4 +58,13 @@ export class ComerInvoiceService extends HttpService {
   getValidPayments(params?: _Params) {
     return this.get(ENDPOINT_INVOICE.ComerHeadboard, params);
   }
+
+  executeSQL(data: {
+    invoiceField: string;
+    table: string;
+    eventId: number;
+    invoiceId: number;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ApplicationSQL, data);
+  }
 }
