@@ -88,4 +88,9 @@ export class CustomerService extends HttpService {
     const route = `${this.endpointRepresentative}/${id}`;
     return this.get(route, params);
   }
+
+  getCustomerById(id: string | number): Observable<ICustomer> {
+    const route = `${this.endpointClients}/${id}`;
+    return this.get(route);
+  }
 }
