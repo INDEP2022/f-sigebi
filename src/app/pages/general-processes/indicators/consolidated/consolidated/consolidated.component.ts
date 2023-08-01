@@ -116,7 +116,6 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
         };
         this.dictaminaService.getDictamina(params).subscribe({
           next: (data: any) => {
-            console.log(data);
             this.data = data.data;
             this.totalItems = data.count;
             this.loading = false;
