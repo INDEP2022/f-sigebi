@@ -108,14 +108,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
           this.returnParseDate_(this.data.recordDate)
         ),
         referenceOri: this.data.referenceOri,
-        dateOi: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.dateOi)
-        ),
+        // dateOi: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.dateOi)
+        // ),
         entryOrderId: this.data.entryOrderId,
         validSystem: this.data.validSystem,
         description: this.data.description,
         branchOffice: this.data.branchOffice,
-        reconciled: this.data.reconciled,
+        // reconciled: this.data.reconciled,
         appliedTo: this.data.appliedTo,
         clientId: this.data.clientId,
         lotId: this.data.lotId,
@@ -157,12 +157,12 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       result: this.form.value.result,
       recordDate: this.form.value.recordDate,
       referenceOri: this.form.value.referenceOri,
-      dateOi: this.form.value.dateOi,
+      // dateOi: this.form.value.dateOi,
       entryOrderId: this.form.value.entryOrderId,
       validSystem: this.form.value.validSystem,
       description: this.form.value.description,
       branchOffice: this.form.value.branchOffice,
-      reconciled: this.form.value.reconciled,
+      // reconciled: this.form.value.reconciled,
       appliedTo: this.form.value.appliedTo,
       clientId: this.form.value.clientId,
     };
@@ -222,7 +222,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, this.title);
+    this.alert('success', `Registro ${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -230,7 +230,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, this.title);
+    this.alert('error', `Error al Intentar ${message} el Registro`, '');
     this.loading = false;
   }
 
