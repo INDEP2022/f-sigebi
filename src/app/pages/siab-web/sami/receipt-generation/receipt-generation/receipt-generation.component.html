@@ -78,7 +78,7 @@
           </form-radio>
         </div>
         <div class="col-md-2">
-          <form-radio label="Reprogramacion">
+          <form-radio label="Reprogramación">
             <input
               type="radio"
               formControlName="operation"
@@ -98,13 +98,13 @@
       </div>
     </form>
     <div class="row margin-input">
-      <form [formGroup]="indepForm" class="form-material">
+      <form [formGroup]="indepForm1" class="form-material">
         <div class="col-md-8 pt-2" *ngIf="cancellationView">
-          <form-field [control]="indepForm.get('cancellation')">
+          <form-field [control]="indepForm1.get('cancellation')">
             <ngx-select
               (fetchItems)="getGenericC($event)"
               [data]="cancellationList"
-              [form]="indepForm"
+              [form]="indepForm1"
               value="keyId"
               bindLabel="description"
               label="Seleccione el motivo de la Cancelaci&oacute;n"
@@ -113,11 +113,11 @@
           </form-field>
         </div>
         <div class="col-md-8 pt-2" *ngIf="reprogramingView">
-          <form-field [control]="indepForm.get('reprogramming')">
+          <form-field [control]="indepForm1.get('reprogramming')">
             <ngx-select
               (fetchItems)="getGenericR($event)"
               [data]="reprogramingList"
-              [form]="indepForm"
+              [form]="indepForm1"
               value="keyId"
               bindLabel="description"
               label="Seleccione el motivo de la Reprogramaci&oacute;n"
