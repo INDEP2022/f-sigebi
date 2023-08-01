@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Generacion de Recibos Prog.</h5>
+      <h5 class="title">Generaci&oacute;n de Recibos Programación</h5>
     </div>
   </div>
   <div body>
@@ -17,7 +17,7 @@
               formControlName="programmingId" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 pt-4">
           <button
             type="button"
             class="btn btn-primary active btn-sm"
@@ -26,20 +26,17 @@
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-sm btn-success active">
+        <div class="col-md-2 pt-4">
+          <button
+            type="button"
+            class="btn btn-sm btn-success active"
+            (click)="dowloadGoods()"
+            [disabled]="!downloadResultsGoods">
             Descargar bienes <i class="bi bi-file-earmark-excel-fill"></i>
           </button>
         </div>
       </div>
     </form>
-    <!-- <div class="row">
-      <div class="col-md-2">
-        <button type="button" class="btn btn-primary active">
-          Descargar bienes
-        </button>
-      </div>
-    </div> -->
     <hr />
     <form [formGroup]="receiptGenerationForm" class="form-material">
       <div class="row margin-input">
@@ -81,7 +78,7 @@
           </form-radio>
         </div>
         <div class="col-md-2">
-          <form-radio label="Reprogramacion">
+          <form-radio label="Reprogramación">
             <input
               type="radio"
               formControlName="operation"
@@ -101,13 +98,13 @@
       </div>
     </form>
     <div class="row margin-input">
-      <form [formGroup]="indepForm" class="form-material">
+      <form [formGroup]="indepForm1" class="form-material">
         <div class="col-md-8 pt-2" *ngIf="cancellationView">
-          <form-field [control]="indepForm.get('cancellation')">
+          <form-field [control]="indepForm1.get('cancellation')">
             <ngx-select
               (fetchItems)="getGenericC($event)"
               [data]="cancellationList"
-              [form]="indepForm"
+              [form]="indepForm1"
               value="keyId"
               bindLabel="description"
               label="Seleccione el motivo de la Cancelaci&oacute;n"
@@ -116,11 +113,11 @@
           </form-field>
         </div>
         <div class="col-md-8 pt-2" *ngIf="reprogramingView">
-          <form-field [control]="indepForm.get('reprogramming')">
+          <form-field [control]="indepForm1.get('reprogramming')">
             <ngx-select
               (fetchItems)="getGenericR($event)"
               [data]="reprogramingList"
-              [form]="indepForm"
+              [form]="indepForm1"
               value="keyId"
               bindLabel="description"
               label="Seleccione el motivo de la Reprogramaci&oacute;n"
@@ -153,7 +150,7 @@
       <input type="file" (change)="chargeFile($event.target)" /> -->
     </div>
     <div class="row" style="margin-left: 0%">
-      <div class="col-md-2">
+      <div class="col-md-2 pt-4">
         <button
           type="submit"
           class="btn btn-primary active btn-sm"
@@ -162,12 +159,20 @@
           Cargar <i class="bx bx-send"></i>
         </button>
       </div>
-      <div class="col-md-2">
+      <div class="col-md-4 pt-4">
         <button
           type="button"
           class="btn btn-success active btn-sm"
-          [disabled]="!downloadResults">
+          [disabled]="!downloadResults"
+          (click)="goodsDownloadResults()">
           Descargar Resultados <i class="bi bi-file-earmark-excel-fill"></i>
+        </button>
+      </div>
+      <div class="col-md-3 pt-4">
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="clearInsertOperation()">
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
@@ -182,12 +187,14 @@
     </div>
     <div class="row margin-input">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data1">
-          </ng2-smart-table>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
         </div>
       </div>
       <app-pagination
@@ -235,9 +242,6 @@
           <label class="text-right">Clave &Uacute;nica:</label>
           <span> {{ uniqueKey }} </span>
         </div>
-        <!-- <label class="label" for=""
-              >Clave &Uacute;nica: <span> {{ uniqueKey }} </span></label
-            > -->
       </div>
       <div class="col-md-4">
         <div class="form-group">
@@ -371,7 +375,7 @@
         </div>
       </div>
     </form>
-    <hr />
+
     <tr>
       <td colspan="5" align="center">
         <button
@@ -450,6 +454,12 @@
         </div>
       </form>
     </div>
+    <hr />
+    <app-receipt-tables
+      [folio]="folio"
+      [count]="count"
+      [id_programacion]="id_programacion">
+    </app-receipt-tables>
     <!-- <app-receipt-tables [folio]="folio" [count]="count" [id_programacion]="id_programacion"></app-receipt-tables> -->
   </div>
 </app-card>

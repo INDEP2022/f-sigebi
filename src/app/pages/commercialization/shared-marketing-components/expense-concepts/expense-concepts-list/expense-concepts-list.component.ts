@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { firstValueFrom, takeUntil } from 'rxjs';
 
 import { FormControl } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { ConceptsService } from 'src/app/core/services/ms-commer-concepts/concepts.service';
@@ -13,6 +13,7 @@ import { secondFormatDate } from 'src/app/shared/utils/date';
 import { ExpenseConceptsService } from '../services/expense-concepts.service';
 import { COLUMNS } from './columns';
 import { CopyParametersConceptsModalComponent } from './copy-parameters-modal/copy-parameters-modal.component';
+import { ExpenseConceptsListModalComponent } from './expense-concepts-list-modal/expense-concepts-list-modal.component';
 
 @Component({
   selector: 'app-expense-concepts-list',
@@ -61,30 +62,29 @@ export class ExpenseConceptsListComponent
       actions: {
         columnTitle: 'Acciones',
         position: 'left',
-        add: true,
+        add: false,
         edit: true,
         delete: true,
       },
-      add: {
-        addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent:
-          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate: true,
-      },
-      edit: {
-        ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent:
-          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmSave: true,
-      },
-      delete: {
-        ...this.settings.delete,
-        confirmDelete: true,
-      },
-      mode: 'inline',
+      // add: {
+      //   addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
+      //   createButtonContent:
+      //     '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+      //   cancelButtonContent:
+      //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+      //   confirmCreate: true,
+      // },
+      // edit: {
+      //   ...this.settings.edit,
+      //   saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+      //   cancelButtonContent:
+      //     '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+      //   confirmSave: true,
+      // },
+      // delete: {
+      //   ...this.settings.delete,
+      //   confirmDelete: true,
+      // },
       columns: { ...COLUMNS },
     };
 
@@ -101,6 +101,34 @@ export class ExpenseConceptsListComponent
 
   set selectedConcept(value) {
     this.expenseConceptsService.concept = value;
+  }
+
+  add() {
+    this.openModal();
+  }
+
+  edit(row: IConcept) {
+    this.openModal(row);
+  }
+
+  openModal(concept: IConcept = null) {
+    let config: ModalOptions = {
+      initialState: {
+        concept: {
+          ...concept,
+          numerary: concept.numerary ? concept.numerary === 'S' : false,
+          automatic: concept.automatic ? concept.automatic === 'S' : false,
+        },
+        callback: (next: boolean) => {
+          if (next) {
+            this.getData();
+          }
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ExpenseConceptsListModalComponent, config);
   }
 
   async showCopyModal() {
@@ -211,35 +239,6 @@ export class ExpenseConceptsListComponent
     this.settings = $event;
   }
 
-  onAddConfirm(event: any) {
-    console.log(event);
-    if (event.newData) {
-      this.conceptsService
-        .create({
-          ...event.newData,
-          address: this.getAddressCode(event.newData.address),
-          automatic: event.newData.automatic ? 'S' : 'N',
-          numerary: event.newData.numerary ? 'S' : 'N',
-        })
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: response => {
-            event.confirm.resolve();
-            this.alert('success', 'Concepto de Pago', 'Creado correctamente');
-            this.getData();
-          },
-          error: err => {
-            event.confirm.resolve();
-            this.alert(
-              'error',
-              'ERROR',
-              'No se pudo crear el concepto de pago'
-            );
-          },
-        });
-    }
-  }
-
   get haveParams() {
     return this.expenseConceptsService.haveParams ?? false;
   }
@@ -278,61 +277,4 @@ export class ExpenseConceptsListComponent
       }
     }
   }
-
-  onEditConfirm(event: { data: IConcept; newData: IConcept; confirm: any }) {
-    console.log(event);
-    if (event.newData) {
-      this.conceptsService
-        .edit({
-          ...event.newData,
-          address: this.getAddressCode(event.newData.address),
-          automatic: event.newData.automatic ? 'S' : 'N',
-          numerary: event.newData.numerary ? 'S' : 'N',
-        })
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: response => {
-            event.confirm.resolve();
-            this.alert(
-              'success',
-              'Edición de Concepto de Pago ' + event.data.id,
-              'Actualizado correctamente'
-            );
-            this.getData();
-          },
-          error: err => {
-            event.confirm.resolve();
-            this.alert(
-              'error',
-              'ERROR',
-              'No se pudo actualizar el concepto de pago ' + event.data.id
-            );
-          },
-        });
-    }
-  }
-
-  edit(data: IConcept) {
-    console.log(data);
-    // this.alertQuestion(
-    //   'question',
-    //   '¿Desea copiar los parámetros del concepto: ' + data.id + ' ?',
-    //   ''
-    // ).then(question => {
-    //   if (question.isConfirmed) {
-    //     this.conceptsService
-    //       .copyParameters(data)
-    //       .pipe(takeUntil(this.$unSubscribe))
-    //       .subscribe({
-    //         next: response => {
-    //           this.expenseConceptsService.concept = data;
-    //         },
-    //       });
-    //   }
-    // });
-  }
-
-  // settingsChange2($event: any): void {
-  //   this.settings2 = $event;
-  // }
 }

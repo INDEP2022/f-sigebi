@@ -5,18 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="modelForm">
       <div class="row mb-3 mt-3">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="modelForm.get('id')" label="Modelo">
             <input
               type="text"
               class="form-control"
               formControlName="id"
-              maxlength="30"
+              maxlength="6"
               [readonly]="edit" />
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-9">
           <form-field
             [control]="modelForm.get('modelComment')"
             label="Comentario Modelo">
