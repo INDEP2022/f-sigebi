@@ -797,7 +797,6 @@ export class VerifyComplianceTabComponent
 
   selectGood(event: any) {
     event.toggle.subscribe((data: any) => {
-      //debugger;
       const index = this.goodsSelected.indexOf(data.row);
       if (index == -1 && data.toggle == true) {
         data.row['selected'] = true;
@@ -908,7 +907,6 @@ export class VerifyComplianceTabComponent
       allowOutsideClick: false,
     }).then(async result => {
       if (result.isConfirmed) {
-        //debugger;
         this.loader.load = true;
         //eliminar el chat clarification
         const idChatClarification =
