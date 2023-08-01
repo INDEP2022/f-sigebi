@@ -61,8 +61,37 @@ export const COLUMNSCUSTOMER = {
 };
 
 export const COLUMNS_LOT_EVENT = {
-    
-}
+  publicLot: {
+    title: 'Lote',
+    type: 'number',
+    sort: false,
+  },
+  rfc: {
+    title: 'RFC Cliente',
+    type: 'number',
+    sort: false,
+  },
+  vtaStatusId: {
+    title: 'Estatus',
+    type: 'text',
+    sort: false,
+  },
+  guaranteePrice: {
+    title: 'Garantía',
+    type: 'number',
+    sort: false,
+  },
+  advancePayment: {
+    title: 'Anticipo',
+    type: 'number',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    type: 'text',
+    sort: false,
+  },
+};
 
 //FUNCIONES
 export function setCheckHide(hideValue: boolean) {

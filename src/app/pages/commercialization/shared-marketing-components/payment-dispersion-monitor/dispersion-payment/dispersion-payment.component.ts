@@ -23,6 +23,7 @@ import { SecurityService } from 'src/app/core/services/ms-security/security.serv
 import { BasePage } from 'src/app/core/shared';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import { COLUMNSCUSTOMER, COLUMNS_LOT_EVENT, setCheckHide } from './columns';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -88,6 +89,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   private lot_solo_pend: boolean = false;
 
   private txt_usu_valido: string = null;
+  private id_tipo_disp: string = null
 
   constructor(
     private fb: FormBuilder,
@@ -97,6 +99,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private parametersModService: ParameterModService,
     private comerEventService: ComerEventService,
     private comerTpEventsService: ComerTpEventosService,
+    private comerLotsService: LotService,
     private customersService: ComerClientsService
   ) {
     super();
@@ -302,6 +305,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.postQueryEvent(resp.eventTpId, resp.statusVtaId, resp.address);
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
+        this.getDataLotes(resp.id)
       },
       err => {
         console.log(err);
@@ -340,17 +344,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: eventTpId,
     };
 
-    this.comerTpEventsService.getTpEvent(model).subscribe()
-  }
-  //Data de COMER_CLIENTESXEVENTO
-  getDateComerCustomer() {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('EventId', this.event.value);
-    this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
+    this.comerTpEventsService.getTpEvent(model).subscribe(
       res => {
-        console.log(res.data[0].id_tipo_disp);
-        const id_tipo_disp = res.data[0].id_tipo_disp;
-        if ([1, 3].includes(parseInt(id_tipo_disp))) {
+        console.log(res)
+        this.id_tipo_disp = res.data[0].id_tipo_disp;
+        if ([1, 3].includes(parseInt(this.id_tipo_disp))) {
           console.log('Entra');
           this.availableByTypeSettingFalse();
           this.isAvailableByType = false;
@@ -360,9 +358,15 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        console.log(err);
+        console.log(err)
       }
-    );
+    )
+
+    //Parte final del postquery
+    this.dateMaxWarranty.setValue(new Date()) //TODO: Hay que corregir según un endpoint
+    this.dateMaxPayment.setValue(new Date()) //TODO: Hay que corregir según un endpoint
+    
+    //TODO: Falta endpoint de insert
   }
 
   //Cambiar los settings de las tablas
@@ -421,7 +425,34 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //Postquery COMER_CLIENTESXEVENTO
-  postqueryComerCustomer() {}
+  postqueryComerCustomer(item: any) {
+    clearGoodCheckCustomer()
+    return new Promise((resolve, reject) => {
+      if([1, 3].includes(parseInt(this.id_tipo_disp))){
+        if(item.SentToSIRSAE == 'S'){
+  
+        }
+      }
+    })
+    
+  }
 
-  getDataLotes() {}
+  //LOTES
+  getDataLotes(eventId: string | number) {
+    const paramsF = new FilterParams()
+    paramsF.addFilter('eventId', eventId)
+    paramsF.addFilter('clientId', null, SearchFilter.NOT)
+    this.comerLotsService.getComerLotsClientsPayref(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res)
+        this.dataLotEvent = res.data
+        this.totalItemsLotEvent = res.count
+      },
+      err => {
+        console.log(err)
+      }
+    )
+  }
+
+  //LOTES DESIERTOS
 }

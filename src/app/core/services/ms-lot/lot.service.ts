@@ -12,6 +12,10 @@ export class LotService extends HttpService {
     this.microservice = LotEndpoints.BasePath;
   }
 
+  getAllComerLotsFilter(params?: string){
+    return this.get('eat-lots',params)
+  }
+
   getLotbyEvent(id: string | number, params?: ListParams) {
     const route = `${LotEndpoints.ComerLot}?filter.idEvent=${id}`;
     return this.get(route, params);
@@ -100,5 +104,9 @@ export class LotService extends HttpService {
 
   incVXRGoods(body: { goods: (string | number)[]; user: string }) {
     return this.post('apps/rejected-good', body);
+  }
+
+  getComerLotsClientsPayref(params?: string){
+    return this.get('apps/get-comer-lots-clients-payref', params)
   }
 }
