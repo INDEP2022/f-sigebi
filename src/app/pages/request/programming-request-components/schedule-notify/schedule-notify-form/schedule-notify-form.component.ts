@@ -24,12 +24,12 @@ import {
   ESTATE_COLUMNS_NOTIFY,
   ESTATE_COLUMNS_VIEW,
 } from '../../acept-programming/columns/estate-columns';
-import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { estates, users } from './schedule-notify-data';
 
 import { takeUntil } from 'rxjs';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
 
 @Component({
   selector: 'app-schedule-notify-form',
@@ -37,7 +37,11 @@ import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-
   styles: [],
 })
 export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
-  settingsUser = { ...this.settings, actions: false, columns: USER_COLUMNS };
+  settingsUser = {
+    ...this.settings,
+    actions: false,
+    columns: USER_COLUMNS_SHOW,
+  };
   settingsState = {
     ...this.settings,
     columns: ESTATE_COLUMNS_NOTIFY,
