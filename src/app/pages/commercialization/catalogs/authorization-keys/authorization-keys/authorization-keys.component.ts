@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -24,7 +25,8 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private comerEventosService: ComerEventosServiceTwo,
-    private utilComerV1Service: UtilComerV1Service
+    private utilComerV1Service: UtilComerV1Service,
+    private clipboard: Clipboard
   ) {
     super();
   }
@@ -69,13 +71,11 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
   generateKey(): void {
     let key = this.eventForm.controls['id'].value;
     this.form.controls['txtEncrip'].setValue(key);
-    console.log(key);
     this.loading = true;
     this.utilComerV1Service.encrypt(this.form.value).subscribe({
       next: response => {
         //TODO: Validate Response
         if (response !== null) {
-          console.log(response);
           this.form.controls['encrip'].setValue(response);
         } else {
           //TODO: CHECK MESSAGE
@@ -95,7 +95,7 @@ export class AuthorizationKeysComponent extends BasePage implements OnInit {
   }
 
   copy() {
-    navigator.clipboard.writeText(this.form.value['encrip']);
+    this.clipboard.copy(this.form.value['encrip']);
     this.onLoadToast(
       'success',
       'Clave de Autorización',
