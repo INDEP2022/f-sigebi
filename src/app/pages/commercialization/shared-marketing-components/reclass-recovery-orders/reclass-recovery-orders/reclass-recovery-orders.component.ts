@@ -162,8 +162,8 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
           console.log(err);
         }
       );
-    }else{
-      this.alert('warning','No ingresó ningún OI','')
+    } else {
+      this.alert('warning', 'No ingresó ningún OI', '');
     }
   }
 

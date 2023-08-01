@@ -28,13 +28,14 @@
                         [control]="form.get('noExpediente')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'fileNumber')"
+                          [data]="fileNumberselect"
                           [form]="form"
-                          bindLabel="expedientNumber"
-                          value="expedientNumber"
+                          bindLabel="no_expediente"
+                          value="no_expediente"
                           label="No&#46; Expediente"
                           [control]="'noExpediente'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -42,13 +43,14 @@
                         [control]="form.get('averPrevia')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'previousSearch')"
+                          [data]="previousSearchselect"
                           [form]="form"
-                          bindLabel="preliminaryInquiry"
-                          value="preliminaryInquiry"
+                          bindLabel="averiguacion_previa"
+                          value="averiguacion_previa"
                           label="Averiguaci&oacute;n Previa"
                           [control]="'averPrevia'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -57,13 +59,14 @@
                         [control]="form.get('causaPenal')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'penalCause')"
+                          [data]="penalCauseselect"
                           [form]="form"
-                          bindLabel="criminalCase"
-                          value="criminalCase"
+                          bindLabel="causa_penal"
+                          value="causa_penal"
                           label="Causa Penal"
                           [control]="'causaPenal'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -72,13 +75,14 @@
                         [control]="form.get('noVolante')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'flierNumber')"
+                          [data]="flierNumberselect"
                           [form]="form"
-                          bindLabel="wheelNumber"
-                          value="wheelNumber"
+                          bindLabel="no_volante"
+                          value="no_volante"
                           label="No&#46; Volante"
                           [control]="'noVolante'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -100,13 +104,14 @@
                         [control]="form.get('fechaRec')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'receptionDate')"
+                          [data]="receptionDateselect"
                           [form]="form"
-                          bindLabel="receiptDate"
-                          value="receiptDate"
+                          bindLabel="fec_recepcion"
+                          value="fec_recepcion"
                           label="Fecha Recepci&oacute;n"
                           [control]="'fechaRec'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -115,13 +120,14 @@
                         [control]="form.get('amparo')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'amparoKey')"
+                          [data]="amparoKeyselect"
                           [form]="form"
-                          bindLabel="protectionKey"
-                          value="protectionKey"
+                          bindLabel="cve_amparo"
+                          value="cve_amparo"
                           label="Amparo"
                           [control]="'amparo'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -137,6 +143,7 @@
                           value="touchPenaltyKey"
                           label="Toca Penal"
                           [control]="'tocaPenal'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -154,6 +161,7 @@
                           value="courtNumber"
                           label="No&#46; Juzgado"
                           [control]="'noJuzgado'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -162,13 +170,14 @@
                         [control]="form.get('fechaOficio')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'extJobDate')"
+                          [data]="extJobDateselect"
                           [form]="form"
-                          bindLabel="externalOfficeDate"
-                          value="externalOfficeDate"
+                          bindLabel="fec_oficio_externo"
+                          value="fec_oficio_externo"
                           label="Fecha Oficio Externo"
                           [control]="'fechaOficio'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -184,6 +193,7 @@
                           value="id"
                           label="Ministerio P&uacute;blico"
                           [control]="'minPub'"
+                          [showTooltip]="true"
                           (change)="onMinsPublicChange($event)">
                         </ngx-select>
                       </form-field>
@@ -192,13 +202,14 @@
                         [control]="form.get('oficioExterno')"
                         class="col-md-3">
                         <ngx-select
-                          (fetchItems)="getNotifications($event)"
-                          [data]="notificationselect"
+                          (fetchItems)="getDistinct($event, 'extJobKey')"
+                          [data]="extJobKeyselect"
                           [form]="form"
-                          bindLabel="officeExternalKey"
-                          value="officeExternalKey"
+                          bindLabel="cve_oficio_externo"
+                          value="cve_oficio_externo"
                           label="Oficio Externo No&#46;"
                           [control]="'oficioExterno'"
+                          [showTooltip]="true"
                           (change)="onNotificationChange($event)">
                         </ngx-select>
                       </form-field>
@@ -216,7 +227,8 @@
                           value="codeState"
                           label="Entidad Federativa"
                           [control]="'entFed'"
-                          (change)="onNotificationChange($event)">
+                          [showTooltip]="true"
+                          (change)="onEntidadChange($event)">
                         </ngx-select>
                       </form-field>
                     </div>

@@ -107,14 +107,21 @@ export class ExpenseConceptsListComponent
     this.openModal();
   }
 
-  openModal() {
+  edit(row: IConcept) {
+    this.openModal(row);
+  }
+
+  openModal(concept: IConcept = null) {
     let config: ModalOptions = {
       initialState: {
+        concept: {
+          ...concept,
+          numerary: concept.numerary ? concept.numerary === 'S' : false,
+          automatic: concept.automatic ? concept.automatic === 'S' : false,
+        },
         callback: (next: boolean) => {
           if (next) {
-            // this.params
-            //   .pipe(takeUntil(this.$unSubscribe))
-            //   .subscribe(() => this.searchRegistryService(this.goodId));
+            this.getData();
           }
         },
       },
@@ -270,37 +277,4 @@ export class ExpenseConceptsListComponent
       }
     }
   }
-
-  // onEditConfirm(event: { data: IConcept; newData: IConcept; confirm: any }) {
-  //   console.log(event);
-  //   if (event.newData) {
-  //     this.conceptsService
-  //       .edit({
-  //         ...event.newData,
-  //         address: this.getAddressCode(event.newData.address),
-  //         automatic: event.newData.automatic ? 'S' : 'N',
-  //         numerary: event.newData.numerary ? 'S' : 'N',
-  //       })
-  //       .pipe(takeUntil(this.$unSubscribe))
-  //       .subscribe({
-  //         next: response => {
-  //           event.confirm.resolve();
-  //           this.alert(
-  //             'success',
-  //             'Edición de Concepto de Pago ' + event.data.id,
-  //             'Actualizado correctamente'
-  //           );
-  //           this.getData();
-  //         },
-  //         error: err => {
-  //           event.confirm.resolve();
-  //           this.alert(
-  //             'error',
-  //             'ERROR',
-  //             'No se pudo actualizar el concepto de pago ' + event.data.id
-  //           );
-  //         },
-  //       });
-  //   }
-  // }
 }
