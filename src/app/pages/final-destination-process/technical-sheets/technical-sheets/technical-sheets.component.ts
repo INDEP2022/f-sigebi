@@ -8,6 +8,7 @@ import {
 import { BehaviorSubject, catchError, of, switchMap } from 'rxjs';
 import { DictaminacionService } from 'src/app/common/services/dictaminacion.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { FichasTecnicasService } from 'src/app/core/services/fichas-tecnicas/fichas-tecnicas.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -40,7 +41,8 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
     private programmingRequestService: ProgrammingRequestService,
     private dictaminaService: DictaminacionService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private fichasTecnicas: FichasTecnicasService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -123,12 +125,25 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
       });
   }
 
-  onSubmit() {}
+  onSubmit() {
+    this.getFichasTecnicas();
+  }
 
   onRevisionFichas() {
     this.router.navigate([
       '/pages/final-destination-process/review-technical-sheets',
     ]);
+  }
+
+  getFichasTecnicas() {
+    this.fichasTecnicas.getFichasTecnicas().subscribe({
+      next: data => {
+        console.log(data);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   changeDelegation(event: any) {
