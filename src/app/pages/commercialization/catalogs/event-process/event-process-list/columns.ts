@@ -16,7 +16,7 @@ export const COLUMNS = {
     },
   },
   processKey: {
-    title: 'Cve Proceso',
+    title: 'CVE Proceso',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.comerDetail.processKey != null
