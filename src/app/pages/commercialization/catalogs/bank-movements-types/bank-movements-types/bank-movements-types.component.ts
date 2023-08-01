@@ -256,6 +256,13 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
         this.getDeductives();
         this.alert('success', 'Movimiento Borrado Correctamente', '');
       },
+      error: err => {
+        this.alert(
+          'warning',
+          'No se Puede Eliminar el Registro porque Está Referenciado en Otra Tabla',
+          ''
+        );
+      },
     });
   }
 
