@@ -187,9 +187,10 @@ export class QuarterlyAccumulatedAssetsComponent
 
   confirm(): void {
     const { delegation, subdelegation, fromMonth, toMonth } = this.form.value;
+    //RGERDIRBIACUMTRIM
     this.loading = true;
     this.siabService
-      .fetchReport('RGERDIRBIACUMTRIM', {
+      .fetchReport('blank', {
         pf_anioini: format(fromMonth, 'dd-MM-yyyy'),
         pf_anio_fin: format(toMonth, 'dd-MM-yyyy'),
         pn_deleg: delegation,
