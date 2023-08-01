@@ -11,6 +11,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -147,7 +148,8 @@ export class ConciliationExecutionMainComponent
     private comerClientsService: ComerClientsService,
     private modalService: BsModalService,
     private comerEventosService: ComerEventosService,
-    private lotService: LotService
+    private lotService: LotService,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.settings = {
@@ -243,26 +245,6 @@ export class ConciliationExecutionMainComponent
     this.totalItems = this.conciliationColumns.length;
   }
 
-  getEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventsTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.eventsTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
-  getBatches(params: ListParams) {
-    if (params.text == '') {
-      this.batchItems = new DefaultSelect(this.batchesTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.batchesTestData.filter((i: any) => i.id == id)];
-      this.batchItems = new DefaultSelect(item[0], 1);
-    }
-  }
-
   selectEvent(event: any) {
     console.log(event);
     this.selectedEvent = event;
@@ -273,6 +255,7 @@ export class ConciliationExecutionMainComponent
   }
 
   selectBatch(batch: any) {
+    console.log('aaa', batch);
     this.selectedBatch = batch;
   }
 
@@ -298,13 +281,29 @@ export class ConciliationExecutionMainComponent
       );
   }
 
-  cancel() {
+  async cancel() {
     if (!this.selectedEvent)
       return this.alert(
         'warning',
         'Es Necesario Especificar un Evento para Deshacer',
         ''
       );
+    let obj = {};
+    await this.eliminar(obj);
+  }
+
+  async eliminar(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.getFcomer612Get1(body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
   }
 
   // ----------------------- WILMER ----------------------- //
@@ -428,6 +427,8 @@ export class ConciliationExecutionMainComponent
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
     this.selectedEvent = null;
+    this.globalFASES = null;
+    this.getComerEvents(new ListParams());
   }
   allNo() {
     if (!this.selectedEvent) {
@@ -440,20 +441,21 @@ export class ConciliationExecutionMainComponent
       return;
     }
 
-    const data: any = this.data.getAll().then(resp => {
+    const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
-      let result = resp.map(async (item: any) => {
-        item.process = 'N';
-        delete item.rfc;
-        delete item.name;
-        await this.update(item);
-      });
+      // let result = resp.map(async (item: any) => {
+      //   item.process = 'N';
+      //   delete item.rfc;
+      //   delete item.name;
+      //   await this.update(item);
+      // });
 
-      Promise.all(result).then(async resp => {
-        // this.loading = false;
-        await this.getComerClientsXEvent('no');
-        // this.data.refresh()
-      });
+      // Promise.all(result).then(async resp => {
+      // this.loading = false;
+      await this.update(this.selectedEvent.id_evento, 'N');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
     });
   }
   allYes() {
@@ -467,27 +469,28 @@ export class ConciliationExecutionMainComponent
       return;
     }
 
-    const data: any = this.data.getAll().then(resp => {
+    const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
-      let result = resp.map(async (item: any) => {
-        item.process = 'S';
-        delete item.rfc;
-        delete item.name;
-        await this.update(item);
-      });
+      // let result = resp.map(async (item: any) => {
+      //   item.process = 'S';
+      //   delete item.rfc;
+      //   delete item.name;
+      //   await this.update(item);
+      // });
 
-      Promise.all(result).then(async resp => {
-        // this.loading = false;
-        await this.getComerClientsXEvent('no');
-        // this.data.refresh()
-      });
+      // Promise.all(result).then(async resp => {
+      // this.loading = false;
+      await this.update(this.selectedEvent.id_evento, 'S');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
     });
   }
 
   // UPDATE CLIENTES X EVENTOS //
-  async update(body: any) {
+  async update(event: any, type: any) {
     return new Promise((resolve, reject) => {
-      this.comerClientsService.updateClientXEvent(body).subscribe({
+      this.comerDetailsService.pFmcomr612ClientxEvent1(event, type).subscribe({
         next: response => {
           resolve(true);
         },
@@ -536,8 +539,8 @@ export class ConciliationExecutionMainComponent
     );
 
     if (respEvent) {
-      V_IDTPVENTO = respEvent.V_IDTPVENTO;
-      V_FASE = respEvent.V_FASE;
+      V_IDTPVENTO = respEvent.idTipeEvent;
+      V_FASE = respEvent.phase;
     }
 
     if (V_FASE == 1) {
@@ -617,15 +620,15 @@ export class ConciliationExecutionMainComponent
 
   async getSelectFase(id_evento: any) {
     return new Promise((resolve, reject) => {
-      // this.comerClientsService.updateClientXEvent(body).subscribe({
-      //   next: response => {
-      //     resolve(true);
-      //   },
-      //   error: err => {
-      //     resolve(false);
-      //     console.log('ERR', err);
-      //   },
-      // });
+      this.comerDetailsService.getFcomer612Get1(id_evento).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
     });
   }
 

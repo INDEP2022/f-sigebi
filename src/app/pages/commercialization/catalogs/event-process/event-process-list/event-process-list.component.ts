@@ -70,6 +70,23 @@ export class EventProcessListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'warrantyDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processKey':
+                searchFilter = SearchFilter.ILIKE;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'tpeventoId':
+                searchFilter = SearchFilter.EQ;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'statusvtaId':
+                searchFilter = SearchFilter.ILIKE;
+                field = 'filter.comerDetail.' + filter.field;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -107,17 +124,25 @@ export class EventProcessListComponent extends BasePage implements OnInit {
 
   getEventsByType(id: string | number): void {
     this.loading = true;
-    this.comerTpEventsService
-      .getEventsByType(id, this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.comerEvent = response.data;
-          this.data.load(response.data);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.comerTpEventsService.getEventsByTypeFilter(id, params).subscribe({
+      next: response => {
+        this.comerEvent = response.data;
+        this.data.load(response.data);
+        this.totalItems = response.count || 0;
+        this.data.refresh();
+        this.params.value.page = 1;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.totalItems = 0;
+        this.data.load([]);
+      },
+    });
   }
 
   deleteEvent(id: string) {

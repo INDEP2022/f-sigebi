@@ -14,11 +14,23 @@
     </div>
     <app-card [header]="false">
       <div body>
-        <div class="d-flex justify-content-end">
-          <app-columns-select
-            [leftList]="true"
-            [(settings)]="settings"
-            class="row justify-content-end"></app-columns-select>
+        <div class="row">
+          <div class="col-6">
+            <button
+              (click)="openModalCreate()"
+              type="button"
+              tooltip="Nuevo"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+          <div class="col-6 d-flex justify-content-end">
+            <app-columns-select
+              [leftList]="true"
+              [(settings)]="settings"
+              class="row justify-content-end"></app-columns-select>
+          </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-12" [class]="selectedConcept ? '' : 'notAdd'">
@@ -27,7 +39,6 @@
                 [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings"
                 [source]="data"
-                (create)="openModalCreate()"
                 (edit)="openModalEdit($event.data)"
                 (delete)="deleteConfirm($event.data)">
               </ng2-smart-table>
