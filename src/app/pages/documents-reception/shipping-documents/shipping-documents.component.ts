@@ -129,6 +129,17 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     return true;
   }
 
+  sendNotification(notification: any, selected: boolean) {
+    if (selected) {
+      this.selectedNotifications.push(notification);
+      console.log('this.selectedNotifications ', this.selectedNotifications);
+    } else {
+      this.selectedNotifications = this.selectedNotifications.filter(
+        _notification => _notification.wheelNumber != notification.wheelNumber
+      );
+    }
+  }
+
   ngOnInit(): void {
     this.openDialog();
     this.formControls.messageType.valueChanges
@@ -230,17 +241,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     }
     if (messageType == 'direction') {
       this.formControls.messageBody.setValue(DIRECTION_TEXT);
-    }
-  }
-
-  sendNotification(notification: any, selected: boolean) {
-    if (selected) {
-      this.selectedNotifications.push(notification);
-      console.log('this.selectedNotifications ', this.selectedNotifications);
-    } else {
-      this.selectedNotifications = this.selectedNotifications.filter(
-        _notification => _notification.wheelNumber != notification.wheelNumber
-      );
     }
   }
 

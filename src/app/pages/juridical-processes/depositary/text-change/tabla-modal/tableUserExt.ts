@@ -1,11 +1,11 @@
 export const EXTERNOS_COLUMS = {
   personExtInt_: {
-    title: 'Tipo persona',
+    title: 'Tipo de persona',
     type: 'string',
     sort: false,
   },
   userOrPerson: {
-    title: 'Nombre persona',
+    title: 'Nombre de la Persona',
     type: 'string',
     sort: false,
   },
@@ -18,7 +18,7 @@ export const EXTERNOS_COLUMS_OFICIO = {
     sort: false,
   },
   userOrPerson: {
-    title: 'Nombre persona',
+    title: 'Nombre de la Persona',
     type: 'string',
     sort: false,
   },

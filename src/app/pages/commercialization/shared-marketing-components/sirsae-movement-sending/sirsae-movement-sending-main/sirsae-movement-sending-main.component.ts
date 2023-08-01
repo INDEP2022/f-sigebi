@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, skip, takeUntil, tap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -11,6 +12,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -152,6 +154,8 @@ export class SirsaeMovementSendingMainComponent
   acordionOpen: boolean = false;
   disabledBtnCerrar: boolean = false;
   loadingBtn: boolean = false;
+
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -159,7 +163,8 @@ export class SirsaeMovementSendingMainComponent
     private comerClientsService: ComerClientsService,
     private modalService: BsModalService,
     private comerInvoiceService: ComerInvoiceService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.settings = {
@@ -344,7 +349,7 @@ export class SirsaeMovementSendingMainComponent
       params['filter.customers.rfc'] = params['filter.rfc'];
       delete params['filter.rfc'];
     }
-
+    params['sortBy'] = 'customerId:DESC';
     this.comerClientsService.getComerClientsXEventgetAllV2(params).subscribe({
       next: response => {
         console.log(response);
@@ -358,6 +363,7 @@ export class SirsaeMovementSendingMainComponent
           this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;
+          this.clickSearch = false;
         });
       },
       error: err => {
@@ -373,6 +379,7 @@ export class SirsaeMovementSendingMainComponent
         this.data.refresh();
         this.totalItems = 0;
         this.loading = false;
+        this.clickSearch = false;
       },
     });
   }
@@ -391,20 +398,23 @@ export class SirsaeMovementSendingMainComponent
     });
   }
 
+  clickSearch: boolean = false;
   search() {
     if (!this.eventSelected)
       return this.alert(
         'warning',
-        'Debe Seleccionar un Evento para Consultar',
+        'Es Necesario Especificar un Evento para Consultar',
         ''
       );
 
     this.disabledBtnCerrar = true;
     this.acordionOpen = true;
     this.totalItems = 0;
+    this.clickSearch = true;
     // this.amountList = [];
     // this.typeEvents = event.data;
-
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getComerClientsXEvent('si'));
@@ -417,6 +427,16 @@ export class SirsaeMovementSendingMainComponent
     this.totalItems = 0;
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
+    this.eventSelected = null;
+    this.getComerEvents(new ListParams());
+    this.clearSubheaderFields();
+  }
+
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
   }
   edit(event: any) {
     console.log('aaa', event);
@@ -427,7 +447,7 @@ export class SirsaeMovementSendingMainComponent
   }
   openForm(data: any, editVal: boolean) {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
     const modalConfig = MODAL_CONFIG;
@@ -446,7 +466,7 @@ export class SirsaeMovementSendingMainComponent
 
   allNo() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 
@@ -455,29 +475,30 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    const data: any = this.data.getAll().then(resp => {
+    const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
 
-      let result = resp.map(async (item: any) => {
-        item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
-        if (item.sendedSirsae != 'S') {
-          item.sendSirsae = 'N';
-          delete item.rfc;
-          delete item.name;
-          await this.update(item);
-        }
-      });
+      // let result = resp.map(async (item: any) => {
+      //   item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
+      //   if (item.sendedSirsae != 'S') {
+      //     item.sendSirsae = 'N';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update(this.eventSelected.id, 'N');
+      //   }
+      // });
 
-      Promise.all(result).then(resp => {
-        // this.loading = false;
-        this.getComerClientsXEvent('no');
-        // this.data.refresh()
-      });
+      // Promise.all(result).then(resp => {
+      // this.loading = false;
+      await this.update(this.eventSelected.id, 'N');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
     });
   }
   allYes() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 
@@ -486,30 +507,46 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    const data: any = this.data.getAll().then(resp => {
+    const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) this.loading = true;
-      let result = resp.map(async (item: any) => {
-        item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
-        if (item.sendedSirsae != 'S') {
-          item.sendSirsae = 'S';
-          delete item.rfc;
-          delete item.name;
-          await this.update(item);
-        }
-      });
+      // let result = resp.map(async (item: any) => {
+      //   item.sendedSirsae = item.sendedSirsae == null ? 'N' : item.sendedSirsae;
+      //   if (item.sendedSirsae != 'S') {
+      //     item.sendSirsae = 'S';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update(item, 'S');
+      //   }
+      // });
 
-      Promise.all(result).then(async resp => {
-        // this.loading = false;
-        await this.getComerClientsXEvent('no');
-        // this.data.refresh()
-      });
+      // Promise.all(result).then(async resp => {
+      // this.loading = false;
+      await this.update(this.eventSelected.id, 'S');
+      await this.getComerClientsXEvent('no');
+      // this.data.refresh()
+      // });
     });
   }
 
   // UPDATE CLIENTES X EVENTOS //
-  async update(body: any) {
+  async update(event: any, type: any) {
     return new Promise((resolve, reject) => {
-      this.comerClientsService.updateClientXEvent(body).subscribe({
+      this.comerDetailsService.pFmcomr612ClientxEvent2(event, type).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  // PARA ELIMINAR //
+  async update_(data: any) {
+    return new Promise((resolve, reject) => {
+      this.comerClientsService.updateClientXEvent(data).subscribe({
         next: response => {
           resolve(true);
         },
@@ -523,7 +560,7 @@ export class SirsaeMovementSendingMainComponent
 
   async enviarSIRSAE() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 
@@ -537,88 +574,105 @@ export class SirsaeMovementSendingMainComponent
     const data: any = this.data.getAll().then(async resp => {
       if (resp.length > 0) {
         this.loading = true;
-        this.loadingBtn = true;
       }
-      let arr: any = [];
-      let result = resp.map(async (item: any) => {
-        const rfc = item.rfc;
-        // VALIDA_PAGOS
-        const valid1 = await this.validPayments(item);
-        if (valid1 == 0) {
-          this.alert(
-            'warning',
-            `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
-            ''
-          );
-          item.sendSirsae = 'N';
-          delete item.rfc;
-          delete item.name;
-          await this.update(item);
-        }
+      this.loadingBtn = true;
 
-        let obj = {
-          sendSirsae: item.sendSirsae,
-          sentSirsae: item.sendedSirsae,
-          rfc: rfc,
-          customer: item.clientId,
-        };
-        arr.push(obj);
-      });
+      // let arr: any = [];
+      // let result = resp.map(async (item: any) => {
+      //   const rfc = item.rfc;
+      //   // VALIDA_PAGOS
+      //   const valid1 = await this.validPayments(item);
+      //   if (valid1 == 0) {
+      //     this.alert(
+      //       'warning',
+      //       `El Cliente ${item.customerId} No tiene Pagos y no se Enviará a SIRSAE `,
+      //       ''
+      //     );
+      //     item.sendSirsae = 'N';
+      //     delete item.rfc;
+      //     delete item.name;
+      //     await this.update_(item);
+      //   }
 
-      Promise.all(result).then(async resp => {
-        const resss = await this.sendSirsae(1, arr);
+      //   let obj = {
+      //     sendSirsae: item.sendSirsae,
+      //     sentSirsae: item.sendedSirsae,
+      //     rfc: rfc,
+      //     customer: item.clientId,
+      //   };
+      //   arr.push(obj);
+      // });
 
-        if (
-          resss == 'ERROR EN LA CONEXION A SIRSAE' ||
-          resss ==
-            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms'
-        ) {
-          this.alert(
-            'error',
-            'Error de Conexión, No se Pudo Conectar a la Base de Datos (SIRSAE)',
-            ''
-          );
-          this.loadingBtn = false;
-          await this.getComerClientsXEvent('no');
-        } else {
-          // ACT_EST_EVE
-          const valid2 = await this.actEstEve();
-          if (valid2 == 0) {
-            let obj = {
-              statusVtaId: 'CONC',
-              id: this.eventSelected.id,
-              eventTpId: this.eventSelected.eventTpId,
-            };
+      // Promise.all(result).then(async resp => {
+      await this.pFmcomr612getAuxCount(this.eventSelected.id);
 
-            await this.updateEvents(this.eventSelected.id, obj);
-          } else {
-            let obj = {
-              statusVtaId: 'PCON',
-              id: this.eventSelected.id,
-              eventTpId: this.eventSelected.eventTpId,
-            };
-            await this.updateEvents(this.eventSelected.id, obj);
-          }
+      const resss = await this.sendSirsae(1, []);
 
-          this.alert('success', 'Proceso Terminado Correctamente', '');
-          this.loadingBtn = false;
-          await this.getComerClientsXEvent('no');
-        }
+      if (
+        resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms'
+      ) {
+        this.alert(
+          'error',
+          'Error de Conexión',
+          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+        );
+        this.loadingBtn = false;
+        await this.getComerClientsXEvent('no');
+      } else {
+        // ACT_EST_EVE
+        await this.actEstEve(this.eventSelected.id);
+        this.loadingBtn = false;
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+        await this.getComerClientsXEvent('no');
+
+        // ACT_EST_EVE
+        // const valid2 = await this.actEstEve(this.eventSelected.id);
+        // if (valid2 == 0) {
+        //   let obj = {
+        //     statusVtaId: 'CONC',
+        //     id: this.eventSelected.id,
+        //     eventTpId: this.eventSelected.eventTpId,
+        //   };
+
+        //   await this.updateEvents(this.eventSelected.id, obj);
+        // } else {
+        //   let obj = {
+        //     statusVtaId: 'PCON',
+        //     id: this.eventSelected.id,
+        //     eventTpId: this.eventSelected.eventTpId,
+        //   };
+        //   await this.updateEvents(this.eventSelected.id, obj);
+        // }
+      }
+      // });
+    });
+  }
+
+  actEstEve(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.actEstEve(id).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
       });
     });
   }
 
-  actEstEve() {
-    const params = new ListParams();
-    params['filter.idEvent'] = `$eq:${this.eventSelected.id}`;
-    params['filter.sendedSirsae'] = `$eq:N`;
+  pFmcomr612getAuxCount(id: any) {
     return new Promise((resolve, reject) => {
-      this.comerClientsService.getComerClientsXEventgetAllV2(params).subscribe({
+      this.comerDetailsService.pFmcomr612getAuxCount(id).subscribe({
         next: response => {
-          resolve(response.count);
+          resolve(true);
         },
         error: err => {
-          resolve(0);
+          resolve(false);
+          console.log('ERR', err);
         },
       });
     });
@@ -672,21 +726,12 @@ export class SirsaeMovementSendingMainComponent
     let obj = {
       process: process,
       event: this.eventSelected.id,
-      customerXevent: data,
+      // customerXevent: data,
     };
-    // {
-    //   process: process,
-    //   event: data.eventId,
-    //   sendSirsae: data.sendSirsae,
-    //   sentSirsae: data.sendedSirsae,
-    //   rfc: data.rfc,
-    // };
     return new Promise((resolve, reject) => {
       this.paymentService.sendSirsaeFcomer112(obj).subscribe({
         next: response => {
           resolve(true);
-          // this.alert('success', 'Proceso Ejecutado Correctamente', '');
-          // this.getPayments();
         },
         error: error => {
           console.log('error', error);
@@ -698,7 +743,7 @@ export class SirsaeMovementSendingMainComponent
 
   obtenerOI() {
     if (!this.eventSelected) {
-      this.alert('warning', 'Debe Seleccionar un Evento', '');
+      this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
 

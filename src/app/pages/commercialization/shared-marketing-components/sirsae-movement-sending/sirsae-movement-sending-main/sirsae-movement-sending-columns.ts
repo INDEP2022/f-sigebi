@@ -3,11 +3,13 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
     title: 'ID Cliente',
     type: 'number',
     sort: false,
+    width: '12%',
   },
   name: {
     title: 'Cliente',
     sort: false,
     type: 'string',
+    width: '44%',
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.customers ? row.customers.reasonName : null;
     // },
@@ -16,6 +18,7 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
     title: 'R.F.C.',
     type: 'string',
     sort: false,
+    width: '20%',
     // valuePrepareFunction: (cell: any, row: any) => {
     //   return row.customers ? row.customers.rfc : null;
     // },
@@ -24,6 +27,7 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
     title: 'Enviado SIRSAE',
     type: 'string',
     sort: false,
+    width: '12%',
     filter: {
       type: 'list',
       config: {
@@ -44,10 +48,12 @@ export const SIRSAE_MOVEMENT_SENDING_COLUMNS = {
       }
     },
   },
-  sendSirsae: {
+  sendSirsae1: {
+    // ! Error
     title: 'Enviar SIRSAE',
     type: 'string',
     sort: false,
+    width: '12%',
     filter: {
       type: 'list',
       config: {

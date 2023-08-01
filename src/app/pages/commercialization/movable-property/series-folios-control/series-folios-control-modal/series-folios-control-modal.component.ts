@@ -199,7 +199,7 @@ export class SeriesFoliosControlModalComponent
             this.loading = false;
             this.modalRef.hide();
             this.modalRef.content.callback(true);
-            this.alert('success', 'Folio', 'Actualizado correctamente');
+            this.alert('success', 'Folio', 'Actualizado Correctamente');
           },
           error: () => {
             this.loading = false;
@@ -260,7 +260,7 @@ export class SeriesFoliosControlModalComponent
             this.loading = false;
             this.modalRef.hide();
             this.modalRef.content.callback(true);
-            this.alert('success', 'Folio', 'Creado correctamente');
+            this.alert('success', 'Folio', 'Creado Correctamente');
           },
           error: () => {
             this.loading = false;

@@ -897,3 +897,8 @@ export interface IGoodCharge {
   startDate?: string;
   endDate?: string;
 }
+
+export interface IValidationExempte {
+  goodNumber?: number;
+  process?: string;
+}

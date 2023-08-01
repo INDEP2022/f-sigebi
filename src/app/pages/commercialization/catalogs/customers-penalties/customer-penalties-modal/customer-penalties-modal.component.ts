@@ -25,6 +25,11 @@ export class CustomerPenaltiesModalComponent
   penalties: ICustomersPenalties;
   today: Date;
 
+  clientId: number;
+  eventId: number;
+  lotId: number;
+  publicLot: number;
+
   @Output() data = new EventEmitter<{}>();
 
   constructor(
@@ -37,22 +42,36 @@ export class CustomerPenaltiesModalComponent
   }
 
   ngOnInit(): void {
+    console.log(this.customersPenalties);
     this.prepareForm();
+    this.clientId = this.customersPenalties.clientId?.id;
+    this.eventId = this.customersPenalties.eventId?.id;
+    this.lotId = this.customersPenalties.lotId?.id;
+    this.publicLot = this.customersPenalties.lotId?.publicLot;
+    this.form.patchValue({
+      clientId: this.clientId,
+      eventId: this.eventId,
+      lotId: this.lotId,
+    });
   }
 
   private prepareForm() {
     this.form = this.fb.group({
+      clientId: [
+        null,
+        [Validators.maxLength(13), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      id: [
+        null,
+        [Validators.maxLength(13), Validators.pattern(NUMBERS_PATTERN)],
+      ],
       typeProcess: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      event: [
+      eventId: [
         null,
         [Validators.maxLength(7), Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      eventKey: [
-        null,
-        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
       ],
       lotId: [
         null,
@@ -69,30 +88,51 @@ export class CustomerPenaltiesModalComponent
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
       ],
       penaltiDate: [null],
+      publicLot: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      user: [null, [Validators.pattern(STRING_PATTERN)]],
+      pFlag: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      registernumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.customersPenalties != null) {
       this.edit = true;
       this.form.patchValue(this.customersPenalties);
 
-      const dbStartDate = this.form.get('startDate').value;
-      const dbEndDate = this.form.get('endDate').value;
-      const dbPenaltiDate = this.form.get('penaltiDate').value;
+      if (this.form.get('startDate').value === null) {
+        this.form.get('startDate').value.reset();
+      } else {
+        const dbReleaseDate = this.form.get('startDate').value;
+        const formattedDate1 = formatDate(dbReleaseDate, 'dd/MM/yyyy', 'en-US');
+        this.form.get('startDate').setValue(formattedDate1);
+        this.form
+          .get('startDate')
+          .setValue(this.addDays(new Date(dbReleaseDate), 1));
+      }
 
-      const formattedDate1 = formatDate(dbStartDate, 'dd/MM/yyyy', 'en-US'); //
-      const formattedDate2 = formatDate(dbEndDate, 'dd/MM/yyyy', 'en-US'); //
-      const formattedDate3 = formatDate(dbPenaltiDate, 'dd/MM/yyyy', 'en-US'); //
+      if (this.form.get('endDate').value === null) {
+        this.form.get('endDate').value.reset();
+      } else {
+        const dbBlackListDate = this.form.get('endDate').value;
+        const formattedDate2 = formatDate(
+          dbBlackListDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.form.get('endDate').setValue(formattedDate2);
+        this.form
+          .get('endDate')
+          .setValue(this.addDays(new Date(dbBlackListDate), 1));
+      }
 
-      this.form.get('startDate').setValue(formattedDate1);
-      this.form.get('endDate').setValue(formattedDate2);
-      this.form.get('penaltiDate').setValue(formattedDate3);
-
-      this.form
-        .get('startDate')
-        .setValue(this.addDays(new Date(dbStartDate), 1)); //
-      this.form.get('endDate').setValue(this.addDays(new Date(dbEndDate), 1)); //
-      this.form
-        .get('penaltiDate')
-        .setValue(this.addDays(new Date(dbPenaltiDate), 1)); //
+      if (this.form.get('penaltiDate').value === null) {
+        this.form.get('penaltiDate').value.reset();
+      } else {
+        const dbFreeDate = this.form.get('penaltiDate').value;
+        const formattedDate3 = formatDate(dbFreeDate, 'dd/MM/yyyy', 'en-US');
+        this.form.get('penaltiDate').setValue(formattedDate3);
+        this.form
+          .get('penaltiDate')
+          .setValue(this.addDays(new Date(dbFreeDate), 1));
+      }
     }
   }
 
@@ -100,6 +140,10 @@ export class CustomerPenaltiesModalComponent
     const result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
+  }
+
+  clearFreeDate(propertyName: string) {
+    this.form.get(propertyName).setValue(null);
   }
 
   close() {
@@ -112,7 +156,39 @@ export class CustomerPenaltiesModalComponent
 
   update() {
     this.loading = true;
-    this.clientPenaltyService.updateCustomers(this.form.value).subscribe({
+    const clientId = this.customersPenalties.clientId.id;
+    const lotId = this.form.get('lotId');
+    const eventId = this.form.get('eventId');
+    const endDate = this.form.get('endDate');
+    const penaltyId = this.customersPenalties.id;
+    const pFlag = this.customersPenalties.pFlag;
+    const penaltiDate = this.form.get('penaltiDate');
+    const publicLot = this.customersPenalties.publicLot;
+    const refeOfficeOther = this.form.get('refeOfficeOther');
+    const registernumber = this.customersPenalties.registernumber;
+    const startDate = this.form.get('startDate');
+    const typeProcess = this.form.get('typeProcess');
+    const user = this.customersPenalties.user;
+    const userPenalty = this.customersPenalties.userPenalty;
+    const model: any = {
+      customerId: clientId,
+      batchId: lotId.value,
+      eventId: eventId.value,
+      finalDate: endDate.value,
+      penaltyId: penaltyId,
+      pFlag: pFlag,
+      penalizesDate: penaltiDate.value,
+      batchPublic: publicLot,
+      referenceJobOther: refeOfficeOther.value,
+      recordNumber: registernumber,
+      initialDate: startDate.value,
+      processType: typeProcess.value,
+      user: user,
+      usrPenalize: userPenalty,
+      nbOrigin: null,
+    };
+    console.log(model);
+    this.clientPenaltyService.updateCustomers1(model).subscribe({
       next: data => {
         this.handleSuccess(), this.modalRef.hide();
       },
@@ -126,8 +202,48 @@ export class CustomerPenaltiesModalComponent
 
   create() {
     this.loading = true;
+    const clientId = this.form.get('clientId');
+    const lotId = this.form.get('lotId');
+    const eventId = this.form.get('eventId');
+    const endDate: string | null =
+      this.form.get('endDate').value !== null
+        ? this.convertDateFormat(this.form.get('endDate').value)
+        : null;
+    const id = this.form.get('id');
+    const pFlag = this.form.get('pFlag');
+    const penaltiDate: string | null =
+      this.form.get('penaltiDate').value !== null
+        ? this.convertDateFormat(this.form.get('penaltiDate').value)
+        : null;
+    const publicLot = this.form.get('publicLot');
+    const refeOfficeOther = this.form.get('refeOfficeOther');
+    const registernumber = this.form.get('registernumber');
+    const startDate: string | null =
+      this.form.get('startDate').value !== null
+        ? this.convertDateFormat(this.form.get('startDate').value)
+        : null;
+    const typeProcess = this.form.get('typeProcess');
+    const user = this.form.get('user');
+    const userPenalty = this.form.get('userPenalty');
+    const model: any = {
+      customerId: clientId.value,
+      batchId: lotId.value,
+      eventId: eventId.value,
+      batchPublic: publicLot.value,
+      initialDate: startDate,
+      finalDate: endDate,
+      processType: typeProcess.value,
+      referenceJobOther: refeOfficeOther.value,
+      user: user.value,
+      penaltyId: id.value,
+      pFlag: pFlag.value,
+      recordNumber: registernumber.value,
+      usrPenalize: userPenalty.value,
+      penalizesDate: penaltiDate,
+      nbOrigin: null,
+    };
     if (this.form.valid) {
-      this.clientPenaltyService.create(this.form.value).subscribe({
+      this.clientPenaltyService.create(model).subscribe({
         next: data => {
           this.loading = false;
           this.handleSuccess();
@@ -148,10 +264,24 @@ export class CustomerPenaltiesModalComponent
     }
   }
 
+  convertDateFormat(inputDate: string | Date): string {
+    if (inputDate instanceof Date) {
+      return formatDate(inputDate, 'yyyy-MM-dd', 'en-US');
+    } else if (typeof inputDate === 'string') {
+      const parts = inputDate.split('/');
+      if (parts.length !== 3) {
+        throw new Error('Fecha en Formato Incorrecto: ' + inputDate);
+      }
+      return parts[2] + '-' + parts[1] + '-' + parts[0];
+    } else {
+      throw new Error('Formato de Fecha Inválido: ' + inputDate);
+    }
+  }
+
   handleSuccess() {
     const message: string = this.edit
       ? 'Penalización Actualizada'
-      : 'Penalización Creadoa';
+      : 'Penalización Creada';
     this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
