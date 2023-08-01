@@ -4,10 +4,7 @@ import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endp
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import {
-  IComerTpEvent,
-  IComerTpEventSend,
-} from '../../models/ms-event/event-type.model';
+import { IComerTpEvent } from '../../models/ms-event/event-type.model';
 
 @Injectable({
   providedIn: 'root',
@@ -57,7 +54,7 @@ export class ComerTpEventosService extends HttpService {
     return this.put(route, tpenalty);
   }
 
-  newUpdate(id: string | number, tpenalty: IComerTpEventSend) {
+  newUpdate(id: string | number, tpenalty: any) {
     const route = `${this.endpoint}/${id}`;
     return this.put(route, tpenalty);
   }
@@ -81,6 +78,11 @@ export class ComerTpEventosService extends HttpService {
 
   getEventsByType(id: string | number, params?: ListParams) {
     const route = `${EventEndpoints.ComerTEvents}?filter.address=${id}`;
+    return this.get(route, params);
+  }
+
+  getEventsByTypeFilter(id: string | number, params?: ListParams) {
+    const route = `${EventEndpoints.ComerTEvents}/get-all`;
     return this.get(route, params);
   }
 

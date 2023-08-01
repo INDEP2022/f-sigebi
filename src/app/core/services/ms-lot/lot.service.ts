@@ -102,6 +102,32 @@ export class LotService extends HttpService {
     return this.post('apps/rejected-good', body);
   }
 
+  thirdBaseFile(eventId: string | number) {
+    return this.get<{
+      nameFile: string;
+      base64File: string;
+    }>(`apps/file-third-base/${eventId}`);
+  }
+
+  loadInvoice(eventId: string | number, file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.post(`apps/c-invoice/${eventId}`, formData);
+  }
+
+  createBases(body: {
+    eventId: string | number;
+    costBase: string | number;
+    file: File;
+  }) {
+    const { eventId, costBase, file } = body;
+    const formData = new FormData();
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('costBase', costBase ? `${costBase}` : null);
+    formData.append('file', file);
+    return this.post('apps/create-bases', formData);
+  }
+
   getPagosRefMonto(body: any) {
     return this.post('apps/get-pagos-ref-monto', body);
   }

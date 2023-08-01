@@ -212,22 +212,22 @@ export class HomeComponent extends BasePage implements OnInit {
   }
 
   deleteAlert() {
-    this.alertQuestion('warning', 'Eliminar', '¿Desea eliminar este registro?');
+    this.alertQuestion('warning', 'Eliminar', '¿Desea Eliminar este registro?');
   }
 
   questionAlert() {
-    this.alertQuestion('question', '¿Quiere continuar con el proceso?', '');
+    this.alertQuestion('question', '¿Quiere Continuar con el Proceso?', '');
   }
   errorAlert() {
-    this.alert('error', 'Error', 'Descripción del error');
+    this.alert('error', 'Error', 'Descripción del Error');
   }
 
   warningAlert() {
-    this.alert('warning', 'No se encontraron bienes', '');
+    this.alert('warning', 'No se Encontraron Bienes', '');
   }
 
   successAlert() {
-    this.alert('success', 'El registro se ha guardado', '');
+    this.alert('success', 'El Registro se ha Guardado', '');
   }
   openModal() {
     let config: ModalOptions = {

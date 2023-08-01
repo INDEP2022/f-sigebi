@@ -249,7 +249,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     if (sender == 0) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo Recibo?',
+        '¿Desea Registrar los Bienes con tipo Recibo?',
         '',
         'Continuar'
       ).then(q => {
@@ -260,7 +260,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     } else if (sender == 1) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo Resguardo?',
+        '¿Desea Registrar los Bienes con tipo Resguardo?',
         '',
         'Continuar'
       ).then(q => {
@@ -271,7 +271,7 @@ export class ReceiptGenerationSamiComponent extends BasePage implements OnInit {
     } else if (sender == 2) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo Almacén?',
+        '¿Desea Registrar los Bienes con tipo Almacén?',
         '',
         'Continuar'
       ).then(q => {
