@@ -97,7 +97,7 @@ export class ConsigmentsGoodsComponent extends BasePage implements OnInit {
       this.alert(
         'error',
         'Error',
-        'El estatus de bien no es valido para comercializar'
+        'El estatus de bien no es válido para comercializar'
       );
       this.settings = { ...this.settings };
       return;
