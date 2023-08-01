@@ -2,7 +2,7 @@ import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import * as moment from 'moment';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -83,7 +83,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       //borrar
-      //this.idRequest = 56817
+      this.idRequest = 56817;
       //fin
       if (this.idRequest) {
         this.getData(data);
@@ -94,50 +94,57 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
   getData(params: ListParams) {
     this.loading = true;
     params['filter.applicationId'] = `$eq:${this.idRequest}`;
-    this.rejectedGoodService.getAll(params).subscribe({
-      next: resp => {
-        const result = resp.data.map(async (item: any, _i) => {
-          item.select = false;
-          //borrar solo de prueba
-          /* if (_i == 0) {
+    this.rejectedGoodService
+      .getAll(params)
+      .pipe(
+        catchError(err => {
+          return of({ data: [], count: 0 });
+        })
+      )
+      .subscribe({
+        next: (resp: any) => {
+          const result = resp.data.map(async (item: any, _i: number) => {
+            item.select = false;
+            //borrar solo de prueba
+            /* if (_i == 0) {
             item.resultTaxpayer = 'ACEPTADO';
             item.resultFinal = 'Y';
           } */
-          //fin
+            //fin
 
-          item['validated'] =
-            item.resultFinal == 'Y' || item.resultFinal == 'P' ? true : false;
-          item['maneuverRequired'] =
-            item.requiresManeuver == 'Y' ? true : false;
+            item['validated'] =
+              item.resultFinal == 'Y' || item.resultFinal == 'P' ? true : false;
+            item['maneuverRequired'] =
+              item.requiresManeuver == 'Y' ? true : false;
 
-          item.startVisitDate = item.startVisitDate
-            ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
-            : null;
-          item.endVisitDate = item.endVisitDate
-            ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
-            : null;
-          item['unitExtentDescrip'] = await this.getDescripUnit(
-            item.unitExtent
-          );
-          item['delegationDescrip'] = await this.getDelegation(
-            item.delegationRegionalId,
-            item.cveState
-          );
-          item['fractionDescrip'] = await this.getFraction(item.fractionId);
-        });
+            item.startVisitDate = item.startVisitDate
+              ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+              : null;
+            item.endVisitDate = item.endVisitDate
+              ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+              : null;
+            item['unitExtentDescrip'] = await this.getDescripUnit(
+              item.unitExtent
+            );
+            item['delegationDescrip'] = await this.getDelegation(
+              item.delegationRegionalId,
+              item.cveState
+            );
+            item['fractionDescrip'] = await this.getFraction(item.fractionId);
+          });
 
-        Promise.all(result).then(x => {
-          console.log(resp.data);
-          this.selectedGoodColumns.load(resp.data);
-          this.selectedGoodTotalItems = resp.count;
-          setTimeout(() => {
-            this.disableValidateColumn();
-            this.setContributorValidatorRows();
-          }, 600);
-          this.loading = false;
-        });
-      },
-    });
+          Promise.all(result).then(x => {
+            console.log(resp.data);
+            this.selectedGoodColumns.load(resp.data);
+            this.selectedGoodTotalItems = resp.count;
+            setTimeout(() => {
+              this.disableValidateColumn();
+              this.setContributorValidatorRows();
+            }, 600);
+            this.loading = false;
+          });
+        },
+      });
   }
 
   getDescripUnit(unit: string) {

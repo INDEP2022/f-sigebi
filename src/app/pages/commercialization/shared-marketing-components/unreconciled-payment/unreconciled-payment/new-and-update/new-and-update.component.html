@@ -41,7 +41,6 @@
           <form-field [control]="form.get('date')" label="Fecha">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
               maxlength="11"
               bsDatepicker
               type="text"
@@ -108,7 +107,6 @@
           <form-field [control]="form.get('dateOi')" label="Fecha OI">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
               bsDatepicker
               maxlength="11"
               type="text"
@@ -203,7 +201,13 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!form.valid"
+          [disabled]="
+            !form.valid ||
+            form.get('recordDate').value == undefined ||
+            form.get('recordDate') == null ||
+            form.get('date').value == undefined ||
+            form.get('date') == null
+          "
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">
