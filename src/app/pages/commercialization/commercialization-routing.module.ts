@@ -163,7 +163,7 @@ const routes: Routes = [
           './shared-marketing-components/referenced-payment/referenced-payment.module'
         )
       ).ReferencedPaymentModule,
-    data: { title: 'Pagos Referenciados' },
+    data: { title: 'Pagos Referenciados', screen: 'FCOMER111' },
   },
   {
     path: 'unreconciled-payment',
