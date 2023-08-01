@@ -147,18 +147,23 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
           },
           error: (err: any) => {
             this.loading = false;
-            this.alert('warning', 'No Existen Bancos', ``);
+            // this.alert('warning', 'No Existen Bancos', ``);
           },
         });
     }, 3000);
   }
 
+  consultarBanco(event: any) {
+    const bankSelectValue = event;
+    this.onBankSelectChange(bankSelectValue);
+  }
+
   // Asigna el valor del banco seleccionado a la función "searchBankAccount"
-  onBankSelectChange(value: any) {
+  onBankSelectChange(bankSelectValue: any) {
     this.bankAccountSelect = new DefaultSelect();
     this.loading = false;
-    if (value && value.bankCode) {
-      const bankCode = value.bankCode;
+    if (bankSelectValue) {
+      const bankCode = bankSelectValue;
       this.searchBankAccount(bankCode, this.paramsSubject);
       this.loading = false;
     } else {
@@ -221,6 +226,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
 
   //Modal para crear o editar clientes penalizados
   openForm(bankMovementsTypes?: IBankMovementsTypes) {
+    console.log(bankMovementsTypes);
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       bankMovementsTypes,
@@ -232,6 +238,7 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
   }
 
   showDeleteAlert(bankMovementsTypes?: IBankMovementsTypes) {
+    console.log(bankMovementsTypes);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -248,6 +255,13 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
       next: () => {
         this.getDeductives();
         this.alert('success', 'Movimiento Borrado Correctamente', '');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'No se Puede Eliminar el Registro porque Está Referenciado en Otra Tabla',
+          ''
+        );
       },
     });
   }

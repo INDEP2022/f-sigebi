@@ -28,7 +28,7 @@ import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
 import { BasePage } from 'src/app/core/shared';
-import Swal from 'sweetalert2';
+import Swal, { SweetAlertResult } from 'sweetalert2';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { EVENT_LOT_LIST_COLUMNS } from '../../utils/table-columns/event-lots-list-columns';
@@ -48,6 +48,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
 
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
+  @Output() fillStadistics = new EventEmitter<void>();
   @ViewChild('validFileInput', { static: true })
   validFileInput: ElementRef<HTMLInputElement>;
   totalItems = 0;
@@ -136,7 +137,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       params.addFilter('eventId', id.value);
     }
     params.sortBy = 'publicLot:ASC';
-    return this.comerLotService.getAllFilter(params.getParams()).pipe(
+    return this.comerLotService.getAllFilterPostQuery(params.getParams()).pipe(
       catchError(error => {
         this.loading = false;
         this.lots.load([]);
@@ -147,7 +148,6 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       tap(response => {
         this.loading = false;
         console.log(response.data);
-
         this.lots.load(response.data);
         this.lots.refresh();
         this.totalItems = response.count;
@@ -254,6 +254,10 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       'Si',
       'No'
     );
+    if (this.onlyBase) {
+      this.validateBaseColumns(askIsLotifying);
+      return;
+    }
     if (askIsLotifying.isConfirmed) {
       this.validateCsv();
       return;
@@ -297,5 +301,22 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   /** PUP_VALCSV_CLIENTES */
   validateCsvCustomers() {
     console.warn('PUP_VALCSV_CLIENTES');
+  }
+
+  /** VALIDA_COLUMNASBASE */
+  validateBaseColumns(askIsLotifying: SweetAlertResult) {
+    let type: 'CLIENTES' | 'LOTES' = null;
+    if (askIsLotifying.isConfirmed) {
+      type = 'LOTES';
+      return;
+    }
+
+    if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
+      type = 'CLIENTES';
+      return;
+    }
+    if (type) {
+      console.warn('VALIDA_COLUMNASBASE');
+    }
   }
 }

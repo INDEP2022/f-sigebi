@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent_ } from './searchDate';
+
 export const RELEASE_REPORT_COLUMNS = {
   id: {
     title: 'Oficio',
@@ -26,6 +28,15 @@ export const RELEASE_REPORT_COLUMNS = {
   invoiceDate: {
     title: 'Fecha de Factura',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent_,
+    },
   },
   signatory: {
     title: 'Adjudicatario',
@@ -59,7 +70,7 @@ export const COMEMR_BIENES_COLUMNS = {
     sort: false,
   },
   lotDescription: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'text',
     sort: false,
   },

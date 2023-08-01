@@ -292,7 +292,14 @@ export class ReceptionStrategiesComponent extends BasePage implements OnInit {
   }
 
   clean(event: any) {
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    delete this.params.getValue()['filter.receptionPhysicalDate'];
+    delete this.params.getValue()['filter.coordinateAdmin'];
+    delete this.params.getValue()['filter.usrActrecep'];
+    this.params.getValue().text = '';
+    this.params.getValue().page = 1;
+    this.params.getValue().inicio = 1;
+    this.params.getValue().pageSize = 10;
+    this.params.getValue().take = 10;
     this.data.load([]);
     this.data.refresh();
     this.totalItems = 0;

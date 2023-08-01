@@ -105,7 +105,7 @@
               [parameters]="parameters"
               [eventForm]="eventForm"></consigments-container>
           </tab>
-          <tab>
+          <tab (selectTab)="viewBase()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">

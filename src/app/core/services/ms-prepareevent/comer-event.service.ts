@@ -56,6 +56,10 @@ export class ComerEventService extends HttpService {
     return this.get(PrepareEventEndpoints.ApplicationDataEvent, params);
   }
 
+  getAllEvent(params: _Params | string) {
+    return this.get(PrepareEventEndpoints.ComerEvent, params);
+  }
+
   getDataTpEvents(idEvent: number) {
     return this.get(`${PrepareEventEndpoints.ApplicationTpEvent}/${idEvent}`);
   }

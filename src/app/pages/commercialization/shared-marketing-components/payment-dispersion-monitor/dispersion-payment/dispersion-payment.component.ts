@@ -391,7 +391,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       },
     };
   }
-
   //Data de COMER_CLIENTESXEVENTO
   getDataComerCustomer() {
     clearGoodCheckCustomer();
@@ -460,4 +459,5 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     paramsF.addFilter('idClient',null)
     paramsF.addFilter('eventId', eventId)
   }
+
 }
