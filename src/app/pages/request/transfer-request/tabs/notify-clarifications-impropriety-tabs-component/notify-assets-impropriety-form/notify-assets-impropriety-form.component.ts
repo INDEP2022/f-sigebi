@@ -58,6 +58,8 @@ export class NotifyAssetsImproprietyFormComponent
   typeClarifications: any;
   idSolicitud: any;
   delegationUser: any;
+
+  xmlRespSat: string = '';
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -75,6 +77,7 @@ export class NotifyAssetsImproprietyFormComponent
 
   //dataDocumentsImpro: IClarificationDocumentsImpro;
   ngOnInit(): void {
+    console.log('Información de la solicitud', this.infoRequest);
     this.modalService.onHide.subscribe(key => {});
 
     this.dictamenSeq();
@@ -589,17 +592,103 @@ export class NotifyAssetsImproprietyFormComponent
     });
   }
 
+  //Variables temporales para respuesta del SAT
+
   updateChatClarification(
     chatClarifications: IChatClarifications,
     xml: string
   ) {
+    const transferente = this.infoRequest.transferent.name;
+    const idOficioAclaracion: string = 'AGA-SA24130-803-5230';
+    const oficio = this.infoRequest.paperNumber;
+    const fechaOficio = this.infoRequest.paperDate;
+    const nombreDestinatario: string =
+      this.clarificationForm?.controls['addresseeName'].value;
+    const puestoDestinatario: string =
+      this.clarificationForm?.controls['positionAddressee'].value;
+    const estado = this.infoRequest.regionalDelegation.keyState;
+    const ciudad = this.infoRequest.regionalDelegation.city;
+    const direccion = this.infoRequest.regionalDelegation.officeAddress;
+    const regional = this.infoRequest.regionalDelegation.description;
+    const cargoTitular = this.clarificationForm.controls['senderCharge'].value;
+    const titular = this.clarificationForm.controls['senderName'].value;
+
+    this.xmlRespSat = `<OficioAclaracion><IdOficioAclaracion>${idOficioAclaracion}</IdOficioAclaracion><VersionOficio>1.0</VersionOficio><AdministracionGeneral>${transferente}</AdministracionGeneral><UnidadTransferente>Transferente de ${estado}</UnidadTransferente><IdUnidadTransferente>803</IdUnidadTransferente><NoOficio>${oficio}</NoOficio><FechaOficio>${fechaOficio}</FechaOficio><Asunto>Aclaración en atención al oficio ${this.folioReporte} de fecha ${fechaOficio}.</Asunto><LugarFechaEmision>${ciudad}, ${estado}, a 01 de agosto de 2023.</LugarFechaEmision><LeyendaAnioOficial></LeyendaAnioOficial><NombreDestinatario>${nombreDestinatario}</NombreDestinatario><PuestoDestinatario>${puestoDestinatario}</PuestoDestinatario><DireccionDestinatario>${direccion}, ${ciudad}, Chiapas</DireccionDestinatario><RegionalSAE>${regional}</RegionalSAE><Titular>${titular}</Titular><RFCTitular>AEDL7001109G8</RFCTitular><CargoTitular>${cargoTitular}</CargoTitular><PieOficio1>Carretera Federal 200 Tepic-Talismán, Km. 24+400m Tramo Tapachula - Ciudad Hidalgo, Municipio de Suchiate, C.P. 30840, Ciudad Hidalgo, Chiapas</PieOficio1><PieOficio2>Tel.: 01(962) 6202000   sat.gob.mx   youtube/satmx  twitter.com/satmx.</PieOficio2><Parrafo>En atención al oficio número ${this.folioReporte} de fecha ${fechaOficio}, el cual hace referencia al oficio de transferencia Aduana-de-Cd-Hidalgo-2022-334 de fecha 30 de noviembre de 1999, dirigido al Servicio de Administración y Enajenación de Bienes, mediante el cual se puso a disposición diversos bienes, afectos al(os) expediente(s) A-108/20 y donde se acredita que han pasado a propiedad del Fisco Federal o estan disponibles para su transferencia.\n\nEn virtud de lo anterior, le informo que se anexa ACUERDO DE ADJUDICACION DELAS MERCANCIAS A-108/20, MEDIANTE EL CUAL SE PASO A PROPIEDAD DEL FISCO FEDERAL LA MERCANCIA..\n\n1.- ACUERDO DE ADJUDICACION\n\n\nSin otro asunto en particular, le envío un cordial saludo.</Parrafo><Suplencia>En suplencia por ausencia del Administrador de la Aduana de Ciudad Hidalgo, con fundamento en los artículos 1, 2, primer párrafo, apartado D, segundo párrafo; 4, sexto párrafo; 5, último párrafo; 7 primer párrafo fracción XII y último párrafo, 19 párrafos primero, segundo y tercero, numeral 9, y 21 primer párrafo, apartado A, fracción I y último párrafo del Reglamento Interior del Servicio de Administración Tributaria publicado en el Diario Oficial de la Federación el 24 de agosto de 2015, firma el  de la Aduana.</Suplencia><DocumentosAdjuntos><Documento><DocAdjunto>ACUERDO DE ADJUDICACION</DocAdjunto><ArchivoDocAdjunto>SA24130-5230-8900.pdf</ArchivoDocAdjunto><AlgoritmoHashDocAdjunto>SHA1</AlgoritmoHashDocAdjunto><HashDocAdjunto>6935cc0476c76a19178f1d8b0572dfeefbb1e6aa</HashDocAdjunto></Documento></DocumentosAdjuntos><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+<ds:SignedInfo>
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
+<ds:Reference URI="">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+<ds:Transform Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>GQZ5G/VQjYa25UtnpjeAT4Za5x4=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>
+<ds:SignatureValue>
+h3ZxEjVczSMVPJqOXQ7K78VUCHo4wQX5kgmfj6DKBz31rZXdnTs3oZf9NdIKwThqTiUGUhfkE3d0
+qRA63kI+p7ObrXtxUyRhGR6k4ZyjPy4iw1k36URvPLX+hGyKuRpkSUBVo/ZR9HM+0hZLVefyC55d
+ssqG2NXKaWKIuocA7PGZR1Am8ZwcqAcabek4M0jIGx0N50hvga+RpmVKNccz6rzlIIsVBL39Mbsc
+BbNIKlgbsI74zRoWl56BVR71i51UUdMRRlNuWKIGBFEkXue3Hczt1jl/KWUWBj7JvAKLi8gjPyiX
+Ayvj531AhQk1AoyWqzeoLZSiJMu/BiVZcIIP0g==
+</ds:SignatureValue>
+<ds:KeyInfo>
+<ds:X509Data>
+<ds:X509Certificate>
+MIIGTzCCBDegAwIBAgIUMDAwMDEwMDAwMDA1MDI1NjkxMTkwDQYJKoZIhvcNAQELBQAwggGEMSAw
+HgYDVQQDDBdBVVRPUklEQUQgQ0VSVElGSUNBRE9SQTEuMCwGA1UECgwlU0VSVklDSU8gREUgQURN
+SU5JU1RSQUNJT04gVFJJQlVUQVJJQTEaMBgGA1UECwwRU0FULUlFUyBBdXRob3JpdHkxKjAoBgkq
+hkiG9w0BCQEWG2NvbnRhY3RvLnRlY25pY29Ac2F0LmdvYi5teDEmMCQGA1UECQwdQVYuIEhJREFM
+R08gNzcsIENPTC4gR1VFUlJFUk8xDjAMBgNVBBEMBTA2MzAwMQswCQYDVQQGEwJNWDEZMBcGA1UE
+CAwQQ0lVREFEIERFIE1FWElDTzETMBEGA1UEBwwKQ1VBVUhURU1PQzEVMBMGA1UELRMMU0FUOTcw
+NzAxTk4zMVwwWgYJKoZIhvcNAQkCE01yZXNwb25zYWJsZTogQURNSU5JU1RSQUNJT04gQ0VOVFJB
+TCBERSBTRVJWSUNJT1MgVFJJQlVUQVJJT1MgQUwgQ09OVFJJQlVZRU5URTAeFw0xOTEyMjYxODEz
+NDhaFw0yMzEyMjYxODE0MjhaMIHrMSgwJgYDVQQDEx9NQVJJQSBERSBMT1VSREVTIEFSRVZBTE8g
+REFNSUFOMSgwJgYDVQQpEx9NQVJJQSBERSBMT1VSREVTIEFSRVZBTE8gREFNSUFOMSgwJgYDVQQK
+Ex9NQVJJQSBERSBMT1VSREVTIEFSRVZBTE8gREFNSUFOMQswCQYDVQQGEwJNWDEpMCcGCSqGSIb3
+DQEJARYabG91cmRlcy5hcmV2YWxvQHNhdC5nb2IubXgxFjAUBgNVBC0TDUFFREw3MDAxMTA5Rzgx
+GzAZBgNVBAUTEkFFREw3MDAxMTBNQ1NSTVIwNDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBAIsVyjuQMkhs8P94lPdlRDUAX+8uMEsKclwA1djEzx0hWUlzr5SAu7ea/WeawsZSZmenw6t7
+bIF/Qc8DW0MHbuPXgKmHUTaOm8KEiyAIovVj+XUwpnuIMFF/agDMTqOqQMx/hNcN8p8JvwTHHSdV
+qZyVrkJC3TAbFRwmF4CY35SsQsQHoEaPbdRDTmQr+YWUHdK1JYqYXEYr6xuzE9HFy88qsUxr9O5L
+FKnB+h8tyw0t3HvwdnkIUQl0XdHFEcYehmpZGWH5L4NDOn4XKdCWrQA9Qsv8IIdoK/yPwNd42lcL
+sx+kA11RXXsTbgxC0NMP6nw9cc7GHrSfs/M8d4LV39MCAwEAAaNPME0wDAYDVR0TAQH/BAIwADAL
+BgNVHQ8EBAMCA9gwEQYJYIZIAYb4QgEBBAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEF
+BQcDAjANBgkqhkiG9w0BAQsFAAOCAgEAdvnHPUGa1NRrms3LMXArPr9uwr8e0rLHsrCTZj4zxDG0
+0uRIltfUSE3RCa3JAHTReC9uuPp5dFWvmDgC3nk2jXldpw9HqlAycmKQPnYPsCEDzsKBuJJ2Rz8B
+s5OtTExxKqkb2BWvjkTvXlLhnWe/E3Ib609BcHbprL2FECQ1om+YNuzhdWoEJTuI9n8ryEw/taZ3
+LQ7lYt2D4AtKJg7NaCG/181ZKD2koUNBnSTtmhvbH29jBYC2CTnX34BOPlcERPE9E4HuzBkZSVOx
+wF1oZMbNLwSpI3gLJlEL7HTViuR94kKpEzPwWTujDhEzXCdK8+9OcvxLfey3dP72IDioLzcTBJdu
+fBT/bgLLSl6/pJJffKCg0Hf6gwEDXLRSmmYU9Ii4F0CFakyRIKQ3Fk69VYhzKxYVXo+uSHxWIHWI
+u6yb0hGAP0NoJpjQe4KWZm807AuVI2JwEK5ZTAfsHtn7k2sPeI8pJ6uho0zZudkugJ/Z/RLRLdeA
+MYLjqDnmzqr6pgichkEsnuUvjhgEY0dNMfljd8bUTUFg6TrQ8PSSEP3A1LqB07ao6jSsOsXbd8dB
+7RAQSFcv7gtHJakCwLDEVbXMI9d1rmiq6LmkHXeajEwpib54CwmLeiU/wfiGdamjAQWu2qptnz2R
+bJf6G7qGAQKP2mJZ1zTY5YZmZeOUj1o=
+</ds:X509Certificate>
+</ds:X509Data>
+<ds:KeyValue>
+<ds:RSAKeyValue>
+<ds:Modulus>
+ixXKO5AySGzw/3iU92VENQBf7y4wSwpyXADV2MTPHSFZSXOvlIC7t5r9Z5rCxlJmZ6fDq3tsgX9B
+zwNbQwdu49eAqYdRNo6bwoSLIAii9WP5dTCme4gwUX9qAMxOo6pAzH+E1w3ynwm/BMcdJ1WpnJWu
+QkLdMBsVHCYXgJjflKxCxAegRo9t1ENOZCv5hZQd0rUliphcRivrG7MT0cXLzyqxTGv07ksUqcH6
+Hy3LDS3ce/B2eQhRCXRd0cURxh6GalkZYfkvg0M6fhcp0JatAD1Cy/wgh2gr/I/A13jaVwuzH6QD
+XVFdexNuDELQ0w/qfD1xzsYetJ+z8zx3gtXf0w==
+</ds:Modulus>
+<ds:Exponent>AQAB</ds:Exponent>
+</ds:RSAKeyValue>
+</ds:KeyValue>
+</ds:KeyInfo>
+</ds:Signature></OficioAclaracion>`;
+
     const modelChatClarifications: IChatClarifications = {
       id: chatClarifications.id, //ID primaria
       clarifiNewsRejectId: this.dataClarifications2.rejectNotificationId, //Establecer ID de bienes_recha_notif_aclara
       requestId: this.idRequest,
       goodId: this.dataClarifications2.goodId,
       xmlJobClarification: xml,
-      xmlClarificationJobResp: xml,
+      xmlClarificationJobResp: this.xmlRespSat,
 
       //clarificationStatus: 'EN_ACLARACION', //Valor a cambiar
     };

@@ -32,6 +32,7 @@ export class ConsigmentsEventsComponent extends BasePage implements OnInit {
   @Input() preparation: boolean;
   @Input() eventSelected: IComerEvent;
   @Output() eventSelectedChange = new EventEmitter<IComerEvent>();
+  @Output() exit = new EventEmitter<void>();
   constructor(private comerEventService: ComerEventService) {
     super();
     this.settings = {
