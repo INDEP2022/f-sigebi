@@ -564,10 +564,10 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    // if (this.data.count() == 0) {
-    //   this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
-    //   return;
-    // }
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+      return;
+    }
 
     // await this.validaPagos()
 
@@ -607,11 +607,17 @@ export class SirsaeMovementSendingMainComponent
       await this.pFmcomr612getAuxCount(this.eventSelected.id);
 
       const resss = await this.sendSirsae(1, []);
-
+      console.log('RESS', resss);
       if (
         resss == 'ERROR EN LA CONEXION A SIRSAE' ||
         resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms'
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
       ) {
         this.alert(
           'error',
@@ -620,6 +626,7 @@ export class SirsaeMovementSendingMainComponent
         );
         this.loadingBtn = false;
         await this.getComerClientsXEvent('no');
+        return;
       } else {
         // ACT_EST_EVE
         await this.actEstEve(this.eventSelected.id);
@@ -765,13 +772,24 @@ export class SirsaeMovementSendingMainComponent
 
       // Promise.all(result).then(async resp => {
       const resss = await this.sendSirsae(2, []);
-      if (resss == 'ERROR EN LA CONEXION A SIRSAE') {
+      if (
+        resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+        resss ==
+          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+      ) {
         this.alert(
           'error',
-          'Error de Conexión, No se pudo Conectar a la Base de Datos (SIRSAE)',
-          ''
+          'Error de Conexión',
+          'No se pudo Conectar a la Base de Datos (SIRSAE)'
         );
         await this.getComerClientsXEvent('no');
+        return;
       } else {
         this.alert('success', 'Proceso Terminado Correctamente', '');
         // this.loading = false;

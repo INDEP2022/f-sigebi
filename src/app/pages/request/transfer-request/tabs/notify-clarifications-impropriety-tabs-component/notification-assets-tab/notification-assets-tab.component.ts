@@ -1090,6 +1090,7 @@ export class NotificationAssetsTabComponent
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);
+            this.changeStatuesTmp();
           }
         },
       },
@@ -1638,7 +1639,21 @@ export class NotificationAssetsTabComponent
   }
 
   changeStatuesTmp() {
-    if (this.rowSelected == false) {
+    if (this.requestData.typeOfTransfer === 'SAT_SAE') {
+      console.log('Soy SAT');
+
+      if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
+        this.updateChatClarificationsTmp();
+      } else if (
+        this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
+      ) {
+        this.updateChatImprClarificationTmp();
+      }
+    } else {
+      console.log('No soy SAT');
+    }
+
+    /*if (this.rowSelected == false) {
       this.message('warning', 'Error', 'Primero seleccione una notificación');
     } else {
       if (
@@ -1679,7 +1694,7 @@ export class NotificationAssetsTabComponent
           );
         }
       }
-    }
+    }*/
   }
 
   updateChatClarificationsTmp() {
