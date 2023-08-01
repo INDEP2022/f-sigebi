@@ -1,17 +1,25 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITiieV1 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { ParameterTiieService } from 'src/app/core/services/ms-parametercomer/parameter-tiie.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
-import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_PATTERN,
+  NUM_POSITIVE,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -23,15 +31,18 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
   public override bsConfig: Partial<BsDatepickerConfig>;
   @Input() onChangeInp: any;
   @Input() placeholder: any;
-  title: string = 'Registro de Interes';
+  title: string = 'Registro de Interés';
   inputControl = new FormControl('');
 
-  providerForm: ModelForm<ITiieV1>;
-  //providerForm: FormGroup = new FormGroup({});
+  //providerForm: ModelForm<ITiieV1>;
+  providerForm: FormGroup = new FormGroup({});
   provider: ITiieV1;
   edit: boolean = false;
   userSelect = new DefaultSelect();
-
+  minDate = new Date('2011');
+  maxDate = new Date('2025');
+  maxValor: number = 99;
+  miFormulario: FormGroup;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -46,6 +57,14 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
         minMode: 'year' as BsDatepickerViewMode,
       }
     );
+
+    this.providerForm = this.fb.group({
+      tiieDays: [null, Validators.required],
+    });
+  }
+
+  get tiieDays() {
+    return this.providerForm.get('tiieDays') as FormControl;
   }
   ngOnInit(): void {
     /*this.inputControl.valueChanges
@@ -72,7 +91,6 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(NUM_POSITIVE),
-          Validators.min(1),
           Validators.max(31),
         ],
       ],
@@ -84,9 +102,9 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.pattern(NUM_POSITIVE),
+          Validators.pattern(DOUBLE_PATTERN),
           Validators.min(1),
-          Validators.max(99),
+          Validators.max(99.9999),
         ],
       ],
       user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
@@ -101,6 +119,7 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
       //this.searchUser({ text: this.provider.user });
       this.providerForm.patchValue(this.provider);
     }
+    this.providerForm.controls['registryDate'].setValue(new Date());
     setTimeout(() => {
       this.getUserInfo(new ListParams());
     }, 1000);
@@ -128,6 +147,46 @@ export class FilterDatePickerComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  validateDate(event: Date) {
+    if (event) {
+      const primerDiaMes = new Date(event.getFullYear(), event.getMonth(), 1);
+      const primerDiaMesSiguiente = new Date(primerDiaMes);
+      primerDiaMesSiguiente.setMonth(primerDiaMes.getMonth() + 1);
+      const duracionMesMilisegundos =
+        primerDiaMesSiguiente.getTime() - primerDiaMes.getTime();
+      const numeroDias = Math.floor(
+        duracionMesMilisegundos / (1000 * 60 * 60 * 24)
+      );
+      this.maxValor = numeroDias;
+      this.cambiarValidacion(numeroDias);
+      console.log(numeroDias);
+    }
+  }
+
+  cambiarValidacion(maxValue: number) {
+    // Establecer nuevos validadores (por ejemplo, Validators.min y Validators.max)
+    this.tiieDays.setValidators([
+      Validators.required,
+      Validators.pattern(NUM_POSITIVE),
+      Validators.min(1),
+      Validators.max(maxValue),
+    ]);
+
+    // Validar con los nuevos validadores
+    this.tiieDays.updateValueAndValidity();
+  }
+
+  /*actualizarValidador() {
+    const validadores = [Validators.required];
+
+    if (this.maxValor) {
+      validadores.push(Validators.max(this.maxValor));
+    }
+
+    this.miNumeroInput.setValidators(validadores);
+    this.miNumeroInput.updateValueAndValidity();
+  }*/
 
   /*getUserInfoUpdate(params: ListParams, id?:string | number) {
 

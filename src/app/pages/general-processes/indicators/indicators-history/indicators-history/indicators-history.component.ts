@@ -152,4 +152,12 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
     this.noVolante = event.selected[0].flyerNumber | 0;
     this.noExpediente = event.selected[0].fileNumber | 0;
   }
+
+  cumplioIndicador(
+    fechaUno: string,
+    fechaDos: string,
+    fechaTres: string,
+    numOne: number,
+    numTwo: number
+  ) {}
 }

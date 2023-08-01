@@ -318,9 +318,11 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         'No se pudo Conectar a la Base de Datos (SIRSAE)'
       );
       this.loadingBtn = false;
+      this.getPayments();
       return;
     } else {
       this.loadingBtn = false;
+      this.getPayments();
       this.alert('success', 'Proceso Ejecutado Correctamente', '');
     }
     // else if (a && b) {
