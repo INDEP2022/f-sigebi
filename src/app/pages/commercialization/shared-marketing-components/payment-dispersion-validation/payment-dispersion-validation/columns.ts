@@ -140,7 +140,7 @@ export const RECEIVED_COLUMNS = {
     sort: false,
   },
   amountNoAppVat: {
-    title: 'Monto no Aplica IVA',
+    title: 'Monto No Aplica IVA',
     type: 'string',
     sort: false,
   },

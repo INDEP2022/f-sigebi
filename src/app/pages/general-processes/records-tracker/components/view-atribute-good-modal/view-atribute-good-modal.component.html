@@ -1,0 +1,31 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">ATRIBUTOS DEL BIEN {{ good.id }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <app-good-characteristics-table
+        [goodChange]="goodChange"
+        [clasification]="classificationOfGoods"
+        [settings]="atributActSettings"
+        [avaluo]="false"
+        [good]="good"
+        [disabled]="true"
+        [service]="service"></app-good-characteristics-table>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- <app-good-characteristics-table [goodChange]="goodChange" [clasification]="classificationOfGoods"
+    [settings]="atributActSettings" [avaluo]="false" [good]="good" [disabled]="true" [service]="service"
+    [initValue]="true"></app-good-characteristics-table> -->

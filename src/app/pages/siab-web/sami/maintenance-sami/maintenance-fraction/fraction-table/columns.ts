@@ -10,5 +10,6 @@ export const COLUMNS = {
   clasificador_siab: {
     title: 'Clasificador Siab',
     sort: false,
+    filter: false,
   },
 };
