@@ -877,3 +877,28 @@ export interface ISecondIfMC {
   user: string;
   toolbarUser: string;
 }
+
+export interface IGoodCharge {
+  goodNumber?: number;
+  descriptionGood?: string;
+  lot?: number;
+  expedientNumber?: number;
+  typeEvent?: number;
+  mandate?: string;
+  eventId?: number;
+  rfc?: string;
+  reasonName?: string;
+  price?: number;
+  entryOrderId?: number;
+  delegationNumber?: number;
+  reference?: string;
+  invoice?: string;
+  serieNumber?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface IValidationExempte {
+  goodNumber?: number;
+  process?: string;
+}

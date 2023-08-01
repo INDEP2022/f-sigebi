@@ -7,12 +7,18 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
+import { ComerRediModalComponent } from './comer-redi-modal/comer-redi-modal.component';
 import { InvoiceRectificationProcessRoutingModule } from './invoice-rectification-process-routing.module';
 import { InvoiceRectificationProcessComponent } from './invoice-rectification-process/invoice-rectification-process.component';
 import { NewImageModalComponent } from './new-image-modal/new-image-modal.component';
 
 @NgModule({
-  declarations: [InvoiceRectificationProcessComponent, NewImageModalComponent],
+  declarations: [
+    InvoiceRectificationProcessComponent,
+    NewImageModalComponent,
+    ComerRediModalComponent,
+  ],
   imports: [
     CommonModule,
     InvoiceRectificationProcessRoutingModule,
@@ -20,6 +26,7 @@ import { NewImageModalComponent } from './new-image-modal/new-image-modal.compon
     ModalModule.forChild(),
     PreviewDocumentsComponent,
     UsersSharedComponent,
+    FormLoaderComponent,
   ],
 })
 export class InvoiceRectificationProcessModule {}

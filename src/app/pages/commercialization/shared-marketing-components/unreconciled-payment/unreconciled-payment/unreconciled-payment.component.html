@@ -11,7 +11,7 @@
           <div class="col-12 text-end">
             <div class="row">
               <div class="col-11 justify-content-end align-items-end mt-3 mb-3">
-                <button
+                <!-- <button
                   (click)="add()"
                   type="button"
                   containerClass="tooltip-style"
@@ -19,7 +19,7 @@
                   style="float: right">
                   Agregar
                   <i class="bx bx-plus bx-sm float-icon"></i>
-                </button>
+                </button> -->
               </div>
               <div class="col-md-1 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <app-columns-select
@@ -50,6 +50,7 @@
             [settings]="settings"
             [source]="data"
             (edit)="edit($event.data)"
+            (userRowSelect)="rowsSelected($event)"
             (delete)="questionDelete($event.data)">
           </ng2-smart-table>
         </ng-scrollbar>
@@ -62,8 +63,12 @@
     <div class="row text-center">
       <div>
         <!-- <div class="col-lg-3 col-md-3 col-sm-6 col-12 mb-3 mt-3"> -->
-        <button (click)="enviarSIRSAE()" class="btn btn btn-info active btn-sm">
-          Enviar SIRSAE
+        <button
+          [ngClass]="{ loading: loadingBtn }"
+          [disabled]="!valAcc || loadingBtn"
+          (click)="enviarSIRSAE()"
+          class="btn btn btn-primary active btn-sm">
+          Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
         </button>
         <!-- </div> -->
       </div>

@@ -41,4 +41,11 @@ export class ThirdPartyService extends HttpService {
       params
     );
   }
+
+  getFindItemCustom(params?: _Params): Observable<IListResponse<IThirdParty>> {
+    return this.get<IListResponse<IThirdParty>>(
+      ThirdPartyEndpoints.FindItemCustom,
+      params
+    );
+  }
 }

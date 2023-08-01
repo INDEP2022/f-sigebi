@@ -18,6 +18,7 @@ import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-
 import { ITask } from 'src/app/core/models/ms-task/task-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { DomicileService } from 'src/app/core/services/catalogs/domicile.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -97,6 +98,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   paramsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   // namewarehouse1: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsTransportable = new BehaviorSubject<ListParams>(new ListParams());
+  paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
   paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsAuthority = new BehaviorSubject<ListParams>(new ListParams());
   goodsInfoTrans: any[] = [];
@@ -106,6 +109,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   // goodsInfoWarehouse2: any[] = [];
   totalItems: number = 0;
   totalItemsTransportable: number = 0;
+  totalItemsTransportableGoods: number = 0;
   totalItemsGuard: number = 0;
   totalItemsWarehouse: number = 0;
   idTransferent: number;
@@ -118,6 +122,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   goodsTranportables: LocalDataSource = new LocalDataSource();
   goodsGuards: LocalDataSource = new LocalDataSource();
   goodsWarehouse: LocalDataSource = new LocalDataSource();
+  paramsShowTransportable = new BehaviorSubject<ListParams>(new ListParams());
   task: ITask;
   headingTransportable: string = `Transportables(0)`;
   headingGuard: string = `Resguardo(0)`;
@@ -128,6 +133,16 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   typeRelevantName: string = '';
   nameState: string = '';
   nameWarehouse: string = '';
+  formLoadingTransportable: boolean = false;
+  formLoadingGuard: boolean = false;
+  formLoadingWarehouse: boolean = false;
+  paramsGuardGoods = new BehaviorSubject<ListParams>(new ListParams());
+  paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsTransportableGuard: number = 0;
+  totalItemsTransportableWarehouse: number = 0;
+  paramsShowWarehouse = new BehaviorSubject<ListParams>(new ListParams());
+  endDateEmail: string = '';
+  startDateEmail: string = '';
   // goodId: any;
   // uniqueKey: any;
   // goodDescription: any;
@@ -156,7 +171,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     private router: Router,
     private wcontentService: WContentService,
     private sanitizer: DomSanitizer,
-    private stateService: StateOfRepublicService
+    private stateService: StateOfRepublicService,
+    private domicilieService: DomicileService
   ) {
     super();
     this.settings = {
@@ -177,9 +193,14 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getUsersProgramming());
 
-    this.params
+    this.paramsGuardGoods
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.showGoodProgramming());
+      .subscribe(() => this.showGuard());
+
+    this.paramsWarehouseGoods
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.showWarehouseGoods());
+
     // this.sendEmailUsers();
     // this.show2GoodProgramming();
   }
@@ -189,8 +210,11 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
-        data.startDate = moment(data.startDate).format('YYYY-MM-DD HH:mm:ss');
-        data.endDate = moment(data.endDate).format('YYYY-MM-DD HH:mm:ss');
+        this.startDateEmail = data.startDate;
+        this.endDateEmail = data.endDate;
+
+        data.startDate = moment(data.startDate).format('DD/MM/YYYY HH:mm:ss');
+        data.endDate = moment(data.endDate).format('DD/MM/YYYY HH:mm:ss');
         this.programming = data;
 
         this.idTransferent = data.tranferId;
@@ -203,7 +227,151 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.getTypeRelevant();
         this.getwarehouse();
         this.getTask();
+
+        this.paramsTransportableGoods
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.filterStatusTrans());
       });
+  }
+
+  showGuard() {
+    this.formLoadingGuard = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsTransportableGuard = data.count;
+        this.headingGuard = `Resguardo(${data.count})`;
+        const showGuard: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowTransportable.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
+
+                  if (item.statePhysicalSae == 1)
+                    item['statePhysicalSae'] = 'BUENO';
+                  if (item.statePhysicalSae == 2)
+                    item['statePhysicalSae'] = 'MALO';
+                  showGuard.push(item);
+                  this.goodsGuards.load(showGuard);
+                  this.formLoadingGuard = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        this.formLoadingGuard = false;
+      },
+    });
+
+    /*console.log('goodsProg', goodsProg);
+    console.log('count', count);
+    this.formLoadingGuard = true;
+    const filterTrans = goodsProg.filter(item => {
+      return item.status == 'EN_RESGUARDO_TMP';
+    });
+    const showGuard: any = [];
+    filterTrans.map((item: IGoodProgramming) => {
+      this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+      this.goodService
+        .getAll(this.paramsShowTransportable.getValue())
+        .subscribe({
+          next: async data => {
+            data.data.map(async item => {
+              const aliasWarehouse: any = await this.getAliasWarehouse(
+                item.addressId
+              );
+              item['aliasWarehouse'] = aliasWarehouse;
+
+              if (item.statePhysicalSae == 1)
+                item['statePhysicalSae'] = 'BUENO';
+              if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
+              showGuard.push(item);
+              this.goodsGuards.load(showGuard);
+              this.totalItemsTransportableGuard = count;
+              this.headingGuard = `Resguardo(${count})`;
+              this.formLoadingGuard = false;
+            });
+          },
+        });
+    }); */
+  }
+
+  showWarehouseGoods() {
+    this.formLoadingWarehouse = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsTransportableWarehouse = data.count;
+        this.headingWarehouse = `Almacén INDEP(${data.count})`;
+        const showWarehouse: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowWarehouse.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowWarehouse.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
+
+                  if (item.statePhysicalSae == 1)
+                    item['statePhysicalSae'] = 'BUENO';
+                  if (item.statePhysicalSae == 2)
+                    item['statePhysicalSae'] = 'MALO';
+                  showWarehouse.push(item);
+                  this.goodsWarehouse.load(showWarehouse);
+                  this.formLoadingWarehouse = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        console.log('data bienes Prog', error);
+        this.formLoadingWarehouse = false;
+      },
+    });
+    /*this.formLoadingWarehouse = true;
+    const filterTrans = goodsProg.filter(item => {
+      return item.status == 'EN_ALMACEN_TMP';
+    });
+    const showWarehouse: any = [];
+    filterTrans.map((item: IGoodProgramming) => {
+      this.paramsShowWarehouse.getValue()['filter.id'] = item.goodId;
+      this.goodService.getAll(this.paramsShowWarehouse.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async item => {
+            const aliasWarehouse: any = await this.getAliasWarehouse(
+              item.addressId
+            );
+            item['aliasWarehouse'] = aliasWarehouse;
+
+            if (item.statePhysicalSae == 1) item['statePhysicalSae'] = 'BUENO';
+            if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
+            showWarehouse.push(item);
+            this.goodsWarehouse.load(showWarehouse);
+            this.totalItemsTransportableWarehouse = count;
+            this.headingWarehouse = `Almacén INDEP(${count})`;
+            this.formLoadingWarehouse = false;
+          });
+        },
+      });
+    }); */
   }
 
   getTask() {
@@ -436,19 +604,113 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     );
   }
 
-  showGoodProgramming() {
+  /*showGoodProgramming() {
     this.params.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
       .getGoodsProgramming(this.params.getValue())
       .subscribe(data => {
-        this.filterStatusTrans(data.data);
+        //this.filterStatusTrans(data.data);
         this.filterStatusGuard(data.data);
         this.filterStatusWarehouse(data.data);
       });
-  }
+  } */
 
-  filterStatusTrans(data: IGoodProgramming[]) {
-    const goodsTrans = data.filter(items => {
+  filterStatusTrans() {
+    this.formLoadingTransportable = true;
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: async data => {
+        this.totalItemsTransportableGoods = data.count;
+        this.headingTransportable = `Transportable(${data.count})`;
+        const showTransportable: any = [];
+        data.data.map((item: IGoodProgramming) => {
+          this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+          this.goodService
+            .getAll(this.paramsShowTransportable.getValue())
+            .subscribe({
+              next: async data => {
+                data.data.map(async item => {
+                  const aliasWarehouse: any = await this.getAliasWarehouse(
+                    item.addressId
+                  );
+                  item['aliasWarehouse'] = aliasWarehouse;
+
+                  if (item.physicalStatus == 1)
+                    item['physicalStatus'] = 'BUENO';
+                  if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
+                  showTransportable.push(item);
+
+                  this.goodsTranportables.load(showTransportable);
+                  this.formLoadingTransportable = false;
+                });
+              },
+            });
+        });
+      },
+      error: error => {
+        console.log('data bienes Prog', error);
+        this.formLoadingTransportable = false;
+      },
+    });
+
+    /*console.log('goodsProg', goodsProg);
+    console.log('count', count);
+    this.formLoadingGuard = true;
+    const filterTrans = goodsProg.filter(item => {
+      return item.status == 'EN_RESGUARDO_TMP';
+    });
+    const showGuard: any = [];
+    filterTrans.map((item: IGoodProgramming) => {
+      this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+      this.goodService
+        .getAll(this.paramsShowTransportable.getValue())
+        .subscribe({
+          next: async data => {
+            data.data.map(async item => {
+              const aliasWarehouse: any = await this.getAliasWarehouse(
+                item.addressId
+              );
+              item['aliasWarehouse'] = aliasWarehouse;
+
+              if (item.statePhysicalSae == 1)
+                item['statePhysicalSae'] = 'BUENO';
+              if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
+              showGuard.push(item);
+              this.goodsGuards.load(showGuard);
+              this.totalItemsTransportableGuard = count;
+              this.headingGuard = `Resguardo(${count})`;
+              this.formLoadingGuard = false;
+            });
+          },
+        });
+    }); */
+
+    /* const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: data => {
+        this.totalItemsTransportable = data.count;
+        this.headingTransportable = `Transportables(${data.count})`;
+        data.data.map(items => {
+          this.goodService.getGoodByIds(items.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              this.goodsInfoTrans.push(response);
+              this.goodsTranportables.load(this.goodsInfoTrans);
+            },
+          });
+        });
+      },
+    }); */
+    /* const goodsTrans = data.filter(items => {
       return items.status == 'EN_TRANSPORTABLE';
     });
 
@@ -465,6 +727,19 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           this.goodsTranportables.load(this.goodsInfoTrans);
           this.totalItemsTransportable = this.goodsTranportables.count();
           this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+        },
+      });
+    }); */
+  }
+
+  getAliasWarehouse(idAddress: number) {
+    return new Promise((resolve, reject) => {
+      this.domicilieService.getById(idAddress).subscribe({
+        next: response => {
+          resolve(response.aliasWarehouse);
+        },
+        error: error => {
+          resolve(false);
         },
       });
     });
@@ -529,6 +804,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           this.sendEmailUsers();
+          this.createTaskNotification();
+          this.createTaskExecuteProgramming();
+          this.createTaskFormalize();
         }
       });
     } else {
@@ -546,7 +824,61 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.emails.push(emailsUsers);
     });
 
-    await Promise.all(
+    const showTransportableData = await this.showTransportableEmail();
+    if (showTransportableData) {
+      const showGuardData = await this.showGuardEmail();
+      if (showGuardData) {
+        const showGuardData = await this.showWarehouseEmail();
+
+        if (showGuardData) {
+          const showBase64: any = await this.showBase64();
+
+          const dataEmail = {
+            folio: this.programming.folio,
+            startDate: this.startDateEmail,
+            endDate: this.endDateEmail,
+            city: this.programming.city,
+            address: this.programming.address,
+            usersProg: this.infoUsers,
+            goodsTrans: this.transGoods,
+            goodsResg: this.guardGoods,
+            goodsWarehouse: this.warehouseGoods,
+            emailSend: this.emails,
+            nameAtt: this.programming.folio,
+            fileB64: showBase64,
+          };
+
+          this.emailService.createEmailProgramming(dataEmail).subscribe({
+            next: response => {},
+            error: error => {},
+          });
+
+          /*const dataEmail = {
+            folio: this.programming.folio,
+            startDate: moment(this.programming.startDate).format(
+              'YYYY-MM-DD HH:mm:ss'
+            ),
+            endDate: moment(this.programming.endDate).format(
+              'YYYY-MM-DD HH:mm:ss'
+            ),
+            city: this.programming.city,
+            address: this.programming.address,
+            usersProg: this.infoUsers,
+            goodsTrans: this.transGoods,
+            goodsResg: this.guardGoods,
+            goodsWarehouse: this.warehouseGoods,
+            emailSend: this.emails,
+            nameAtt: this.programming.folio,
+            fileB64: showBase64,
+          };
+
+          console.log('dataEmail', dataEmail);
+
+           */
+        }
+      }
+    }
+    /*await Promise.all(
       this.goodsInfoTrans.map(async good => {
         if (good.storeId) {
           const infotrans = await this.warehouseNameT(good.storeId);
@@ -569,11 +901,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           };
           this.transGoods.push(transObject);
         }
-      })
-    );
+      }) 
+    ); */
 
-    await Promise.all(
+    /*await Promise.all(
+      
       this.goodsInfoGuard.map(async goodRes => {
+        console.log('goodRes', goodRes);
         const guardsGood = await this.warehouseNameT(goodRes.storeId);
         const guardObject = {
           goodId: goodRes.goodId,
@@ -589,6 +923,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
     await Promise.all(
       this.goodsInfoWarehouse.map(async goodRes => {
+        console.log('goodRes', goodRes);
         const warehouseGood = await this.warehouseNameT(goodRes.storeId);
         const guardObject = {
           goodId: goodRes.goodId,
@@ -601,118 +936,137 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
         this.warehouseGoods.push(guardObject);
       })
-    );
+    ); */
+  }
 
-    const dataEmail = {
-      folio: this.programming.folio,
-      startDate: this.programming.startDate,
-      endDate: this.programming.endDate,
-      city: this.programming.city,
-      address: this.programming.address,
-      usersProg: this.infoUsers,
-      goodsTrans: this.transGoods,
-      goodsResg: this.guardGoods,
-      goodsWarehouse: this.warehouseGoods,
-      emailSend: this.emails,
-    };
-    this.emailService
-      .createEmailProgramming(JSON.stringify(dataEmail))
-      .subscribe({
-        next: () => {
-          this.createTaskNotification();
-          this.createTaskExecuteProgramming();
-          this.createTaskFormalize();
+  showBase64() {
+    return new Promise((resolve, reject) => {
+      this.wcontentService.obtainFile(this.programming.contentId).subscribe({
+        next: response => {
+          resolve(response);
         },
         error: error => {},
       });
+    });
   }
 
-  //   this.infoUsers.map(user => {
-  //     const emailsUsers = user.email;
-  //     this.emails.push(emailsUsers);
-  //     console.log('correo', emailsUsers);
-  //   });
+  showTransportableEmail() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+      params.getValue().limit = 10000000;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async good => {
+            const paramsGood = new BehaviorSubject<ListParams>(
+              new ListParams()
+            );
+            paramsGood.getValue()['filter.id'] = good.goodId;
+            this.goodService.getAll(paramsGood.getValue()).subscribe({
+              next: async data => {
+                const infotrans = await this.warehouseNameT(
+                  data.data[0].storeId
+                );
+                const transObject = {
+                  goodId: good.goodId,
+                  uniqueKey: data.data[0].uniqueKey,
+                  goodDescription: data.data[0].goodDescription,
+                  quantity: data.data[0].quantity,
+                  unitMeasure: data.data[0].unitMeasure,
+                  storeId: infotrans,
+                };
+                this.transGoods.push(transObject);
+                resolve(true);
+              },
+            });
+            //this.goodService.getAll;
+          });
+        },
+        error: error => {},
+      });
+    });
+  }
 
-  //   this.goodsInfoTrans.map(async good => {
-  //    const infotrans = await this.warehouseNameT(good.storeId);
-  //    console.log('infotrans', good);
-  //    const transObject = {
-  //      goodId: good.goodId,
-  //      uniqueKey: good.uniqueKey,
-  //      goodDescription: good.goodDescription,
-  //      quantity: good.quantity,
-  //      unitMeasure: good.unitMeasure,
-  //      storeId: infotrans, //condicionar
-  //    };
-  //    console.log('transdato', good.storeId);
-  //    console.log('transdato nombre', infotrans);
-  //    console.log('transdato obj', transObject);
-  //    this.transGoods.push(transObject);
-  //  });
+  showGuardEmail() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+      params.getValue().limit = 10000000;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async good => {
+            const paramsGood = new BehaviorSubject<ListParams>(
+              new ListParams()
+            );
+            paramsGood.getValue()['filter.id'] = good.goodId;
+            this.goodService.getAll(paramsGood.getValue()).subscribe({
+              next: async data => {
+                const infotrans = await this.warehouseNameT(
+                  data.data[0].storeId
+                );
+                const transObject = {
+                  goodId: good.goodId,
+                  uniqueKey: data.data[0].uniqueKey,
+                  goodDescription: data.data[0].goodDescription,
+                  quantity: data.data[0].quantity,
+                  unitMeasure: data.data[0].unitMeasure,
+                  storeId: infotrans,
+                };
+                this.guardGoods.push(transObject);
+                resolve(true);
+              },
+            });
+            //this.goodService.getAll;
+          });
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
 
-  //   this.goodsInfoGuard.map( async goodRes => {
-  //    const guardsgood = await this.warehouseNameT(goodRes.storeId);
-  //    const guardObject = {
-  //      goodId: goodRes.goodId,
-  //      uniqueKey: goodRes.uniqueKey,
-  //      goodDescription: goodRes.goodDescription,
-  //      quantity: goodRes.quantity,
-  //      unitMeasure: goodRes.unitMeasure,
-  //      storeId: guardsgood,
-  //    };
-  //    console.log('guardsgood', goodRes.storeId);
-  //    console.log('guardsgood nombre', guardsgood);
-  //    console.log('guardsgood obf', guardObject);
-  //    this.guardGoods.push(guardObject);
-  //  });
-
-  //    this.goodsInfoWarehouse.map(async warehouse => {
-  //     const infowarehouse = await this.warehouseNameT(warehouse.storeId);
-  //     const warehouseObject = {
-  //       goodId: warehouse.goodId,
-  //       uniqueKey: warehouse.uniqueKey,
-  //       goodDescription: warehouse.goodDescription,
-  //       quantity: warehouse.quantity,
-  //       unitMeasure: warehouse.unitMeasure,
-  //       storeId: infowarehouse,
-  //     };
-  //     console.log('infowarehouse', warehouse.storeId);
-  //     // console.log('infowarehouse name', infowarehouse);
-  //     console.log('warehpous nombre', warehouseObject);
-  //     this.warehouseGoods.push(warehouseObject);
-  //   });
-
-  //   const dataEmail = {
-  //     folio: this.programming.folio,
-  //     startDate: this.programming.startDate,
-  //     endDate: this.programming.endDate,
-  //     city: this.programming.city,
-  //     address: this.programming.address,
-  //     usersProg: this.infoUsers,
-  //     goodsTrans: this.transGoods,
-  //     goodsResg: this.guardGoods,
-  //     goodsWarehouse: this.warehouseGoods,
-  //     emailSend: this.emails,
-  //   };
-  //   console.log('newdata', dataEmail);
-  //   this.emailService
-  //     .createEmailProgramming(JSON.stringify(dataEmail))
-  //     .subscribe({
-  //       next: () => {
-  //         this.alert(
-  //           'success',
-  //           'Notificación',
-  //           'Se envio el correo electrónico a los usuarios correctamente'
-  //         );
-  //         this.createTaskNotification();
-  //         this.createTaskExecuteProgramming();
-  //         this.createTaskFormalize();
-  //       },
-  //       error: error => {},
-  //     });
-  // }
-  // this.nameWarehouse = data.description;
-  // this.formLoading = false;
+  showWarehouseEmail() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+      params.getValue().limit = 10000000;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async good => {
+            const paramsGood = new BehaviorSubject<ListParams>(
+              new ListParams()
+            );
+            paramsGood.getValue()['filter.id'] = good.goodId;
+            this.goodService.getAll(paramsGood.getValue()).subscribe({
+              next: async data => {
+                const infotrans = await this.warehouseNameT(
+                  data.data[0].storeId
+                );
+                const transObject = {
+                  goodId: good.goodId,
+                  uniqueKey: data.data[0].uniqueKey,
+                  goodDescription: data.data[0].goodDescription,
+                  quantity: data.data[0].quantity,
+                  unitMeasure: data.data[0].unitMeasure,
+                  storeId: infotrans,
+                };
+                this.warehouseGoods.push(transObject);
+                resolve(true);
+              },
+            });
+            //this.goodService.getAll;
+          });
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
 
   //Creamos la tarea de notificación al delegado regional//
   async createTaskNotification() {
@@ -830,9 +1184,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         next: response => {
           return resolve(response.description);
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
     });
   }

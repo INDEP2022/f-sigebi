@@ -74,7 +74,7 @@ const routes: Routes = [
     path: 'parameters',
     loadChildren: async () =>
       (await import('./parameters/parameters.module')).ParametersModule,
-    data: { title: 'Parámetros Comercialización', screen: '' },
+    data: { title: 'Parámetros del Módulo Comercialización' },
   },
   {
     path: 'users-event-types',
@@ -88,7 +88,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./brands-sub-brands/brands-sub-brands.module'))
         .BrandsSubBrandsModule,
-    data: { title: 'Marcas y SubMarcas', screen: 'FCOMER069' },
+    data: { title: 'Marcas y Submarcas', screen: 'FCOMER069' },
   },
   {
     path: 'models',

@@ -15,6 +15,7 @@ import {
   catchError,
   firstValueFrom,
   of,
+  switchMap,
   tap,
   throwError,
 } from 'rxjs';
@@ -23,6 +24,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { BasePage } from 'src/app/core/shared';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
@@ -54,28 +56,44 @@ export class EventGoodsLotsListActionsComponent
   invoiceInput: ElementRef<HTMLInputElement>;
   @ViewChild('invoiceDataInput', { static: true })
   invoiceDataInput: ElementRef<HTMLInputElement>;
+  @ViewChild('saleBaseInput', { static: true })
+  saleBaseInput: ElementRef<HTMLInputElement>;
+  @ViewChild('customersBaseInput', { static: true })
+  customersBaseInput: ElementRef<HTMLInputElement>;
   @Input() params: BehaviorSubject<FilterParams>;
   goodsLotifyControl = new FormControl(null);
   customersImportControl = new FormControl(null);
   invoiceControl = new FormControl(null);
   invoiceDataControl = new FormControl(null);
+  saleBasesControl = new FormControl(null);
+  customersBasecontrol = new FormControl(null);
+  @Input() onlyBase = false;
   get controls() {
     return this.eventForm.controls;
   }
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
+  @Output() fillStadistics = new EventEmitter<void>();
   constructor(
     private router: Router,
     private eventPreparationService: EventPreparationService,
     private globalVarsService: GlobalVarsService,
     private comerEventService: ComerEventService,
     private lotService: LotService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private utilComerV1Service: UtilComerV1Service
   ) {
     super();
   }
 
   ngOnInit(): void {}
+
+  private getFileFromEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const filename = file.name;
+    return file;
+  }
 
   isSomeItemSelected() {
     if (!this.lotSelected) {
@@ -436,13 +454,33 @@ export class EventGoodsLotsListActionsComponent
       this.invoiceControl.reset();
       return;
     }
-    this.loadInvoice();
+    if (!this.onlyBase) {
+      this.loadInvoice(event).subscribe();
+    } else {
+      this.loadBaseInvoice();
+    }
   }
 
   /** C_FACTURA */
-  loadInvoice() {
-    // TODO: IMPLEMENTAR CUANDO ESTE LISTO
-    console.warn('C_FACTURA');
+  loadInvoice(event: Event) {
+    const { id } = this.controls;
+    this.loader.load = true;
+    const file = this.getFileFromEvent(event);
+    return this.lotService.loadInvoice(id.value, file).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.invoiceControl.reset();
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        this.invoiceControl.reset();
+        const params = this.params.getValue();
+        this.params.next(params);
+      })
+    );
   }
 
   // ? ---------------------- Revisa Trasf x Lote
@@ -500,7 +538,7 @@ export class EventGoodsLotsListActionsComponent
 
   // ? Clientes desde Tabla Tercero
 
-  async onLoadCustomersFroThird() {
+  async onLoadCustomersFromThird() {
     const ask = await this.alertQuestion(
       'question',
       'Eliga una opción',
@@ -624,5 +662,151 @@ export class EventGoodsLotsListActionsComponent
       }  tiene Bienes de diferente Mandato, presione el botón Actualizar Mandato`,
       ''
     );
+  }
+
+  // * ----------------- ACCIONES DE BASE
+
+  // ?-------------------- EXPORTAR EXCEL
+  onBaseExportExcel() {
+    this.baseThird().subscribe();
+  }
+
+  /**ARCHIVO_TERCERO_BASE */
+  baseThird() {
+    this.loader.load = true;
+    const { id } = this.controls;
+    return this.lotService.thirdBaseFile(id.value).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', 'Error', 'Ocurrió un Error al Generar el Archivo');
+        return throwError(() => error);
+      }),
+      tap(res => {
+        this.loader.load = false;
+        console.log(res);
+
+        this._downloadExcelFromBase64(res.base64File, `Evento-${id.value}`);
+      })
+    );
+  }
+
+  //  ? -------------------- CARGA VENTA DE BASES
+  onLoadBaseSales() {
+    const { statusVtaId } = this.controls;
+    const valid = this.consignment();
+    const canContinue =
+      (valid && this.parameters.pValids == 1) || statusVtaId.value != 'CONC';
+    if (!canContinue) {
+      this.alert(
+        'error',
+        'Error',
+        'Este tipo de evento no permite esta funcionalidad o Usted no tiene permisos'
+      );
+      return;
+    }
+    this.saleBaseInput.nativeElement.click();
+  }
+
+  async loadSaleBases(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.saleBasesControl.reset();
+      return;
+    }
+
+    try {
+      await this.impExcelBase(event);
+      this.saleBasesControl.reset();
+      const params = this.params.getValue();
+      this.params.next(params);
+      this.fillStadistics.emit();
+    } catch (error) {
+      this.saleBasesControl.reset();
+    }
+  }
+
+  async impExcelBase(event: Event) {
+    return firstValueFrom(
+      this.createBases(event).pipe(switchMap(() => this.calculatePrices()))
+    );
+  }
+
+  /** CREATE_BASES */
+  createBases(event: Event) {
+    const { id, baseCost } = this.controls;
+    this.loader.load = true;
+    const file = this.getFileFromEvent(event);
+    return this.lotService
+      .createBases({
+        eventId: id.value,
+        costBase: baseCost.value,
+        file,
+      })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+
+          this.alert('error', ' Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(() => {
+          this.loader.load = false;
+        })
+      );
+  }
+
+  /** CALCULA_PRECIOS_SALIDA */
+  calculatePrices() {
+    const { id } = this.controls;
+    this.loader.load = true;
+    return this.utilComerV1Service
+      .salePrices({ event: id.value, lot: null })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.alert('error', ' Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(() => {
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+        })
+      );
+  }
+
+  // ? -------------- CARGA CLIENTES BASE
+  onLoadBaseCustomers() {
+    const { statusVtaId } = this.controls;
+    const valid = this.consignment();
+    const canContinue =
+      (valid && this.parameters.pValids) || statusVtaId.value == 'CONC';
+    if (!canContinue) {
+      this.alert(
+        'error',
+        'Error',
+        'Este tipo de evento no permite esta funcionalidad o Usted no tiene permisos'
+      );
+      return;
+    }
+
+    this.customersBaseInput.nativeElement.click();
+  }
+
+  loadCustomersBase(event: Event) {
+    if (!this.isValidFile(event)) {
+      this.saleBasesControl.reset();
+      return;
+    }
+    this.impBaseCustomers();
+  }
+
+  impBaseCustomers() {
+    console.warn('PUP_IMP_EXCEL_BASES_CLIENTE');
+  }
+
+  // ? --------------- Carga Factura
+  // CARGA_FACTURA
+  loadBaseInvoice() {
+    // TODO: IMPLEMENTAR CUANDO SE TENGA
+    console.warn('CARGA_FACTURA');
   }
 }

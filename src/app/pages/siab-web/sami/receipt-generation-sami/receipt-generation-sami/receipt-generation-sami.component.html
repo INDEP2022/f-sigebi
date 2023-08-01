@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Generacion de Recibos</h5>
+      <h5 class="title">Generaci&oacute;n de Recibos</h5>
     </div>
   </div>
   <div body>
@@ -27,6 +27,7 @@
           </button>
         </div>
       </div>
+
       <div class="row margin-input">
         <div class="col-md-12">
           <form-field [control]="programmingForm.get('managementId')">
@@ -62,60 +63,71 @@
       </div>
     </form>
 
-    <div class="row pt-2">
+    <div class="row pt-2" style="margin-left: 0%">
       <div class="col-md-4">
-        <label class="label" for=""
-          >No. Gesti&oacute;n: <span> {{ goodID }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">No. Gesti&oacute;n:</label>
+          <span> {{ goodID }} </span>
+        </div>
       </div>
       <div class="col-md-4">
-        <label class="label" for=""
+        <div class="form-group">
+          <label class="text-right">Clave &Uacute;nica:</label>
+          <span> {{ uniqueKey }} </span>
+        </div>
+        <!-- <label class="label" for=""
           >Clave &Uacute;nica: <span> {{ uniqueKey }} </span></label
-        >
+        > -->
       </div>
       <div class="col-md-4">
-        <label class="label" for=""
-          >Expediente: <span> {{ noFile }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Expediente:</label>
+          <span> {{ noFile }} </span>
+        </div>
       </div>
       <div class="col-md-4 pt-2">
-        <label class="label" for=""
-          >Destino Trasferente:
-          <span> {{ destinoTransferenteLetra }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Destino Transferente:</label>
+          <span> {{ destinoTransferenteLetra }} </span>
+        </div>
       </div>
       <div class="col-md-4 pt-2">
-        <label class="label" for=""
-          >Cantidad Trasferente: <span> {{ quantity }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Cantidad Transferente:</label>
+          <span> {{ quantity }} </span>
+        </div>
       </div>
       <div class="col-md-4 pt-2">
-        <label class="label" for=""
-          >Unidad Medida Trasferente: <span> {{ unitMeasure }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Unidad Medida Transferente:</label>
+          <span> {{ unitMeasure }} </span>
+        </div>
       </div>
       <div class="col-md-4 pt-2">
-        <label class="label" for=""
-          >Estado F&iacute;sico Trasferente:
-          <span> {{ physicalStateLetter }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Estado F&iacute;sico Transferente:</label>
+          <span> {{ physicalStateLetter }} </span>
+        </div>
       </div>
       <div class="col-md-4 pt-2">
-        <label class="label" for=""
-          >Estado Conservaci&oacute;n Trasferente:
-          <span> {{ letterConservationStatus }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right"
+            >Estado Conservaci&oacute;n Transferente:</label
+          >
+          <span> {{ letterConservationStatus }} </span>
+        </div>
       </div>
       <div class="col-md-4 pt-2">
-        <label class="label" for=""
-          >Destino Ligie: <span> {{ destinationLetter }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Destino Ligie:</label>
+          <span> {{ destinationLetter }} </span>
+        </div>
       </div>
       <div class="col-md-12 pt-2">
-        <label class="label" for=""
-          >Descripci&oacute;n Trasferente:
-          <span> {{ descriptionGood }} </span></label
-        >
+        <div class="form-group">
+          <label class="text-right">Descripci&oacute;n Transferente:</label>
+          <span> {{ descriptionGood }} </span>
+        </div>
       </div>
     </div>
     <form [formGroup]="indepForm" class="form-material">
@@ -278,6 +290,10 @@
         </div>
       </form>
     </div>
-    <app-receipt-table-goods></app-receipt-table-goods>
+    <hr />
+    <app-receipt-tables
+      [folio]="folio"
+      [count]="count"
+      [id_programacion]="id_programacion"></app-receipt-tables>
   </div>
 </app-card>

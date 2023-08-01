@@ -57,6 +57,7 @@
             [control]="representativeForm.get('dateBorn')">
             <input
               type="text"
+              style="position: relative"
               class="form-control"
               formControlName="dateBorn"
               bsDatepicker
@@ -64,6 +65,17 @@
               [bsConfig]="{
                 dateInputFormat: 'DD/MM/YYYY'
               }" />
+            <i
+              *ngIf="representativeForm.get('dateBorn').value"
+              class="fa fa-times"
+              (click)="clearFreeDate('dateBorn')"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 5px;
+                transform: translate(0, -50%);
+                cursor: pointer;
+              "></i>
           </form-field>
         </div>
 

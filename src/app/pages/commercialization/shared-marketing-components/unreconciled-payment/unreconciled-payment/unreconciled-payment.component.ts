@@ -3,12 +3,15 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { COLUMNS } from './columns';
 import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
@@ -16,7 +19,29 @@ import { NewAndUpdateComponent } from './new-and-update/new-and-update.component
 @Component({
   selector: 'app-unreconciled-payment',
   templateUrl: './unreconciled-payment.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
@@ -24,10 +49,15 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  layout: string;
+  loadingBtn: boolean = false;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private token: AuthService,
+    private route: ActivatedRoute,
+    private comerClientsService: ComerClientsService
   ) {
     super();
     this.settings = {
@@ -37,7 +67,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...COLUMNS },
@@ -45,6 +75,19 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      if (params.get('goodType')) {
+        console.log(params.get('goodType'));
+        // if (this.navigateCount > 0) {
+        //   this.form.reset();
+        //   this.clientRows = [];
+        //   window.location.reload();
+        // }
+        this.layout = params.get('goodType');
+
+        // this.navigateCount += 1;
+      }
+    });
     this.prepareForm();
     this.data
       .onChanged()
@@ -61,9 +104,20 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
-              id: () => (searchFilter = SearchFilter.EQ),
-              nameReason: () => (searchFilter = SearchFilter.ILIKE),
-              calculationRoutine: () => (searchFilter = SearchFilter.EQ),
+              paymentId: () => (searchFilter = SearchFilter.EQ),
+              reference: () => (searchFilter = SearchFilter.ILIKE),
+              movementNumber: () => (searchFilter = SearchFilter.EQ),
+              move: () => (searchFilter = SearchFilter.EQ),
+              date: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              bankKey: () => (searchFilter = SearchFilter.ILIKE),
+              entryOrderId: () => (searchFilter = SearchFilter.EQ),
+              lotPub: () => (searchFilter = SearchFilter.EQ),
+              event: () => (searchFilter = SearchFilter.EQ),
+              clientId: () => (searchFilter = SearchFilter.EQ),
+              rfc: () => (searchFilter = SearchFilter.ILIKE),
+              name: () => (searchFilter = SearchFilter.ILIKE),
+              appliedTo: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -90,6 +144,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       cadena: [null],
     });
   }
+
   getPayments() {
     this.loading = true;
     this.totalItems = 0;
@@ -97,14 +152,65 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+
+    if (params['filter.date']) {
+      var fecha = new Date(params['filter.date']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['filter.date'] = `$eq:${fechaFormateada}`;
+      // delete params['filter.date'];
+    }
+
+    if (params['filter.name']) {
+      params['filter.customers.nomRazon'] = params['filter.name'];
+      delete params['filter.name'];
+    }
+
+    if (params['filter.rfc']) {
+      params['filter.customers.rfc'] = params['filter.rfc'];
+      delete params['filter.rfc'];
+    }
+
+    if (params['filter.lotPub']) {
+      params['filter.lots.lotPublic'] = params['filter.lotPub'];
+      delete params['filter.lotPub'];
+    }
+
+    if (params['filter.event']) {
+      params['filter.lots.idEvent'] = params['filter.event'];
+      delete params['filter.event'];
+    }
+
+    if (params['filter.move']) {
+      params['filter.ctrl.description'] = params['filter.move'];
+      delete params['filter.move'];
+    }
+
     params['filter.entryOrderId'] = `$null`;
-    this.paymentService.getComerPaymentRef(params).subscribe({
+    params['sortBy'] = `paymentId:DESC`;
+    this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
-        this.data.load(response.data);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        let result = response.data.map(async (item: any) => {
+          // const client: any = await this.getClients(item.clientId);
+          item['rfc'] = item.customers ? item.customers.rfc : null;
+          item['name'] = item.customers ? item.customers.nomRazon : null;
+          item['event'] = item.lots ? item.lots.idEvent : null;
+          item['lotPub'] = item.lots ? item.lots.lotPublic : null;
+          item['move'] = item.ctrl ? item.ctrl.description : null;
+        });
+        Promise.all(result).then(resp => {
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        });
       },
       error: error => {
         this.data.load([]);
@@ -121,7 +227,13 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   }
 
   edit(event: any) {
-    this.openForm(event.data, true);
+    console.log('aaa', event);
+    if (event == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event;
+    }
+    this.openForm(event, true);
   }
   add() {
     this.openForm(null, false);
@@ -155,11 +267,22 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
               this.getPayments();
             },
             error: error => {
-              this.alert(
-                'error',
-                'Ocurrió un Error al Eliminar el Registro',
-                ''
-              );
+              if (
+                error.error.message ==
+                'update or delete on table "comer_pagoref" violates foreign key constraint "comer_pagoref_obs_canc_pag_fk" on table "comer_pagoref_obs_canc"'
+              ) {
+                this.alert(
+                  'error',
+                  'Ocurrió un Error al Eliminar el Registro',
+                  'Tiene Registros Relacionados en Otras Tablas'
+                );
+              } else {
+                this.alert(
+                  'error',
+                  'Ocurrió un Error al Eliminar el Registro',
+                  ''
+                );
+              }
             },
           });
         }
@@ -167,24 +290,136 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     );
   }
 
-  enviarSIRSAE() {
+  async enviarSIRSAE() {
+    if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
+
+    // if (!this.valAcc.lots)
+    //   return this.alert('warning', 'Este Pago No tiene Lote Asociado', '');
+
+    this.loadingBtn = true;
     // CREA_CABECERA;
-    this.creaCabecera();
+    const a = await this.creaCabecera();
     // ENVIA_LEE_SIRSAE(1, NULL);
-    this.enviaLeeSirsae(1, null);
+    const resss = await this.enviaLeeSirsae(1, null);
+    if (
+      resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+      resss ==
+        'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+    ) {
+      this.alert(
+        'error',
+        'Error de Conexión',
+        'No se pudo Conectar a la Base de Datos (SIRSAE)'
+      );
+      this.loadingBtn = false;
+      this.getPayments();
+      return;
+    } else {
+      this.loadingBtn = false;
+      this.getPayments();
+      this.alert('success', 'Proceso Ejecutado Correctamente', '');
+    }
+    // else if (a && b) {
+    //   this.alert('success', 'Procesos Ejecutados Correctamente', '');
+    // }
   }
-  creaCabecera() {
-    let obj = {};
-    this.paymentService.createHeader(obj).subscribe({
-      next: response => {
-        // this.alert('success', 'El Registro se Eliminó Correctamente', '');
-        this.getPayments();
-      },
-      error: error => {
-        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
-      },
+
+  async creaCabecera() {
+    let obj = {
+      user: this.token.decodeToken().preferred_username,
+      idPay: this.valAcc.paymentId,
+      idEvent: this.valAcc.lots ? this.valAcc.lots.idEvent : null,
+      pAddress: this.layout,
+      idLot: this.valAcc.idLot,
+      appliedA: this.valAcc.appliedTo,
+      amount: this.valAcc.amount,
+      idLotPub: this.valAcc.lots ? this.valAcc.lots.lotPublic : null,
+    };
+    return new Promise((resolve, reject) => {
+      this.paymentService.createHeader(obj).subscribe({
+        next: response => {
+          // this.alert('success', 'Proceso Ejecutado Correctamente', '');
+          // this.getPayments();
+          resolve(true);
+        },
+        error: error => {
+          resolve(null);
+          // this.alert('error', 'Ocurrió un Error al Intentar Ejecutar el Proceso', error.error.message);
+        },
+      });
     });
   }
 
-  enviaLeeSirsae(item1: number, item2: any) {}
+  async enviaLeeSirsae(item1: number, item2: any) {
+    let obj = {
+      pmodo: item1,
+      plote: item2,
+      idEvent: this.valAcc.lots ? this.valAcc.lots.idEvent : null,
+      idPay: this.valAcc.paymentId,
+    };
+    return new Promise((resolve, reject) => {
+      this.paymentService.sendReadSirsaeFcomer113(obj).subscribe({
+        next: response => {
+          resolve('OK');
+          // this.alert('success', 'Proceso Ejecutado Correctamente', '');
+          // this.getPayments();
+        },
+        error: error => {
+          console.log('error', error);
+          // if (
+          //   error.error.message ==
+          //   'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+          // ) {
+          //   console.log('si');
+          //   this.loadingBtn = false;
+          //   this.alert(
+          //     'error',
+          //     'Error de Conexión',
+          //     'No se ha podido Conectar a la Base de Datos (SIRSAE)'
+          //   );
+          //   resolve(error.error.message);
+          //   return;
+          // } else {
+
+          // this.alert(
+          //   'error',
+          //   'Ocurrió un Error al Intentar Ejecutar el Proceso',
+          //   error.error.message
+          // );
+          resolve(error.error.message);
+          //   return;
+          // }
+        },
+      });
+    });
+  }
+
+  valAcc: any = null;
+  rowsSelected(event: any) {
+    if (event.data == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event.data;
+    }
+  }
+
+  getClients(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerClientsService.getById_(id).subscribe({
+        next: data => {
+          console.log('dasadas', data);
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
 }

@@ -56,7 +56,21 @@ export class ComerEventService extends HttpService {
     return this.get(PrepareEventEndpoints.ApplicationDataEvent, params);
   }
 
+  getAllEvent(params: _Params | string) {
+    return this.get(PrepareEventEndpoints.ComerEvent, params);
+  }
+
   getDataTpEvents(idEvent: number) {
     return this.get(`${PrepareEventEndpoints.ApplicationTpEvent}/${idEvent}`);
+  }
+
+  updateComerEvent(id: any, params: any) {
+    return this.put<IListResponse<IComerEvent>>(`comer-event/${id}`, params);
+  }
+  getAllFilterLetter(id: number, params: ListParams) {
+    return this.get<IListResponse<any>>(
+      `comer-good-xlot?filter.lotId=${id}`,
+      params
+    );
   }
 }
