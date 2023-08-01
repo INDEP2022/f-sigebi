@@ -455,4 +455,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //LOTES DESIERTOS
+  getDataDesertLots(eventId: string | number){
+    const paramsF = new FilterParams()
+    paramsF.addFilter('idClient',null)
+    paramsF.addFilter('eventId', eventId)
+  }
 }
