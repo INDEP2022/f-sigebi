@@ -1095,42 +1095,24 @@ export class FormalizeProgrammingFormComponent
                     );
 
                     if (createOIC) {
-                      if (uvfv) {
-                        if (firmUvfv) {
-                          const createsig = await this.createFirm(
-                            keyDoc,
-                            idTypeDoc,
+                      if (!firmUvfv) {
+                        if (nomReport) {
+                          this.loadDocument(
+                            nomReport,
                             _proceeding.id,
-                            'ACTAS',
-                            'FIRMA_ELECT_UVFV',
-                            nomUvfv,
-                            _proceeding.positionWorkerUvfv,
-                            null,
-                            null
+                            idTypeDoc,
+                            typeFirm,
+                            _proceeding
                           );
-
-                          if (createsig) {
-                            if (nomReport) {
-                              this.loadDocument(
-                                nomReport,
-                                this.actId,
-                                idTypeDoc,
-                                typeFirm,
-                                _proceeding
-                              );
-                            }
-                          }
-                        } else {
-                          if (nomReport) {
-                            this.loadDocument(
-                              nomReport,
-                              this.actId,
-                              idTypeDoc,
-                              typeFirm,
-                              _proceeding
-                            );
-                          }
                         }
+                      } else {
+                        this.loadDocument(
+                          nomReport,
+                          _proceeding.id,
+                          idTypeDoc,
+                          typeFirm,
+                          _proceeding
+                        );
                       }
                     }
                   }
@@ -1307,7 +1289,6 @@ export class FormalizeProgrammingFormComponent
                 .subscribe({
                   next: async response => {
                     if (response.data.length > 0) {
-                      console.log('actas', response.data[0]);
                       const showBase64: any = await this.showBase64(
                         response.data[0].id_content
                       );
@@ -1327,11 +1308,8 @@ export class FormalizeProgrammingFormComponent
                         process: 'FORMALIZAR',
                         fileB64: showBase64,
                       };
-                      console.log('data', data);
                       this.emailService.createEmailNotify(data).subscribe({
-                        next: response => {
-                          console.log('response', response);
-                        },
+                        next: response => {},
                       });
                     } else {
                       this.alert(

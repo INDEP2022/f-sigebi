@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -21,13 +23,21 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   response: boolean = false;
   totalItems: number = 0;
   settings2: any;
+  //data: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  rowSelected: boolean = false;
+  selectedRow: any = null;
+  etapa: number = 0;
+  expediente: string | number;
+
+  goodsList: IGood[] = [];
 
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
     private datePipe: DatePipe,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodParametersService: GoodParametersService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -38,6 +48,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.getEdo();
   }
 
   initForm() {
@@ -86,6 +97,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   data2 = EXAMPLE_DATA2;
 
   search(term: string | number) {
+    this.expediente = term;
+    console.log(' this.expediente  ', this.expediente);
     this.loading = true;
     this.expedientService.getById(term).subscribe(
       response => {
@@ -119,7 +132,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
         } else {
           this.alert('info', 'No se encontrarón registros', '');
         }
-
+        this.getGoods();
         this.loading = false;
       },
       error => (this.loading = false)
@@ -145,6 +158,27 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   settingsChange(event: any, op: number) {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
+  }
+
+  getGoods(): void {
+    this.goodService
+      .getByExpedient(this.expediente, this.params.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.goodsList = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
+  }
+
+  getEdo() {
+    this.goodParametersService.getPhaseEdo().subscribe(res => {
+      let edo = JSON.parse(JSON.stringify(res['stagecreated']));
+      this.etapa = edo;
+    });
   }
 }
 

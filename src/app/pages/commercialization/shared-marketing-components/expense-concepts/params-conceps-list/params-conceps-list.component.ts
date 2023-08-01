@@ -48,9 +48,6 @@ export class ParamsConcepsListComponent
           delete: true,
         },
       },
-      add: {
-        addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      },
       columns: { ...COLUMNS },
     };
     this.haveInitialCharge = false;
