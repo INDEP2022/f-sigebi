@@ -67,7 +67,7 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
   searchBanks(params: ListParams) {
     this.banks = new DefaultSelect();
     this.loading = true;
-    this.bankAccountSelect = new DefaultSelect();
+    // this.bankAccountSelect = new DefaultSelect();
     this.recordAccountStatementsService.getAll(params).subscribe({
       next: response => {
         this.loading = true;
@@ -81,20 +81,10 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  // Asigna el valor del banco seleccionado a la función "searchBankAccount"
-  onBankSelectChange(value: any) {
-    this.bankAccountSelect = new DefaultSelect();
-    this.loading = false;
-    if (value && value.bankCode) {
-      const bankCode = value.bankCode;
-      this.loading = false;
-    } else {
-      this.loading = false;
-    }
-  }
-
   // Permite buscar los bancos por nombre
   onSearchName(inputElement: any) {
+    this.banks = new DefaultSelect();
+    console.log('Hola 3');
     const name = inputElement.value;
     setTimeout(() => {
       this.recordAccountStatementsService
@@ -106,7 +96,7 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
           },
           error: (err: any) => {
             this.loading = false;
-            this.alert('warning', 'No Existen Bancos', ``);
+            // this.alert('warning', 'No Existen Bancos', ``);
           },
         });
     }, 3000);

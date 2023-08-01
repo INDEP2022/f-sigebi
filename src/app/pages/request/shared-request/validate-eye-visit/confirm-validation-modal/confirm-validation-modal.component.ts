@@ -49,6 +49,7 @@ export class ConfirmValidationModalComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    console.log(this.goods);
     this.confirmForm = this.fb.group({
       resultTaxpayer: [null, [Validators.required]],
       observationsResult: [null, [Validators.required]],
@@ -75,27 +76,26 @@ export class ConfirmValidationModalComponent implements OnInit {
       const agrupador = this.goods.goodGrouper;
       const idBien = this.goods.goodresdevId;
 
-      const groupList: any = await this.getlistGroupNumber(agrupador);
-      if (groupList.count > 0) {
+      const groupList = this.goods;
+      if (groupList.length > 0) {
         groupList.data.map(async (item: any) => {
           const bienRow = item.goodresdevId;
           const agrupadorRow = item.goodGrouper;
           const resFinalRow = item.resultFinal;
 
           if (
-            idBien == bienRow &&
-            (agrupador == null || agrupador == agrupadorRow)
+            resFinalRow != 'Y' ||
+            form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE' ||
+            form.resultTaxpayer == 'REPROGRAMAR'
           ) {
-            if (
-              resFinalRow != 'Y' ||
-              form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE' ||
-              form.resultTaxpayer == 'REPROGRAMAR'
-            ) {
-              item.resultTaxpayer = 'RECHAZADO';
-              item.resultFinal = 'Y';
+            item.resultTaxpayer = 'RECHAZADO';
+            item.resultFinal = 'Y';
 
-              this.deleteGoodDated(item);
-            }
+            this.deleteGoodDated(item);
+          } else {
+            item.resultFinal = 'Y';
+            item.resultTaxpayer = form.resultTaxpayer;
+            item.observationsResult = form.observationsResult;
           }
         });
       }
@@ -123,6 +123,8 @@ export class ConfirmValidationModalComponent implements OnInit {
     if (good.resultFinal != null) {
       //llamar a sacar de la reserva en almacen
       if (good.reservationId != null) {
+        //mandar a llamar el endpoint de presosXxsaeFacade (eliminarReservaBIen)
+      } else {
       }
     }
   }

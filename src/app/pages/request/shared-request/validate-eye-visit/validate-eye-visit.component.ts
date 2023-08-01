@@ -207,7 +207,13 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
   goodsSelected(event: any) {
     const index = this.selectedList.indexOf(event.row);
-    const index2 = this.selectedGoodColumns['data'].indexOf(event.row);
+
+    if (index == -1) {
+      this.selectedList.push(event.row);
+    } else {
+      this.selectedList.splice(index, 1);
+    }
+    /*const index2 = this.selectedGoodColumns['data'].indexOf(event.row);
     if (index == -1) {
       if (this.selectedList.length >= 1) {
         this.selectedGoodColumns.getElements().then(data => {
@@ -227,7 +233,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     } else {
       this.selectedGoodColumns['data'][index2].select = false;
       this.selectedList.splice(index, 1);
-    }
+    }*/
   }
 
   validateVisitResult() {

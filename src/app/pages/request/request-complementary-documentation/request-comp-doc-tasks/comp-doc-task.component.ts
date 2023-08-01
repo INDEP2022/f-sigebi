@@ -1,4 +1,5 @@
 import { inject } from '@angular/core';
+import { catchError, of } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
@@ -260,20 +261,30 @@ export abstract class CompDocTasksComponent extends BasePage {
 
   getGoodResDev(params: ListParams) {
     return new Promise((resolve, reject) => {
-      this.rejectedService.getAll(params).subscribe({
-        next: resp => {
-          resolve(resp);
-        },
-        error: error => {
-          reject(
-            'error no se pudo obtener los bienes de la tabla good-res-dev'
-          );
-        },
-      });
+      this.rejectedService
+        .getAll(params)
+        .pipe(
+          catchError(err => {
+            if (err.status == 400) {
+              return of({ data: [], count: 0 });
+            }
+            throw err;
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+          error: error => {
+            reject(
+              'error no se pudo obtener los bienes de la tabla good-res-dev'
+            );
+          },
+        });
     });
   }
 
-  turnResquestMessage(requestId: number) {
+  turnResquestMessage(requestId: number, email?: string) {
     Swal.fire({
       title: `Desea turnar la solicitud con el folio: ${requestId}`,
       text: 'Usted va a transferir una solicitud que no es comercio exterior a un TE',

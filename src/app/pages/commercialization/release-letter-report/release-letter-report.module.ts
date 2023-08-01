@@ -7,9 +7,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FindReleaseLetterComponent } from './find-release-letter/find-release-letter.component';
 import { ReleaseLetterReportRoutingModule } from './release-letter-report-routing.module';
 import { ReleaseLetterReportComponent } from './release-letter-report.component';
+import { CustomDateFilterComponent_ } from './searchDate';
 
 @NgModule({
-  declarations: [ReleaseLetterReportComponent, FindReleaseLetterComponent],
+  declarations: [
+    ReleaseLetterReportComponent,
+    FindReleaseLetterComponent,
+    CustomDateFilterComponent_,
+  ],
   imports: [
     CommonModule,
     FormLoaderComponent,
