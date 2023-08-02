@@ -7,6 +7,10 @@ const routes: Routes = [
     path: '',
     component: ExpenseCaptureComponent,
   },
+  {
+    path: ':id',
+    component: ExpenseCaptureComponent,
+  },
 ];
 
 @NgModule({
