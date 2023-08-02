@@ -98,4 +98,8 @@ export class ComerEventosService extends HttpService {
     // PUP_EXPORT_DETPAGOS
     return this.post('application/pup-export-detpayments', body);
   }
+
+  getByIdComerTEvents(id: string | number) {
+    return this.get<IListResponse<any>>(`${EventEndpoints.ComerTEvents}/${id}`);
+  }
 }
