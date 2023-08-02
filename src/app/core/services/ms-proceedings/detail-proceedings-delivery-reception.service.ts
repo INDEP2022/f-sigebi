@@ -8,6 +8,7 @@ import {
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -72,4 +73,13 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.GetProcedding}/${report}`;
     return this.get(route);
   }
+
+  getProceding(report: number | string) {
+    const route = `${ProceedingsEndpoints.proceedingGet}/${report}`;
+    return this.get(route);
+  }
+
+  /*  getProceding2() {
+      return this.get(ProceedingsEndpoints.proceedingGet2);
+    }*/
 }

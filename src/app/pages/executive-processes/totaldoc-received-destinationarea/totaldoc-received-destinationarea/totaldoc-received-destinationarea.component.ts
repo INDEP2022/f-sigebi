@@ -140,8 +140,9 @@ export class TotaldocReceivedDestinationareaComponent
     console.log(reportParams);
 
     detailReport
-      ? this.getReport('RCONDIRREPORECDODA', reportParams)
-      : //Todo: Get Real Report
+      ? this.getReport('blank', reportParams)
+      : //? this.getReport('RCONDIRREPORECDODA', reportParams)
+        //Todo: Get Real Report
         //this.getReport('RCONDIRREPORECDOCA', reportParams);
         this.getReportBlank('blank');
   }

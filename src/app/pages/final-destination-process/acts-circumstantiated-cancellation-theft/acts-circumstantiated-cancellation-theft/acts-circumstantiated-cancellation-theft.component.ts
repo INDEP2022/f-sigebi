@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, tap } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS1 } from './columns1';
@@ -36,8 +40,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   data1 = EXAMPLE_DATA1;
   data2 = EXAMPLE_DATA2;
+  folioScan: number;
+  loadingDoc: boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private jasperService: SiabService,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS1;
@@ -127,8 +138,48 @@ export class ActsCircumstantiatedCancellationTheftComponent
   settingsChange(event: any, op: number) {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
   }
-}
 
+  proccesReport() {
+    if (this.folioScan) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', { pn_folio: this.folioScan })
+          .pipe(
+            tap(response => {
+              this.alert(
+                'success',
+                'Generado correctamente',
+                'Generado correctamente con folio: ' + this.folioScan
+              );
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe tener el folio en pantalla para poder imprimir'
+      );
+    }
+  }
+}
 const EXAMPLE_DATA1 = [
   {
     goodNumb: '3859',

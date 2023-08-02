@@ -7,15 +7,18 @@ export enum ExpedientEndpoints {
   FindIdentificator = `expedient/find-identificator`,
   GetNextVal = 'expedient/get-nextval',
   CreateExpedient = `expedient/create-expedient`,
+
   // GetTempExpedient = 'expedient/get-temp-expedient',
   TmpExpedients = 'tmp-expedients',
   CreateTempExpedient = 'expedient/create-temp-expedient',
   DeleteTempExpedient = 'expedient/delete-temp-expedient',
-
   //ExpedientSami
   ExpedientSami = 'expedientsami',
 
   //Select
   SelectExpedient = 'expedient/expedient',
   DeleteActaConversions = 'application/delete-record-teacher',
+
+  expedientePrueba = 'application/get-sol-servicios-nobien',
+  expedientRegistros = 'application/get-sol-servicios-tran-emi-aut',
 }

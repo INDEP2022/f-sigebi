@@ -13,10 +13,16 @@
     </div>
     <div class="row">
       <div class="col-3">
-        <button class="btn btn-secondary btn-sm active">Definir Filtro</button>
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="openDefineFilter()">
+          Definir Filtro
+        </button>
       </div>
       <div class="col-3">
-        <button class="btn btn-secondary btn-sm active">Bienes</button>
+        <button class="btn btn-secondary btn-sm active" (click)="getall()">
+          Bienes
+        </button>
       </div>
       <div class="col-6">
         <button class="btn btn-secondary btn-sm active">Por Rastreador</button>
@@ -48,11 +54,14 @@
 
     <div class="row mt-5 justify-content-end">
       <div class="col-12 col-md-3 text-center text-md-right">
-        <button class="btn btn-success btn-sm active">Exportar a Excel</button>
+        <button class="btn btn-success btn-sm active" (click)="exportExcel()">
+          Exportar a Excel <i class="bx bx-download float-icon"></i>
+        </button>
       </div>
       <div class="col-12 col-md-6 text-center text-md-right mt-3 mt-md-0">
         <button class="btn btn-success btn-sm active">
           Exportar a Excel y Cambiar Estatus
+          <i class="bx bx-download float-icon"></i>
         </button>
       </div>
     </div>

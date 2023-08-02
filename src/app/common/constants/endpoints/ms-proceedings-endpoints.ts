@@ -24,4 +24,7 @@ export enum ProceedingsEndpoints {
   GetUnion = 'aplication/getUnionTables',
   GetFactDbConvBien = 'aplication/getFactDbConvBien',
   GetProcedding = 'aplication/getMaxFile',
+  //proceedingGet = 'aplication/get-max-act',
+  proceedingGet = 'aplication/data-word',
+  //proceedingGet2 = 'aplication/data-word',
 }

@@ -1,26 +1,26 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_EXPORT_GOODS = {
-  numberGood: {
+  no_bien: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  cantidad: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
   },
-  clasificationNumb: {
+  no_clasif_bien: {
     title: 'No. Clasf Bien',
     type: 'number',
     sort: false,
   },
-  tansfNumb: {
+  no_transferente: {
     title: 'No. Transfer',
     type: 'number',
     sort: false,
@@ -31,21 +31,21 @@ export const COLUMNS_EXPORT_GOODS = {
     sort: false,
   },
   delDeliv: {
-    title: 'Del_Admin',
+    title: 'Del_Recibe',
     type: 'number',
     sort: false,
   },
-  recepDate: {
+  fecha_liberacion: {
     title: 'Fecha Recepción',
     type: 'string',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     type: 'number',
     sort: false,
   },
-  proceedingsNumb: {
+  no_expediente: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,

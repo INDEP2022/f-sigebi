@@ -127,4 +127,12 @@ export class DelegationService
     const route = `${DelegationsEndpoints.Delegation}/id/${id}/etapaEdo/${etapaEdo}`;
     return this.delete(route);
   }
+
+  getCatalog() {
+    return this.get(DelegationsEndpoints.catalogRegistros);
+  }
+
+  postCatalog(model: any) {
+    return this.post(DelegationsEndpoints.catalogetNoActa, model);
+  }
 }
