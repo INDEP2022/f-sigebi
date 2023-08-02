@@ -129,8 +129,8 @@ export class FormEditComponent extends BasePage implements OnInit {
         next: (resp: IListResponse<IProceedings>) => {
           this.onLoadToast(
             'success',
-            'Actualizada',
-            'El acta ha sido actualizado exitosamente'
+            'Acta de Decomiso Y Devolución',
+            'Actualizado Correctamente'
           );
           this.modalRef.content.callback(true);
           this.modalRef.hide();

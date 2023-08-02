@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -28,12 +28,15 @@ interface IGlobal {
   styles: [],
 })
 export class DestinationGoodsActsComponent extends BasePage implements OnInit {
+  @ViewChild('mySmartTable') mySmartTable: any;
   actForm: FormGroup;
   formTable1: FormGroup;
+  box: any[] = [];
   response: boolean = false;
   totalItems: number = 0;
   totalItems2: number = 0;
   settings2: any;
+  strategy = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   rowSelected: boolean = false;
@@ -52,6 +55,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   selectedGood: any;
   selectedGood2: any;
   deleteselectedRow: any;
+  contador: number = 0;
+  totalValue: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -259,6 +264,26 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       );
     }
   }
+  countRowTotal() {
+    this.totalValue = 0;
+    for (let i = 0; i < this.box.length; i++) {
+      this.totalValue += Number(this.box[i].quantity);
+    }
+    this.totalValue = this.roundPercentage(this.totalValue);
+    console.log('LONGITUD: ', this.box.length);
+  }
+
+  roundPercentage(percentage: number): number {
+    return parseFloat(percentage.toFixed(1));
+  }
+
+  countFacture() {
+    this.contador = 0;
+    for (let i = 0; i < this.box.length; i++) {
+      this.contador++;
+    }
+  }
+
   selectRow(event: IGood) {
     this.selectedGood = event;
     //console.log('selectedGood ', this.selectedGood);
@@ -282,19 +307,27 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     }
   }
 
+  clearSelection() {
+    const selectedRows = this.mySmartTable.grid.getSelectedRows();
+    selectedRows.forEach((row: any) => {
+      row.isSelected = false;
+    });
+  }
+
   removeSelect() {
+    this.box = [];
     if (this.deleteselectedRow == null) {
-      this.onLoadToast('error', 'Debe Seleccionar un Registro');
+      this.onLoadToast('error', 'Debe seleccionar un registro');
       return;
     } else {
-      /*this.strategy.remove(this.deleteselectedRow);
+      this.strategy.remove(this.deleteselectedRow);
       this.strategy.remove(this.box);
       this.contador = 0;
       this.totalValue = 0;
       this.countRowTotal();
       this.clearSelection();
       this.countFacture();
-      this.strategy.load([]); */
+      this.strategy.load([]);
     }
   }
 
