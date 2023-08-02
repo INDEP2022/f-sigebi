@@ -248,7 +248,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           this.alert(
             'warning',
             'Generación de Recibos',
-            'Esta Programación no tienes Bienes'
+            'Esta Programación no tiene Bienes'
           );
         },
       });
@@ -256,7 +256,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Ingresa una Programación'
+        'Ingrese una Programación'
       );
       this.loader.load = false;
       return;
@@ -287,7 +287,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Este Bien ya fue Guardado Anteriormente'
+        'Este Bien ya fue guardado anteriormente'
       );
     }
   }
@@ -389,7 +389,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                   this.totalItems = this.goodsDownloadExcel.length;
                   this.alert(
                     'success',
-                    `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                    `Proceso terminado correctamente, ya puede descargar el resultado`,
                     ''
                   );
                   this.downloadResultsGoods = false;
@@ -409,11 +409,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             let message: string = '';
             if (IdReceipt > 0) {
               message =
-                'Se Actualizará la Información de los Bienes y se Guardaran en el Recibo' +
+                'Se actualizará la información de los Bienes y se guardarán en el Recibo' +
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creará un Recibo Nuevo';
+                'Se actualizará la información de los Bienes y se creará un Recibo nuevo';
             }
             this.alertQuestion(
               'question',
@@ -437,7 +437,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                        `Proceso terminado correctamente, ya puede descargar el resultado`,
                         ''
                       );
                       this.downloadResultsGoods = false;
@@ -459,11 +459,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             let message: string = '';
             if (IdReceipt > 0) {
               message =
-                'Se Actualizará la Información de los Bienes y se Guardaran en el Recibo Almacén' +
+                'Se actualizará la información de los Bienes y se guardarán en el recibo Almacén' +
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creará un Recibo Almacén Nuevo';
+                'Se actualizará la información de los Bienes y se creará un recibo Almacén nuevo';
             }
             this.alertQuestion(
               'question',
@@ -484,7 +484,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                      `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
                     this.downloadResultsGoods = false;
@@ -505,11 +505,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             let message: string = '';
             if (IdReceipt > 0) {
               message =
-                'Se Actualizará la Información de los Bienes y se Guardaran en el Recibo Resguardo' +
+                'Se actualizará la información de los Bienes y se guardarán en el recibo Resguardo' +
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creará un Recibo Resguardo Nuevo';
+                'Se actualizará la información de los Bienes y se creará un recibo Resguardo nuevo';
             }
             this.alertQuestion(
               'question',
@@ -531,7 +531,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                        `Proceso terminado correctamente, ya puede descargar el resultado`,
                         ''
                       );
                     }, 1000);
@@ -566,7 +566,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                      `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
                   }, 1000);
@@ -577,7 +577,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Debes Seleccionar el Motivo, de la Reprogramación',
+            'Debe seleccionar el motivo, de la reprogramación',
             ''
           );
         }
@@ -587,7 +587,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         if (this.indepForm1.controls['cancellation'].value != null) {
           this.alertQuestion(
             'question',
-            'Se Cancelaran los Bienes',
+            'Se cancelarán los Bienes',
             '¿Desea continuar?',
             'Continuar'
           ).then(q => {
@@ -605,7 +605,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
+                      `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
                   }, 1000);
@@ -616,16 +616,16 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Debes Seleccionar el Motivo, de la Cancelación',
+            'Debe seleccionar el motivo, de la Cancelación',
             ''
           );
         }
       } else {
         console.log(this.receiptGenerationForm.value);
-        this.alert('warning', 'Seleccione una Opción', '');
+        this.alert('warning', 'Seleccione una opción', '');
       }
     } else {
-      this.alert('warning', 'Seleccione Algún Archivo', '');
+      this.alert('warning', 'Seleccione algún archivo', '');
     }
   }
   async acceptMassive() {
@@ -862,7 +862,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } catch (error) {
           good.cantidad_sae = 0;
           good.observaciones =
-            good.observaciones + ',No se puede convertir la cantidad INDEP';
+            good.observaciones + ', No se puede convertir la cantidad INDEP';
           console.log(good.observaciones);
         }
       } else {
@@ -881,7 +881,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         if (unidadSae == '0') {
           good.unidad_medida_sae = '';
           good.observaciones =
-            good.observaciones + ', Se Necesita una unidad de Medida SAE';
+            good.observaciones + ', Se necesita una Unidad de Medida INDEP';
           console.log(good.observaciones);
         } else {
           good.unidad_medida_sae = unidadSae;
@@ -891,7 +891,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.ESTADO_FISICO_TRASFERENTE) {
         estado_fisico = await this.obtCat(
-          'Estado Fisico',
+          'Estado Físico',
           data.ESTADO_FISICO_TRASFERENTE
         );
         if (estado_fisico != '0') {
@@ -902,7 +902,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.ESTADO_FISICO_SAE) {
         let fisicoSae: any = '';
-        fisicoSae = await this.obtCat('Estado Fisico', data.ESTADO_FISICO_SAE);
+        fisicoSae = await this.obtCat('Estado Físico', data.ESTADO_FISICO_SAE);
         if (fisicoSae != '0') {
           good.estado_fisico_sae = Number(fisicoSae);
         } else {
@@ -922,7 +922,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       if (data.ESTADO_CONSERVACION_SAE) {
         let estadoConservacionSae: any = '';
         estadoConservacionSae = await this.obtCat(
-          'Estado Conservacion',
+          'Estado Conservación',
           data.ESTADO_CONSERVACION_SAE
         );
         console.log(estadoConservacionSae);
@@ -931,7 +931,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           good.observaciones =
             good.observaciones +
-            ', No se encuentra el estado de converción SAE';
+            ', No se encuentra el estado de conservación INDEP';
           good.estado_conservacion_sae = 0;
           console.log(good.observaciones);
         }
@@ -958,7 +958,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           good.destino_sae = destinoSae;
         } else {
           good.observaciones =
-            good.observaciones + ', No se encuentra destino SAE';
+            good.observaciones + ', No se encuentra destino INDEP';
           good.destino_sae = 0;
           console.log(good.observaciones);
         }
@@ -1013,7 +1013,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           } else {
             coma = '';
           }
-          result = result + coma + 'La cantidad debe ser enteros';
+          result = result + coma + 'La cantidad debe ser un entero';
           console.log(result);
           res(result);
         }
@@ -1272,7 +1272,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Generación de Recibos',
-          'La Cantidad debe ser Enteros'
+          'La cantidad debe se un entero'
         );
         return;
       }
@@ -1282,7 +1282,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (sender == 0) {
       this.alertQuestion(
         'question',
-        '¿Desea Registrar los Bienes con tipo Recibo?',
+        '¿Desea registrar los Bienes con tipo Recibo?',
         '',
         'Continuar'
       ).then(q => {
@@ -1293,7 +1293,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     } else if (sender == 1) {
       this.alertQuestion(
         'question',
-        '¿Desea Registrar los Bienes con tipo Resguardo?',
+        '¿Desea registrar los Bienes con tipo Resguardo?',
         '',
         'Continuar'
       ).then(q => {
@@ -1304,7 +1304,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     } else if (sender == 2) {
       this.alertQuestion(
         'question',
-        '¿Desea Registrar los Bienes con tipo Almacén?',
+        '¿Desea registrar los Bienes con tipo Almacén?',
         '',
         'Continuar'
       ).then(q => {
@@ -1336,14 +1336,14 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log(resp);
-          this.alert('success', `Bien Agregado a ${operation}`, '');
+          this.alert('success', `Bien agregado a ${operation}`, '');
           this.cleanInsert();
         },
         error: eror => {
           this.alert(
             'warning',
             'Generación de Recibos',
-            'No se pudo Agregar el Bien al Recibo'
+            'No se pudo agregar el Bien al recibo'
           );
         },
       });
@@ -1352,8 +1352,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['cancellation'].value != null) {
       this.alertQuestion(
         'question',
-        'Se Cancelará la programació',
-        '¿Deseas continuar?',
+        'Se cancelará la programación',
+        '¿Desea continuar?',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -1370,7 +1370,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Generación de Recibos',
-                'La Cantidad debe ser Enteros'
+                'La Cantidad debe ser un entero'
               );
               return;
             }
@@ -1386,7 +1386,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debes Seleccionar el Motivo, de la Cancelación'
+        'Debe seleccionar el motivo, de la cancelación'
       );
       return;
     }
@@ -1395,8 +1395,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['reprogramming'].value != null) {
       this.alertQuestion(
         'question',
-        'Se ará una Reprogramación',
-        '¿Deseas continuar?',
+        'Se hará una Reprogramación',
+        '¿Desea continuar?',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -1413,7 +1413,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Generación de Recibos',
-                'La Cantidad debe ser Enteros'
+                'La cantidad debe ser un entero'
               );
               return;
             }
@@ -1429,7 +1429,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debes Seleccionar el Motivo, de la Reprogramación'
+        'Debe seleccionar el motivo, de la reprogramación'
       );
       return;
     }
