@@ -50,6 +50,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getData();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
