@@ -50,6 +50,7 @@ export class ClientPenaltyService extends HttpService {
 
   //http://sigebimstest.indep.gob.mx/penalty/api/v1/comer-penalty-his/export?filter.customerId=$eq:18104
   getByIdComerPenaltyHis2(id: string | number) {
+    console.log(id);
     return this.get(`comer-penalty-his/export?filter.customerId=$eq:${id}`);
   }
 

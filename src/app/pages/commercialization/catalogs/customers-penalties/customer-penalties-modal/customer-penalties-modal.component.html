@@ -174,13 +174,14 @@
 
       <div class="row mt-3">
         <div class="col-md-4">
-          <form-field label="publicLot" [control]="form.get('publicLot')">
+          <form-field label="Lote Público" [control]="form.get('publicLot')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               [readonly]="edit"
               formControlName="publicLot"
-              maxlength="30" />
+              min="1"
+              oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" />
           </form-field>
         </div>
 
