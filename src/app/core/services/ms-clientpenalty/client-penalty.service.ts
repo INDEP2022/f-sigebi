@@ -48,12 +48,9 @@ export class ClientPenaltyService extends HttpService {
     return this.get(route, params);
   }
 
-  getByIdComerPenaltyHish(
-    id: string | number,
-    params?: string
-  ): Observable<IListResponse<IHistoryCustomersPenalties>> {
-    const route = `${this.route3}:${id}`;
-    return this.get(route, params);
+  //http://sigebimstest.indep.gob.mx/penalty/api/v1/comer-penalty-his/export?filter.customerId=$eq:18104
+  getByIdComerPenaltyHis2(id: string | number) {
+    return this.get(`comer-penalty-his/export?filter.customerId=$eq:${id}`);
   }
 
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
