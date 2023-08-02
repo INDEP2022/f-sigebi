@@ -34,6 +34,7 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Output() onOpenEvent = new EventEmitter<void>();
   @Input() parameters: IEventPreparationParameters;
+  eventSelected: IComerEvent = null;
   get controls() {
     return this.eventForm.controls;
   }
@@ -119,28 +120,34 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   selectEvent(event: any) {
     if (event.isSelected) {
       this.globalEventChange.emit(event.data);
-      this.eventForm.patchValue(
-        {
-          ...event.data,
-          eventDate: event.data?.eventDate
-            ? new Date(event.data?.eventDate)
-            : null,
-          eventClosingDate: event.data?.eventClosingDate
-            ? new Date(event.data?.eventClosingDate)
-            : null,
-          failureDate: event.data?.failureDate
-            ? new Date(event.data?.failureDate)
-            : null,
-        },
-        { emitEvent: false }
-      );
+      this.eventSelected = event.data;
     } else {
       this.globalEventChange.emit(null);
+      this.eventSelected = null;
       this.eventForm.reset();
     }
   }
 
   openEvent() {
+    if (!this.eventSelected) {
+      this.alert('error', 'Error', 'Selecciona un Evento');
+      return;
+    }
+    this.eventForm.patchValue(
+      {
+        ...this.eventSelected,
+        eventDate: this.eventSelected?.eventDate
+          ? new Date(this.eventSelected?.eventDate)
+          : null,
+        eventClosingDate: this.eventSelected?.eventClosingDate
+          ? new Date(this.eventSelected?.eventClosingDate)
+          : null,
+        failureDate: this.eventSelected?.failureDate
+          ? new Date(this.eventSelected?.failureDate)
+          : null,
+      }
+      // { emitEvent: false }
+    );
     this.onOpenEvent.emit();
   }
 }

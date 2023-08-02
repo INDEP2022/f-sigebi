@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const COLUMNS = {
   /*id: {
     title: 'Id Evento',
@@ -109,9 +111,9 @@ export const COLUMNS_PROCESS = {
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == '1')
-        return '<strong><span class="badge badge-pill badge-success">PROCESO ANTERIOR</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">PROCESO ANTERIOR</span></strong>';
       if (value == '2')
-        return '<strong><span class="badge badge-pill badge-warning">PROCESO NUEVO</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">PROCESO NUEVO</span></strong>';
       return value;
     },
     filter: {
@@ -133,19 +135,26 @@ export const COLUMNS_PROCESS = {
 
   warrantyDate: {
     title: 'Fecha Garantía',
-    type: 'string',
+    type: 'html',
     sort: false,
+
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
   },
 
   topost: {
     title: 'Publicar',
-    type: 'number',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == '1')
-        return '<strong><span class="badge badge-pill badge-success">SI</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">SI</span></strong>';
       if (value == '0')
-        return '<strong><span class="badge badge-pill badge-warning">NO</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">NO</span></strong>';
       return value;
     },
     filter: {

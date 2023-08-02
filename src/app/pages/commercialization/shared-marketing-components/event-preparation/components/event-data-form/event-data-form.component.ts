@@ -41,6 +41,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() eventFormVisual = new EventFormVisualProperties();
   readonly minEventDate = new Date('2000-01-01');
   readonly maxEventDate = new Date(addYears(startOfYear(new Date()), 5));
+  viewApplyButton = true;
   get controls() {
     return this.eventForm.controls;
   }

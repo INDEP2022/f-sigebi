@@ -845,7 +845,7 @@ export class ClarificationsComponent
         goodId: item.goodId,
         descriptionGoodSae: item.descriptionGoodSae,
       };
-      debugger;
+      //debugger;
       const updateResult: any = await this.updateGood(body);
       if (this.goodSaeModified.length == index) {
         this.loading = false;
