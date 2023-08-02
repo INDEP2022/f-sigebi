@@ -8,7 +8,7 @@ export const COUNT_TIIE_COLUMNS = {
     sort: false,
   },*/
   tiieDays: {
-    title: 'Días TIIE',
+    title: 'Día TIIE',
     type: 'number',
     sort: false,
     valuePrepareFunction: (dias: number) => {
@@ -31,29 +31,29 @@ export const COUNT_TIIE_COLUMNS = {
     sort: false,
     valuePrepareFunction: (value: string) => {
       if (value == '1')
-        return '<strong><span class="badge badge-pill badge-success">Enero</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Enero</span></strong>';
       if (value == '2')
-        return '<strong><span class="badge badge-pill badge-warning">Febrero</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info" >Febrero</span></strong>';
       if (value == '3')
-        return '<strong><span class="badge badge-pill badge-warning">Marzo</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Marzo</span></strong>';
       if (value == '4')
-        return '<strong><span class="badge badge-pill badge-warning">Abril</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Abril</span></strong>';
       if (value == '5')
-        return '<strong><span class="badge badge-pill badge-warning">Mayo</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Mayo</span></strong>';
       if (value == '6')
-        return '<strong><span class="badge badge-pill badge-warning">Junio</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Junio</span></strong>';
       if (value == '7')
-        return '<strong><span class="badge badge-pill badge-warning">Julio</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Julio</span></strong>';
       if (value == '8')
-        return '<strong><span class="badge badge-pill badge-warning">Agosto</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Agosto</span></strong>';
       if (value == '9')
-        return '<strong><span class="badge badge-pill badge-warning">Septiembre</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Septiembre</span></strong>';
       if (value == '10')
-        return '<strong><span class="badge badge-pill badge-warning">Octubre</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Octubre</span></strong>';
       if (value == '11')
-        return '<strong><span class="badge badge-pill badge-warning">Noviembre</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Noviembre</span></strong>';
       if (value == '12')
-        return '<strong><span class="badge badge-pill badge-warning">Diciembre</span></strong>';
+        return '<strong><span class="badge badge-pill badge-soft-info">Diciembre</span></strong>';
       return value;
     },
     filter: {

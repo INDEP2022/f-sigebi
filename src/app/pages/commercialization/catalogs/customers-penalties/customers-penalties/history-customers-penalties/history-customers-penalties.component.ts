@@ -179,15 +179,11 @@ export class HistoryCustomersPenaltiesComponent
           this.data2.load(response.data);
           this.data2.refresh();
           this.totalItems = response.count;
-          console.log(this.data2);
-          console.log(this.totalItems);
           this.loading = false;
         },
         error: error => {
           this.loading = false;
           this.data2 = new LocalDataSource();
-          // this.data2.reset();
-          // this.totalItems.reset();
           this.totalItems = 0;
           this.alert(
             'warning',

@@ -12,4 +12,5 @@ export enum MassiveGoodEndpoints {
   GetFProRecPag2CSV = `application/get-f-proc-rec-pag2`,
   Massive = `application/massive-load-button`,
   PupCargaCsv = `application/pup-carga-csv`,
+  GoodsShedules = 'application/get-goods-schedules-csv',
 }
