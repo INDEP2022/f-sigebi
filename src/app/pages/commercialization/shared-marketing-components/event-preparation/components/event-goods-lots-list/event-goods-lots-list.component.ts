@@ -118,22 +118,24 @@ export class EventGoodsLotsListComponent
     this.loading = true;
     params.addFilter('idLot', this.lot.id);
     params.sortBy = 'goodNumber:ASC';
-    return this.comerGoodsXLotService.getAllFilter(params.getParams()).pipe(
-      catchError(error => {
-        this.loading = false;
-        this.lotGoods.load([]);
-        this.lotGoods.refresh();
-        this.totalItems = 0;
-        return throwError(() => error);
-      }),
-      tap(response => {
-        this.loading = false;
-        console.log(response.data);
+    return this.comerGoodsXLotService
+      .getAllFilterPostQuery(params.getParams())
+      .pipe(
+        catchError(error => {
+          this.loading = false;
+          this.lotGoods.load([]);
+          this.lotGoods.refresh();
+          this.totalItems = 0;
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loading = false;
+          console.log(response.data);
 
-        this.lotGoods.load(response.data);
-        this.lotGoods.refresh();
-        this.totalItems = response.count;
-      })
-    );
+          this.lotGoods.load(response.data);
+          this.lotGoods.refresh();
+          this.totalItems = response.count;
+        })
+      );
   }
 }
