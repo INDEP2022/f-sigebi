@@ -1,5 +1,5 @@
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
@@ -90,4 +90,6 @@ export class EventPreparationMain extends BasePage {
 
   preparation = false;
   lotSelected: IComerLot;
+
+  refreshFromPreparation = new Subject<void>();
 }

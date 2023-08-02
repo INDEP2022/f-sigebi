@@ -610,6 +610,9 @@ export class VerifyComplianceTabComponent
     const index = this.goodsModified.indexOf(good);
     if (index != -1) {
       this.goodsModified[index] = good;
+      if (this.goodsModified[index].descriptionGoodSae == '') {
+        this.goodsModified[index].descriptionGoodSae = null;
+      }
     } else {
       this.goodsModified.push(good);
     }
@@ -628,6 +631,8 @@ export class VerifyComplianceTabComponent
         resp.data.map((item: any) => {
           const value = this.goodsSelected.filter((x: any) => x.id == item.id);
           item['selected'] = value.length == 0 ? false : true;
+
+          item.quantity = Number(item.quantity);
         });
 
         this.goodData.load(resp.data); //load  new LocalDataSource()

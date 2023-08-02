@@ -87,7 +87,7 @@ export class GenerateReceiptGuardFormComponent
   }
 
   confirm() {
-    const now = moment(new Date().toLocaleString(), 'DD/MM/YYYY HH:mm:ss');
+    const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
     console.log('now', now);
     this.form.get('receiptDate').setValue(now);
     console.log('this.form', this.form.value);
@@ -95,6 +95,7 @@ export class GenerateReceiptGuardFormComponent
       .updateReceiptGuard(this.receiptId, this.form.value)
       .subscribe({
         next: async response => {
+          console.log('creado', response);
           this.modalRef.content.callback(this.receiptGuards);
           this.modalRef.hide();
           //this.openReport(response);

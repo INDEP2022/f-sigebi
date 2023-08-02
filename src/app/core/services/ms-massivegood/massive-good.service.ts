@@ -31,7 +31,9 @@ export class MassiveGoodService extends HttpService {
       params
     );
   }
-
+  postGoodsSchedules(body: any) {
+    return this.post(this.route.GoodsShedules, body);
+  }
   getAllWithFilters(params?: string): Observable<IListResponse<IMassiveGood>> {
     return this.get<IListResponse<IMassiveGood>>(
       this.route.MassiveChargeGoods,
@@ -157,5 +159,9 @@ export class MassiveGoodService extends HttpService {
     formData.append('file', file);
     formData.append('vc_pantalla', vc_pantalla);
     return this.post(this.route.PupCargaCsv, formData);
+  }
+
+  createProgGoodMassive(data: Object) {
+    return this.post(this.route.MassiveProgGood, data);
   }
 }

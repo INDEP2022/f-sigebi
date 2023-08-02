@@ -80,7 +80,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       lotId: [null, Validators.required],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
-      recordDate: [new Date()],
+      recordDate: [null],
       referenceOri: [null, [Validators.pattern(STRING_PATTERN)]],
       dateOi: [null],
       entryOrderId: [null, Validators.pattern(NUMBERS_PATTERN)],
@@ -104,9 +104,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         code: this.data.code,
         type: this.data.type,
         result: this.data.result,
-        recordDate: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.recordDate)
-        ),
+        // recordDate: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.recordDate)
+        // ),
         referenceOri: this.data.referenceOri,
         // dateOi: secondFormatDateToDate2(
         //   this.returnParseDate_(this.data.dateOi)
@@ -146,7 +146,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   update() {
     const requestBody: any = {
       paymentId: this.data.paymentId,
-      reference: Number(this.form.value.reference),
+      reference: this.form.value.reference,
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
@@ -155,11 +155,12 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       lotId: this.form.value.lotId,
       type: this.form.value.type,
       result: this.form.value.result,
-      recordDate: this.form.value.recordDate,
+      // recordDate: this.form.value.recordDate,
       referenceOri: this.form.value.referenceOri,
       // dateOi: this.form.value.dateOi,
       entryOrderId: this.form.value.entryOrderId,
-      validSystem: this.form.value.validSystem,
+      validSystem:
+        this.form.value.validSystem == '' ? null : this.form.value.validSystem,
       description: this.form.value.description,
       branchOffice: this.form.value.branchOffice,
       // reconciled: this.form.value.reconciled,
