@@ -1,0 +1,72 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Comercializaci&oacute;n Origenes
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="formGroup">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <!-- <form-field
+            [control]="formGroup.get('usuario')"
+            label="Usuario">
+            <input
+              type="usuario"
+              class="form-control" maxlength="50"
+              formControlName="email" />
+          </form-field> -->
+          <ngx-select
+            [data]="dataUser"
+            bindLabel="description"
+            label="Usuario"
+            value="usuario"
+            (fetchItems)="getUsers($event)"
+            [form]="formGroup"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="usuario"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <!-- <form-field
+            [control]="formGroup.get('id_tipo_firmante')"
+            label="Tipo">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="200"
+              formControlName="id_tipo_firmante" />
+          </form-field> -->
+          <ngx-select
+            [data]="dataFirmType"
+            bindLabel="denomination"
+            label="Tipo Firmante"
+            value="signatoryType"
+            (fetchItems)="getFirmType($event)"
+            [form]="formGroup"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="id_tipo_firmante"></ngx-select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="formGroup.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
