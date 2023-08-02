@@ -370,6 +370,7 @@ export class ResponsibilityLettersReportComponent
       next: data => {
         this.loading = false;
         this.respLetter = data;
+        console.log(this.respLetter);
         this.respForm.get('paragraph1').setValue(this.respLetter.paragraph1);
         this.respForm.get('paragraph2').setValue(this.respLetter.paragraph2);
         this.respForm.get('paragraph3').setValue(this.respLetter.paragraph3);

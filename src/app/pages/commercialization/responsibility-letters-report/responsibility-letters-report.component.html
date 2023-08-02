@@ -99,7 +99,7 @@
                   </button> -->
                   <button
                     type="button"
-                    class="btn btn-info active btn-sm mr-3"
+                    class="btn btn-primary active btn-sm mr-3"
                     (click)="searchComer()">
                     Buscar Oficio
                     <i class="bx bx-search bx-sm float-icon"></i>
@@ -121,11 +121,11 @@
                         [control]="bienesLotesForm.get('evento')"
                         label="Evento">
                         <input
-                          [readonly]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="evento" />
+                          formControlName="evento"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -135,11 +135,11 @@
                         [control]="bienesLotesForm.get('descEvento')"
                         label="Descripción de Evento">
                         <input
-                          [readonly]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="descEvento" />
+                          formControlName="descEvento"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -149,11 +149,11 @@
                         [control]="bienesLotesForm.get('lote')"
                         label="Lote">
                         <input
-                          [disabled]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="lote" />
+                          formControlName="lote"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -163,11 +163,11 @@
                         [control]="bienesLotesForm.get('description')"
                         label="Descripción de Lote">
                         <input
-                          [disabled]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="description" />
+                          formControlName="description"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -179,9 +179,9 @@
                         <input
                           type="text"
                           maxlength="50"
-                          [disabled]="!validPermisos"
                           class="form-control"
-                          formControlName="oficio" />
+                          formControlName="oficio"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -193,9 +193,9 @@
                         <input
                           type="text"
                           maxlength="20"
-                          [disabled]="!validPermisos"
                           class="form-control"
-                          formControlName="factura" />
+                          formControlName="factura"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -207,15 +207,12 @@
                         <input
                           bsDatepicker
                           class="form-control"
-                          [disabled]="!validPermisos"
-                          formControlName="fechaFactura" />
+                          formControlName="fechaFactura"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
+
                   <div class="col-md-4 mt-2">
                     <div>
                       <form-field
@@ -361,12 +358,12 @@
                 <div class="card-body">
                   <form-field
                     class="col-md-12 col-sm-12 col-12 p-2"
-                    [control]="respForm.get('parrafo1')"
+                    [control]="respForm.get('paragraph1')"
                     label="P&aacute;rrafo 1">
                     <textarea
                       maxlength="500"
                       class="form-control text-justify"
-                      formControlName="parrafo1"
+                      formControlName="paragraph1"
                       rows="5"
                       readonly></textarea>
                   </form-field>
@@ -405,12 +402,12 @@
               <div class="card-body">
                 <form-field
                   class="col-md-12 col-sm-12 col-12 p-2"
-                  [control]="respForm.get('parrafo2')"
+                  [control]="respForm.get('paragraph2')"
                   label="P&aacute;rrafo 2">
                   <textarea
                     maxlength="500"
                     class="form-control text-justify"
-                    formControlName="parrafo2"
+                    formControlName="paragraph2"
                     rows="5"
                     readonly></textarea>
                 </form-field>
@@ -418,12 +415,12 @@
               <div class="card-body">
                 <form-field
                   class="col-md-12 col-sm-12 col-12 p-2"
-                  [control]="respForm.get('parrafo3')"
+                  [control]="respForm.get('paragraph3')"
                   label="P&aacute;rrafo 2">
                   <textarea
                     maxlength="500"
                     class="form-control text-justify"
-                    formControlName="parrafo3"
+                    formControlName="paragraph3"
                     rows="5"
                     readonly></textarea>
                 </form-field>
@@ -448,10 +445,10 @@
                         label="Descripción">
                         <input
                           type="text"
-                          [readonly]="!validPermisos"
                           class="form-control"
                           formControlName="description"
-                          maxlength="100" />
+                          maxlength="100"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
