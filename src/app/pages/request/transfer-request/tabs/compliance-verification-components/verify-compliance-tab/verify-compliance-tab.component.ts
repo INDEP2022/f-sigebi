@@ -631,6 +631,8 @@ export class VerifyComplianceTabComponent
         resp.data.map((item: any) => {
           const value = this.goodsSelected.filter((x: any) => x.id == item.id);
           item['selected'] = value.length == 0 ? false : true;
+
+          item.quantity = Number(item.quantity);
         });
 
         this.goodData.load(resp.data); //load  new LocalDataSource()
