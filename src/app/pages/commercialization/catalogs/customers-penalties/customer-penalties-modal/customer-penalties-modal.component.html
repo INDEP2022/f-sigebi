@@ -170,27 +170,25 @@
               "></i>
           </form-field>
         </div>
-      </div>
 
-      <div class="row mt-3">
         <div class="col-md-4">
           <form-field label="Lote Público" [control]="form.get('publicLot')">
             <input
               type="number"
               class="form-control"
-              [readonly]="edit"
               formControlName="publicLot"
               min="1"
               oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" />
           </form-field>
         </div>
+      </div>
 
+      <div class="row mt-3">
         <div class="col-md-4">
           <form-field label="Usuario" [control]="form.get('user')">
             <input
               type="text"
               class="form-control"
-              [readonly]="edit"
               formControlName="user"
               maxlength="30" />
           </form-field>
@@ -201,7 +199,6 @@
             <input
               type="text"
               class="form-control"
-              [readonly]="edit"
               formControlName="pFlag"
               maxlength="30" />
           </form-field>
