@@ -1,16 +1,19 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Generaci&oacute;n de Recibos Programación</h5>
+      <h5 class="title">
+        Generaci&oacute;n de Recibos Programación (Masivo por Excel)
+      </h5>
     </div>
   </div>
   <div body>
     <form [formGroup]="programmingForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-7">
-          <form-field
-            label="Ingresa la Programaci&oacute;n"
-            [control]="programmingForm.get('programmingId')">
+          <label class="title" for=""
+            >Ingrese la Programaci&oacute;n: <span class="color: red">*</span>
+          </label>
+          <form-field [control]="programmingForm.get('programmingId')">
             <input
               type="text"
               class="form-control"
@@ -40,7 +43,10 @@
     <hr />
     <form [formGroup]="receiptGenerationForm" class="form-material">
       <div class="row margin-input">
-        <h5 class="title">Selecciona la Operación</h5>
+        <label class="title" for=""
+          >Seleccione la Operación<span class="color: red">*</span>
+        </label>
+
         <div class="col-md-2">
           <form-radio label="Actualiza Información">
             <input
@@ -129,11 +135,9 @@
     </div>
     <div class="margin-input">
       <form [formGroup]="fileProgrammingForm" class="form-material">
-        <div class="col-md-12">
-          <label
-            for=""
-            style="font-size: 10px; font-weight: 600; color: #74788d"
-            >Selecciona el archivo a procesar (excel)</label
+        <div class="row pt-2 col-md-3">
+          <label class="title" for=""
+            >Seleccione el archivo a procesar (excel)</label
           >
           <form-field [control]="fileProgrammingForm.get('file')">
             <input
@@ -149,32 +153,31 @@
       
       <input type="file" (change)="chargeFile($event.target)" /> -->
     </div>
-    <div class="row" style="margin-left: 0%">
-      <div class="col-md-2 pt-4">
-        <button
-          type="submit"
-          class="btn btn-primary active btn-sm"
-          (click)="upload()"
-          [disabled]="!receiptGenerationForm.valid">
-          Cargar <i class="bx bx-send"></i>
-        </button>
-      </div>
-      <div class="col-md-4 pt-4">
-        <button
-          type="button"
-          class="btn btn-success active btn-sm"
-          [disabled]="!downloadResults"
-          (click)="goodsDownloadResults()">
-          Descargar Resultados <i class="bi bi-file-earmark-excel-fill"></i>
-        </button>
-      </div>
-      <div class="col-md-3 pt-4">
-        <button
-          class="btn btn-danger btn-sm active"
-          (click)="clearInsertOperation()">
-          Limpiar <i class="fas fa-eraser"> </i>
-        </button>
-      </div>
+
+    <div class="col-md-3 pt-5">
+      <button
+        type="submit"
+        class="btn btn-primary active btn-sm"
+        (click)="upload()"
+        [disabled]="!receiptGenerationForm.valid">
+        Cargar <i class="bx bx-send"></i>
+      </button>
+    </div>
+    <div class="col-md-3 pt-5">
+      <button
+        type="button"
+        class="btn btn-success active btn-sm"
+        [disabled]="!downloadResults"
+        (click)="goodsDownloadResults()">
+        Descargar Resultados <i class="bi bi-file-earmark-excel-fill"></i>
+      </button>
+    </div>
+    <div class="col-md-3 pt-5">
+      <button
+        class="btn btn-danger btn-sm active"
+        (click)="clearInsertOperation()">
+        Limpiar <i class="fas fa-eraser"> </i>
+      </button>
     </div>
     <hr />
     <div>
@@ -202,9 +205,26 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        Generaci&oacute;n de Recibos Programación (Individual)
+      </h5>
+    </div>
+  </div>
+
+  <div body>
+    <!-- ======================== -->
     <form [formGroup]="programmingForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-12">
+          <label class="title" for=""
+            >Seleccione el Bien: <span class="color: red">*</span>
+          </label>
           <form-field [control]="programmingForm.get('managementId')">
             <ngx-select
               (fetchItems)="programmingGoodReceipt($event)"
@@ -212,7 +232,6 @@
               [form]="programmingForm"
               value="id_bien"
               bindLabel="descripcion_bien"
-              label="No. Gesti&oacute;n"
               control="managementId"
               [labelTemplate]="goodLabel"
               [optionTemplate]="goodOption"
@@ -385,7 +404,7 @@
           Asignar Recibo
         </button>
         <button
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-info active btn-sm m-2"
           (click)="assignReceiptOne(1)"
           [disabled]="!indepForm.valid">
           Resguardo
@@ -397,13 +416,13 @@
           Almacén
         </button>
         <button
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-info active btn-sm m-2"
           (click)="reprogrammingOne()"
           [disabled]="!indepForm.valid">
           Reprogramaci&oacute;n
         </button>
         <button
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-danger active btn-sm m-2"
           (click)="cancellationOne()"
           [disabled]="!indepForm.valid">
           Cancelaci&oacute;n
@@ -455,11 +474,23 @@
       </form>
     </div>
     <hr />
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        Generaci&oacute;n de Recibos Programación (Múltiple)
+      </h5>
+    </div>
+  </div>
+
+  <div body>
     <app-receipt-tables
       [folio]="folio"
       [count]="count"
       [id_programacion]="id_programacion">
     </app-receipt-tables>
-    <!-- <app-receipt-tables [folio]="folio" [count]="count" [id_programacion]="id_programacion"></app-receipt-tables> -->
   </div>
 </app-card>

@@ -93,15 +93,25 @@ export class RequestRecordTabComponent
       this.typeOfTransfer = this.requestForm.controls['typeOfTransfer'].value;
       this.getTrans(this.typeOfTransfer);
     }
+    //debugger;
     //this.prepareForm();
     if (this.requestForm.controls['paperDate'].value != null) {
-      const paperDate = this.requestForm.controls['paperDate'].value;
-      this.bsPaperValue = new Date(paperDate);
+      const paperDate = this.parseDateNoOffset(
+        this.requestForm.controls['paperDate'].value
+      );
+      this.bsPaperValue = paperDate;
     }
 
-    // if (this.requestForm.controls['receptionDate'].value != null) {
-    //    this.bsPaperValue = new Date();
-    // }
+    if (this.requestForm.controls['receptionDate'].value == null) {
+      //this.bsPaperValue = new Date();
+      this.requestForm.controls['receptionDate'].setValue(
+        this.bsReceptionValue.toISOString()
+      );
+    } else {
+      this.bsReceptionValue = this.parseDateNoOffset(
+        this.requestForm.controls['receptionDate'].value
+      );
+    }
 
     //establecer el asunto
     if (this.requestForm.controls['affair'].value != null) {
@@ -442,5 +452,12 @@ export class RequestRecordTabComponent
       field = null;
     });
     this.requestForm.updateValueAndValidity();
+  }
+
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() + dateLocal.getTimezoneOffset() * 60 * 1000
+    );
   }
 }

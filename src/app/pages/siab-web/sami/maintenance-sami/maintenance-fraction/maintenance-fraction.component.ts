@@ -71,7 +71,7 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
   async update() {
     this.alertQuestion(
       'question',
-      'Se actualizará la fracción arancelaria',
+      'Se actualizará la FRACCIÓN ARANCELARIA',
       '¿Desea continuar?',
       'Continuar'
     ).then(async question => {
@@ -89,7 +89,7 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
           this.loader.load = false;
           this.alert(
             'error',
-            'Actualización de fracción arancelaria',
+            'Actualización de FRACCIÓN ARANCELARIA',
             'No realizada'
           );
           return;
@@ -107,14 +107,14 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
           this.loader.load = false;
           this.alert(
             'error',
-            'Actualización de fracción arancelaria',
+            'Actualización de FRACCIÓN ARANCELARIA',
             'No realizada'
           );
           return;
         } else {
           this.alert(
             'success',
-            'Actualización de fracción arancelaria',
+            'Actualización de FRACCIÓN ARANCELARIA',
             'Realizada exitosamente'
           );
           this.clear();

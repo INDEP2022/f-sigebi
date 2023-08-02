@@ -84,6 +84,7 @@ export class ClassificationAssetsTabComponent
   isGoodSelected: boolean = false;
   goodForClarifi: IGood[] = [];
   typeTransfer: string = '';
+  goodSaeModified: any = [];
 
   constructor(
     private goodService: GoodService,
@@ -112,6 +113,15 @@ export class ClassificationAssetsTabComponent
       ...this.columns.select,
       onComponentInitFunction: this.selectGood.bind(this),
     };*/
+    this.columns.descriptionGoodSae = {
+      ...this.columns.descriptionGoodSae,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setDescriptionGoodSae(data);
+        });
+      },
+    };
+
     this.initForm();
     this.request = this.requestObject.getRawValue();
     this.typeTransfer = this.request.typeOfTransfer;
@@ -571,5 +581,67 @@ export class ClassificationAssetsTabComponent
 
   selectRow(row?: any) {
     console.log('Información de la fila seleccionada, ', row);
+  }
+
+  setDescriptionGoodSae(descriptionInput: any) {
+    this.paragraphs['data'].map((item: any) => {
+      if (item.id === descriptionInput.data.id) {
+        item.descriptionGoodSae = descriptionInput.text;
+
+        this.addGoodModified(item);
+      }
+    });
+  }
+
+  addGoodModified(good: any) {
+    const index = this.goodSaeModified.indexOf(good);
+    if (index != -1) {
+      this.goodSaeModified[index] = good;
+      if (this.goodSaeModified[index].descriptionGoodSae == '') {
+        this.goodSaeModified[index].descriptionGoodSae = null;
+      }
+    } else {
+      this.goodSaeModified.push(good);
+    }
+  }
+
+  saveGoodSaeDescrip() {
+    if (this.goodSaeModified.length == 0) {
+      return;
+    }
+    this.loading = true;
+    this.goodSaeModified.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      const body: any = {
+        id: item.id,
+        goodId: item.goodId,
+        descriptionGoodSae: item.descriptionGoodSae,
+      };
+      const updateResult: any = await this.updateGood(body);
+      if (this.goodSaeModified.length == index) {
+        this.loading = false;
+        this.goodSaeModified = [];
+        this.onLoadToast('success', 'Bienes actualizados');
+      }
+    });
+  }
+
+  updateGood(good: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.update(good).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          this.loading = false;
+          this.onLoadToast(
+            'error',
+            'Ocurrio un problema al actualizar el bien',
+            `${error.message}`
+          );
+          reject('Ocurrio un problema al actualizar el bien');
+        },
+      });
+    });
   }
 }
