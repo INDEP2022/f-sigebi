@@ -10,24 +10,23 @@ export const CONSIGMENTS_GOODS_COLUMNS = {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
-      row.goodNumber?.description ?? '',
+      row.bienes?.description ?? '',
   },
   estatus: {
     title: 'Estatus',
     sort: false,
-    valuePrepareFunction: (empty: any, row: any) =>
-      row.goodNumber?.status ?? '',
+    valuePrepareFunction: (empty: any, row: any) => row.bienes?.status ?? '',
   },
   label_good: {
     title: 'Destino',
     sort: false,
     valuePrepareFunction: (value: any, row: any) =>
-      GOOD_LABELS[row?.goodNumber?.labelNumber] ?? 'INDEFINIDO',
+      GOOD_LABELS[row?.bienes?.labelNumber] ?? 'INDEFINIDO',
   },
-  transferNumber: {
+  transferente: {
     title: 'Mandato',
     sort: false,
-    valuePrepareFunction: (transfer: any) => transfer?.nameTransferent,
+    valuePrepareFunction: (transfer: any) => transfer?.key,
   },
   sold: {
     title: 'Vendido',

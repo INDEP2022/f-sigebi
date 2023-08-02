@@ -52,6 +52,7 @@ export const ASSETS_COLUMNS = {
     title: 'Cantidad de la Transferente',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => Number(value),
   },
   measureUnitLigie: {
     title: 'Unidad de Medida Ligie',

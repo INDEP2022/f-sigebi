@@ -107,7 +107,7 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.downloadDocument(
-            'TODOS_LOS_CLIENTES_PENALIZADOS',
+            'DETALLES_DE_CAPTURA',
             'excel',
             response.base64File
           );
