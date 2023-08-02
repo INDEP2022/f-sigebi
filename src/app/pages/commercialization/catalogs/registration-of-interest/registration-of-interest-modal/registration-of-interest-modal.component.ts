@@ -360,7 +360,7 @@ export class RegistrationOfInterestModalComponent
             this.loading = false;
             this.onLoadToast(
               'success',
-              'Registro de Interes',
+              'Registro de Interés',
               'Borrado Correctamente'
             );
             this.getExample();
