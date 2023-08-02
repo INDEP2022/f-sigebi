@@ -49,7 +49,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Captura de Gastos',
-            link: '/pages/commercialization/expense-capture',
+            link: '/pages/commercialization/expense-capture/M',
           },
           {
             label: 'Terceros comercializadores',
@@ -77,7 +77,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
+            link: '/pages/commercialization/expense-concepts/M',
           },
           {
             label: 'Delegar Permisos a Eventos',
@@ -175,7 +175,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Captura de Gastos',
-            link: '/pages/commercialization/expense-capture',
+            link: '/pages/commercialization/expense-capture/I',
           },
           {
             label: 'Consulta de bienes',
@@ -183,7 +183,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
+            link: '/pages/commercialization/expense-concepts/I',
           },
           {
             label: 'Delegar Permisos a Eventos',
