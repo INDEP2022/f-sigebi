@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -92,7 +93,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private genericService: GenericService,
     private excelService: ExcelService,
-    private receptionGoodService: ReceptionGoodService
+    private receptionGoodService: ReceptionGoodService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -532,8 +534,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
                         ''
                       );
-                      this.downloadResultsGoods = false;
-                      this.searchPrograming();
                     }, 1000);
                   })
                   .catch(error => {});
@@ -569,8 +569,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
                       ''
                     );
-                    this.downloadResultsGoods = false;
-                    this.searchPrograming();
                   }, 1000);
                 })
                 .catch(error => {});
@@ -610,8 +608,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
                       ''
                     );
-                    this.downloadResultsGoods = false;
-                    this.searchPrograming();
                   }, 1000);
                 })
                 .catch(error => {});
@@ -881,7 +877,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.UNIDAD_MEDIDA_SAE) {
         let unidadSae: any = '';
-        unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_TRASFERENTE);
+        unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
         if (unidadSae == '0') {
           good.unidad_medida_sae = '';
           good.observaciones =
@@ -1058,13 +1054,13 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         P_ESTADO_CONSERVACION_SAE: good.estado_conservacion_sae,
         P_ESTADO_FISICO_SAE: good.estado_fisico_sae,
         P_UNIDAD_MEDIDA_SAE:
-          good.unidad_medida_sae != '' ? good.unidad_medida_sae : ' ',
+          good.unidad_medida_sae != '' ? good.unidad_medida_sae : null,
         P_DESCRIPCION_BIEN_SAE:
           good.descripcion_bien_sae != undefined
             ? good.descripcion_bien_sae != ''
               ? good.descripcion_bien_sae
-              : ' '
-            : ' ',
+              : null
+            : null,
         P_ID_BIEN: good.id_bien,
         P_ID_PROGRAMACION: good.id_programacion,
         P_USUARIO_CREACION: localStorage.getItem('username'),
@@ -1161,62 +1157,76 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     return result;
   }
   dowloadGoods() {
-    this.goodsDownloadPrograming = [];
-    this.goods.forEach((element: any) => {
-      console.log(element);
-      if (element.guardado == 0) {
-        this.goodsDownloadPrograming.push({
-          ID: Number(element.id_recorrido),
-          ID_BIEN: Number(element.id_bien),
-          CLAVE_UNICA: element.clave_unica,
-          NO_EXPEDIENTE: element.no_expediente,
-          DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-          DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae_letra,
-          CANTIDAD_TRASFERENTE:
-            element.cantidad != null ? element.cantidad.toString() : '',
-          CANTIDAD_SAE:
-            element.cantidad_sae != null ? element.cantidad_sae.toString() : '',
-          UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida_letra,
-          UNIDAD_MEDIDA_SAE: element.unidad_medida_sae_letra,
-          ESTADO_FISICO_TRASFERENTE:
-            element.estado_fisico_letra != null
-              ? element.estado_fisico_letra.toString()
-              : '',
-          ESTADO_FISICO_SAE:
-            element.estado_conservacion_sae_letra != null
-              ? element.estado_conservacion_sae_letra.toString()
-              : '',
-          ESTADO_CONSERVACION_TRASFERENTE:
-            element.estado_conservacion_letra != null
-              ? element.estado_conservacion_letra.toString()
-              : '',
-          ESTADO_CONSERVACION_SAE:
-            element.estado_conservacion_sae_letra != null
-              ? element.estado_conservacion_sae_letra.toString()
-              : '',
-          DESTINO:
-            element.destino_letra != null
-              ? element.destino_letra.toString()
-              : '',
-          DESTINO_TRASFERENTE:
-            element.destino_transferente_letra != null
-              ? element.destino_transferente_letra.toString()
-              : '',
-          DESTINO_SAE:
-            element.destino_sae_letra != null
-              ? element.destino_sae_letra.toString()
-              : '',
-          ID_PROGRAMACION: element.id_programacion,
-        });
-      }
-    });
-    console.log(this.goodsDownloadPrograming);
-    const filename: string =
-      'Bienes de la Programación ' +
-      this.programmingForm.controls['programmingId'].value;
-    this.excelService.export(this.goodsDownloadPrograming, {
-      type: 'xlsx',
-      filename,
+    // this.goodsDownloadPrograming = [];
+    // this.goods.forEach((element: any) => {
+    //   console.log(element);
+    //   if (element.guardado == 0) {
+    //     this.goodsDownloadPrograming.push({
+    //       ID: Number(element.id_recorrido),
+    //       ID_BIEN: Number(element.id_bien),
+    //       CLAVE_UNICA: element.clave_unica,
+    //       NO_EXPEDIENTE: element.no_expediente,
+    //       DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
+    //       DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae_letra,
+    //       CANTIDAD_TRASFERENTE:
+    //         element.cantidad != null ? element.cantidad.toString() : '',
+    //       CANTIDAD_SAE:
+    //         element.cantidad_sae != null ? element.cantidad_sae.toString() : '',
+    //       UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida_letra,
+    //       UNIDAD_MEDIDA_SAE: element.unidad_medida_sae_letra,
+    //       ESTADO_FISICO_TRASFERENTE:
+    //         element.estado_fisico_letra != null
+    //           ? element.estado_fisico_letra.toString()
+    //           : '',
+    //       ESTADO_FISICO_SAE:
+    //         element.estado_conservacion_sae_letra != null
+    //           ? element.estado_conservacion_sae_letra.toString()
+    //           : '',
+    //       ESTADO_CONSERVACION_TRASFERENTE:
+    //         element.estado_conservacion_letra != null
+    //           ? element.estado_conservacion_letra.toString()
+    //           : '',
+    //       ESTADO_CONSERVACION_SAE:
+    //         element.estado_conservacion_sae_letra != null
+    //           ? element.estado_conservacion_sae_letra.toString()
+    //           : '',
+    //       DESTINO:
+    //         element.destino_letra != null
+    //           ? element.destino_letra.toString()
+    //           : '',
+    //       DESTINO_TRASFERENTE:
+    //         element.destino_transferente_letra != null
+    //           ? element.destino_transferente_letra.toString()
+    //           : '',
+    //       DESTINO_SAE:
+    //         element.destino_sae_letra != null
+    //           ? element.destino_sae_letra.toString()
+    //           : '',
+    //       ID_PROGRAMACION: element.id_programacion,
+    //     });
+    //   }
+    // });
+    // console.log(this.goodsDownloadPrograming);
+    // const filename: string =
+    //   'Bienes de la Programación ' +
+    //   this.programmingForm.controls['programmingId'].value;
+    // this.excelService.export(this.goodsDownloadPrograming, {
+    //   type: 'xlsx',
+    //   filename,
+    // });
+    let data = {
+      programmingId: this.programmingForm.controls['programmingId'].value,
+    };
+    this.loader.load = true;
+    this.massiveGoodService.postGoodsSchedules(data).subscribe({
+      next: response => {
+        console.log(response);
+        this._downloadExcelFromBase64(response.base64File, response.nameFile);
+        this.loader.load = false;
+      },
+      error: eror => {
+        this.loader.load = false;
+      },
     });
   }
   goodsDownloadResults() {
