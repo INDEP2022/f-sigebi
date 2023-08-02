@@ -52,7 +52,8 @@
             </div>-->
             <app-columns-select
               [(settings)]="settings"
-              [leftList]="true"></app-columns-select>
+              [leftList]="true"
+              [defaultColumns]="2"></app-columns-select>
           </div>
         </div>
         <div [class]="loading ? 'table-loading' : ''">
@@ -61,11 +62,45 @@
             [settings]="settings"
             [source]="data"
             (edit)="openForm($event.data)"
-            (delete)="deleteEvent($event.data.id.id)"
             (rowSelect)="changeEvent($event)">
           </ng2-smart-table>
           <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>
+        </div>
+      </div>
+
+      <div class="col-md-6" *ngIf="rowTypeProcess">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Procesos</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+            <div>
+              <button
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm()"
+                *ngIf="totalItems1 < 1">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+            <app-columns-select
+              [(settings)]="settings2"
+              [leftList]="true"></app-columns-select>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="settings2"
+            [source]="data1"
+            (delete)="showDeleteAlert($event)"
+            (edit)="openForm($event)"></ng2-smart-table>
+          <!--<app-pagination
+            [params]="params1"
+            [totalItems]="totalItems1"></app-pagination>-->
         </div>
       </div>
 

@@ -44,4 +44,11 @@ export class CapturelineService extends HttpService {
       params
     );
   }
+
+  //http://sigebimstest.indep.gob.mx/captureline/api/v1/comer-detcapturelines/filterExcel?filter.eventId=$eq:3435
+  getAllDetCaptureLinesExport(captureLinesId: number | string) {
+    return this.get<any>(
+      `comer-detcapturelines/filterExcel?filter.eventId=$eq:${captureLinesId}`
+    );
+  }
 }
