@@ -460,7 +460,17 @@ export class GoodService extends HttpService {
     return this.post<any>('good/pupValidMasiv2', body);
   }
 
-  chargeGoods(body: IGoodCharge){
-    return this.post<any>('good/charge-goods', body)
+  getRegistrosProgramados(params: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodEndpoints.TmpTotGoodsProgrammed,
+      params
+    );
+  }
+  chargeGoods(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods', body);
+  }
+
+  chargeGoodsExcel(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods-excel', body);
   }
 }

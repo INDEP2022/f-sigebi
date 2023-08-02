@@ -140,7 +140,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
-        console.log('usuarios', resp);
         resp.data.map((item: any) => {
           item['fullName'] = item.firstName + ' ' + item.lastName;
         });

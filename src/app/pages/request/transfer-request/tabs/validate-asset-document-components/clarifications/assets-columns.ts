@@ -1,3 +1,5 @@
+import { SaeInputComponent } from '../../compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
+
 export const ASSETS_COLUMNS = {
   /*selected: {
     title: '',
@@ -21,9 +23,18 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  descriptionGoodSae: {
+  /* descriptionGoodSae: {
     title: 'Descripción de Bien INDEP',
     type: 'string',
+    sort: false,
+  }, */
+  descriptionGoodSae: {
+    title: 'Descripción Bien INDEP',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: SaeInputComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   descriptionRelevantType: {
@@ -43,7 +54,7 @@ export const ASSETS_COLUMNS = {
     sort: false,
   },
   measureUnitLigie: {
-    title: 'Unidad de Medida Ligia',
+    title: 'Unidad de Medida Ligie',
     type: 'string',
     sort: false,
   },

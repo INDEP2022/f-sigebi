@@ -20,6 +20,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerDirectInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-detinvoice.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { ComerRectInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-rectinvoice.service';
@@ -27,6 +28,7 @@ import { ParameterModService } from 'src/app/core/services/ms-parametercomer/par
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ComerRediModalComponent } from '../comer-redi-modal/comer-redi-modal.component';
 import { NewImageModalComponent } from '../new-image-modal/new-image-modal.component';
 import { REDICET_FACTURAS } from './columna';
 
@@ -52,6 +54,8 @@ export class InvoiceRectificationProcessComponent
     PDIRECCION: 'M',
   };
   totalItems: number = 0;
+  loadingSearch: boolean = false;
+  isSearch: boolean = false;
 
   constructor(
     private modalRef: BsModalRef,
@@ -65,7 +69,8 @@ export class InvoiceRectificationProcessComponent
     private datePipe: DatePipe,
     private parameterComer: ParameterModService,
     private authService: AuthService,
-    private comerInvoiceService: ComerInvoiceService
+    private comerInvoiceService: ComerInvoiceService,
+    private jasperService: SiabService
   ) {
     super();
 
@@ -96,6 +101,16 @@ export class InvoiceRectificationProcessComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
+          const { jobNot } = this.form.value;
+
+          if (!jobNot) {
+            this.alert(
+              'warning',
+              'Detalle Factura',
+              'Ingrese un Número de Oficio'
+            );
+            return;
+          }
           let filters = change.filter.filters;
           filters.map((filter: any) => {
             let field = '';
@@ -173,7 +188,7 @@ export class InvoiceRectificationProcessComponent
       params['filter.expDate'] = `${SearchFilter.EQ}:${
         typeof expDate == 'string'
           ? expDate.split('/').reverse().join('-')
-          : expDate
+          : this.datePipe.transform(expDate, 'yyyy-MM-dd')
       }`;
     if (series) params['filter.series'] = `${SearchFilter.ILIKE}:${series}`;
     if (Invoice) params['filter.Invoice'] = `${SearchFilter.EQ}:${Invoice}`;
@@ -186,7 +201,7 @@ export class InvoiceRectificationProcessComponent
       params[
         'filter.inrepresentation'
       ] = `${SearchFilter.ILIKE}:${inrepresentation}`;
-
+    this.loadingSearch = true;
     this.getComerRectInovice(params);
   }
 
@@ -198,7 +213,6 @@ export class InvoiceRectificationProcessComponent
     };
     this.comerDirectInovice.getAll(params).subscribe({
       next: resp => {
-        console.log(resp);
         this.dataFilter.load(resp.data);
         this.dataFilter.refresh();
         this.totalItems = resp.count;
@@ -216,6 +230,8 @@ export class InvoiceRectificationProcessComponent
   getComerRectInovice(params?: ListParams) {
     this.comerRectInoviceService.getAll(params).subscribe({
       next: resp => {
+        this.loadingSearch = false;
+        this.isSearch = true;
         const rectInvoice = resp.data[0];
 
         rectInvoice.expDate = rectInvoice.expDate
@@ -225,43 +241,103 @@ export class InvoiceRectificationProcessComponent
           ? rectInvoice.attentionDate.split('-').reverse().join('/')
           : '';
 
+        const fecha = rectInvoice.hourAttention
+          ? rectInvoice.hourAttention.split(' ')
+          : null;
+
+        rectInvoice.hourAttention = rectInvoice.hourAttention
+          ? `${fecha[0].split('-').reverse().join('/')} ${fecha[1]}`
+          : null;
+
         this.form.patchValue(rectInvoice);
         this.paramsList.getValue()[
           'filter.notJob'
         ] = `${SearchFilter.EQ}:${rectInvoice.jobNot}`;
         this.getComerDirectInvoice();
       },
-      error: err => {},
+      error: err => {
+        this.loadingSearch = false;
+        this.alert('error', 'Error', 'No se encontraron resultados');
+      },
     });
   }
 
+  parseDateNoOffset(date: string | Date): Date {
+    const dateLocal = new Date(date);
+    return new Date(
+      dateLocal.valueOf() - dateLocal.getTimezoneOffset() * 60 * 1000
+    );
+  }
+
   saveData() {
-    this.setYear();
+    if (!this.isSearch) this.setYear();
 
     const saveData = this.form.value;
 
     saveData.expDate =
       typeof saveData.expDate == 'string'
         ? saveData.expDate.split('/').reverse().join('-')
-        : saveData.expDate;
+        : this.datePipe.transform(saveData.expDate, 'yyyy-MM-dd');
     saveData.attentionDate =
       typeof saveData.attentionDate == 'string'
         ? saveData.attentionDate.split('/').reverse().join('-')
-        : saveData.attentionDate;
-    delete saveData.hourAttention;
-    this.comerRectInoviceService.create(saveData).subscribe({
-      next: () => {},
-      error: err => {
-        this.alert('error', 'Error', err.error.message);
-      },
-    });
+        : this.datePipe.transform(saveData.attentionDate, 'yyyy-MM-dd');
+
+    if (this.isSearch) {
+      if (typeof saveData.hourAttention == 'string') {
+        const fecha = saveData.hourAttention.split(' ');
+        saveData.hourAttention = `${fecha[0].split('/').reverse().join('-')} ${
+          fecha[1]
+        }`;
+      } else {
+        saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+      }
+
+      this.comerRectInoviceService.update(saveData).subscribe({
+        next: () => {
+          this.alert(
+            'success',
+            'Rectificación de Factura',
+            'Actualizado correctamente'
+          );
+        },
+        error: err => {
+          this.alert('error', 'Error', err.error.message);
+        },
+      });
+    } else {
+      if (typeof saveData.hourAttention == 'string') {
+        const fecha = saveData.hourAttention.split(' ');
+        saveData.hourAttention = `${fecha[0].split('/').reverse().join('-')} ${
+          fecha[1]
+        }`;
+      } else {
+        saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+      }
+
+      this.comerRectInoviceService.create(saveData).subscribe({
+        next: () => {
+          this.alert(
+            'success',
+            'Rectificación de Factura',
+            'Creado correctamente'
+          );
+        },
+        error: err => {
+          this.alert('error', 'Error', err.error.message);
+        },
+      });
+    }
   }
 
   setYear() {
     const { expDate } = this.form.value;
-    let year = expDate
-      ? Number(this.datePipe.transform(expDate, 'yyyy'))
-      : null;
+    let year =
+      typeof expDate == 'string'
+        ? Number(expDate.split('/')[2])
+        : expDate
+        ? Number(this.datePipe.transform(expDate, 'yyyy'))
+        : null;
     this.form.get('year').patchValue(year);
   }
 
@@ -312,7 +388,7 @@ export class InvoiceRectificationProcessComponent
   private prepareForm() {
     this.form = this.fb.group({
       Invoice: [null],
-      InvoiceAttention: [null],
+      InvoiceAttention: [null, Validators.pattern(STRING_PATTERN)],
       attentionDate: [null, Validators.pattern(STRING_PATTERN)],
       billDate: [null],
       billId: [null],
@@ -321,14 +397,17 @@ export class InvoiceRectificationProcessComponent
       elaborates: [null],
       eventId: [null],
       expDate: [null, Validators.required],
-      hourAttention: ['12:00'],
+      hourAttention: [
+        `${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`,
+        Validators.required,
+      ],
       inrepresentation: [null, Validators.pattern(STRING_PATTERN)],
       issues: [null],
       jobNot: [null, Validators.required],
       jobpriceNot: [null],
       lastnameMat: [null, Validators.pattern(STRING_PATTERN)],
       lastnamePat: [null, Validators.pattern(STRING_PATTERN)],
-      name: [null, Validators.pattern(STRING_PATTERN)],
+      name: [null],
       nbOrigin: [null],
       origin: [null],
       paragraph1: [null, Validators.pattern(STRING_PATTERN)],
@@ -345,6 +424,10 @@ export class InvoiceRectificationProcessComponent
     this.dataFilter.load([]);
     this.dataFilter.refresh();
     this.totalItems = 0;
+    this.isSearch = false;
+    this.form.get('hourAttention').patchValue(`
+    ${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00
+    `);
   }
 
   cleanData() {
@@ -352,6 +435,10 @@ export class InvoiceRectificationProcessComponent
     this.dataFilter.load([]);
     this.dataFilter.refresh();
     this.totalItems = 0;
+    this.isSearch = false;
+    this.form.get('hourAttention').patchValue(`
+    ${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00
+    `);
   }
 
   openModal(): void {
@@ -364,23 +451,35 @@ export class InvoiceRectificationProcessComponent
   openForm(data: any) {}
 
   openPrevPdf() {
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }
+    const { jobNot } = this.form.value;
 
-  remove(data: any) {}
+    if (!jobNot) {
+      this.alert('error', 'Error', 'Ingrese un Número de Oficio');
+      return;
+    }
+
+    this.jasperService.fetchReportBlank('blank').subscribe({
+      next: resp => {
+        const blob = new Blob([resp], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config: ModalOptions = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              console.log(data);
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+      error: () => {},
+    });
+  }
 
   postChangeFolio() {
     const { name, series, Invoice } = this.form.value;
@@ -405,7 +504,7 @@ export class InvoiceRectificationProcessComponent
         let date = data.impressionDate ?? null;
 
         if (date) {
-          date = data.split('-').reverse().join('/');
+          date = date.split('-').reverse().join('/');
         }
 
         this.form.get('billDate').patchValue(date);
@@ -433,35 +532,103 @@ export class InvoiceRectificationProcessComponent
     }
   }
 
-  async setParaghrapAll() {
+  async setParaghrapAll(val: any) {
+    if (!val) return;
+
+    const {
+      attentionDate,
+      hourAttention,
+      inrepresentation,
+      name,
+      lastnameMat,
+      lastnamePat,
+      InvoiceAttention,
+      series,
+      Invoice,
+      billDate,
+    } = this.form.value;
     let AUX_FECHA: string,
       AUX_CADENA: string,
       CADENA: string,
       AUX_INTERESADO: string,
-      AUX_FECHAFACT: string;
+      AUX_FECHAFACT: string,
+      AUX_HORA: string;
+
+    if (!attentionDate) return;
 
     const parr1 = await this.getValor('PARRAFO1_REF');
     const parr3 = await this.getValor('PARRAFO3_REF');
     const parr4 = await this.getValor('PARRAFO4_REF');
 
-    //   AUX_FECHA:= ARMA_FECHA(: COMER_RECTFACTURAS.FECHA_ATENCION);
-    //   CADENA:= REPLACE(AUX_CADENA, '&DIA', AUX_FECHA);
-    //   AUX_HORA:= ARMA_HORA(: COMER_RECTFACTURAS.HORA_ATENCION);
-    //   CADENA:= REPLACE(CADENA, '&HORA', AUX_HORA);
-    //   AUX_INTERESADO:= ARMA_INTERESADO(: COMER_RECTFACTURAS.NOMBRE, : COMER_RECTFACTURAS.APELLIDO_PAT, : COMER_RECTFACTURAS.APELLIDO_MAT,
-    // 									: COMER_RECTFACTURAS.ENREPRESENTACION);
-    //   CADENA:= REPLACE(CADENA, '&INTERESADO', AUX_INTERESADO);
-    //   CADENA:= REPLACE(CADENA, '&FOLIO',: COMER_RECTFACTURAS.FOLIO_ATENCION);
-    //   CADENA:= REPLACE(CADENA, '&SERIE',: COMER_RECTFACTURAS.SERIE);
-    //   CADENA:= REPLACE(CADENA, '&NOFACT',: COMER_RECTFACTURAS.FOLIO);
-    //   AUX_FECHAFACT:= ARMA_FECHA(: COMER_RECTFACTURAS.FECHA_FACTURA);
-    //   CADENA:= REPLACE(CADENA, '&FECHAFACT', AUX_FECHAFACT);
-    // : COMER_RECTFACTURAS.PARRAFO1 := CADENA;
+    let date = this.datePipe.transform(attentionDate, 'yyyy/MM/dd');
+
+    const day = Number(date.split('/')[2]);
+    const month = Number(date.split('/')[1]);
+    const year = Number(date.split('/')[0]);
+
+    const months = [
+      'ENERO',
+      'FEBRERO',
+      'MARZO',
+      'ABRIL',
+      'MAYO',
+      'JUNIO',
+      'JULIO',
+      'AGOSTO',
+      'SEPTIEMBRE',
+      'OCTUBRE',
+      'NOVIEMBRE',
+      'DICIEMBRE',
+    ];
+    AUX_CADENA = parr1;
+    AUX_FECHA = `${day} de ${months[Number(month - 1)]} del ${year}`;
+    CADENA = AUX_CADENA.replace('&DIA', AUX_FECHA);
+
+    AUX_HORA =
+      typeof hourAttention == 'string'
+        ? this.datePipe.transform(
+            new Date(
+              `${hourAttention.split(' ')[0].split('/').reverse().join('-')} ${
+                hourAttention.split(' ')[1]
+              }`
+            ),
+            'h:mm a'
+          ) //hourAttention.split(' ')[1]
+        : this.datePipe.transform(hourAttention, 'h:mm a');
+    CADENA = CADENA.replace('&HORA', AUX_HORA);
+
+    let interesado: string = '';
+
+    if (inrepresentation) {
+      interesado = `${inrepresentation ?? ''} EN REPRESENTACION DE ${
+        name ?? ''
+      } ${lastnamePat ?? ''} ${lastnameMat ?? ''}`;
+    } else {
+      interesado = `${name ?? ''} ${lastnamePat ?? ''} ${lastnameMat ?? ''}`;
+    }
+    interesado = interesado.trim();
+
+    AUX_INTERESADO = interesado;
+    CADENA = CADENA.replace('&INTERESADO', AUX_INTERESADO);
+    CADENA = CADENA.replace('&FOLIO', InvoiceAttention ?? '');
+    CADENA = CADENA.replace('&SERIE', series ?? '');
+    CADENA = CADENA.replace('&NOFACT', Invoice ?? '');
+
+    const year2 = billDate ? Number(billDate.split('/')[2]) : null;
+    const month2 = billDate ? Number(billDate.split('/')[1]) : null;
+    const day2 = billDate ? Number(billDate.split('/')[0]) : null;
+
+    AUX_FECHAFACT = billDate
+      ? `${day2} de ${months[Number(month2 - 1)]} de ${year2}`
+      : '';
+    CADENA = CADENA.replace('&FECHAFACT', billDate ? AUX_FECHAFACT : '');
+
+    this.form.get('paragraph1').patchValue(CADENA);
+    this.form.get('paragraph3').patchValue(parr3);
+    this.form.get('paragraph4').patchValue(parr4);
   }
 
   async getValor(param: string) {
-    console.log(param);
-
     const filter = new ListParams();
     filter['filter.parameter'] = `${SearchFilter.EQ}:${param}`;
     return firstValueFrom(
@@ -470,5 +637,67 @@ export class InvoiceRectificationProcessComponent
         catchError(() => of(null))
       )
     );
+  }
+
+  openModalSeparate(context?: any) {
+    const { jobNot } = this.form.value;
+
+    if (!jobNot) {
+      this.alert('error', 'Error', 'Ingrese un número de oficio');
+      return;
+    }
+
+    let config: ModalOptions = {
+      initialState: {
+        allotment: context,
+        factura: this.form.value,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getComerDirectInvoice();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ComerRediModalComponent, config);
+  }
+
+  remove(data: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea Eliminar este registro?'
+    ).then(answ => {
+      if (answ.isConfirmed) {
+        this.comerDirectInovice
+          .remove({ year: data.year, row: data.row, notJob: data.notJob })
+          .subscribe({
+            next: () => {
+              this.alert(
+                'success',
+                'Detalle Facturación',
+                'Eliminado Correctamente'
+              );
+              this.getComerDirectInvoice();
+            },
+            error: err => {
+              if (err.status == 500) {
+                if (
+                  err.error.message.includes('violates foreign key constraint')
+                ) {
+                  this.alert(
+                    'error',
+                    'Error',
+                    'Debe eliminar las relaciones de este detalle facturación'
+                  );
+                  return;
+                }
+              }
+              this.alert('error', 'Error', err.error.message);
+            },
+          });
+      }
+    });
   }
 }

@@ -4,6 +4,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
+import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
+import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
+import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   CURP_PATTERN,
@@ -14,15 +18,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
-//Models
-import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
-import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
-
-//Services
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
-import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
-import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 
 @Component({
   selector: 'app-customers-modal',
@@ -47,23 +42,27 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private customerService: CustomerService,
-    private penaltyService: TPenaltyService,
-    private clientPenaltyService: ClientPenaltyService
+    private penaltyService: TPenaltyService
   ) {
     super();
     this.today = new Date();
   }
 
   ngOnInit(): void {
+    console.log('Customers ', this.customers);
     this.prepareForm();
-    this.agentId = this.customerForm.value.agentId?.id;
-    this.penaltyId = this.customerForm.value.penaltyId?.penaltyId;
-    this.userFree = this.customerForm.value.userFree?.id;
+    this.agentId = this.customers.agentId?.id;
+    this.penaltyId = this.customers.penaltyId?.penaltyId;
+    this.userFree = this.customers.userFree?.id;
+    console.log(this.agentId);
+    console.log(this.penaltyId);
+    console.log(this.userFree);
     this.customerForm.patchValue({
       agentId: this.agentId,
       penaltyId: this.penaltyId,
       userFree: this.userFree,
     });
+    console.log(this.customerForm);
   }
 
   private prepareForm() {
@@ -160,11 +159,11 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       penaltyId: [
         null,
         [Validators.maxLength(20), Validators.pattern(NUMBERS_PATTERN)],
-      ], //Llave
+      ],
       sellerId: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
-      ], //LLave
+      ],
       approvedRfc: [
         null,
         [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
@@ -172,7 +171,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       userFree: [
         null,
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
-      ], //Lave
+      ],
       freeDate: [null, [Validators.pattern(STRING_PATTERN)]],
       economicAgreementKey: [
         null,
@@ -225,48 +224,85 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     if (this.customers != null) {
       this.edit = true;
       this.customerForm.patchValue(this.customers);
+      console.log(this.customerForm.get('releaseDate').value);
+      console.log(this.customerForm.get('blackListDate').value);
+      console.log(this.customerForm.get('freeDate').value);
+      console.log(this.customerForm.get('penaltyInitDate').value);
+      console.log(this.customerForm.get('penaltyEndDate').value);
 
-      const dbReleaseDate = this.customerForm.get('releaseDate').value;
-      const dbBlackListDate = this.customerForm.get('blackListDate').value;
-      const dbFreeDate = this.customerForm.get('freeDate').value;
-      const dbPenaltyInitDate = this.customerForm.get('penaltyInitDate').value;
-      const dbPenaltyEndDate = this.customerForm.get('penaltyEndDate').value;
+      if (this.customerForm.get('releaseDate').value === null) {
+        this.customerForm.get('releaseDate').value.reset();
+      } else {
+        const dbReleaseDate = this.customerForm.get('releaseDate').value;
+        const formattedDate1 = formatDate(dbReleaseDate, 'dd/MM/yyyy', 'en-US');
+        this.customerForm.get('releaseDate').setValue(formattedDate1);
+        this.customerForm
+          .get('releaseDate')
+          .setValue(this.addDays(new Date(dbReleaseDate), 1));
+        console.log(this.customerForm.get('releaseDate').value);
+      }
 
-      const formattedDate1 = formatDate(dbReleaseDate, 'dd/MM/yyyy', 'en-US');
-      const formattedDate2 = formatDate(dbBlackListDate, 'dd/MM/yyyy', 'en-US');
-      const formattedDate3 = formatDate(dbFreeDate, 'dd/MM/yyyy', 'en-US');
-      const formattedDate4 = formatDate(
-        dbPenaltyInitDate,
-        'dd/MM/yyyy',
-        'en-US'
-      );
-      const formattedDate5 = formatDate(
-        dbPenaltyEndDate,
-        'dd/MM/yyyy',
-        'en-US'
-      );
+      if (this.customerForm.get('blackListDate').value === null) {
+        this.customerForm.get('blackListDate').value.reset();
+      } else {
+        const dbBlackListDate = this.customerForm.get('blackListDate').value;
+        const formattedDate2 = formatDate(
+          dbBlackListDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.customerForm.get('blackListDate').setValue(formattedDate2);
+        this.customerForm
+          .get('blackListDate')
+          .setValue(this.addDays(new Date(dbBlackListDate), 1));
+        console.log(this.customerForm.get('blackListDate').value);
+        console.log(formattedDate2);
+      }
 
-      this.customerForm.get('releaseDate').setValue(formattedDate1);
-      this.customerForm.get('blackListDate').setValue(formattedDate2);
-      this.customerForm.get('freeDate').setValue(formattedDate3);
-      this.customerForm.get('penaltyInitDate').setValue(formattedDate4);
-      this.customerForm.get('penaltyEndDate').setValue(formattedDate5);
+      if (this.customerForm.get('freeDate').value === null) {
+        this.customerForm.get('freeDate').value.reset();
+      } else {
+        const dbFreeDate = this.customerForm.get('freeDate').value;
+        const formattedDate3 = formatDate(dbFreeDate, 'dd/MM/yyyy', 'en-US');
+        this.customerForm.get('freeDate').setValue(formattedDate3);
+        this.customerForm
+          .get('freeDate')
+          .setValue(this.addDays(new Date(dbFreeDate), 1));
+        console.log(this.customerForm.get('freeDate').value);
+      }
 
-      this.customerForm
-        .get('releaseDate')
-        .setValue(this.addDays(new Date(dbReleaseDate), 1));
-      this.customerForm
-        .get('blackListDate')
-        .setValue(this.addDays(new Date(dbBlackListDate), 1));
-      this.customerForm
-        .get('freeDate')
-        .setValue(this.addDays(new Date(dbFreeDate), 1));
-      this.customerForm
-        .get('penaltyInitDate')
-        .setValue(this.addDays(new Date(dbPenaltyInitDate), 1));
-      this.customerForm
-        .get('penaltyEndDate')
-        .setValue(this.addDays(new Date(dbPenaltyEndDate), 1));
+      if (this.customerForm.get('penaltyInitDate').value === null) {
+        this.customerForm.get('penaltyInitDate').value.reset();
+      } else {
+        const dbPenaltyInitDate =
+          this.customerForm.get('penaltyInitDate').value;
+        const formattedDate4 = formatDate(
+          dbPenaltyInitDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.customerForm.get('penaltyInitDate').setValue(formattedDate4);
+        this.customerForm
+          .get('penaltyInitDate')
+          .setValue(this.addDays(new Date(dbPenaltyInitDate), 1));
+        console.log(this.customerForm.get('penaltyInitDate').value);
+      }
+
+      if (this.customerForm.get('penaltyEndDate').value === null) {
+        this.customerForm.get('penaltyEndDate').value.reset();
+      } else {
+        const dbPenaltyEndDate = this.customerForm.get('penaltyEndDate').value;
+        const formattedDate5 = formatDate(
+          dbPenaltyEndDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.customerForm.get('penaltyEndDate').setValue(formattedDate5);
+        this.customerForm
+          .get('penaltyEndDate')
+          .setValue(this.addDays(new Date(dbPenaltyEndDate), 1));
+        console.log(this.customerForm.get('penaltyEndDate').value);
+      }
     }
   }
 
@@ -289,6 +325,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.loading = true;
     const model: ICustomer = {
       agentId: this.customerForm.get('agentId').value,
       approvedRfc: this.customerForm.get('approvedRfc').value,
@@ -356,13 +393,19 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     this.customerService.updateCustomers(this.customers.id, model).subscribe({
       next: data => {
         this.handleSuccess(), this.modalRef.hide();
+        console.log('bien');
+        this.loading = true;
       },
       error: (error: any) => {
         this.alert('warning', `No es Posible Actualizar el Cliente`, '');
         this.modalRef.hide();
+        console.log('mal');
+        this.loading = false;
       },
     });
     this.modalRef.hide();
+    console.log('neutro');
+    this.loading = true;
   }
 
   convertDateFormat(inputDate: string | Date): string {
@@ -403,9 +446,10 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente Actualizado(a)'
-      : 'Cliente Creado(a)';
+      ? 'Cliente Actualizado'
+      : 'Cliente Creado';
     this.alert('success', `${message} Correctamente`, '');
+    this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

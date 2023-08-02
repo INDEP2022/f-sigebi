@@ -28,6 +28,7 @@ export const COLUMNS = {
     title: 'Dirección',
     type: 'string',
     sort: false,
+    filter: false,
     class: 'w-md',
     editor: {
       type: 'list',
@@ -40,7 +41,7 @@ export const COLUMNS = {
           { value: 'GENERAL', title: 'GENERAL' },
           { value: 'VIGILANCIA', title: 'VIGILANCIA' },
           { value: 'SEGUROS', title: 'SEGUROS' },
-          { value: 'JURIDICO', title: 'JURIDICO' },
+          { value: 'JURIDICO', title: 'JURÍDICO' },
           { value: 'ADMINISTRACIÓN', title: 'ADMINISTRACIÓN' },
         ],
       },
@@ -69,7 +70,7 @@ export const COLUMNS = {
     sort: false,
   },
   numerary: {
-    title: 'Afecta Num.',
+    title: 'Afecta No.',
     type: 'custom',
     sort: false,
     renderComponent: CheckboxDisabledElementComponent,

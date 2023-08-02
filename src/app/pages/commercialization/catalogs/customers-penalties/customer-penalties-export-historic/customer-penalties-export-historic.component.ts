@@ -37,7 +37,6 @@ export class CustomersPenaltiesExportHistoricComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log(this.iHistoryCustomersPenalties);
   }
 
   private prepareForm() {

@@ -150,7 +150,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         'Confirmación',
-        '¿Desea agregar los usuarios a la programación?'
+        '¿Desea agregar los usuarios a la Programación?'
       ).then(question => {
         if (question.isConfirmed) {
           let count: number = 0;

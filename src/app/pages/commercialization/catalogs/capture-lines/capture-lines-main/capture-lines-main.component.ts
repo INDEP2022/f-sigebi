@@ -49,7 +49,7 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'customerBmx':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'userCreated':
                 searchFilter = SearchFilter.ILIKE;

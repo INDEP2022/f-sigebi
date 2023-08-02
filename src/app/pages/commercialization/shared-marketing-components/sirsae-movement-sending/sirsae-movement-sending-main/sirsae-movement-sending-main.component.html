@@ -22,7 +22,7 @@
                 </ngx-select>
               </form-field>
             </div>
-            <div class="col-sm-6 col-md-6">
+            <div class="col-sm-4 col-md-4">
               <form-field
                 [control]="form.get('description')"
                 label="Descripción">
@@ -39,7 +39,7 @@
             </div>
             <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
-                [disabled]="!eventSelected"
+                [disabled]="!eventSelected || loading || loadingBtn"
                 (click)="search()"
                 class="btn btn-sm btn-block btn-primary active">
                 Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -50,6 +50,14 @@
                 (click)="clear()"
                 class="btn btn-sm btn-block btn-danger active">
                 Limpiar <i class="fas fa-eraser"> </i>
+              </button>
+            </div>
+            <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                [disabled]="loading || loadingBtn || !eventSelected"
+                (click)="obtenerOI()"
+                class="w-100 btn btn-sm btn-block btn-info active">
+                Obtener OI
               </button>
             </div>
           </div>
@@ -63,62 +71,56 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>CLIENTES DEL EVENTO</h5>
         </div>
-        <div class="row mt-4 d-flex justify-content-center">
+        <!-- <div class="row mt-4 d-flex justify-content-center">
           <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-            <button
-              [disabled]="loading"
-              (click)="obtenerOI()"
-              class="w-100 btn btn-sm btn-block btn-info active">
+            <button [disabled]="loading" (click)="obtenerOI()" class="w-100 btn btn-sm btn-block btn-info active">
               Obtener OI
             </button>
           </div>
           <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-            <button
-              [disabled]="loading"
-              *ngIf="layout == 'M'"
-              type="button"
-              class="btn w-100 btn-primary btn-sm active"
-              tooltip="Enviar a SIRSAE"
-              containerClass="tooltip-style"
-              (click)="enviarSIRSAE()">
+            <button [disabled]="loading" *ngIf="layout == 'M'" type="button" class="btn w-100 btn-primary btn-sm active"
+              tooltip="Enviar a SIRSAE" containerClass="tooltip-style" (click)="enviarSIRSAE()">
               Enviar <i class="bx bx-send"></i>
             </button>
           </div>
-        </div>
-        <div class="row mt-4 d-flex justify-content-end">
-          <div class="ch-content justify-content-end">
-            <!-- <h5 class="title">Clientes del Evento</h5> -->
-            <div class="col-md-5 buttons">
-              <!-- <app-columns-select [(settings)]="settings"></app-columns-select> -->
-              <!-- <div class="mr-2">
-                <button (click)="obtenerOI()" class="btn btn-sm btn-block btn-info active ml-2 mb-3 mr-2">
-                  Obtener OI
-                </button>
-              </div>
+        </div> -->
+        <div class="row mt-2">
+          <div class="col-sm-12 col-md-12 col-lg-12 col-xl-9">
+            <div class="d-flex flex-row-reverse my-3">
               <div>
-                <button *ngIf="layout == 'M'" type="button" class="btn btn-primary btn-sm active ml-2 mb-3"
-                  tooltip="Enviar a SIRSAE" containerClass="tooltip-style" (click)="enviarSIRSAE()">
-                  Enviar <i class="bx bx-send"></i>
-                </button>
-              </div> -->
-              <div>
-                <button
+                <!-- <button
+                  [disabled]="loading || loadingBtn"
                   (click)="add()"
                   type="button"
-                  class="btn btn-info btn-sm active ml-2 mb-3">
+                  class="btn btn-info btn-sm active mb-3">
                   Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                </button> -->
+              </div>
+              <div>
+                <button
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="loading || loadingBtn"
+                  *ngIf="layout == 'M'"
+                  type="button"
+                  class="btn btn-primary btn-sm active mr-3"
+                  tooltip="Enviar a SIRSAE"
+                  containerClass="tooltip-style"
+                  (click)="enviarSIRSAE()">
+                  Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
                 </button>
               </div>
             </div>
           </div>
+          <div class="col-sm-12 col-md-3"></div>
         </div>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-9">
             <form-loader *ngIf="loading"></form-loader>
             <ng-scrollbar
               [track]="'all'"
               [ngStyle]="{ height: loading ? '0px' : '300px' }">
               <ng2-smart-table
+                #myTable
                 [attr.class]="'table-bordered'"
                 [settings]="settings"
                 [source]="data"
@@ -126,39 +128,37 @@
                 (userRowSelect)="selectClients($event.selected)">
               </ng2-smart-table>
             </ng-scrollbar>
-            <!-- <div [class]="loading ? 'table-loading' : ''">
-                                </div> -->
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
           </div>
-          <app-pagination [params]="params" [totalItems]="totalItems">
-          </app-pagination>
-        </div>
-        <div class="row justify-content-center text-center">
-          <div class="col-4"></div>
-          <div class="col-md-2">
-            <button
-              [disabled]="loading"
-              (click)="allNo()"
-              type="button"
-              tooltip="Cambiar Todos a NO"
-              containerClass="tooltip-style"
-              class="w-100 btn btn-primary btn-sm active mb-3">
-              Todos NO
-              <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
-            </button>
+          <div class="col-3">
+            <div class="row justify-content-center text-center mt-2">
+              <div class="col-md-6 mb-4">
+                <button
+                  [disabled]="loading || loadingBtn"
+                  (click)="allNo()"
+                  type="button"
+                  tooltip="Cambiar Enviar Sirsae a NO"
+                  containerClass="tooltip-style"
+                  class="w-100 btn btn-primary btn-sm active mb-3">
+                  Todos NO
+                  <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
+                </button>
+              </div>
+              <div class="col-md-6 mb-4">
+                <button
+                  [disabled]="loading || loadingBtn"
+                  (click)="allYes()"
+                  type="button"
+                  tooltip="Cambiar Enviar Sirsae a SI"
+                  containerClass="tooltip-style"
+                  class="w-100 btn btn-success active btn-sm mb-3">
+                  Todos SI
+                  <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="col-md-2">
-            <button
-              [disabled]="loading"
-              (click)="allYes()"
-              type="button"
-              tooltip="Cambiar Todos a SI"
-              containerClass="tooltip-style"
-              class="w-100 btn btn-success active btn-sm mb-3">
-              Todos SI
-              <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
-            </button>
-          </div>
-          <div class="col-4"></div>
         </div>
       </accordion-group>
     </accordion>

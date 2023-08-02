@@ -117,9 +117,9 @@ export class EstateDocumentFormComponent
   showDocsEstValidate() {
     if (!this.rowSelected) {
       this.message(
-        'info',
-        'Error',
-        'Seleccione un data para poder ver sus documentos'
+        'warging',
+        'Atención',
+        'Seleccione un registro para poder ver sus documentos'
       );
       return;
     }

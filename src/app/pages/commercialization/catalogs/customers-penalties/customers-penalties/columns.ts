@@ -168,3 +168,34 @@ export const COLUMNS2 = {
     },
   },
 };
+
+export const COLUMNS3 = {
+  processType: {
+    title: 'Tipo de Penalización',
+    sort: false,
+  },
+  eventId: {
+    title: 'Clave Evento',
+    sort: false,
+  },
+  batchPublic: {
+    title: 'Lote',
+    sort: false,
+  },
+  referenceJobOther: {
+    title: 'Motivo Penalización',
+    sort: false,
+  },
+  causefree: {
+    title: 'Motivo Liberación',
+    sort: false,
+  },
+  usrPenalize: {
+    title: 'Usuario Penaliza',
+    sort: false,
+  },
+  usrfree: {
+    title: 'Usuario Libera',
+    sort: false,
+  },
+};

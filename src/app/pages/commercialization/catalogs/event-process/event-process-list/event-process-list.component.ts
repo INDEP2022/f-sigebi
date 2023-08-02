@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
@@ -9,7 +9,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS } from './columns';
+import { COLUMNS, COLUMNS_PROCESS } from './columns';
 //Components
 import { EventTProcessFormComponent } from '../event-tprocess-form/event-tprocess-form.component';
 //Services
@@ -19,6 +19,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { IComerTpEventFull } from 'src/app/core/models/ms-event/event-type.model';
 import { IComerEventRl } from 'src/app/core/models/ms-event/event.model';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 
 @Component({
   selector: 'app-event-process-list',
@@ -29,16 +30,24 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   comerEvent: IComerEventRl[] = [];
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
 
   totalItems: number = 0;
+  totalItems1: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
 
   columnFilters: any = [];
+  columnFilters1: any = [];
+  rowTypeProcess: boolean = false;
+
+  settings2 = { ...this.settings };
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private comerEventosService: ComerEventosService,
+    private comerEventService: ComerEventService,
     private comerTpEventsService: ComerTpEventosService
   ) {
     super();
@@ -51,7 +60,21 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         edit: true,
         delete: false,
       },
-      columns: COLUMNS,
+      columns: { ...COLUMNS },
+    };
+    this.settings.actions = false;
+
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...COLUMNS_PROCESS },
     };
   }
 
@@ -70,6 +93,23 @@ export class EventProcessListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'warrantyDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processKey':
+                searchFilter = SearchFilter.ILIKE;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'tpeventoId':
+                searchFilter = SearchFilter.EQ;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'statusvtaId':
+                searchFilter = SearchFilter.ILIKE;
+                field = 'filter.comerDetail.' + filter.field;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -83,62 +123,136 @@ export class EventProcessListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
-          this.getEvents();
+          this.params = this.pageFilter(this.params);
+          this.getEventsByType();
         }
       });
 
-    this.prepareForm();
-    this.getEvents();
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*  SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'warrantyDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processKey':
+                searchFilter = SearchFilter.ILIKE;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'tpeventoId':
+                searchFilter = SearchFilter.EQ;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              case 'statusvtaId':
+                searchFilter = SearchFilter.ILIKE;
+                field = 'filter.comerDetail.' + filter.field;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              console.log(filter.search);
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params1 = this.pageFilter(this.params1);
+          this.getEventsByType();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getEventsByType());
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getEventProcess());
+
+    //this.prepareForm();
+    //this.getEvents();
   }
 
-  private prepareForm(): void {
+  /*private prepareForm(): void {
     this.form = this.fb.group({
       goodType: [null, [Validators.required]],
     });
-  }
+  }*/
 
-  getEvents() {
+  /*getEvents() {
     let tpeventoId = this.form.controls['goodType'].value;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getEventsByType(tpeventoId));
-  }
+  }*/
 
-  getEventsByType(id: string | number): void {
+  getEventsByType() {
     this.loading = true;
-    this.comerTpEventsService
-      .getEventsByType(id, this.params.getValue())
-      .subscribe({
-        next: response => {
-          this.comerEvent = response.data;
-          this.data.load(this.comerEvent);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.comerEventService.getAllEvent(params).subscribe({
+      next: response => {
+        this.comerEvent = response.data;
+        this.data.load(response.data);
+        this.totalItems = response.count || 0;
+        this.data.refresh();
+        this.params.value.page = 1;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
 
-  deleteEvent(id: string) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.loading = true;
-        this.comerEventosService.remove(id).subscribe({
-          next: data => {
-            this.loading = false;
-            this.showSuccess();
-            this.getEvents();
-          },
-          error: error => {
-            this.loading = false;
-            this.showError();
-          },
-        });
-      }
+  changeEvent(event: any) {
+    console.log(event.data);
+    this.rowTypeProcess = true;
+  }
+
+  getEventProcess(id?: string) {
+    this.loading = true;
+    if (id) {
+      this.params1.getValue()['filter.comerDetail.id'] = `$eq:${id}`;
+    }
+    let params = {
+      ...this.params1.getValue(),
+      ...this.columnFilters1,
+    };
+    this.comerTpEventsService.getEventProGetAll(params).subscribe({
+      next: response => {
+        //this.comerEvent = response.data;
+        this.data1.load(response.data);
+        this.totalItems1 = response.count || 0;
+        this.data1.refresh();
+        this.params.value.page = 1;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems1 = 0;
+      },
     });
   }
 
@@ -165,9 +279,46 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       comerEvent,
       callback: (next: boolean) => {
-        if (next) this.getEvents();
+        if (next) this.getEventsByType();
       },
     };
     this.modalService.show(EventTProcessFormComponent, modalConfig);
+  }
+
+  showDeleteAlert(transferent?: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea borrar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.deleteEvent(transferent.id);
+        this.alert('success', 'Borrado', '');
+        //Swal.fire('Borrado', '', 'success');
+      }
+    });
+  }
+
+  deleteEvent(id: string) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loading = true;
+        this.comerEventosService.remove(id).subscribe({
+          next: data => {
+            this.loading = false;
+            this.showSuccess();
+            //this.getEvents();
+          },
+          error: error => {
+            this.loading = false;
+            this.showError();
+          },
+        });
+      }
+    });
   }
 }
