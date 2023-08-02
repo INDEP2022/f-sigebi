@@ -8,6 +8,10 @@ const routes: Routes = [
     path: '',
     component: ExpenseConceptsComponent,
   },
+  {
+    path: ':id',
+    component: ExpenseConceptsComponent,
+  },
 ];
 
 @NgModule({

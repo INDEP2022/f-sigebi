@@ -146,7 +146,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   update() {
     const requestBody: any = {
       paymentId: this.data.paymentId,
-      reference: Number(this.form.value.reference),
+      reference: this.form.value.reference,
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
@@ -159,7 +159,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       referenceOri: this.form.value.referenceOri,
       // dateOi: this.form.value.dateOi,
       entryOrderId: this.form.value.entryOrderId,
-      validSystem: this.form.value.validSystem,
+      validSystem:
+        this.form.value.validSystem == '' ? null : this.form.value.validSystem,
       description: this.form.value.description,
       branchOffice: this.form.value.branchOffice,
       // reconciled: this.form.value.reconciled,

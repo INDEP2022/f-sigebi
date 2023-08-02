@@ -198,8 +198,6 @@
         <button
           [disabled]="
             !form.valid ||
-            form.get('recordDate').value == undefined ||
-            form.get('recordDate') == null ||
             form.get('date').value == undefined ||
             form.get('date') == null
           "
