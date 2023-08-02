@@ -33,7 +33,7 @@ export class InterfacesirsaeService extends HttpService {
     return this.post('update-invitations/program-cs-main', body);
   }
 
-  sendSirsae(body:ISendSirsae){
-    return this.post('sirsae/send-sirsae', body)
+  sendSirsae(body: ISendSirsae) {
+    return this.post('sirsae/send-sirsae', body);
   }
 }
