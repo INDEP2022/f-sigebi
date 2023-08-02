@@ -7,26 +7,46 @@
   <div body>
     <form class="form-material" [formGroup]="formGroup">
       <div class="row">
-        <div class="col-sm-12 col-md-8">
-          <form-field
-            [control]="formGroup.get('denomination')"
-            label="Denominaci&oacute;n">
+        <div class="col-sm-12 col-md-4">
+          <form-field [control]="formGroup.get('screenKey')" label="Pantalla">
             <input
               type="text"
               class="form-control"
-              maxlength="100"
-              formControlName="denomination" />
+              maxlength="30"
+              formControlName="screenKey" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-4">
           <form-field
-            [control]="formGroup.get('orderId')"
-            label="Orden de Presentaci&oacute;n">
+            [control]="formGroup.get('reportKey')"
+            label="Reporte Asociado (XML)">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="30"
+              formControlName="reportKey" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-4">
+          <form-field
+            [control]="formGroup.get('signatoriesNumber')"
+            label="N&uacute;mero de Firmantes">
             <input
               type="number"
               class="form-control"
               maxlength="2"
-              formControlName="orderId" />
+              formControlName="signatoriesNumber" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-12">
+          <form-field
+            [control]="formGroup.get('description')"
+            label="T&iacute;tulo del Reporte (XML)">
+            <input
+              type="text"
+              class="form-control"
+              maxlength="100"
+              formControlName="description" />
           </form-field>
         </div>
       </div>

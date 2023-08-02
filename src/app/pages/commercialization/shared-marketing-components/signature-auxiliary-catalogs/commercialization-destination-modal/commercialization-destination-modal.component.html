@@ -7,26 +7,26 @@
   <div body>
     <form class="form-material" [formGroup]="formGroup">
       <div class="row">
-        <div class="col-sm-12 col-md-8">
+        <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="formGroup.get('denomination')"
-            label="Denominaci&oacute;n">
+            [control]="formGroup.get('email')"
+            label="Correo Electr&oacute;nico">
+            <input
+              type="email"
+              class="form-control"
+              maxlength="50"
+              formControlName="email" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="formGroup.get('name')"
+            label="Nombre del Destinatario">
             <input
               type="text"
               class="form-control"
-              maxlength="100"
-              formControlName="denomination" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-4">
-          <form-field
-            [control]="formGroup.get('orderId')"
-            label="Orden de Presentaci&oacute;n">
-            <input
-              type="number"
-              class="form-control"
-              maxlength="2"
-              formControlName="orderId" />
+              maxlength="200"
+              formControlName="name" />
           </form-field>
         </div>
       </div>
