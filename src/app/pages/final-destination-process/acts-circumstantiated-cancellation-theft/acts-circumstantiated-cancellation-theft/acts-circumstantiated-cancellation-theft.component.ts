@@ -10,14 +10,20 @@ import {
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { FindActaComponent } from '../find-acta/find-acta.component';
@@ -40,8 +46,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formFind: FormGroup;
   totalItems2: number = 0;
   loading2: boolean = false;
+  bienesLoading: boolean = false;
   formTable2: FormGroup;
   actaRecepttionForm: FormGroup;
+  validPermisos: boolean = true;
   goodFormFormGroup: FormGroup;
   disabledBtnCerrar: boolean = true;
   ocultarPaginado: boolean = false;
@@ -49,6 +57,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   disabledBtnActas: boolean = true;
   actaGoodForm: FormGroup;
   formTag: FormGroup;
+  gTramite: IProceduremanagement[] = [];
   statusCanc: string | number = '';
   expedient: IExpedient;
   validateEx: boolean = true;
@@ -63,6 +72,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -88,6 +98,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private detailProceeDelRecService: DetailProceeDelRecService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
+    private procedureManagementService: ProcedureManagementService,
     protected modalService: BsModalService,
     private GoodprocessService_: GoodprocessService,
     private proceedingsService: ProceedingsService,
@@ -455,6 +466,25 @@ export class ActsCircumstantiatedCancellationTheftComponent
         });
     });
   }
+  gestionTramite() {
+    this.filterParams
+      .getValue()
+      .addFilter('expedient', this.fileNumber, SearchFilter.EQ);
+    this.procedureManagementService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.gTramite = data.data;
+        console.log(this.bienes);
+        this.dataTableGood.load(this.bienes);
+        this.dataTableGood.refresh();
+        this.totalItems = data.count;
+      },
+      error: () => {
+        this.bienesLoading = false;
+        console.error('error ');
+      },
+    });
+  }
+
   actualizarActa() {}
   agregarActa() {}
   cleanActa() {}

@@ -43,6 +43,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   @Output() onSave = new EventEmitter<any>();
   @Output() cleanForm = new EventEmitter<any>();
   @Input() idConversion: number | string;
+  @Input() loadingExpedient: boolean;
   actaActual: any;
   valDelete: boolean = false;
   // @Output() onConfirm = new EventEmitter<any>();
@@ -117,6 +118,7 @@ export class FindActaComponent extends BasePage implements OnInit {
   }
 
   return() {
+    this.loadingExpedient = false;
     console.log('SIIII', this.valDelete);
     if (this.valDelete) {
       this.ejecutarFuncionDesdeModal(true);
@@ -139,11 +141,11 @@ export class FindActaComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           console.log(data);
-          let result = data.data.map((item: any) => {
-            item['numTransfer_'] = item.numTransfer
-              ? item.numTransfer.id
-              : null;
-          });
+          // let result = data.data.map((item: any) => {
+          //   item['numTransfer_'] = item.numTransfer
+          //     ? item.numTransfer.id
+          //     : null;
+          // });
           this.dataFactActas.load(data.data);
           this.dataFactActas.refresh();
           this.loading = false;

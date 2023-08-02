@@ -122,6 +122,7 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
       next: data => {
         this.loading = false;
         this.expedients = data.data;
+        console.log(this.expedients);
         this.totalItems = data.count;
         this.dataFactExp.load(this.expedients);
         this.dataFactExp.refresh();
