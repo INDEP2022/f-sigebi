@@ -18,7 +18,10 @@
     <div *ngIf="response">
       <div class="d-flex justify-content-center justify-content-md-end mt-2">
         <div class="">
-          <button type="button" class="btn btn-success btn-sm active">
+          <button
+            type="button"
+            class="btn btn-success btn-sm active"
+            (click)="exportData()">
             Exportar Datos
           </button>
         </div>

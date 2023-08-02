@@ -15,6 +15,10 @@ import { DestinationActsDelegationComponent } from '../destination-acts-delegati
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
 
+interface IGlobal {
+  numeroExpediente: number;
+}
+
 @Component({
   selector: 'app-destination-goods-acts',
   templateUrl: './destination-goods-acts.component.html',
@@ -32,6 +36,9 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   selectedRow: any = null;
   etapa: number = 0;
   expediente: string | number;
+  global: IGlobal = {
+    numeroExpediente: null,
+  };
 
   goodsList: IGood[] = [];
 
@@ -52,6 +59,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.pupInitForm();
     this.getEdo();
   }
 
@@ -95,6 +103,15 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     this.formTable1 = this.fb.group({
       detail: [null, []],
     });
+  }
+
+  pupInitForm() {
+    if (this.global.numeroExpediente !== null) {
+      this.params.getValue()[
+        'filter.no_expedient'
+      ] = `$eq:${this.global.numeroExpediente}`;
+      /// se llama para llenar la forma
+    }
   }
 
   data = EXAMPLE_DATA;
@@ -206,6 +223,18 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(DestinationActsDelegationComponent, config);
+  }
+
+  exportData() {
+    if (this.expediente !== null && this.actForm.get('').value) {
+      /// Llamar al bloque Actas
+    } else {
+      this.alert(
+        'warning',
+        'Actas de Destino de Bienes',
+        'Necesitas un número de expedientes con acta (s)'
+      );
+    }
   }
 }
 
