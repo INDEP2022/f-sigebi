@@ -550,7 +550,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   comerBienesLetter(lotId: number, params: ListParams) {
     this.bienesLoading = true;
     this.filterParams.getValue().removeAllFilters();
-    // this.filterParams.getValue().page = params.page;
+    this.filterParams.getValue().page = params.page;
     this.filterParams.getValue().search = params.text;
     // this.filterParams.getValue().page = 1000000;
     this.filterParams
