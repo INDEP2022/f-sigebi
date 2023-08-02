@@ -8,6 +8,16 @@ export interface IParameters {
   registryNumber: number | null;
 }
 
+/*export interface IParameters1 {
+  id: string | null;
+  description: string | null;
+  initialValue: string | null;
+  finalValue: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+  registryNumber: number | null;
+}*/
+
 export interface IIndicatorParameters {
   id: string | number;
   description: string;
