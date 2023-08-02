@@ -12,6 +12,7 @@ import { IComerLotsEG, IEvent } from '../../models/ms-parametercomer/parameter';
 export class ComerLotService extends HttpService {
   private readonly endpoint: string = EventEndpoints.ComerLotEvent;
   private readonly endComer: string = ComerLotEndpoints.ComerLot;
+  private readonly clientComer: string = ComerLotEndpoints.clientLot;
   private readonly fiterByEvent: string = EventEndpoints.FilterEvent;
   private readonly evento: string = EventEndpoints.ComerE;
   private readonly fiterByGood: string = EventEndpoints.FilterGood;
@@ -51,6 +52,10 @@ export class ComerLotService extends HttpService {
   }
   getByIdLot(id: string | number) {
     const route = `${this.endComer}/${id}`;
+    return this.get(route);
+  }
+  getByClient(id: string | number) {
+    const route = `${this.clientComer}/${id}`;
     return this.get(route);
   }
 }

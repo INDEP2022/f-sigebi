@@ -33,6 +33,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('typeTransportable', this.typeTransportable);
     this.prepareForm();
     if (this.typeTransportable == 'warehouse')
       this.getWarehouses(new ListParams());
@@ -49,8 +50,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   getStoreGuard(params: ListParams) {
     params['filter.name'] = `$ilike:${params.text}`;
     params['filter.regionalDelegation'] = this.data[0].idDelegation;
-    params['filter.managedBy'] = 'Transferente';
-    params['filter.administratorName'] = this.data[0].idTransferent;
+
     this.goodsQueryService.getCatStoresView(params).subscribe({
       next: data => {
         this.warehouses = new DefaultSelect(data.data, data.count);

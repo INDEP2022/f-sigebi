@@ -23,7 +23,7 @@ export class LinkCellComponent<T = any> implements OnInit, ViewCell {
   constructor() {}
 
   ngOnInit(): void {
-    console.log(this.value);
+    // console.log(this.value);
   }
 
   onLinkClick() {

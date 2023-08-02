@@ -7,7 +7,9 @@
       [parameters]="parameters"
       [preparation]="preparation"
       [(eventSelected)]="eventSelected"
-      (exit)="exit.emit()"></consigments-events>
+      (exit)="
+        exit.emit({ refresh: false, preparation: preparation })
+      "></consigments-events>
   </div>
 </div>
 <div class="row">
@@ -19,6 +21,10 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <consigments-goods [lotSelected]="lotSelected"></consigments-goods>
+    <consigments-goods
+      [preparation]="preparation"
+      [lotSelected]="lotSelected"
+      [eventSelected]="eventSelected"
+      (onAccept)="confirm($event)"></consigments-goods>
   </div>
 </div>
