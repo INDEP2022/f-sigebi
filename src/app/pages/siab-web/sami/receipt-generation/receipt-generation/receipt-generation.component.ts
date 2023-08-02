@@ -891,7 +891,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.ESTADO_FISICO_TRASFERENTE) {
         estado_fisico = await this.obtCat(
-          'Estado Físico',
+          'Estado Fisico',
           data.ESTADO_FISICO_TRASFERENTE
         );
         if (estado_fisico != '0') {
@@ -902,7 +902,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.ESTADO_FISICO_SAE) {
         let fisicoSae: any = '';
-        fisicoSae = await this.obtCat('Estado Físico', data.ESTADO_FISICO_SAE);
+        fisicoSae = await this.obtCat('Estado Fisico', data.ESTADO_FISICO_SAE);
         if (fisicoSae != '0') {
           good.estado_fisico_sae = Number(fisicoSae);
         } else {
@@ -922,7 +922,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       if (data.ESTADO_CONSERVACION_SAE) {
         let estadoConservacionSae: any = '';
         estadoConservacionSae = await this.obtCat(
-          'Estado Conservación',
+          'Estado Conservacion',
           data.ESTADO_CONSERVACION_SAE
         );
         console.log(estadoConservacionSae);
