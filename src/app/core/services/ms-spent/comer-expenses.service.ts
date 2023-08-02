@@ -20,4 +20,8 @@ export class SpentService extends HttpService {
       params
     );
   }
+
+  getAllComerPagosRef(params?: string) {
+    return this.get('comer-payment-ref-gens', params);
+  }
 }

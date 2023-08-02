@@ -16,13 +16,23 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
-import { COLUMNSCUSTOMER, COLUMNS_LOT_EVENT, setCheckHide } from './columns';
+import {
+  COLUMNSCUSTOMER,
+  COLUMNS_CUSTOMER_BANKS,
+  COLUMNS_DESERT_LOTS,
+  COLUMNS_LOTS_BANKS,
+  COLUMNS_LOT_EVENT,
+  COLUMNS_PAYMENT_LOT,
+  setCheckHide,
+} from './columns';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -37,6 +47,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   settingsCustomerBanks = this.settings;
   settingsLotsBanks = this.settings;
   settingsPaymentLots = this.settings;
+
+  loadingCustomer = false;
+  loadingLotEvent = false;
+  loadingDesertLots = false;
+  loadingCustomerBanks = false;
+  loadingLotBanks = false;
+  loadingPaymentLots = false;
 
   form: FormGroup;
   formCustomerEvent: FormGroup;
@@ -55,6 +72,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   dataDesertedLots = new LocalDataSource();
   dataCustomerBanks = new LocalDataSource();
   dataLotsBanks = new LocalDataSource();
+  dataPaymentLots = new LocalDataSource();
 
   paramsCustomer = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsCustomer: number = 0;
@@ -88,6 +106,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   private lot_solo_pend: boolean = false;
 
   private txt_usu_valido: string = null;
+  private id_tipo_disp: number = null;
 
   constructor(
     private fb: FormBuilder,
@@ -97,6 +116,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private parametersModService: ParameterModService,
     private comerEventService: ComerEventService,
     private comerTpEventsService: ComerTpEventosService,
+    private comerLotsService: LotService,
+    private spentService: SpentService,
     private customersService: ComerClientsService
   ) {
     super();
@@ -130,6 +151,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   prepareSettings() {
     this.settingsCustomer = {
       ...TABLE_SETTINGS,
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: false,
       columns: COLUMNSCUSTOMER,
     };
@@ -138,6 +161,30 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       ...TABLE_SETTINGS,
       actions: false,
       columns: COLUMNS_LOT_EVENT,
+    };
+
+    this.settingsDesertedLots = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: COLUMNS_DESERT_LOTS,
+    };
+
+    this.settingsCustomerBanks = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: COLUMNS_CUSTOMER_BANKS,
+    };
+
+    this.settingsLotsBanks = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: COLUMNS_LOTS_BANKS,
+    };
+
+    this.settingsPaymentLots = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      columns: COLUMNS_PAYMENT_LOT,
     };
   }
 
@@ -285,6 +332,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Seleccionar eventos
   selectEvent() {
+    this.loadingCustomer = true;
+    this.loadingLotEvent = true;
+    this.loadingDesertLots = true;
+    this.loadingCustomerBanks = true;
+    this.loadingLotBanks = true;
+    this.loadingPaymentLots = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('id', this.event.value);
     console.log(this.event.value);
@@ -302,6 +355,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.postQueryEvent(resp.eventTpId, resp.statusVtaId, resp.address);
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
+        this.getDataLotes(resp.id);
+        this.getDataDesertLots(resp.id);
       },
       err => {
         console.log(err);
@@ -340,17 +395,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       pEventKey: eventTpId,
     };
 
-    this.comerTpEventsService.getTpEvent(model).subscribe();
-  }
-  //Data de COMER_CLIENTESXEVENTO
-  getDateComerCustomer() {
-    const paramsF = new FilterParams();
-    paramsF.addFilter('EventId', this.event.value);
-    this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
+    this.comerTpEventsService.getTpEvent(model).subscribe(
       res => {
-        console.log(res.data[0].id_tipo_disp);
-        const id_tipo_disp = res.data[0].id_tipo_disp;
-        if ([1, 3].includes(parseInt(id_tipo_disp))) {
+        console.log(res);
+        this.id_tipo_disp = res.data[0].id_tipo_disp;
+        if ([1, 3].includes(this.id_tipo_disp)) {
           console.log('Entra');
           this.availableByTypeSettingFalse();
           this.isAvailableByType = false;
@@ -363,12 +412,20 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(err);
       }
     );
+
+    //Parte final del postquery
+    this.dateMaxWarranty.setValue(new Date()); //TODO: Hay que corregir según un endpoint
+    this.dateMaxPayment.setValue(new Date()); //TODO: Hay que corregir según un endpoint
+
+    //TODO: Falta endpoint de insert
   }
 
   //Cambiar los settings de las tablas
   availableByTypeSettingFalse() {
     setCheckHide(true);
     this.settingsCustomer = {
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       ...TABLE_SETTINGS,
       actions: false,
       columns: {
@@ -380,6 +437,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   availableByTypeSettingTrue() {
     setCheckHide(false);
     this.settingsCustomer = {
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       ...TABLE_SETTINGS,
       actions: false,
       columns: {
@@ -387,7 +446,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       },
     };
   }
-
   //Data de COMER_CLIENTESXEVENTO
   getDataComerCustomer() {
     clearGoodCheckCustomer();
@@ -399,14 +457,26 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       paramsF.limit = this.paramsCustomer.value.limit;
     }
     this.comerTpEventsService.getTpEvent2(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        this.dataCustomer.load(res.data);
+      async res => {
+        const newData = await Promise.all(
+          res.data.map(async (e: any) => {
+            let disponible: boolean;
+            const validate = await this.postqueryComerCustomer(e);
+            disponible = JSON.parse(JSON.stringify(validate)).available;
+            console.log(disponible);
+            return {
+              ...e,
+              available: disponible,
+            };
+          })
+        );
+
+        this.dataCustomer.load(newData);
         this.totalItemsCustomer = res.count;
-        this.loading = false;
+        this.loadingCustomer = false;
       },
       err => {
-        this.loading = false;
+        this.loadingCustomer = false;
         if (err.status == 400) {
           this.alert(
             'warning',
@@ -420,8 +490,139 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     );
   }
 
-  //Postquery COMER_CLIENTESXEVENTO
-  postqueryComerCustomer() {}
+  //REFRESCAR COMER_CLIENTESXEVENTO
+  refreshComerCustomer() {
+    this.getDataComerCustomer();
+  }
 
-  getDataLotes() {}
+  //Postquery COMER_CLIENTESXEVENTO
+  postqueryComerCustomer(item: any) {
+    return new Promise((resolve, reject) => {
+      if ([1, 3].includes(this.id_tipo_disp)) {
+        if (item.SentToSIRSAE == 'S') {
+          resolve({ available: false });
+        } else if (item.SendToSIRSAE == 'S') {
+          resolve({ available: true });
+        } else {
+          resolve({ available: false });
+        }
+      } else {
+        resolve({ available: true });
+      }
+    });
+  }
+
+  //LOTES
+  getDataLotes(eventId: string | number) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('eventId', eventId);
+    paramsF.addFilter('clientId', null, SearchFilter.NOT);
+    this.comerLotsService
+      .getComerLotsClientsPayref(paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.dataLotEvent.load(res.data);
+          this.totalItemsLotEvent = res.count;
+          this.loadingLotEvent = false;
+        },
+        err => {
+          console.log(err);
+          this.loadingLotEvent = false;
+          this.dataLotEvent.load([]);
+          this.totalItemsLotEvent = 0;
+        }
+      );
+  }
+
+  //LOTES DESIERTOS
+  getDataDesertLots(eventId: string | number) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('idClient', null);
+    paramsF.addFilter('eventId', eventId);
+    this.comerLotsService.getAllComerLotsFilter(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.loadingDesertLots = false;
+      },
+      err => {
+        console.log(err);
+        this.loadingDesertLots = false;
+      }
+    );
+  }
+
+  //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
+  selectRowClientEvent(e: any) {
+    console.log(e.data);
+    this.getPaymentByCustomer(e.data.ClientId);
+  }
+
+  //SELECCIONAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
+  selectRowLotsEvent(e: any) {
+    console.log(e.data);
+    this.getLotsBanks(e.data.lotId);
+    this.getPaymentLots(e.data.lotId);
+  }
+
+  //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
+  getPaymentByCustomer(clientId: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('Customer_ID', clientId);
+    this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.dataCustomerBanks.load(res.data);
+        this.totalItemsCustomerBanks = res.count;
+        this.loadingCustomerBanks = false;
+      },
+      err => {
+        console.log(err);
+        this.loadingCustomerBanks = false;
+        this.dataCustomerBanks.load([]);
+        this.totalItemsCustomerBanks = 0;
+      }
+    );
+  }
+
+  //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
+  getLotsBanks(idLote: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('SystemValid', 'R,D,B', SearchFilter.NOTIN);
+    paramsF.addFilter('BatchID', idLote);
+    this.paymentService.getComerPaymentRef(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.dataLotsBanks.load(res.data);
+        this.totalItemsLotsBanks = res.count;
+        this.loadingLotBanks = false;
+      },
+      err => {
+        console.log(err);
+        this.dataLotsBanks.load([]);
+        this.totalItemsLotsBanks = 0;
+        this.loadingLotBanks = false;
+      }
+    );
+  }
+
+  //DATOS DE COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTE
+  getPaymentLots(lotId: string) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('lotId', lotId);
+    this.spentService.getAllComerPagosRef(paramsF.getParams()).subscribe(
+      res => {
+        console.log(res);
+        this.dataPaymentLots.load(res.data);
+        this.totalItemsPaymentLots = res.count;
+        this.loadingPaymentLots = false;
+      },
+      err => {
+        console.log(err);
+        this.dataPaymentLots.load([]);
+        this.totalItemsPaymentLots = 0;
+        this.loadingPaymentLots = false;
+      }
+    );
+  }
 }

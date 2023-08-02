@@ -100,6 +100,10 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
         this.dataFactLetter.load(this.letters);
         this.dataFactLetter.refresh();
       },
+      error: () => {
+        this.loading = false;
+        console.error('error al filtrar cartas');
+      },
     });
   }
   onUserRowSelect(row: any): void {

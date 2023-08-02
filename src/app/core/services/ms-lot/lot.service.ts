@@ -7,9 +7,14 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
   providedIn: 'root',
 })
 export class LotService extends HttpService {
+  private readonly endpointComer: string = 'comer-lotes';
   constructor() {
     super();
     this.microservice = LotEndpoints.BasePath;
+  }
+
+  getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
   }
 
   getLotbyEvent(id: string | number, params?: ListParams) {
@@ -102,6 +107,15 @@ export class LotService extends HttpService {
     return this.post('apps/rejected-good', body);
   }
 
+  getComerLotsClientsPayref(params?: string) {
+    return this.get('apps/get-comer-lots-clients-payref', params);
+  }
+
+  getLotById(id: string | number) {
+    const route = `eat-lots/${id}`;
+    return this.get(route);
+  }
+
   thirdBaseFile(eventId: string | number) {
     return this.get<{
       nameFile: string;
@@ -134,5 +148,9 @@ export class LotService extends HttpService {
 
   getPagosRefMontoTipod(body: any) {
     return this.post('apps/get-pagos-ref-monto-tipo-d', body);
+  }
+
+  getLotComerPayRef(params?: string) {
+    return this.get('apps/get-lot-comer-pay-ref', params);
   }
 }

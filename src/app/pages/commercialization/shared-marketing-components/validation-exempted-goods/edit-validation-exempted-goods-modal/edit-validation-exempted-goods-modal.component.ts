@@ -58,6 +58,7 @@ export class EditValidationExemptedGoodsModalComponent
 
   update() {
     this.loading = true;
+    console.log(this.goodForm.value);
     this.goodTransAvaService.update(this.goodForm.value).subscribe({
       next: data => {
         this.handleSuccess();
@@ -86,7 +87,7 @@ export class EditValidationExemptedGoodsModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert('success', `${message} Correctamente`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

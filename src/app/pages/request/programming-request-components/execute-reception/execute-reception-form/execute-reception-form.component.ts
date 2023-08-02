@@ -2182,6 +2182,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         }); */
       }
     } else if (type == 'almacen') {
+      console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {
         this.receipts.getElements().then(async receipt => {
           const createReceiptGood: any = await this.createReceiptWarehouse(
