@@ -88,6 +88,9 @@
           </div>
         </div>
       </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <form-loader *ngIf="loading"></form-loader>
     <ng-scrollbar

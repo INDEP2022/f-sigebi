@@ -39,6 +39,10 @@ export const COLUMNS1 = {
     title: 'Descripción del Bien',
     sort: false,
   },
+  descripcion_bien_sae: {
+    title: 'Descripción del Bien INDEP',
+    sort: false,
+  },
   cantidad: {
     title: 'Cantidad',
     sort: false,

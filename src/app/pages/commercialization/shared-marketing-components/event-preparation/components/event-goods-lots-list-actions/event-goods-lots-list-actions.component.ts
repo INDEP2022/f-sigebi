@@ -175,6 +175,7 @@ export class EventGoodsLotsListActionsComponent
       eventForm: this.eventForm,
       lastLot: Number(this.lotSelected.id) ?? -1,
       lastPublicLot: this.lotSelected.publicLot ?? 1,
+      executionType: this.onlyBase ? 'base' : 'normal',
     });
 
     this.router.navigate([GOODS_TACKER_ROUTE], {

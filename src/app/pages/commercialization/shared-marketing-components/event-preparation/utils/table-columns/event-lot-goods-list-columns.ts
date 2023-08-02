@@ -1,5 +1,5 @@
 export const EVENT_LOT_GOODS_LIST_COLUMNS = {
-  goodNumber: {
+  bienes: {
     title: 'No. Bien',
     sort: false,
     valuePrepareFunction: (good: any) => good?.id ?? '',
@@ -8,19 +8,20 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
-      row.goodNumber?.description ?? '',
+      row.bienes?.description ?? '',
   },
-  transferNumber: {
+  transferente: {
     title: 'Transferente',
     sort: false,
     valuePrepareFunction: (transfer: any) =>
-      `${transfer?.cvman ?? ''}-${transfer?.nameTransferent ?? ''}`,
+      transfer
+        ? `${transfer?.cvman ?? ''}-${transfer?.nameTransferent ?? ''}`
+        : null,
   },
   estatus: {
     title: 'Estatus',
     sort: false,
-    valuePrepareFunction: (empty: any, row: any) =>
-      row.goodNumber?.status ?? '',
+    valuePrepareFunction: (empty: any, row: any) => row.bienes?.status ?? '',
   },
   quantity: {
     title: 'Cantidad',
@@ -30,13 +31,13 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'Valor Avalúo',
     sort: false,
     valuePrepareFunction: (empty: any, row: any) =>
-      row.goodNumber?.appraisedValue ?? '',
+      row.bienes?.appraisedValue ?? '',
   },
   commercialEventId: {
     title: 'Evento Participa',
     sort: false,
   },
-  loteParticipa: {
+  lotepubremesa: {
     title: 'Lote Participa',
     sort: false,
   },
@@ -44,7 +45,7 @@ export const EVENT_LOT_GOODS_LIST_COLUMNS = {
     title: 'Evento Rem / Pre',
     sort: false,
   },
-  loteRemPre: {
+  lotrepuborig: {
     title: 'Lote Rem / Pre',
     sort: false,
   },
