@@ -45,7 +45,10 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       accountKey: [null],
       bankKey: [null, [Validators.required]],
-      coinKey: [null, [Validators.pattern(STRING_PATTERN)]],
+      coinKey: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       branchOffice: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       rateCalculationInterest: [null],
       registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],

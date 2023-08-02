@@ -24,8 +24,12 @@ export class ClientPenaltyService extends HttpService {
     this.microservice = ClientPenaltyEndpoints.Penalty;
   }
 
-  getAll(params?: string): Observable<IListResponse<ICustomersPenalties>> {
-    return this.get<IListResponse<any>>(this.route, params);
+  getAll(params?: string) {
+    return this.get<IListResponse<any>>(`${this.route}`, params);
+  }
+
+  getAll2() {
+    return this.get<any>(`${this.route}/export`);
   }
 
   getAllState(): Observable<IListResponse<ICustomersPenalties>> {
@@ -44,12 +48,10 @@ export class ClientPenaltyService extends HttpService {
     return this.get(route, params);
   }
 
-  getByIdComerPenaltyHish(
-    id: string | number,
-    params?: string
-  ): Observable<IListResponse<IHistoryCustomersPenalties>> {
-    const route = `${this.route3}:${id}`;
-    return this.get(route, params);
+  //http://sigebimstest.indep.gob.mx/penalty/api/v1/comer-penalty-his/export?filter.customerId=$eq:18104
+  getByIdComerPenaltyHis2(id: string | number) {
+    console.log(id);
+    return this.get(`comer-penalty-his/export?filter.customerId=$eq:${id}`);
   }
 
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
@@ -63,6 +65,11 @@ export class ClientPenaltyService extends HttpService {
   updateCustomers(customersPenalties: IHistoryCustomersPenalties) {
     console.log(customersPenalties);
     return this.put(`${this.route}/update-penalty`, customersPenalties);
+  }
+
+  updateCustomers2(customersPenalties: IHistoryCustomersPenalties) {
+    console.log(customersPenalties);
+    return this.put(`${this.route2}`, customersPenalties);
   }
 
   updateCustomers1(customersPenalties: ICustomerPenaltiesModal) {

@@ -59,6 +59,7 @@ const defaultData = [
   styleUrls: ['./assets.component.scss'],
 })
 export class AssetsComponent extends BasePage implements OnInit, OnChanges {
+  @ViewChild('table', { static: false }) table: any;
   @Input() requestObject: any; //solicitudes
   @Input() process: string = '';
   @ViewChild('uploadFile') fileUploaded: ElementRef<any>;
@@ -323,6 +324,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   selectRows(event: any) {
+    if (event.isSelected == false) {
+      this.table.isAllSelected = false;
+    }
     this.listgoodObjects = event.selected;
     if (this.listgoodObjects.length <= 1) {
       if (event.isSelected === true) {

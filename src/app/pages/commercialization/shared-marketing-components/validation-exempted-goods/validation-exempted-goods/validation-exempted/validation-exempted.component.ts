@@ -106,10 +106,9 @@ export class ValidationExemptedListComponent
         .getById(this.validationExempteId, params)
         .subscribe({
           next: response => {
-            const responses = response;
             this.data.load([response]);
             this.data.refresh();
-            this.totalItems = response.count;
+            this.totalItems = 1;
             this.loading = false;
           },
           error: error => {
@@ -121,6 +120,7 @@ export class ValidationExemptedListComponent
         });
     }
   }
+
   openForm(goodsTransAva?: IGoodsTransAva) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {

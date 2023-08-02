@@ -16,7 +16,6 @@ import { EventTProcessFormComponent } from '../event-tprocess-form/event-tproces
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
-import { IComerTpEventFull } from 'src/app/core/models/ms-event/event-type.model';
 import { IComerEventRl } from 'src/app/core/models/ms-event/event.model';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -40,6 +39,8 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   columnFilters1: any = [];
   rowTypeProcess: boolean = false;
+
+  eventId: string;
 
   settings2 = { ...this.settings };
 
@@ -66,11 +67,11 @@ export class EventProcessListComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -93,23 +94,9 @@ export class EventProcessListComponent extends BasePage implements OnInit {
             switch (filter.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
-                field = 'filter.comerDetail.' + filter.field;
                 break;
-              case 'warrantyDate':
-                filter.search = this.returnParseDate(filter.search);
+              case 'eventTpId':
                 searchFilter = SearchFilter.EQ;
-                break;
-              case 'processKey':
-                searchFilter = SearchFilter.ILIKE;
-                field = 'filter.comerDetail.' + filter.field;
-                break;
-              case 'tpeventoId':
-                searchFilter = SearchFilter.EQ;
-                field = 'filter.comerDetail.' + filter.field;
-                break;
-              case 'statusvtaId':
-                searchFilter = SearchFilter.ILIKE;
-                field = 'filter.comerDetail.' + filter.field;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -212,7 +199,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         this.data.load(response.data);
         this.totalItems = response.count || 0;
         this.data.refresh();
-        this.params.value.page = 1;
+        //this.params.value.page = 1;
         this.loading = false;
       },
       error: error => {
@@ -225,8 +212,12 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   }
 
   changeEvent(event: any) {
-    console.log(event.data);
-    this.rowTypeProcess = true;
+    if (event) {
+      console.log(event.data);
+      this.eventId = event.data.id;
+      this.getEventProcess(event.data.id);
+      this.rowTypeProcess = true;
+    }
   }
 
   getEventProcess(id?: string) {
@@ -273,33 +264,37 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     error ? console.log(error) : null;
   }
 
-  openForm(comerEvent?: IComerTpEventFull) {
-    console.log(comerEvent);
+  openForm(event?: any) {
+    if (event) console.log(event.data);
+    const comerEvent = event != null ? event.data : null;
     const modalConfig = MODAL_CONFIG;
+    const eventId = this.eventId;
+    //const comerEvent: any = event.data;
     modalConfig.initialState = {
       comerEvent,
+      eventId,
       callback: (next: boolean) => {
-        if (next) this.getEventsByType();
+        if (next) this.getEventProcess(eventId);
       },
     };
     this.modalService.show(EventTProcessFormComponent, modalConfig);
   }
 
   showDeleteAlert(transferent?: any) {
+    console.log(transferent.data);
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.deleteEvent(transferent.id);
-        this.alert('success', 'Borrado', '');
+        this.delete(transferent.data.id);
         //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  deleteEvent(id: string) {
+  /*deleteEvent(id: string) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -319,6 +314,22 @@ export class EventProcessListComponent extends BasePage implements OnInit {
           },
         });
       }
+    });
+  }*/
+
+  delete(id?: string | number) {
+    this.comerTpEventsService.remove(id).subscribe({
+      next: data => {
+        //this.loading = false;
+        this.alert('success', 'Proceso', 'Borrado Correctamente');
+        this.getEventProcess(this.eventId);
+        //this.showSuccess();
+        //this.getEvents();
+      },
+      error: error => {
+        this.loading = false;
+        this.showError();
+      },
     });
   }
 }
