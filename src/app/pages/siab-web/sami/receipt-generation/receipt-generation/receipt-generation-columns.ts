@@ -1,6 +1,6 @@
 export const RECEIPTGENERATION_COLUMNS = {
   ID: {
-    title: 'Id Recorrido',
+    title: 'ID Recorrido',
     sort: false,
   },
   ID_BIEN: {

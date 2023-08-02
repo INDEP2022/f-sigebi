@@ -93,6 +93,7 @@ export class RequestRecordTabComponent
       this.typeOfTransfer = this.requestForm.controls['typeOfTransfer'].value;
       this.getTrans(this.typeOfTransfer);
     }
+    //debugger;
     //this.prepareForm();
     if (this.requestForm.controls['paperDate'].value != null) {
       const paperDate = this.parseDateNoOffset(

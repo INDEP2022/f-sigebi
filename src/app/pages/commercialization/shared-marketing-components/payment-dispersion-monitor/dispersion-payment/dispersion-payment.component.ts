@@ -543,11 +543,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerLotsService.getAllComerLotsFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.loadingDesertLots = false
+        this.loadingDesertLots = false;
       },
       err => {
         console.log(err);
-        this.loadingDesertLots = false
+        this.loadingDesertLots = false;
       }
     );
   }
@@ -574,11 +574,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataCustomerBanks.load(res.data);
         this.totalItemsCustomerBanks = res.count;
-        this.loadingCustomerBanks = false
+        this.loadingCustomerBanks = false;
       },
       err => {
         console.log(err);
-        this.loadingCustomerBanks = false
+        this.loadingCustomerBanks = false;
         this.dataCustomerBanks.load([]);
         this.totalItemsCustomerBanks = 0;
       }
@@ -595,13 +595,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataLotsBanks.load(res.data);
         this.totalItemsLotsBanks = res.count;
-        this.loadingLotBanks = false
+        this.loadingLotBanks = false;
       },
       err => {
         console.log(err);
         this.dataLotsBanks.load([]);
         this.totalItemsLotsBanks = 0;
-        this.loadingLotBanks = false
+        this.loadingLotBanks = false;
       }
     );
   }
@@ -615,13 +615,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataPaymentLots.load(res.data);
         this.totalItemsPaymentLots = res.count;
-        this.loadingPaymentLots = false
+        this.loadingPaymentLots = false;
       },
       err => {
         console.log(err);
         this.dataPaymentLots.load([]);
         this.totalItemsPaymentLots = 0;
-        this.loadingPaymentLots = false
+        this.loadingPaymentLots = false;
       }
     );
   }
