@@ -16,6 +16,7 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -23,7 +24,6 @@ import { SecurityService } from 'src/app/core/services/ms-security/security.serv
 import { BasePage } from 'src/app/core/shared';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import { COLUMNSCUSTOMER, COLUMNS_LOT_EVENT, setCheckHide } from './columns';
-import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -35,17 +35,17 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   settingsCustomer = this.settings;
   settingsLotEvent = this.settings;
   settingsDesertedLots = this.settings;
-  settingsCustomerBanks = this.settings
-  settingsLotsBanks = this.settings
-  settingsPaymentLots = this.settings
+  settingsCustomerBanks = this.settings;
+  settingsLotsBanks = this.settings;
+  settingsPaymentLots = this.settings;
 
   form: FormGroup;
   formCustomerEvent: FormGroup;
   formLotEvent: FormGroup;
   formDesertLots: FormGroup;
-  formCustomerBanks: FormGroup
-  formLotsBanks: FormGroup
-  formPaymentLots: FormGroup
+  formCustomerBanks: FormGroup;
+  formLotsBanks: FormGroup;
+  formPaymentLots: FormGroup;
 
   statusEvent: string = null;
   eventType: string = null;
@@ -89,7 +89,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   private lot_solo_pend: boolean = false;
 
   private txt_usu_valido: string = null;
-  private id_tipo_disp: string = null
+  private id_tipo_disp: string = null;
 
   constructor(
     private fb: FormBuilder,
@@ -237,20 +237,20 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
     this.formCustomerBanks = this.fb.group({
       validAmount: [null],
-      total: [null]
-    })
+      total: [null],
+    });
     //PAGOS RECIBIDOS EN EL BANCO POR LOTE
     this.formLotsBanks = this.fb.group({
       validAmount: [null],
-      total: [null]
-    })
+      total: [null],
+    });
     //COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTES
     this.formPaymentLots = this.fb.group({
       totalWithIva: [null],
       totalIva: [null],
       totalWithoutIva: [null],
-      totalSum: [null]
-    })
+      totalSum: [null],
+    });
   }
 
   //Gets
@@ -305,7 +305,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.postQueryEvent(resp.eventTpId, resp.statusVtaId, resp.address);
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
-        this.getDataLotes(resp.id)
+        this.getDataLotes(resp.id);
       },
       err => {
         console.log(err);
@@ -346,7 +346,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
     this.comerTpEventsService.getTpEvent(model).subscribe(
       res => {
-        console.log(res)
+        console.log(res);
         this.id_tipo_disp = res.data[0].id_tipo_disp;
         if ([1, 3].includes(parseInt(this.id_tipo_disp))) {
           console.log('Entra');
@@ -358,14 +358,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         }
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
 
     //Parte final del postquery
-    this.dateMaxWarranty.setValue(new Date()) //TODO: Hay que corregir según un endpoint
-    this.dateMaxPayment.setValue(new Date()) //TODO: Hay que corregir según un endpoint
-    
+    this.dateMaxWarranty.setValue(new Date()); //TODO: Hay que corregir según un endpoint
+    this.dateMaxPayment.setValue(new Date()); //TODO: Hay que corregir según un endpoint
+
     //TODO: Falta endpoint de insert
   }
 
@@ -425,39 +425,38 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Postquery COMER_CLIENTESXEVENTO
   postqueryComerCustomer(item: any) {
-    clearGoodCheckCustomer()
+    clearGoodCheckCustomer();
     return new Promise((resolve, reject) => {
-      if([1, 3].includes(parseInt(this.id_tipo_disp))){
-        if(item.SentToSIRSAE == 'S'){
-  
+      if ([1, 3].includes(parseInt(this.id_tipo_disp))) {
+        if (item.SentToSIRSAE == 'S') {
         }
       }
-    })
-    
+    });
   }
 
   //LOTES
   getDataLotes(eventId: string | number) {
-    const paramsF = new FilterParams()
-    paramsF.addFilter('eventId', eventId)
-    paramsF.addFilter('clientId', null, SearchFilter.NOT)
-    this.comerLotsService.getComerLotsClientsPayref(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res)
-        this.dataLotEvent = res.data
-        this.totalItemsLotEvent = res.count
-      },
-      err => {
-        console.log(err)
-      }
-    )
+    const paramsF = new FilterParams();
+    paramsF.addFilter('eventId', eventId);
+    paramsF.addFilter('clientId', null, SearchFilter.NOT);
+    this.comerLotsService
+      .getComerLotsClientsPayref(paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.dataLotEvent = res.data;
+          this.totalItemsLotEvent = res.count;
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 
   //LOTES DESIERTOS
-  getDataDesertLots(eventId: string | number){
-    const paramsF = new FilterParams()
-    paramsF.addFilter('idClient',null)
-    paramsF.addFilter('eventId', eventId)
+  getDataDesertLots(eventId: string | number) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter('idClient', null);
+    paramsF.addFilter('eventId', eventId);
   }
-
 }
