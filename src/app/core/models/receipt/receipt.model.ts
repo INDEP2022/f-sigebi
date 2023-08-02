@@ -47,6 +47,7 @@ export interface IRecepitGuard {
   chargeSeg?: string;
   officialSae?: string;
   chargeSae?: string;
+  contentId?: string;
   typeTransport?: string;
   guard?: number;
   idGood?: number;
