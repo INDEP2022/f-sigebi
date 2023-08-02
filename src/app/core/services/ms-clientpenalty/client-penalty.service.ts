@@ -67,6 +67,11 @@ export class ClientPenaltyService extends HttpService {
     return this.put(`${this.route}/update-penalty`, customersPenalties);
   }
 
+  updateCustomers2(customersPenalties: IHistoryCustomersPenalties) {
+    console.log(customersPenalties);
+    return this.put(`${this.route2}`, customersPenalties);
+  }
+
   updateCustomers1(customersPenalties: ICustomerPenaltiesModal) {
     console.log(customersPenalties);
     return this.put(`${this.route}/update-penalty`, customersPenalties);
