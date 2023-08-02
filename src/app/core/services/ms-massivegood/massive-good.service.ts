@@ -160,4 +160,8 @@ export class MassiveGoodService extends HttpService {
     formData.append('vc_pantalla', vc_pantalla);
     return this.post(this.route.PupCargaCsv, formData);
   }
+
+  createProgGoodMassive(data: Object) {
+    return this.post(this.route.MassiveProgGood, data);
+  }
 }

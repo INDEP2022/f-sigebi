@@ -30,11 +30,13 @@
         <div class="col-md-3">
           <form-field
             [control]="goodForm.get('registryNumber')"
-            label="No. Registro">
+            label="No. de Registro">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="registryNumber" />
+              formControlName="registryNumber"
+              min="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
       </div>

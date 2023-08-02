@@ -49,8 +49,9 @@ export const REQUEST_OF_ASSETS_COLUMNS = {
   },
   quantity: {
     title: 'Cantidad de la Transferente',
-    type: 'string',
+    type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => Number(value),
   },
   measureUnitTransferent: {
     title: 'Unidad de Medida Transferente',
