@@ -1,16 +1,19 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BasePage } from 'src/app/core/shared';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SignatureAuxiliaryCatalogsService } from '../services/signature-auxiliary-catalogs.service';
 
 @Component({
-  selector: 'app-types-modal',
-  templateUrl: './types-modal.component.html',
+  selector: 'app-commercialization-origins-modal',
+  templateUrl: './commercialization-origins-modal.component.html',
   styles: [],
 })
-export class TypesModalComponent extends BasePage implements OnInit {
+export class CommercializationOriginsModalComponent
+  extends BasePage
+  implements OnInit
+{
   data: any;
   edit: boolean = false;
   formGroup: FormGroup = new FormGroup({});
@@ -30,8 +33,16 @@ export class TypesModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.formGroup = this.fb.group({
-      signatoryType: [null],
-      orderId: [
+      originId: [null],
+      screenKey: [
+        { value: null, disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      signatoriesNumber: [
         { value: null, disabled: false },
         [
           Validators.required,
@@ -39,11 +50,19 @@ export class TypesModalComponent extends BasePage implements OnInit {
           Validators.pattern(NUM_POSITIVE),
         ],
       ],
-      denomination: [
+      description: [
         { value: null, disabled: false },
         [
           Validators.required,
           Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      reportKey: [
+        { value: null, disabled: false },
+        [
+          Validators.required,
+          Validators.maxLength(30),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
@@ -68,7 +87,7 @@ export class TypesModalComponent extends BasePage implements OnInit {
     }
     if (this.edit == false) {
       this.svSignatureAuxiliaryCatalogsService
-        .createComerTypeSignatories(this.formGroup.value)
+        .createComerOrigins(this.formGroup.value)
         .subscribe({
           next: res => {
             console.log('RESPONSE', res);
@@ -88,10 +107,7 @@ export class TypesModalComponent extends BasePage implements OnInit {
         });
     } else {
       this.svSignatureAuxiliaryCatalogsService
-        .updateComerTypeSignatories(
-          this.formGroup.value.signatoryType,
-          this.formGroup.value
-        )
+        .updateComerOrigins(this.formGroup.value.originId, this.formGroup.value)
         .subscribe({
           next: res => {
             console.log('RESPONSE', res);
