@@ -312,4 +312,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     }
     this.totalItems2 = aux;
   }
+
+  /////////////////////// cogigo de Alexander
+
+  ////////////////////////
 }
