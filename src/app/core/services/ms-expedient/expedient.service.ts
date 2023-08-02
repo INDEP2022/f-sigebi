@@ -75,4 +75,7 @@ export class ExpedientService extends HttpService {
       tap(() => this.microservice)
     );
   }
+  getExpedienteById(id: number | string) {
+    return this.get(`${ExpedientEndpoints.FindIdentificator}/${id}`);
+  }
 }

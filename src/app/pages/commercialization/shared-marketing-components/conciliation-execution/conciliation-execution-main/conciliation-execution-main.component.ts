@@ -236,16 +236,22 @@ export class ConciliationExecutionMainComponent
     this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
       description: [null],
-      date: [null, [Validators.required]],
-      phase: [null, [Validators.required]],
+      date: [null],
+      phase: [null],
       batch: [null],
       price: [null],
     });
   }
 
   getData() {
-    this.conciliationColumns = this.clientsTestData;
-    this.totalItems = this.conciliationColumns.length;
+    if (!this.selectedEvent) {
+      this.alert('warning', 'Es Necesario Especificar el Evento', '');
+      this.conciliationForm.get('event').markAsTouched();
+      return;
+    }
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.getComerClientsXEvent('no');
   }
 
   mostrarLotes: boolean = false;
@@ -442,6 +448,8 @@ export class ConciliationExecutionMainComponent
     this.data.load([]);
     this.data.refresh();
     this.totalItems = 0;
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
     this.selectedEvent = null;

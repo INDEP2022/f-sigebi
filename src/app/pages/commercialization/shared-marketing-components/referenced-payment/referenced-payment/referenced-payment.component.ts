@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -12,6 +12,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
@@ -43,7 +44,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private comerClientsService: ComerClientsService,
     private comerEventService: ComerEventService,
     private accountMovementService: AccountMovementService,
-    private comerEventosService: ComerEventosService
+    private comerEventosService: ComerEventosService,
+    private bankService: BankService
   ) {
     super();
     this.settings = {
@@ -122,9 +124,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      bank: [null, [Validators.required]],
-      from: [null, [Validators.required]],
+      event: [null],
+      event_: [null],
+      bank: [null],
+      from: [null],
     });
   }
 
@@ -202,7 +205,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       delete params['filter.move'];
     }
 
-    params['filter.entryOrderId'] = `$null`;
+    // params['filter.entryOrderId'] = `$null`;
     params['sortBy'] = `paymentId:DESC`;
     this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
@@ -244,13 +247,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
     this.comerEventService.getAllFilter(params.getParams()).subscribe({
       next: data => {
-        // let result = data.data.map(item => {
-        //   item['bindlabel_'] = item.id + ' - ' + item.description;
-        // });
-        // Promise.all(result).then(resp => {
-        console.log('EVENT', data);
-        this.comerEventSelect = new DefaultSelect(data.data, data.count);
-        // });
+        let result = data.data.map((item: any) => {
+          item['idAndProcess'] = item.id + ' - ' + item.processKey;
+        });
+        Promise.all(result).then(resp => {
+          console.log('EVENT', data);
+          this.comerEventSelect = new DefaultSelect(data.data, data.count);
+        });
       },
       error: err => {
         this.comerEventSelect = new DefaultSelect();
@@ -280,30 +283,29 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.accountMovementService
-        .getPaymentControl(params.getParams())
-        .subscribe({
-          next: response => {
-            console.log('ress1', response);
-            let result = response.data.map(item => {
-              item['bankAndCode'] = item.idCode + ' - ' + item.cveBank;
-            });
+      this.bankService.getAll_(params.getParams()).subscribe({
+        next: response => {
+          console.log('ress1', response);
+          let result = response.data.map(item => {
+            item['bankAndCode'] = item.bankCode + ' - ' + item.name;
+          });
 
-            Promise.all(result).then((resp: any) => {
-              this.banks = new DefaultSelect(response.data, response.count);
-              this.loading = false;
-            });
-          },
-          error: err => {
-            this.banks = new DefaultSelect();
-            console.log(err);
-          },
-        });
+          Promise.all(result).then((resp: any) => {
+            this.banks = new DefaultSelect(response.data, response.count);
+          });
+        },
+        error: err => {
+          this.banks = new DefaultSelect();
+          console.log(err);
+        },
+      });
     });
   }
   search() {}
-  clear() {}
-
+  clear() {
+    this.form.reset();
+  }
+  carga() {}
   setValuesFormEvent(event?: any) {}
 
   setValuesFormBank(event?: any) {}

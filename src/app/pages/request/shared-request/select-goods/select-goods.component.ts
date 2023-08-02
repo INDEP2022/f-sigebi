@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
@@ -53,7 +54,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     //private goodProcessService: GoodProcessService,
     private requestService: RequestService,
     //private rejectedGoodService: RejectedGoodService,
-    private affairService: AffairService
+    private affairService: AffairService,
+    private rejectedGoodService: RejectedGoodService
   ) {
     super();
     this.goodSettings.columns = SELECT_GOODS_COLUMNS;
@@ -158,6 +160,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   getInfoGoods(filters: any) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.params = new BehaviorSubject<ListParams>(new ListParams());
+
     if (
       this.processDet == 'DEVOLUCION' ||
       this.processDet == 'AMPARO' ||
@@ -195,25 +199,35 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       params.getValue()['filter.tipoTransferente_vb'] = 'A';
     }
 
-    console.log('params', params);
-    /*this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGoods(filters)); */
+    for (const key in filters) {
+      if (filters[key] != null) {
+        params.getValue()[key] = filters[key];
+      }
+    }
+    this.params = params;
+    console.log('params', this.params);
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      debugger;
+      console.log(data);
+      //this.getGoods(filters)
+    });
   }
 
   getGoods(filters: any) {
-    /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    this.rejectedGoodService.getAll(params.getValue()).subscribe({
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    const filter = params.getValue();
+    debugger;
+    this.rejectedGoodService.getAll(filter).subscribe({
       next: response => {
         this.goodColumns = response.data;
         this.goodTotalItems = response.count;
-        const info = response.data.map(item => {
+        /*const info = response.data.map(item => {
           return item.good;
-        });
-         
+        });*/
       },
       error: error => {},
-    }); */
+    });
     /*this.goodProcessService
       .getGoodPostQuery(this.params.getValue(), filters)
       .subscribe({
