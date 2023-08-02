@@ -48,28 +48,7 @@
               formControlName="date" />
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('appliedTo')" label="Aplicado a:">
-            <ng-select formControlName="appliedTo" class="form-control pt-1">
-              <ng-option value="D">Devolución</ng-option>
-              <ng-option value="P">Penalización</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('clientId')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="form"
-              control="clientId"
-              [data]="clients"
-              value="id"
-              bindLabel="id"
-              label="Cliente"
-              (fetchItems)="getClients($event)">
-            </ngx-select>
-          </form-field>
-        </div>
+
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('lotId')">
             <ngx-select
@@ -94,6 +73,28 @@
           </form-field>
         </div>
         <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('appliedTo')" label="Aplicado a:">
+            <ng-select formControlName="appliedTo" class="form-control pt-1">
+              <ng-option value="D">Devolución</ng-option>
+              <ng-option value="P">Penalización</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('clientId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="clientId"
+              [data]="clients"
+              value="id"
+              bindLabel="id"
+              label="Cliente"
+              (fetchItems)="getClients($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
           <form-field [control]="form.get('amount')" label="Monto">
             <input
               maxlength="17"
@@ -103,7 +104,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('dateOi')" label="Fecha OI">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
@@ -113,19 +114,13 @@
               class="form-control"
               formControlName="dateOi" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
-            <input
-              bsDatepicker
-              [readonly]="true"
-              maxlength="11"
-              type="text"
-              class="form-control"
-              formControlName="recordDate" />
+            <input bsDatepicker maxlength="11" type="text" class="form-control" formControlName="recordDate" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6 mt-2">
           <form-field
             [control]="form.get('referenceOri')"
