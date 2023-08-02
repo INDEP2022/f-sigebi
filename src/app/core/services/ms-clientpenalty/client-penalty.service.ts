@@ -50,6 +50,7 @@ export class ClientPenaltyService extends HttpService {
 
   //http://sigebimstest.indep.gob.mx/penalty/api/v1/comer-penalty-his/export?filter.customerId=$eq:18104
   getByIdComerPenaltyHis2(id: string | number) {
+    console.log(id);
     return this.get(`comer-penalty-his/export?filter.customerId=$eq:${id}`);
   }
 
@@ -64,6 +65,11 @@ export class ClientPenaltyService extends HttpService {
   updateCustomers(customersPenalties: IHistoryCustomersPenalties) {
     console.log(customersPenalties);
     return this.put(`${this.route}/update-penalty`, customersPenalties);
+  }
+
+  updateCustomers2(customersPenalties: IHistoryCustomersPenalties) {
+    console.log(customersPenalties);
+    return this.put(`${this.route2}`, customersPenalties);
   }
 
   updateCustomers1(customersPenalties: ICustomerPenaltiesModal) {

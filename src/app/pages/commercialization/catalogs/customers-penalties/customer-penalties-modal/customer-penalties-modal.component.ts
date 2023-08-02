@@ -42,7 +42,6 @@ export class CustomerPenaltiesModalComponent
   }
 
   ngOnInit(): void {
-    console.log(this.customersPenalties);
     this.prepareForm();
     this.clientId = this.customersPenalties.clientId?.id;
     this.eventId = this.customersPenalties.eventId?.id;
@@ -59,11 +58,19 @@ export class CustomerPenaltiesModalComponent
     this.form = this.fb.group({
       clientId: [
         null,
-        [Validators.maxLength(13), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(13),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       id: [
         null,
-        [Validators.maxLength(13), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(13),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       typeProcess: [
         null,
@@ -85,11 +92,15 @@ export class CustomerPenaltiesModalComponent
       ],
       userPenalty: [
         null,
-        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      penaltiDate: [null],
+      penaltiDate: [null, [Validators.required]],
       publicLot: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      user: [null, [Validators.pattern(STRING_PATTERN)]],
+      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       pFlag: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       registernumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
@@ -202,19 +213,19 @@ export class CustomerPenaltiesModalComponent
 
   create() {
     this.loading = true;
-    const clientId = this.form.get('clientId');
-    const lotId = this.form.get('lotId');
-    const eventId = this.form.get('eventId');
+    const clientId = this.form.get('clientId'); //
+    const lotId = this.form.get('lotId'); //
+    const eventId = this.form.get('eventId'); //
     const endDate: string | null =
       this.form.get('endDate').value !== null
         ? this.convertDateFormat(this.form.get('endDate').value)
         : null;
-    const id = this.form.get('id');
+    const id = this.form.get('id'); //
     const pFlag = this.form.get('pFlag');
     const penaltiDate: string | null =
       this.form.get('penaltiDate').value !== null
         ? this.convertDateFormat(this.form.get('penaltiDate').value)
-        : null;
+        : null; //
     const publicLot = this.form.get('publicLot');
     const refeOfficeOther = this.form.get('refeOfficeOther');
     const registernumber = this.form.get('registernumber');
@@ -226,22 +237,24 @@ export class CustomerPenaltiesModalComponent
     const user = this.form.get('user');
     const userPenalty = this.form.get('userPenalty');
     const model: any = {
+      clientId: clientId.value,
       customerId: clientId.value,
-      batchId: lotId.value,
       eventId: eventId.value,
       batchPublic: publicLot.value,
-      initialDate: startDate,
-      finalDate: endDate,
-      processType: typeProcess.value,
-      referenceJobOther: refeOfficeOther.value,
-      user: user.value,
+      penaltyDate: penaltiDate,
       penaltyId: id.value,
+      refeOfficeOther: refeOfficeOther.value,
+      userPenalty: userPenalty.value,
+      lotId: lotId.value,
+      startDate: startDate,
+      endDate: endDate,
+      typeProcess: typeProcess.value,
       pFlag: pFlag.value,
-      recordNumber: registernumber.value,
-      usrPenalize: userPenalty.value,
-      penalizesDate: penaltiDate,
+      user: user.value,
+      registernumber: registernumber.value,
       nbOrigin: null,
     };
+    console.log(model);
     if (this.form.valid) {
       this.clientPenaltyService.create(model).subscribe({
         next: data => {
@@ -252,6 +265,7 @@ export class CustomerPenaltiesModalComponent
         error: error => {
           this.alert('warning', `No es Posible Crear el Cliente`, '');
           this.loading = false;
+          console.log(error);
         },
       });
     } else {

@@ -5,7 +5,7 @@
         <input type="number" class="form-control" formControlName="solicitud" />
       </form-field>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 col-6 mb-4 pl-0">
       <button
         type="button"
         class="btn btn-primary active btn-sm"
@@ -15,9 +15,19 @@
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
+    <div class="col-md-2 col-6 mb-4 p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger active btn-sm"
+        (click)="clear()">
+        Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+      </button>
+    </div>
   </div>
   <div class="row">
-    <app-delegation-table [solicitud]="solicitudTable"></app-delegation-table>
+    <app-delegation-table
+      [solicitud]="solicitudTable"
+      [update]="updateTable"></app-delegation-table>
   </div>
   <ng-custom-select-loading
     [form]="form"

@@ -43,6 +43,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
@@ -136,6 +137,7 @@ export class PerformProgrammingFormComponent
   loadingReport: boolean = false;
   loadingTrans: boolean = false;
   loadingGuard: boolean = false;
+  selectMasiveGood: boolean = false;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   paramsState = new BehaviorSubject<ListParams>(new ListParams());
@@ -177,6 +179,7 @@ export class PerformProgrammingFormComponent
   goodsProgCopy: IGoodProgramming[] = [];
   goodsProg: IGoodProgramming[] = [];
   stateKey: string = '';
+  minDateFecElab = new Date();
   idMunicipality: string = '';
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingsTransportableGoodsClose = {
@@ -234,7 +237,8 @@ export class PerformProgrammingFormComponent
     private localityService: LocalityService,
     private storeAkaService: StoreAliasStockService,
     private goodProcessService: GoodProcessService,
-    private statesService: StateOfRepublicService
+    private statesService: StateOfRepublicService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -332,6 +336,7 @@ export class PerformProgrammingFormComponent
       municipality: [null],
       colony: [null],
       postalCode: [null],
+      goodId: [null],
     });
   }
 
@@ -629,12 +634,58 @@ export class PerformProgrammingFormComponent
     const akaWarehouse = this.searchGoodsForm.get('warehouse').value;
     const postalCode = this.searchGoodsForm.get('postalCode').value;
     const state = this.searchGoodsForm.get('state').value;
+    const goodId = this.searchGoodsForm.get('goodId').value;
 
-    if (!municipality && !colony && !akaWarehouse && !postalCode && !state) {
+    if (
+      !municipality &&
+      !colony &&
+      !akaWarehouse &&
+      !postalCode &&
+      !state &&
+      !goodId
+    ) {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getProgGoods());
     }
+
+    if (
+      goodId &&
+      !municipality &&
+      !colony &&
+      !akaWarehouse &&
+      !postalCode &&
+      !state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
+
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
+      }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        goodNumber: goodId,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
+    }
+    /*
 
     if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
       const filterData = this.goodsProgCopy.filter(item => {
@@ -983,15 +1034,13 @@ export class PerformProgrammingFormComponent
         );
         this.estatesList.load(filterData);
       }
-    }
+    } */
   }
   showClean() {
-    this.searchGoodsForm.get('municipality').setValue('');
-    this.searchGoodsForm.get('colony').setValue('');
-    this.searchGoodsForm.get('warehouse').setValue('');
-    this.searchGoodsForm.get('postalCode').setValue('');
-    this.searchGoodsForm.get('state').setValue('');
-    this.estatesList.load(this.goodsProg);
+    this.searchGoodsForm.reset();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProgGoods());
   }
 
   searchProgGoods(filter: Object) {
@@ -1271,8 +1320,43 @@ export class PerformProgrammingFormComponent
           });
 
           //goodsFilter = goodsFilter.filter(item => item);
+          this.estatesList.load(goodsFilter);
+          this.goodsProgCopy = goodsFilter;
+          this.loadingGoods = false;
           this.totalItems = response.count;
-          this.filterGoodsProgramming(goodsFilter);
+          //this.filterGoodsProgramming(goodsFilter);
+        },
+        error: error => (this.loadingGoods = false),
+      });
+  }
+
+  getProgGoodsSearch(filterData: Object) {
+    this.loadingGoods = true;
+
+    this.goodsQueryService
+      .postGoodsProgramming(this.params.getValue(), filterData)
+      .subscribe({
+        next: response => {
+          let goodsFilter = response.data.map(items => {
+            if (items.physicalState) {
+              if (items.physicalState == 1) {
+                items.physicalState = 'BUENO';
+                return items;
+              } else if (items.physicalState == 2) {
+                items.physicalState = 'MALO';
+                return items;
+              }
+            } else {
+              return items;
+            }
+          });
+
+          //goodsFilter = goodsFilter.filter(item => item);
+          this.estatesList.load(goodsFilter);
+          this.goodsProgCopy = goodsFilter;
+          this.loadingGoods = false;
+          this.totalItems = response.count;
+          //this.filterGoodsProgramming(goodsFilter);
         },
         error: error => (this.loadingGoods = false),
       });
@@ -1301,7 +1385,6 @@ export class PerformProgrammingFormComponent
           this.estatesList.load(filter);
           this.loadingGoods = false;
           //this.estatesList.load(filter);
-          this.loadingGoods = false;
         } else {
           this.alert(
             'warning',
@@ -1321,44 +1404,105 @@ export class PerformProgrammingFormComponent
   }
 
   sendTransportable() {
-    if (this.goodSelect.length) {
-      this.alertQuestion(
-        'warning',
-        'Acción',
-        'Los Bienes seleccionados serán enviados a transportable'
-      ).then(async question => {
-        if (question.isConfirmed) {
-          const createProgGood = await this.insertGoodsProgTrans();
-          if (createProgGood) {
-            const updateGood: any = await this.changeStatusGoodTrans();
-            if (updateGood) {
-              const showGoods: any = await this.getFilterGood(
-                'EN_TRANSPORTABLE'
-              );
-              console.log('showGoods', showGoods);
-              if (showGoods) {
-                //const _showGoods = await this.showGoodsTransportable(showGoods);
+    if (!this.selectMasiveGood) {
+      if (this.goodSelect.length) {
+        this.alertQuestion(
+          'warning',
+          'Acción',
+          'Los Bienes seleccionados serán enviados a transportable'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            const createProgGood = await this.insertGoodsProgTrans();
+            if (createProgGood) {
+              const updateGood: any = await this.changeStatusGoodTrans();
+              if (updateGood) {
+                const showGoods: any = await this.getFilterGood(
+                  'EN_TRANSPORTABLE'
+                );
 
-                /*this.params
+                if (showGoods) {
+                  //const _showGoods = await this.showGoodsTransportable(showGoods);
+
+                  /*this.params
                   .pipe(takeUntil(this.$unSubscribe))
                   .subscribe(() => this.getProgGoods()); */
 
-                this.params
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getProgGoods());
-                this.paramsTransportableGoods
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.showTrans());
-                this.goodSelect = [];
-                /*if (_showGoods) {
+                  this.params
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getProgGoods());
+                  this.paramsTransportableGoods
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.showTrans());
+                  this.goodSelect = [];
+                  /*if (_showGoods) {
                 } */
+                }
               }
             }
           }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Error',
+          'Se necesita tener un bien seleccionado'
+        );
+      }
+    } else {
+      this.alertQuestion(
+        'warning',
+        'Acción',
+        'Todos los Bienes serán enviados a transportable'
+      ).then(question => {
+        if (question.isConfirmed) {
+          let tranferent: number = 0;
+          let typeRelevant: number = 0;
+          if (this.transferentId) {
+            tranferent = this.transferentId;
+          } else if (this.dataProgramming.tranferId)
+            tranferent = this.dataProgramming.tranferId;
+
+          if (this.idTypeRelevant) {
+            typeRelevant = this.idTypeRelevant;
+          } else if (this.dataProgramming.typeRelevantId) {
+            typeRelevant = this.dataProgramming.typeRelevantId;
+          }
+
+          const formData = {
+            regionalDelegation: Number(
+              this.dataProgramming.regionalDelegationNumber
+            ),
+            transferent: tranferent,
+            relevantType: typeRelevant,
+            statusGood: 'APROBADO',
+            programmingId: this.idProgramming,
+            creationUser: 'Sigebi admon',
+            modificationUser: 'Sigebi admon',
+            version: '1',
+            status: 'EN_TRANSPORTABLE',
+          };
+
+          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
+            next: response => {
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
+              this.paramsTransportableGoods
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.showTrans());
+
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Bienes agregados a transportable correctamente'
+              );
+            },
+            error: error => {
+              console.log('error', error);
+            },
+          });
         }
       });
-    } else {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
@@ -1519,34 +1663,99 @@ export class PerformProgrammingFormComponent
               typeTransportable: 'guard',
               callback: async (data: any) => {
                 if (data) {
-                  const createProgGood = await this.addGoodsGuards();
-                  console.log('createProgGood', createProgGood);
-                  if (createProgGood) {
-                    const updateGood: any = await this.changeStatusGoodGuard(
-                      data
-                    );
-                    console.log('updateGood', updateGood);
-                    if (updateGood) {
-                      const showGoods: any = await this.getFilterGood(
-                        'EN_RESGUARDO_TMP'
+                  if (!this.selectMasiveGood) {
+                    const createProgGood = await this.addGoodsGuards();
+
+                    if (createProgGood) {
+                      const updateGood: any = await this.changeStatusGoodGuard(
+                        data
                       );
 
-                      if (showGoods) {
-                        this.params
-                          .pipe(takeUntil(this.$unSubscribe))
-                          .subscribe(() => this.getProgGoods());
-                        this.paramsGuardGoods
-                          .pipe(takeUntil(this.$unSubscribe))
-                          .subscribe(() => this.showGuard());
-                        this.goodSelect = [];
-                        //const _showGoods = await this.showGoodsGuard(showGoods);
-                        /*console.log('showGoods', _showGoods);
+                      if (updateGood) {
+                        const showGoods: any = await this.getFilterGood(
+                          'EN_RESGUARDO_TMP'
+                        );
+
+                        if (showGoods) {
+                          this.params
+                            .pipe(takeUntil(this.$unSubscribe))
+                            .subscribe(() => this.getProgGoods());
+                          this.paramsGuardGoods
+                            .pipe(takeUntil(this.$unSubscribe))
+                            .subscribe(() => this.showGuard());
+                          this.goodSelect = [];
+                          //const _showGoods = await this.showGoodsGuard(showGoods);
+                          /*console.log('showGoods', _showGoods);
                         
                         if (_showGoods) {
                           
                         } */
+                        }
                       }
                     }
+                  } else {
+                    this.alertQuestion(
+                      'warning',
+                      'Acción',
+                      'Todos los Bienes serán enviados a resguardo'
+                    ).then(question => {
+                      if (question.isConfirmed) {
+                        let tranferent: number = 0;
+                        let typeRelevant: number = 0;
+                        if (this.transferentId) {
+                          tranferent = this.transferentId;
+                        } else if (this.dataProgramming.tranferId)
+                          tranferent = this.dataProgramming.tranferId;
+
+                        if (this.idTypeRelevant) {
+                          typeRelevant = this.idTypeRelevant;
+                        } else if (this.dataProgramming.typeRelevantId) {
+                          typeRelevant = this.dataProgramming.typeRelevantId;
+                        }
+
+                        const formData = {
+                          regionalDelegation: Number(
+                            this.dataProgramming.regionalDelegationNumber
+                          ),
+                          transferent: tranferent,
+                          relevantType: typeRelevant,
+                          statusGood: 'APROBADO',
+                          programmingId: this.idProgramming,
+                          creationUser: 'Sigebi admon',
+                          modificationUser: 'Sigebi admon',
+                          version: '1',
+                          status: 'EN_RESGUARDO',
+                        };
+
+                        this.massiveGoodService
+                          .createProgGoodMassive(formData)
+                          .subscribe({
+                            next: async response => {
+                              const updateWarehouseTransportable =
+                                await this.updateWarehouseGuard(data);
+
+                              if (updateWarehouseTransportable) {
+                                this.params
+                                  .pipe(takeUntil(this.$unSubscribe))
+                                  .subscribe(() => this.getProgGoods());
+                                this.paramsGuardGoods
+                                  .pipe(takeUntil(this.$unSubscribe))
+                                  .subscribe(() => this.showGuard());
+                                this.goodSelect = [];
+
+                                this.alert(
+                                  'success',
+                                  'Acción Correcta',
+                                  'Bienes agregados a resguardo correctamente'
+                                );
+                              }
+                            },
+                            error: error => {
+                              console.log('error', error);
+                            },
+                          });
+                      }
+                    });
                   }
                 }
               },
@@ -1559,6 +1768,43 @@ export class PerformProgrammingFormComponent
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
+  }
+
+  updateWarehouseGuard(store: number) {
+    return new Promise((resolve, reject) => {
+      const data = {
+        programmingId: this.idProgramming,
+        status: 'EN_RESGUARDO_TMP',
+        storeNumber: store,
+      };
+      this.goodProcessService.updateMassiveStore(data).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+      /*this.goodsTranportables.getElements().then(data => {
+        if (data.length > 0) {
+          data.map((good: IGood) => {
+            const object = {
+              id: good.id,
+              goodId: good.goodId,
+              storeId: this.warehouseId,
+            };
+            this.goodService.updateByBody(object).subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {},
+            });
+          });
+        } else {
+          resolve(true);
+        }
+      }); */
+    });
   }
 
   async addGoodsGuards() {
@@ -1964,7 +2210,6 @@ export class PerformProgrammingFormComponent
 
         const updateTask = await this.updateTask(folio, task.id);
         if (updateTask) {
-          console.log('this.performForm.value', this.performForm.value);
           this.programmingGoodService
             .updateProgramming(this.idProgramming, this.performForm.value)
             .subscribe({
@@ -2139,7 +2384,7 @@ export class PerformProgrammingFormComponent
     }
 
     if (error > 0) {
-      this.alert('info', 'Error', `${message}`);
+      this.alert('warning', 'Advertencia', `${message}`);
     } else if (error == 0) {
       if (this.performForm.get('startDate').value) {
         this.performForm
@@ -2385,7 +2630,6 @@ export class PerformProgrammingFormComponent
   }
 
   setDataProgramming() {
-    console.log('dataProgramming', this.dataProgramming);
     if (this.dataProgramming.folio) {
       this.showForm = true;
       this.performForm.get('address').setValue(this.dataProgramming.address);
@@ -2407,12 +2651,16 @@ export class PerformProgrammingFormComponent
       this.performForm
         .get('startDate')
         .setValue(
-          moment(this.dataProgramming.startDate).format('DD/MM/YYYY HH:mm:ss')
+          moment(new Date(this.dataProgramming.startDate)).format(
+            'DD/MM/YYYY HH:mm:ss'
+          )
         );
       this.performForm
         .get('endDate')
         .setValue(
-          moment(this.dataProgramming.endDate).format('DD/MM/YYYY HH:mm:ss')
+          moment(new Date(this.dataProgramming.endDate)).format(
+            'DD/MM/YYYY HH:mm:ss'
+          )
         );
 
       this.transferentId = this.dataProgramming.tranferId;
@@ -2735,14 +2983,13 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  checkInfoDate(event: any) {
-    const startDate = event;
-    const _startDateFormat = moment(startDate).format('YYYY/MM/DD HH:mm:ss');
-
+  checkInfoDate(startDate: Date) {
+    const _startDateFormat = moment(startDate).format('DD/MM/YYYY');
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
-      'YYYY/MM/DD HH:mm:ss'
+      'DD/MM/YYYY'
     );
-    const date = moment(new Date()).format('YYYY/MM/DD HH:mm:ss');
+
+    const date = moment(new Date()).format('YYYY/MM/DD');
     const hour = new Date().getHours();
     const minute = new Date().getMinutes();
     const formData = {
@@ -2754,7 +3001,45 @@ export class PerformProgrammingFormComponent
 
     this.programmingService.getDateProgramming(formData).subscribe({
       next: (response: any) => {
-        const correctDate = moment(response).format('DD/MM/YYYY ');
+        const correctDate = moment(response).format('DD/MM/YYYY');
+
+        if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
+          this.performForm
+            .get('startDate')
+            .addValidators([minDate(new Date(response))]);
+          this.performForm
+            .get('startDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+
+          this.performForm
+            .get('endDate')
+            .addValidators([minDate(new Date(response))]);
+          this.performForm
+            .get('endDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+        }
+      },
+    });
+    /*
+
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'YYYY/MM/DD HH:mm:ss'
+    );
+    const date = moment(new Date()).format('YYYY/MM/DD');
+    const hour = new Date().getHours();
+    const minute = new Date().getMinutes();
+    const formData = {
+      days: 5,
+      hours: hour,
+      minutes: minute,
+      date: date,
+    };
+
+    this.programmingService.getDateProgramming(formData).subscribe({
+      next: (response: any) => {
+        const correctDate = moment(response).format('DD/MM/YYYY');
         if (correctDate > _startDateFormat || correctDate > _endDateFormat) {
           this.performForm
             .get('startDate')
@@ -2791,6 +3076,131 @@ export class PerformProgrammingFormComponent
         }
       },
       error: error => {},
+    }); */
+  }
+
+  selectAllGoods() {
+    this.selectMasiveGood = true;
+  }
+
+  removeSelectGoods() {
+    this.selectMasiveGood = false;
+  }
+
+  deleteMassiveGoodTransportable() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea eliminar todos los Bienes de transportable?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const data = {
+          schedulesId: this.idProgramming,
+          status: 'EN_TRANSPORTABLE',
+        };
+
+        this.programmingService.deleteGoodsMassive(data).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'Acción Correcta',
+              'Bienes eliminados de transportable correctamente'
+            );
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getProgGoods());
+            this.paramsTransportableGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.showTrans());
+
+            this.goodsTranportables = new LocalDataSource();
+            const deleteGood = this.goodsTranportables.count();
+            this.headingTransportable = `Transportable(${deleteGood})`;
+            this.totalItemsTransportableGoods = deleteGood;
+          },
+          error: error => {
+            console.log('error date', error);
+          },
+        });
+      }
+    });
+  }
+  deleteMassiveGoodGuard() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea eliminar todos los Bienes de resguardo?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const data = {
+          schedulesId: this.idProgramming,
+          status: 'EN_RESGUARDO_TMP',
+        };
+
+        this.programmingService.deleteGoodsMassive(data).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'Acción Correcta',
+              'Bienes eliminados de resguardo correctamente'
+            );
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getProgGoods());
+            this.paramsGuardGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.showGuard());
+
+            this.goodsGuards = new LocalDataSource();
+            const deleteGood = this.goodsGuards.count();
+            this.headingGuard = `Resguardo(${deleteGood})`;
+            this.totalItemsTransportableGuard = deleteGood;
+          },
+          error: error => {
+            console.log('error date', error);
+          },
+        });
+      }
+    });
+  }
+
+  deleteMassiveGoodWarehouse() {
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea eliminar todos los Bienes de almacén?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const data = {
+          schedulesId: this.idProgramming,
+          status: 'EN_ALMACEN_TMP',
+        };
+
+        this.programmingService.deleteGoodsMassive(data).subscribe({
+          next: response => {
+            this.alert(
+              'success',
+              'Acción Correcta',
+              'Bienes eliminados de almacén correctamente'
+            );
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getProgGoods());
+            this.paramsWarehouseGoods
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.showWarehouseGoods());
+            this.goodSelect = [];
+
+            this.goodsWarehouse = new LocalDataSource();
+            const deleteGood = this.goodsWarehouse.count();
+            this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
+            this.totalItemsTransportableWarehouse = deleteGood;
+          },
+          error: error => {
+            console.log('error date', error);
+          },
+        });
+      }
     });
   }
 }
