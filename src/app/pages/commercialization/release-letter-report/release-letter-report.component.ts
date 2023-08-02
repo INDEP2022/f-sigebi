@@ -214,7 +214,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
       ],
-      fechaFactura: [null, [Validators.required]],
+      fechaFactura: [null],
       parrafo2: [
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
@@ -539,8 +539,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
           'es'
         );
         this.bienesLotesForm.get('evento').setValue(this.event.id);
-        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
-        this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
+        // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        // this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
         this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
         this.cve = this.event.processKey;
         console.log(this.cve);
@@ -583,6 +583,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
     this.filterParams.getValue().search = params.text;
+    // this.filterParams.getValue().page = 1000000;
     this.filterParams
       .getValue()
       .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
@@ -592,6 +593,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         next: data => {
           this.bienesLoading = false;
           this.bienes = data.data;
+          console.log(this.bienes);
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
