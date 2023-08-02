@@ -20,7 +20,7 @@
           class="form-material form-horizontal"
           [formGroup]="actForm"
           (ngSubmit)="onSubmit()">
-          <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <!-- <div class="row mt-5 justify-content-start justify-content-sm-end">
             <div class="col-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
@@ -33,7 +33,7 @@
                 </form-field>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="row mt-5">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
@@ -60,17 +60,23 @@
               </div>
             </div>
           </div>
-
+          <div class="row mt-5">
+            <app-divider class=""></app-divider>
+          </div>
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('actSelect')"
                   label="&Aacute;cta">
+                  <!-- <ngx-select (fetchItems)="searchActs($event)" [data]="actData" value="cveAct"
+                    bindLabel="cveAccount" [label]="actData" [control]="bankField" (change)="searchAct($event)">
+                  </ngx-select> -->
                   <select class="form-control" formControlName="actSelect">
                     <option [value]="null">Seleccione un valor</option>
-                    <option [value]="1">1</option>
-                    <option [value]="2">2</option>
+                    <option *ngFor="let act of actData" [value]="act.cveAct">
+                      {{ act.cveAct }}
+                    </option>
                   </select>
                 </form-field>
               </div>

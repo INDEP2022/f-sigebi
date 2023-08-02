@@ -5,6 +5,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
+import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -32,11 +33,16 @@ export class DonationActsComponent extends BasePage implements OnInit {
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
+  actData: any[] = [];
 
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
+  expno: string | number;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private donationService: DonationService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
@@ -50,7 +56,46 @@ export class DonationActsComponent extends BasePage implements OnInit {
   }
 
   search(term: string | number) {
-    this.response = !this.response;
+    this.expno = term;
+    this.loading = true;
+    this.donationService
+      .getEventComDonation({ fileId: '$eq:' + term })
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          this.actData = resp.data;
+          this.actForm.patchValue({
+            preliminaryAscertainment: resp.data[0].expedient.preliminaryInquiry,
+            causePenal: resp.data[0].expedient.causePenal,
+          });
+          this.response = true;
+          this.loading = false;
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
+  }
+
+  searchActs(term: any) {
+    this.loading = true;
+    this.donationService
+      .getEventComDonation({ fileId: '$eq:' + term })
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          this.actData = resp.data;
+          this.actForm.patchValue({
+            preliminaryAscertainment: resp.data[0].expedient.preliminaryInquiry,
+            causePenal: resp.data[0].expedient.causePenal,
+          });
+          this.response = true;
+          this.loading = false;
+        },
+        error: err => {
+          console.log(err);
+        },
+      });
   }
 
   onSubmit() {}
@@ -132,6 +177,8 @@ export class DonationActsComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  searchAct(term: any) {}
 }
 
 const EXAMPLE_DATA = [
