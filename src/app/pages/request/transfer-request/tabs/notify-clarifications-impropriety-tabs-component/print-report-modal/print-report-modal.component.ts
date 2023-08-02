@@ -656,7 +656,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
         next: data => {
-          console.log('XML Geneardo: ', data);
+          console.log('XML Generado: ', data);
           this.xml = data;
           this.msjCheck = true;
           this.handleSuccess();

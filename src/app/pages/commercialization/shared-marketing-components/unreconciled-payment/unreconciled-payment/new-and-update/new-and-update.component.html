@@ -41,12 +41,35 @@
           <form-field [control]="form.get('date')" label="Fecha">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
               maxlength="11"
               bsDatepicker
               type="text"
               class="form-control"
               formControlName="date" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('lotId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="lotId"
+              [data]="lotes"
+              value="idLot"
+              bindLabel="idLot"
+              label="Lote"
+              (fetchItems)="getLotes($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="reference" />
           </form-field>
         </div>
         <div class="col-md-6 mt-2">
@@ -72,29 +95,6 @@
           </form-field>
         </div>
         <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('lotId')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="form"
-              control="lotId"
-              [data]="lotes"
-              value="idLot"
-              bindLabel="idLot"
-              label="Lote"
-              (fetchItems)="getLotes($event)">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('reference')" label="Referencia">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="reference" />
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
           <form-field [control]="form.get('amount')" label="Monto">
             <input
               maxlength="17"
@@ -104,30 +104,23 @@
           </form-field>
         </div>
 
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('dateOi')" label="Fecha OI">
             <input
               [ngClass]="{ 'bg-gray': disabledSend }"
-              [readonly]="disabledSend"
               bsDatepicker
               maxlength="11"
               type="text"
               class="form-control"
               formControlName="dateOi" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
-            <input
-              bsDatepicker
-              [readonly]="true"
-              maxlength="11"
-              type="text"
-              class="form-control"
-              formControlName="recordDate" />
+            <input bsDatepicker maxlength="11" type="text" class="form-control" formControlName="recordDate" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6 mt-2">
           <form-field
             [control]="form.get('referenceOri')"
@@ -203,7 +196,13 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
-          [disabled]="!form.valid"
+          [disabled]="
+            !form.valid ||
+            form.get('recordDate').value == undefined ||
+            form.get('recordDate') == null ||
+            form.get('date').value == undefined ||
+            form.get('date') == null
+          "
           type="button"
           class="btn btn-primary btn-sm active"
           (click)="confirm()">

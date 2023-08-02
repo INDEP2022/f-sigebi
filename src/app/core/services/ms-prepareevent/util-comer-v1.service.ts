@@ -33,4 +33,9 @@ export class UtilComerV1Service extends HttpService {
       PrepareEventEndpoints.ApplicationPufSearchEvent + '/' + goodNumber
     );
   }
+
+  /** UTIL_COMER.PRECIOS_VTA  */
+  salePrices(body: { event: string | number; lot?: string | number }) {
+    return this.post(PrepareEventEndpoints.SalePrices, body);
+  }
 }
