@@ -27,13 +27,11 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-
   /*quantity: {
     title: 'Cantidad de Transacción',
     type: 'number',
     sort: false,
   }, */
-
   amountToReserve: {
     title: 'Cantidad Reservada',
     type: 'number',
@@ -64,6 +62,11 @@ export const SELECT_GOODS_COLUMNS = {
     sort: false,
   },
   saeNo: {
+    title: 'No. INDEP',
+    type: 'string',
+    sort: false,
+  },
+  inventoryNumber: {
     title: 'No. INDEP',
     type: 'string',
     sort: false,

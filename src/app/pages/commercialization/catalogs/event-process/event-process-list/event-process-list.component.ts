@@ -41,6 +41,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
   rowTypeProcess: boolean = false;
 
   eventId: string;
+  button: boolean = false;
 
   settings2 = { ...this.settings };
 
@@ -166,9 +167,9 @@ export class EventProcessListComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getEventsByType());
-    this.params1
+    /*this.params1
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getEventProcess());
+      .subscribe(() => this.getEventProcess());*/
 
     //this.prepareForm();
     //this.getEvents();
@@ -243,6 +244,7 @@ export class EventProcessListComponent extends BasePage implements OnInit {
         this.data1.load([]);
         this.data1.refresh();
         this.totalItems1 = 0;
+        this.button = true;
       },
     });
   }
