@@ -9,6 +9,7 @@
         <search-bar-simple
           (eventEmit)="search($event)"
           [label]="''"
+          id="expediente"
           [placeholder]="'N&uacute;mero de expediente'">
         </search-bar-simple>
       </div>
@@ -245,7 +246,20 @@
             </div>
           </div>
         </div>
-
+        <div class="col-md-12 text-center mt-4 mb-4">
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button">
+            <!-- Mover uno -->
+            <i class="bx bx-chevron-down bx-md"></i>
+          </button>
+          <button
+            class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+            type="button">
+            <!-- Quitar uno -->
+            <i class="bx bx-chevron-up bx-md"></i>
+          </button>
+        </div>
         <div class="row mt-5">
           <app-divider></app-divider>
         </div>
@@ -263,6 +277,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
+              (userRowSelect)="onUserRowSelect($event)"
               [source]="data2"></ng2-smart-table>
           </div>
         </ng-scrollbar>

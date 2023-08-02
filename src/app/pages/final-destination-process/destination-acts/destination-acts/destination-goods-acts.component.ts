@@ -1,7 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -9,6 +11,7 @@ import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DestinationActsDelegationComponent } from '../destination-acts-delegation/destination-acts-delegation.component';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
 
@@ -37,7 +40,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     private expedientService: ExpedientService,
     private datePipe: DatePipe,
     private goodService: GoodService,
-    private goodParametersService: GoodParametersService
+    private goodParametersService: GoodParametersService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -179,6 +183,29 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       let edo = JSON.parse(JSON.stringify(res['stagecreated']));
       this.etapa = edo;
     });
+  }
+
+  onUserRowSelect(good: any) {
+    console.log('good', good.data);
+    this.openModal(good.data);
+  }
+
+  openModal(good: any) {
+    let config: ModalOptions = {
+      initialState: {
+        good: good,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => console.log('recibido '));
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(DestinationActsDelegationComponent, config);
   }
 }
 
