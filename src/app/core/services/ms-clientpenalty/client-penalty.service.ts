@@ -24,8 +24,12 @@ export class ClientPenaltyService extends HttpService {
     this.microservice = ClientPenaltyEndpoints.Penalty;
   }
 
-  getAll(params?: string): Observable<IListResponse<ICustomersPenalties>> {
-    return this.get<IListResponse<any>>(this.route, params);
+  getAll(params?: string) {
+    return this.get<IListResponse<any>>(`${this.route}`, params);
+  }
+
+  getAll2() {
+    return this.get<any>(`${this.route}/export`);
   }
 
   getAllState(): Observable<IListResponse<ICustomersPenalties>> {
