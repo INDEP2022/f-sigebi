@@ -8,7 +8,7 @@ export const COUNT_TIIE_COLUMNS = {
     sort: false,
   },*/
   tiieDays: {
-    title: 'Días TIIE',
+    title: 'Día TIIE',
     type: 'number',
     sort: false,
     valuePrepareFunction: (dias: number) => {

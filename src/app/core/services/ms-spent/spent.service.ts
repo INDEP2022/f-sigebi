@@ -37,7 +37,7 @@ export class SpentService extends HttpService {
   }
 
   getChargeSpentsExcel(body: IChargeSpent) {
-    return this.post(`aplication/charge-spents-excel`, body);
+    return this.post(`aplication/charge-spents-excel`, body)
   }
 
   getComerPaymentRefGens(params?: _Params) {

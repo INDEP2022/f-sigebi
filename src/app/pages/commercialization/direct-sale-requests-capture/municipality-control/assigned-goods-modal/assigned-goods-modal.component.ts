@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BienesAsignados } from 'src/app/core/models/ms-directsale/BienesAsignados';
+import { MunicipalityControlMainService } from 'src/app/core/services/ms-directsale/municipality-control-main.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -14,103 +15,78 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   title: string = 'Bien Asignado';
   good: any;
+  number = 0;
   positions: number[] = [];
   edit: boolean = false;
   goodClassification: any[] = [];
   siabClassification: any[] = [];
+  assignedGoodColumns: any[] = [];
   goodItems = new DefaultSelect();
+  bodyBien: BienesAsignados;
   goodForm: FormGroup = new FormGroup({});
   @Output() onConfirm = new EventEmitter<any>();
 
-  goodTestData = [
-    {
-      id: 1,
-    },
-    {
-      id: 2,
-    },
-    {
-      id: 3,
-    },
-    {
-      id: 4,
-    },
-    {
-      id: 5,
-    },
-  ];
-
-  goodClassificationData = [
-    {
-      description: 'CLASIFICACION 1',
-    },
-    {
-      description: 'CLASIFICACION 2',
-    },
-    {
-      description: 'CLASIFICACION 3',
-    },
-    {
-      description: 'CLASIFICACION 4',
-    },
-    {
-      description: 'CLASIFICACION 5',
-    },
-  ];
-
-  siabClassificationData = [
-    {
-      description: 'CLASIFICACION 1',
-    },
-    {
-      description: 'CLASIFICACION 2',
-    },
-    {
-      description: 'CLASIFICACION 3',
-    },
-    {
-      description: 'CLASIFICACION 4',
-    },
-    {
-      description: 'CLASIFICACION 5',
-    },
-  ];
-
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private municipalityControlMainService: MunicipalityControlMainService
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    this.getData();
+  }
+  getData() {
     this.prepareForm();
-    this.getGoods({ page: 1, text: '' });
-    this.getGoodClassification();
-    this.getSiabClassification();
   }
 
   private prepareForm(): void {
     this.goodForm = this.fb.group({
-      goodId: [null, [Validators.required]],
-      appraisal: [null, Validators.pattern(STRING_PATTERN)],
-      appraisalDate: [null],
-      sessionNumber: [null],
-      goodClasification: [null],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      delegation: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      location: [null, Validators.pattern(STRING_PATTERN)],
-      mandate: [null, Validators.pattern(STRING_PATTERN)],
-      siabClassification: [null],
-      commentary: [null, Validators.pattern(STRING_PATTERN)],
+      repvendcId: [null],
+      batchId: [1],
+      bill: [null, [Validators.required]],
+      labelsent: [null, [Validators.required]],
+      sayDelivery: [null, [Validators.required]],
+      job: [null, [Validators.required]],
+      managed: [null, [Validators.required]],
+      addresssent: [null, [Validators.required]],
+      labelBatch: [null, [Validators.required]],
+      userSignature: [null, [Validators.required]],
+      paragraph1: [null, Validators.pattern(STRING_PATTERN)],
+      ccp1: [null],
     });
     if (this.good !== undefined) {
       this.edit = true;
       this.goodForm.patchValue(this.good);
+      this.setValue();
+    } else {
+      this.edit = false;
     }
+  }
+
+  setValue() {
+    this.goodForm.controls['batchId'].setValue(
+      this.goodForm.controls['batchId'].value.batchId
+    );
+  }
+  createId() {
+    this.municipalityControlMainService.getBienesAsignados().subscribe({
+      next: data => {
+        this.assignedGoodColumns = data.data;
+        for (let i = 0; i < this.assignedGoodColumns.length; i++) {
+          if (this.assignedGoodColumns[i].repvendcId > this.number) {
+            this.number = this.assignedGoodColumns[i].repvendcId;
+          }
+        }
+        this.handleSuccess();
+      },
+      error: err => {
+        this.number = 1;
+        this.handleSuccess();
+      },
+    });
+    this.number = 0;
   }
 
   close() {
@@ -118,32 +94,60 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.handleSuccess();
+    this.createId();
   }
 
   handleSuccess() {
     this.loading = true;
-    // Llamar servicio para agregar control
-    this.loading = false;
-    this.onConfirm.emit(this.goodForm.value);
-    this.modalRef.hide();
-  }
-
-  getGoodClassification() {
-    this.goodClassification = this.goodClassificationData;
-  }
-
-  getSiabClassification() {
-    this.siabClassification = this.siabClassificationData;
-  }
-
-  getGoods(params: ListParams) {
-    if (params.text == '') {
-      this.goodItems = new DefaultSelect(this.goodTestData, 5);
+    this.bodyBien = this.goodForm.value;
+    if (this.edit) {
+      this.municipalityControlMainService
+        .updateBienesAsignados(this.goodForm.value.repvendcId, this.bodyBien)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            this.onLoadToast('success', 'Datos actualizados correctamente', '');
+            this.number = 0;
+            this.modalRef.hide();
+            location.reload();
+          },
+          error: err => {
+            console.log(err);
+            this.onLoadToast(
+              'warning',
+              'advertencia',
+              'Lo sentimos ha ocurrido un error'
+            );
+            this.number = 0;
+            this.modalRef.hide();
+          },
+        });
     } else {
-      const id = parseInt(params.text);
-      const item = [this.goodTestData.filter((i: any) => i.id == id)];
-      this.goodItems = new DefaultSelect(item[0], 1);
+      this.number++;
+      this.goodForm.value.repvendcId = this.number;
+      this.goodForm.value.sayDelivery = this.goodForm.value.sayDelivery
+        .toLocaleDateString()
+        .toString();
+      this.municipalityControlMainService
+        .addBienesAsignados(this.bodyBien)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            this.onLoadToast('success', 'Datos agregados correctamente', '');
+            this.number = 0;
+            this.modalRef.hide();
+            location.reload();
+          },
+          error: err => {
+            this.onLoadToast(
+              'warning',
+              'advertencia',
+              'Lo sentimos ha ocurrido un error'
+            );
+            this.number = 0;
+            this.modalRef.hide();
+          },
+        });
     }
   }
 }
