@@ -1099,7 +1099,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Error',
-          'El Oficio no tiene Documentos, no se podrá Trabajar'
+          'El Oficio no tiene documentos, no se podrá Trabajar'
         );
         return;
       }
@@ -1111,7 +1111,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Error',
-          'El Oficio tiene Información Incompleta, no se podrá trabajar'
+          'El Oficio tiene información incompleta, no se podrá trabajar'
         );
         return;
       }

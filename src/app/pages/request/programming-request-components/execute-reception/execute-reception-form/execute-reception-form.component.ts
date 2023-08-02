@@ -66,6 +66,7 @@ import { CancelationGoodFormComponent } from '../cancelation-good-form/cancelati
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { ShowReceiptCloseComponent } from '../show-receipt-close/show-receipt-close.component';
+import { ShowReceiptGuardCloseComponent } from '../show-receipt-guard-close/show-receipt-guard-close.component';
 import { ShowReportComponentComponent } from '../show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from '../upload-report-receipt/upload-report-receipt.component';
 import {
@@ -2628,6 +2629,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (data: boolean) => {
           if (data) {
             this.getReceiptsGuard();
+            this.receiptGuards = new LocalDataSource();
           }
         },
       };
@@ -2643,6 +2645,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (data: boolean) => {
           if (data) {
             this.getReceiptsGuard();
+            this.receiptWarehouse = new LocalDataSource();
           }
         },
       };
@@ -3851,7 +3854,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     } else {
       stateConservation = true;
     }
-
+    this.count == 0;
     if (saePhysical && stateConservation) {
       if (this.goodsGuards.value.length > 0) {
         this.alertQuestion(
@@ -4639,7 +4642,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true,
         };
         this.modalService.show(ShowReportComponentComponent, config);
-        console.log('bienes prog', this.goodId);
       },
       error: error => {},
     });
@@ -4942,5 +4944,37 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReceiptCloseComponent, config);
+  }
+
+  showReceiptWarehouseClose() {
+    let config: ModalOptions = {
+      initialState: {
+        programming: this.programming,
+        typeReceipt: 'warehouse',
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReceiptGuardCloseComponent, config);
+  }
+
+  showReceiptGuardClose() {
+    let config: ModalOptions = {
+      initialState: {
+        programming: this.programming,
+        typeReceipt: 'guard',
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReceiptGuardCloseComponent, config);
   }
 }
