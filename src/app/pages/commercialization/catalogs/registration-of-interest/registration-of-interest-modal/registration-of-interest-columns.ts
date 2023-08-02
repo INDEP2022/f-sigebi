@@ -2,13 +2,13 @@ import { DatePipe } from '@angular/common';
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const COUNT_TIIE_COLUMNS = {
-  id: {
+  /*id: {
     title: 'Id',
     type: 'number',
     sort: false,
-  },
+  },*/
   tiieDays: {
-    title: 'Días TIIE',
+    title: 'Día TIIE',
     type: 'number',
     sort: false,
     valuePrepareFunction: (dias: number) => {

@@ -7,17 +7,20 @@
   <div body>
     <div class="row">
       <div class="col-md-6">
-        <search-bar [filterParams]="params"></search-bar>
+        <h5 class="title">ENTIDADES</h5>
       </div>
       <div class="col-md-6 text-right">
         <button
           type="button"
-          class="btn btn-primary btn-sm active ml-3"
+          tooltip="Nuevo"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
           (click)="openModal()">
-          Nuevo
+          Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
       </div>
     </div>
+    <br />
     <div class="row">
       <div class="col-md-12">
         <div [ngClass]="{ 'table-loading': loading }">

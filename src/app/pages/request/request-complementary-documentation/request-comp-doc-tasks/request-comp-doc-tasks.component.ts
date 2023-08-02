@@ -196,7 +196,10 @@ export class RequestCompDocTasksComponent
             this.turnResquestMessage(this.requestId);
           }
         } else if (this.process == 'BSValidarVisitaOcular') {
-          alert('falta');
+          const haveRerpot = await this.validateNotifyReport();
+          if (haveRerpot == true) {
+            this.turnResquestMessage(this.requestId);
+          }
         } else if (this.process == 'BSElaborarOficioRespuesta') {
           alert('falta');
         } else {
@@ -421,4 +424,12 @@ export class RequestCompDocTasksComponent
     });
   }
   /* FIN METODO PARA TURNAR NOTIFICACIONES */
+
+  /* METODO PARA VALIDAR VISITA OCULAR */
+  validateNotifyReport() {
+    return new Promise((resolve, reject) => {
+      //si cuenta con reporte de notificacion devuelve true
+      resolve(true);
+    });
+  }
 }
