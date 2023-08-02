@@ -346,12 +346,7 @@
                 </form-field>
               </div>
             </div>
-            <div
-              [class]="
-                loadingLotEvent
-                  ? 'table-loading row mb-3 mt-3'
-                  : 'row mb-3 mt-3'
-              ">
+            <div [class]="loadingLotEvent ? 'table-loading' : ''">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsLotEvent"

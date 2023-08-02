@@ -332,12 +332,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Seleccionar eventos
   selectEvent() {
-    this.loadingCustomer = false;
-    this.loadingLotEvent = false;
-    this.loadingDesertLots = false;
-    this.loadingCustomerBanks = false;
-    this.loadingLotBanks = false;
-    this.loadingPaymentLots = false;
+    this.loadingCustomer = true;
+    this.loadingLotEvent = true;
+    this.loadingDesertLots = true;
+    this.loadingCustomerBanks = true;
+    this.loadingLotBanks = true;
+    this.loadingPaymentLots = true;
     const paramsF = new FilterParams();
     paramsF.addFilter('id', this.event.value);
     console.log(this.event.value);
