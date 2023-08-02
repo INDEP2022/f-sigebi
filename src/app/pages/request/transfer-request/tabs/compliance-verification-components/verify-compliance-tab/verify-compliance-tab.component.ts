@@ -610,6 +610,9 @@ export class VerifyComplianceTabComponent
     const index = this.goodsModified.indexOf(good);
     if (index != -1) {
       this.goodsModified[index] = good;
+      if (this.goodsModified[index].descriptionGoodSae == '') {
+        this.goodsModified[index].descriptionGoodSae = null;
+      }
     } else {
       this.goodsModified.push(good);
     }

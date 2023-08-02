@@ -14,8 +14,8 @@ import { COLUMNS } from './columns';
 export class CustomersComponent extends BasePage implements OnInit {
   @Input() dataIncome: LocalDataSource;
   @Input() totalIncome: number = 0;
-  @Input() id_tipo_disp:number = null;
-  @Output() paramsChange = new EventEmitter() 
+  @Input() id_tipo_disp: number = null;
+  @Output() paramsChange = new EventEmitter();
 
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -38,16 +38,14 @@ export class CustomersComponent extends BasePage implements OnInit {
     console.log(this.dataIncome);
     console.log(this.totalIncome);
 
-    this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(params => {
-          console.log(params);
-          this.paramsMannage(params)
-        });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.paramsMannage(params);
+    });
   }
 
-  paramsMannage(params: any){
-    this.paramsChange.emit(params)
+  paramsMannage(params: any) {
+    this.paramsChange.emit(params);
   }
 
   add() {
@@ -77,7 +75,6 @@ export class CustomersComponent extends BasePage implements OnInit {
   }
 }
 
-function OutPut(): (target: CustomersComponent, propertyKey: "params") => void {
+function OutPut(): (target: CustomersComponent, propertyKey: 'params') => void {
   throw new Error('Function not implemented.');
 }
-

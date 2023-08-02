@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { firstValueFrom, takeUntil } from 'rxjs';
 
 import { FormControl } from '@angular/forms';
@@ -24,6 +24,7 @@ export class ExpenseConceptsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IConcept>
   implements OnInit
 {
+  @Input() address: string;
   toggleInformation = true;
   pageSizeOptions = [5, 10, 20, 25];
   limit: FormControl = new FormControl(5);
@@ -222,12 +223,11 @@ export class ExpenseConceptsListComponent
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;
-    if (newColumnFilters['filter.address']) {
-      newColumnFilters['filter.address'] =
-        '$eq:' +
-        this.getAddressCode(
-          (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-        );
+    if (this.address) {
+      newColumnFilters['filter.address'] = '$eq:' + this.address;
+      // this.getAddressCode(
+      //   (newColumnFilters['filter.address'] + '').replace('$eq:', '')
+      // );
     }
     return {
       ...this.params.getValue(),
