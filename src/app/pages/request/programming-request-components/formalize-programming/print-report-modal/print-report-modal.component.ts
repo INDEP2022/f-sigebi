@@ -547,7 +547,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   openMessage(message: string): void {
-    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
+    this.alertQuestion('warning', 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
           this.firm();

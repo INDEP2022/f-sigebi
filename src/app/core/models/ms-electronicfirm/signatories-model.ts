@@ -67,3 +67,11 @@ export interface IComerDestXML {
   recordNumber: number;
   nbOrigin: string;
 }
+
+export interface IComerTypeSignatories {
+  signatoryType: number;
+  denomination: string;
+  orderId: number;
+  recordNumber: number;
+  nbOrigin: string;
+}

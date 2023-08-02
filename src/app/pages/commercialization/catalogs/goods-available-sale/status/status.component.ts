@@ -74,7 +74,7 @@ export class StatusComponent extends BasePage implements OnInit {
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'idTypeEvent':
+              case 'comerTpevents':
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
                 break;

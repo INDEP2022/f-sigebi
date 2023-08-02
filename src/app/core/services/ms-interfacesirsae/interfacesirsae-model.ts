@@ -1,4 +1,4 @@
 export interface ISendSirsae {
-    identificator: number | string,
-    eventId: number | string
+  identificator: number | string;
+  eventId: number | string;
 }
