@@ -7,26 +7,7 @@
 
   <div body>
     <form [formGroup]="comerLibsForm" class="form-material">
-      <div class="d-flex justify-content-end">
-        <div class="d-inline mr-2">
-          Fecha:
-          <span class="ml-3 mr-3" style="display: initial !important">
-            <!-- {{ carta | date:'dd \'de\' MMMM \'del año\' yyyy' }} -->
-            {{ carta ? carta : dateNew }}
-          </span>
-          <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-                    Regresar
-                    <i class="fas fa-arrow-circle-left"></i>
-                  </button> -->
-          <!-- <button (click)="searchComer()" class="btn btn-primary btn-sm active m-1" tooltip="Cartas de Liberación"
-                    containerClass="tooltip-style">
-                    <i class="bx bx-list-plus bx-sm float-icon"></i>
-                  </button> -->
-        </div>
-      </div>
-      <br /><br />
       <!--  <div class="row">
-
        <div class="col-md-12">
           <div class="row">
             <div class="col-md-12">
@@ -79,18 +60,14 @@
           </div>
         </div>
       </div>-->
-      <div class="row m-3">
-        <div class="col-4"></div>
+      <div class="row m-3 flex-row justify-content-between">
+        <div class="col-md-4">
+          <div class="d-flex align-items-center">
+            <span class="mr-2">Fecha:</span>
+            <span class="ml-3 mr-3">{{ carta }}</span>
+          </div>
+        </div>
         <div class="col-md-8 text-end">
-          <!-- <button [disabled]="!letterDefault" (click)="actualizarLetter()" type="button"
-            class="btn btn-info active btn-sm mr-3">
-            Guardar
-            <i aria-hidden="true" class="fa fa-save"></i>
-          </button> -->
-          <!-- <button (click)="searchComer()" type="button" class="btn btn-info active btn-sm mr-3">
-            Buscar carta
-            <i class="bx bx-plus bx-sm float-icon"></i>
-          </button> -->
           <button
             type="button"
             class="btn btn-primary active btn-sm mr-3"
@@ -113,7 +90,7 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
-                  <div class="col-md-4 mt-3">
+                  <div class="col-md-6 mt-3">
                     <div>
                       <form-field
                         [control]="comerLibsForm.get('oficio')"
@@ -123,6 +100,21 @@
                           maxlength="50"
                           class="form-control"
                           formControlName="oficio"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('puesto')"
+                        label="Puesto">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="puesto"
+                          maxlength="50"
                           readonly />
                       </form-field>
                     </div>
@@ -142,20 +134,6 @@
                       </form-field>
                     </div>
                   </div>
-                  <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field
-                        [control]="comerLibsForm.get('puesto')"
-                        label="Puesto">
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="puesto"
-                          maxlength="50"
-                          readonly />
-                      </form-field>
-                    </div>
-                  </div>
                   <div class="card-body">
                     <form-field
                       class="col-md-12 col-sm-12 col-12 p-2"
@@ -169,11 +147,11 @@
                         readonly></textarea>
                     </form-field>
                   </div>
-                  <div class="col-md-4 mt-2">
+                  <div class="col-md-12 mt-2">
                     <div>
                       <form-field
                         [control]="comerLibsForm.get('adjudicatorio')"
-                        label="Adjudicatorio">
+                        label="Adjudicatario">
                         <input
                           type="text"
                           class="form-control"
@@ -267,7 +245,7 @@
                         readonly></textarea>
                     </form-field>
                   </div>
-                  <div class="col-md-4 mt-3">
+                  <div class="col-md-6 mt-3">
                     <div>
                       <form-field
                         [control]="comerLibsForm.get('ccp1')"
@@ -282,7 +260,7 @@
                       </form-field>
                     </div>
                   </div>
-                  <div class="col-md-4 mt-3">
+                  <div class="col-md-6 mt-3">
                     <div>
                       <form-field
                         [control]="comerLibsForm.get('ccp2')"
