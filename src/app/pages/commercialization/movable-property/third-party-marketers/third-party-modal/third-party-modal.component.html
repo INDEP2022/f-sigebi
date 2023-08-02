@@ -114,6 +114,14 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="!thirdPartyForm.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
           [disabled]="thirdPartyForm.invalid"
           type="button"
           class="btn btn-primary btn-sm active"
@@ -123,7 +131,7 @@
           <span *ngIf="!edit"
             ><i aria-hidden="true" class="fa fa-save"></i
           ></span>
-        </button>
+        </button> -->
         <!-- <confirm-button
           [type]="'button'"
           [disabled]="thirdPartyForm.invalid"

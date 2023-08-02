@@ -23,8 +23,7 @@
           id="hora"
           class="form-control"
           name="startTime"
-          [(ngModel)]="horaActual"
-          readonly />
+          [(ngModel)]="horaActual" />
         <!-- </form> -->
       </div>
     </div>
@@ -66,18 +65,6 @@
           </div>
 
           <div class="row pt-4">
-            <form-field
-              [control]="infoForm.get('residentialWorker1')"
-              label="Residencia">
-              <input
-                maxlength="400"
-                type="text"
-                class="form-control"
-                formControlName="residentialWorker1" />
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
             <form-field [control]="infoForm.get('idCatWorker1')">
               <ngx-select
                 [form]="infoForm"
@@ -87,6 +74,18 @@
                 bindLabel="description"
                 (fetchItems)="getIdentification($event)"
                 label="Identificaci&oacute;n"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              [control]="infoForm.get('residentialWorker1')"
+              label="Residencia">
+              <input
+                maxlength="400"
+                type="text"
+                class="form-control"
+                formControlName="residentialWorker1" />
             </form-field>
           </div>
 

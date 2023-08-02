@@ -8,10 +8,17 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, catchError, tap, throwError } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  firstValueFrom,
+  tap,
+  throwError,
+} from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
 import { BasePage } from 'src/app/core/shared';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
@@ -34,13 +41,19 @@ export class CommerPackagesLotsComponent
   @Input() lots = new LocalDataSource();
   @Input() onlyBase = false;
   @Output() fillStadistics = new EventEmitter<void>();
+  @Output() onLotSelected = new EventEmitter<IComerLot>();
   comerLot: IComerLot;
   @Input() loggedUser: TokenInfoModel;
   viewRejectedGoods = false;
+
+  get controls() {
+    return this.eventForm.controls;
+  }
   constructor(
     private globalVarsService: GlobalVarsService,
     private eventPreparationService: EventPreparationService,
-    private utilComerV1Service: UtilComerV1Service
+    private utilComerV1Service: UtilComerV1Service,
+    private eventAppService: EventAppService
   ) {
     super();
   }
@@ -97,16 +110,38 @@ export class CommerPackagesLotsComponent
           );
           return throwError(() => error);
         }),
-        tap(res => {
+        tap(async res => {
           this.loader.load = false;
           this.alert('success', 'Proceso Terminado', '');
-          // TODO: BIENES RECHAZADOS
+          await this.verifyRejectedGoods();
           this.fillStadistics.emit();
         })
       );
   }
 
+  /**VERIFICARECHAZADOS */
+  async verifyRejectedGoods() {
+    const { id } = this.controls;
+    return firstValueFrom(
+      this.eventAppService.verifyRejectedGoods(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          if (response.data > 0) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Hubo Bienes Rechazados pulse el botón de Bienes no Cargados'
+            );
+          }
+        })
+      )
+    );
+  }
+
   onLotSelect(lot: IComerLot) {
+    this.onLotSelected.emit(lot);
     this.comerLot = lot;
   }
 }

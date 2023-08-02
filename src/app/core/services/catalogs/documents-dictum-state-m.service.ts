@@ -3,7 +3,10 @@ import { Observable } from 'rxjs';
 import { DocumentsEndpoints } from 'src/app/common/constants/endpoints/ms-documents-endpoints';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IDocumentsDictumXStateM } from '../../models/ms-documents/documents-dictum-x-state-m';
+import {
+  IDataDocumentosBien,
+  IDocumentsDictumXStateM,
+} from '../../models/ms-documents/documents-dictum-x-state-m';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +18,8 @@ export class DocumentsDictumStatetMService extends HttpService {
     this.microservice = DocumentsEndpoints.Documents;
   }
 
-  getAll(params?: _Params): Observable<IListResponse<IDocumentsDictumXStateM>> {
-    return this.get<IListResponse<IDocumentsDictumXStateM>>(
+  getAll(params?: _Params): Observable<IDataDocumentosBien> {
+    return this.get<IDataDocumentosBien>(
       this.route.DocumentsDictuXStateM,
       params
     );

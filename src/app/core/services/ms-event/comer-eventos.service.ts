@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IComerEvent } from './../../models/ms-event/event.model';
 
@@ -65,5 +65,41 @@ export class ComerEventosService extends HttpService {
 
   validUser(body: { event: number | string; user: string; address: string }) {
     return this.post(EventEndpoints.ComerE + '/valid-user', body);
+  }
+
+  getAppGetfComer(body: any, params?: _Params) {
+    return this.post(EventEndpoints.AppGetfComer, body, params);
+  }
+
+  getSelectComerEvent(params: _Params, goodType: any) {
+    return this.get(`application/selectComerEvent/${goodType}`, params);
+  }
+
+  getPaymentLots(id: any) {
+    return this.get(`application/get-lots-payments/${id}`);
+  }
+
+  pupExpExcel(body: any) {
+    // PUP_EXP_EXCEL
+    return this.post('application/pup-exp-excel', body);
+  }
+
+  pupExpxcVenvspag(body: any) {
+    //PUP_EXPEXC_VENVSPAG
+    return this.post('application/pup-expxc-venvspag', body);
+  }
+
+  pupExpPayModest(body: any) {
+    // PUP_EXPPAGOMODEST
+    return this.post('application/pup-exp-pay-modest', body);
+  }
+
+  pupExportDetpayments(body: any) {
+    // PUP_EXPORT_DETPAGOS
+    return this.post('application/pup-export-detpayments', body);
+  }
+
+  getByIdComerTEvents(id: string | number) {
+    return this.get<IListResponse<any>>(`${EventEndpoints.ComerTEvents}/${id}`);
   }
 }

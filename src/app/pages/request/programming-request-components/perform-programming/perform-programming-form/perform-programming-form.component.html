@@ -102,7 +102,7 @@
                   [data]="regionalsDelegations"
                   value="description"
                   bindLabel="description"
-                  label="Selecciona una Delegaci&oacute;n Regional"
+                  label="Delegaci&oacute;n Regional"
                   (change)="regionalDelegationSelect($event)"
                   (fetchItems)="
                     getRegionalDelegationSelect($event)
@@ -118,7 +118,7 @@
                   value="description"
                   bindLabel="description"
                   [readonly]="true"
-                  label="Selecciona una Delegaci&oacute;n Regional"
+                  label="Delegaci&oacute;n Regional"
                   (change)="regionalDelegationSelect($event)"
                   (fetchItems)="
                     getRegionalDelegationSelect($event)
@@ -149,7 +149,7 @@
                   [loading]="loading"
                   value="id"
                   bindLabel="descCondition"
-                  label="Selecciona un Estado"
+                  label="Estado"
                   (change)="stateSelect($event)"
                   (fetchItems)="getStateSelect($event)"></ngx-select>
               </form-field>
@@ -164,7 +164,7 @@
                   value="id"
                   [readonly]="true"
                   bindLabel="descCondition"
-                  label="Selecciona un estado"
+                  label="Estado"
                   (change)="stateSelect($event)"
                   (fetchItems)="getStateSelect($event)"></ngx-select>
               </form-field>
@@ -193,8 +193,8 @@
                   [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
-                    rangeInputFormat: 'YYYY/MM/DD HH:mm:ss',
-                    dateInputFormat: 'YYYY/MM/DD HH:mm:ss'
+                    rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                    dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
                   }"
                   bsDatepicker />
               </form-field>
@@ -211,8 +211,8 @@
                   [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
-                    rangeInputFormat: 'YYYY/MM/DD HH:mm:ss',
-                    dateInputFormat: 'YYYY/MM/DD HH:mm:ss'
+                    rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                    dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
                   }"
                   bsDatepicker />
               </form-field>
@@ -231,7 +231,7 @@
                   [data]="transferences"
                   value="id"
                   bindLabel="nameAndId"
-                  label="Selecciona Transferente"
+                  label="Transferente"
                   (change)="transferentSelect($event)"
                   (fetchItems)="getTransferentSelect($event)"></ngx-select>
               </form-field>
@@ -246,7 +246,7 @@
                   [data]="transferences"
                   value="nameAndId"
                   bindLabel="nameAndId"
-                  label="Selecciona Transferente"
+                  label="Transferente"
                   (change)="transferentSelect($event)"
                   (fetchItems)="getTransferentSelect($event)"></ngx-select>
               </form-field>
@@ -262,7 +262,7 @@
                   [showTooltip]="true"
                   value="id"
                   bindLabel="nameAndId"
-                  label="Selecciona Emisora"
+                  label="Emisora"
                   (change)="stationSelect($event)"
                   (fetchItems)="getStations($event)"></ngx-select>
               </form-field>
@@ -276,7 +276,7 @@
                   [showTooltip]="true"
                   value="nameAndId"
                   bindLabel="nameAndId"
-                  label="Selecciona Emisora"
+                  label="Emisora"
                   (change)="stationSelect($event)"
                   (fetchItems)="getStations($event)"></ngx-select>
               </form-field>
@@ -292,7 +292,7 @@
                   [showTooltip]="true"
                   value="idAuthority"
                   bindLabel="nameAndId"
-                  label="Selecciona una Autoridad"
+                  label="Autoridad"
                   (change)="authoritySelect($event)"
                   (fetchItems)="getAuthoritySelect($event)"></ngx-select>
               </form-field>
@@ -306,7 +306,7 @@
                   [showTooltip]="true"
                   value="nameAndId"
                   bindLabel="nameAndId"
-                  label="Selecciona una Autoridad"
+                  label="Autoridad"
                   (change)="authoritySelect($event)"
                   (fetchItems)="getAuthoritySelect($event)"></ngx-select>
               </form-field>
@@ -324,7 +324,7 @@
                   [data]="typeRelevant"
                   value="id"
                   bindLabel="description"
-                  label="Selecciona un Tipo Relevante"
+                  label="Tipo Relevante"
                   (change)="typeSchedule($event)"
                   (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
               </form-field>
@@ -338,7 +338,7 @@
                   value="id"
                   [readonly]="true"
                   bindLabel="description"
-                  label="Selecciona un Tipo Relevante"
+                  label="Tipo Relevante"
                   (change)="typeSchedule($event)"
                   (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
               </form-field>
@@ -382,9 +382,9 @@
               class="mr-2 disabled"></confirm-button>
           </div>
 
-          <div class="row pt-5">
+          <div class="row">
             <h5 class="title">Almac&eacute;n</h5>
-            <div class="col-sm-12 pt-4">
+            <div class="col-sm-12">
               <form-field
                 [control]="performForm.get('storeId')"
                 *ngIf="showWarehouseInfo">
@@ -395,7 +395,6 @@
                   value="description"
                   bindLabel="description"
                   (change)="showWarehouse($event)"
-                  label="Selecciona un Almac&eacute;n"
                   (fetchItems)="getWarehouseSelect($event)"></ngx-select>
               </form-field>
               <form-field
@@ -407,8 +406,7 @@
                   [data]="warehouse"
                   [searchable]="showWarehouseInfo"
                   value="idWarehouse"
-                  bindLabel="description"
-                  label="Selecciona un almac&eacute;n"></ngx-select>
+                  bindLabel="description"></ngx-select>
               </form-field>
             </div>
           </div>
@@ -624,22 +622,32 @@
                       settingsTransportableGoods
                     "></app-columns-select>
                 </div>
-                <ng2-smart-table
-                  *ngIf="!infoTask?.State"
-                  [attr.class]="'table-bordered table-responsive pt-3'"
-                  [settings]="settingsTransportableGoods"
-                  [source]="goodsTranportables"
-                  (edit)="showGoodWarehouse($event.data)"
-                  (delete)="removeGoodTrans($event.data)">
-                </ng2-smart-table>
 
-                <ng2-smart-table
-                  *ngIf="infoTask?.State == 'FINALIZADA'"
-                  [attr.class]="'table-bordered table-responsive pt-3'"
-                  [settings]="settingsTransportableGoodsClose"
-                  [source]="goodsTranportables"
-                  (edit)="showGood($event.data)">
-                </ng2-smart-table>
+                <div
+                  class="row"
+                  *ngIf="formLoadingTransportable"
+                  style="margin-bottom: 5rem">
+                  <form-loader *ngIf="formLoadingTransportable"></form-loader>
+                </div>
+
+                <div *ngIf="!formLoadingTransportable">
+                  <ng2-smart-table
+                    *ngIf="!infoTask?.State"
+                    [attr.class]="'table-bordered table-responsive pt-3'"
+                    [settings]="settingsTransportableGoods"
+                    [source]="goodsTranportables"
+                    (edit)="showGoodWarehouse($event.data)"
+                    (delete)="removeGoodTrans($event.data)">
+                  </ng2-smart-table>
+
+                  <ng2-smart-table
+                    *ngIf="infoTask?.State == 'FINALIZADA'"
+                    [attr.class]="'table-bordered table-responsive pt-3'"
+                    [settings]="settingsTransportableGoodsClose"
+                    [source]="goodsTranportables"
+                    (edit)="showGood($event.data)">
+                  </ng2-smart-table>
+                </div>
 
                 <app-pagination
                   [params]="paramsTransportableGoods"
@@ -650,23 +658,31 @@
                   <app-columns-select
                     [(settings)]="settingGuardGoods"></app-columns-select>
                 </div>
-                <ng2-smart-table
-                  *ngIf="!infoTask?.State"
-                  [attr.class]="'table-bordered table-responsive pt-3'"
-                  [settings]="settingGuardGoods"
-                  [source]="goodsGuards"
-                  (edit)="showGoodWarehouse($event.data)"
-                  (delete)="removeGoodGuard($event.data)">
-                </ng2-smart-table>
+                <div
+                  class="row"
+                  *ngIf="formLoadingGuard"
+                  style="margin-bottom: 5rem">
+                  <form-loader *ngIf="formLoadingGuard"></form-loader>
+                </div>
 
-                <ng2-smart-table
-                  *ngIf="infoTask?.State == 'FINALIZADA'"
-                  [attr.class]="'table-bordered table-responsive pt-3'"
-                  [settings]="settingGuardGoodsClose"
-                  [source]="goodsGuards"
-                  (edit)="showGood($event.data)">
-                </ng2-smart-table>
+                <div *ngIf="!formLoadingGuard">
+                  <ng2-smart-table
+                    *ngIf="!infoTask?.State"
+                    [attr.class]="'table-bordered table-responsive pt-3'"
+                    [settings]="settingGuardGoods"
+                    [source]="goodsGuards"
+                    (edit)="showGoodWarehouse($event.data)"
+                    (delete)="removeGoodGuard($event.data)">
+                  </ng2-smart-table>
 
+                  <ng2-smart-table
+                    *ngIf="infoTask?.State == 'FINALIZADA'"
+                    [attr.class]="'table-bordered table-responsive pt-3'"
+                    [settings]="settingGuardGoodsClose"
+                    [source]="goodsGuards"
+                    (edit)="showGood($event.data)">
+                  </ng2-smart-table>
+                </div>
                 <app-pagination
                   [params]="paramsGuardGoods"
                   [totalItems]="totalItemsTransportableGuard"></app-pagination>
@@ -676,22 +692,31 @@
                   <app-columns-select
                     [(settings)]="settingWarehouseGoods"></app-columns-select>
                 </div>
-                <ng2-smart-table
-                  *ngIf="!infoTask?.State"
-                  [attr.class]="'table-bordered table-responsive pt-3'"
-                  [settings]="settingWarehouseGoods"
-                  [source]="goodsWarehouse"
-                  (edit)="showGoodWarehouse($event.data)"
-                  (delete)="removeGoodWarehouse($event.data)">
-                </ng2-smart-table>
+                <div
+                  class="row"
+                  *ngIf="formLoadingWarehouse"
+                  style="margin-bottom: 5rem">
+                  <form-loader *ngIf="formLoadingWarehouse"></form-loader>
+                </div>
+                <div *ngIf="!formLoadingWarehouse">
+                  <ng2-smart-table
+                    *ngIf="!infoTask?.State"
+                    [attr.class]="'table-bordered table-responsive pt-3'"
+                    [settings]="settingWarehouseGoods"
+                    [source]="goodsWarehouse"
+                    (edit)="showGoodWarehouse($event.data)"
+                    (delete)="removeGoodWarehouse($event.data)">
+                  </ng2-smart-table>
 
-                <ng2-smart-table
-                  *ngIf="infoTask?.State == 'FINALIZADA'"
-                  [attr.class]="'table-bordered table-responsive pt-3'"
-                  [settings]="settingWarehouseGoodsClose"
-                  [source]="goodsWarehouse"
-                  (edit)="showGoodWarehouse($event.data)">
-                </ng2-smart-table>
+                  <ng2-smart-table
+                    *ngIf="infoTask?.State == 'FINALIZADA'"
+                    [attr.class]="'table-bordered table-responsive pt-3'"
+                    [settings]="settingWarehouseGoodsClose"
+                    [source]="goodsWarehouse"
+                    (edit)="showGoodWarehouse($event.data)">
+                  </ng2-smart-table>
+                </div>
+
                 <app-pagination
                   [params]="paramsWarehouseGoods"
                   [totalItems]="

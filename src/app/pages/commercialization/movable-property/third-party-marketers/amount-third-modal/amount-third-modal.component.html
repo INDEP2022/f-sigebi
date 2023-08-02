@@ -43,11 +43,11 @@
         </div>
         <div class="col-md-4">
           <form-field
-            label="Monto inicial"
+            label="Monto Inicial"
             [control]="amountForm.get('startingAmount')">
             <input
               [max-length]="10"
-              pattern="^[0-9]+"
+              pattern="^[0-9.]+"
               type="number"
               class="form-control"
               formControlName="startingAmount" />
@@ -58,8 +58,8 @@
             label="PCT Comisión"
             [control]="amountForm.get('pctCommission')">
             <input
-              [max-length]="5"
-              pattern="^[0-9]+"
+              [max-length]="3"
+              pattern="^[0-9.]+"
               type="number"
               class="form-control"
               formControlName="pctCommission" />
@@ -71,12 +71,27 @@
             [control]="amountForm.get('finalAmount')">
             <input
               [max-length]="10"
-              pattern="^[0-9]+"
+              pattern="^[0-9.]+"
               type="number"
               class="form-control"
               formControlName="finalAmount" />
           </form-field>
         </div>
+        <!-- <div class="col-md-4">
+          <form-field label="Monto inicial" [control]="amountForm.get('startingAmount')">
+            <input maxlength="10" pattern="^[0-9.]+" type="text" class="form-control" formControlName="startingAmount" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="PCT Comisión" [control]="amountForm.get('pctCommission')">
+            <input maxlength="5" pattern="^[0-9.]+" type="text" class="form-control" formControlName="pctCommission" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Monto Final" [control]="amountForm.get('finalAmount')">
+            <input maxlength="10" pattern="^[0-9.]+" type="text" class="form-control" formControlName="finalAmount" />
+          </form-field>
+        </div> -->
       </div>
 
       <!-- <div class="row pt-5">
@@ -92,6 +107,14 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="!amountForm.valid"
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
           [disabled]="amountForm.invalid"
           type="button"
           class="btn btn-primary btn-sm active"
@@ -101,7 +124,7 @@
           <span *ngIf="!edit"
             ><i aria-hidden="true" class="fa fa-save"></i
           ></span>
-        </button>
+        </button> -->
         <!-- <confirm-button [type]="'button'" [disabled]="amountForm.invalid" (confirm)="confirm()"></confirm-button> -->
       </div>
       <div class="m-3">

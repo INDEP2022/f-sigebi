@@ -9,7 +9,6 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGoodProgramming } from 'src/app/core/models/good-programming/good-programming';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
@@ -28,6 +27,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
+import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -45,6 +45,7 @@ import { TRANSPORTABLE_GOODS_FORMALIZE } from '../../execute-reception/execute-r
 import { ShowReportComponentComponent } from '../../execute-reception/show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from '../../execute-reception/upload-report-receipt/upload-report-receipt.component';
 import { InformationRecordComponent } from '../information-record/information-record.component';
+import { ShowProceedingCloseComponent } from '../show-proceeding-close/show-proceeding-close.component';
 
 @Component({
   selector: 'app-formalize-programming-form',
@@ -236,7 +237,8 @@ export class FormalizeProgrammingFormComponent
     private signatoriesService: SignatoriesService,
     private sanitizer: DomSanitizer,
     private taskService: TaskService,
-    private authService: AuthService
+    private authService: AuthService,
+    private emailService: EmailService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -263,8 +265,8 @@ export class FormalizeProgrammingFormComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getProccedings());
 
-    /*
     this.getInfoGoodsProgramming();
+    /*
     this.router.navigate(
       [
         '/pages/request/programming-request/formalize-programming',
@@ -307,7 +309,6 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         //this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
@@ -317,7 +318,7 @@ export class FormalizeProgrammingFormComponent
         const infoWarehouse = filterWarehouse.filter((item: IRecepitGuard) => {
           return item;
         });
-        console.log('infoWarehouse', infoWarehouse);
+
         this.receiptWarehouseData = infoWarehouse[0];
         this.receipts.load(infoWarehouse);
         //this.receiptWarehouseGood = infoWarehouse[0];
@@ -331,7 +332,6 @@ export class FormalizeProgrammingFormComponent
             return item;
           });
 
-          console.log('infoGuard', infoGuard);
           this.receiptGuardData = infoGuard[0];
           this.receipts.load(infoGuard);
           //this.receiptGuardGood = infoGuard[0];
@@ -345,6 +345,7 @@ export class FormalizeProgrammingFormComponent
   getProccedings() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.idPrograming'] = this.programmingId;
+    params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
         this.actId = response.data[0].id;
@@ -388,7 +389,7 @@ export class FormalizeProgrammingFormComponent
         //this.getUsersProgramming();
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getInfoGoodsProgramming());
+          .subscribe(() => this.getInfoReceptionGood());
       });
   }
 
@@ -490,7 +491,7 @@ export class FormalizeProgrammingFormComponent
       });
   } */
 
-  getInfoGoodsProgramming() {
+  getInfoReceptionGood() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.programmingService
@@ -498,11 +499,12 @@ export class FormalizeProgrammingFormComponent
       .subscribe(data => {
         this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.filterStatusReception(data.data));
+          .subscribe(() => this.filterStatusReception());
 
         this.paramsGuard
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.filterStatusGuard(data.data));
+          .subscribe(() => this.filterStatusGuard());
+        /* 
 
         this.paramsGoodsWarehouse
           .pipe(takeUntil(this.$unSubscribe))
@@ -512,14 +514,62 @@ export class FormalizeProgrammingFormComponent
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.filterStatusReprog(data.data));
 
-        this.filterStatusCancel(data.data);
+        this.filterStatusCancel(data.data); */
         /*
          */
       });
   }
 
-  filterStatusReception(data: IGoodProgramming[]) {
+  getInfoGoodsProgramming() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusReception());
+
+    this.paramsGuard
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusGuard());
+
+    this.paramsGoodsWarehouse
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusWarehouse());
+
+    this.paramsReprog
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusReprog());
+
+    this.paramsCanc
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.filterStatusCancel());
+  }
+
+  filterStatusReception() {
     const goodsInfoRecep: any[] = [];
+
+    this.params.getValue()['filter.programmingId'] = this.programmingId;
+    this.params.getValue()['filter.status'] = 'EN_RECEPCION';
+    this.programmingService
+      .getGoodsProgramming(this.params.getValue())
+      .subscribe(data => {
+        data.data.map(items => {
+          this.goodService.getGoodByIds(items.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              // queda pendiente mostrar el alías del almacén //
+
+              goodsInfoRecep.push(response);
+              this.goodsRecepcion.load(goodsInfoRecep);
+              this.totalItemsReception = this.goodsRecepcion.count();
+              //this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+            },
+          });
+        });
+      });
+    /*const goodsInfoRecep: any[] = [];
     const goodsRecep = data.filter(items => {
       return items.status == 'EN_RECEPCION';
     });
@@ -541,114 +591,146 @@ export class FormalizeProgrammingFormComponent
           //this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
         },
       });
-    });
+    }); */
   }
-  filterStatusGuard(data: IGoodProgramming[]) {
+
+  filterStatusGuard() {
     const goodsInfoGuard: any[] = [];
+    this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
+    this.paramsGuard.getValue()['filter.status'] = 'EN_RESGUARDO';
+    this.programmingService
+      .getGoodsProgramming(this.paramsGuard.getValue())
+      .subscribe({
+        next: response => {
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+
+                goodsInfoGuard.push(response);
+                this.goodsGuards.load(goodsInfoGuard);
+                this.totalItemsGuard = this.goodsGuards.count();
+                this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              },
+            });
+          });
+        },
+        error: error => {},
+      });
+    /*
+   
     const goodsTrans = data.filter(items => {
       return items.status == 'EN_RESGUARDO';
     });
 
-    goodsTrans.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
-        next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-
-          goodsInfoGuard.push(response);
-          this.goodsGuards.load(goodsInfoGuard);
-          this.totalItemsGuard = this.goodsGuards.count();
-          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
-        },
-      });
-    });
+     */
   }
 
-  filterStatusWarehouse(data: IGoodProgramming[]) {
+  filterStatusWarehouse() {
     const goodsInfoWarehouse: any[] = [];
-    const goodswarehouse = data.filter(items => {
-      return items.status == 'EN_ALMACEN';
-    });
-
-    goodswarehouse.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
+    this.paramsGoodsWarehouse.getValue()['filter.programmingId'] =
+      this.programmingId;
+    this.paramsGoodsWarehouse.getValue()['filter.status'] = 'EN_ALMACEN';
+    this.programmingService
+      .getGoodsProgramming(this.paramsGoodsWarehouse.getValue())
+      .subscribe({
         next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          goodsInfoWarehouse.push(response);
-          this.goodsWarehouse.load(goodsInfoWarehouse);
-          this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+                goodsInfoWarehouse.push(response);
+                this.goodsWarehouse.load(goodsInfoWarehouse);
+                this.totalItemsWarehouse = this.goodsWarehouse.count();
+                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+              },
+            });
+          });
         },
       });
-    });
   }
 
-  filterStatusReprog(data: IGoodProgramming[]) {
+  filterStatusReprog() {
     const goodsInfoReprog: any[] = [];
-    const goodsReprog = data.filter(items => {
-      return items.status == 'EN_PROGRAMACION';
-    });
-
-    goodsReprog.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
+    this.paramsReprog.getValue()['filter.programmingId'] = this.programmingId;
+    this.paramsReprog.getValue()['filter.status'] = 'EN_PROGRAMACION';
+    this.programmingService
+      .getGoodsProgramming(this.paramsReprog.getValue())
+      .subscribe({
         next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          goodsInfoReprog.push(response);
-          this.goodsReprog.load(goodsInfoReprog);
-          this.totalItemsReprog = this.goodsReprog.count();
-          this.headingReprogramation = `Reprogramación(${this.goodsReprog.count()})`;
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+                goodsInfoReprog.push(response);
+                this.goodsReprog.load(goodsInfoReprog);
+                this.totalItemsReprog = this.goodsReprog.count();
+                this.headingReprogramation = `Reprogramación(${this.goodsReprog.count()})`;
+              },
+            });
+          });
         },
       });
-    });
   }
 
-  filterStatusCancel(data: IGoodProgramming[]) {
+  filterStatusCancel() {
     const goodsInfoCancel: any[] = [];
+    this.paramsCanc.getValue()['filter.programmingId'] = this.programmingId;
+    this.paramsCanc.getValue()['filter.status'] = 'CANCELADO';
+    this.programmingService
+      .getGoodsProgramming(this.paramsCanc.getValue())
+      .subscribe({
+        next: response => {
+          response.data.map(items => {
+            this.goodService.getGoodByIds(items.goodId).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+                goodsInfoCancel.push(response);
+                this.goodsCancel.load(goodsInfoCancel);
+                //this.totalItemsWarehouse = this.goodsWarehouse.count();
+                this.headingCancelation = `Cancelación(${this.goodsCancel.count()})`;
+              },
+            });
+          });
+        },
+        error: error => {},
+      });
+    /*
+    
     const goodsCancel = data.filter(items => {
       return items.status == 'CANCELADO';
     });
 
-    goodsCancel.map(items => {
-      this.goodService.getGoodByIds(items.goodId).subscribe({
-        next: response => {
-          if (response.saePhysicalState == 1)
-            response.saePhysicalState = 'BUENO';
-          if (response.saePhysicalState == 2)
-            response.saePhysicalState = 'MALO';
-          if (response.decriptionGoodSae == null)
-            response.decriptionGoodSae = 'Sin descripción';
-          // queda pendiente mostrar el alías del almacén //
-          goodsInfoCancel.push(response);
-          this.goodsCancel.load(goodsInfoCancel);
-          //this.totalItemsWarehouse = this.goodsWarehouse.count();
-          this.headingCancelation = `Cancelación(${this.goodsCancel.count()})`;
-        },
-      });
-    });
+    */
   }
 
   generateMinute(proceeding: IProceedings) {
-    console.log('receipts', this.receiptData);
-    console.log('receipts guard', this.receiptGuardData);
-    console.log('receipts warehouse', this.receiptWarehouseData);
-
+    console.log('proceeding', proceeding);
+    proceeding.programmingId = this.programmingId;
     if (
       this.receiptData?.statusReceipt == 'CERRADO' ||
       this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
@@ -666,9 +748,13 @@ export class FormalizeProgrammingFormComponent
               proceeding,
               programming: this.programming,
               typeTransferent: this.typeTransferent,
-              callback: (proceeding: IProceedings, tranType: string) => {
+              callback: (
+                proceeding: IProceedings,
+                tranType: string,
+                typeFirm: string
+              ) => {
                 if (proceeding && tranType) {
-                  this.processInfoProceeding(proceeding, tranType);
+                  this.processInfoProceeding(proceeding, tranType, typeFirm);
                   //this.getProccedings();
                 }
               },
@@ -688,11 +774,13 @@ export class FormalizeProgrammingFormComponent
           proceeding,
           programming: this.programming,
           typeTransferent: this.typeTransferent,
-          callback: (proceeding: IProceedings, tranType: string) => {
-            if (proceeding && tranType) {
-              this.processInfoProceeding(proceeding, tranType);
-              //this.getProccedings();
-            }
+          callback: (
+            proceeding: IProceedings,
+            tranType: string,
+            typeFirm: string
+          ) => {
+            this.processInfoProceeding(proceeding, tranType, typeFirm);
+            //this.getProccedings();
           },
         };
 
@@ -747,95 +835,38 @@ export class FormalizeProgrammingFormComponent
     }
   }
 
-  processInfoProceeding(proceeding: IProceedings, tranType: string) {
+  processInfoProceeding(
+    proceeding: IProceedings,
+    tranType: string,
+    typeFirm: string
+  ) {
+    let OIC: boolean = false;
+    let uvfv: boolean = false;
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    let nomReport: string = '';
-    let idTypeDoc: number = 0;
     params.getValue()['filter.id'] = proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.programmingId;
+    params.getValue()['filter.idPrograming'] = this.programmingId;
+    params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
-        const proceeding = response.data[0];
-        //const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
+        console.log('response sd', response);
+        const _proceeding = response.data[0];
+        let nomReport: string = '';
+        let idTypeDoc: number = 0;
+
         const keyDoc: number = this.programming.id;
-        let no_auto: number = 0;
-        let no_electronicF: number = 0;
-        let autog: boolean = false;
-        let elect: boolean = false;
-        let OIC: boolean = false;
-        let uvfv: boolean = false;
-
-        const nomFun1 = proceeding.nameWorker1;
-        const nomFun2 = proceeding.nameWorker2;
-        const nomOic = proceeding.nameWorkerOic;
-        const nomUvfv = proceeding.nameWorkerUvfv;
-        const nomWit1 = proceeding.nameWitness1;
-        const nomWit2 = proceeding.nameWitness2;
-        const firmFun1 = proceeding.electronicSignatureWorker1;
-        const firmFun2 = proceeding.electronicSignatureWorker2;
-        const firmUvfv = proceeding.electronicSignatureUvfv;
-        const firmOic = proceeding.electronicSignatureOic;
-        const firmWit1 = proceeding.electronicSignatureWitness1;
-        const firmWit2 = proceeding.electronicSignatureWitness2;
-
-        if (nomFun1) {
-          if (firmFun1) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (nomFun2) {
-          if (firmFun2) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (nomWit1) {
-          if (firmWit1) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (nomWit2) {
-          if (firmWit2) {
-            no_electronicF++;
-          } else {
-            no_auto++;
-          }
-        }
-
-        if (tranType == 'CE') {
-          if (nomOic) {
-            OIC = true;
-            if (firmOic) {
-              no_electronicF++;
-            } else {
-              no_auto++;
-            }
-          }
-
-          if (nomUvfv) {
-            uvfv = true;
-            if (firmUvfv) {
-              no_electronicF++;
-            } else {
-              no_auto++;
-            }
-          }
-        }
-
-        if (no_auto > 0) {
-          autog = true;
-        } else if (no_electronicF > 0) {
-          elect = true;
-        }
+        const nomFun1 = _proceeding.nameWorker1;
+        const nomFun2 = _proceeding.nameWorker2;
+        const nomOic = _proceeding.nameWorkerOic;
+        const nomUvfv = _proceeding.nameWorkerUvfv;
+        const nomWit1 = _proceeding.nameWitness1;
+        const nomWit2 = _proceeding.nameWitness2;
+        const firmFun1 = _proceeding.electronicSignatureWorker1;
+        const firmFun2 = _proceeding.electronicSignatureWorker2;
+        const firmUvfv = _proceeding.electronicSignatureUvfv;
+        const firmOic = _proceeding.electronicSignatureOic;
+        const firmWit1 = _proceeding.electronicSignatureWitness1;
+        const firmWit2 = _proceeding.electronicSignatureWitness2;
 
         if (tranType == 'A') {
           nomReport = 'ActaAseguradosBook.jasper';
@@ -848,250 +879,247 @@ export class FormalizeProgrammingFormComponent
           idTypeDoc = 210;
         }
 
-        const learnedType = idTypeDoc;
-        const learnedId = this.programming.id;
-        this.signatoriesService
-          .getSignatoriesFilter(learnedType, learnedId)
-          .subscribe({
-            next: async response => {
-              response.data.map(async item => {
-                this.signatoriesService
-                  .deleteFirmante(Number(item.signatoryId))
-                  .subscribe({
-                    next: () => {},
-                    error: error => {},
-                  });
-              });
+        if (typeFirm == 'autografa') {
+          this.loadDocument(
+            nomReport,
+            _proceeding.id,
+            idTypeDoc,
+            typeFirm,
+            _proceeding
+          );
+        } else {
+          console.log('REVISA LAS FIRMAS');
+          const learnedType = idTypeDoc;
+          const learnedId = this.programming.id;
+          this.signatoriesService
+            .getSignatoriesFilter(learnedType, learnedId)
+            .subscribe({
+              next: async response => {
+                console.log('firmantes', response);
+                response.data.map(async item => {
+                  this.signatoriesService
+                    .deleteFirmante(Number(item.signatoryId))
+                    .subscribe({
+                      next: () => {},
+                      error: error => {},
+                    });
+                });
 
-              if (firmFun1) {
-                await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_FUN_1',
-                  nomFun1,
-                  proceeding.positionWorker1,
-                  proceeding.idCatWorker1,
-                  proceeding.idNoWorker1
-                );
-              }
+                if (firmFun1) {
+                  await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_FUN_1',
+                    nomFun1,
+                    _proceeding.positionWorker1,
+                    _proceeding.idCatWorker1,
+                    _proceeding.idNoWorker1
+                  );
+                }
 
-              if (firmFun2) {
-                await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_FUN_2',
-                  nomFun2,
-                  proceeding.positionWorker2,
-                  proceeding.idCatWorker2,
-                  proceeding.idNoWorker2
-                );
-              }
+                if (firmFun2) {
+                  await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_FUN_2',
+                    nomFun2,
+                    _proceeding.positionWorker2,
+                    _proceeding.idCatWorker2,
+                    _proceeding.idNoWorker2
+                  );
+                }
 
-              if (firmWit1) {
-                await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_TEST_1',
-                  nomWit1,
-                  null,
-                  proceeding.idCatWitness1,
-                  proceeding.idNoWitness1
-                );
-              }
+                if (firmWit1) {
+                  await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_TEST_1',
+                    nomWit1,
+                    null,
+                    _proceeding.idCatWitness1,
+                    _proceeding.idNoWitness1
+                  );
+                }
 
-              if (firmWit2) {
-                const createSigned = await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_TEST_2',
-                  nomWit2,
-                  null,
-                  proceeding.idCatWitness2,
-                  proceeding.idNoWitness2
-                );
+                if (firmWit2) {
+                  const createSigned = await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_TEST_2',
+                    nomWit2,
+                    null,
+                    _proceeding.idCatWitness2,
+                    _proceeding.idNoWitness2
+                  );
 
-                if (createSigned && tranType != 'CE') {
-                  if (nomReport) {
-                    this.loadDocument(nomReport, proceeding.id, idTypeDoc);
+                  if (createSigned && tranType != 'CE') {
+                    if (nomReport) {
+                      this.loadDocument(
+                        nomReport,
+                        _proceeding.id,
+                        idTypeDoc,
+                        typeFirm,
+                        _proceeding
+                      );
+                    }
                   }
                 }
-              }
 
-              if (tranType == 'CE') {
-                if (OIC) {
+                if (tranType == 'CE') {
                   if (firmOic) {
                     const createOIC = await this.createFirm(
                       keyDoc,
                       idTypeDoc,
-                      proceeding.id,
+                      _proceeding.id,
                       'ACTAS',
                       'FIRMA_ELECT_OIC',
                       nomOic,
-                      proceeding.positionWorkerOic,
-                      proceeding.idCatWorkerOic,
-                      proceeding.idNoWorkerOic
+                      _proceeding.positionWorkerOic,
+                      _proceeding.idCatWorkerOic,
+                      _proceeding.idNoWorkerOic
                     );
 
                     if (createOIC) {
-                      if (uvfv) {
-                        if (firmUvfv) {
-                          const createsig = await this.createFirm(
-                            keyDoc,
-                            idTypeDoc,
-                            proceeding.id,
-                            'ACTAS',
-                            'FIRMA_ELECT_UVFV',
-                            nomUvfv,
-                            proceeding.positionWorkerUvfv,
-                            null,
-                            null
-                          );
-
-                          if (createsig) {
-                            if (nomReport) {
-                              this.loadDocument(
-                                nomReport,
-                                proceeding.id,
-                                idTypeDoc
-                              );
-                            }
-                          }
-                        } else {
+                      if (!firmUvfv) {
+                        if (nomReport) {
                           this.loadDocument(
                             nomReport,
-                            proceeding.id,
-                            idTypeDoc
+                            _proceeding.id,
+                            idTypeDoc,
+                            typeFirm,
+                            _proceeding
                           );
                         }
+                      } else {
+                        this.loadDocument(
+                          nomReport,
+                          _proceeding.id,
+                          idTypeDoc,
+                          typeFirm,
+                          _proceeding
+                        );
                       }
                     }
                   }
                 }
-              }
-            },
-            error: async error => {
-              if (firmFun1) {
-                await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_FUN_1',
-                  nomFun1,
-                  proceeding.positionWorker1,
-                  proceeding.idCatWorker1,
-                  proceeding.idNoWorker1
-                );
-              }
+              },
+              error: async error => {
+                if (firmFun1) {
+                  await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_FUN_1',
+                    nomFun1,
+                    _proceeding.positionWorker1,
+                    _proceeding.idCatWorker1,
+                    _proceeding.idNoWorker1
+                  );
+                }
 
-              if (firmFun2) {
-                await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_FUN_2',
-                  nomFun2,
-                  proceeding.positionWorker2,
-                  proceeding.idCatWorker2,
-                  proceeding.idNoWorker2
-                );
-              }
+                if (firmFun2) {
+                  await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_FUN_2',
+                    nomFun2,
+                    _proceeding.positionWorker2,
+                    _proceeding.idCatWorker2,
+                    _proceeding.idNoWorker2
+                  );
+                }
 
-              if (firmWit1) {
-                await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_TEST_1',
-                  nomWit1,
-                  null,
-                  proceeding.idCatWitness1,
-                  proceeding.idNoWitness1
-                );
-              }
+                if (firmWit1) {
+                  await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    _proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_TEST_1',
+                    nomWit1,
+                    null,
+                    _proceeding.idCatWitness1,
+                    _proceeding.idNoWitness1
+                  );
+                }
 
-              if (firmWit2) {
-                const createSigned = await this.createFirm(
-                  keyDoc,
-                  idTypeDoc,
-                  proceeding.id,
-                  'ACTAS',
-                  'FIRMA_ELECT_TEST_2',
-                  nomWit2,
-                  null,
-                  proceeding.idCatWitness2,
-                  proceeding.idNoWitness2
-                );
+                if (firmWit2) {
+                  const createSigned = await this.createFirm(
+                    keyDoc,
+                    idTypeDoc,
+                    proceeding.id,
+                    'ACTAS',
+                    'FIRMA_ELECT_TEST_2',
+                    nomWit2,
+                    null,
+                    _proceeding.idCatWitness2,
+                    _proceeding.idNoWitness2
+                  );
 
-                if (createSigned && tranType != 'CE') {
-                  if (nomReport) {
-                    this.loadDocument(nomReport, this.actId, idTypeDoc);
+                  if (createSigned && tranType != 'CE') {
+                    if (nomReport) {
+                      this.loadDocument(
+                        nomReport,
+                        this.actId,
+                        idTypeDoc,
+                        typeFirm,
+                        _proceeding
+                      );
+                    }
                   }
                 }
-              }
 
-              if (tranType == 'CE') {
-                if (OIC) {
+                if (tranType == 'CE') {
                   if (firmOic) {
                     const createOIC = await this.createFirm(
                       keyDoc,
                       idTypeDoc,
-                      proceeding.id,
+                      _proceeding.id,
                       'ACTAS',
                       'FIRMA_ELECT_OIC',
                       nomOic,
-                      proceeding.positionWorkerOic,
-                      proceeding.idCatWorkerOic,
-                      proceeding.idNoWorkerOic
+                      _proceeding.positionWorkerOic,
+                      _proceeding.idCatWorkerOic,
+                      _proceeding.idNoWorkerOic
                     );
 
                     if (createOIC) {
-                      if (uvfv) {
-                        if (firmUvfv) {
-                          const createsig = await this.createFirm(
-                            keyDoc,
+                      if (!firmUvfv) {
+                        if (nomReport) {
+                          this.loadDocument(
+                            nomReport,
+                            _proceeding.id,
                             idTypeDoc,
-                            proceeding.id,
-                            'ACTAS',
-                            'FIRMA_ELECT_UVFV',
-                            nomUvfv,
-                            proceeding.positionWorkerUvfv,
-                            null,
-                            null
+                            typeFirm,
+                            _proceeding
                           );
-
-                          if (createsig) {
-                            if (nomReport) {
-                              this.loadDocument(
-                                nomReport,
-                                this.actId,
-                                idTypeDoc
-                              );
-                            }
-                          }
-                        } else {
-                          if (nomReport) {
-                            this.loadDocument(nomReport, this.actId, idTypeDoc);
-                          }
                         }
+                      } else {
+                        this.loadDocument(
+                          nomReport,
+                          _proceeding.id,
+                          idTypeDoc,
+                          typeFirm,
+                          _proceeding
+                        );
                       }
                     }
                   }
                 }
-              }
-            },
-          });
-        //const nomFun1 = proceeding. */
+              },
+            });
+        }
       },
       error: error => {},
     });
@@ -1129,7 +1157,13 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
-  loadDocument(nomReport: string, actId: number, typeDoc: number) {
+  loadDocument(
+    nomReport: string,
+    actId: number,
+    typeDoc: number,
+    typeFirm: string,
+    proceeding: IProceedings
+  ) {
     const idTypeDoc = typeDoc;
     const idProg = this.programming.id;
     //Modal que genera el reporte
@@ -1137,12 +1171,21 @@ export class FormalizeProgrammingFormComponent
       initialState: {
         idTypeDoc,
         idProg,
+        typeFirm,
         programming: this.programming,
         nomReport: nomReport,
         actId: actId,
-        callback: (next: boolean) => {
+        proceedingInfo: proceeding,
+        callback: (next: boolean, typeFirm: string) => {
           if (next) {
-            this.uplodadReceiptDelivery(typeDoc, actId);
+            console.log('typeFirm', typeFirm);
+            if (typeFirm == 'autografa') {
+              this.uplodadReceiptDelivery(typeDoc, actId);
+            } else {
+              this.getProccedings();
+              this.proceeding.clear();
+              this.totalItemsProceedings = 0;
+            }
           }
         },
       },
@@ -1158,9 +1201,11 @@ export class FormalizeProgrammingFormComponent
       typeDoc: typeDoc,
       actId: actId,
       programming: this.programming,
-      callback: (data: boolean) => {
+      callback: (data: boolean, typeFirm: string) => {
         if (data) {
           this.getProccedings();
+          this.proceeding.clear();
+          this.totalItemsProceedings = 0;
         }
       },
     };
@@ -1211,44 +1256,115 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
-    if (this.proceedingData.statusProceeedings == 'CERRADO') {
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        '¿Desea formalizar la programación?'
-      ).then(async question => {
-        if (question.isConfirmed) {
-          const _task = JSON.parse(localStorage.getItem('Task'));
-          const user: any = this.authService.decodeToken();
-          let body: any = {};
-          body['idTask'] = _task.id;
-          body['userProcess'] = user.username;
-          body['type'] = 'SOLICITUD_PROGRAMACION';
-          body['subtype'] = 'Formalizar_Entrega';
-          body['ssubtype'] = 'ACCEPT';
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea formalizar la programación?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        //const sendEmailendFormalitation = this.sendEmail();
+        const _task = JSON.parse(localStorage.getItem('Task'));
+        const user: any = this.authService.decodeToken();
+        let body: any = {};
+        body['idTask'] = _task.id;
+        body['userProcess'] = user.username;
+        body['type'] = 'SOLICITUD_PROGRAMACION';
+        body['subtype'] = 'Formalizar_Entrega';
+        body['ssubtype'] = 'ACCEPT';
 
-          const closeTask = await this.closeTaskExecuteRecepcion(body);
-          if (closeTask) {
-            this.alertInfo(
-              'success',
-              'Acción correcta',
-              'Se cerro la tarea formalizar entrega correctamente'
-            ).then(question => {
-              if (question.isConfirmed) {
-                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-              }
-            });
-          }
+        const closeTask = await this.closeTaskExecuteRecepcion(body);
+        if (closeTask) {
+          this.alertInfo(
+            'success',
+            'Acción correcta',
+            'Se cerro la tarea formalizar entrega correctamente'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+              const params = new BehaviorSubject<ListParams>(new ListParams());
+              params.getValue()['filter.idPrograming'] = this.programmingId;
+              params.getValue()['filter.statusProceeedings'] = 'CERRADO';
+              this.proceedingService
+                .getProceedings(params.getValue())
+                .subscribe({
+                  next: async response => {
+                    if (response.data.length > 0) {
+                      const showBase64: any = await this.showBase64(
+                        response.data[0].id_content
+                      );
+                      const data = {
+                        recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
+                        message: `Le informamos que el acta con folio: ${response.data[0].folioProceedings}, terminó satisfactoriamente.`,
+                        userCreation: 'dr_sigebi',
+                        dateCreation: '2023-07-31',
+                        userModification: 'dr_sigebi',
+                        dateModification: '2023-07-31',
+                        version: '2',
+                        subject:
+                          'Notificación de cierre de acta de entrega recepción',
+                        nameAtt: response.data[0].folioProceedings,
+                        typeAtt: 'application/pdf;',
+                        //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
+                        process: 'FORMALIZAR',
+                        fileB64: showBase64,
+                      };
+                      this.emailService.createEmailNotify(data).subscribe({
+                        next: response => {},
+                      });
+                    } else {
+                      this.alert(
+                        'error',
+                        'Acción Invalida',
+                        'Se necesita tener un acta cerrada para terminar la tarea'
+                      );
+                    }
+                  },
+                  error: error => {},
+                });
+            }
+          });
         }
-      });
-    } else {
-      this.alertInfo(
-        'info',
-        'Acción Inválida',
-        'Se necesita cerrar el acta'
-      ).then();
-    }
+      }
+    });
   }
+
+  showBase64(id_content: string) {
+    return new Promise((resolve, reject) => {
+      this.wcontentService.obtainFile(id_content).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  /*sendEmail() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    //params.getValue()['filter.idPrograming'] = this.programmingId;
+    //params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        console.log('acta', response);
+      },
+      error: error => {},
+    });
+    const data = {
+      recipients: 'correopruebas@gmail.com',
+      message:
+        'Le informamos que el acta con folio: OCCIDENTE-SAT-8341-A1-22-08, terminó satisfactoriamente.',
+      userCreation: 'arosales',
+      dateCreation: '2022-08-05',
+      userModification: 'arosales',
+      dateModification: '2022-08-05',
+      version: '2',
+      subject: 'Notificación de cierre de acta de entrega recepción',
+      nameAtt: 'OCCIDENTE-SAT-8341-A1-22-08',
+      typeAtt: 'application/pdf;',
+      //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
+      process: 'FORMALIZAR',
+    };
+  } */
 
   closeTaskExecuteRecepcion(body: any) {
     return new Promise((resolve, reject) => {
@@ -1280,5 +1396,20 @@ export class FormalizeProgrammingFormComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowDocumentsGoodComponent, config);
+  }
+
+  showProceedingClose() {
+    let config: ModalOptions = {
+      initialState: {
+        programming: this.programming,
+        proceeding: this.proceedingData,
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowProceedingCloseComponent, config);
   }
 }

@@ -36,7 +36,7 @@ export const PREPARE_EVENT_CUSTOMER_LIST_COLUMNS = {
     sort: false,
   },
   country: {
-    title: 'Pais',
+    title: 'País',
     sort: false,
   },
   fax: {

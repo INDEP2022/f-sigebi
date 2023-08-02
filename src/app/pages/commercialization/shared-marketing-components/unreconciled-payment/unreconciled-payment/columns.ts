@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const COLUMNS = {
   paymentId: {
     title: 'ID Pago',
@@ -12,7 +14,7 @@ export const COLUMNS = {
     sort: false,
   },
   movementNumber: {
-    title: 'No. Movto.',
+    title: 'No. Movimiento',
     // width: '15%',
     type: 'string',
     sort: false,
@@ -28,6 +30,14 @@ export const COLUMNS = {
     // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   amount: {
     title: 'Monto',
@@ -47,18 +57,19 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  lotPub: {
-    title: 'Lote Pub.',
-    // width: '15%',
-    type: 'string',
-    sort: false,
-  },
   event: {
     title: 'Evento',
     // width: '15%',
     type: 'string',
     sort: false,
   },
+  lotPub: {
+    title: 'Lote Pub.',
+    // width: '15%',
+    type: 'string',
+    sort: false,
+  },
+
   // dateOi: {
   //   title: 'Fecha OI',
   //   width: '15%',
@@ -71,7 +82,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  taxId: {
+  rfc: {
     title: 'R.F.C',
     // width: '15%',
     type: 'string',
@@ -88,5 +99,24 @@ export const COLUMNS = {
     // width: '15%',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'D', title: 'Devolución' },
+          { value: 'P', title: 'Penalización' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.appliedTo == 'P') {
+        return 'Penalización';
+      } else if (row.appliedTo == 'D') {
+        return 'Devolución';
+      } else {
+        return row.appliedTo;
+      }
+    },
   },
 };

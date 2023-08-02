@@ -20,8 +20,11 @@ export class PaymentService extends HttpService {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
 
+  getComerReldisDisp() {
+    return this.get(`comer-reldis-disp`);
+  }
   createHeader(params: any) {
-    return this.post(PaymentEndPoints.ComerPaymentRef, params);
+    return this.post(PaymentEndPoints.CreateHeaderFcomer113, params);
   }
 
   create(params: any) {
@@ -30,5 +33,26 @@ export class PaymentService extends HttpService {
 
   update(id: any, params: any) {
     return this.put(`${PaymentEndPoints.ComerPaymentRef}/${id}`, params);
+  }
+
+  sendReadSirsaeFcomer113(params: any) {
+    return this.post(PaymentEndPoints.SendReadSirsaeFcomer113, params);
+  }
+
+  sendSirsaeFcomer112(params: any) {
+    return this.post(PaymentEndPoints.SendSirsaeFcomer112, params);
+  }
+
+  getLoadPayment(id: number, params: any) {
+    return this.get(`load-payments/${id}`, params);
+  }
+
+  getComerPaymentRefGetAllV2(params: _Params) {
+    return this.get(PaymentEndPoints.GetAllV2, params);
+  }
+
+  getPaymentById(filter: number) {
+    const route = `comer-payment-ref?filter.lotId=$eq:${filter}`;
+    return this.get(route);
   }
 }

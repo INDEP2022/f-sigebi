@@ -4,19 +4,72 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row p-1">
+      <div class="row p-1" style="height: 300px; overflow-y: scroll">
+        <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('bankKey')" label="Banco">
+            <input
+              maxlength="10"
+              type="text"
+              class="form-control"
+              formControlName="bankKey" />
+            <!-- <ngx-select [searchOnInit]="true" [form]="form" control="bankKey" [data]="banks" value="cveBank"
+              bindLabel="bankAndNumber" label="Banco" (fetchItems)="getBanks($event)">
+            </ngx-select> -->
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('code')" label="Código">
+            <input
+              maxlength="4"
+              type="text"
+              class="form-control"
+              formControlName="code" />
+          </form-field>
+        </div>
         <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('bankKey')">
+          <form-field
+            [control]="form.get('movementNumber')"
+            label="No. Movimiento">
+            <input
+              maxlength="11"
+              type="text"
+              class="form-control"
+              formControlName="movementNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('date')" label="Fecha">
+            <input
+              [ngClass]="{ 'bg-gray': disabledSend }"
+              maxlength="11"
+              bsDatepicker
+              type="text"
+              class="form-control"
+              formControlName="date" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('lotId')">
             <ngx-select
               [searchOnInit]="true"
               [form]="form"
-              control="bankKey"
-              [data]="banks"
-              value="cveBank"
-              bindLabel="bankAndNumber"
-              label="Banco"
-              (fetchItems)="getBanks($event)">
+              control="lotId"
+              [data]="lotes"
+              value="idLot"
+              bindLabel="idLot"
+              label="Lote"
+              (fetchItems)="getLotes($event)">
             </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              maxlength="30"
+              type="text"
+              class="form-control"
+              formControlName="reference" />
           </form-field>
         </div>
         <div class="col-md-6 mt-2">
@@ -35,54 +88,10 @@
               control="clientId"
               [data]="clients"
               value="id"
-              bindLabel="idAndName"
+              bindLabel="id"
               label="Cliente"
               (fetchItems)="getClients($event)">
             </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('lotId')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="form"
-              control="lotId"
-              [data]="lotes"
-              value="idLot"
-              bindLabel="idAndDesc"
-              label="Lote"
-              (fetchItems)="getLotes($event)">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field
-            [control]="form.get('movementNumber')"
-            label="No. Movimiento">
-            <input
-              maxlength="11"
-              type="text"
-              class="form-control"
-              formControlName="movementNumber" />
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('date')" label="Fecha">
-            <input
-              maxlength="11"
-              bsDatepicker
-              type="text"
-              class="form-control"
-              formControlName="date" />
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('reference')" label="Referencia">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="reference" />
           </form-field>
         </div>
         <div class="col-md-6 mt-2">
@@ -95,51 +104,29 @@
           </form-field>
         </div>
 
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('dateOi')" label="Fecha OI">
             <input
+              [ngClass]="{ 'bg-gray': disabledSend }"
               bsDatepicker
               maxlength="11"
               type="text"
               class="form-control"
               formControlName="dateOi" />
           </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('code')" label="Código">
-            <input
-              maxlength="4"
-              type="text"
-              class="form-control"
-              formControlName="code" />
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('type')" label="Tipo">
-            <input
-              maxlength="1"
-              type="text"
-              class="form-control"
-              formControlName="type" />
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
+        </div> -->
+
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('recordDate')" label="Fecha Registro">
-            <input
-              bsDatepicker
-              [readonly]="true"
-              maxlength="11"
-              type="text"
-              class="form-control"
-              formControlName="recordDate" />
+            <input bsDatepicker maxlength="11" type="text" class="form-control" formControlName="recordDate" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6 mt-2">
           <form-field
             [control]="form.get('referenceOri')"
             label="Referencia Ori">
             <input
-              maxlength="11"
+              maxlength="30"
               type="text"
               class="form-control"
               formControlName="referenceOri" />
@@ -154,7 +141,7 @@
               formControlName="branchOffice" />
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
+        <div class="col-md-3 mt-2">
           <form-field
             [control]="form.get('validSystem')"
             label="Sistema Válido">
@@ -163,6 +150,15 @@
               type="text"
               class="form-control"
               formControlName="validSystem" />
+          </form-field>
+        </div>
+        <div class="col-md-3 mt-2">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input
+              maxlength="1"
+              type="text"
+              class="form-control"
+              formControlName="type" />
           </form-field>
         </div>
 
@@ -200,6 +196,18 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="
+            !form.valid ||
+            form.get('date').value == undefined ||
+            form.get('date') == null
+          "
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button
           [disabled]="form.valid"
           type="button"
           class="btn btn-primary btn-sm active"
@@ -209,7 +217,7 @@
           <span *ngIf="!edit"
             ><i aria-hidden="true" class="fa fa-save"></i
           ></span>
-        </button>
+        </button> -->
       </div>
       <div class="m-3">
         <button

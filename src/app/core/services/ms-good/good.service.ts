@@ -21,6 +21,7 @@ import { environment } from './../../../../environments/environment';
 import {
   GoodGetData,
   IGood,
+  IGoodCharge,
   IGoodSami,
   IValidaCambioEstatus,
   IVban,
@@ -457,5 +458,19 @@ export class GoodService extends HttpService {
 
   pupValidMasiv(body: any) {
     return this.post<any>('good/pupValidMasiv2', body);
+  }
+
+  getRegistrosProgramados(params: ListParams) {
+    return this.get<IListResponse<any>>(
+      GoodEndpoints.TmpTotGoodsProgrammed,
+      params
+    );
+  }
+  chargeGoods(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods', body);
+  }
+
+  chargeGoodsExcel(body: IGoodCharge) {
+    return this.post<any>('good/charge-goods-excel', body);
   }
 }

@@ -1,10 +1,114 @@
-<app-impression-of-acts
-  [title]="'Impresi&oacute;n de &Aacute;ctas de Devoluci&oacute;n'"
-  [labelDelegation1]="'No. Delegaci&oacute;n Ejecutora'"
-  [labelDescripDelegation1]="'Descripci&oacute;n Delegaci&oacute;n Ejecutora'"
-  [labelDelegation2]="'No. Delegaci&oacute;n Administra'"
-  [labelDescripDelegation2]="'Descripci&oacute;n Delegaci&oacute;n Administra'"
-  [labelDate1]="'Fecha de Elaboraci&oacute;n'"
-  [labelDate2]="'Hasta el'"
-  [father]="'return-acts-report'">
-</app-impression-of-acts>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Impresi&oacute;n de Actas de Devoluci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <form
+      [formGroup]="flatFileGoodForm"
+      (ngSubmit)="onSubmit()"
+      class="form-material">
+      <div class="row margin-input">
+        <app-delegation-shared
+          (click)="loadDelegation('Recibe')"
+          [form]="flatFileGoodForm"
+          [showDelegation]="true"
+          [delegationField]="'delegation'"
+          labelDelegation="Delegación Ejecutora"
+          [subdelegationField]="'subdelegation'"
+          labelSubdelegation="Delegación Administra"
+          [showSubdelegation]="true"></app-delegation-shared>
+      </div>
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('expedienteI')"
+            label="No. Expediente Desde el:">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedienteI" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('expedienteF')"
+            label="Hasta el:">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expedienteF" />
+          </form-field>
+        </div>
+        <br />
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('statusActa')"
+            label="Estatus Acta">
+            <input
+              type="text"
+              formControlName="statusActa"
+              placeholder=""
+              class="form-control" />
+          </form-field>
+        </div>
+        <br />
+        <div class="col-md-6">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="flatFileGoodForm.get('tipoActa')"
+              label="Tipo de Acta">
+              <select class="form-control" formControlName="tipoActa">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="1">1</option>
+                <option [value]="2">2</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+        <br />
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('initialDate')"
+            label="Fecha Inicial">
+            <input
+              type="text"
+              formControlName="initialDate"
+              placeholder="Fecha Inicial"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="flatFileGoodForm.get('finalDate')"
+            label="Fecha Final">
+            <input
+              type="text"
+              formControlName="finalDate"
+              placeholder="Fecha Final"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input justify-content-center">
+        <div class="col-md-1"></div>
+        <div class="col-md-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="onSubmit()"
+            [disabled]="!flatFileGoodForm.valid">
+            Reporte
+          </button>
+        </div>
+      </div>
+      <div class="row mt-5"></div>
+    </form>
+  </div>
+</app-card>

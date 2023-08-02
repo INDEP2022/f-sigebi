@@ -1,3 +1,5 @@
+import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
+
 export const REPRESENTATIVES_COLUMNS = {
   id: {
     title: 'Clave Representante',
@@ -24,6 +26,10 @@ export const REPRESENTATIVES_COLUMNS = {
       const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
       const year = dateObj.getFullYear();
       return `${day}/${month}/${year}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
     },
   },
   rfc: {

@@ -27,7 +27,7 @@
           [loadingText]="'Formalizando'"
           [btnSmall]="true"
           [icon]="'fa fa-check'"
-          [className]="'btn-primary disabled'"
+          [className]="'btn-primary'"
           (confirm)="confirm()"></confirm-button>
 
         <button
@@ -52,8 +52,8 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo Transferente&#58;</label>
-            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ stateName }} </span>
           </div>
         </div>
         <div class="col-md-4">
@@ -92,13 +92,6 @@
       <div class="row pt-3">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Estado&#58;</label>
-            <span class="fs-4"> {{ stateName }} </span>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="form-group">
             <label class="text-right mr-2">Emisora&#58;</label>
             <span class="fs-4"> {{ stationName }} </span>
           </div>
@@ -110,6 +103,13 @@
             <span class="fs-4"> {{ programming?.address }} </span>
           </div>
         </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+          </div>
+        </div>
       </div>
 
       <div class="row pt-3">
@@ -119,15 +119,13 @@
             <span class="fs-4"> {{ authorityName }} </span>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Observación&#58;</label>
             <span class="fs-4"> {{ programming?.observation }} </span>
           </div>
         </div>
-      </div>
 
-      <div class="row pt-3">
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Tipo Relevante&#58;</label>
@@ -196,6 +194,12 @@
           class="btn btn-primary disabled btn-sm active">
           Actualizar <i class="fas fa-sync-alt"> </i>
         </button>
+
+        <button
+          (click)="showProceedingClose()"
+          class="btn btn-info btn-sm active">
+          Ver actas cerradas <i class="fas fa-eye"> </i>
+        </button>
       </div>
       <div class="row pt-3">
         <form [formGroup]="proceedingForm">
@@ -258,21 +262,27 @@
                       <td
                         class="text-center align-baseline"
                         *ngIf="proceedingData.statusProceeedings == 'ABIERTO'">
-                        <a
-                          (click)="generateMinute(proceeding.value)"
-                          class="text-center">
-                          <i class="fa fa-file mr-2" style="cursor: pointer"></i
-                        ></a>
+                        <a class="text-center">
+                          <button
+                            (click)="generateMinute(proceeding.value)"
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fa fa-file"></i>
+                          </button>
+                        </a>
                       </td>
 
                       <td
                         class="text-center align-baseline"
                         *ngIf="proceedingData.statusProceeedings == 'CERRADO'">
-                        <a
-                          (click)="showProceeding(proceeding.value)"
-                          class="text-center">
-                          <i class="fa fa-eye mr-2" style="cursor: pointer"></i
-                        ></a>
+                        <a class="text-center">
+                          <button
+                            (click)="showProceeding(proceeding.value)"
+                            type="button"
+                            class="btn btn-primary active btn-sm">
+                            <i class="fa fa-eye mr-2"></i>
+                          </button>
+                        </a>
                       </td>
                     </ng-container>
                   </tr>
@@ -397,7 +407,7 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsReprog"
-                    [source]="">
+                    [source]="goodsReprog">
                   </ng2-smart-table>
                 </div>
               </div>
@@ -418,7 +428,7 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsCancelation"
-                    [source]="">
+                    [source]="goodsCancel">
                   </ng2-smart-table>
 
                   <app-pagination

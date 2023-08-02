@@ -93,23 +93,31 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    if (this.tranType != 'A') {
-      console.log(this.form.value);
+    if (this.form.get('observations').value) {
+      const formData = {
+        id: this.form.get('id').value,
+        goodId: this.form.get('goodId').value,
+        observations: this.form.get('observations').value,
+      };
+
       this.alertQuestion(
         'question',
         'Confirmación',
         '¿Desea actualizar la información del bien?'
       ).then(question => {
         if (question.isConfirmed) {
-          this.goodService.updateByBody(this.form.value).subscribe({
+          this.goodService.updateByBody(formData).subscribe({
             next: () => {
-              this.onLoadToast(
+              this.alertInfo(
                 'success',
-                'Acción realizada',
+                'Acción Correcta',
                 'Bien modificado correctamente'
-              );
-              this.modalService.content.callback(true);
-              this.modalRef.hide();
+              ).then(question => {
+                if (question.isConfirmed) {
+                  this.modalService.content.callback(true);
+                  this.modalRef.hide();
+                }
+              });
             },
             error: error => {
               this.onLoadToast('error', 'Error', 'Error al actualizar el bien');
@@ -118,49 +126,11 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
         }
       });
     } else {
-      if (this.form.get('observations').value) {
-        const formData = {
-          id: this.form.get('id').value,
-          goodId: this.form.get('goodId').value,
-          observations: this.form.get('observations').value,
-        };
-
-        this.alertQuestion(
-          'question',
-          'Confirmación',
-          '¿Desea actualizar la información del bien?'
-        ).then(question => {
-          if (question.isConfirmed) {
-            this.goodService.updateByBody(formData).subscribe({
-              next: () => {
-                this.alertInfo(
-                  'success',
-                  'Acción Correcta',
-                  'Bien modificado correctamente'
-                ).then(question => {
-                  if (question.isConfirmed) {
-                    this.modalService.content.callback(true);
-                    this.modalRef.hide();
-                  }
-                });
-              },
-              error: error => {
-                this.onLoadToast(
-                  'error',
-                  'Error',
-                  'Error al actualizar el bien'
-                );
-              },
-            });
-          }
-        });
-      } else {
-        this.alertInfo(
-          'error',
-          'Acción Inválida',
-          'Se necesita llenar el campo observación'
-        );
-      }
+      this.alertInfo(
+        'error',
+        'Acción Inválida',
+        'Se necesita llenar el campo observación'
+      );
     }
   }
 

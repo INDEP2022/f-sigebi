@@ -65,7 +65,11 @@
             [params]="params"
             [lotSelected]="lotSelected"
             [parameters]="parameters"
-            [eventForm]="eventForm"></event-goods-lots-list-actions>
+            [onlyBase]="onlyBase"
+            [eventForm]="eventForm"
+            (fillStadistics)="
+              fillStadistics.emit()
+            "></event-goods-lots-list-actions>
         </ul>
       </div>
     </div>

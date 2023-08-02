@@ -52,7 +52,7 @@
       *ngIf="registerControls.typeEvent.value == 'DN'"
       class="col-md-4 mt-4"
       [control]="formSiab.get('cdonacCve')"
-      label="CVE Don">
+      label="Cve. Don">
       <input
         type="text"
         [max-length]="2000"
@@ -94,7 +94,7 @@
       *ngIf="registerControls.typeEvent.value == 'RF'"
       class="col-md-4 mt-4"
       [control]="formSiab.get('dictumCve')"
-      label="CVE Dictamen">
+      label="Cve. Dictamen">
       <input
         type="text"
         [max-length]="2000"
@@ -112,7 +112,7 @@
       *ngIf="registerControls.typeEvent.value == 'DN'"
       class="col-md-4 mt-4"
       [control]="formSiab.get('adonacCve')"
-      label="CVE Aut.">
+      label="Cve. Aut.">
       <input type="text" class="form-control" formControlName="adonacCve" />
     </form-field>
 

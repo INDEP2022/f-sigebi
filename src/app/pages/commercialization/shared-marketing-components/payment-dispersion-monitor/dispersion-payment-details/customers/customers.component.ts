@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
@@ -11,9 +12,14 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class CustomersComponent extends BasePage implements OnInit {
-  data: any[] = [];
-  totalItems: number = 0;
+  @Input() dataIncome: LocalDataSource;
+  @Input() totalIncome: number = 0;
+  @Input() id_tipo_disp: number = null;
+  @Output() paramsChange = new EventEmitter();
+
   params = new BehaviorSubject<ListParams>(new ListParams());
+
+  data = new LocalDataSource();
 
   total: number = 105666395.52;
   return: number = 0.0;
@@ -28,7 +34,19 @@ export class CustomersComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.dataIncome);
+    console.log(this.totalIncome);
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      this.paramsMannage(params);
+    });
+  }
+
+  paramsMannage(params: any) {
+    this.paramsChange.emit(params);
+  }
 
   add() {
     //this.openModal();
@@ -55,4 +73,8 @@ export class CustomersComponent extends BasePage implements OnInit {
   settingsChange($event: any): void {
     this.settings = $event;
   }
+}
+
+function OutPut(): (target: CustomersComponent, propertyKey: 'params') => void {
+  throw new Error('Function not implemented.');
 }

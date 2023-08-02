@@ -41,7 +41,7 @@ import { CLARIFICATION_COLUMNS } from './clarifications-columns';
 @Component({
   selector: 'app-clarifications',
   templateUrl: './clarifications.component.html',
-  styles: [],
+  styleUrls: ['./clarifications.component.scss'],
 })
 export class ClarificationsComponent
   extends BasePage
@@ -76,6 +76,7 @@ export class ClarificationsComponent
   statusTask: any = '';
   columns = ASSETS_COLUMNS;
   goodsSelected: IGood[] = [];
+  goodSaeModified: any = [];
 
   constructor(
     private modalService: BsModalService,
@@ -125,6 +126,15 @@ export class ClarificationsComponent
       ...this.columns.selected,
       onComponentInitFunction: this.selectGoods.bind(this),
     };*/
+
+    this.columns.descriptionGoodSae = {
+      ...this.columns.descriptionGoodSae,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setDescriptionGoodSae(data);
+        });
+      },
+    };
     this.prepareForm();
   }
   private prepareForm() {
@@ -798,6 +808,50 @@ export class ClarificationsComponent
           );
         },
       });
+    });
+  }
+
+  setDescriptionGoodSae(descriptionInput: any) {
+    this.assetsArray['data'].map((item: any) => {
+      if (item.id === descriptionInput.data.id) {
+        item.descriptionGoodSae = descriptionInput.text;
+
+        this.addGoodModified(item);
+      }
+    });
+  }
+
+  addGoodModified(good: any) {
+    const index = this.goodSaeModified.indexOf(good);
+    if (index != -1) {
+      this.goodSaeModified[index] = good;
+      if (this.goodSaeModified[index].descriptionGoodSae == '') {
+        this.goodSaeModified[index].descriptionGoodSae = null;
+      }
+    } else {
+      this.goodSaeModified.push(good);
+    }
+  }
+
+  saveGoodSaeDescrip() {
+    if (this.goodSaeModified.length == 0) {
+      return;
+    }
+    this.loading = true;
+    this.goodSaeModified.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      const body: any = {
+        id: item.id,
+        goodId: item.goodId,
+        descriptionGoodSae: item.descriptionGoodSae,
+      };
+      debugger;
+      const updateResult: any = await this.updateGood(body);
+      if (this.goodSaeModified.length == index) {
+        this.loading = false;
+        this.goodSaeModified = [];
+        this.onLoadToast('success', 'Bienes actualizados');
+      }
     });
   }
 }

@@ -1,8 +1,15 @@
-import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  Input,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import * as moment from 'moment';
 import { LocalDataSource, Ng2SmartTableComponent } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, of, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
@@ -13,7 +20,10 @@ import { BasePage } from 'src/app/core/shared';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { ViewFileButtonComponent } from '../select-goods/view-file-button/view-file-button.component';
 import { ModifyDatesModalComponent } from './modify-dates-modal/modify-dates-modal.component';
-import { SELECT_GOODS_EYE_VISIT_COLUMNS } from './select-good-eye-visit-columns';
+import {
+  SELECTED_GOOD_REVIEW,
+  SELECT_GOODS_EYE_VISIT_COLUMNS,
+} from './select-good-eye-visit-columns';
 
 @Component({
   selector: 'app-select-good-eye-visit',
@@ -23,6 +33,7 @@ import { SELECT_GOODS_EYE_VISIT_COLUMNS } from './select-good-eye-visit-columns'
 export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   @ViewChild('tableGoods') tableGoods: Ng2SmartTableComponent;
   @Input() idRequest: number;
+  @Input() typeVisit: string;
   selectedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodTotalItems: number = 0;
   selectedGoodColumns = new LocalDataSource();
@@ -43,7 +54,15 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   constructor() {
     super();
-    this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(this.typeVisit);
+    if (this.typeVisit === 'selectGood') {
+      this.selectedGoodSettings.columns = SELECT_GOODS_EYE_VISIT_COLUMNS;
+    } else {
+      this.selectedGoodSettings.columns = SELECTED_GOOD_REVIEW;
+    }
   }
 
   goodTestData = [
@@ -66,46 +85,63 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     const self = this;
-    this.selectedGoodSettings.columns = {
-      select: {
-        title: '',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any, component: any = self) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-            component.checked(data);
-          });
+    if (this.typeVisit === 'selectGood') {
+      this.selectedGoodSettings.columns = {
+        select: {
+          title: '',
+          type: 'custom',
+          sort: false,
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.toggle.subscribe((data: any) => {
+              data.row.to = data.toggle;
+              component.checked(data);
+            });
+          },
         },
-      },
-      maneuverRequired: {
-        title: 'Maniobra Requerida',
-        type: 'custom',
-        sort: false,
-        renderComponent: CheckboxElementComponent,
-        onComponentInitFunction(instance: any, component: any = self) {
-          instance.toggle.subscribe((data: any) => {
-            data.row.to = data.toggle;
-            component.requiredVisitChecked(data);
-          });
+        maneuverRequired: {
+          title: 'Maniobra Requerida',
+          type: 'custom',
+          sort: false,
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.toggle.subscribe((data: any) => {
+              data.row.to = data.toggle;
+              component.requiredVisitChecked(data);
+            });
+          },
         },
-      },
-      viewFile: {
-        title: 'Expediente',
-        type: 'custom',
-        sort: false,
-        renderComponent: ViewFileButtonComponent,
-        onComponentInitFunction(instance: any, component: any = self) {
-          instance.action.subscribe((row: any) => {
-            component.viewFile(row);
-          });
+        viewFile: {
+          title: 'Expediente',
+          type: 'custom',
+          sort: false,
+          renderComponent: ViewFileButtonComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.action.subscribe((row: any) => {
+              component.viewFile(row);
+            });
+          },
         },
-      },
-      ...this.selectedGoodSettings.columns,
-    };
+        ...this.selectedGoodSettings.columns,
+      };
+    } else if (this.typeVisit == 'resultGood') {
+      this.selectedGoodSettings.columns = {
+        viewFile: {
+          title: 'Expediente',
+          type: 'custom',
+          sort: false,
+          renderComponent: ViewFileButtonComponent,
+          onComponentInitFunction(instance: any, component: any = self) {
+            instance.action.subscribe((row: any) => {
+              component.viewFile(row);
+            });
+          },
+        },
+        ...this.selectedGoodSettings.columns,
+      };
+    }
     //id de prueba borrar
-    this.idRequest = 1;
+    this.idRequest = 56817;
     //
     this.selectedGoodParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -117,54 +153,59 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
   }
 
   getData(params: ListParams) {
-    //const good: any = Object.assign({ viewFile: '' }, this.goodTestData[0]);
-    //const good: any = Object.assign(this.goodTestData[0]);
-    //this.selectedGoodColumns.load(this.goodTestData) //= [...this.selectedGoodColumns, good];
-    //this.selectedGoodTotalItems = this.goodTestData.length;
     this.loading = true;
-    params['filter.applicationId'] = `$eq:${this.idRequest}`; //56817
-    this.rejectedGoodService.getAll(params).subscribe({
-      next: resp => {
-        setTimeout(() => {
-          const result = resp.data.map(async (item: any) => {
-            if (item.resultFinal != null) {
-              if (item.resultFinal != 'N') {
-                const column = this.tableGoods.grid.getColumns();
-                const maneuverReqColumn = column.find(
-                  x => x.id == 'maneuverRequired'
-                );
-                maneuverReqColumn.hide = true;
+    params['filter.applicationId'] = `$eq:${this.idRequest}`;
+    this.rejectedGoodService
+      .getAll(params)
+      .pipe(
+        catchError(err => {
+          return of({ data: [], count: 0 });
+        })
+      )
+      .subscribe({
+        next: resp => {
+          setTimeout(() => {
+            const result = resp.data.map(async (item: any) => {
+              if (item.resultFinal != null) {
+                if (item.resultFinal != 'N') {
+                  const column = this.tableGoods.grid.getColumns();
+                  const maneuverReqColumn = column.find(
+                    x => x.id == 'maneuverRequired'
+                  );
+                  maneuverReqColumn.hide = true;
+                }
               }
-            }
 
-            item['maneuverRequired'] =
-              item.requiresManeuver == 'Y' ? true : false;
+              item['maneuverRequired'] =
+                item.requiresManeuver == 'Y' ? true : false;
 
-            item.startVisitDate = item.startVisitDate
-              ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
-              : null;
-            item.endVisitDate = item.endVisitDate
-              ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
-              : null;
-            item['unitExtentDescrip'] = await this.getDescripUnit(
-              item.unitExtent
-            );
-            item['delegationDescrip'] = await this.getDelegation(
-              item.delegationRegionalId,
-              item.cveState
-            );
-            item['fractionDescrip'] = await this.getFraction(item.fractionId);
-          });
+              item.startVisitDate = item.startVisitDate
+                ? moment(item.startVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+                : null;
+              item.endVisitDate = item.endVisitDate
+                ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
+                : null;
+              item['unitExtentDescrip'] = await this.getDescripUnit(
+                item.unitExtent
+              );
+              item['delegationDescrip'] = await this.getDelegation(
+                item.delegationRegionalId,
+                item.cveState
+              );
+              item['fractionDescrip'] = await this.getFraction(item.fractionId);
+            });
 
-          Promise.all(result).then(x => {
-            console.log(resp.data);
-            this.selectedGoodColumns.load(resp.data);
-            this.selectedGoodTotalItems = resp.count;
-            this.loading = false;
-          });
-        }, 600);
-      },
-    });
+            Promise.all(result).then(x => {
+              this.selectedGoodColumns.load(resp.data);
+              this.selectedGoodTotalItems = resp.count;
+              this.loading = false;
+              setTimeout(() => {
+                this.centerExpedientButton();
+              }, 200);
+            });
+          }, 600);
+        },
+      });
   }
 
   viewFile(file: any) {
@@ -206,10 +247,14 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     });
   }
 
-  saveManeuverReq() {
-    /*this.maneuverReqList.map((item)=>{
-      const body:any = {id:item.id, requiresManeuver: item.requiresManeuver}
-    })*/
+  centerExpedientButton() {
+    const table = document.getElementById('selectedGoodsTable');
+    const tbody = table.children[0].children[1].children;
+
+    for (let index = 0; index < tbody.length; index++) {
+      const element = tbody[index];
+      element.children[0].setAttribute('style', 'text-align: center;');
+    }
   }
 
   modifyDate() {

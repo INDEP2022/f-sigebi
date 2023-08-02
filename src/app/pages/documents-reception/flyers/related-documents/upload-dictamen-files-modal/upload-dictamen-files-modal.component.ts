@@ -133,8 +133,8 @@ export class UploadDictamenFilesModalComponent
   confirm() {
     this.alertQuestion(
       'question',
-      'Se va a comenzar el proceso del firmado electrónico. ¿Desea Continuar?',
-      ''
+      'Se va a comenzar el proceso del firmado electrónico.',
+      '¿Desea Continuar?'
     ).then(async question => {
       if (question.isConfirmed) {
         this.sendFormAndFilesToFirm();

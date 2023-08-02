@@ -88,7 +88,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.brandService.getAll(params).subscribe({
       next: response => {
         this.brandsSubBrands = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -113,7 +113,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar esta marca?'
+      '¿Desea Eliminar esta Marca?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(brandsSubBrands.id);
@@ -126,6 +126,13 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
       next: () => {
         this.getDeductives();
         this.alert('success', 'Marca Borrada Correctamente', '');
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'No se Puede Eliminar la Marca Porque se Encuentra Registrada en Otra Tabla',
+          ''
+        );
       },
     });
   }

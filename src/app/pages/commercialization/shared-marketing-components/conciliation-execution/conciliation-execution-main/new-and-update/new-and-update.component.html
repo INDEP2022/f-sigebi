@@ -1,0 +1,92 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Agregar' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('eventId')" label="Evento">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="eventId" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('customerId')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              [readonly]="true"
+              control="customerId"
+              [data]="clients"
+              value="id"
+              bindLabel="id"
+              label="Cliente"
+              (fetchItems)="getClients($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Procesar" [control]="form.get('process')">
+            <ng-select formControlName="process" class="form-control pt-1">
+              <ng-option value="S">SI</ng-option>
+              <ng-option value="N">NO</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Fecha de Ejecución"
+            [control]="form.get('executionDate')">
+            <input
+              (ngModelChange)="dateMovementFin($event)"
+              [ngClass]="{ 'bg-gray': disabledSend }"
+              [readonly]="disabledSend"
+              type="text"
+              class="form-control"
+              formControlName="executionDate"
+              bsDatepicker
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          [disabled]="
+            !form.valid ||
+            form.get('executionDate').value == undefined ||
+            form.get('executionDate').value == null
+          "
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="confirm()">
+          Guardar
+          <span><i aria-hidden="true" class="fa fa-save"></i></span>
+        </button>
+        <!-- <button [disabled]="form.invalid" type="button" class="btn btn-primary btn-sm active"
+                    (click)="confirm()">
+                    {{ edit ? 'Actualizar' : 'Guardar' }}
+                    <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
+                    <span *ngIf="!edit"><i aria-hidden="true" class="fa fa-save"></i></span>
+                </button> -->
+        <!-- <confirm-button [type]="'button'" [disabled]="form.invalid" (confirm)="confirm()"></confirm-button> -->
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -16,7 +16,13 @@ import { secondFormatDateToDate2 } from 'src/app/shared/utils/date';
 @Component({
   selector: 'app-even-permission-control-modal',
   templateUrl: './even-permission-control-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      .bg-gray {
+        background-color: white !important;
+      }
+    `,
+  ],
 })
 export class EvenPermissionControlModalComponent
   extends BasePage
@@ -36,6 +42,7 @@ export class EvenPermissionControlModalComponent
   users = new DefaultSelect<IComerClients>();
 
   event: any;
+  disabledSend: boolean = true;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -60,9 +67,6 @@ export class EvenPermissionControlModalComponent
     if (this.comerUser != null) {
       this.edit = true;
 
-      // Test the function
-      const dateStr = this.comerUser.date;
-      const formattedDate = this.formatDate(dateStr);
       console.log('date', secondFormatDateToDate2(this.comerUser.date));
 
       this.comerUserForm.patchValue({
@@ -75,7 +79,7 @@ export class EvenPermissionControlModalComponent
     } else {
       if (this.event) {
         this.comerUserForm.patchValue({
-          idEvent: this.event.id,
+          idEvent: this.event.id_evento,
         });
       }
     }
@@ -93,13 +97,9 @@ export class EvenPermissionControlModalComponent
         });
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.users = new DefaultSelect();
+        // this.userChange(false)
+        this.loading = false;
       },
       () => {}
     );
@@ -114,6 +114,12 @@ export class EvenPermissionControlModalComponent
   }
 
   create() {
+    console.log(this.comerUserForm.get('date').value);
+    if (!this.comerUserForm.get('date').value) {
+      this.alert('warning', 'Debe Especificar la Fecha', '');
+      this.comerUserForm.get('date').markAsTouched();
+      return;
+    }
     let params = {
       eventId: this.comerUserForm.value.idEvent,
       user: this.comerUserForm.value.username,
@@ -135,6 +141,11 @@ export class EvenPermissionControlModalComponent
   }
 
   update() {
+    if (!this.comerUserForm.get('date').value) {
+      this.alert('warning', 'Debe Especificar la Fecha', '');
+      this.comerUserForm.get('date').markAsTouched();
+      return;
+    }
     let params = {
       eventId: this.comerUserForm.value.idEvent,
       user: this.comerUserForm.value.username,
@@ -191,49 +202,8 @@ export class EvenPermissionControlModalComponent
     }
   }
 
-  async formatDate(dateStr: any) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    const [day, month, year] = dateStr.split('-').map(Number);
-
-    if (isNaN(day) || isNaN(month) || isNaN(year)) {
-      throw new Error(
-        'Invalid date format. Please provide a date in the format dd-mm-yyyy'
-      );
-    }
-
-    const d = new Date(year, month - 1, day);
-    const dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][
-      d.getDay()
-    ];
-    const timezoneOffset = -d.getTimezoneOffset();
-    const timezoneOffsetHours = Math.floor(Math.abs(timezoneOffset) / 60)
-      .toString()
-      .padStart(2, '0');
-    const timezoneOffsetMinutes = Math.abs(timezoneOffset % 60)
-      .toString()
-      .padStart(2, '0');
-    const timezone =
-      timezoneOffset >= 0
-        ? `GMT+${timezoneOffsetHours}:${timezoneOffsetMinutes}`
-        : `GMT-${timezoneOffsetHours}:${timezoneOffsetMinutes}`;
-    const formattedDate = `${dayOfWeek} ${months[month - 1]} ${day
-      .toString()
-      .padStart(2, '0')} ${year} 00:00:00 ${timezone} (hora de Venezuela)`;
-
-    return formattedDate;
+  userChange($event: any) {
+    console.log($event);
+    if (!$event) this.getUsers(new ListParams());
   }
 }
