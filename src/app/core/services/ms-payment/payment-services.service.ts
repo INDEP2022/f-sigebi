@@ -55,4 +55,8 @@ export class PaymentService extends HttpService {
     const route = `comer-payment-ref?filter.lotId=$eq:${filter}`;
     return this.get(route);
   }
+
+  getPaymentPagoRed(params?: string){
+    return this.get('application/get-payment-pagoref',params)
+  }
 }
