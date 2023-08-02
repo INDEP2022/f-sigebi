@@ -16,6 +16,7 @@ export class CustomersComponent extends BasePage implements OnInit {
   @Input() totalIncome: number = 0;
   @Input() id_tipo_disp: number = null;
   @Output() paramsChange = new EventEmitter();
+
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   data = new LocalDataSource();
@@ -73,6 +74,7 @@ export class CustomersComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 }
+
 function OutPut(): (target: CustomersComponent, propertyKey: 'params') => void {
   throw new Error('Function not implemented.');
 }

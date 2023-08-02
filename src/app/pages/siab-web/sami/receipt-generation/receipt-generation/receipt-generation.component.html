@@ -1,7 +1,9 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Generaci&oacute;n de Recibos Programación</h5>
+      <h5 class="title">
+        Generaci&oacute;n de Recibos Programación (Masivo por Excel)
+      </h5>
     </div>
   </div>
   <div body>
@@ -9,7 +11,7 @@
       <div class="row margin-input">
         <div class="col-md-7">
           <form-field
-            label="Ingresa la Programaci&oacute;n"
+            label="Ingrese la Programaci&oacute;n"
             [control]="programmingForm.get('programmingId')">
             <input
               type="text"
@@ -40,7 +42,7 @@
     <hr />
     <form [formGroup]="receiptGenerationForm" class="form-material">
       <div class="row margin-input">
-        <h5 class="title">Selecciona la Operación</h5>
+        <h5 class="title">Seleccione la Operación</h5>
         <div class="col-md-2">
           <form-radio label="Actualiza Información">
             <input
@@ -202,6 +204,20 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
     <hr />
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        Generaci&oacute;n de Recibos Programación (Individual)
+      </h5>
+    </div>
+  </div>
+
+  <div body>
+    <!-- ======================== -->
     <form [formGroup]="programmingForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-12">
@@ -385,7 +401,7 @@
           Asignar Recibo
         </button>
         <button
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-info active btn-sm m-2"
           (click)="assignReceiptOne(1)"
           [disabled]="!indepForm.valid">
           Resguardo
@@ -397,13 +413,13 @@
           Almacén
         </button>
         <button
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-info active btn-sm m-2"
           (click)="reprogrammingOne()"
           [disabled]="!indepForm.valid">
           Reprogramaci&oacute;n
         </button>
         <button
-          class="btn btn-primary active btn-sm m-2"
+          class="btn btn-danger active btn-sm m-2"
           (click)="cancellationOne()"
           [disabled]="!indepForm.valid">
           Cancelaci&oacute;n
@@ -455,11 +471,23 @@
       </form>
     </div>
     <hr />
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        Generaci&oacute;n de Recibos Programación (Múltiple)
+      </h5>
+    </div>
+  </div>
+
+  <div body>
     <app-receipt-tables
       [folio]="folio"
       [count]="count"
       [id_programacion]="id_programacion">
     </app-receipt-tables>
-    <!-- <app-receipt-tables [folio]="folio" [count]="count" [id_programacion]="id_programacion"></app-receipt-tables> -->
   </div>
 </app-card>
