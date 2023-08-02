@@ -1,5 +1,7 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -15,8 +17,10 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
@@ -34,11 +38,23 @@ export class ActsCircumstantiatedCancellationTheftComponent
   form: FormGroup;
   formTable1: FormGroup;
   formFind: FormGroup;
+  totalItems2: number = 0;
+  loading2: boolean = false;
   formTable2: FormGroup;
+  actaRecepttionForm: FormGroup;
+  goodFormFormGroup: FormGroup;
+  disabledBtnCerrar: boolean = true;
+  ocultarPaginado: boolean = false;
+  dataRecepcion: any[] = [];
+  disabledBtnActas: boolean = true;
+  actaGoodForm: FormGroup;
   formTag: FormGroup;
+  statusCanc: string | number = '';
   expedient: IExpedient;
   validateEx: boolean = true;
   loadingExpedient: boolean = false;
+  screenKey = 'FACTCIRCUNR_0001';
+  dataRecepcionGood: LocalDataSource = new LocalDataSource();
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
@@ -54,21 +70,29 @@ export class ActsCircumstantiatedCancellationTheftComponent
   data2 = EXAMPLE_DATA2;
   aprevia: string = '';
   causa: string = '';
+  annio: string = '';
   noExpediente: number = 0;
   fileNumber: number | string = '';
   columnFilters: any = [];
   columnFilters2: any = [];
   dataTableGood_: any[] = [];
-  time = new Date().toISOString().slice(0, 16);
+  cveActa: string = '';
+  to: string = '';
+  from: string = '';
+  time = new Date();
+  dateElaboration: string = '';
   dataTableGood: LocalDataSource = new LocalDataSource();
   bienes: IGood[] = [];
   constructor(
     private fb: FormBuilder,
+    private detailProceeDelRecService: DetailProceeDelRecService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
     protected modalService: BsModalService,
     private GoodprocessService_: GoodprocessService,
-    private proceedingsService: ProceedingsService
+    private proceedingsService: ProceedingsService,
+    private datePipe: DatePipe,
+    private router: Router
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -79,6 +103,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   ngOnInit(): void {
     this.initForm();
+    this.actaForm();
+    this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
   }
 
   initForm() {
@@ -150,7 +176,38 @@ export class ActsCircumstantiatedCancellationTheftComponent
       tag: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+  private actaForm() {
+    this.actaRecepttionForm = this.fb.group({
+      acta: [null],
+      type: [null],
+      claveTrans: [null],
+      administra: [null],
+      cveReceived: [null],
+      consec: [null],
+      // ejecuta: [null],
+      anio: [null],
+      mes: [null],
+      cveActa: [null],
+      direccion: [null],
+      observaciones: [null],
+      testigoOIC: [null],
+      testigoTwo: [null],
+      testigoTree: [null],
+      respConv: [null],
+      parrafo1: [null],
+      parrafo2: [null],
+      parrafo3: [null],
+      // witness1: [null],
+      // witness2: [null],
+    });
+  }
 
+  private goodForm() {
+    this.actaGoodForm = this.fb.group({
+      goodId: [null],
+      statusGood: [null],
+    });
+  }
   onSubmit() {}
 
   search(event: any) {
@@ -284,6 +341,123 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.getExpedient(next.id);
     });
   }
+  goStatus() {
+    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
+      queryParams: {
+        origin: this.screenKey,
+        // PAR_FOLIO: this.folio,
+      },
+    });
+  }
+  actasDefault: any = null;
+  searchActas(actas?: string) {
+    actas = this.cveActa;
+    const expedienteNumber = this.fileNumber;
+    const actaActual = this.actasDefault;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      actas,
+      actaActual,
+      expedienteNumber,
+    };
+
+    let modalRef = this.modalService.show(FindActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+
+      this.actasDefault = next;
+      // this.fCreate = this.datePipe.transform(
+      //   next.dateElaborationReceipt,
+      //   'dd/MM/yyyy'
+      // );
+      this.statusCanc = next.statusProceedings;
+      if (this.statusCanc == 'CERRADA') {
+        this.disabledBtnCerrar = false;
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+        this.disabledBtnCerrar = true;
+      }
+
+      this.actaRecepttionForm.patchValue({
+        acta: next.id,
+
+        administra: next.approvedXAdmon,
+        // ejecuta: next.ejecuta,
+        consec: next.numeraryFolio,
+        type: next.idTypeProceedings,
+        claveTrans: next.numTransfer,
+        cveActa: next.keysProceedings,
+        // mes: next.dateElaborationReceipt,
+        cveReceived: next.receiptKey,
+        // anio: new Date(next.dateElaborationReceipt),
+        direccion: next.address,
+        // parrafo1: next.parrafo1,
+        // parrafo2: next.parrafo2,
+        // parrafo3: next.parrafo3,
+      });
+      this.to = this.datePipe.transform(
+        this.actaRecepttionForm.controls['mes'].value,
+        'MM/yyyy'
+      );
+      this.annio = this.datePipe.transform(
+        this.actaRecepttionForm.controls['anio'].value,
+        'MM/yyyy'
+      );
+      await this.getDetailProceedingsDevollution(this.actasDefault.id);
+      // this.getActasByConversion(next.cve_acta_conv);
+    });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanActa();
+      }
+    });
+  }
+  async getDetailProceedingsDevollution(id: any) {
+    this.loading2 = true;
+    // const params = new ListParams();
+    let params: any = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters2,
+    };
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService
+        .getGoodsByProceedings(id, params)
+        .subscribe({
+          next: data => {
+            let result = data.data.map((item: any) => {
+              item['description'] = item.good ? item.good.description : null;
+            });
+
+            Promise.all(result).then(item => {
+              this.ocultarPaginado = true;
+              this.dataRecepcion = data.data;
+              this.dataRecepcionGood.load(this.dataRecepcion);
+              this.dataRecepcionGood.refresh();
+              this.totalItems2 = data.count;
+              console.log('data', data);
+              this.loading2 = false;
+            });
+          },
+          error: error => {
+            this.dataRecepcion = [];
+            this.dataRecepcionGood.load([]);
+            this.loading2 = false;
+            this.ocultarPaginado = false;
+          },
+        });
+    });
+  }
+  actualizarActa() {}
+  agregarActa() {}
+  cleanActa() {}
 }
 
 const EXAMPLE_DATA1 = [

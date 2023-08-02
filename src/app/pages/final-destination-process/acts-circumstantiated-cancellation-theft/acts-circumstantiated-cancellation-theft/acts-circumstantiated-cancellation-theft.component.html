@@ -19,9 +19,9 @@
       <div class="col-md-4">
         <div class="d-flex align-items-center">
           <label for="" class="col-form-label"
-            >Hora de Creación:&nbsp;&nbsp;</label
+            >Fecha de Elaboración:&nbsp;&nbsp;</label
           >
-          <div>{{ time | date : 'hh:mm' }}</div>
+          <div>{{ dateElaboration || '00/00/0000' }}</div>
         </div>
       </div>
       <div class="col-md-8 text-end">
@@ -29,7 +29,7 @@
           type="button"
           class="btn btn-primary active btn-sm mr-3"
           (click)="searchExpedient()">
-          Buscar
+          Buscar Expediente
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
         <button
@@ -73,24 +73,54 @@
                     <div>{{ aprevia || '' }}</div>
                   </div>
                 </div>
-
-                <!-- <div class="form-group row p-3">
-                  <div class="col-md-3">
-                    <label for="" class="col-form-label">Causa Penal:</label>
-                    <div>{{ criCase || '' }}</div>
-                  </div>
-                  <div class="col-md-7">
-                    <label for="" class="col-form-label">Acta:</label>
-                    <div>{{ cveActa || '' }}</div>
-                  </div>
-                </div> -->
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
+    <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="col-md-8 text-end">
+        <button
+          [disabled]="!actasDefault"
+          (click)="actualizarActa()"
+          type="button"
+          class="btn btn-primary active btn-sm mr-3">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <button
+          (click)="agregarActa()"
+          type="button"
+          class="btn btn-info active btn-sm mr-3">
+          Nueva Acta
+          <i class="bx bx-plus bx-sm float-icon"></i>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="searchActas()">
+          Estatus Actas
+          <i class="bx bx-search bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="cleanActa()"
+          type="button"
+          class="btn btn-danger active btn-sm mr-3">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button>
+        <!-- <button
+                          [disabled]="!actasDefault"
+                          type="button"
+                          class="btn btn-primary btn-sm active mr-2"
+                          (click)="savActa()">
+                          Guardar
+                          <i aria-hidden="true" class="fa fa-save"></i>
+                        </button> -->
+      </div>
+    </div>
     <div *ngIf="response">
       <div class="row mt-5 justify-content-md-end">
         <div class="col-md-4 text-center text-md-right mt-3 mt-md-0">
@@ -116,22 +146,7 @@
               </div>
             </div>
           </div>
-          <div class="row mt-5">
-            <!-- <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="form.get('preliminaryAscertainment')" label="Averiguaci&oacute;n Previa">
-                  <input type="text" class="form-control" formControlName="preliminaryAscertainment" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="form.get('causePenal')" label="Causa Penal">
-                  <input type="text" class="form-control" formControlName="causePenal" />
-                </form-field>
-              </div>
-            </div>-->
-          </div>
+          <div class="row mt-5"></div>
           <div class="row mt-4">
             <div class="col-12 col-md-6">
               <div class="mb-3 pl-4 pr-4">
