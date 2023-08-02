@@ -10,31 +10,93 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <!--Events Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-events-shared [form]="form"></app-events-shared>
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormEvent($event)"
+              [form]="form"
+              control="event"
+              [data]="comerEventSelect"
+              value="id"
+              bindLabel="id"
+              label="Evento"
+              (fetchItems)="getComerEvents($event)">
+            </ngx-select>
+          </form-field>
+          <label for=""
+            >Si Desea Consultar un Evento en Particular, Selecciónelo</label
+          >
         </div>
-        <!--Banks Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-banks-shared [form]="form"></app-banks-shared>
+        <div class="col-md-6">
+          <form-field [control]="form.get('bank')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormBank($event)"
+              [form]="form"
+              control="bank"
+              [data]="banks"
+              value="id"
+              bindLabel="bankAndCode"
+              label="Banco"
+              (fetchItems)="getBanks($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <!-- <div class="col-md-3">
+          <form-field [control]="form.get('processKey')" label="Cve Proceso">
+            <input formControlName="processKey" type="text" class="form-control" readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('username')" label="Usuario">
+            <input formControlName="username" type="text" class="form-control" readonly />
+          </form-field>
+        </div> -->
+      </div>
+      <div class="row text-center justify-content-center">
+        <div class="col-6">
+          <button
+            style="float: right"
+            type="button"
+            [disabled]="!form.valid"
+            (click)="search()"
+            class="btn btn-primary active btn-sm">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-6">
+          <button
+            style="float: left"
+            (click)="clear()"
+            type="button"
+            class="btn btn-sm btn-danger active">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
     </form>
-    <div class="row pt-4">
+    <div class="row">
       <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
+        <form-loader *ngIf="loading"></form-loader>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '400px' }">
           <ng2-smart-table
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-bordered table-responsive'"
+            class="table-responsive"
             [settings]="settings"
             [source]="data"
             (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
+            (userRowSelect)="rowsSelected($event)"
+            (delete)="questionDelete($event.data)">
           </ng2-smart-table>
-        </div>
+        </ng-scrollbar>
       </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
   </div>
 </app-card>
