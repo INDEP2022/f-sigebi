@@ -53,6 +53,7 @@
             </div>
             <div class="col-sm-6 col-lg-4 mt-2">
               <form-field
+                *ngIf="mostrarLotes"
                 [control]="conciliationForm.get('phase')"
                 label="Fase">
                 <ng-select
@@ -75,7 +76,9 @@
               </form-field>
             </div>
             <div class="col-sm-6 col-lg-4 mt-2">
-              <form-field [control]="conciliationForm.get('batch')">
+              <form-field
+                *ngIf="mostrarLotes"
+                [control]="conciliationForm.get('batch')">
                 <ngx-select
                   [readonly]="!selectedEvent"
                   [form]="conciliationForm"
@@ -173,13 +176,10 @@
           <div class="col-sm-12 col-md-12 col-lg-12 col-xl-9">
             <div class="d-flex flex-row-reverse my-3">
               <div>
-                <button
-                  [disabled]="loading || loadingBtn"
-                  (click)="add()"
-                  type="button"
+                <!-- <button [disabled]="loading || loadingBtn" (click)="add()" type="button"
                   class="btn btn-info btn-sm active mb-3">
                   Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-                </button>
+                </button> -->
               </div>
               <!-- <div class="mr-2">
             <button [disabled]="loading || loadingBtn" class="btn btn-sm btn-info active me-2 font-size-14"
