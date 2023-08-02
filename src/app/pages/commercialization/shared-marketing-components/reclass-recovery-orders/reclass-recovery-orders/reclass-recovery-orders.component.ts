@@ -12,6 +12,8 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
+import { ISendSirsae } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -19,8 +21,6 @@ import {
   DETAILS_OI_COLUMNS,
   goodCheck,
 } from './reclass-recovery-orders-columns';
-import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
-import { ISendSirsae } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
 
 @Component({
   selector: 'app-reclass-recovery-orders',
@@ -162,8 +162,8 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
           console.log(err);
         }
       );
-    }else{
-      this.alert('warning','No ingresó ningún OI','')
+    } else {
+      this.alert('warning', 'No ingresó ningún OI', '');
     }
   }
 
@@ -216,9 +216,9 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
   }
 
   //Limpiar
-  clearAll(){
-    this.form.reset()
-    this.dataComerDetails.load([])
+  clearAll() {
+    this.form.reset();
+    this.dataComerDetails.load([]);
   }
 
   //Enviar SIRSAE
@@ -229,22 +229,26 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
       motivo_reclap = 'REFERENCIA';
       enviar = 1;
     }
-    console.log(this.identifier)
+    console.log(this.identifier);
     const model: ISendSirsae = {
       identificator: this.identifier,
-      eventId: this.idEventParams
-    }
+      eventId: this.idEventParams,
+    };
 
     this.sirsaeService.sendSirsae(model).subscribe(
       res => {
-        console.log(res)
-        this.alert('success','Enviado a SIRSAE','')
+        console.log(res);
+        this.alert('success', 'Enviado a SIRSAE', '');
       },
       err => {
-        console.log(err)
-        this.alert('error','Se presentó un Error inesperado al enviar a SIRSAE','')
+        console.log(err);
+        this.alert(
+          'error',
+          'Se presentó un Error inesperado al enviar a SIRSAE',
+          ''
+        );
       }
-    )
+    );
   }
 
   //Llenar los datos traidos

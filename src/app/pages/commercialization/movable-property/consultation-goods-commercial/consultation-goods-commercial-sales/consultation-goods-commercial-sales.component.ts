@@ -294,7 +294,7 @@ export class ConsultationGoodsCommercialSalesComponent
     this.form.reset();
     this.dataGoods.load([]);
     this.totalItems = 0;
-    this.modelSave = null
+    this.modelSave = null;
   }
 
   //Exportar select excel
@@ -405,7 +405,7 @@ export class ConsultationGoodsCommercialSalesComponent
         'Debe especificar al menos un parámetro de búsqueda',
         ''
       );
-      this.loading = false
+      this.loading = false;
     } else {
       this.goodService.chargeGoods(model).subscribe(
         res => {

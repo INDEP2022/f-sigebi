@@ -86,14 +86,12 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   receiptSelect(receipt: IReceipt) {
-    console.log('receipt', receipt);
     this.receiptId = receipt.id;
     this.actId = receipt.actId;
     this.statusReceipt = receipt.statusReceipt;
   }
 
   async confirm() {
-    console.log('this.statusReceipt', this.statusReceipt);
     if (this.statusReceipt == 'ABIERTO') {
       const updateProgrammingGood = await this.updateProgGoood();
 
@@ -197,7 +195,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
       const filterProceedingOpen = this.proceedigns.filter(item => {
         return item.statusProceeedings == 'ABIERTO';
       });
-      console.log('filterProceedingOpen', filterProceedingOpen);
+
       if (filterProceedingOpen.length == 0) {
         const form: Object = {
           idPrograming: this.programming.id,
@@ -216,7 +214,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
 
               this.receptionGoodService.createReceipt(receiptForm).subscribe({
                 next: async response => {
-                  console.log('response', response);
                   const folioReceipt = await this.createKeyReceipt(response);
                   if (folioReceipt) {
                     this.getReceipts();
@@ -269,7 +266,6 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
 
             this.receptionGoodService.createReceipt(receiptForm).subscribe({
               next: async response => {
-                console.log('response', response);
                 const folioReceipt = await this.createKeyReceipt(response);
                 if (folioReceipt) {
                   this.getReceipts();
