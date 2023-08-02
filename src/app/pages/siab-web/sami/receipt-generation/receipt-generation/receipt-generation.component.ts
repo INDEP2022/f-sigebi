@@ -1050,8 +1050,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           this.receiptGenerationForm.controls['operation'].value,
         P_MOTIVOCAN: reasonCanRep,
         P_CANTIDAD_SAE: good.cantidad_sae,
-        P_DESTINO_SAE: good.destino_sae,
-        P_ESTADO_CONSERVACION_SAE: good.estado_conservacion_sae,
+        P_DESTINO_SAE: Number(good.destino_sae),
+        P_ESTADO_CONSERVACION_SAE: Number(good.estado_conservacion_sae),
         P_ESTADO_FISICO_SAE: good.estado_fisico_sae,
         P_UNIDAD_MEDIDA_SAE:
           good.unidad_medida_sae != '' ? good.unidad_medida_sae : null,
@@ -1338,6 +1338,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           console.log(resp);
           this.alert('success', `Bien Agregado a ${operation}`, '');
           this.cleanInsert();
+          this.programmingGoodReceipt(new ListParams());
         },
         error: eror => {
           this.alert(
