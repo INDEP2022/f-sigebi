@@ -7,7 +7,7 @@
       <div class="row mt-3">
         <div class="col-9">
           <div class="row mt-2">
-            <div class="col-sm-3 col-lg-3 mt-2">
+            <div class="col-sm-3 col-lg-3">
               <form-field [control]="conciliationForm.get('event')">
                 <ngx-select
                   [form]="conciliationForm"
@@ -34,7 +34,7 @@
                   maxlength="200" />
               </form-field>
             </div>
-            <div class="col-sm-6 col-lg-4 mt-2">
+            <div class="col-sm-6 col-lg-3 mt-2">
               <form-field
                 [control]="conciliationForm.get('date')"
                 label="Fecha">
@@ -51,7 +51,7 @@
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-sm-6 col-lg-4 mt-2">
+            <div class="col-sm-6 col-lg-5 mt-2">
               <form-field
                 *ngIf="mostrarLotes"
                 [control]="conciliationForm.get('phase')"
@@ -65,12 +65,12 @@
                   [clearable]="false">
                   <ng-option value="1">GARANTIA DE SERIEDAD</ng-option>
                   <ng-option value="2">GARANTIA DE CUMPLIMIENTO</ng-option>
-                  <ng-option value="3">LIQUIDACION</ng-option>
-                  <ng-option value="4">LIQUIDACION EXTEMPORANEA</ng-option>
+                  <ng-option value="3">LIQUIDACIÓN</ng-option>
+                  <ng-option value="4">LIQUIDACIÓN EXTEMPORÁNEA</ng-option>
                   <ng-option value="5">VENTA DE BASES</ng-option>
                   <ng-option value="6">AMORTIZACIONES</ng-option>
                   <ng-option value="7"
-                    >GARANTIA DE CUMPLIMIENTO EXTEMPORANEA</ng-option
+                    >GARANTIA DE CUMPLIMIENTO EXTEMPORÁNEA</ng-option
                   >
                 </ng-select>
               </form-field>
