@@ -1,13 +1,16 @@
 export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
-  applicationId: {
+  soladjinstgobId: {
     title: 'Solicitud',
     type: 'number',
     sort: false,
   },
-  entityId: {
+  typeentgobId: {
     title: 'Entidad',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (id: any) => {
+      return id.typeentgobId;
+    },
   },
   applicant: {
     title: 'Solicitante',
@@ -34,7 +37,7 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  applicationQuantity: {
+  amount: {
     title: 'Cant. Solic.',
     type: 'number',
     sort: false,
@@ -49,12 +52,12 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  adjudication: {
+  award: {
     title: 'Adjudicación',
     type: 'string',
     sort: false,
   },
-  email: {
+  webmail: {
     title: 'Correo Web',
     type: 'string',
     sort: false,
@@ -62,57 +65,57 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
 };
 
 export const MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS = {
-  goodId: {
+  repvendcId: {
     title: 'N° Bien',
     type: 'number',
     sort: false,
   },
-  appraisal: {
+  bill: {
     title: 'Valor Avalúo',
     type: 'number',
     sort: false,
   },
-  appraisalDate: {
+  labelsent: {
     title: 'Fecha Avalúo',
     type: 'string',
     sort: false,
   },
-  sessionNumber: {
+  addresssent: {
     title: 'N° Sesión',
     type: 'number',
     sort: false,
   },
-  goodClasification: {
+  labelBatch: {
     title: 'Clasifica Bien',
     type: 'string',
     sort: false,
   },
-  description: {
+  paragraph1: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  delegation: {
+  ccp1: {
     title: 'Delegación',
     type: 'string',
     sort: false,
   },
-  location: {
+  ccp2: {
     title: 'Ubicación',
     type: 'string',
     sort: false,
   },
-  mandate: {
+  nbOrigin: {
     title: 'Mandato',
     type: 'string',
     sort: false,
   },
-  siabClassification: {
+  managed: {
     title: 'Clasifica SIAB',
     type: 'string',
     sort: false,
   },
-  commentary: {
+  sayDelivery: {
     title: 'Comentarios',
     type: 'string',
     sort: false,

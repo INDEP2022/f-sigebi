@@ -7,14 +7,14 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./receipt-generation/receipt-generation.module'))
         .ReceiptGenerationModule,
-    data: { title: 'Generacion de Recibo Prog.' },
+    data: { title: 'Generación de Recibo Prog.' },
   },
   {
     path: 'receipt-generation-sami',
     loadChildren: async () =>
       (await import('./receipt-generation-sami/receipt-generation-sami.module'))
         .ReceiptGenerationSamiModule,
-    data: { title: 'Generacion de Recibo' },
+    data: { title: 'Generación de Recibo' },
   },
   {
     path: 'maintenance',

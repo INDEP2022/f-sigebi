@@ -5,7 +5,6 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <!--Info Event-->
       <div class="row mb-5 mt-3">
         <div class="col">
           <button class="btn btn-danger btn-sm active mr-3">
@@ -34,6 +33,7 @@
           <input
             type="text"
             formControlName="cveProcess"
+            readOnly
             class="form-control" />
         </form-field>
       </div>
@@ -154,69 +154,484 @@
           </div>
         </div>
       </div>
+      <div class="row mb-3 mt-5 text-center">
+        <div class="col">
+          <button
+            class="btn btn-sm btn-success active mr-3"
+            [disabled]="loadingExcel">
+            Exportar a Excel Detalle de los Pagos
+            <i class="bx bx-download float-icon"></i>
+          </button>
+          <button
+            class="btn btn-sm btn-success active mr-3"
+            [disabled]="loadingExcel"
+            (click)="exportExcelSellPayment()">
+            Exportar a Excel de Ventas Vs. Pagos
+            <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row mt-3 text-center">
+        <div class="col">
+          <button
+            class="btn btn-sm btn-success active mr-3"
+            [disabled]="loadingExcel">
+            Exportar a Excel Pagos sin Estatus
+            <i class="bx bx-download float-icon"></i>
+          </button>
+          <button
+            class="btn btn-sm btn-success active"
+            [disabled]="loadingExcel">
+            Exportar a Excel Pagos Vs. Lotes
+            <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </div>
     </form>
   </div>
 </app-card>
-<!--Tabs-->
+
 <app-card>
   <div body>
-    <!--Options-->
-
-    <div class="row justify-content-end mb-3 mt-3">
-      <div class="d-flex col-3">
-        <div class="btn-group w-100" dropdown>
-          <button
-            id="button-animated"
-            dropdownToggle
-            type="button"
-            class="btn btn-success btn-sm active dropdown-toggle"
-            aria-controls="dropdown-animated">
-            Descargar
-            <span class="caret"></span>
-          </button>
-          <ul
-            id="dropdown-animated"
-            *dropdownMenu
-            class="dropdown-menu"
-            role="menu"
-            aria-labelledby="button-animated">
-            <li role="menuitem">
-              <a class="dropdown-item">Detalles de los Pagos</a>
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item">Ventas vs Pagos</a>
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item">Pagos s/m Estaus</a>
-            </li>
-            <li role="menuitem"><a class="dropdown-item">Pagos vs Lotes</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
     <div class="md-tabs mb-3 mt-3">
       <tabset [justified]="true">
-        <tab heading="Clientes Participantes" id="tab1">
-          <app-customers
-            [dataIncome]="dataCustomer"
-            [totalIncome]="totalIncome"></app-customers>
+        <!-- CLIENTES PARTICIPANTES EN EL EVENTO -->
+        <tab heading="Clientes Participantes en el Evento" id="tab1">
+          <form [formGroup]="formCustomerEvent" class="form-material">
+            <div class="row mb-3">
+              <div class="col">
+                <div class="col-md-2" *ngIf="isAvailableByType">
+                  <button
+                    class="btn btn-primary btn-sm active mr-3"
+                    (click)="refreshComerCustomer()">
+                    Refrescar <i class="fas fa-sync-alt"> </i>
+                  </button>
+                </div>
+                <form-field
+                  [control]="formCustomerEvent.get('inProcess')"
+                  class="col-md-2"
+                  *ngIf="isAvailableByType">
+                  <div class="form-check d-flex align-items-center">
+                    <label
+                      class="form-check-label pr-5 ml-2"
+                      for="flexCheckChecked">
+                      En Proceso
+                    </label>
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      formControlName="inProcess"
+                      id="flexCheckDefault" />
+                  </div>
+                </form-field>
+              </div>
+            </div>
+            <div
+              [class]="
+                loadingCustomer
+                  ? 'table-loading row mb-3 mt-3'
+                  : 'row mb-3 mt-3'
+              ">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsCustomer"
+                (userRowSelect)="selectRowClientEvent($event)"
+                [source]="dataCustomer">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="paramsCustomer"
+              [totalItems]="totalItemsCustomer"
+              [limit]="limitCustomer"></app-pagination>
+            <div class="row mb-3 mt-3">
+              <form-field
+                [control]="formCustomerEvent.get('totalAmount')"
+                class="col-md-4"
+                label="Total">
+                <input
+                  type="number"
+                  formControlName="totalAmount"
+                  class="form-control" />
+              </form-field>
+              <form-field
+                [control]="formCustomerEvent.get('devAmount')"
+                class="col-md-4"
+                label="Devolución">
+                <input
+                  type="number"
+                  formControlName="devAmount"
+                  class="form-control" />
+              </form-field>
+              <form-field
+                [control]="formCustomerEvent.get('penAmount')"
+                class="col-md-4"
+                label="Penalización">
+                <input
+                  type="number"
+                  formControlName="penAmount"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </form>
         </tab>
-        <tab heading="Pagos Recibidos/Cliente" id="tab2">
-          <app-customers-payments></app-customers-payments>
-        </tab>
-        <tab heading="Lotes" id="tab3">
-          <app-batch></app-batch>
-        </tab>
-        <tab heading="Lotes Desiertos" id="tab4">
-          <app-deserted-batch></app-deserted-batch>
-        </tab>
-        <tab heading="Pagos Recibidos/Lote" id="tab5">
-          <app-batch-payments></app-batch-payments>
-        </tab>
-        <tab heading="Composición de Pagos" id="tab6">
-          <app-composition-batch-payments></app-composition-batch-payments>
+        <!-- PAGOS RECIBIDOS EN EL BANCO POR CLIENTE -->
+        <tab heading="Pagos Recibidos en el Banco por Cliente" id="tab2">
+          <form [formGroup]="formCustomerBanks" class="form-material">
+            <div [class]="loadingCustomerBanks ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsCustomerBanks"
+                [source]="dataCustomerBanks">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="paramsCustomerBanks"
+              [totalItems]="totalItemsCustomerBanks"
+              [limit]="limitCustomerBanks"></app-pagination>
+            <div class="row mb-3 mt-3 text-center">
+              <form-field
+                [control]="formCustomerBanks.get('validAmount')"
+                label="Monto Válido"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="validAmount" />
+              </form-field>
+              <form-field
+                [control]="formCustomerBanks.get('total')"
+                label="Total"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="total" />
+              </form-field>
+              <div class="col">
+                <button type="button" class="btn btn-primary btn-sm active">
+                  Desagregar Pagos
+                </button>
+              </div>
+            </div>
+          </form>
         </tab>
       </tabset>
     </div>
+  </div>
+</app-card>
+
+<!--Tabs-->
+<app-card>
+  <div body>
+    Options
+    <div class="md-tabs mb-3 mt-3">
+      <tabset [justified]="true">
+        <!-- LOTES ASIGNADOS EN EL EVENTO -->
+        <tab heading="Lotes Asignados en el Evento" id="tab3">
+          <form [formGroup]="formLotEvent" class="form-material">
+            <div class="row mb-3">
+              <div class="col">
+                <div class="col-md-2" *ngIf="isAvailableByType">
+                  <button class="btn btn-primary btn-sm active mr-3">
+                    Refrescar <i class="fas fa-sync-alt"> </i>
+                  </button>
+                </div>
+                <form-field
+                  [control]="formLotEvent.get('inProcess')"
+                  class="col-md-2"
+                  *ngIf="isAvailableByType">
+                  <div class="form-check d-flex align-items-center">
+                    <label
+                      class="form-check-label pr-5 ml-2"
+                      for="flexCheckChecked">
+                      En Proceso
+                    </label>
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      formControlName="inProcess"
+                      id="flexCheckDefault" />
+                  </div>
+                </form-field>
+              </div>
+            </div>
+            <div
+              [class]="
+                loadingLotEvent
+                  ? 'table-loading row mb-3 mt-3'
+                  : 'row mb-3 mt-3'
+              ">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsLotEvent"
+                (userRowSelect)="selectRowLotsEvent($event)"
+                [source]="dataLotEvent">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="paramsLotEvent"
+              [totalItems]="totalItemsLotEvent"
+              [limit]="limitLotEvent"></app-pagination>
+
+            <div class="row mb-3 mt-3">
+              <div class="col-md-1"></div>
+              <table class="table table-bordered col-md-9">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th class="text-center">Precio Final</th>
+                    <th
+                      *ngIf="eventManagement != 'MUEBLES'"
+                      class="text-center">
+                      Garantía Cumplimiento
+                    </th>
+                    <th class="text-center">Monto Liquidar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td class="text-center">
+                      <form-field [control]="formLotEvent.get('finalPrice')">
+                        <input
+                          type="text"
+                          formControlName="finalPrice"
+                          class="form-control" />
+                      </form-field>
+                    </td>
+                    <td
+                      class="text-center"
+                      *ngIf="eventManagement != 'MUEBLES'">
+                      <form-field [control]="formLotEvent.get('warranty')">
+                        <input
+                          type="text"
+                          formControlName="warranty"
+                          class="form-control" />
+                      </form-field>
+                    </td>
+                    <td class="text-center">
+                      <form-field
+                        [control]="formLotEvent.get('liquidateAmount')">
+                        <input
+                          type="text"
+                          formControlName="liquidateAmount"
+                          class="form-control" />
+                      </form-field>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">Totales</td>
+                    <td class="text-center">
+                      <form-field
+                        [control]="formLotEvent.get('totalFinalPrice')">
+                        <input
+                          type="text"
+                          formControlName="totalFinalPrice"
+                          class="form-control" />
+                      </form-field>
+                    </td>
+                    <td
+                      class="text-center"
+                      *ngIf="eventManagement != 'MUEBLES'">
+                      <form-field [control]="formLotEvent.get('totalWarranty')">
+                        <input
+                          type="text"
+                          formControlName="totalWarranty"
+                          class="form-control" />
+                      </form-field>
+                    </td>
+                    <td class="text-center">
+                      <form-field
+                        [control]="formLotEvent.get('totalLiquidateAmount')">
+                        <input
+                          type="text"
+                          formControlName="totalLiquidateAmount"
+                          class="form-control" />
+                      </form-field>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </form>
+        </tab>
+        <!-- PAGOS RECIBIDOS EN EL BANCO POR LOTE -->
+        <tab heading="Pagos Recibidos en el Banco por Lote" id="tab4">
+          <form [formGroup]="formLotsBanks" class="form-material">
+            <div [class]="loadingLotBanks ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsLotsBanks"
+                [source]="dataLotsBanks">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="paramsLotsBanks"
+              [totalItems]="totalItemsLotsBanks"
+              [limit]="limitLotsBanks"></app-pagination>
+            <div class="row mb-3 mt-3 text-center">
+              <form-field
+                [control]="formLotsBanks.get('validAmount')"
+                label="Monto Válido"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="validAmount" />
+              </form-field>
+              <form-field
+                [control]="formLotsBanks.get('total')"
+                label="Total"
+                class="col-md-4">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="total" />
+              </form-field>
+            </div>
+          </form>
+        </tab>
+        <!-- COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTE -->
+        <tab heading="Composición de Pagos Recibidos por Lote" id="tab5">
+          <form [formGroup]="formPaymentLots" class="form-material">
+            <div [class]="loadingPaymentLots ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsPaymentLots"
+                [source]="dataPaymentLots">
+              </ng2-smart-table>
+            </div>
+            <app-pagination
+              [params]="paramsPaymentLots"
+              [totalItems]="totalItemsPaymentLots"
+              [limit]="limitPaymentLots"></app-pagination>
+            <div class="row mb-3 mt-3 text-center">
+              <form-field
+                [control]="formPaymentLots.get('totalWithIva')"
+                label="Monto Total"
+                class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalWithIva" />
+              </form-field>
+              <form-field
+                [control]="formPaymentLots.get('totalIva')"
+                label="Total IVA"
+                class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalIva" />
+              </form-field>
+              <form-field
+                [control]="formPaymentLots.get('totalWithoutIva')"
+                label="Monto sin IVA"
+                class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalWithoutIva" />
+              </form-field>
+              <form-field
+                [control]="formPaymentLots.get('totalSum')"
+                label="Total"
+                class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="totalSum" />
+              </form-field>
+            </div>
+          </form>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>
+
+<app-card>
+  <div body>
+    <div class="row mb-3 mt-3 text-center">
+      <div class="col">
+        <div class="row">
+          <span>Definitivo</span>
+        </div>
+        <div class="row">
+          <div class="col d-flex justify-content-center">
+            <form-radio label="Si">
+              <input type="radio" formControlName="option" value="true" />
+            </form-radio>
+            <form-radio label="No">
+              <input type="radio" formControlName="option" value="true" />
+            </form-radio>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="row">
+          <span>Todos los Lotes</span>
+        </div>
+        <div class="row">
+          <div class="col d-flex justify-content-center">
+            <form-radio label="Si">
+              <input type="radio" formControlName="option" value="true" />
+            </form-radio>
+            <form-radio label="No">
+              <input type="radio" formControlName="option" value="true" />
+            </form-radio>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row text-center mb-3 mt-3">
+      <div class="col">
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Ejecutar Dispersión
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Enviar SIRSAE <i class="bx bx-send"></i>
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active">
+          Reprocesar Dispersión
+        </button>
+      </div>
+    </div>
+    <div class="row text-center mb-3 mt-3">
+      <div class="col">
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Propuesta de Dispersión
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Propuesta de Envío SIRSAE
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active">
+          Propuesta de Reproceso
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<!-- LOTES DESIERTOS EN EL EVENTO -->
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">LOTES DESIERTOS EN EL EVENTO</h5>
+  </div>
+  <div body>
+    <div
+      [class]="
+        loadingDesertLots ? 'table-loading row mb-3 mt-3' : 'row mb-3 mt-3'
+      ">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settingsDesertedLots"
+        [source]="dataDesertedLots">
+      </ng2-smart-table>
+    </div>
+    <app-pagination
+      [params]="paramsDesertedLots"
+      [totalItems]="totalItemsDesertedLots"
+      [limit]="limitDesertedLots"></app-pagination>
   </div>
 </app-card>

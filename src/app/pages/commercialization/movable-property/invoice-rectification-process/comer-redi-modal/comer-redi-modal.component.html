@@ -1,0 +1,74 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="form.get('invoicefield')">
+            <ngx-select
+              [data]="fields"
+              [searchOnInit]="true"
+              (fetchItems)="getFields($event)"
+              [form]="form"
+              value="invoiceFieldId"
+              bindLabel="invoiceFieldId"
+              label="En"
+              [control]="'invoicefield'"
+              [searchable]="false"
+              [labelTemplate]="filds"
+              [optionTemplate]="fildsd"
+              (change)="changeField($event)">
+            </ngx-select>
+            <ng-template #filds let-item="item">
+              {{ item.columnId }} - {{ item.invoiceFieldId }}
+            </ng-template>
+            <ng-template #fildsd let-item="item">
+              <div [title]="item.columnId + '-' + item.invoiceFieldId">
+                {{ item.columnId }} - {{ item.invoiceFieldId }}
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('worthCurrent')" label="Dice">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="worthCurrent"
+              oninput="if(this.value.length > 60) this.value = this.value.slice(0, 60)" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('worthNew')" label="Debe Decir">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="worthNew"
+              oninput="if(this.value.length > 60) this.value = this.value.slice(0, 60)" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [btnSmall]="true"
+          [loading]="loading"
+          (confirm)="saveData()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

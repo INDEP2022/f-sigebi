@@ -1,70 +1,74 @@
 export const RECEIPTGENERATION_COLUMNS = {
-  goods: {
+  ID: {
+    title: 'ID Recorrido',
+    sort: false,
+  },
+  ID_BIEN: {
     title: 'Bien',
     sort: false,
   },
   uniqueKey: {
-    title: 'Clave única',
+    title: 'Clave Única',
     sort: false,
   },
-  noProceedings: {
-    title: 'N.Expediente',
+  NO_EXPEDIENTE: {
+    title: 'No. Expediente',
     sort: false,
   },
-  descriptionGood: {
+  DESCRIPCION_BIEN_TASFERENTE: {
     title: 'Descripción Bien',
     sort: false,
   },
-  descriptionGoodSae: {
+  DESCRIPCION_BIEN_SAE: {
     title: 'Descripción Bien INDEP',
     sort: false,
   },
-  amount: {
+  CANTIDAD_TRASFERENTE: {
     title: 'Cantidad',
     sort: false,
   },
-  amountSae: {
+  CANTIDAD_SAE: {
     title: 'Cantidad INDEP',
     sort: false,
   },
-  unitMeasure: {
-    title: 'Unidad medida',
+  UNIDAD_MEDIDA_TRASFERENTE: {
+    title: 'Unidad Medida',
     sort: false,
   },
-  unitMeasureSae: {
-    title: 'Unidad medida INDEP',
+  UNIDAD_MEDIDA_SAE: {
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
-  physicalState: {
-    title: 'Estado físico',
+  ESTADO_FISICO_TRASFERENTE: {
+    title: 'Estado Físico',
     sort: false,
   },
-  physicalStateSae: {
-    title: 'Estado físico INDEP',
+  ESTADO_FISICO_SAE: {
+    title: 'Estado Físico INDEP',
     sort: false,
   },
-  stateConservation: {
+  ESTADO_CONSERVACION_TRASFERENTE: {
     title: 'Estado Conservación',
     sort: false,
   },
-  stateConservationSae: {
+  ESTADO_CONSERVACION_SAE: {
     title: 'Estado Conservación INDEP',
     sort: false,
   },
-  destiny: {
+  DESTINO: {
     title: 'Destino',
     sort: false,
   },
-  transferDestination: {
+  DESTINO_TRASFERENTE: {
     title: 'Destino Transferente',
     sort: false,
   },
-  destinySae: {
+  DESTINO_SAE: {
     title: 'Destino INDEP',
     sort: false,
   },
-  route: {
-    title: 'Id Recorrido',
+  OBSERVACIONES: {
+    title: 'Observaciones',
     sort: false,
   },
 };
@@ -74,11 +78,11 @@ export const WISTNESS_COLUMNS = {
     sort: false,
   },
   witnessName: {
-    title: 'Nombre del testigo',
+    title: 'Nombre del Testigo',
     sort: false,
   },
   witnessCharge: {
-    title: 'Cargo del testigo',
+    title: 'Cargo del Testigo',
     sort: false,
   },
   column0: {

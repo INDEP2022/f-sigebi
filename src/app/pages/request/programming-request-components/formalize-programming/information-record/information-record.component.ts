@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -68,7 +69,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('proceeding', this.proceeding);
     this.prepareDevileryForm();
     this.typeTrans();
     this.getIdentification(new ListParams());
@@ -146,15 +146,17 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       evet: [null],
       startTime: [null],
       celebrates: [null],
+      closingDate: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.id'] = this.proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.programming.id;
+    params.getValue()['filter.idPrograming'] = this.programming.id;
     params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
 
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
+        console.log('acta', response);
         this.infoForm.get('nameWorker1').setValue(response.data[0].nameWorker1);
 
         if (response.data[0].electronicSignatureWorker1 == 1) {
@@ -324,6 +326,10 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     }
 
     this.infoForm.get('startTime').setValue(this.horaActual);
+    this.infoForm
+      .get('closingDate')
+      .setValue(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
+
     this.infoForm.get('idPrograming').setValue(this.programming.id);
 
     if (
@@ -391,12 +397,39 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         'Todas las firmas deben ser electronícas'
       );
       this.loading = false;
-    } else {
-      console.log('AUTOGRAFAS');
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 0 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 0 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 0 &&
+      this.infoForm.get('electronicSignatureOic').value == 0
+    ) {
       this.typeFirm = 'autografa';
       this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
         next: response => {
-          console.log('response update', response);
+          this.loading = false;
+          this.close();
+          this.modalRef.content.callback(
+            this.proceeding,
+            this.tranType,
+            this.typeFirm
+          );
+          //this.processInfoProceeding();
+        },
+        error: error => {
+          console.log('errror update', error);
+        },
+      });
+    } else if (
+      this.infoForm.get('electronicSignatureWorker1').value == 1 &&
+      this.infoForm.get('electronicSignatureWorker2').value == 1 &&
+      this.infoForm.get('electronicSignatureWitness1').value == 1 &&
+      this.infoForm.get('electronicSignatureWitness2').value == 1 &&
+      this.infoForm.get('electronicSignatureOic').value == 1
+    ) {
+      this.typeFirm = 'electronica';
+      this.proceedingService.updateProceeding(this.infoForm.value).subscribe({
+        next: response => {
           this.loading = false;
           this.close();
           this.modalRef.content.callback(
@@ -457,7 +490,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           // xFolioProgramacion: this.programming.folio,
         };
         //this.wContentService.addDocumentToContent();
-        console.log('modelReport', modelReport);
       },
       error: error => {},
     });
@@ -468,6 +500,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
   getIdentification(params: ListParams) {
     params['filter.name'] = 'Identificaciones';
+    params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
         console.log('response', response);

@@ -37,6 +37,7 @@ export enum ENDPOINT_LINKS {
   EntFed = 'catalog/entfed',
   EstRepuve = 'catalog/est-repuve',
   File = 'catalog/expedientes',
+  FichaTecnica = 'views/get-v-ind-fic-tecnicas',
   Fraction = 'catalog/fractions',
   GeneralStatus = 'catalog/general-status',
   Generic = 'catalog/generics',
@@ -55,6 +56,7 @@ export enum ENDPOINT_LINKS {
   IndicatorDeadline = 'catalog/indicator-deadlines',
   Indiciados = 'catalog/indiciados',
   IndicatorReport = 'catalog/indicator-report',
+  IndicatorGood = 'ind-consolid',
   InstitutionClasification = 'catalog/institution-classification',
   IssuingInstitution = 'catalog/issuing-institution',
   LabelOkey = 'catalog/label-good',
@@ -171,6 +173,7 @@ export enum ENDPOINT_LINKS {
   NumeraryCategoriesAutom = 'categorization-autom-numerary',
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/application/paComerUsuxtpevents',
+  UserLevel = 'ind-user/get-inicializa-forma',
   security = 'security/tracking-profile',
 
   //request
@@ -190,4 +193,5 @@ export enum ENDPOINT_LINKS {
   Process = 'strategy/strategy-process',
   SubTypeGood = 'fractions?search=&filter.id=',
   FractionS = 'catalog',
+  Departamentuser = 'departament',
 }

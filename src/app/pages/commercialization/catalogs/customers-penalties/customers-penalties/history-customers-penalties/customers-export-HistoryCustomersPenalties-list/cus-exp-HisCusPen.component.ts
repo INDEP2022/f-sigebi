@@ -10,12 +10,12 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { IHistoryCustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS2 } from '../../columns';
+import { COLUMNS3 } from '../../columns';
 
 @Component({
   selector: 'app-customers-export-HistoryCustomersPenalties-list.component',
   templateUrl: './cus-exp-HisCusPen.component.html',
-  styles: [], //
+  styles: [],
 })
 export class CustomersExportHistoryCustomersPenaltiesListComponent
   extends BasePage
@@ -28,6 +28,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
   data: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   edit: boolean = false;
+
   clientId: number;
 
   constructor(
@@ -36,7 +37,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
     private modalRef: BsModalRef
   ) {
     super();
-    this.settings.columns = COLUMNS2;
+    this.settings.columns = COLUMNS3;
     this.settings.hideSubHeader = false;
     this.settings.actions = false;
   }
@@ -95,7 +96,7 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
 
   //Tabla con todos los clientes
   getData() {
-    this.data = new LocalDataSource();
+    this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -107,19 +108,96 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
           this.customersPenalties = response.data;
           this.data.load(response.data);
           this.data.refresh();
-          this.totalItems = response.data.length;
+          this.totalItems = response.count;
           this.loading = false;
         },
         error: error => (this.loading = false),
       });
   }
 
-  //Exportar lista blanca de clientes
-  exportClientsWhiteList(): void {
-    this.excelService.exportAsExcelFile(
-      this.customersPenalties,
-      'TodosLosRepresentantesDelCliente'
+  //Exportar todos los clientes con penalizaciones
+  exportAll(): void {
+    this.loading = true;
+    this.clientPenaltyService.getByIdComerPenaltyHis2(this.clientId).subscribe({
+      next: response => {
+        this.downloadDocument(
+          'HISTORICO_DE_PENALIZACIONES_DEL_CLIENTE',
+          'excel',
+          response.base64File
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  //Exportar lista blanca de clientes//getByIdComerPenaltyHis2
+  // exportAll(): void {
+  //   const data = this.customersPenalties.map((row: any) =>
+  //     this.transFormColums(row)
+  //   );
+  //   this.excelService.exportAsExcelFile(
+  //     data,
+  //     'TodosLosRepresentantesDelCliente'
+  //   );
+  // }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.processType,
+      'Clave Evento': row.eventId,
+      Lote: row.batchPublic,
+      'Motivo Penalización': row.referenceJobOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+    };
   }
 
   close() {

@@ -26,6 +26,10 @@ export class GoodProcessService extends HttpService {
     this.microservice = GoodProcessPoints.basepath;
   }
 
+  updateFraction(body: { newFraction: string; goodNum: number }) {
+    return this.post(GoodProcessPoints.updateFractions, body);
+  }
+
   getValNume(model: IValNumeOtro) {
     return this.post<IResponse>(GoodProcessPoints.cuValNume, model);
   }
@@ -232,5 +236,10 @@ export class GoodProcessService extends HttpService {
     } else {
       return this.put(`${route}/${requestId}`);
     }
+  }
+
+  updateMassiveStore(form: Object) {
+    const route = GoodProcessPoints.UpdateMassiveStore;
+    return this.put(route, form);
   }
 }

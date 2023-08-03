@@ -127,7 +127,7 @@ export class InvoiceStatusComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este registro?'
     ).then(answ => {
       if (answ.isConfirmed) {
         this.statusInvoiceService.remove(data.id).subscribe({
@@ -135,7 +135,7 @@ export class InvoiceStatusComponent extends BasePage implements OnInit {
             this.alert(
               'success',
               'Estatus Facturación',
-              'Eliminado correctamente'
+              'Eliminado Correctamente'
             );
             this.getData();
           },

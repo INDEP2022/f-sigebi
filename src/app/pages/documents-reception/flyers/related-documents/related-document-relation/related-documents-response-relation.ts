@@ -410,6 +410,7 @@ export abstract class RelateDocumentsResponseRelation extends BasePage {
       this.departmentService.getAll(params).pipe(
         map(res => {
           if (first) {
+            console.log(res.data[0]);
             return res.data[0];
           } else {
             return res;

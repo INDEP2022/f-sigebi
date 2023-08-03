@@ -41,4 +41,8 @@ export class EventProgrammingService extends HttpService {
       model
     );
   }
+
+  faValUserInd(model: any) {
+    return this.post<any>('functions/fa-val-user-ind', model);
+  }
 }

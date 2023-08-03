@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RegistrationOfInterestComponent } from './registration-of-interest.component';
+import { RegistrationOfInterestModalComponent } from './registration-of-interest-modal/registration-of-interest-modal.component';
 
 const routes: Routes = [
-  { path: '', component: RegistrationOfInterestComponent },
+  //{ path: '', component: RegistrationOfInterestComponent },
+  { path: '', component: RegistrationOfInterestModalComponent },
 ];
 
 @NgModule({

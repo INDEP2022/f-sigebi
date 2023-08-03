@@ -1,6 +1,6 @@
 export const SEPARATORS_DOCUMENTS_COLUMNS = {
   key: {
-    title: 'CVE.Separador',
+    title: 'Cve. Separador',
     sort: false,
   },
   description: {

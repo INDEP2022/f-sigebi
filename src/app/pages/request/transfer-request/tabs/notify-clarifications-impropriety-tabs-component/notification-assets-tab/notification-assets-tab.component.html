@@ -16,7 +16,7 @@
           <button
             (click)="endClarification()"
             class="btn btn-primary btn-sm active">
-            Terminar <i aria-hidden="true" class="fa fa-share-square"></i>
+            Regresar <i class="fas fa-arrow-circle-left"></i>
           </button>
         </div>
       </div>
@@ -441,7 +441,7 @@
           <div class="row">
             <div class="d-flex">
               <div class="mr-auto p-2"></div>
-              <div
+              <!-- <div
                 class="p-2"
                 *ngIf="
                   requestData?.typeOfTransfer == 'SAT_SAE' &&
@@ -451,9 +451,9 @@
                 <button
                   class="btn btn-success btn-sm active"
                   (click)="changeStatuesTmp()">
-                  Simular respuesta
+                  Simular Respuesta
                 </button>
-              </div>
+              </div> -->
               <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
                   class="btn btn-success btn-sm active"

@@ -116,6 +116,52 @@
                 </div>
               </div>
             </div>
+            <div class="table-responsive">
+              <div [class]="loadingPending ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="rfcTable"
+                  [settings]="pendingSettings"
+                  [source]="dataTablePending"
+                  (userRowSelect)="selectPending($event)">
+                </ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination
+              [params]="dataTableParamsPending"
+              [totalItems]="totalPending">
+            </app-pagination>
+          </tab>
+          <tab heading="Histórico" id="historyTab">
+            <div class="row">
+              <div
+                class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+                *ngIf="loadingHistorical">
+                <div class="d-flex justify-content-center">
+                  <div class="d-flex justify-content-center">
+                    <div class="loader"></div>
+                    <h6 class="loader-msg pt-3">
+                      Cargando... por favor espere...
+                    </h6>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-8"></div>
+              <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+                <div>
+                  <app-columns-select
+                    [(settings)]="historySettings"
+                    [leftList]="true"></app-columns-select>
+                </div>
+                <div>
+                  <button
+                    class="btn btn-sm btn-success active me-2 font-size-14"
+                    (click)="viewDocument()">
+                    <i class="bx bx-show-alt text-light float-icon"></i>
+                    Ver Documento
+                  </button>
+                </div>
+              </div>
+            </div>
             <ng-scrollbar
               [track]="'horizontal'"
               [autoHeightDisabled]="false"

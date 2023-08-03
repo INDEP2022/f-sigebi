@@ -54,6 +54,11 @@ export class ComerClientsService extends HttpService {
     return this.get<IListResponse<IComerClients>>(`${this.endpoint}/${id}`);
   }
 
+  getClientEventId(id: number | string) {
+    const route = `${CustomersEndpoints.ComerClients}/${id}`;
+    return this.get(route);
+  }
+
   getAll_XEvent(params?: _Params): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(
       CustomersEndpoints.ComerClientsXEvent,

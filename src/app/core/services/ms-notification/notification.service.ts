@@ -303,4 +303,18 @@ export class NotificationService extends HttpService {
   validateGoodStatus(body: any) {
     return this.post(this.route.ValidateGoodStatus, body);
   }
+
+  getDistinct(params: ListParams, body: Object) {
+    /* const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post(
+      `${this.url}${this.microservice}/${this.prefix}notification/get-distinct`,
+      body,
+      { params, headers }
+    ); */
+    return this.post<IListResponse<any>>(
+      'notification/get-distinct',
+      body,
+      params
+    );
+  }
 }

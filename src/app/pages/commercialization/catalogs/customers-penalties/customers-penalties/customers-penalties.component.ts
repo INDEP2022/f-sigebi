@@ -51,34 +51,42 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
+            console.log('Hola');
             switch (filter.field) {
               case 'typeProcess':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'event':
-                searchFilter = SearchFilter.ILIKE;
+              case 'eventId':
+                //field = `filter.${filter.field}.id`;
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'eventKey':
-                searchFilter = SearchFilter.ILIKE;
+              case 'publicLot':
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'lotId':
-                searchFilter = SearchFilter.ILIKE;
-                break;
+
+              /*case 'startDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;*/
               case 'startDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'endDate':
+              /*case 'endDate':
                 if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
                 }
+                break;*/
+              case 'endDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
@@ -86,13 +94,16 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
               case 'userPenalty':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'penaltiDate':
+              /*case 'penaltiDate':
                 if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
-                }
+                }*/
+              case 'penaltiDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -100,6 +111,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
             } else {
               delete this.columnFilters[field];
             }
@@ -117,6 +131,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     if (dateString === '') {
       return '';
     }
+
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -126,6 +141,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     this.penalties = event.data;
+    console.log(this.penalties);
   }
 
   getDeductives() {
@@ -134,11 +150,13 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params);
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
+        console.log(this.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -147,6 +165,17 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   //Modal para crear o editar clientes penalizados
+  /*openForm(customersPenalties?: ICustomersPenalties) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      customersPenalties,
+      callback: (next: boolean) => {
+        if (next) this.getDeductives();
+      },
+    };
+    this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
+  }*/
+
   openForm(customersPenalties?: ICustomersPenalties) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
@@ -173,7 +202,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(customersPenalties.id);

@@ -83,7 +83,7 @@ export const GOODS_SELECTIONS_COLUMNS: Record<string, any> = {
     },
   },
   id: {
-    title: 'Nº Bien',
+    title: 'N. Bien',
     sort: false,
   },
   quantity: {
@@ -123,7 +123,7 @@ export const GOODS_SELECTIONS_COLUMNS: Record<string, any> = {
     renderComponent: SeeMoreComponent,
   },
   adminCoord: {
-    title: 'Coordinacíon Admín.',
+    title: 'Coordinacíon Admin.',
     sort: false,
     renderComponent: SeeMoreComponent,
   },
@@ -133,17 +133,17 @@ export const GOODS_SELECTIONS_COLUMNS: Record<string, any> = {
     renderComponent: SeeMoreComponent,
   },
   warehouseUbication: {
-    title: 'Ubicacíon Almacén.',
+    title: 'Ubicacíon Almacén',
     sort: false,
     renderComponent: SeeMoreComponent,
   },
   warehouseCity: {
-    title: 'Ciudad Almacén.',
+    title: 'Ciudad Almacén',
     sort: false,
     renderComponent: SeeMoreComponent,
   },
   warehosueState: {
-    title: 'Entidad Almacén.',
+    title: 'Entidad Almacén',
     sort: false,
     renderComponent: SeeMoreComponent,
   },

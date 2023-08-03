@@ -1009,7 +1009,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Turnado Exitoso',
-        `Se Turno la solicitud con el folio: ${this.requestData.id}`
+        `Se turnó la solicitud con el folio: ${this.requestData.id}`
       );
       console.log('Tarea Cerrada');
     }
@@ -1102,7 +1102,7 @@ export class RegistrationOfRequestsComponent
       'Aprobar',
       '¿Desea turnar la solicitud con folio: ' + this.requestData.id + '?',
       'Confirmación',
-      undefined,
+      'question',
       this.typeDocument
     );
   }
@@ -1362,15 +1362,15 @@ export class RegistrationOfRequestsComponent
               this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
-                'Error',
-                'Para que la solicitud pueda turnarse es requerido seleccionar al menos los primeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12',
-                'error'
+                'Atención',
+                'Para turnar la solicitud es necesario seleccionar los Artículos requeridos y guardarlos',
+                'warning'
               );
             } else if (this.verifyResp === 'sin guardar') {
               this.verifyCumplianteMsg(
                 'No se pudo turnar la solicitud',
                 'Guarde el formulario antes de turnar la solicitud',
-                'info'
+                'warning'
               );
             }
             this.question = false;

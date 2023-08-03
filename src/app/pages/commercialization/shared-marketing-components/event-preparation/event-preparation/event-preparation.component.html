@@ -101,11 +101,12 @@
             </ng-template>
             <consigments-container
               [preparation]="preparation"
-              (exit)="exitConsignment()"
+              (exit)="exitConsignment($event)"
               [parameters]="parameters"
-              [eventForm]="eventForm"></consigments-container>
+              [eventForm]="eventForm"
+              [parentLot]="lotSelected"></consigments-container>
           </tab>
-          <tab>
+          <tab (selectTab)="viewBase()">
             <ng-template tabHeading>
               <div class="row">
                 <div class="col-md-12 d-flex justify-content-between">

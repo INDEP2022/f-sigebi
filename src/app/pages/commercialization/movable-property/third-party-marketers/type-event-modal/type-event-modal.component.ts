@@ -188,7 +188,7 @@ export class TypeEventModalComponent extends BasePage implements OnInit {
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Tipo de Evento`, '');
+    this.alert('error', `Error al Intentar ${message} el tipo de Evento`, '');
   }
 
   llenarDescription($event: any) {

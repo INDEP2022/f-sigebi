@@ -1,6 +1,7 @@
 export enum GoodEndpoints {
   Good = `good`,
   GoodGetSiab = `goods-siab`,
+  GoodFraction = 'good/queryFraction',
   GetGoodById = `good/getGoodById`,
   GoodGetDat = `good/getData`,
   Domicilies = `domicilies`,
@@ -33,10 +34,12 @@ export enum GoodEndpoints {
   GetMassiveSearch = 'good/getMassiveSearch',
   GoodsMotivesrev2 = 'goods-motivesrev',
   Sgood = `good/searchGoods`,
+  TmpTotGoodsProgrammed = 'tmp-tot-goods-programmed',
 }
 
 export enum GoodProcessPoints {
   basepath = `goodprocess`,
+  updateFractions = 'application/pa-update-fraction-goods',
   cuValNume = `application/cuValNume`,
   cuValOtro = `application/cuValotro`,
   vnNumerario = `application/getVnNumerario`,
@@ -68,6 +71,7 @@ export enum GoodProcessPoints {
   PubPrevieData = 'application/pupPreviewData',
   ProcedureStatusGood = 'application/procedure-status-good',
   UpdateProcedingNumber = 'application/updateProceedingsNumber',
+  UpdateMassiveStore = 'application/updateMassiveStore',
 }
 
 export enum GoodFinderEndpoint {

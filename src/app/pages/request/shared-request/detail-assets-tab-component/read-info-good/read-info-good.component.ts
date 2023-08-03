@@ -153,6 +153,7 @@ export class ReadInfoGoodComponent
 
         console.log('getGood', resp.data[0]);
         const good = resp.data[0];
+        console.log('Fracción', good.fractionCodeFracction);
         this.goodType = good.descriptionRelevantType
           ? good.descriptionRelevantType
           : '';
@@ -465,7 +466,7 @@ export class ReadInfoGoodComponent
     Swal.fire({
       title: '¿Está seguro que desea actualizar la información del bien?',
       text: '',
-      icon: null,
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#9d2449',
       cancelButtonColor: '#a78457',

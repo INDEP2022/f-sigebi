@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
@@ -20,6 +20,7 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
+import { MailFieldModalComponent } from '../../shared-request/mail-field-modal/mail-field-modal.component';
 import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 import { CompDocTasksComponent } from './comp-doc-task.component';
 
@@ -52,6 +53,7 @@ export class RequestCompDocTasksComponent
   resultEyeVisitReport: boolean = false;
   resultVisits: boolean = false;
   createReportDictum: boolean = false;
+  listGoodSelectedTitle: string = 'Listado de Bienes';
   /**
    * SET STATUS ACTIONS
    **/
@@ -79,6 +81,7 @@ export class RequestCompDocTasksComponent
   private requestService = inject(RequestService);
   private requestHelperService = inject(RequestHelperService);
   private affairService = inject(AffairService);
+  private bsModalRef = inject(BsModalRef);
   //private rejectedService = inject(RejectedGoodService)
 
   /*  */
@@ -187,12 +190,19 @@ export class RequestCompDocTasksComponent
         } else if (this.process == 'BSRegistroSolicitudes') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'BSNotificarTransferente') {
-          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+          this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
           const turn = await this.turnEyeVisitor();
           if (turn == true) {
             this.turnResquestMessage(this.requestId);
           }
+        } else if (this.process == 'BSValidarVisitaOcular') {
+          const haveRerpot = await this.validateNotifyReport();
+          if (haveRerpot == true) {
+            this.turnResquestMessage(this.requestId);
+          }
+        } else if (this.process == 'BSElaborarOficioRespuesta') {
+          alert('falta');
         } else {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         }
@@ -250,6 +260,7 @@ export class RequestCompDocTasksComponent
     this.affairService.getByIdAndOrigin(id, 'SAMI').subscribe({
       next: data => {
         this.processDetonate = data.processDetonate;
+        console.log(this.processDetonate);
       },
       error: error => {
         console.log('no se encontraron datos en asuntos ', error);
@@ -269,6 +280,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  /* METODO QUE ITERA LOS BIENES PARA TURNAR VISITA PROGRAMACION OCULAR */
   async turnEyeVisitor() {
     return new Promise(async (resolve, reject) => {
       console.log('verificando vienes oculares');
@@ -281,10 +293,10 @@ export class RequestCompDocTasksComponent
       params.limit = _limit;
       let turnRequest: boolean = true;
       do {
-        params.page = 1;
+        params.page = _page;
         const GRDResult: any = await this.getGoodResDev(params);
         const error: any = await this.verifyEyesVisit(GRDResult.data);
-        if (error > 0) {
+        if (error > 0 || GRDResult.count == 0) {
           end = false;
           turnRequest = false;
           this.onLoadToast(
@@ -293,7 +305,7 @@ export class RequestCompDocTasksComponent
           );
         }
         if (GRDResult.count >= countLimit) {
-          _page = 2;
+          _page = _page + 1;
           countLimit = countLimit + 100;
         } else {
           end = false;
@@ -304,6 +316,7 @@ export class RequestCompDocTasksComponent
     });
   }
 
+  /* METODO QUE VERIFICA SI LOS BIENES EN PROGRAMACION OCULAR CUMPLEN */
   verifyEyesVisit(data: any) {
     return new Promise((resolve, reject) => {
       let count = 0;
@@ -331,6 +344,93 @@ export class RequestCompDocTasksComponent
     modalRef.content.refresh.subscribe(next => {
       if (next) {
       } //this.getCities();
+    });
+  }
+
+  async turnNotificationTask(email: string) {
+    const params = new ListParams();
+    params['filter.applicationId'] = `$eq:56817`; //`$eq:${this.requestId}`;
+    debugger;
+    const goodResDevResult: any = await this.getGoodResDev(params);
+    if (goodResDevResult.count == 0) {
+      this.onLoadToast('error', 'No se han seleccionado bienes del Inventario');
+    } else {
+      //this.turnResquestMessage(this.requestId,email);
+      const containGoodInv = await this.loopNotificationTask();
+      //if(containGoodInv == true){
+      if ((email != null || email != '') && containGoodInv == false) {
+        this.turnResquestMessage(this.requestId, email);
+      } else {
+        this.onLoadToast(
+          'error',
+          'Es necesario ingresar al menos un correo electrónico'
+        );
+      }
+      //}
+    }
+  }
+
+  /* METODOS PARA VALIDAR EL TURNADO EN NOTIFICAR TRANSFERENTE */
+  async loopNotificationTask() {
+    return new Promise(async (resolve, reject) => {
+      let end = true;
+      let _page: number = 1;
+      let _limit: number = 100;
+      let countLimit: number = 100;
+      let params = new ListParams();
+      params['filter.applicationId'] = `$eq:56817`; //`$eq:${this.requestId}`; //56817
+      params.limit = _limit;
+      let containGoodInv: boolean = false;
+      do {
+        params.page = _page;
+        const GRDResult: any = await this.getGoodResDev(params);
+        const contain: any = await this.containInvGood(GRDResult.data);
+        if (contain > 0) {
+          end = false;
+          containGoodInv = true;
+        }
+        if (GRDResult.count >= countLimit) {
+          _page = _page + 1;
+          countLimit = countLimit + 100;
+        } else {
+          end = false;
+        }
+      } while (end);
+      resolve(containGoodInv);
+    });
+  }
+
+  containInvGood(data: any) {
+    return new Promise((resolve, reject) => {
+      let count = 0;
+      data.map((item: any) => {
+        if (item.naturalness == 'INVENTARIOS') {
+          count++;
+        }
+      });
+      resolve(count);
+    });
+  }
+
+  setEmailNotificationTask() {
+    let config: ModalOptions = {
+      initialState: {},
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalService.show(MailFieldModalComponent, config);
+    this.bsModalRef.content.event.subscribe((value: any) => {
+      console.log(value);
+      this.turnNotificationTask(value.email);
+    });
+  }
+  /* FIN METODO PARA TURNAR NOTIFICACIONES */
+
+  /* METODO PARA VALIDAR VISITA OCULAR */
+  validateNotifyReport() {
+    return new Promise((resolve, reject) => {
+      //si cuenta con reporte de notificacion devuelve true
+      resolve(true);
     });
   }
 }

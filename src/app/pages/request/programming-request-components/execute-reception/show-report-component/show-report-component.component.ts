@@ -8,11 +8,13 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { ISignatories } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { GelectronicFirmService } from 'src/app/core/services/ms-gelectronicfirm/gelectronicfirm.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
@@ -64,6 +66,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   goodId: number = 0;
   typeFirm: string = '';
   guardReception: any;
+  proceedingInfo: IProceedings;
   constructor(
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
@@ -75,7 +78,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     private wContentService: WContentService,
     private programmingService: ProgrammingRequestService,
     private programminGoodService: ProgrammingGoodService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private proceedingService: ProceedingsService
   ) {
     super();
     this.settings = {
@@ -96,11 +100,16 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('idTypeDoc', this.idTypeDoc);
+    console.log('this.idTypeDoc', this.idTypeDoc);
+    console.log('this.typeFirm', this.typeFirm);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
       this.title = 'Imprimir Reporte';
+    }
+
+    if (this.typeFirm == 'autografa' || this.typeFirm == 'autograf') {
+      this.btnTitle = 'Adjuntar Documento';
     }
     this.formLoading = true;
     this.showReportByTypeDoc();
@@ -150,6 +159,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.formLoading = false;
       } else {
         let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}`;
+        console.log('linkDoc', linkDoc);
         this.src = linkDoc;
         this.formLoading = false;
       }
@@ -226,16 +236,42 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   signDocument() {
-    //mostrar listado de reportes
-    if (
-      this.idTypeDoc == 185 ||
-      this.idTypeDoc == 186 ||
-      this.typeFirm == 'autograf' ||
-      this.typeFirm == 'autografa'
-    ) {
-      this.modalRef.content.callback(true);
+    if (this.idTypeDoc == 107 && this.typeFirm == 'autografa') {
+      this.modalRef.content.callback(true, this.typeFirm);
       this.modalRef.hide();
-    } else {
+    }
+
+    if (this.idTypeDoc == 103 && this.typeFirm == 'autograf') {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
+    if (this.idTypeDoc == 210 && this.typeFirm == 'autografa') {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
+    if (this.idTypeDoc == 106 && this.typeFirm == 'autografa') {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
+    if (
+      this.idTypeDoc == 186 ||
+      this.idTypeDoc == 187 ||
+      this.idTypeDoc == 185
+    ) {
+      this.modalRef.content.callback(true, this.typeFirm);
+      this.modalRef.hide();
+    }
+
+    if (
+      this.idTypeDoc == 221 ||
+      (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
+      (this.idTypeDoc == 107 && this.typeFirm == 'electronica')
+    ) {
       if (!this.listSigns && this.printReport && !this.isAttachDoc) {
         this.printReport = false;
         this.listSigns = true;
@@ -245,6 +281,21 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.openMessage2();
       }
     }
+
+    //mostrar listado de reportes
+    /*if (
+      this.idTypeDoc == 185 ||
+      this.idTypeDoc == 186 ||
+      (this.idTypeDoc == 103 && this.typeFirm == 'autograf') ||
+      (this.idTypeDoc == 107 && this.typeFirm == 'autografa')
+    ) {
+      console.log('this.idTypeDoc cerrado', this.idTypeDoc);
+      console.log('this.typeFirm cerrado', this.typeFirm);
+      this.modalRef.content.callback(true);
+      this.modalRef.hide();
+    } else {
+      
+    }*/
   }
 
   registerSign() {
@@ -516,7 +567,22 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        if (this.idTypeDoc == 221 || this.typeFirm == 'electronic') {
+        console.log('this.idTypeDoc', this.idTypeDoc);
+        console.log('this.typeFirm', this.typeFirm);
+        if (
+          (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
+          (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
+          (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
+          (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
+          this.idTypeDoc == 221
+        ) {
+          this.validAttachDoc();
+        }
+        /*if (
+          this.idTypeDoc == 221 ||
+          this.typeFirm == 'electronic' ||
+          this.idTypeDoc == 107
+        ) {
           this.validAttachDoc();
         }
 
@@ -528,13 +594,13 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         ) {
           this.close();
           this.modalRef.content.callback(true);
-        }
+        } */
       }
     });
   }
 
   validAttachDoc() {
-    if (this.typeFirm != 'electronic') {
+    if (this.typeFirm != 'electronica') {
       let token = this.authService.decodeToken();
       const extension = '.pdf';
       const nombreDoc = `Oficio Programación Recepción${extension}`;
@@ -585,73 +651,245 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           });
       });
     } else {
-      const idProg = this.programming.id;
-      //const idReceipt = this.
-      const formData = {
-        keyDoc:
-          this.programming.id +
-          '-' +
-          this.receipt.actId +
-          '-' +
-          this.receipt.id,
-        xNivelRegistroNSBDB: 'Bien',
-        xNoProgramacion: this.programming.id,
-        xNombreProceso: 'Ejecutar Recepción',
-        xDelegacionRegional: this.programming.regionalDelegationNumber,
-        xFolioProgramacion: this.programming.folio,
-        xFolioRecibo: this.receipt.folioReceipt,
-        dDocTitle: this.receipt.folioReceipt,
-        dSecurityGroup: 'Public',
-        xidBien: this.goodId,
-        xidTransferente: this.programming.tranferId,
-        xTipoDocumento: 103,
-      };
+      if (this.idTypeDoc == 103 && this.typeFirm == 'electronica') {
+        const idProg = this.programming.id;
+        //const idReceipt = this.
+        const formData = {
+          keyDoc:
+            this.programming.id +
+            '-' +
+            this.receipt.actId +
+            '-' +
+            this.receipt.id,
+          xNivelRegistroNSBDB: 'Bien',
+          xNoProgramacion: this.programming.id,
+          xNombreProceso: 'Ejecutar Recepción',
+          xDelegacionRegional: this.programming.regionalDelegationNumber,
+          xFolioProgramacion: this.programming.folio,
+          xFolioRecibo: this.receipt.folioReceipt,
+          dDocTitle: this.receipt.folioReceipt,
+          dSecurityGroup: 'Public',
+          xidBien: this.goodId,
+          xidTransferente: this.programming.tranferId,
+          xTipoDocumento: 103,
+        };
 
-      const extension = '.pdf';
-      const docName = 'Recibo Resguardo';
-      const contentType: string = '.pdf';
+        const extension = '.pdf';
+        const docName = 'Recibo Resguardo';
+        const contentType: string = '.pdf';
 
-      this.pdf.getData().then(u8 => {
-        let blob = new Blob([u8.buffer], {
-          type: 'application/pdf',
-        });
-        this.wContentService
-          .addDocumentToContent(
-            docName,
-            contentType,
-            JSON.stringify(formData),
-            blob,
-            extension
-          )
-          .subscribe({
-            next: async response => {
-              const updateReceipt = await this.updateReceipt(response.dDocName);
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                const updateReceipt = await this.updateReceipt(
+                  response.dDocName
+                );
 
-              if (updateReceipt) {
-                const updateProgrammingGood =
-                  await this.updateProgrammingGood();
+                if (updateReceipt) {
+                  const updateProgrammingGood =
+                    await this.updateProgrammingGood();
 
-                if (updateProgrammingGood) {
-                  const updateGood = await this.updateGood();
+                  if (updateProgrammingGood) {
+                    const updateGood = await this.updateGood();
 
-                  if (updateGood) {
-                    this.alertInfo(
-                      'success',
-                      'Acción Correcta',
-                      'Documento adjuntado correctamente'
-                    ).then(question => {
-                      if (question.isConfirmed) {
-                        this.close();
-                        this.modalRef.content.callback(true, this.typeFirm);
-                      }
-                    });
+                    if (updateGood) {
+                      this.alertInfo(
+                        'success',
+                        'Acción Correcta',
+                        'Documento adjuntado correctamente'
+                      ).then(question => {
+                        if (question.isConfirmed) {
+                          this.close();
+                          this.modalRef.content.callback(true, this.typeFirm);
+                        }
+                      });
+                    }
                   }
                 }
-              }
-            },
-            error: error => {},
+              },
+              error: error => {},
+            });
+        });
+      } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
+        const idProg = this.programming.id;
+        console.log('proceedingInfo', this.proceedingInfo);
+        //const idReceipt = this.
+        const formData = {
+          keyDoc:
+            this.programming.id + '-' + this.proceedingInfo.folioProceedings,
+          xNivelRegistroNSBDB: 'Bien',
+          xfolioActa: this.proceedingInfo.folioProceedings,
+          xNoProgramacion: this.programming.id,
+          xNombreProceso: 'Formalizar Recepción',
+          xDelegacionRegional: this.programming.regionalDelegationNumber,
+          xFolioProgramacion: this.programming.folio,
+          dDocTitle: this.proceedingInfo.folioProceedings,
+          dSecurityGroup: 'Public',
+          xidBien: this.goodId,
+          xidTransferente: this.programming.tranferId,
+          xTipoDocumento: 107,
+        };
+
+        const extension = '.pdf';
+        const docName = this.proceedingInfo.folioProceedings;
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
           });
-      });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                const updateReceipt = await this.procedding(response.dDocName);
+
+                if (updateReceipt) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
+        const idProg = this.programming.id;
+        console.log('proceedingInfo', this.proceedingInfo);
+        //const idReceipt = this.
+        const formData = {
+          keyDoc:
+            this.programming.id + '-' + this.proceedingInfo.folioProceedings,
+          xNivelRegistroNSBDB: 'Bien',
+          xfolioActa: this.proceedingInfo.folioProceedings,
+          xNoProgramacion: this.programming.id,
+          xNombreProceso: 'Formalizar Recepción',
+          xDelegacionRegional: this.programming.regionalDelegationNumber,
+          xFolioProgramacion: this.programming.folio,
+          dDocTitle: this.proceedingInfo.folioProceedings,
+          dSecurityGroup: 'Public',
+          xidBien: this.goodId,
+          xidTransferente: this.programming.tranferId,
+          xTipoDocumento: 210,
+        };
+
+        const extension = '.pdf';
+        const docName = this.proceedingInfo.folioProceedings;
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                const updateReceipt = await this.procedding(response.dDocName);
+
+                if (updateReceipt) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
+        const idProg = this.programming.id;
+        console.log('proceedingInfo', this.proceedingInfo);
+        //const idReceipt = this.
+        const formData = {
+          keyDoc:
+            this.programming.id + '-' + this.proceedingInfo.folioProceedings,
+          xNivelRegistroNSBDB: 'Bien',
+          xfolioActa: this.proceedingInfo.folioProceedings,
+          xNoProgramacion: this.programming.id,
+          xNombreProceso: 'Formalizar Recepción',
+          xDelegacionRegional: this.programming.regionalDelegationNumber,
+          xFolioProgramacion: this.programming.folio,
+          dDocTitle: this.proceedingInfo.folioProceedings,
+          dSecurityGroup: 'Public',
+          xidBien: this.goodId,
+          xidTransferente: this.programming.tranferId,
+          xTipoDocumento: 106,
+        };
+
+        const extension = '.pdf';
+        const docName = this.proceedingInfo.folioProceedings;
+        const contentType: string = '.pdf';
+
+        this.pdf.getData().then(u8 => {
+          let blob = new Blob([u8.buffer], {
+            type: 'application/pdf',
+          });
+          this.wContentService
+            .addDocumentToContent(
+              docName,
+              contentType,
+              JSON.stringify(formData),
+              blob,
+              extension
+            )
+            .subscribe({
+              next: async response => {
+                const updateReceipt = await this.procedding(response.dDocName);
+
+                if (updateReceipt) {
+                  this.alertInfo(
+                    'success',
+                    'Acción Correcta',
+                    'Documento adjuntado correctamente'
+                  ).then(question => {
+                    if (question.isConfirmed) {
+                      this.close();
+                      this.modalRef.content.callback(true, this.typeFirm);
+                    }
+                  });
+                }
+              },
+              error: error => {},
+            });
+        });
+      }
 
       /*let token = this.authService.decodeToken();
       const extension = '.pdf';
@@ -703,6 +941,24 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           });
       }); */
     }
+  }
+
+  procedding(docName: string) {
+    return new Promise((resolve, reject) => {
+      const formData: any = {
+        id: this.proceedingInfo.id,
+        idPrograming: this.programming.id,
+        statusProceeedings: 'CERRADO',
+        id_content: docName,
+      };
+
+      this.proceedingService.updateProceeding(formData).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {},
+      });
+    });
   }
 
   updateGood() {

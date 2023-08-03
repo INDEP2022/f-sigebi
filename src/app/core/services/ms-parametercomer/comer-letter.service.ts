@@ -11,12 +11,16 @@ import { IComerLetter } from '../../models/ms-parametercomer/comer-letter';
 })
 export class ComerLetterService extends HttpService {
   private readonly endpoint: string = ComerLetterEndpoints.ComerBase;
+  private readonly endpint1: string = ComerLetterEndpoints.CartasLib;
   constructor() {
     super();
     this.microservice = ComerLetterEndpoints.ComerBase;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IComerLetter>> {
-    return this.get<IListResponse<IComerLetter>>(this.endpoint, params);
+    return this.get<IListResponse<IComerLetter>>(this.endpint1, params);
+  }
+  getById(id: string | number): Observable<IComerLetter> {
+    return this.get(`${this.endpint1}/${id}`);
   }
 }

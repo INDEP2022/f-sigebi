@@ -12,7 +12,7 @@ export const COLUMNS_DATA = {
     sort: false,
   },
   representativeBe: {
-    title: 'Representante SAE',
+    title: 'Representante INDEP',
     sort: false,
   },
 };

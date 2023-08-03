@@ -30,12 +30,12 @@ export const SELECT_ADDRESS_COLUMN = {
     sort: false,
   },
   exteriorNumber: {
-    title: 'Num. Ext',
+    title: 'No. Ext',
     type: 'string',
     sort: false,
   },
   interiorNumber: {
-    title: 'Num. Int.',
+    title: 'No. Int.',
     type: 'string',
     sort: false,
   },

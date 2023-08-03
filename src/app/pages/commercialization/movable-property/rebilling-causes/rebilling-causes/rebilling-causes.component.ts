@@ -129,7 +129,7 @@ export class RebillingCausesComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este registro?'
     ).then(answ => {
       if (answ.isConfirmed) {
         this.comerRebilService.remove(Number(data.id)).subscribe({
@@ -137,7 +137,7 @@ export class RebillingCausesComponent extends BasePage implements OnInit {
             this.alert(
               'success',
               'Causa Refacturación',
-              'Eliminado correctamente'
+              'Eliminado Correctamente'
             );
             this.getData();
           },

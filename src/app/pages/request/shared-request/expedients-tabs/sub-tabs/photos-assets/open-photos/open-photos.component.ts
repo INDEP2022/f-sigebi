@@ -83,7 +83,7 @@ export class OpenPhotosComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Ver fotos',
+            'Atención',
             'No hay fotos agregadas a este bien',
             ''
           );

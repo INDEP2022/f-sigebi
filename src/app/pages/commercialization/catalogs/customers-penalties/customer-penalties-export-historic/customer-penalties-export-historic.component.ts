@@ -37,7 +37,6 @@ export class CustomersPenaltiesExportHistoricComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    console.log(this.iHistoryCustomersPenalties);
   }
 
   private prepareForm() {
@@ -197,8 +196,8 @@ export class CustomersPenaltiesExportHistoricComponent
       causefree: this.iHistoryCustomersPenaltiesForm.get('causefree').value,
       nbOrigin: this.iHistoryCustomersPenaltiesForm.get('nbOrigin').value,
     };
-
-    this.clientPenaltyService.updateCustomers(model).subscribe({
+    console.log(model);
+    this.clientPenaltyService.updateCustomers2(model).subscribe({
       next: data => {
         this.handleSuccess(), this.modalRef.hide();
       },

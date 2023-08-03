@@ -1,14 +1,17 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="modal-title" *ngIf="!programming?.folio">
-      Solicitud de alta almac&eacute;n con folio&#58; {{ programmingId }}
+      SOLICITUD DE ALTA ALMAC&Eacute;N CON FOLIO&#58; {{ programmingId }}
     </h5>
 
     <h5 class="modal-title" *ngIf="programming?.folio">
-      Solicitud de alta almac&eacute;n con folio&#58; {{ programming?.folio }}
+      SOLICITUD DE ALTA ALMAC&Eacute;N CON FOLIO&#58; {{ programming?.folio }}
     </h5>
 
-    <div class="row pt-2">
+    <div class="row pt-2"></div>
+  </div>
+  <div body>
+    <div class="row">
       <div class="d-flex justify-content-end">
         <div class="p-2">
           <button
@@ -36,11 +39,7 @@
           </button>
         </div>
       </div>
-    </div>
-  </div>
-  <div body>
-    <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-6 pt-5">
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
             <label class="col-lg-4 text-right"
@@ -77,7 +76,7 @@
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right">C&oacute;digo postal&#58;</label>
+            <label class="col-lg-4 text-right">C&oacute;digo Postal&#58;</label>
             <span> {{ store?.nbzipcode }} </span>
           </div>
 
@@ -87,9 +86,7 @@
           </div>
 
           <div class="form-group">
-            <label class="col-lg-4 text-right"
-              >N&uacute;mero exterior&#58;</label
-            >
+            <label class="col-lg-4 text-right">No. Exterior&#58;</label>
             <span> {{ store?.nbnoexternal }} </span>
           </div>
 
@@ -105,10 +102,10 @@
         </form>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-5 pt-5">
         <form class="form-horizontal" style="margin: 0 auto">
           <div class="form-group">
-            <label class="col-lg-6 text-right">Tipo tercero&#58;</label>
+            <label class="col-lg-6 text-right">Tipo Tercero&#58;</label>
             <span> {{ store?.tpThird }} </span>
           </div>
 
@@ -119,19 +116,19 @@
 
           <div class="form-group">
             <label class="col-lg-6 text-right"
-              >N&#46; gesti&oacute;n inmueble&#58;</label
+              >No&#46; Gesti&oacute;n Inmueble&#58;</label
             >
             <span> {{ store?.nbidstore }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">Con localizador&#58;</label>
+            <label class="col-lg-6 text-right">Localizador&#58;</label>
             <span *ngIf="store?.nbwithlocator"> SI </span>
             <span *ngIf="!store?.nbwithlocator"> NO </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">N&#46; contrato&#58;</label>
+            <label class="col-lg-6 text-right">No&#46; Contrato&#58;</label>
             <span> {{ store?.nbcontract }} </span>
           </div>
 
@@ -142,13 +139,13 @@
 
           <div class="form-group">
             <label class="col-lg-6 text-right"
-              >Inicio de operaciones&#58;</label
+              >Inicio de Operaciones&#58;</label
             >
             <span> {{ startDate }} </span>
           </div>
 
           <div class="form-group">
-            <label class="col-lg-6 text-right">Fin de operaciones&#58;</label>
+            <label class="col-lg-6 text-right">Fin de Operaciones&#58;</label>
             <span> {{ endDate }} </span>
           </div>
 

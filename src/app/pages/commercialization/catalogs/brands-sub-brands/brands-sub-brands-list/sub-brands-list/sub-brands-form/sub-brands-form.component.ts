@@ -15,7 +15,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class SubBrandsFormComponent extends BasePage implements OnInit {
   modelForm: ModelForm<IUpdateSubBrandsModel>;
   model: IUpdateSubBrandsModel;
-  title: string = 'SubMarca';
+  title: string = 'Submarca';
   edit: boolean = false;
 
   constructor(
@@ -77,7 +77,7 @@ export class SubBrandsFormComponent extends BasePage implements OnInit {
         this.handleSuccess(), this.modalRef.hide();
       },
       error: (error: any) => {
-        this.alert('warning', `No es Posible Actualizar la Sub Marca`, '');
+        this.alert('warning', `No es Posible Actualizar la Submarca`, '');
         this.modalRef.hide();
       },
     });
@@ -85,7 +85,7 @@ export class SubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = 'Sub Marca Actualizada';
+    const message: string = 'Submarca Actualizada';
     this.alert('success', `${message} Correctamente`, '');
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -95,22 +95,22 @@ export const NOTIFICATIONS_COLUMNS = {
     },
 */
 export const GOODS_COLUMNS = {
-  goodTypeId: {
+  typeDescription: {
     title: 'Tipo',
     type: 'number',
     sort: false,
   },
-  subTypeId: {
+  subTypeDescription: {
     title: 'Subtipo',
     type: 'number',
     sort: false,
   },
-  subTypeId1: {
+  ssubTypeDescription: {
     title: 'Ssubtipo',
     type: 'number',
     sort: false,
   },
-  goodClassNumber: {
+  sssubTypeDescription: {
     title: 'Sssubtipo',
     type: 'number',
     sort: false,
@@ -145,205 +145,5 @@ export const GOODS_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.description;
     },
-  },
-  val1: {
-    title: 'Val1',
-    type: 'string',
-    sort: false,
-  },
-  val2: {
-    title: 'Val2',
-    type: 'string',
-    sort: false,
-  },
-  val3: {
-    title: 'Val3',
-    type: 'string',
-    sort: false,
-  },
-  val4: {
-    title: 'Val4',
-    type: 'string',
-    sort: false,
-  },
-  val5: {
-    title: 'Val5',
-    type: 'string',
-    sort: false,
-  },
-  val6: {
-    title: 'Val6',
-    type: 'string',
-    sort: false,
-  },
-  val7: {
-    title: 'Val7',
-    type: 'string',
-    sort: false,
-  },
-  val8: {
-    title: 'Val8',
-    type: 'string',
-    sort: false,
-  },
-  val9: {
-    title: 'Val9',
-    type: 'string',
-    sort: false,
-  },
-  val10: {
-    title: 'Val10',
-    type: 'string',
-    sort: false,
-  },
-  val11: {
-    title: 'Val11',
-    type: 'string',
-    sort: false,
-  },
-  val12: {
-    title: 'Val12',
-    type: 'string',
-    sort: false,
-  },
-  val13: {
-    title: 'Val13',
-    type: 'string',
-    sort: false,
-  },
-  val14: {
-    title: 'Val14',
-    type: 'string',
-    sort: false,
-  },
-  val15: {
-    title: 'Val15',
-    type: 'string',
-    sort: false,
-  },
-  val16: {
-    title: 'Val16',
-    type: 'string',
-    sort: false,
-  },
-  val17: {
-    title: 'Val17',
-    type: 'string',
-    sort: false,
-  },
-  val18: {
-    title: 'Val18',
-    type: 'string',
-    sort: false,
-  },
-  val19: {
-    title: 'Val19',
-    type: 'string',
-    sort: false,
-  },
-  val20: {
-    title: 'Val2',
-    type: 'string',
-    sort: false,
-  },
-  val21: {
-    title: 'Val21',
-    type: 'string',
-    sort: false,
-  },
-  val22: {
-    title: 'Val22',
-    type: 'string',
-    sort: false,
-  },
-  val23: {
-    title: 'Val23',
-    type: 'string',
-    sort: false,
-  },
-  val24: {
-    title: 'Val24',
-    type: 'string',
-    sort: false,
-  },
-  val25: {
-    title: 'Val25',
-    type: 'string',
-    sort: false,
-  },
-  val26: {
-    title: 'Val26',
-    type: 'string',
-    sort: false,
-  },
-  val27: {
-    title: 'Val27',
-    type: 'string',
-    sort: false,
-  },
-  val28: {
-    title: 'Val28',
-    type: 'string',
-    sort: false,
-  },
-  val29: {
-    title: 'Val29',
-    type: 'string',
-    sort: false,
-  },
-  val30: {
-    title: 'Val30',
-    type: 'string',
-    sort: false,
-  },
-  val31: {
-    title: 'Val31',
-    type: 'string',
-    sort: false,
-  },
-  val32: {
-    title: 'Val3',
-    type: 'string',
-    sort: false,
-  },
-  val33: {
-    title: 'Val33',
-    type: 'string',
-    sort: false,
-  },
-  val34: {
-    title: 'Val34',
-    type: 'string',
-    sort: false,
-  },
-  val35: {
-    title: 'Val35',
-    type: 'string',
-    sort: false,
-  },
-  val36: {
-    title: 'Val36',
-    type: 'string',
-    sort: false,
-  },
-  val37: {
-    title: 'Val37',
-    type: 'string',
-    sort: false,
-  },
-  val38: {
-    title: 'Val38',
-    type: 'string',
-    sort: false,
-  },
-  val39: {
-    title: 'Val39',
-    type: 'string',
-    sort: false,
-  },
-  val40: {
-    title: 'Val40',
-    type: 'string',
-    sort: false,
   },
 };

@@ -135,7 +135,7 @@ export class ReceiptTablesComponent extends BasePage {
           .postGoodsProgramingReceipts({
             P_TIPO_OPERACION: receiptType,
             P_MOTIVOCAN,
-            P_CANTIDAD_SAE: 0,
+            P_CANTIDAD_SAE: 1,
             P_DESTINO_SAE: 0,
             P_ESTADO_CONSERVACION_SAE: 0,
             P_ESTADO_FISICO_SAE: 0,

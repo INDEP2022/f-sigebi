@@ -40,7 +40,7 @@ export const SELECT_GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   numberGoodsiab: {
-    title: 'No. Sae',
+    title: 'No. INDEP',
     type: 'string',
     sort: false,
   },

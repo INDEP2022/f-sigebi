@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -71,7 +71,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       seal: [null],
       nameReceipt: [null],
       observation: [null],
-      chargeReceipt: [null],
+      chargeReceipt: [null, [Validators.maxLength(15)]],
       electronicSignatureEnt: [null],
       electronicSignatureReceipt: [null],
     });
@@ -171,6 +171,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    console.log('this.generateReceiptForm', this.generateReceiptForm);
     const electronicSignatureEnt = this.generateReceiptForm.get(
       'electronicSignatureEnt'
     ).value;
@@ -196,12 +197,14 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     const _electronicSignatureReceipt = this.generateReceiptForm.get(
       'electronicSignatureReceipt'
     ).value;
+
     if (_electronicSignatureEnt == 1 && _electronicSignatureReceipt == 1) {
       this.receptionGoodService
         .updateReceipt(this.generateReceiptForm.value)
         .subscribe({
           next: async () => {
             const Signatures: any = await this.checkSign();
+            console.log('Signatures', Signatures);
             if (Signatures) {
               this.formInfoSignature(Signatures);
             }
@@ -253,8 +256,10 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.id'] = this.proceeding.id;
       params.getValue()['filter.programmingId'] = this.idProgramming;
+      params.getValue()['filter.statusReceipt'] = 'ABIERTO';
       this.receptionGoodService.getReceipt(params.getValue()).subscribe({
         next: response => {
+          console.log('response', response);
           const firmEnt = response.data[0].electronicSignatureEnt;
           const firmReceip = response.data[0].electronicSignatureReceipt;
           const Signatures = response.data[0];
@@ -384,7 +389,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
             if (createReceiptWitness) {
               this.modalRef.content.callback(
                 this.proceeding,
-                this.idProgramming
+                this.idProgramming,
+                'electronica'
               );
               this.close();
               this.loading = false;
@@ -395,7 +401,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         this.modalRef.content.callback(
           this.proceeding,
           this.idProgramming,
-          'electronic'
+          'electronica'
         );
         this.close();
         this.loading = false;

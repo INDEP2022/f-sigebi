@@ -2675,8 +2675,8 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
     if (this._saveOfficeDictation || this._valid_saveOfficeDictation) {
       this.alertInfo(
         'warning',
-        'Se debe guardar la información primero para poder consultar el reporte',
-        ''
+        'No se ha guardado la información para consultar el reporte.',
+        'Favor de guardar'
       );
       return;
     }

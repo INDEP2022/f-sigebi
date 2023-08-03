@@ -47,7 +47,7 @@ export const TRANSPORTABLE_GOODS = {
   },
 
   unitMeasure: {
-    title: 'Unidad medida INDEP',
+    title: 'Unidad Medida INDEP',
     type: 'string',
     sort: false,
   },
@@ -125,7 +125,7 @@ export const TRANSPORTABLE_GOODS_FORMALIZE = {
     sort: false,
   },
   saeMeasureUnit: {
-    title: 'Unidad medida INDEP',
+    title: 'Unidad Medida INDEP',
     type: 'string',
     sort: false,
   },

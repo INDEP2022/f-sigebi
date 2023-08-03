@@ -175,7 +175,7 @@ export class DeclarationAbandonmentInsuranceComponent
             this.onLoadToast(
               'warning',
               'Notificación por Bien',
-              'Se encontró un CVE usuario ractifica'
+              'Se encontró una Cve. de Usuario que Ractifica'
             );
           } else if (
             data[0].userCorrectsKey == null &&
@@ -184,7 +184,7 @@ export class DeclarationAbandonmentInsuranceComponent
             this.onLoadToast(
               'warning',
               'Notificación por Bien',
-              'El Estatus-Bien y el Estatus Final son iguales'
+              'El Estatus Bien y el Estatus Final son Iguales'
             );
           }
         },
@@ -233,7 +233,7 @@ export class DeclarationAbandonmentInsuranceComponent
           this.onLoadToast(
             'success',
             'Ratificado',
-            'Se modificó el CVE Usuario Ratifica'
+            'Se modificó la Cve. del Usuario que Ratifica'
           );
         },
         error: err => {
@@ -262,7 +262,7 @@ export class DeclarationAbandonmentInsuranceComponent
       next: response => {
         let toast = {
           icon: 'success',
-          message: 'Se Ratificó el Bien correctamente',
+          message: 'Se Ratificó el Bien Correctamente',
         };
 
         this.getGood(this.idBien, toast);

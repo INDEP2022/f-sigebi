@@ -1,8 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
+import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 export const resultContribuyente: any = [
@@ -33,10 +36,14 @@ export const resultContribuyente: any = [
   templateUrl: './confirm-validation-modal.component.html',
   styles: [],
 })
-export class ConfirmValidationModalComponent implements OnInit {
+export class ConfirmValidationModalComponent
+  extends BasePage
+  implements OnInit
+{
   title: string = 'Confirmar Validación';
   confirmForm: FormGroup = new FormGroup({});
   selectResultTaxpayer = new DefaultSelect();
+  private event: EventEmitter<any> = new EventEmitter<any>();
 
   requestId: number = null;
   goods: any = {};
@@ -45,10 +52,14 @@ export class ConfirmValidationModalComponent implements OnInit {
   private bsModalRef = inject(BsModalRef);
   private fb = inject(FormBuilder);
   private rejectedGoodService = inject(RejectedGoodService);
+  private goodService = inject(GoodService);
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   ngOnInit(): void {
+    console.log(this.goods);
     this.confirmForm = this.fb.group({
       resultTaxpayer: [null, [Validators.required]],
       observationsResult: [null, [Validators.required]],
@@ -70,41 +81,165 @@ export class ConfirmValidationModalComponent implements OnInit {
 
   async confirm() {
     const form = this.confirmForm.value;
+    let updateItem: any = {};
     if (form.resultTaxpayer == 'ACEPTADO') {
-      const resultadoFinal = 'y';
+      const resultadoFinal = 'Y';
       const agrupador = this.goods.goodGrouper;
       const idBien = this.goods.goodresdevId;
 
-      const groupList: any = await this.getlistGroupNumber(agrupador);
-      if (groupList.count > 0) {
-        groupList.data.map(async (item: any) => {
+      const groupList = this.goods;
+      if (groupList.length > 0) {
+        groupList.map(async (item: any) => {
           const bienRow = item.goodresdevId;
           const agrupadorRow = item.goodGrouper;
           const resFinalRow = item.resultFinal;
 
           if (
-            idBien == bienRow &&
-            (agrupador == null || agrupador == agrupadorRow)
+            resFinalRow != 'Y' ||
+            form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE' ||
+            form.resultTaxpayer == 'REPROGRAMAR'
           ) {
-            if (
-              resFinalRow != 'Y' ||
-              form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE' ||
-              form.resultTaxpayer == 'REPROGRAMAR'
-            ) {
-              item.resultTaxpayer = 'RECHAZADO';
-              item.resultFinal = 'Y';
+            item.resultTaxpayer = 'RECHAZADO';
+            item.resultFinal = 'Y';
 
-              this.deleteGoodDated(item);
-            }
+            this.deleteGoodDated(item);
+          } else {
+            item.resultFinal = 'Y';
+            item.resultTaxpayer = form.resultTaxpayer;
+            item.observationsResult = form.observationsResult;
           }
+
+          updateItem = {
+            goodresdevId: item.goodresdevId,
+            resultFinal: item.resultFinal,
+            resultTaxpayer: item.resultTaxpayer,
+            observationsResult: form.observationsResult,
+          };
+          this.updateGoodResDev(updateItem);
         });
       }
     } else if (form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE') {
       const resultadoFinal = 'P';
+      this.goods.map((item: any, _i: any) => {
+        const updateItem: any = {
+          goodresdevId: item.goodresdevId,
+          resultFinal: resultadoFinal,
+          resultTaxpayer: form.resultTaxpayer,
+          observationsResult: form.observationsResult,
+        };
+        this.updateGoodResDev(updateItem);
+      });
     } else if (form.resultTaxpayer == 'RECHAZADO') {
+      const resultadoFinal = 'Y';
+      this.goods.map(async (item: any, _i: any) => {
+        updateItem = {
+          goodresdevId: item.goodresdevId,
+          resultFinal: resultadoFinal,
+          resultTaxpayer: form.resultTaxpayer,
+          observationsResult: form.observationsResult,
+        };
+        await this.deleteGoodDated(item);
+
+        this.updateGoodResDev(updateItem);
+      });
     } else if (form.resultTaxpayer == 'NO ASISTIO') {
+      const resultadoFinal = 'Y';
+      this.goods.map(async (item: any, _i: any) => {
+        updateItem = {
+          goodresdevId: item.goodresdevId,
+          resultFinal: resultadoFinal,
+          resultTaxpayer: form.resultTaxpayer,
+          observationsResult: form.observationsResult,
+        };
+        await this.deleteGoodDated(item);
+
+        this.updateGoodResDev(updateItem);
+      });
     } else if (form.resultTaxpayer == 'REPROGRAMAR') {
+      const resultadoFinal = 'Y';
+      this.goods.map(async (item: any, _i: any) => {
+        updateItem = {
+          goodresdevId: item.goodresdevId,
+          resultFinal: resultadoFinal,
+          resultTaxpayer: form.resultTaxpayer,
+          observationsResult: form.observationsResult,
+          startVisitDate: null,
+          endVisitDate: null,
+        };
+        await this.deleteGoodDated(item);
+
+        this.updateGoodResDev(updateItem);
+      });
     }
+
+    this.alertInfo('success', 'Los bienes fueron especificados', '').then(
+      data => {
+        this.event.emit(true);
+        this.close();
+      }
+    );
+  }
+
+  async deleteGoodDated(goodDevRes: any) {
+    if (goodDevRes.inventoryNumber != null) {
+      if (goodDevRes.reservationId != null) {
+        //mandar a llamar el endpoint de presosXxsaeFacade (eliminarReservaBIen)
+      } else {
+        const good: any = await this.findGoodById(goodDevRes.goodId);
+        if (good) {
+          const body: any = {
+            id: good.id,
+            goodId: good.goodId,
+            goodResdevId: null,
+            compensation: null,
+          };
+          await this.updateGood(body);
+        }
+      }
+    }
+  }
+
+  findGoodById(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.goodService
+        .getAll(params)
+        .pipe(
+          map(x => {
+            return x.data[0];
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+        });
+    });
+  }
+
+  updateGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.update(body).subscribe({
+        next: res => {
+          console.log('bien actualizado');
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          this.onLoadToast('error', 'No se pudo actualizar los bienes');
+        },
+      });
+    });
+  }
+
+  updateGoodResDev(goodResDev: any) {
+    const id = goodResDev.goodresdevId;
+    this.rejectedGoodService.updateGoodsResDev(id, goodResDev).subscribe({
+      next: resp => {
+        console.log('good res dev actualizado');
+      },
+    });
   }
 
   getlistGroupNumber(groupId: number) {
@@ -117,13 +252,5 @@ export class ConfirmValidationModalComponent implements OnInit {
         },
       });
     });
-  }
-
-  deleteGoodDated(good: any) {
-    if (good.resultFinal != null) {
-      //llamar a sacar de la reserva en almacen
-      if (good.reservationId != null) {
-      }
-    }
   }
 }

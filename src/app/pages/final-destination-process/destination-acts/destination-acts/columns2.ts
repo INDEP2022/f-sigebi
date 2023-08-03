@@ -4,7 +4,7 @@ export const COLUMNS2 = {
     type: 'number',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,

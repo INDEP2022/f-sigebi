@@ -168,12 +168,13 @@ export class ElectronicSignaturesMainComponent
               if (this.filterByUserP == true) {
                 this.columnFiltersPending[
                   'user'
-                ] = `${SearchFilter.EQ}:ADABDOUBG`;
+                ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
               }
               // PENDIENTE CON RAFA
               // this.columnFiltersPending[
               //   'firmdate'
               // ] = `${SearchFilter.EQ}:NULL`;
+              this.columnFiltersHistorical['firmdate'] = `$is:$null`;
               this.columnFiltersPending['filter.creationdate'] = `$order:desc`;
             } else {
               delete this.columnFiltersPending[field];
@@ -188,12 +189,15 @@ export class ElectronicSignaturesMainComponent
       });
 
     if (this.filterByUserP == true) {
-      this.columnFiltersPending['user'] = `${SearchFilter.EQ}:ADABDOUBG`;
+      this.columnFiltersPending[
+        'user'
+      ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
     }
     // PENDIENTE CON RAFA
     // this.columnFiltersPending[
     //   'firmdate'
     // ] = `${SearchFilter.EQ}:NULL`;
+    this.columnFiltersHistorical['firmdate'] = `$is:$null`;
     this.columnFiltersPending['filter.creationdate'] = `$order:desc`;
     //observador para el paginado
     this.dataTableParamsPending
@@ -244,9 +248,9 @@ export class ElectronicSignaturesMainComponent
               if (this.filterByUserH == true) {
                 this.columnFiltersHistorical[
                   'user'
-                ] = `${SearchFilter.EQ}:ADABDOUBG`;
+                ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
               }
-              this.columnFiltersHistorical['firmdate'] = `$not:null`;
+              this.columnFiltersHistorical['firmdate'] = `$not:$null`;
               this.columnFiltersHistorical[
                 'filter.creationdate'
               ] = `$order:desc`;
@@ -263,9 +267,11 @@ export class ElectronicSignaturesMainComponent
       });
 
     if (this.filterByUserH == true) {
-      this.columnFiltersHistorical['user'] = `${SearchFilter.EQ}:ADABDOUBG`;
+      this.columnFiltersHistorical[
+        'user'
+      ] = `${SearchFilter.EQ}:${this.dataUserLogged.user}`; //ADABDOUBG
     }
-    this.columnFiltersHistorical['firmdate'] = `$not:null`;
+    this.columnFiltersHistorical['firmdate'] = `$not:$null`;
     this.columnFiltersHistorical['filter.creationdate'] = `$order:desc`;
     //observador para el paginado
     this.dataTableParamsHistorical
@@ -463,7 +469,7 @@ export class ElectronicSignaturesMainComponent
     }
   }
 
-  updatePaysRefS(data: IComerDocumentsXML) {
+  updatePaysRefS(data: IComerDocumentsXML, onlyReport: boolean = false) {
     console.log('UPDATE PAYS REF ', data);
     let body: IUpdateComerPagosRef = {
       referenceId: data.referenceid,
@@ -477,7 +483,8 @@ export class ElectronicSignaturesMainComponent
           0,
           data.title,
           data.documentid,
-          data
+          data,
+          onlyReport
         );
       },
       error: error => {
@@ -487,7 +494,8 @@ export class ElectronicSignaturesMainComponent
           0,
           data.title,
           data.documentid,
-          data
+          data,
+          onlyReport
         );
       },
     });
@@ -498,7 +506,8 @@ export class ElectronicSignaturesMainComponent
     count: number,
     origin: string,
     consecutive: number,
-    data: IComerDocumentsXML
+    data: IComerDocumentsXML,
+    onlyReport: boolean = false
   ) {
     let params: any = {
       IDEVENTO: count == 0 ? idEvent : null,
@@ -509,30 +518,33 @@ export class ElectronicSignaturesMainComponent
       .fetchReport('RCOMERINGXMAND', params)
       .subscribe(response => {
         console.log(response);
-        if (response !== null) {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
+        if (onlyReport == false) {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
               },
-              callback: (data: any) => {},
-            },
-            class: 'modal-lg modal-dialog-centered',
-            ignoreBackdropClick: true,
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            this.alert('warning', 'Reporte no disponible por el momento', '');
+          }
+          this.selectedRow = null;
+          this.updatePaysRef(data);
         } else {
-          this.alert('warning', 'Reporte no disponible por el momento', '');
         }
-        this.selectedRow = null;
-        this.updatePaysRef(data);
       });
   }
 
-  updatePaysRef(data: IComerDocumentsXML) {
+  updatePaysRef(data: IComerDocumentsXML, onlyReport: boolean = false) {
     console.log('UPDATE PAYS REF ', data);
     let body: IUpdateComerPagosRef = {
       referenceId: data.referenceid,
@@ -541,6 +553,9 @@ export class ElectronicSignaturesMainComponent
     this.svElectronicSignatures.updateComerPagosRef(body).subscribe({
       next: res => {
         console.log('DATA UPDATE NULL', res);
+        if (onlyReport == true) {
+          this.alert('success', 'Proceso Terminado', '');
+        }
       },
       error: error => {
         console.log(error);
@@ -736,7 +751,48 @@ export class ElectronicSignaturesMainComponent
       });
   }
 
-  getComerActXml() {}
+  getComerActXml() {
+    const params = new FilterParams();
+    params.removeAllFilters();
+    params.addFilter('documentStatus', 1);
+    params.addFilter('documentsXMLId', this.selectedRow.documensxmltid);
+    this.svElectronicSignatures
+      .getAllComerceDocumentsXmlH(params.getParams())
+      .subscribe({
+        next: res => {
+          console.log('DATA DOCUMENTS COMERCE H', res);
+          this.uploadFirmPDF();
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+  }
+
+  uploadFirmPDF() {
+    this.updateComerActXml();
+  }
+
+  updateComerActXml() {
+    let obj = {
+      pathNamePdf: '',
+      documentStatus: 1,
+    };
+    this.svElectronicSignatures.updateComerceDocumentsXmlH(obj).subscribe({
+      next: res => {
+        console.log('UPDATE COMER ACT', res);
+        this.updatePaysRef(this.selectedRow);
+      },
+      error: error => {
+        console.log(error);
+        this.alert(
+          'error',
+          'Error al Actualizar',
+          'No se pudo Actualizar el PDF en la Base de Datos'
+        );
+      },
+    });
+  }
 
   downloadFile() {
     this.downloadPdf(this.pdfUrl, 'example_document');

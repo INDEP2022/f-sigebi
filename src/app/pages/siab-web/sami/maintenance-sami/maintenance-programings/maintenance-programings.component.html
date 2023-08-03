@@ -1,5 +1,5 @@
 <form [formGroup]="form" class="form-material">
-  <div class="row">
+  <div class="row mt-2 mb-3 ml-0 mr-0">
     <div class="col-md-6">
       <form-radio label="Programaciones Recepción">
         <input
@@ -16,7 +16,7 @@
   </div>
   <div class="row margin-input">
     <div class="col-md-8 p-0">
-      <form-field label="Programación" [control]="form.get('id')">
+      <form-field label="Programación" [control]="id">
         <input
           type="number"
           class="form-control"
@@ -24,13 +24,22 @@
           [readonly]="idDisabled" />
       </form-field>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 col-6 mb-4 pl-0">
       <button
         type="button"
         class="btn btn-primary active btn-sm"
+        [disabled]="id.invalid"
         (click)="consultDates()">
         Buscar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
+    <div class="col-md-2 col-6 mb-4 p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger active btn-sm"
+        (click)="clear()">
+        Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
       </button>
     </div>
   </div>
@@ -66,30 +75,34 @@
           type="text"
           class="form-control"
           formControlName="newFechaInicio"
-          bsDatepicker
           readonly
           required
           [bsConfig]="{
             withTimepicker: true,
             rangeInputFormat: 'DD/MM/YYYY, h:mm:ss a',
             dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
-          }" />
+          }"
+          bsDatepicker />
+        <!-- keepDatepickerOpened: true, -->
       </form-field>
     </div>
-    <div class="col-md-6">
+    <div
+      class="col-md-6"
+      [class]="disabledDates ? 'disabledDate' : 'enabledDate'">
       <form-field label="Fecha Fin" [control]="form.get('newFechaFin')">
         <input
           type="text"
           class="form-control"
           formControlName="newFechaFin"
-          bsDatepicker
           readonly
           required
           [bsConfig]="{
             withTimepicker: true,
             rangeInputFormat: 'DD/MM/YYYY, h:mm:ss a',
             dateInputFormat: 'DD/MM/YYYY, h:mm:ss a'
-          }" />
+          }"
+          bsDatepicker />
+        <!-- keepDatepickerOpened: true, -->
       </form-field>
     </div>
   </div>
@@ -110,7 +123,8 @@
         [disabled]="form.invalid"
         class="btn btn-primary btn-sm mr-2 active"
         type="submit"
-        size="small">
+        size="small"
+        (click)="update()">
         Actualizar
       </button>
       <button

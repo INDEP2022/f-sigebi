@@ -52,17 +52,8 @@ export class CustomersPenaltiesExportAllComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'clientId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'reasonName':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'rfc':
-                searchFilter = SearchFilter.ILIKE;
-                break;
               case 'typeProcess':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
                 searchFilter = SearchFilter.ILIKE;
@@ -70,35 +61,11 @@ export class CustomersPenaltiesExportAllComponent
               case 'publicLot':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'startDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;
-              case 'endDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
-                break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'userPenalty':
                 searchFilter = SearchFilter.ILIKE;
-                break;
-              case 'penaltiDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -140,7 +107,7 @@ export class CustomersPenaltiesExportAllComponent
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -150,11 +117,82 @@ export class CustomersPenaltiesExportAllComponent
   }
 
   //Exportar todos los clientes con penalizaciones
-  exportClientsPenalize(): void {
-    this.excelService.exportAsExcelFile(
-      this.customersPenalties,
-      'PenalizacionesDeCliente'
+  exportAll(): void {
+    this.loading = true;
+    this.clientPenaltyService.getAll2().subscribe({
+      next: response => {
+        this.downloadDocument(
+          'TODOS_LOS_CLIENTES_PENALIZADOS',
+          'excel',
+          response.base64File
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  private transFormColums(row: any) {
+    return {
+      'Tipo de Penalización': row.typeProcess,
+      'Clave Evento': row.eventId,
+      Lote: row.publicLot,
+      'Fecha Inicial': row.startDate,
+      'Fecha Final': row.endDate,
+      'Motivo Penalización': row.refeOfficeOther,
+      'Motivo Liberación': row.causefree,
+      'Usuario Penaliza': row.usrPenalize,
+      'Usuario Libera': row.usrfree,
+      'Fecha Penaliza': row.penalizesDate,
+      'No. Registro': row.registernumber,
+      'Fecha Libera': row.releasesDate,
+    };
   }
 
   close() {

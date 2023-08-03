@@ -54,7 +54,7 @@ export class InvoiceStatusModalComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Estatus Facturación',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
           this.modalRef.hide();
           this.modalRef.content.callback(true);
@@ -72,7 +72,7 @@ export class InvoiceStatusModalComponent extends BasePage implements OnInit {
       this.statusInvoiceService.create(newData).subscribe({
         next: () => {
           this.loading = false;
-          this.alert('success', 'Estatus Facturación', 'Creado correctamente');
+          this.alert('success', 'Estatus Facturación', 'Creado Correctamente');
           this.modalRef.hide();
           this.modalRef.content.callback(true);
         },

@@ -13,6 +13,8 @@ export class EventAppService extends HttpService {
   }
 
   verifyRejectedGoods(eventId: string | number) {
-    return this.get(`${this.endpoint}/verifyrejected/${eventId}`);
+    return this.get<{ data: number }>(
+      `${this.endpoint}/verifyrejected/${eventId}`
+    );
   }
 }

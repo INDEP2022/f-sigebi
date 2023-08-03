@@ -230,4 +230,12 @@ export class ProceedingsService extends HttpService {
   pupLaunchesReport2(body: any) {
     return this.post('aplication/get-pup-lanza-reporte-2', body);
   }
+
+  getTmpTotExpProceedings(params: ListParams) {
+    return this.get<IListResponse<any>>('tmp-tot-exp-proceedings', params);
+  }
+
+  getTmpTotGoodsProceedings(params: ListParams) {
+    return this.get<IListResponse<any>>('tmp-tot-goods-proceedings', params);
+  }
 }

@@ -5,7 +5,7 @@ export const PROCEEDINGS_COLUMNS = {
     sort: false,
   },
   receiptCve: {
-    title: 'CVE DEL RECIBE',
+    title: 'Cve. del que Recibe',
     type: 'string',
     sort: false,
   },

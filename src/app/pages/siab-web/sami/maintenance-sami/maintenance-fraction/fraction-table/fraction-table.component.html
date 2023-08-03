@@ -1,0 +1,15 @@
+<div class="row">
+  <div class="row pt-4 pr-0">
+    <div class="col-md-12 pr-0">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          #table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
+</div>

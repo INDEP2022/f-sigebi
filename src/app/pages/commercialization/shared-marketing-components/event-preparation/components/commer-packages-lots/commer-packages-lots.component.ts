@@ -58,16 +58,23 @@ export class CommerPackagesLotsComponent
     super();
   }
 
-  async ngAfterContentInit() {
+  override async ngAfterViewInit() {
     super.ngAfterViewInit();
+    console.log('AFTER VIEW INIT');
     await this.checkGoodsTracker();
   }
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    console.warn('INIT');
+  }
 
   async checkGoodsTracker() {
     const global = await this.globalVarsService.getVars();
     const selftState = await this.eventPreparationService.getState();
+    const execType = this.onlyBase ? 'base' : 'normal';
+    if (selftState.executionType != execType) {
+      return;
+    }
     const { lastLot, lastPublicLot } = selftState;
     const { REL_BIENES } = global;
     if (!REL_BIENES) {
@@ -87,6 +94,8 @@ export class CommerPackagesLotsComponent
     lot: string | number,
     lotepub: string | number
   ) {
+    console.warn('SE MANDO A LLAMAR');
+
     const { id, eventTpId } = this.eventForm.controls;
     this.loader.load = true;
     return this.utilComerV1Service
@@ -115,6 +124,8 @@ export class CommerPackagesLotsComponent
           this.alert('success', 'Proceso Terminado', '');
           await this.verifyRejectedGoods();
           this.fillStadistics.emit();
+          const params = new FilterParams();
+          this.comerLotsListParams.next(params);
         })
       );
   }
@@ -128,7 +139,17 @@ export class CommerPackagesLotsComponent
           return throwError(() => error);
         }),
         tap(response => {
-          console.warn({ response });
+          console.warn('VERIFICARECHAZADOS');
+
+          console.log(response);
+          const c: any = response;
+          if (response.data > 0 || c > 0) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Hubo Bienes Rechazados pulse el botón de Bienes no Cargados'
+            );
+          }
         })
       )
     );

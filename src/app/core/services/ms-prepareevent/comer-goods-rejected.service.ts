@@ -19,4 +19,12 @@ export class ComerGoodsRejectedService extends HttpService {
       params
     );
   }
+
+  getComerGoodXLote(params: _Params) {
+    return this.get(PrepareEventEndpoints.ComerGoodXLote, params);
+  }
+
+  getFindAllComerGoodXlotTotal(params: _Params) {
+    return this.get(PrepareEventEndpoints.getFindAllComerGoodXlotTotal, params);
+  }
 }

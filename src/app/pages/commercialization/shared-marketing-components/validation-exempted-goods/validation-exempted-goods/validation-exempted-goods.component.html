@@ -3,71 +3,23 @@
     <h5 class="title">Bienes exentos de verificación</h5>
   </div>
   <div body>
-    <div class="ch-content">
-      <form [formGroup]="form" class="form-material" (ngSubmit)="onSubmit()">
-        <div class="form-inline mb-4">
-          <div class="form-group mr-4">
-            <form-field [control]="form.get('id')">
-              <input
-                type="text"
-                class="form-control"
-                style="width: 200px"
-                formControlName="id"
-                maxlength="50" />
-            </form-field>
-          </div>
-          <div class="form-group">
-            <button
-              type="submit"
-              class="btn btn-sm btn-info active mr-4"
-              style="width: 110px; background-color: #9d2449">
-              Consultar <i class="bx bx-search float-icon"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm btn-info active"
-              style="width: 90px; background-color: #b38e5d"
-              (click)="cleandInfo()">
-              Limpiar <i class="fa fa-eraser"></i>
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-    <!--TABLE-->
-    <div>
-      <div class="row pt-4">
-        <div class="col-md-12">
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings"
-              [source]="goods"
-              (userRowSelect)="rowsSelected($event)">
-            </ng2-smart-table>
-          </div>
-        </div>
-      </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
-    </div>
-
-    <!--TABLE 2-->
-    <!-- <div class="row pt-4">
+    <!--TABLE GOODS-->
+    <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <div class="table-responsive">
-            <ng2-smart-table
-              [attr.class]="'table-bordered table-responsive'"
-              [settings]="settings2"
-              [source]="proccessList"
-              (edit)="openForm($event.data)">
-            </ng2-smart-table>
-          </div>
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
+            [settings]="settings"
+            [source]="goods"
+            (userRowSelect)="rowsSelected($event)">
+          </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems2"></app-pagination>
-    </div> -->
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+    <app-validation-exempted
+      [proccessList]="proccessList"></app-validation-exempted>
   </div>
 </app-card>

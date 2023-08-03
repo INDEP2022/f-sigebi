@@ -40,7 +40,7 @@ export class RegistrationOfInterestComponent
         position: 'right',
       },
       columns: { ...COUNT_TIIE_COLUMNS },
-      noDataMessage: 'No se encontrarón registros',
+      //noDataMessage: 'No se encontrarón registros',
     };
   }
 
@@ -70,17 +70,17 @@ export class RegistrationOfInterestComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.parameterTiieService.remove(tiie.id).subscribe({
           next: data => {
             this.loading = false;
-            this.onLoadToast('success', 'Registro eliminado', '');
+            this.onLoadToast('success', 'Registro Eliminado', '');
             this.getData();
           },
           error: error => {
-            this.onLoadToast('error', 'No se puede eliminar registro', '');
+            this.onLoadToast('error', 'No Se Puede Eliminar Registro', '');
             this.loading = false;
           },
         });

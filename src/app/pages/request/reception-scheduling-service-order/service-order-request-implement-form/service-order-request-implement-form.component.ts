@@ -165,7 +165,7 @@ export class ServiceOrderRequestImplementFormComponent
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estás seguro que deseas eliminar el servicio?'
+      '¿Está seguro que desea eliminar el servicio?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

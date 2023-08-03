@@ -4,63 +4,76 @@
   </div>
   <div body>
     <div class="row">
-      <capture-filter [isReceptionAndDelivery]="true"></capture-filter>
+      <capture-filter-entr-and-recep
+        (consultEmmit)="consult($event)"
+        (exportEmmit)="export($event)"
+        (cleanEmmit)="clean($event)"></capture-filter-entr-and-recep>
     </div>
     <div class="row pt-3">
       <div class="col-md-12 d-flex justify-content-between">
         <span class="text-success">
           <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
-          <b>123</b>
+          <b>{{ blkControl.totalcumplido }}</b>
         </span>
         <span class="text-danger"
           ><i class="fa fa-ban" aria-hidden="true"></i> Total No Cumplidos&#58;
-          <b>123</b></span
+          <b>{{ blkControl.totalNocumplido }}</b></span
         >
         <span class="text-info"
           ><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
-          <b>90&#37;</b></span
+          <b>{{ blkControl.porcentajeCunplido }}&#37;</b></span
         >
         <p class="">
-          <i class="fa fa-ban" aria-hidden="true"></i> Expedientes en Actas Sin
-          Bienes&#58; <b>123</b>
+          <i class="fa fa-check" aria-hidden="true"></i> Registros en Actas&#58;
+          <b>{{ blkControl.registrosEnActas }}</b>
         </p>
       </div>
     </div>
 
     <div class="row pt-3">
       <div class="col-md-12 d-flex justify-content-between">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
         <div>
           <p class="">
             <i class="fa fa-check" aria-hidden="true"></i> Registros
             programados&#58;
-            <b>123</b>
+            <b>{{ blkControl.registrosProgramados }}</b>
           </p>
           <p class="">
-            <i class="fa fa-ban" aria-hidden="true"></i> Registros en Actas&#58;
-            <b>123</b>
+            <i class="fa fa-ban" aria-hidden="true"></i> Expedientes en Actas
+            Sin Bienes&#58; <b>{{ blkControl.expedientesEnActasSinBienes }}</b>
           </p>
         </div>
 
         <div>
           <p class="">
-            <i class="fa fa-ban" aria-hidden="true"></i> Expedientes
-            Programados&#58; <b>123</b>
+            <i class="fa fa-check" aria-hidden="true"></i> Expedientes
+            Programados&#58; <b>{{ blkControl.expedientesProgramados }}</b>
           </p>
 
           <p class="">
-            <i class="fa fa-ban" aria-hidden="true"></i> Expedientes en
+            <i class="fa fa-check" aria-hidden="true"></i> Expedientes en
             Actas&#58;
-            <b>123</b>
+            <b>{{ blkControl.expedientesEnActas }}</b>
           </p>
         </div>
-
-        <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
     </div>
     <div class="row pt-3 table-content">
-      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
-
-      <app-pagination></app-pagination>
+      <div class="row pt-4 table-container">
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>

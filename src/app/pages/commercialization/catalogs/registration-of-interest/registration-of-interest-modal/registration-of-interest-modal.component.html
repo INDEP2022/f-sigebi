@@ -1,11 +1,11 @@
-<app-modal>
+<!--<app-modal>
   <div header>
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="providerForm">
       <div class="row">
-        <!-- <div class="form-group">
+         <div class="form-group">
           <div class="col-sm-4 p-0">
             <form-field
               [control]="providerForm.get('user')"
@@ -19,26 +19,41 @@
           </div>
           <div class="col-md-3">
             <button
-              (click)="searchUser()"
+              
               class="btn btn-primary btn-sm active">
               Buscar usuario
             </button>
+
+            (click)="searchUser()"
           </div>
-        </div> -->
-        <div class="col-md-4">
-          <!-- <form-field [control]="providerForm.get('user')" label="Selecciona usuario&#58;">
-            <input type="number" class="form-control" formControlName="tiieDays" /> </form-field>-->
-          <ngx-select
-            [form]="providerForm"
-            control="user"
-            (fetchItems)="searchUser($event)"
-            [showTooltip]="true"
-            [data]="selectUser"
-            bindLabel="name"
-            label="User"
-            value="id"></ngx-select>
+        </div> 
+        <div class="row mb-5">
+          <div class="col-md-6">
+            <form-field [control]="providerForm.get('user')" label="Selecciona usuario&#58;">
+            <input type="number" class="form-control" formControlName="tiieDays" /> </form-field>
+            <ngx-select
+              [form]="providerForm"
+              control="user"
+              (fetchItems)="searchUser($event)"
+              [showTooltip]="true"
+              [data]="selectUser"
+              bindLabel="name"
+              label="Usuario"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="providerForm.get('tiieAverage')"
+              label="Promedio TIIE">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="tiieAverage" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2"></div>
+        <div class="col-md-2">
           <form-field
             [control]="providerForm.get('tiieDays')"
             label="Días TIIE">
@@ -48,17 +63,7 @@
               formControlName="tiieDays" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="providerForm.get('tiieAverage')"
-            label="Promedio TIIE">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="tiieAverage" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
           <form-field
             [control]="providerForm.get('tiieMonth')"
             label="Mes TIIE">
@@ -69,9 +74,7 @@
               formControlName="tiieMonth" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field [control]="providerForm.get('tiieYear')" label="Año TIIE">
             <input
               type="number"
@@ -97,4 +100,46 @@
       </div>
     </div>
   </div>
-</app-modal>
+</app-modal>-->
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cat&aacute;logo Registro de Intereses</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [settings]="settings"
+            [attr.class]="'table-bordered'"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</app-card>

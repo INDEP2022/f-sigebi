@@ -34,6 +34,11 @@ export class ConsultationGoodsCommercialBillsComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   newLimit = new FormControl(10);
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  newLimit2 = new FormControl(10);
+
+  modelSave2: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -88,7 +93,7 @@ export class ConsultationGoodsCommercialBillsComponent
   }
 
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: () => {
         if (this.isValid()) {
           this.getData();
@@ -112,11 +117,11 @@ export class ConsultationGoodsCommercialBillsComponent
     }
 
     this.goodSpentService
-      .getGoodSpents(this.form.value, this.params.getValue())
+      .getGoodSpents(this.form.value, this.params2.getValue())
       .subscribe({
         next: response => {
           this.data.load(response.data);
-          this.totalItems = response.count;
+          this.totalItems2 = response.count;
         },
         error: error => {
           console.log(error);
@@ -148,17 +153,87 @@ export class ConsultationGoodsCommercialBillsComponent
   }
 
   exportSelected() {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    const filename = `Gastos_${today}`;
-    const data = this.selectedRows.map(row => this.transFormColums(row));
-    this.excelService.export(data, { filename });
+    if (this.selectedRows.length > 0) {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const filename = `Gastos_${today}`;
+      const data = this.selectedRows.map(row => this.transFormColums(row));
+      this.excelService.export(data, { filename });
+    } else {
+      this.alert('warning', 'No Seleccionó ningun Registro', '');
+    }
   }
 
-  exportAll() {}
+  exportAll() {
+    this.loading = true;
+    console.log(this.modelSave2);
+    if (this.modelSave2 != null) {
+      this.spentService.getChargeSpentsExcel(this.modelSave2).subscribe(
+        res => {
+          this.downloadDocument('TODO_GASTOS', 'excel', res.base64File);
+        },
+        err => {
+          this.loading = false;
+          console.log(err);
+        }
+      );
+    } else {
+      this.loading = false;
+      this.alert(
+        'warning',
+        'Debe especificar al menos un parámetro de búsqueda',
+        ''
+      );
+    }
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    console.log(this.form.value);
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    this.loading = false;
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
 
   private transFormColums(row: any) {
     return {
-      'No. SIAB': row.no_bien,
+      'No. Bien': row.no_bien,
       Descripción: row.bien_descripcion,
       Expediente: row.no_expediente,
       Estatus: row.estatus,
@@ -230,8 +305,18 @@ export class ConsultationGoodsCommercialBillsComponent
     return this.form.get('authority');
   }
 
+  //Limpiar Filtros
+  cleanFilters() {
+    this.form.reset();
+    this.data.load([]);
+    this.totalItems2 = 0;
+    this.modelSave2 = null;
+  }
+
   //Ejecutar consulta
   executeConsult() {
+    this.loading = true;
+
     let model: IChargeSpent = {};
 
     this.good.value != null ? (model.goodNumber = this.good.value) : '';
@@ -256,18 +341,23 @@ export class ConsultationGoodsCommercialBillsComponent
       ? (model.userAuthorize = this.authority.value)
       : '';
 
+    this.modelSave2 = model;
+
     if (Object.keys(model).length === 0) {
       this.alert(
         'warning',
         'Debe especificar al menos un parámetro de búsqueda',
         ''
       );
+      this.loading = false;
     } else {
       this.spentService.getChargeSpents(model).subscribe(
         res => {
           console.log(res);
           this.data.load(res.data);
           this.totalItems = res.count;
+          this.totalItems2 = res.count;
+          this.loading = false;
         },
         err => {
           this.alert(
@@ -278,6 +368,8 @@ export class ConsultationGoodsCommercialBillsComponent
           console.log(err);
           this.data.load([]);
           this.totalItems = 0;
+          this.totalItems2 = 0;
+          this.loading = false;
         }
       );
     }

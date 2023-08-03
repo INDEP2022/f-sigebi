@@ -3,8 +3,11 @@ import { Observable } from 'rxjs';
 import { IGoodsinvEndpoint } from 'src/app/common/constants/endpoints/ms-goodsinv.endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
-import { IListResponse } from '../../interfaces/list-response.interface';
-import { IGoodsInv } from '../../models/ms-goodsinv/goodsinv.model';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
+import { IDescInv, IGoodsInv } from '../../models/ms-goodsinv/goodsinv.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +24,12 @@ export class GoodsInvService extends HttpService {
     return this.get<IListResponse<IGoodsInv>>(
       IGoodsinvEndpoint.CatUnitsMeasureView,
       params
+    );
+  }
+
+  getDescription(gestion: string) {
+    return this.get<IListResponseMessage<IDescInv>>(
+      IGoodsinvEndpoint.GetDescription + '/' + gestion
     );
   }
 

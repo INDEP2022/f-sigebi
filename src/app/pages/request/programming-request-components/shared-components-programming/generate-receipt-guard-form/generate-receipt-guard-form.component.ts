@@ -87,14 +87,15 @@ export class GenerateReceiptGuardFormComponent
   }
 
   confirm() {
-    const now = moment(new Date().toLocaleString(), 'DD/MM/YYYY HH:mm:ss');
-
+    const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+    console.log('now', now);
     this.form.get('receiptDate').setValue(now);
     console.log('this.form', this.form.value);
     this.receptionGoodService
       .updateReceiptGuard(this.receiptId, this.form.value)
       .subscribe({
         next: async response => {
+          console.log('creado', response);
           this.modalRef.content.callback(this.receiptGuards);
           this.modalRef.hide();
           //this.openReport(response);
@@ -178,7 +179,6 @@ export class GenerateReceiptGuardFormComponent
           xFolioProgramacion: this.programming.folio,
         };
         //this.wContentService.addDocumentToContent();
-        console.log('modelReport', modelReport);
       },
       error: error => {},
     });
@@ -186,9 +186,9 @@ export class GenerateReceiptGuardFormComponent
 
   getIdentification(params: ListParams) {
     params['filter.name'] = 'Identificaciones';
+    params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
-        console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
       error: error => {},

@@ -7,7 +7,6 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
-import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared';
@@ -66,8 +65,8 @@ export class ShowProceedingCloseComponent extends BasePage implements OnInit {
       });
   }
 
-  showProceeding(receipt: IReceipt) {
-    this.wcontentService.obtainFile(receipt.contentId).subscribe({
+  showProceeding(receipt: IProceedings) {
+    this.wcontentService.obtainFile(receipt.id_content).subscribe({
       next: response => {
         let blob = this.dataURItoBlob(response);
         let file = new Blob([blob], { type: 'application/pdf' });

@@ -44,7 +44,7 @@ export class ReportPreviewComponent implements OnInit {
   sendToSign(): void {
     //verificar que el reporte y los datos necesarios se envien
     Swal.fire({
-      icon: undefined,
+      icon: 'warning',
       title: 'Confimación',
       text: '¿Está seguro de enviar la información a firmar?',
       showCancelButton: true,

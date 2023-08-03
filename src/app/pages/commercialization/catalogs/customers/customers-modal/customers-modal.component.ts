@@ -4,6 +4,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
+import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
+import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
+import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   CURP_PATTERN,
@@ -14,15 +18,6 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
-//Models
-import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
-import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
-
-//Services
-import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
-import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
-import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 
 @Component({
   selector: 'app-customers-modal',
@@ -47,8 +42,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private customerService: CustomerService,
-    private penaltyService: TPenaltyService,
-    private clientPenaltyService: ClientPenaltyService
+    private penaltyService: TPenaltyService
   ) {
     super();
     this.today = new Date();
@@ -56,19 +50,23 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.agentId = this.customerForm.value.agentId?.id;
-    this.penaltyId = this.customerForm.value.penaltyId?.penaltyId;
-    this.userFree = this.customerForm.value.userFree?.id;
-    this.customerForm.patchValue({
-      agentId: this.agentId,
-      penaltyId: this.penaltyId,
-      userFree: this.userFree,
-    });
+
+    if (this.customers) {
+      const agentId = this.customers.agentId?.id;
+      const penaltyId = this.customers.penaltyId?.penaltyId;
+      const userFree = this.customers.userFree?.id;
+
+      this.customerForm.patchValue({
+        agentId: agentId,
+        penaltyId: penaltyId,
+        userFree: userFree,
+      });
+    }
   }
 
   private prepareForm() {
     this.customerForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       reasonName: [
         null,
         [
@@ -160,11 +158,11 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       penaltyId: [
         null,
         [Validators.maxLength(20), Validators.pattern(NUMBERS_PATTERN)],
-      ], //Llave
+      ],
       sellerId: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
-      ], //LLave
+      ],
       approvedRfc: [
         null,
         [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
@@ -172,7 +170,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       userFree: [
         null,
         [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
-      ], //Lave
+      ],
       freeDate: [null, [Validators.pattern(STRING_PATTERN)]],
       economicAgreementKey: [
         null,
@@ -226,47 +224,62 @@ export class CustomersModalComponent extends BasePage implements OnInit {
       this.edit = true;
       this.customerForm.patchValue(this.customers);
 
-      const dbReleaseDate = this.customerForm.get('releaseDate').value;
-      const dbBlackListDate = this.customerForm.get('blackListDate').value;
-      const dbFreeDate = this.customerForm.get('freeDate').value;
-      const dbPenaltyInitDate = this.customerForm.get('penaltyInitDate').value;
-      const dbPenaltyEndDate = this.customerForm.get('penaltyEndDate').value;
+      if (this.customerForm.get('blackListDate').value === null) {
+        this.customerForm.get('blackListDate').setValue(null);
+      } else {
+        const dbBlackListDate = this.customerForm.get('blackListDate').value;
+        const formattedDate2 = formatDate(
+          dbBlackListDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.customerForm.get('blackListDate').setValue(formattedDate2);
+        this.customerForm
+          .get('blackListDate')
+          .setValue(this.addDays(new Date(dbBlackListDate), 1));
+      }
 
-      const formattedDate1 = formatDate(dbReleaseDate, 'dd/MM/yyyy', 'en-US');
-      const formattedDate2 = formatDate(dbBlackListDate, 'dd/MM/yyyy', 'en-US');
-      const formattedDate3 = formatDate(dbFreeDate, 'dd/MM/yyyy', 'en-US');
-      const formattedDate4 = formatDate(
-        dbPenaltyInitDate,
-        'dd/MM/yyyy',
-        'en-US'
-      );
-      const formattedDate5 = formatDate(
-        dbPenaltyEndDate,
-        'dd/MM/yyyy',
-        'en-US'
-      );
+      if (this.customerForm.get('freeDate').value === null) {
+        this.customerForm.get('freeDate').setValue(null);
+      } else {
+        const dbFreeDate = this.customerForm.get('freeDate').value;
+        const formattedDate3 = formatDate(dbFreeDate, 'dd/MM/yyyy', 'en-US');
+        this.customerForm.get('freeDate').setValue(formattedDate3);
+        this.customerForm
+          .get('freeDate')
+          .setValue(this.addDays(new Date(dbFreeDate), 1));
+      }
 
-      this.customerForm.get('releaseDate').setValue(formattedDate1);
-      this.customerForm.get('blackListDate').setValue(formattedDate2);
-      this.customerForm.get('freeDate').setValue(formattedDate3);
-      this.customerForm.get('penaltyInitDate').setValue(formattedDate4);
-      this.customerForm.get('penaltyEndDate').setValue(formattedDate5);
+      if (this.customerForm.get('penaltyInitDate').value === null) {
+        this.customerForm.get('penaltyInitDate').setValue(null);
+      } else {
+        const dbPenaltyInitDate =
+          this.customerForm.get('penaltyInitDate').value;
+        const formattedDate4 = formatDate(
+          dbPenaltyInitDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.customerForm.get('penaltyInitDate').setValue(formattedDate4);
+        this.customerForm
+          .get('penaltyInitDate')
+          .setValue(this.addDays(new Date(dbPenaltyInitDate), 1));
+      }
 
-      this.customerForm
-        .get('releaseDate')
-        .setValue(this.addDays(new Date(dbReleaseDate), 1));
-      this.customerForm
-        .get('blackListDate')
-        .setValue(this.addDays(new Date(dbBlackListDate), 1));
-      this.customerForm
-        .get('freeDate')
-        .setValue(this.addDays(new Date(dbFreeDate), 1));
-      this.customerForm
-        .get('penaltyInitDate')
-        .setValue(this.addDays(new Date(dbPenaltyInitDate), 1));
-      this.customerForm
-        .get('penaltyEndDate')
-        .setValue(this.addDays(new Date(dbPenaltyEndDate), 1));
+      if (this.customerForm.get('penaltyEndDate').value === null) {
+        this.customerForm.get('penaltyEndDate').setValue(null);
+      } else {
+        const dbPenaltyEndDate = this.customerForm.get('penaltyEndDate').value;
+        const formattedDate5 = formatDate(
+          dbPenaltyEndDate,
+          'dd/MM/yyyy',
+          'en-US'
+        );
+        this.customerForm.get('penaltyEndDate').setValue(formattedDate5);
+        this.customerForm
+          .get('penaltyEndDate')
+          .setValue(this.addDays(new Date(dbPenaltyEndDate), 1));
+      }
     }
   }
 
@@ -289,6 +302,7 @@ export class CustomersModalComponent extends BasePage implements OnInit {
   }
 
   update() {
+    this.loading = true;
     const model: ICustomer = {
       agentId: this.customerForm.get('agentId').value,
       approvedRfc: this.customerForm.get('approvedRfc').value,
@@ -356,13 +370,16 @@ export class CustomersModalComponent extends BasePage implements OnInit {
     this.customerService.updateCustomers(this.customers.id, model).subscribe({
       next: data => {
         this.handleSuccess(), this.modalRef.hide();
+        this.loading = true;
       },
       error: (error: any) => {
         this.alert('warning', `No es Posible Actualizar el Cliente`, '');
         this.modalRef.hide();
+        this.loading = false;
       },
     });
     this.modalRef.hide();
+    this.loading = true;
   }
 
   convertDateFormat(inputDate: string | Date): string {
@@ -380,8 +397,111 @@ export class CustomersModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    this.loading = true;
+    const reasonName = this.customerForm.get('reasonName'); //^
+    const paternalSurname = this.customerForm.get('paternalSurname');
+    const maternalSurname = this.customerForm.get('maternalSurname');
+    const personType = this.customerForm.get('personType');
+    const rfc = this.customerForm.get('rfc'); //^
+    const curp = this.customerForm.get('curp');
+    const country = this.customerForm.get('cucountryrp');
+    const state = this.customerForm.get('cucountrstateyrp');
+    const stateId = this.customerForm.get('stateId');
+    const city = this.customerForm.get('stateIcityd');
+    const municipalityId = this.customerForm.get('statmunicipalityIdeIcityd');
+    const zipCode = this.customerForm.get('zipCode');
+    const street = this.customerForm.get('street');
+    const colony = this.customerForm.get('colony');
+    const delegation = this.customerForm.get('delegation');
+    const fax = this.customerForm.get('fax');
+    const phone = this.customerForm.get('phone');
+    const mailWeb = this.customerForm.get('mailWeb');
+    const user = this.customerForm.get('user');
+    const password = this.customerForm.get('password');
+    const blackList = this.customerForm.get('blackList');
+    const blackListDate: string | null =
+      this.customerForm.get('blackListDate').value !== null
+        ? this.convertDateFormat(this.customerForm.get('blackListDate').value)
+        : null;
+    const releaseDate: string | null =
+      this.customerForm.get('releaseDate').value !== null
+        ? this.convertDateFormat(this.customerForm.get('releaseDate').value)
+        : null;
+    const penaltyId = this.customerForm.get('penaltyId');
+    const sellerId = this.customerForm.get('sellerId');
+    const approvedRfc = this.customerForm.get('approvedRfc');
+    const userFree = this.customerForm.get('userFree');
+    const freeDate: string | null =
+      this.customerForm.get('freeDate').value !== null
+        ? this.convertDateFormat(this.customerForm.get('freeDate').value)
+        : null;
+    const economicAgreementKey = this.customerForm.get('economicAgreementKey');
+    const identificationType = this.customerForm.get('identificationType');
+    const identificationNumber = this.customerForm.get('identificationNumber');
+    const agentId = this.customerForm.get('agentId');
+    const outsideNumber = this.customerForm.get('outsideNumber');
+    const insideNumber = this.customerForm.get('insideNumber');
+    const interbankKey = this.customerForm.get('interbankKey');
+    const bank = this.customerForm.get('bank');
+    const branch = this.customerForm.get('branch');
+    const checksAccount = this.customerForm.get('checksAccount');
+    const penaltyInitDate: string | null =
+      this.customerForm.get('penaltyInitDate').value !== null
+        ? this.convertDateFormat(this.customerForm.get('penaltyInitDate').value)
+        : null;
+    const penaltyEndDate: string | null =
+      this.customerForm.get('penaltyEndDate').value !== null
+        ? this.convertDateFormat(this.customerForm.get('penaltyEndDate').value)
+        : null;
+    const penalizeUser = this.customerForm.get('penalizeUser');
+    const registryNumber = this.customerForm.get('registryNumber');
+    const model: ICustomer = {
+      reasonName: reasonName?.value,
+      paternalSurname: paternalSurname?.value,
+      maternalSurname: maternalSurname?.value,
+      personType: personType?.value,
+      rfc: rfc?.value,
+      curp: curp?.value,
+      country: country?.value,
+      state: state?.value,
+      stateId: stateId?.value,
+      city: city?.value,
+      municipalityId: municipalityId?.value,
+      zipCode: zipCode?.value,
+      street: street?.value,
+      colony: colony?.value,
+      delegation: delegation?.value,
+      fax: fax?.value,
+      phone: phone?.value,
+      mailWeb: mailWeb?.value,
+      user: user?.value,
+      password: password?.value,
+      blackList: blackList?.value,
+      blackListDate: blackListDate,
+      releaseDate: releaseDate,
+      penaltyId: penaltyId?.value,
+      sellerId: sellerId?.value,
+      approvedRfc: approvedRfc?.value,
+      userFree: userFree?.value,
+      freeDate: freeDate,
+      economicAgreementKey: economicAgreementKey?.value,
+      identificationType: identificationType?.value,
+      identificationNumber: identificationNumber?.value,
+      agentId: agentId?.value,
+      outsideNumber: outsideNumber?.value,
+      insideNumber: insideNumber?.value,
+      interbankKey: interbankKey?.value,
+      bank: bank?.value,
+      branch: branch?.value,
+      checksAccount: checksAccount?.value,
+      penaltyInitDate: penaltyInitDate,
+      penaltyEndDate: penaltyEndDate,
+      penalizeUser: penalizeUser?.value,
+      registryNumber: registryNumber?.value,
+    };
+    console.log(model);
     if (this.customerForm.valid) {
-      this.customerService.create(this.customerForm.value).subscribe({
+      this.customerService.create(model).subscribe({
         next: data => {
           this.handleSuccess();
           this.modalRef.hide();
@@ -403,9 +523,10 @@ export class CustomersModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit
-      ? 'Cliente Actualizado(a)'
-      : 'Cliente Creado(a)';
+      ? 'Cliente Actualizado'
+      : 'Cliente Creado';
     this.alert('success', `${message} Correctamente`, '');
+    this.loading = true;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

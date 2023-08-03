@@ -140,7 +140,7 @@ export class RegistrationHelper extends BasePage {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 2) {
+    } else if (!lisDocument || lisDocument < 1) {
       this.message(
         'warning',
         'Se debe asociar un documento a la solicitud para continuar',
@@ -575,7 +575,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motor" en Información de la Embarcación esta vacio.'
+                'El campo "No. Motor" en Información de la Embarcación esta vacio.'
               );
               break;
             } else if (good.enginesNumber === null) {
@@ -584,7 +584,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motores" en Información de la Embarcación esta vacio.'
+                'El campo "No. Motores" en Información de la Embarcación esta vacio.'
               );
               break;
             } /* else if (good.origin === null) {
@@ -641,7 +641,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motor" en Información de Aereonave esta vacio.'
+                'El campo "No. Motor" en Información de Aereonave esta vacio.'
               );
               break;
             } else if (good.enginesNumber === null) {
@@ -650,7 +650,7 @@ export class RegistrationHelper extends BasePage {
               this.message(
                 'warning',
                 `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'El campo "Num. Motores" en Información de Aereonave esta vacio.'
+                'El campo "No. Motores" en Información de Aereonave esta vacio.'
               );
               break;
             } /* else if (good.origin === null) {

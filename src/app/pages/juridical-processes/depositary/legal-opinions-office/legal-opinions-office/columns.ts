@@ -130,7 +130,7 @@ export const CCP_COLUMS_OFICIO = {
     // },
   },
   userOrPerson: {
-    title: 'Nombre Persona',
+    title: 'Nombre de la Persona',
     type: 'string',
     sort: false,
   },

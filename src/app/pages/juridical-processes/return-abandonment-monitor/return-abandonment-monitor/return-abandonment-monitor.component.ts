@@ -187,7 +187,7 @@ export class ReturnAbandonmentMonitorComponent
             this.onLoadToast(
               'warning',
               'Notificación por Bien',
-              'Se encontró un CVE usuario ractifica'
+              'Se encontró una Cve. de Usuario que Ractifica'
             );
           } else if (
             data[0].userCorrectsKey == null &&
@@ -221,7 +221,7 @@ export class ReturnAbandonmentMonitorComponent
           this.onLoadToast(
             'success',
             'Ratificado',
-            'Se modificó el CVE Usuario Ratifica'
+            'Se modificó la Cve. de Usuario que Ratifica'
           );
         },
         error: err => {

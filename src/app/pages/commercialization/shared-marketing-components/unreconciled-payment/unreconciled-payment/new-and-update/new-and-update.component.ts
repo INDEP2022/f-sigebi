@@ -64,7 +64,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      reference: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      paymentId: [null],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       movementNumber: [
         null,
 
@@ -74,25 +78,28 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
       bankKey: [null, [Validators.required]],
       code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      lotId: [null],
+      lotId: [null, Validators.required],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
-      recordDate: [new Date()],
-      referenceOri: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      recordDate: [null],
+      referenceOri: [null],
       dateOi: [null],
       entryOrderId: [null, Validators.pattern(NUMBERS_PATTERN)],
       validSystem: [null, Validators.pattern(STRING_PATTERN)],
       description: [null, Validators.pattern(STRING_PATTERN)],
-      branchOffice: [null, [Validators.pattern(STRING_PATTERN)]],
+      branchOffice: [null],
       reconciled: [null, Validators.pattern(STRING_PATTERN)],
       appliedTo: [null],
       clientId: [null],
+      rfc: [null],
+      name: [null],
     });
 
     if (this.data != null) {
       this.valInitClient = false;
       this.edit = true;
       this.form.patchValue({
+        paymentId: this.data.paymentId,
         reference: this.data.reference,
         movementNumber: this.data.movementNumber,
         date: secondFormatDateToDate2(this.returnParseDate_(this.data.date)),
@@ -101,28 +108,31 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         code: this.data.code,
         type: this.data.type,
         result: this.data.result,
-        recordDate: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.recordDate)
-        ),
+        // recordDate: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.recordDate)
+        // ),
         referenceOri: this.data.referenceOri,
-        dateOi: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.dateOi)
-        ),
+        // dateOi: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.dateOi)
+        // ),
         entryOrderId: this.data.entryOrderId,
         validSystem: this.data.validSystem,
         description: this.data.description,
         branchOffice: this.data.branchOffice,
-        reconciled: this.data.reconciled,
+        // reconciled: this.data.reconciled,
         appliedTo: this.data.appliedTo,
-        clientId: this.data.clientId,
+        // clientId: this.data.idAndName,
         lotId: this.data.lotId,
       });
 
+      this.form.get('clientId').setValue(this.data.idAndName);
+
+      this.form.get('bankKey').setValue(this.data.bankAndNumber);
       console.log('this.data', this.data);
 
       // if (this.data.clientId) {
       //   const params = new ListParams()
-      //   params.text = this.data.clientId;
+      //   params.te  returnDate(date: Date) {}
       //   this.getClientsById(params)
       // }
     } else {
@@ -141,27 +151,33 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   update() {
+    // console.log(this.form.value.bankKey)
+    // console.log(this.form.value.clientId)
+    // return
+    const bank = this.form.value.bankKey;
+    const client = this.form.value.clientId;
     const requestBody: any = {
       paymentId: this.data.paymentId,
-      reference: Number(this.form.value.reference),
+      reference: this.form.value.reference,
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
-      bankKey: this.form.value.bankKey,
-      code: Number(this.form.value.code),
+      bankKey: bank.cveBank,
+      code: bank.idCode,
       lotId: this.form.value.lotId,
-      type: this.form.value.type,
-      result: this.form.value.result,
-      recordDate: this.form.value.recordDate,
-      referenceOri: this.form.value.referenceOri,
-      dateOi: this.form.value.dateOi,
-      entryOrderId: this.form.value.entryOrderId,
-      validSystem: this.form.value.validSystem,
-      description: this.form.value.description,
-      branchOffice: this.form.value.branchOffice,
-      reconciled: this.form.value.reconciled,
+      // type: this.form.value.type,
+      // result: this.form.value.result,
+      // recordDate: this.form.value.recordDate,
+      // referenceOri: this.form.value.referenceOri,
+      // dateOi: this.form.value.dateOi,
+      // entryOrderId: this.form.value.entryOrderId,
+      // validSystem:
+      //   this.form.value.validSystem == '' ? null : this.form.value.validSystem,
+      // description: this.form.value.description,
+      // branchOffice: this.form.value.branchOffice,
+      // reconciled: this.form.value.reconciled,
       appliedTo: this.form.value.appliedTo,
-      clientId: this.form.value.clientId,
+      clientId: client ? client.id : null,
     };
 
     this.paymentService.update(this.data.paymentId, requestBody).subscribe({
@@ -204,7 +220,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // this.alert('success', 'El Registro se Eliminó Correctamente', '');
       },
       error: error => {
-        this.handleError();
+        // if (error.error.message == "La clave del banco no ha sido previamente registrada"){
+        this.alert(
+          'error',
+          'Ocurrió un Error al Guardar el Registro',
+          error.error.message
+        );
+        // }
+        // this.handleError();
         // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
       },
     });
@@ -212,7 +235,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, this.title);
+    this.alert('success', `Registro ${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -220,7 +243,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, this.title);
+    this.alert('error', `Error al Intentar ${message} el Registro`, '');
     this.loading = false;
   }
 
@@ -324,7 +347,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params.addFilter('cveAccount', lparams.text, SearchFilter.EQ);
+        params.addFilter('idCode', lparams.text, SearchFilter.EQ);
       } else {
         console.log('NO');
         params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
@@ -334,23 +357,25 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.accountMovementService.getAccountBank(params.getParams()).subscribe({
-        next: response => {
-          console.log('ress1', response);
-          let result = response.data.map(item => {
-            item['bankAndNumber'] = item.cveBank + ' - ' + item.cveAccount;
-          });
+      this.accountMovementService
+        .getPaymentControl(params.getParams())
+        .subscribe({
+          next: response => {
+            console.log('ress1', response);
+            let result = response.data.map(item => {
+              item['bankAndNumber'] = item.idCode + ' - ' + item.cveBank;
+            });
 
-          Promise.all(result).then((resp: any) => {
-            this.banks = new DefaultSelect(response.data, response.count);
-            this.loading = false;
-          });
-        },
-        error: err => {
-          this.banks = new DefaultSelect();
-          console.log(err);
-        },
-      });
+            Promise.all(result).then((resp: any) => {
+              this.banks = new DefaultSelect(response.data, response.count);
+              this.loading = false;
+            });
+          },
+          error: err => {
+            this.banks = new DefaultSelect();
+            console.log(err);
+          },
+        });
     });
   }
 

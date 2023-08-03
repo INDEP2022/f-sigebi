@@ -32,11 +32,11 @@
           </div>
         </div>
       </div>
-      <div>
+      <div [class.table-loading]="loading">
         <ng2-smart-table
           [settings]="settings"
           [source]="data"
-          (onContentRender)="onContentRender($event)">
+          (userRowSelect)="onUserRowSelect($event)">
         </ng2-smart-table>
       </div>
       <app-pagination
@@ -50,7 +50,9 @@
       </button>
     </div>
     <div class="mt-5">
-      <app-indicators-history-detail></app-indicators-history-detail>
+      <app-indicators-history-detail
+        [noVolante]="noVolante"
+        [noExpediente]="noExpediente"></app-indicators-history-detail>
     </div>
     <div class="mt-5">
       <app-indicators-history-service-orders></app-indicators-history-service-orders>

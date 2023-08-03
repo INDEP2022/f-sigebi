@@ -1,0 +1,69 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row mt-2 mb-3 ml-0 mr-0">
+    <div class="col-md-8 p-0">
+      <form-field label="No. Solicitud" [control]="solicitud">
+        <input type="number" class="form-control" formControlName="solicitud" />
+      </form-field>
+    </div>
+    <div class="col-md-2 col-6 mb-4 pl-0">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        [disabled]="solicitud.invalid"
+        (click)="fillSolicitud()">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
+    <div class="col-md-2 col-6 mb-4 p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger active btn-sm"
+        (click)="clear()">
+        Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <app-delegation-table
+      [solicitud]="solicitudTable"
+      [update]="updateTable"></app-delegation-table>
+  </div>
+  <ng-custom-select-loading
+    [form]="form"
+    formControlName="nuevaOficina"
+    label="Nueva Oficina Regional"
+    path="audit/api/v1/application/delegaciones-regionales"
+    value="id"
+    bindLabel="descripcion"
+    paramSearch="filter.descripcion"
+    prefixSearch="$ilike"></ng-custom-select-loading>
+  <div class="row pt-4">
+    <form-field label="Justificación del Cambio" [control]="justify">
+      <textarea
+        class="form-control"
+        formControlName="justify"
+        [readOnly]="readOnlyJustify"
+        rows="2"></textarea>
+    </form-field>
+  </div>
+  <tr>
+    <td colspan="5" align="center">
+      <button
+        [disabled]="form.invalid"
+        class="btn btn-primary btn-sm mr-2 active"
+        type="submit"
+        size="small"
+        (click)="update()">
+        Actualizar
+      </button>
+      <button
+        class="btn btn-danger btn-sm m-2 active"
+        type="submit"
+        size="small"
+        (click)="clear()">
+        Cancelar
+      </button>
+    </td>
+  </tr>
+</form>

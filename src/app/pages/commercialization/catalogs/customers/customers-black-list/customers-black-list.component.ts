@@ -106,12 +106,122 @@ export class CustomersBlackListComponent extends BasePage implements OnInit {
       },
       error: error => (this.loading = false),
     });
+  } //exportAll
+
+  //Exportar todos los clientes con penalizaciones
+  exportAll(): void {
+    this.loading = true;
+    this.customerService.getAllClientsBlackListExport().subscribe({
+      next: response => {
+        this.downloadDocument(
+          'TODOS_LOS_CLIENTES_LISTA_NEGRA',
+          'excel',
+          response.base64File
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 
   //Exportar lista negra de clientes
-  exportclientsBlackList(): void {
-    this.excelService.exportAsExcelFile(this.customers, 'ClientesEnListaNegra');
-  }
+  // exportSelected(): void {
+  //   const data = this.customers.map((row: any) => this.transFormColums(row));
+  //   this.excelService.exportAsExcelFile(data, 'ClientesEnListaNegra');
+  // }
+
+  // private transFormColums(row: any) {
+  //   return {
+  //     'Clave Cliente': row.id,
+  //     'Nombre o Razón Social': row.reasonName,
+  //     RFC: row.rfc,
+  //     Calle: row.street,
+  //     Ciudad: row.city,
+  //     Colonia: row.colony,
+  //     Delegación: row.delegation,
+  //     'Código Postal': row.zipCode,
+  //     País: row.country,
+  //     Fax: row.fax,
+  //     'Clave Vendedor': row.sellerId,
+  //     Teléfono: row.phone,
+  //     'E-mail': row.mailWeb,
+  //     Estado: row.state,
+  //     CURP: row.curp,
+  //     'Lista Negra': row.blackList,
+  //     'Apellido Paterno': row.paternalSurname,
+  //     'Apellido Materno': row.maternalSurname,
+  //     'Clave Municipal': row.municipalityId,
+  //     'Clave Estatal': row.stateId,
+  //     'Fecha de Lista Negra': row.blackListDate,
+  //     'Fecha de Liberación': row.releaseDate,
+  //     'Clave de Penalización': row.penaltyId,
+  //     'Tipo de Persona': row.personType,
+  //     'RFC Aprobado': row.approvedRfc,
+  //     'Usuario Liberado': row.userFree,
+  //     'Fecha Libera': row.freeDate,
+  //     'No. Registro': row.registryNumber,
+  //     'Clave de Actividad Económica': row.economicAgreementKey,
+  //     'Tipo de Identificación': row.identificationType,
+  //     'No. Identificación': row.identificationNumber,
+  //     'Clave de Representante': row.agentId,
+  //     'No. Exterior': row.outsideNumber,
+  //     'No. Interior': row.insideNumber,
+  //     Contraseña: row.password,
+  //     Usuario: row.user,
+  //     'CLABE Interbancaria': row.interbankKey,
+  //     Banco: row.bank,
+  //     Sucursal: row.branch,
+  //     'Cuenta de Cheques': row.checksAccount,
+  //     'Fecha Inicial de Penalización': row.penaltyInitDate,
+  //     'Usuario Penalizado': row.penalizeUser,
+  //   };
+  // }
 
   close() {
     this.modalRef.hide();

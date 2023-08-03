@@ -1,16 +1,54 @@
 <form [formGroup]="form" class="form-material">
-  <div class="row margin-input">
+  <div class="row mt-2 mb-3 ml-0 mr-0">
     <div class="col-md-8 p-0">
-      <form-field label="No. Gestión" [control]="form.get('gestion')">
+      <form-field label="No. Gestión" [control]="gestion">
         <input type="number" class="form-control" formControlName="gestion" />
       </form-field>
     </div>
-    <div class="col-md-2">
-      <button type="button" class="btn btn-primary active btn-sm">
+    <div class="col-md-2 col-6 mb-4 pl-0">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        [disabled]="gestion.invalid"
+        (click)="fillGoodNumber()">
         Buscar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
+    <div class="col-md-2 col-6 mb-4 p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger active btn-sm"
+        (click)="clear()">
+        Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <app-fraction-table [goodNumber]="goodNumber"></app-fraction-table>
+  </div>
+  <div class="row mt-2 mb-3 ml-0 mr-0">
+    <div class="col-md-8 p-0">
+      <form-field label="Nueva Fracción Arancelaria " [control]="newFraction">
+        <input
+          type="string"
+          class="form-control"
+          formControlName="newFraction" />
+      </form-field>
+    </div>
+    <div class="col-md-2 pl-0">
+      <button
+        type="button"
+        class="btn btn-primary active btn-sm"
+        [disabled]="newFraction.invalid"
+        (click)="fillFraction()">
+        Buscar
+        <i class="bx bx-search-alt bx-sm float-icon"></i>
+      </button>
+    </div>
+  </div>
+  <div class="row">
+    <app-fraction-table [fractionCod]="fractionCod"></app-fraction-table>
   </div>
   <!-- <div class="row">
     <form-field label="Fraccion" [control]="form.get('dice')">
@@ -31,6 +69,15 @@
         maxlength="1250"></textarea>
     </form-field>
   </div> -->
+  <div class="row">
+    <form-field label="Justificación del Cambio" [control]="justify">
+      <textarea
+        class="form-control"
+        formControlName="justify"
+        [readOnly]="readOnlyJustify"
+        rows="2"></textarea>
+    </form-field>
+  </div>
   <tr>
     <td colspan="5" align="center">
       <button

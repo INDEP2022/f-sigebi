@@ -90,7 +90,7 @@ export const COLUMNS = {
     sort: false,
   },
   expedientTransferenceNumber: {
-    title: 'Exp. Transfer',
+    title: 'Exp. Transferente',
     type: 'string',
     sort: false,
   },

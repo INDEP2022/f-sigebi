@@ -15,7 +15,7 @@ import { CAPTURE_LINES_COLUMNS } from '../../capture-lines-main/capture-lines-co
 @Component({
   selector: 'app-export-capture-lines',
   templateUrl: './export-capture-lines.component.html',
-  styles: [], //
+  styles: [],
 })
 export class ExportCaptureLinesComponent extends BasePage implements OnInit {
   title: string = 'Detalle de Captura';
@@ -51,6 +51,9 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'pallette':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -63,7 +66,6 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(`${searchFilter}:${filter.search}`);
             } else {
               delete this.columnFilters[field];
             }
@@ -79,7 +81,6 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
 
   //Tabla con todos los eventos para exportar
   getData() {
-    this.data = new LocalDataSource();
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -98,13 +99,89 @@ export class ExportCaptureLinesComponent extends BasePage implements OnInit {
       });
   }
 
-  //Exportar lista blanca de clientes
-  exportcaptureLinesMain(): void {
-    this.excelService.exportAsExcelFile(
-      this.captureLinesMain,
-      'DetallesDeBusquedaYProcesamientoDePagos'
-    );
+  //Exportar todos líneas de captura
+  exportAll(): void {
+    this.loading = true;
+    this.capturelineService
+      .getAllDetCaptureLinesExport(this.captureId)
+      .subscribe({
+        next: response => {
+          this.downloadDocument(
+            'DETALLES_DE_CAPTURA',
+            'excel',
+            response.base64File
+          );
+          // this._downloadExcelFromBase64(response.base64File, 'TODOS_LOS_CLIENTES_PENALIZADOS');
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
   }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  //Exportar lista blanca de clientes
+  // exportSelected(): void {
+  //   const data = this.captureLinesMain.map((row: any) =>
+  //     this.transFormColums(row)
+  //   );
+  //   this.excelService.exportAsExcelFile(
+  //     data,
+  //     'DetallesDeBusquedaYProcesamientoDePagos'
+  //   );
+  // }
+
+  // private transFormColums(row: any) {
+  //   return {
+  //     Evento: row.eventId,
+  //     'No. Paleta': row.pallette,
+  //     'Línea Captura': row.captureLine,
+  //   };
+  // }
 
   close() {
     this.modalRef.hide();

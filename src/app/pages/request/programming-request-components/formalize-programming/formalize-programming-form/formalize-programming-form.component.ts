@@ -27,6 +27,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
+import { EmailService } from 'src/app/core/services/ms-email/email.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -236,7 +237,8 @@ export class FormalizeProgrammingFormComponent
     private signatoriesService: SignatoriesService,
     private sanitizer: DomSanitizer,
     private taskService: TaskService,
-    private authService: AuthService
+    private authService: AuthService,
+    private emailService: EmailService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -307,7 +309,6 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.programmingId'] = this.programmingId;
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         //this.receiptGuardGood = response.data[0];
 
         const filterWarehouse = response.data.map((item: any) => {
@@ -317,7 +318,7 @@ export class FormalizeProgrammingFormComponent
         const infoWarehouse = filterWarehouse.filter((item: IRecepitGuard) => {
           return item;
         });
-        console.log('infoWarehouse', infoWarehouse);
+
         this.receiptWarehouseData = infoWarehouse[0];
         this.receipts.load(infoWarehouse);
         //this.receiptWarehouseGood = infoWarehouse[0];
@@ -331,7 +332,6 @@ export class FormalizeProgrammingFormComponent
             return item;
           });
 
-          console.log('infoGuard', infoGuard);
           this.receiptGuardData = infoGuard[0];
           this.receipts.load(infoGuard);
           //this.receiptGuardGood = infoGuard[0];
@@ -348,7 +348,6 @@ export class FormalizeProgrammingFormComponent
     params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
         this.actId = response.data[0].id;
         this.proceedingData = response.data[0];
         this.proceeding.clear();
@@ -730,10 +729,7 @@ export class FormalizeProgrammingFormComponent
   }
 
   generateMinute(proceeding: IProceedings) {
-    console.log('receipts', this.receiptData);
-    console.log('receipts guard', this.receiptGuardData);
-    console.log('receipts warehouse', this.receiptWarehouseData);
-
+    proceeding.programmingId = this.programmingId;
     if (
       this.receiptData?.statusReceipt == 'CERRADO' ||
       this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
@@ -756,13 +752,10 @@ export class FormalizeProgrammingFormComponent
                 tranType: string,
                 typeFirm: string
               ) => {
-                console.log('proceeding', proceeding);
-                console.log('tranType', tranType);
-                console.log('typeFirm', typeFirm);
-                /*if (proceeding && tranType) {
-                  this.processInfoProceeding(proceeding, tranType);
+                if (proceeding && tranType) {
+                  this.processInfoProceeding(proceeding, tranType, typeFirm);
                   //this.getProccedings();
-                } */
+                }
               },
             };
 
@@ -785,13 +778,8 @@ export class FormalizeProgrammingFormComponent
             tranType: string,
             typeFirm: string
           ) => {
-            if (proceeding) {
-              console.log('proceeding', proceeding);
-              console.log('tranType', tranType);
-              console.log('typeFirm', typeFirm);
-              this.processInfoProceeding(proceeding, tranType, typeFirm);
-              //this.getProccedings();
-            }
+            this.processInfoProceeding(proceeding, tranType, typeFirm);
+            //this.getProccedings();
           },
         };
 
@@ -851,37 +839,32 @@ export class FormalizeProgrammingFormComponent
     tranType: string,
     typeFirm: string
   ) {
+    let OIC: boolean = false;
+    let uvfv: boolean = false;
     const params = new BehaviorSubject<ListParams>(new ListParams());
-    let nomReport: string = '';
-    let idTypeDoc: number = 0;
     params.getValue()['filter.id'] = proceeding.id;
-    params.getValue()['filter.idProgramming'] = this.programmingId;
+    params.getValue()['filter.idPrograming'] = this.programmingId;
     params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('response', response);
-        const proceeding = response.data[0];
-        //const keyDoc = proceeding.programmingId + '-' + proceeding.actId;
-        const keyDoc: number = this.programming.id;
-        let no_auto: number = 0;
-        let no_electronicF: number = 0;
-        let autog: boolean = false;
-        let elect: boolean = false;
-        let OIC: boolean = false;
-        let uvfv: boolean = false;
+        const _proceeding = response.data[0];
+        let nomReport: string = '';
+        let idTypeDoc: number = 0;
 
-        const nomFun1 = proceeding.nameWorker1;
-        const nomFun2 = proceeding.nameWorker2;
-        const nomOic = proceeding.nameWorkerOic;
-        const nomUvfv = proceeding.nameWorkerUvfv;
-        const nomWit1 = proceeding.nameWitness1;
-        const nomWit2 = proceeding.nameWitness2;
-        const firmFun1 = proceeding.electronicSignatureWorker1;
-        const firmFun2 = proceeding.electronicSignatureWorker2;
-        const firmUvfv = proceeding.electronicSignatureUvfv;
-        const firmOic = proceeding.electronicSignatureOic;
-        const firmWit1 = proceeding.electronicSignatureWitness1;
-        const firmWit2 = proceeding.electronicSignatureWitness2;
+        const keyDoc: number = this.programming.id;
+        const nomFun1 = _proceeding.nameWorker1;
+        const nomFun2 = _proceeding.nameWorker2;
+        const nomOic = _proceeding.nameWorkerOic;
+        const nomUvfv = _proceeding.nameWorkerUvfv;
+        const nomWit1 = _proceeding.nameWitness1;
+        const nomWit2 = _proceeding.nameWitness2;
+        const firmFun1 = _proceeding.electronicSignatureWorker1;
+        const firmFun2 = _proceeding.electronicSignatureWorker2;
+        const firmUvfv = _proceeding.electronicSignatureUvfv;
+        const firmOic = _proceeding.electronicSignatureOic;
+        const firmWit1 = _proceeding.electronicSignatureWitness1;
+        const firmWit2 = _proceeding.electronicSignatureWitness2;
 
         if (tranType == 'A') {
           nomReport = 'ActaAseguradosBook.jasper';
@@ -895,7 +878,13 @@ export class FormalizeProgrammingFormComponent
         }
 
         if (typeFirm == 'autografa') {
-          this.loadDocument(nomReport, proceeding.id, idTypeDoc, typeFirm);
+          this.loadDocument(
+            nomReport,
+            _proceeding.id,
+            idTypeDoc,
+            typeFirm,
+            _proceeding
+          );
         } else {
           const learnedType = idTypeDoc;
           const learnedId = this.programming.id;
@@ -916,13 +905,13 @@ export class FormalizeProgrammingFormComponent
                   await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_FUN_1',
                     nomFun1,
-                    proceeding.positionWorker1,
-                    proceeding.idCatWorker1,
-                    proceeding.idNoWorker1
+                    _proceeding.positionWorker1,
+                    _proceeding.idCatWorker1,
+                    _proceeding.idNoWorker1
                   );
                 }
 
@@ -930,13 +919,13 @@ export class FormalizeProgrammingFormComponent
                   await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_FUN_2',
                     nomFun2,
-                    proceeding.positionWorker2,
-                    proceeding.idCatWorker2,
-                    proceeding.idNoWorker2
+                    _proceeding.positionWorker2,
+                    _proceeding.idCatWorker2,
+                    _proceeding.idNoWorker2
                   );
                 }
 
@@ -944,13 +933,13 @@ export class FormalizeProgrammingFormComponent
                   await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_TEST_1',
                     nomWit1,
                     null,
-                    proceeding.idCatWitness1,
-                    proceeding.idNoWitness1
+                    _proceeding.idCatWitness1,
+                    _proceeding.idNoWitness1
                   );
                 }
 
@@ -958,76 +947,61 @@ export class FormalizeProgrammingFormComponent
                   const createSigned = await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_TEST_2',
                     nomWit2,
                     null,
-                    proceeding.idCatWitness2,
-                    proceeding.idNoWitness2
+                    _proceeding.idCatWitness2,
+                    _proceeding.idNoWitness2
                   );
 
                   if (createSigned && tranType != 'CE') {
                     if (nomReport) {
                       this.loadDocument(
                         nomReport,
-                        proceeding.id,
+                        _proceeding.id,
                         idTypeDoc,
-                        typeFirm
+                        typeFirm,
+                        _proceeding
                       );
                     }
                   }
                 }
 
                 if (tranType == 'CE') {
-                  if (OIC) {
-                    if (firmOic) {
-                      const createOIC = await this.createFirm(
-                        keyDoc,
-                        idTypeDoc,
-                        proceeding.id,
-                        'ACTAS',
-                        'FIRMA_ELECT_OIC',
-                        nomOic,
-                        proceeding.positionWorkerOic,
-                        proceeding.idCatWorkerOic,
-                        proceeding.idNoWorkerOic
-                      );
+                  if (firmOic) {
+                    const createOIC = await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      _proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_OIC',
+                      nomOic,
+                      _proceeding.positionWorkerOic,
+                      _proceeding.idCatWorkerOic,
+                      _proceeding.idNoWorkerOic
+                    );
 
-                      if (createOIC) {
-                        if (uvfv) {
-                          if (firmUvfv) {
-                            const createsig = await this.createFirm(
-                              keyDoc,
-                              idTypeDoc,
-                              proceeding.id,
-                              'ACTAS',
-                              'FIRMA_ELECT_UVFV',
-                              nomUvfv,
-                              proceeding.positionWorkerUvfv,
-                              null,
-                              null
-                            );
-
-                            if (createsig) {
-                              if (nomReport) {
-                                this.loadDocument(
-                                  nomReport,
-                                  proceeding.id,
-                                  idTypeDoc,
-                                  typeFirm
-                                );
-                              }
-                            }
-                          } else {
-                            this.loadDocument(
-                              nomReport,
-                              proceeding.id,
-                              idTypeDoc,
-                              typeFirm
-                            );
-                          }
+                    if (createOIC) {
+                      if (!firmUvfv) {
+                        if (nomReport) {
+                          this.loadDocument(
+                            nomReport,
+                            _proceeding.id,
+                            idTypeDoc,
+                            typeFirm,
+                            _proceeding
+                          );
                         }
+                      } else {
+                        this.loadDocument(
+                          nomReport,
+                          _proceeding.id,
+                          idTypeDoc,
+                          typeFirm,
+                          _proceeding
+                        );
                       }
                     }
                   }
@@ -1038,13 +1012,13 @@ export class FormalizeProgrammingFormComponent
                   await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_FUN_1',
                     nomFun1,
-                    proceeding.positionWorker1,
-                    proceeding.idCatWorker1,
-                    proceeding.idNoWorker1
+                    _proceeding.positionWorker1,
+                    _proceeding.idCatWorker1,
+                    _proceeding.idNoWorker1
                   );
                 }
 
@@ -1052,13 +1026,13 @@ export class FormalizeProgrammingFormComponent
                   await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_FUN_2',
                     nomFun2,
-                    proceeding.positionWorker2,
-                    proceeding.idCatWorker2,
-                    proceeding.idNoWorker2
+                    _proceeding.positionWorker2,
+                    _proceeding.idCatWorker2,
+                    _proceeding.idNoWorker2
                   );
                 }
 
@@ -1066,13 +1040,13 @@ export class FormalizeProgrammingFormComponent
                   await this.createFirm(
                     keyDoc,
                     idTypeDoc,
-                    proceeding.id,
+                    _proceeding.id,
                     'ACTAS',
                     'FIRMA_ELECT_TEST_1',
                     nomWit1,
                     null,
-                    proceeding.idCatWitness1,
-                    proceeding.idNoWitness1
+                    _proceeding.idCatWitness1,
+                    _proceeding.idNoWitness1
                   );
                 }
 
@@ -1085,8 +1059,8 @@ export class FormalizeProgrammingFormComponent
                     'FIRMA_ELECT_TEST_2',
                     nomWit2,
                     null,
-                    proceeding.idCatWitness2,
-                    proceeding.idNoWitness2
+                    _proceeding.idCatWitness2,
+                    _proceeding.idNoWitness2
                   );
 
                   if (createSigned && tranType != 'CE') {
@@ -1095,63 +1069,46 @@ export class FormalizeProgrammingFormComponent
                         nomReport,
                         this.actId,
                         idTypeDoc,
-                        typeFirm
+                        typeFirm,
+                        _proceeding
                       );
                     }
                   }
                 }
 
                 if (tranType == 'CE') {
-                  if (OIC) {
-                    if (firmOic) {
-                      const createOIC = await this.createFirm(
-                        keyDoc,
-                        idTypeDoc,
-                        proceeding.id,
-                        'ACTAS',
-                        'FIRMA_ELECT_OIC',
-                        nomOic,
-                        proceeding.positionWorkerOic,
-                        proceeding.idCatWorkerOic,
-                        proceeding.idNoWorkerOic
-                      );
+                  if (firmOic) {
+                    const createOIC = await this.createFirm(
+                      keyDoc,
+                      idTypeDoc,
+                      _proceeding.id,
+                      'ACTAS',
+                      'FIRMA_ELECT_OIC',
+                      nomOic,
+                      _proceeding.positionWorkerOic,
+                      _proceeding.idCatWorkerOic,
+                      _proceeding.idNoWorkerOic
+                    );
 
-                      if (createOIC) {
-                        if (uvfv) {
-                          if (firmUvfv) {
-                            const createsig = await this.createFirm(
-                              keyDoc,
-                              idTypeDoc,
-                              proceeding.id,
-                              'ACTAS',
-                              'FIRMA_ELECT_UVFV',
-                              nomUvfv,
-                              proceeding.positionWorkerUvfv,
-                              null,
-                              null
-                            );
-
-                            if (createsig) {
-                              if (nomReport) {
-                                this.loadDocument(
-                                  nomReport,
-                                  this.actId,
-                                  idTypeDoc,
-                                  typeFirm
-                                );
-                              }
-                            }
-                          } else {
-                            if (nomReport) {
-                              this.loadDocument(
-                                nomReport,
-                                this.actId,
-                                idTypeDoc,
-                                typeFirm
-                              );
-                            }
-                          }
+                    if (createOIC) {
+                      if (!firmUvfv) {
+                        if (nomReport) {
+                          this.loadDocument(
+                            nomReport,
+                            _proceeding.id,
+                            idTypeDoc,
+                            typeFirm,
+                            _proceeding
+                          );
                         }
+                      } else {
+                        this.loadDocument(
+                          nomReport,
+                          _proceeding.id,
+                          idTypeDoc,
+                          typeFirm,
+                          _proceeding
+                        );
                       }
                     }
                   }
@@ -1159,7 +1116,6 @@ export class FormalizeProgrammingFormComponent
               },
             });
         }
-        //const nomFun1 = proceeding. */
       },
       error: error => {},
     });
@@ -1201,7 +1157,8 @@ export class FormalizeProgrammingFormComponent
     nomReport: string,
     actId: number,
     typeDoc: number,
-    typeFirm: string
+    typeFirm: string,
+    proceeding: IProceedings
   ) {
     const idTypeDoc = typeDoc;
     const idProg = this.programming.id;
@@ -1214,9 +1171,17 @@ export class FormalizeProgrammingFormComponent
         programming: this.programming,
         nomReport: nomReport,
         actId: actId,
-        callback: (next: boolean) => {
+        proceedingInfo: proceeding,
+        callback: (next: boolean, typeFirm: string) => {
           if (next) {
-            this.uplodadReceiptDelivery(typeDoc, actId);
+            if (typeFirm == 'autografa') {
+              this.uplodadReceiptDelivery(typeDoc, actId);
+            } else {
+              this.getProccedings();
+              this.proceeding.clear();
+              this.totalItemsProceedings = 0;
+              this.sendEmail();
+            }
           }
         },
       },
@@ -1232,15 +1197,54 @@ export class FormalizeProgrammingFormComponent
       typeDoc: typeDoc,
       actId: actId,
       programming: this.programming,
-      callback: (data: boolean) => {
+      callback: (data: boolean, typeFirm: string) => {
         if (data) {
           this.getProccedings();
           this.proceeding.clear();
+          this.totalItemsProceedings = 0;
+          this.sendEmail();
         }
       },
     };
 
     this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
+  sendEmail() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idPrograming'] = this.programmingId;
+    params.getValue()['filter.statusProceeedings'] = 'CERRADO';
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: async response => {
+        if (response.data.length > 0) {
+          const showBase64: any = await this.showBase64(
+            response.data[0].id_content
+          );
+          const data = {
+            //recipients: `gustavoangelsantosclemente@gmail.com, al221810743@gmail.com`,
+            recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
+            message: `Le informamos que el acta con folio: ${response.data[0].folioProceedings}, terminó satisfactoriamente.`,
+            userCreation: 'dr_sigebi',
+            dateCreation: '2023-07-31',
+            userModification: 'dr_sigebi',
+            dateModification: '2023-07-31',
+            version: '2',
+            subject: 'Notificación de cierre de acta de entrega recepción',
+            nameAtt: response.data[0].folioProceedings,
+            typeAtt: 'application/pdf;',
+            //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
+            process: 'FORMALIZAR',
+            fileB64: showBase64,
+          };
+          this.emailService.createEmailNotify(data).subscribe({
+            next: response => {
+              console.log('correo enviado', response);
+            },
+          });
+        }
+      },
+      error: error => {},
+    });
   }
 
   close() {
@@ -1286,44 +1290,75 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
-    if (this.proceedingData.statusProceeedings == 'CERRADO') {
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        '¿Desea formalizar la programación?'
-      ).then(async question => {
-        if (question.isConfirmed) {
-          const _task = JSON.parse(localStorage.getItem('Task'));
-          const user: any = this.authService.decodeToken();
-          let body: any = {};
-          body['idTask'] = _task.id;
-          body['userProcess'] = user.username;
-          body['type'] = 'SOLICITUD_PROGRAMACION';
-          body['subtype'] = 'Formalizar_Entrega';
-          body['ssubtype'] = 'ACCEPT';
+    this.alertQuestion(
+      'question',
+      'Confirmación',
+      '¿Desea formalizar la programación?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        //const sendEmailendFormalitation = this.sendEmail();
+        const _task = JSON.parse(localStorage.getItem('Task'));
+        const user: any = this.authService.decodeToken();
+        let body: any = {};
+        body['idTask'] = _task.id;
+        body['userProcess'] = user.username;
+        body['type'] = 'SOLICITUD_PROGRAMACION';
+        body['subtype'] = 'Formalizar_Entrega';
+        body['ssubtype'] = 'ACCEPT';
 
-          const closeTask = await this.closeTaskExecuteRecepcion(body);
-          if (closeTask) {
-            this.alertInfo(
-              'success',
-              'Acción correcta',
-              'Se cerro la tarea formalizar entrega correctamente'
-            ).then(question => {
-              if (question.isConfirmed) {
-                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-              }
-            });
-          }
+        const closeTask = await this.closeTaskExecuteRecepcion(body);
+        if (closeTask) {
+          this.alertInfo(
+            'success',
+            'Acción correcta',
+            'Se cerro la tarea formalizar entrega correctamente'
+          ).then(question => {
+            if (question.isConfirmed) {
+              this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+            }
+          });
         }
-      });
-    } else {
-      this.alertInfo(
-        'info',
-        'Acción Inválida',
-        'Se necesita cerrar el acta'
-      ).then();
-    }
+      }
+    });
   }
+
+  showBase64(id_content: string) {
+    return new Promise((resolve, reject) => {
+      this.wcontentService.obtainFile(id_content).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
+  }
+
+  /*sendEmail() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    //params.getValue()['filter.idPrograming'] = this.programmingId;
+    //params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        console.log('acta', response);
+      },
+      error: error => {},
+    });
+    const data = {
+      recipients: 'correopruebas@gmail.com',
+      message:
+        'Le informamos que el acta con folio: OCCIDENTE-SAT-8341-A1-22-08, terminó satisfactoriamente.',
+      userCreation: 'arosales',
+      dateCreation: '2022-08-05',
+      userModification: 'arosales',
+      dateModification: '2022-08-05',
+      version: '2',
+      subject: 'Notificación de cierre de acta de entrega recepción',
+      nameAtt: 'OCCIDENTE-SAT-8341-A1-22-08',
+      typeAtt: 'application/pdf;',
+      //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
+      process: 'FORMALIZAR',
+    };
+  } */
 
   closeTaskExecuteRecepcion(body: any) {
     return new Promise((resolve, reject) => {

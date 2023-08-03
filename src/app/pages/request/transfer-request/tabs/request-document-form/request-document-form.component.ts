@@ -98,9 +98,9 @@ export class RequestDocumentFormComponent extends BasePage implements OnInit {
   showDocsEst() {
     if (!this.rowSelected) {
       this.message(
-        'info',
+        'warning',
         'Error',
-        'Seleccione un data para poder ver sus documentos'
+        'Seleccione un registro para poder ver sus documentos'
       );
       return;
     }

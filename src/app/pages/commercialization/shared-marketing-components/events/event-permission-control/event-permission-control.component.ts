@@ -167,7 +167,7 @@ export class EventPermissionControlComponent
           this.getUserEvent(response.id);
         } else {
           //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontraron registros', '');
+          this.alert('info', 'No se Encontraron Registros', '');
         }
 
         this.loading = false;
@@ -339,7 +339,7 @@ export class EventPermissionControlComponent
             error: error => {
               this.alert(
                 'error',
-                'Ocurrió un Error al Eliminar el registro',
+                'Ocurrió un Error al Eliminar el Registro',
                 ''
               );
             },

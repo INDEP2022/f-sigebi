@@ -154,7 +154,7 @@ export const COLUMNS = {
 */
 export const COLUMNS_DEVOLUCION = {
   movement: {
-    title: 'Num. Movto',
+    title: 'No. Movto',
     sort: false,
   },
   date: {
@@ -166,7 +166,7 @@ export const COLUMNS_DEVOLUCION = {
     sort: false,
   },
   branch: {
-    title: 'sucursal',
+    title: 'Sucursal',
     sort: false,
   },
   amount: {

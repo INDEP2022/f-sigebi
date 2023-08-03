@@ -55,15 +55,15 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService.getProgrammingId(this.idProgramming).subscribe({
       next: response => {
         response.startDate = moment(response.startDate).format(
-          'DD/MMMM/YYYY, h:mm:ss a'
+          'DD/MM/YYYY HH:mm:ss'
         );
-
         response.endDate = moment(response.endDate).format(
-          'DD/MMMM/YYYY, h:mm:ss a'
+          'DD/MM/YYYY HH:mm:ss'
         );
+        console.log('response', response);
         this.form.get('concurrentMsg').setValue(response?.concurrentMsg);
-        this.form.get('endDate').setValue(response?.endDate);
-        this.form.get('startDate').setValue(response?.startDate);
+        this.form.get('endDate').setValue(response.endDate);
+        this.form.get('startDate').setValue(response.startDate);
         //this.form.patchValue(response);
       },
       error: error => {},
@@ -74,12 +74,8 @@ export class RejectProgrammingFormComponent extends BasePage implements OnInit {
     const formData = {
       id: this.idProgramming,
 
-      startDate: moment(this.form.get('startDate').value).format(
-        'YYYY-MM-DD HH:mm:ssZ'
-      ),
-      endDate: moment(this.form.get('endDate').value).format(
-        'YYYY-MM-DD HH:mm:ssZ'
-      ),
+      startDate: new Date(this.form.get('startDate').value),
+      endDate: new Date(this.form.get('endDate').value),
       concurrentMsg: this.form.get('concurrentMsg').value,
     };
     this.programmingService

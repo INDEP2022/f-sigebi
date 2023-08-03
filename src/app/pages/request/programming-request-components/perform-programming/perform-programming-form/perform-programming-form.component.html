@@ -189,13 +189,13 @@
                 <input
                   class="form-control"
                   formControlName="startDate"
-                  (ngModelChange)="checkInfoDate($event)"
                   [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
                     rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
                     dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
                   }"
+                  [minDate]="minDateFecElab"
                   bsDatepicker />
               </form-field>
             </div>
@@ -214,6 +214,7 @@
                     rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
                     dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
                   }"
+                  [minDate]="minDateFecElab"
                   bsDatepicker />
               </form-field>
             </div>
@@ -382,9 +383,9 @@
               class="mr-2 disabled"></confirm-button>
           </div>
 
-          <div class="row pt-5">
+          <div class="row">
             <h5 class="title">Almac&eacute;n</h5>
-            <div class="col-sm-12 pt-4">
+            <div class="col-sm-12">
               <form-field
                 [control]="performForm.get('storeId')"
                 *ngIf="showWarehouseInfo">
@@ -395,7 +396,6 @@
                   value="description"
                   bindLabel="description"
                   (change)="showWarehouse($event)"
-                  label="Selecciona un Almac&eacute;n"
                   (fetchItems)="getWarehouseSelect($event)"></ngx-select>
               </form-field>
               <form-field
@@ -407,8 +407,7 @@
                   [data]="warehouse"
                   [searchable]="showWarehouseInfo"
                   value="idWarehouse"
-                  bindLabel="description"
-                  label="Selecciona un almac&eacute;n"></ngx-select>
+                  bindLabel="description"></ngx-select>
               </form-field>
             </div>
           </div>
@@ -495,16 +494,30 @@
 
           <form [formGroup]="searchGoodsForm" class="form-material">
             <div class="row pt-5">
-              <form-field [control]="searchGoodsForm.get('warehouse')">
-                <ngx-select
-                  [form]="searchGoodsForm"
-                  control="warehouse"
-                  [data]="akaWarehouse"
-                  value="aliasStock"
-                  bindLabel="aliasStock"
-                  label="Alias Almacén"
-                  (fetchItems)="getAkaWarehouse($event)"></ngx-select>
-              </form-field>
+              <div class="col-md-6">
+                <form-field
+                  [control]="searchGoodsForm.get('goodId')"
+                  label="No. Gestión">
+                  <input
+                    type="text"
+                    class="form-control"
+                    maxlength="200"
+                    formControlName="goodId" />
+                </form-field>
+              </div>
+
+              <div class="col-md-6">
+                <form-field [control]="searchGoodsForm.get('warehouse')">
+                  <ngx-select
+                    [form]="searchGoodsForm"
+                    control="warehouse"
+                    [data]="akaWarehouse"
+                    value="aliasStock"
+                    bindLabel="aliasStock"
+                    label="Alias Almacén"
+                    (fetchItems)="getAkaWarehouse($event)"></ngx-select>
+                </form-field>
+              </div>
             </div>
 
             <div class="row pt-3">
@@ -595,9 +608,19 @@
           </button>
 
           <button
-            class="btn btn-primary disabled btn-sm active"
-            *ngIf="infoTask?.State == 'FINALIZADA'">
-            <i class="fa fa-plus-circle" aria-hidden="true"></i> Almac&eacute;n
+            *ngIf="selectMasiveGood == false"
+            (click)="selectAllGoods()"
+            class="btn btn-info btn-sm active">
+            Seleccionar todos los bienes disponibles
+            <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+
+          <button
+            *ngIf="selectMasiveGood == true"
+            (click)="removeSelectGoods()"
+            class="btn btn-danger btn-sm active">
+            Seleccionar Bienes individuales
+            <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
         <div [class]="loadingGoods ? 'table-loading' : ''">
@@ -618,11 +641,17 @@
           <div class="md-tabs">
             <tabset>
               <tab [heading]="headingTransportable" id="tab1">
-                <div class="d-flex justify-content-start">
+                <div class="justify-content-end">
                   <app-columns-select
                     [(settings)]="
                       settingsTransportableGoods
                     "></app-columns-select>
+
+                  <button
+                    (click)="deleteMassiveGoodTransportable()"
+                    class="btn btn-danger btn-sm active ml-2">
+                    Eliminar todos los Bienes
+                  </button>
                 </div>
 
                 <div
@@ -656,9 +685,15 @@
                   [totalItems]="totalItemsTransportableGoods"></app-pagination>
               </tab>
               <tab [heading]="headingGuard">
-                <div class="d-flex justify-content-start">
+                <div class="justify-content-start">
                   <app-columns-select
                     [(settings)]="settingGuardGoods"></app-columns-select>
+
+                  <button
+                    (click)="deleteMassiveGoodGuard()"
+                    class="btn btn-danger btn-sm active ml-2">
+                    Eliminar todos los Bienes
+                  </button>
                 </div>
                 <div
                   class="row"
@@ -690,9 +725,15 @@
                   [totalItems]="totalItemsTransportableGuard"></app-pagination>
               </tab>
               <tab [heading]="headingWarehouse">
-                <div class="d-flex justify-content-start">
+                <div class="justify-content-start">
                   <app-columns-select
                     [(settings)]="settingWarehouseGoods"></app-columns-select>
+
+                  <button
+                    (click)="deleteMassiveGoodWarehouse()"
+                    class="btn btn-danger btn-sm active ml-2">
+                    Eliminar todos los Bienes
+                  </button>
                 </div>
                 <div
                   class="row"

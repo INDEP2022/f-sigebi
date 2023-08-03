@@ -235,4 +235,12 @@ export class GoodsQueryService extends HttpService {
       params
     );
   }
+
+  getVIndProcedingsDelivery(params: ListParams) {
+    return this.get<IListResponse<any>>('v-ind-proceedings-delivery', params);
+  }
+
+  getVIndProceedingsEntReception(params: ListParams) {
+    return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
+  }
 }

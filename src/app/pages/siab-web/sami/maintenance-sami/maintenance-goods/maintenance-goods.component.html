@@ -1,21 +1,30 @@
 <form [formGroup]="form" class="form-material">
-  <div class="row margin-input">
-    <div class="col-md-8 p-0">
+  <div class="row mt-2 mb-3 ml-0 mr-0">
+    <div class="col-md-8 pl-0">
       <form-field label="No. Gestión" [control]="form.get('gestion')">
         <input type="number" class="form-control" formControlName="gestion" />
       </form-field>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-2 col-6 mb-4 pl-0">
       <button
         type="button"
         class="btn btn-primary active btn-sm"
+        [disabled]="!gestion.value"
         (click)="searchDescription()">
         Buscar
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>
     </div>
+    <div class="col-md-2 col-6 mb-4 p-0" style="text-align: right">
+      <button
+        type="button"
+        class="btn btn-danger active btn-sm"
+        (click)="clear()">
+        Limpiar <i class="fas fa-eraser bx-sm float-icon"></i>
+      </button>
+    </div>
   </div>
-  <div class="row">
+  <div class="row mb-2">
     <form-field label="Dice" [control]="form.get('dice')">
       <textarea
         class="form-control"
@@ -24,7 +33,7 @@
         rows="2"></textarea>
     </form-field>
   </div>
-  <div class="row">
+  <div class="row mb-2">
     <form-field label="Debe decir" [control]="form.get('debeDecir')">
       <textarea
         [readOnly]="readOnlyDebeDecir"
@@ -32,6 +41,17 @@
         formControlName="debeDecir"
         rows="2"
         maxlength="1250"></textarea>
+    </form-field>
+  </div>
+  <div class="row">
+    <form-field
+      label="Justificación del Cambio"
+      [control]="form.get('justify')">
+      <textarea
+        class="form-control"
+        formControlName="justify"
+        [readOnly]="readOnlyDebeDecir"
+        rows="2"></textarea>
     </form-field>
   </div>
   <tr>

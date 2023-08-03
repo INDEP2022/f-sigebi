@@ -141,7 +141,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   totalItemsTransportableGuard: number = 0;
   totalItemsTransportableWarehouse: number = 0;
   paramsShowWarehouse = new BehaviorSubject<ListParams>(new ListParams());
-
+  endDateEmail: string = '';
+  startDateEmail: string = '';
   // goodId: any;
   // uniqueKey: any;
   // goodDescription: any;
@@ -209,6 +210,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
+        this.startDateEmail = data.startDate;
+        this.endDateEmail = data.endDate;
+
         data.startDate = moment(data.startDate).format('DD/MM/YYYY HH:mm:ss');
         data.endDate = moment(data.endDate).format('DD/MM/YYYY HH:mm:ss');
         this.programming = data;
@@ -237,7 +241,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
     this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
       next: async data => {
-        console.log('es neta', data);
         this.totalItemsTransportableGuard = data.count;
         this.headingGuard = `Resguardo(${data.count})`;
         const showGuard: any = [];
@@ -266,7 +269,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log('data bienes Prog', error);
+        this.formLoadingGuard = false;
       },
     });
 
@@ -340,6 +343,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log('data bienes Prog', error);
+        this.formLoadingWarehouse = false;
       },
     });
     /*this.formLoadingWarehouse = true;
@@ -618,7 +622,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
     this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
       next: async data => {
-        console.log('data', data);
         this.totalItemsTransportableGoods = data.count;
         this.headingTransportable = `Transportable(${data.count})`;
         const showTransportable: any = [];
@@ -648,6 +651,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       },
       error: error => {
         console.log('data bienes Prog', error);
+        this.formLoadingTransportable = false;
       },
     });
 
@@ -820,7 +824,63 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.emails.push(emailsUsers);
     });
 
-    await Promise.all(
+    const showTransportableData = await this.showTransportableEmail();
+
+    if (showTransportableData) {
+      const showGuardData = await this.showGuardEmail();
+
+      if (showGuardData) {
+        const showGuardData = await this.showWarehouseEmail();
+
+        if (showGuardData) {
+          const showBase64: any = await this.showBase64();
+
+          const dataEmail = {
+            folio: this.programming.folio,
+            startDate: this.startDateEmail,
+            endDate: this.endDateEmail,
+            city: this.programming.city,
+            address: this.programming.address,
+            usersProg: this.infoUsers,
+            goodsTrans: this.transGoods,
+            goodsResg: this.guardGoods,
+            goodsWarehouse: this.warehouseGoods,
+            emailSend: this.emails,
+            nameAtt: this.programming.folio,
+            fileB64: showBase64,
+          };
+
+          this.emailService.createEmailProgramming(dataEmail).subscribe({
+            next: response => {},
+            error: error => {},
+          });
+
+          /*const dataEmail = {
+            folio: this.programming.folio,
+            startDate: moment(this.programming.startDate).format(
+              'YYYY-MM-DD HH:mm:ss'
+            ),
+            endDate: moment(this.programming.endDate).format(
+              'YYYY-MM-DD HH:mm:ss'
+            ),
+            city: this.programming.city,
+            address: this.programming.address,
+            usersProg: this.infoUsers,
+            goodsTrans: this.transGoods,
+            goodsResg: this.guardGoods,
+            goodsWarehouse: this.warehouseGoods,
+            emailSend: this.emails,
+            nameAtt: this.programming.folio,
+            fileB64: showBase64,
+          };
+
+          console.log('dataEmail', dataEmail);
+
+           */
+        }
+      }
+    }
+    /*await Promise.all(
       this.goodsInfoTrans.map(async good => {
         if (good.storeId) {
           const infotrans = await this.warehouseNameT(good.storeId);
@@ -843,11 +903,13 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
           };
           this.transGoods.push(transObject);
         }
-      })
-    );
+      }) 
+    ); */
 
-    await Promise.all(
+    /*await Promise.all(
+      
       this.goodsInfoGuard.map(async goodRes => {
+        console.log('goodRes', goodRes);
         const guardsGood = await this.warehouseNameT(goodRes.storeId);
         const guardObject = {
           goodId: goodRes.goodId,
@@ -863,6 +925,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
     await Promise.all(
       this.goodsInfoWarehouse.map(async goodRes => {
+        console.log('goodRes', goodRes);
         const warehouseGood = await this.warehouseNameT(goodRes.storeId);
         const guardObject = {
           goodId: goodRes.goodId,
@@ -875,116 +938,139 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
         this.warehouseGoods.push(guardObject);
       })
-    );
-
-    const dataEmail = {
-      folio: this.programming.folio,
-      startDate: moment(this.programming.startDate).format(
-        'YYYY-MM-DD HH:mm:ss'
-      ),
-      endDate: moment(this.programming.endDate).format('YYYY-MM-DD HH:mm:ss'),
-      city: this.programming.city,
-      address: this.programming.address,
-      usersProg: this.infoUsers,
-      goodsTrans: this.transGoods,
-      goodsResg: this.guardGoods,
-      goodsWarehouse: this.warehouseGoods,
-      emailSend: this.emails,
-    };
-    this.emailService
-      .createEmailProgramming(JSON.stringify(dataEmail))
-      .subscribe({
-        next: () => {},
-        error: error => {},
-      });
+    ); */
   }
 
-  //   this.infoUsers.map(user => {
-  //     const emailsUsers = user.email;
-  //     this.emails.push(emailsUsers);
-  //     console.log('correo', emailsUsers);
-  //   });
+  showBase64() {
+    return new Promise((resolve, reject) => {
+      this.wcontentService.obtainFile(this.programming.contentId).subscribe({
+        next: response => {
+          resolve(response);
+        },
+        error: error => {},
+      });
+    });
+  }
 
-  //   this.goodsInfoTrans.map(async good => {
-  //    const infotrans = await this.warehouseNameT(good.storeId);
-  //    console.log('infotrans', good);
-  //    const transObject = {
-  //      goodId: good.goodId,
-  //      uniqueKey: good.uniqueKey,
-  //      goodDescription: good.goodDescription,
-  //      quantity: good.quantity,
-  //      unitMeasure: good.unitMeasure,
-  //      storeId: infotrans, //condicionar
-  //    };
-  //    console.log('transdato', good.storeId);
-  //    console.log('transdato nombre', infotrans);
-  //    console.log('transdato obj', transObject);
-  //    this.transGoods.push(transObject);
-  //  });
+  showTransportableEmail() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.status'] = 'EN_TRANSPORTABLE';
+      params.getValue().limit = 10000000;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async good => {
+            const paramsGood = new BehaviorSubject<ListParams>(
+              new ListParams()
+            );
+            paramsGood.getValue()['filter.id'] = good.goodId;
+            this.goodService.getAll(paramsGood.getValue()).subscribe({
+              next: async data => {
+                const infotrans = await this.warehouseNameT(
+                  data.data[0].storeId
+                );
+                const transObject = {
+                  goodId: good.goodId,
+                  uniqueKey: data.data[0].uniqueKey,
+                  goodDescription: data.data[0].goodDescription,
+                  quantity: data.data[0].quantity,
+                  unitMeasure: data.data[0].unitMeasure,
+                  storeId: infotrans,
+                };
+                this.transGoods.push(transObject);
+                resolve(true);
+              },
+            });
+            //this.goodService.getAll;
+          });
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
 
-  //   this.goodsInfoGuard.map( async goodRes => {
-  //    const guardsgood = await this.warehouseNameT(goodRes.storeId);
-  //    const guardObject = {
-  //      goodId: goodRes.goodId,
-  //      uniqueKey: goodRes.uniqueKey,
-  //      goodDescription: goodRes.goodDescription,
-  //      quantity: goodRes.quantity,
-  //      unitMeasure: goodRes.unitMeasure,
-  //      storeId: guardsgood,
-  //    };
-  //    console.log('guardsgood', goodRes.storeId);
-  //    console.log('guardsgood nombre', guardsgood);
-  //    console.log('guardsgood obf', guardObject);
-  //    this.guardGoods.push(guardObject);
-  //  });
+  showGuardEmail() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+      params.getValue().limit = 10000000;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async good => {
+            const paramsGood = new BehaviorSubject<ListParams>(
+              new ListParams()
+            );
+            paramsGood.getValue()['filter.id'] = good.goodId;
+            this.goodService.getAll(paramsGood.getValue()).subscribe({
+              next: async data => {
+                const infotrans = await this.warehouseNameT(
+                  data.data[0].storeId
+                );
+                const transObject = {
+                  goodId: good.goodId,
+                  uniqueKey: data.data[0].uniqueKey,
+                  goodDescription: data.data[0].goodDescription,
+                  quantity: data.data[0].quantity,
+                  unitMeasure: data.data[0].unitMeasure,
+                  storeId: infotrans,
+                };
+                this.guardGoods.push(transObject);
+                resolve(true);
+              },
+            });
+            //this.goodService.getAll;
+          });
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
 
-  //    this.goodsInfoWarehouse.map(async warehouse => {
-  //     const infowarehouse = await this.warehouseNameT(warehouse.storeId);
-  //     const warehouseObject = {
-  //       goodId: warehouse.goodId,
-  //       uniqueKey: warehouse.uniqueKey,
-  //       goodDescription: warehouse.goodDescription,
-  //       quantity: warehouse.quantity,
-  //       unitMeasure: warehouse.unitMeasure,
-  //       storeId: infowarehouse,
-  //     };
-  //     console.log('infowarehouse', warehouse.storeId);
-  //     // console.log('infowarehouse name', infowarehouse);
-  //     console.log('warehpous nombre', warehouseObject);
-  //     this.warehouseGoods.push(warehouseObject);
-  //   });
-
-  //   const dataEmail = {
-  //     folio: this.programming.folio,
-  //     startDate: this.programming.startDate,
-  //     endDate: this.programming.endDate,
-  //     city: this.programming.city,
-  //     address: this.programming.address,
-  //     usersProg: this.infoUsers,
-  //     goodsTrans: this.transGoods,
-  //     goodsResg: this.guardGoods,
-  //     goodsWarehouse: this.warehouseGoods,
-  //     emailSend: this.emails,
-  //   };
-  //   console.log('newdata', dataEmail);
-  //   this.emailService
-  //     .createEmailProgramming(JSON.stringify(dataEmail))
-  //     .subscribe({
-  //       next: () => {
-  //         this.alert(
-  //           'success',
-  //           'Notificación',
-  //           'Se envio el correo electrónico a los usuarios correctamente'
-  //         );
-  //         this.createTaskNotification();
-  //         this.createTaskExecuteProgramming();
-  //         this.createTaskFormalize();
-  //       },
-  //       error: error => {},
-  //     });
-  // }
-  // this.nameWarehouse = data.description;
-  // this.formLoading = false;
+  showWarehouseEmail() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+      params.getValue().limit = 10000000;
+      this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+        next: async data => {
+          data.data.map(async good => {
+            const paramsGood = new BehaviorSubject<ListParams>(
+              new ListParams()
+            );
+            paramsGood.getValue()['filter.id'] = good.goodId;
+            this.goodService.getAll(paramsGood.getValue()).subscribe({
+              next: async data => {
+                const infotrans = await this.warehouseNameT(
+                  data.data[0].storeId
+                );
+                const transObject = {
+                  goodId: good.goodId,
+                  uniqueKey: data.data[0].uniqueKey,
+                  goodDescription: data.data[0].goodDescription,
+                  quantity: data.data[0].quantity,
+                  unitMeasure: data.data[0].unitMeasure,
+                  storeId: infotrans,
+                };
+                this.warehouseGoods.push(transObject);
+                resolve(true);
+              },
+            });
+            //this.goodService.getAll;
+          });
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
+  }
 
   //Creamos la tarea de notificación al delegado regional//
   async createTaskNotification() {
@@ -1102,9 +1188,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         next: response => {
           return resolve(response.description);
         },
-        error: error => {
-          console.log(error);
-        },
+        error: error => {},
       });
     });
   }

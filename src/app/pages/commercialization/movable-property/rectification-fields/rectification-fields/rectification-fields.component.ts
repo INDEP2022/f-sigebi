@@ -141,7 +141,7 @@ export class RectificationFieldsComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este registro?'
     ).then(answ => {
       if (answ.isConfirmed) {
         this.rectificationFieldService.remove(data).subscribe({
@@ -149,7 +149,7 @@ export class RectificationFieldsComponent extends BasePage implements OnInit {
             this.alert(
               'success',
               'Campo Rectificación  de Facturación',
-              'Eliminado correctamente'
+              'Eliminado Correctamente'
             );
             this.getData();
           },

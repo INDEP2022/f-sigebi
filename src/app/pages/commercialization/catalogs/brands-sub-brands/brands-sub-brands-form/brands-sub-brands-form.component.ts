@@ -75,7 +75,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', `No es Posible Crear la Marca`, '');
+          this.alert('warning', `Ya Existe una Marca con ese Nombre`, '');
           this.modalRef.hide();
         },
       });

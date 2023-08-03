@@ -65,7 +65,7 @@ export class RectificationFieldsModalComponent
           this.alert(
             'success',
             'Rectificación de Facturas',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
         },
         error: err => {
@@ -90,7 +90,7 @@ export class RectificationFieldsModalComponent
           this.alert(
             'success',
             'Rectificación de Facturas',
-            'Creado correctamente'
+            'Creado Correctamente'
           );
         },
         error: err => {

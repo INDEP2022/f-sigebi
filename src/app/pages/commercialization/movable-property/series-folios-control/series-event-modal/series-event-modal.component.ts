@@ -66,7 +66,7 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Tipo de Evento por Serie',
-            'Actualizado correctamente'
+            'Actualizado Correctamente'
           );
         },
         error: () => {
@@ -87,7 +87,7 @@ export class SeriesEventModalComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Tipo de Evento por Serie',
-            'Creado correctamente'
+            'Creado Correctamente'
           );
         },
         error: () => {

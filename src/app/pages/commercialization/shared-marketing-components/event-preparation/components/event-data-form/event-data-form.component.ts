@@ -41,6 +41,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() eventFormVisual = new EventFormVisualProperties();
   readonly minEventDate = new Date('2000-01-01');
   readonly maxEventDate = new Date(addYears(startOfYear(new Date()), 5));
+  viewApplyButton = true;
   get controls() {
     return this.eventForm.controls;
   }
@@ -171,7 +172,10 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   /**
    * BLK_EVENTO.PRE-UPDATE
    */
-  async preUpdateEvent() {}
+  async preUpdateEvent() {
+    // TIPO DE EVENTO COMER NO VALIDA NAD
+    this.updateEvent().subscribe();
+  }
 
   createEvent() {
     this.loading = true;
@@ -194,10 +198,32 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       }),
       catchError(error => {
         this.loading = false;
-        this.alert('error', 'Error', 'Ocurrio un Error al Guardar el Evento');
+        this.alert('error', 'Error', 'Ocurrió un Error al Guardar el Evento');
         return throwError(() => error);
       })
     );
+  }
+
+  updateEvent() {
+    this.loading = true;
+    const { id } = this.controls;
+    return this.comerEventsService
+      .updateComerEvent(id.value, this.eventForm.value)
+      .pipe(
+        catchError(error => {
+          this.loading = false;
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un Error al Actualizar el Evento'
+          );
+          return throwError(() => error);
+        }),
+        tap(event => {
+          this.alert('success', 'El Evento ha sido Guardado', '');
+          this.loading = false;
+        })
+      );
   }
 
   eventDateChange(_eventDate: Date) {
@@ -226,6 +252,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   }
 
   failureDateChange(failDate: Date) {
+    console.log({ failDate });
+
     if (!failDate) {
       return;
     }
@@ -243,6 +271,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
 
   closingDateChange() {
     const { eventDate, failureDate, eventClosingDate } = this.controls;
+    console.log({ eventClosingDate });
     if (!eventClosingDate.value) {
       return;
     }

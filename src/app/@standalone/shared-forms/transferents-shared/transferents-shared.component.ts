@@ -62,7 +62,7 @@ export class TransferenteSharedComponent extends BasePage implements OnInit {
             };
           })
         );
-        this.transferents = new DefaultSelect(newData);
+        this.transferents = new DefaultSelect(newData, data.count);
       },
       err => {
         this.transferents = new DefaultSelect();

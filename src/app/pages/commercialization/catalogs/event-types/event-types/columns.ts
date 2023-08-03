@@ -12,7 +12,7 @@ export const COLUMNS = {
     sort: false,
   },
   typeDispId: {
-    title: 'Tipo de Disperción',
+    title: 'Tipo de Dispersión',
     sort: false,
   },
   typeFailedpId: {

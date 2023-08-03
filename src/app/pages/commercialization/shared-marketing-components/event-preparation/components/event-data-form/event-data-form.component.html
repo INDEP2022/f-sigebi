@@ -1,5 +1,5 @@
 <div class="row">
-  <h6>Datos del evento de comercialización</h6>
+  <h6>Datos del Evento de Comercialización</h6>
 </div>
 <div class="row pt-2">
   <div class="col-md-12">
@@ -112,7 +112,10 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <button type="button" class="btn btn-primary btn-sm active mr-3">
+          <button
+            type="button"
+            *ngIf="eventFormVisual.applyButton"
+            class="btn btn-primary btn-sm active mr-3">
             Aplicar
           </button>
         </div>

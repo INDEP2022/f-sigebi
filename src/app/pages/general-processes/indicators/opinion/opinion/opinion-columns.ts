@@ -1,27 +1,27 @@
 import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const GENERAL_PROCESSES_OPINION_COLUNNS = {
-  coordinacion_regional: {
+  regionalcoordination: {
     title: 'Coordinación Regional',
     sort: false,
   },
-  cve_dictamen: {
+  opinioncode: {
     title: 'Tipo de Desahogo',
     sort: false,
   },
-  no_oficio: {
+  externallettercode: {
     title: 'Número de Oficio',
     sort: false,
   },
-  no_expediente: {
+  filenumber: {
     title: 'Número de Expediente',
     sort: false,
   },
-  no_volante: {
+  flywheelnumber: {
     title: 'Número Volante',
     sort: false,
   },
-  finiind: {
+  startdateofindication: {
     title: 'Fecha Volante',
     sort: false,
     type: 'html',
@@ -33,7 +33,7 @@ export const GENERAL_PROCESSES_OPINION_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
-  ffinaliza: {
+  enddate: {
     title: 'Fecha Desahogo',
     sort: false,
     type: 'html',
@@ -45,7 +45,7 @@ export const GENERAL_PROCESSES_OPINION_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
-  fmaxima: {
+  maximumdate: {
     title: 'Fecha Máxima',
     sort: false,
     type: 'html',
@@ -57,7 +57,7 @@ export const GENERAL_PROCESSES_OPINION_COLUNNS = {
       component: CustomDateFilterComponent,
     },
   },
-  uinicia: {
+  startdate: {
     title: 'Usuario',
     sort: false,
   },
@@ -66,22 +66,3 @@ export const GENERAL_PROCESSES_OPINION_COLUNNS = {
   //     sort: false
   // },
 };
-function getData() {
-  const data = [];
-  const el = {
-    regional: 'EXAMPLE_DATA',
-    cve: 'EXAMPLE_DATA',
-    expediente: 'EXAMPLE_DATA',
-    noVolante: 'EXAMPLE_DATA',
-    tramite: 'EXAMPLE_DATA',
-    usuario: 'EXAMPLE_DATA',
-    page: 'EXAMPLE_DATA',
-    fin: 'EXAMPLE_DATA',
-    max: 'EXAMPLE_DATA',
-  };
-  for (let index = 0; index < 10; index++) {
-    data.push(el);
-  }
-  return data;
-}
-export const GENERAL_PROCESSES_OPINION_DATA = getData();

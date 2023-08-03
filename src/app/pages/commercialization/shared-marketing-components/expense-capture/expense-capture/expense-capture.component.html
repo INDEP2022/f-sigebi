@@ -5,7 +5,8 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <app-expense-comercial [address]="address"></app-expense-comercial>
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="ch-content">
         <h5 class="title">Gastos del área comercial</h5>
       </div>
@@ -235,7 +236,7 @@
             label="Comprobantes a nombre">
             <select class="form-control" formControlName="proofName">
               <option value="Mandato">Mandato</option>
-              <option value="SAE">SAE</option>
+              <option value="SAE">INDEP</option>
             </select>
           </form-field>
         </div>
@@ -305,7 +306,7 @@
         <div class="col-md-6">
           <div class="ch-content">
             <h5 class="title">Datos de ingreso</h5>
-            <!-- <app-columns-select [(settings)]="settings1"></app-columns-select> -->
+
           </div>
           <div class="row pt-3">
             <ng2-smart-table [settings]="settings1" [source]="list1">
@@ -401,6 +402,6 @@
           </div>
         </div>
       </div>
-    </form>
+    </form> -->
   </div>
 </app-card>

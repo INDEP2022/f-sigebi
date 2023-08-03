@@ -1,0 +1,40 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccione</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-md-12">
+          <app-delegation-shared
+            [form]="form"
+            [showDelegation]="true"
+            [delegationField]="'delegation'"
+            labelDelegation="Delegación Recibe"
+            [subdelegationField]="'subdelegation'"
+            [showSubdelegation]="true"></app-delegation-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="update()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -9,4 +9,6 @@ export enum PrepareEventEndpoints {
   ProcessesTracker = 'util-comer-v1/processesTracker',
   ApplicationDataEvent = 'application/get-data-eat-events',
   ApplicationTpEvent = 'application/get-data-eatevents-tpevents',
+  SalePrices = 'util-comer-v1/priceVta',
+  getFindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
 }

@@ -64,7 +64,7 @@ export class ConceptsService extends HttpService {
       case 'S':
         return 'SEGUROS';
       case 'J':
-        return 'JURIDICO';
+        return 'JURÍDICO';
       case 'A':
         return 'ADMINISTRACIÓN';
       default:

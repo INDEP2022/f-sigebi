@@ -66,17 +66,13 @@ export class ReturnActsReportComponent extends BasePage implements OnInit {
 
   validateVolant() {
     if (
-      this.flatFileGoodForm.get('expedienteI').value != null &&
-      this.flatFileGoodForm.get('expedienteF').value != null
+      this.flatFileGoodForm.get('expedienteF').value <
+      this.flatFileGoodForm.get('expedienteI').value
     ) {
-      if (
-        this.flatFileGoodForm.get('expedienteF').value <
-        this.flatFileGoodForm.get('expedienteI').value
-      ) {
-        this.alert('error', 'Rango de volantes erroneo.', '');
-        return;
-      }
+      this.alert('error', 'Rango de volantes erroneo.', '');
+      return true;
     }
+    return false;
   }
 
   validarFechas(): boolean {
@@ -155,9 +151,10 @@ export class ReturnActsReportComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {
-    this.validateVolant();
-    if (!this.validarFechas()) {
-      this.Generar();
+    if (!this.validateVolant()) {
+      if (!this.validarFechas()) {
+        this.Generar();
+      }
     }
   }
 }

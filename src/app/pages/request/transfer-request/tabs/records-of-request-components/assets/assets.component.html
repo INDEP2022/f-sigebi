@@ -42,6 +42,8 @@
         <div class="btn-group" dropdown placement="bottom right">
           <button
             id="button-alignment"
+            data-toggle="tooltip"
+            title="Más Acciones"
             dropdownToggle
             type="button"
             class="btn btn-info btn-sm active dropdown-toggle"
@@ -57,18 +59,18 @@
             aria-labelledby="button-alignment">
             <li role="menuitem">
               <a class="dropdown-item" (click)="openSelectAddressModal()">
-                <i class="bx bx-home"></i> Seleccionar Domicilio</a
+                <i class="bx bx-directions"></i> Seleccionar Domicilio</a
               >
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="menajeModal()">
-                <i class="bx bx-layer"></i> Menaje
+                <i class="bx bx-dock-top"></i> Menaje
               </a>
             </li>
             <!-- *ngIf="typeRecord == 'PAMA' && transferente === 'SAT_SAE'" -->
             <li role="menuitem">
               <a class="dropdown-item" (click)="masiveClasification()">
-                <i class="bx bx-layer"></i> Clasificar Bienes
+                <i class="bx bx-poll"></i> Clasificar Bienes
               </a>
             </li>
             <!-- sub menu de importacion -->
@@ -81,12 +83,12 @@
             <li class="divider dropdown-divider"></li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="classifyAllGoods()">
-                <i class="bx bx-layer"></i> Clasificar Todos los Bienes
+                <i class="bx bx-poll"></i> Clasificar Todos los Bienes
               </a>
             </li>
             <li role="menuitem">
               <a class="dropdown-item" (click)="assignAllAddress()">
-                <i class="bx bx-layer"></i> Asignar a Todos el Domicilio
+                <i class="bx bx-directions"></i> Asignar a Todos el Domicilio
               </a>
             </li>
             <li class="divider dropdown-divider"></li>
@@ -123,6 +125,7 @@
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            #table
             [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="paragraphs"

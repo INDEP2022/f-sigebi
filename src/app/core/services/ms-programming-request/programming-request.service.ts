@@ -97,4 +97,11 @@ export class ProgrammingRequestService {
       `${environment.API_URL}programminggood/api/v1/programmed-good/goods-excel/${status}/${programmingId}`
     );
   }
+
+  deleteGoodsMassive(data: Object) {
+    const route = `programminggood/api/v1/programminggood/apps/delete-massive-goods-schedules`;
+    return this.http.delete(`${environment.API_URL}/${route}`, {
+      body: data,
+    });
+  }
 }

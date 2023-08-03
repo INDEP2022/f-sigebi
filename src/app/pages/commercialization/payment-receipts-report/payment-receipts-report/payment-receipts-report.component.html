@@ -7,10 +7,22 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field [control]="form.get('idEvent')" label="Evento">
             <input type="text" class="form-control" formControlName="idEvent" />
           </form-field>
+        </div>
+        <div class="col-md-1">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            [disabled]="
+              form.get('idEvent').value == null ||
+              form.get('idEvent').value == ''
+            "
+            (click)="search()">
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
         </div>
         <div class="col-md-3">
           <form-field [control]="form.get('description')" label="Descripción">
@@ -30,13 +42,31 @@
         </div>
         <div class="col-md-3">
           <form-field [control]="form.get('amount')" label="Monto">
-            <input type="text" class="form-control" formControlName="amount" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount" />
           </form-field>
         </div>
       </div>
-      <hr />
-      <div class="row pt-5">
-        <div class="col-md-6 alert alert-info">
+
+      <div class="row justify-content-end">
+        <div class="col-md-2">
+          <button
+            class="btn btn-primary active btn-sm m-2"
+            [disabled]="
+              form.get('allotment').value == null ||
+              form.get('allotment').value == ''
+            "
+            (click)="reportAndTables()">
+            Siguiente
+            <i class="fas fa-arrow-circle-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-5" *ngIf="showResolucion == true">
+        <div class="col-md-6">
           <div class="row">
             <div class="col-md-6">
               <form-field [control]="form.get('sender')" label="Recibimos de:">
@@ -70,6 +100,8 @@
             </div>
             <div class="col-md-4">
               <app-delegation-shared
+                [showDelegation]="true"
+                [delegationField]="'delegation'"
                 [showSubdelegation]="false"
                 [form]="form"></app-delegation-shared>
             </div>
@@ -156,7 +188,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6 alert alert-info">
+        <div class="col-md-6">
           <div class="row">
             <div class="col-md-3">
               <form-field [control]="form.get('receipt')" label="Recibo No.">
@@ -199,7 +231,7 @@
               <!-- <div class="table-responsive"> -->
               <ng2-smart-table
                 class="col-md-12"
-                [attr.class]="'table-bordered'"
+                [attr.class]="'table-bordered table-responsive'"
                 [settings]="settings"
                 [source]="dataGood"></ng2-smart-table>
             </div>
@@ -209,7 +241,7 @@
         </div>
       </div>
 
-      <div class="row pt-5">
+      <div class="row pt-5" *ngIf="showResolucion == true">
         <div class="col-md-6">
           <form-field
             [control]="form.get('delivery')"
@@ -231,8 +263,8 @@
           </form-field>
         </div>
       </div>
-      <hr />
-      <div class="row">
+      <hr *ngIf="showResolucion == true" />
+      <div class="row" *ngIf="showResolucion == true">
         <div class="ch-content mb-5">
           <h5 class="title">Notario</h5>
         </div>
@@ -268,8 +300,8 @@
           </form-field>
         </div>
       </div>
-      <hr />
-      <div class="row">
+      <hr *ngIf="showResolucion == true" />
+      <div class="row" *ngIf="showResolucion == true">
         <div class="col-md-6">
           <form-field [control]="form.get('attorney')" label="Apoderado">
             <input
@@ -287,25 +319,30 @@
           </form-field>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="showResolucion == true">
         <div class="col-md-6"></div>
       </div>
     </form>
   </div>
 </app-card>
-<div footer>
+<div footer *ngIf="showResolucion == true">
   <div class="d-flex justify-content-center">
     <div class="m-3">
       <confirm-button
         text="Imprimir"
         [disabled]="form.invalid"
         [loading]="loading"
+        [btnSmall]="true"
+        icon="bx bx-printer bx-sm float-icon"
         (confirm)="confirm()">
       </confirm-button>
     </div>
     <div class="m-3">
-      <button type="button" class="btn btn-danger active" (click)="cleanForm()">
-        Limpiar
+      <button
+        type="button"
+        class="btn btn-danger btn-sm active mr-3"
+        (click)="cleanForm()">
+        Limpiar <i class="fas fa-eraser"> </i>
       </button>
     </div>
   </div>

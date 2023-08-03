@@ -1,20 +1,72 @@
-import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
+import { IGood } from 'src/app/core/models/good/good.model';
+import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS1 } from './columns1';
-import { COLUMNS2 } from './columns2';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { COPY } from '../acts-cir-columns';
+import { FindActaComponent } from '../find-acta/find-acta.component';
+import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienes table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+      .registros-movidos {
+        background-color: yellow;
+      }
+    `,
+  ],
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
@@ -22,35 +74,178 @@ export class ActsCircumstantiatedCancellationTheftComponent
 {
   response: boolean = false;
   form: FormGroup;
+  selectedRow: IGood;
+  statusGood_: any;
   formTable1: FormGroup;
+  formFind: FormGroup;
+  totalItems2: number = 0;
+  loading2: boolean = false;
+  goods: string;
+  bienesLoading: boolean = false;
   formTable2: FormGroup;
+  loadingBienes: boolean = true;
+  actaRecepttionForm: FormGroup;
+  validPermisos: boolean = true;
+  goodFormFormGroup: FormGroup;
+  disabledBtnCerrar: boolean = true;
+  showScanForm: boolean = true;
+  ocultarPaginado: boolean = false;
+  transfer: number = 0;
+  dataRecepcion: any[] = [];
+  disabledBtnActas: boolean = true;
+  actaGoodForm: FormGroup;
   formTag: FormGroup;
+  gTramite: IProceduremanagement[] = [];
+  statusCanc: string | number = '';
+  expedient: IExpedient;
+  validateEx: boolean = true;
+  loadingExpedient: boolean = false;
+  screenKey = 'FACTCIRCUNR_0001';
+  dataRecepcionGood: LocalDataSource = new LocalDataSource();
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  paramsList = new BehaviorSubject<ListParams>(new ListParams());
+  paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   data1 = EXAMPLE_DATA1;
   data2 = EXAMPLE_DATA2;
-
-  constructor(private fb: FormBuilder) {
+  aprevia: string = '';
+  causa: string = '';
+  annio: string = '';
+  noExpediente: number = 0;
+  fileNumber: number;
+  columnFilters: any = [];
+  columnFilters2: any = [];
+  dataTableGood_: any[] = [];
+  cveActa: string = '';
+  to: string = '';
+  from: string = '';
+  time = new Date();
+  dateElaboration: string = '';
+  dataTableGood: LocalDataSource = new LocalDataSource();
+  bienes: IGood[] = [];
+  constructor(
+    private fb: FormBuilder,
+    private detailProceeDelRecService: DetailProceeDelRecService,
+    private expedientService: ExpedientService,
+    private goodService: GoodService,
+    private procedureManagementService: ProcedureManagementService,
+    protected modalService: BsModalService,
+    private GoodprocessService_: GoodprocessService,
+    private proceedingsService: ProceedingsService,
+    private datePipe: DatePipe,
+    private router: Router,
+    private statusGoodService: StatusGoodService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {
     super();
-    this.settings = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS1;
-    this.settings2 = { ...this.settings, actions: false };
-    this.settings2.columns = COLUMNS2;
+    // this.settings = { ...this.settings, actions: false };
+    // this.settings.columns = COLUMNS1;
+    // this.settings2 = { ...this.settings, actions: false };
+    // this.settings2.columns = COLUMNS2;
+    this.validPermisos = !this.validPermisos;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
+      },
+    };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...COPY },
+      rowClassFunction: (row: any) => {
+        // if (row.data.di_disponible == 'S') {
+        //   return 'text-white';
+        // } else {
+        return 'bg-light text-black';
+        // }
+      },
+    };
   }
 
   ngOnInit(): void {
-    this.initForm();
+    this.goodForm();
+    this.actaForm();
+    this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
   }
 
   initForm() {
     this.form = this.fb.group({
+      find: [null],
       statusAct: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -117,16 +312,703 @@ export class ActsCircumstantiatedCancellationTheftComponent
       tag: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+  private actaForm() {
+    this.actaRecepttionForm = this.fb.group({
+      acta: [null],
+      type: [null],
+      claveTrans: [null],
+      direccion: [null],
+      administra: [null],
+      cveReceived: [null],
+      consec: [null],
+      fechaCaptura: [null],
+      anio: [null],
+      mes: [null],
+      receive: [null],
+      ident: [null],
+      cveActa: [null],
+      observaciones: [null],
+      testigoOIC: [null],
+      testigoTwo: [null],
+      testigoTree: [null],
+      respConv: [null],
+      parrafo1: [null],
+      parrafo2: [null],
+      parrafo3: [null],
+      // witness1: [null],
+      // witness2: [null],
+    });
+  }
 
+  goodForm() {
+    this.actaGoodForm = this.fb.group({
+      goodId: [null],
+      statusGood: [null],
+    });
+  }
   onSubmit() {}
 
   search(event: any) {
-    this.response = !this.response;
+    // this.loadingExpedient = true;
+    this.getExpedient(event);
+    event = '';
   }
-
   settingsChange(event: any, op: number) {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
   }
+  getExpedient(id: number) {
+    this.loadingExpedient = true;
+    this.expedientService.getById(id).subscribe({
+      next: (data: any) => {
+        this.loadingExpedient = false;
+        this.response = !this.response;
+        this.validateEx = true;
+        this.expedient = data;
+        this.fileNumber = Number(this.expedient.id);
+        this.aprevia = this.expedient.preliminaryInquiry;
+        this.causa = this.expedient.criminalCase;
+        this.transfer = this.expedient.transferNumber;
+        // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
+        this.actaRecepttionForm
+          .get('fechaCaptura')
+          .setValue(this.expedient.insertionDatehc);
+        this.actaRecepttionForm
+          .get('claveTrans')
+          .setValue(this.expedient.transferNumber);
+        this.actaRecepttionForm
+          .get('ident')
+          .setValue(this.expedient.identifier);
+        this.actaRecepttionForm
+          .get('receive')
+          .setValue(this.expedient.courtName);
+        this.actaRecepttionForm
+          .get('testigoTwo')
+          .setValue(this.expedient.indicatedName);
+
+        // console.log(this.expedient);
+        this.getGoodsByStatus(this.fileNumber);
+      },
+      error: () => {
+        console.error('expediente nulo');
+        this.loadingExpedient = false;
+        this.validateEx = false;
+      },
+    });
+  }
+
+  getGoodsByStatus(id: number) {
+    this.loadingBienes = true;
+    let params: any = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    console.log('1412212', params);
+    this.goodService.getByExpedient_(id, params).subscribe({
+      next: data => {
+        this.loadingBienes = false;
+        this.bienes = data.data;
+        console.log('Bienes', this.bienes);
+
+        let result = data.data.map(async (item: any) => {
+          let obj = {
+            vcScreen: 'FACTCIRCUNR_0001',
+            pNumberGood: item.id,
+          };
+          const di_dispo = await this.getStatusScreen(obj);
+          item['di_disponible'] = di_dispo;
+          const acta: any = await this.getActaGoodExp(item.id, item.fileNumber);
+          console.log('acta', acta);
+          item['acta_'] = acta;
+          item.di_disponible = acta != null ? 'N' : di_dispo;
+        });
+
+        Promise.all(result).then(item => {
+          this.dataTableGood_ = this.bienes;
+          this.dataTableGood.load(this.bienes);
+          this.dataTableGood.refresh();
+          // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
+          this.totalItems = data.count;
+          this.loadingBienes = false;
+          // console.log(this.bienes);
+        });
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+  async getStatusScreen(body: any) {
+    return new Promise((resolve, reject) => {
+      this.GoodprocessService_.getScreenGood(body).subscribe({
+        next: async (state: any) => {
+          if (state.data) {
+            console.log('di_dispo', state);
+            resolve('S');
+          } else {
+            console.log('di_dispo', state);
+            resolve('N');
+          }
+        },
+        error: () => {
+          resolve('N');
+        },
+      });
+    });
+  }
+  async getActaGoodExp(good: any, exp: any) {
+    return new Promise((resolve, reject) => {
+      this.proceedingsService.getGetFactDbConvBien(good, exp).subscribe({
+        next: async (state: any) => {
+          console.log('acta', state);
+          resolve(state.data[0].cve_acta);
+        },
+        error: () => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  cleanForm() {
+    this.form.reset();
+    this.dataTableGood_ = [];
+    this.dataTableGood.load([]);
+    this.dataTableGood.reset();
+  }
+  searchExpedient(provider?: IExpedient) {
+    this.loadingExpedient = true;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      provider,
+    };
+
+    let modalRef = this.modalService.show(
+      FindAllExpedientComponent,
+      modalConfig
+    );
+    modalRef.content.onSave.subscribe((next: any) => {
+      console.log(next);
+      this.getExpedient(next.id);
+    });
+  }
+  goStatus() {
+    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
+      queryParams: {
+        origin: this.screenKey,
+        // PAR_FOLIO: this.folio,
+      },
+    });
+  }
+  actasDefault: any = null;
+  searchActas(actas?: string) {
+    actas = this.cveActa;
+    const expedienteNumber = this.fileNumber;
+    const actaActual = this.actasDefault;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      actas,
+      actaActual,
+      expedienteNumber,
+    };
+
+    let modalRef = this.modalService.show(FindActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      console.log(next);
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+
+      this.actasDefault = next;
+      // this.fCreate = this.datePipe.transform(
+      //   next.dateElaborationReceipt,
+      //   'dd/MM/yyyy'
+      // );
+      this.statusCanc = next.statusProceedings;
+      if (this.statusCanc == 'CERRADA') {
+        this.disabledBtnCerrar = false;
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+        this.disabledBtnCerrar = true;
+      }
+
+      this.actaRecepttionForm.patchValue({
+        acta: next.id,
+
+        administra: next.approvedXAdmon,
+        // ejecuta: next.ejecuta,
+        consec: next.numeraryFolio,
+        type: next.idTypeProceedings,
+        claveTrans: next.numTransfer,
+        cveActa: next.keysProceedings,
+        // mes: next.dateElaborationReceipt,
+        cveReceived: next.receiptKey,
+        // anio: new Date(next.dateElaborationReceipt),
+        direccion: next.address,
+        // parrafo1: next.parrafo1,
+        // parrafo2: next.parrafo2,
+        // parrafo3: next.parrafo3,
+      });
+      this.to = this.datePipe.transform(
+        this.actaRecepttionForm.controls['mes'].value,
+        'MM/yyyy'
+      );
+      this.annio = this.datePipe.transform(
+        this.actaRecepttionForm.controls['anio'].value,
+        'MM/yyyy'
+      );
+      await this.getDetailProceedingsDevollution(this.actasDefault.id);
+      // this.getActasByConversion(next.cve_acta_conv);
+    });
+    modalRef.content.cleanForm.subscribe(async (next: any) => {
+      if (next) {
+        this.cleanActa();
+      }
+    });
+  }
+  async getDetailProceedingsDevollution(id: any) {
+    this.loading2 = true;
+    // const params = new ListParams();
+    let params: any = {
+      ...this.paramsList2.getValue(),
+      ...this.columnFilters2,
+    };
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService
+        .getGoodsByProceedings(id, params)
+        .subscribe({
+          next: data => {
+            let result = data.data.map((item: any) => {
+              item['description'] = item.good ? item.good.description : null;
+            });
+
+            Promise.all(result).then(item => {
+              this.ocultarPaginado = true;
+              this.dataRecepcion = data.data;
+              this.dataRecepcionGood.load(this.dataRecepcion);
+              this.dataRecepcionGood.refresh();
+              this.totalItems2 = data.count;
+              console.log('data', data);
+              this.loading2 = false;
+            });
+          },
+          error: error => {
+            this.dataRecepcion = [];
+            this.dataRecepcionGood.load([]);
+            this.loading2 = false;
+            this.ocultarPaginado = false;
+          },
+        });
+    });
+  }
+  gestionTramite() {
+    this.bienesLoading = false;
+    this.filterParams
+      .getValue()
+      .addFilter('expedient', this.fileNumber, SearchFilter.EQ);
+    this.procedureManagementService.getAll(this.params.getValue()).subscribe({
+      next: data => {
+        this.gTramite = data.data;
+        console.log(this.bienes);
+        this.dataTableGood.load(this.bienes);
+        this.dataTableGood.refresh();
+        this.totalItems = data.count;
+      },
+      error: () => {
+        this.bienesLoading = false;
+        console.error('error ');
+      },
+    });
+  }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
+  goodsValid: any;
+  async addSelect() {
+    if (this.selectedGooods.length > 0) {
+      if (this.actasDefault == null) {
+        this.alert(
+          'warning',
+          'No Existe un Acta en la cual Asignar el Bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (this.statusCanc == 'CERRADA') {
+          this.alert(
+            'warning',
+            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            ''
+          );
+          return;
+        } else {
+          console.log('aaa', this.goods);
+
+          let result = this.selectedGooods.map(async (good: any) => {
+            if (good.di_acta != null) {
+              this.alert(
+                'warning',
+                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                'Debe Capturar un Acta.'
+              );
+            } else if (good.di_disponible == 'N') {
+              this.onLoadToast(
+                'warning',
+                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+              );
+              return;
+            } else {
+              console.log('GOOD', good);
+              this.loading2 = true;
+
+              if (!this.dataRecepcion.some((v: any) => v === good)) {
+                let indexGood = this.dataTableGood_.findIndex(
+                  _good => _good.id == good.id
+                );
+                console.log('indexGood', indexGood);
+                // if (indexGood != -1)
+                // this.dataTableGood_[indexGood].di_disponible = 'N';
+
+                await this.createDET(good);
+                // this.dataTableGood_ = this.bienes;
+                // this.dataRecepcion.push(good);
+                // this.dataRecepcion = [...this.dataRecepcion];
+              }
+            }
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(this.fileNumber);
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
+          });
+        }
+      }
+    } else {
+      this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
+    }
+  }
+  async createDET(good: any) {
+    // if (this.dataRecepcion.length > 0) {
+    // let result = this.dataRecepcion.map(async good => {
+    let obj: any = {
+      numberProceedings: this.actasDefault.id,
+      numberGood: good.id,
+      amount: good.quantity,
+      received: null,
+      approvedXAdmon: null,
+      approvedDateXAdmon: null,
+      approvedUserXAdmon: null,
+      dateIndicatesUserApproval: null,
+      numberRegister: null,
+      reviewIndft: null,
+      correctIndft: null,
+      idftUser: null,
+      idftDate: null,
+      numDelegationIndft: null,
+      yearIndft: null,
+      monthIndft: null,
+      idftDateHc: null,
+      packageNumber: null,
+      exchangeValue: null,
+    };
+
+    await this.saveGoodActas(obj);
+  }
+  async saveGoodActas(body: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.addGoodToProceedings(body).subscribe({
+        next: data => {
+          // this.alert('success', 'Bien agregado correctamente', '');
+          resolve(true);
+        },
+        error: error => {
+          // this.authorityName = '';
+          resolve(false);
+        },
+      });
+    });
+  }
+  async getGoodsDelete(id: any) {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${id}`;
+    return new Promise((resolve, reject) => {
+      this.goodService
+        .getByExpedient_(Number(this.fileNumber), params)
+        .subscribe({
+          next: data => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  async deleteDET(good: any) {
+    // if (this.selectedGooodsValid.length > 0) {
+    //   this.loading2 = true;
+    //   let result = this.selectedGooodsValid.map(async good => {
+
+    const valid: any = await this.getGoodsDelete(good.numberGood);
+    if (valid != null) {
+      let obj: any = {
+        numberGood: good.numberGood,
+        numberProceedings: this.actasDefault.id,
+      };
+
+      await this.deleteDetailProcee(obj);
+    }
+
+    // let obj_: any = {
+    //   id: good.id,
+    //   goodId: good.id,
+    //   status: await this.getScreenStatus(good),
+    // };
+    // // UPDATE BIENES
+    // await this.updateGood(obj_);
+
+    // // INSERT HISTORIC
+    // await this.saveHistoric(obj_);
+    //   });
+
+    //   Promise.all(result).then(async (item) => {
+    //     await this.getDetailProceedingsDevollution(this.actasDefault.id);
+    //   })
+    // }
+  }
+
+  async deleteDetailProcee(params: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
+        next: data => {
+          console.log('data', data);
+          // this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          // this.loading2 = false;
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  async selectData(event: { data: IGood; selected: any }) {
+    this.selectedRow = event.data;
+    console.log(this.selectedRow);
+    await this.getStatusGoodService(this.selectedRow.status);
+    this.selectedGooods = event.selected;
+    this.changeDetectorRef.detectChanges();
+  }
+  async getStatusGoodService(status: any) {
+    this.statusGoodService.getById(status).subscribe({
+      next: async (resp: any) => {
+        console.log('resp.data', resp);
+        this.statusGood_ = resp.description;
+        // this.statusGoodForm.get('statusGood').setValue(resp.description)
+      },
+      error: err => {
+        this.statusGood_ = '';
+        // this.statusGoodForm.get('statusGood').setValue('')
+      },
+    });
+  }
+  addAll() {
+    if (this.actasDefault == null) {
+      this.alert(
+        'warning',
+        'No existe un Acta en la cual Asignar el Bien.',
+        'Debe capturar un acta.'
+      );
+      return;
+    } else {
+      if (this.statusCanc == 'CERRADA') {
+        this.alert(
+          'warning',
+          'El Acta ya esta Cerrada, no puede Realizar Modificaciones a esta',
+          ''
+        );
+        return;
+      } else {
+        if (this.dataTableGood_.length > 0) {
+          this.loading2 = true;
+          let result = this.dataTableGood_.map(async _g => {
+            console.log(_g);
+
+            if (_g.di_disponible == 'N') {
+              return;
+            }
+
+            if (_g.di_disponible == 'S') {
+              _g.di_disponible = 'N';
+              let valid = this.dataRecepcion.some(
+                goodV => goodV.numberGood == _g.id
+              );
+
+              console.log('valid', valid);
+              await this.createDET(_g);
+              if (!valid) {
+                // this.dataRecepcion = [...this.dataRecepcion, _g];
+              }
+            }
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(Number(this.fileNumber));
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
+          });
+        }
+      }
+    }
+  }
+
+  removeSelect() {
+    if (this.dataRecepcion.length == 0) {
+      return;
+    }
+    if (this.statusCanc == 'CERRADA') {
+      this.alert(
+        'warning',
+        'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+        ''
+      );
+      return;
+    } else {
+      if (this.actasDefault == null) {
+        this.alert(
+          'warning',
+          'No Existe un Acta en la cual Asignar el Bien.',
+          'Debe Capturar un Acta.'
+        );
+        return;
+      } else if (this.selectedGooodsValid.length == 0) {
+        this.alert(
+          'warning',
+          'Debe Seleccionar un Bien que Forme Parte del Acta Primero',
+          'Debe Capturar un Acta.'
+        );
+        return;
+      } else {
+        this.loading2 = true;
+        if (this.selectedGooodsValid.length > 0) {
+          // this.goods = this.goods.concat(this.selectedGooodsValid);
+          let result = this.selectedGooodsValid.map(async good => {
+            console.log('good', good);
+            this.dataRecepcion = this.dataRecepcion.filter(
+              (_good: any) => _good.id != good.id
+            );
+            let index = this.dataTableGood_.findIndex(
+              g => g.id === good.numberGood
+            );
+            // if (index != -1) {
+            //   this.dataTableGood_[index].di_disponible = 'S';
+            //   this.dataTableGood_[index].acta = null;
+            // }
+            await this.deleteDET(good);
+            // this.selectedGooods = [];
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(Number(this.fileNumber));
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
+          });
+          this.selectedGooodsValid = [];
+        }
+      }
+    }
+  }
+
+  removeAll() {
+    if (this.actasDefault == null) {
+      this.alert(
+        'warning',
+        'No Existe un Acta en la cual Asignar el Bien.',
+        'Debe Capturar un Acta.'
+      );
+      return;
+    } else {
+      if (this.statusCanc == 'CERRADA') {
+        this.alert(
+          'warning',
+          'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+          ''
+        );
+        return;
+      } else {
+        if (this.dataRecepcion.length > 0) {
+          this.dataRecepcion.forEach(good => {
+            console.log('this.dataRecepcion', this.dataRecepcion);
+            this.dataRecepcion = this.dataRecepcion.filter(
+              _good => _good.id != good.id
+            );
+            let index = this.dataTableGood_.findIndex(g => g.id === good.id);
+            // if (index != -1) {
+            //   if (this.dataTableGood_[index].est_disponible) {
+            //     this.dataTableGood_[index].est_disponible = 'S';
+            //   }
+
+            //   if (this.dataTableGood_[index].di_disponible) {
+            //     this.dataTableGood_[index].di_disponible = 'S';
+            //   }
+            // }
+          });
+          this.goodsValid = [];
+        }
+      }
+    }
+  }
+
+  rowsSelected(event: any) {
+    this.selectedGooodsValid = event.selected;
+  }
+
+  actualizarActa() {}
+  agregarActa() {}
+  cleanActa() {}
+  cargueMasive() {}
+  btnDetail() {}
+  sendOffice() {}
+  Generar() {}
+  cerrarActa() {}
 }
 
 const EXAMPLE_DATA1 = [

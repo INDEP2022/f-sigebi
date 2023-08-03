@@ -8,4 +8,5 @@ export enum ThirdPartyEndpoints {
   ThirdPartyGetAll = `comi-xthird/get-all`,
   FindItemV2 = 'third-party/findItemV2',
   FindItemCustom = 'third-party/findItemCustom',
+  TypeEventfindItemV2 = 'type-events-xter-comer/findItemV2',
 }

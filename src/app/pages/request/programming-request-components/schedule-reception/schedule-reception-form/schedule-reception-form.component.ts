@@ -111,7 +111,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
 
   userLogData() {
     let userLog = this.authService.decodeToken();
-    console.log('userLog', userLog);
+
     this.delegationUser = userLog.delegacionreg;
   }
 
@@ -168,7 +168,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
           if (taskResult) {
             this.msgGuardado(
               'success',
-              'Creación de tarea correcta',
+              'Creación de Tarea Correcta',
               `Se creó la tarea Realizar Programación con el folio: ${this.programmingId}`
             );
           }

@@ -22,7 +22,7 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
           goodCheck.push(data.row);
         } else {
           goodCheck = goodCheck.filter(
-            valor => valor.idordeningreso != data.row.idordeningreso
+            valor => valor.row.idordeningreso != data.row.idordeningreso
           );
         }
       });

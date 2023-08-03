@@ -53,8 +53,8 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo Transferente&#58;</label>
-            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ stateName }} </span>
           </div>
         </div>
         <div class="col-md-4">
@@ -95,12 +95,6 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Estado&#58;</label>
-            <span class="fs-4"> {{ stateName }} </span>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group">
             <label class="text-right mr-2">Emisora&#58;</label>
             <span class="fs-4"> {{ stationName }} </span>
           </div>
@@ -109,6 +103,12 @@
           <div class="form-group">
             <label class="text-right mr-2">Dirección&#58;</label>
             <span class="fs-4"> {{ programming?.address }} </span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
           </div>
         </div>
       </div>
@@ -120,15 +120,13 @@
             <span class="fs-4"> {{ authorityName }} </span>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Observación&#58;</label>
             <span class="fs-4"> {{ programming?.observation }} </span>
           </div>
         </div>
-      </div>
 
-      <div class="row pt-4">
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Tipo Relevante&#58;</label>
@@ -414,9 +412,13 @@
                         <form-field
                           [control]="executeForm.get('descriptionGoodSae')">
                           <input
+                            style="
+                              width: 230px;
+                              height: 50px;
+                              font-size: 13px !important;
+                            "
                             type="text"
                             class="form-control"
-                            maxlength="100"
                             formControlName="descriptionGoodSae" />
                         </form-field>
                       </td>
@@ -827,7 +829,7 @@
                                       <input
                                         type="text"
                                         class="form-control"
-                                        maxlength="100"
+                                        maxlength="5000"
                                         formControlName="descriptionGoodSae" />
                                     </form-field>
                                   </td>
@@ -1232,7 +1234,12 @@
                                   <input
                                     type="text"
                                     class="form-control"
-                                    maxlength="100"
+                                    style="
+                                      width: 230px;
+                                      height: 50px;
+                                      font-size: 13px !important;
+                                    "
+                                    maxlength="5000"
                                     formControlName="descriptionGoodSae" />
                                 </form-field>
                               </td>
@@ -1407,9 +1414,20 @@
                   [params]="paramsGuardGoods"
                   [totalItems]="totalItemsGuard"></app-pagination>
               </div>
+
+              <div class="justify-content-end btn-toolbar">
+                <button
+                  (click)="showReceiptGuardClose()"
+                  class="btn btn-primary btn-sm active">
+                  Ver recibos resguardo <i class="fa fa-eye"></i>
+                </button>
+              </div>
               <div
                 class="row pt-5"
-                *ngIf="receiptGuardGood?.statusReceiptGuard == 'ABIERTO'">
+                *ngIf="
+                  receiptGuardGood?.statusReceiptGuard == 'ABIERTO' ||
+                  receiptGuardGood?.statusReceiptGuard == null
+                ">
                 <ng2-smart-table
                   [attr.class]="'table-bordered pt-3'"
                   [settings]="settingsReceiptsGuards"
@@ -1644,8 +1662,13 @@
                                     ">
                                     <input
                                       type="text"
+                                      style="
+                                        width: 230px;
+                                        height: 50px;
+                                        font-size: 13px !important;
+                                      "
                                       class="form-control"
-                                      maxlength="100"
+                                      maxlength="5000"
                                       formControlName="descriptionGoodSae" />
                                   </form-field>
                                 </td>
@@ -1825,12 +1848,19 @@
                     [totalItems]="totalItemsWarehouse"></app-pagination>
                 </div>
               </div>
-
+              <div class="justify-content-end btn-toolbar">
+                <button
+                  (click)="showReceiptWarehouseClose()"
+                  class="btn btn-primary btn-sm active">
+                  Ver recibos almacén <i class="fa fa-eye"></i>
+                </button>
+              </div>
               <div
-                class="row pt-5"
+                class="row pt-2"
                 *ngIf="
-                  receiptWarehouseGood?.statusReceiptGuard == 'ABIERTO' &&
-                  receiptWarehouseGood?.typeReceipt == 'ALMACEN'
+                  (receiptWarehouseGood?.statusReceiptGuard == 'ABIERTO' &&
+                    receiptWarehouseGood?.typeReceipt == 'ALMACEN') ||
+                  receiptWarehouseGood?.statusReceiptGuard == null
                 ">
                 <ng2-smart-table
                   [attr.class]="'table-bordered pt-3'"
@@ -1838,21 +1868,6 @@
                   [source]="receiptWarehouse"
                   (edit)="showGoodsReceiptWarehouse($event.data)"
                   (delete)="generateReceiptWarehouse($event.data)">
-                </ng2-smart-table>
-              </div>
-
-              <div
-                class="row pt-5"
-                *ngIf="
-                  receiptWarehouseGood?.statusReceiptGuard == 'CERRADO' &&
-                  receiptWarehouseGood?.typeReceipt == 'ALMACEN'
-                ">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered pt-3'"
-                  [settings]="settingsReceiptWarehouseClose"
-                  [source]="receiptWarehouse"
-                  (edit)="showGoodsReceiptWarehouse($event.data)"
-                  (delete)="showReceipt($event.data)">
                 </ng2-smart-table>
               </div>
             </tab>
@@ -2064,7 +2079,12 @@
                                     <input
                                       type="text"
                                       class="form-control"
-                                      maxlength="100"
+                                      style="
+                                        width: 230px;
+                                        height: 50px;
+                                        font-size: 13px !important;
+                                      "
+                                      maxlength="5000"
                                       formControlName="descriptionGoodSae" />
                                   </form-field>
                                 </td>
@@ -2410,7 +2430,12 @@
                                   <input
                                     type="text"
                                     class="form-control"
-                                    maxlength="100"
+                                    maxlength="5000"
+                                    style="
+                                      width: 230px;
+                                      height: 50px;
+                                      font-size: 13px !important;
+                                    "
                                     formControlName="descriptionGoodSae" />
                                 </form-field>
                               </td>

@@ -27,7 +27,7 @@
           [loadingText]="'Formalizando'"
           [btnSmall]="true"
           [icon]="'fa fa-check'"
-          [className]="'btn-primary disabled'"
+          [className]="'btn-primary'"
           (confirm)="confirm()"></confirm-button>
 
         <button
@@ -52,8 +52,8 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Correo Transferente&#58;</label>
-            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+            <label class="text-right mr-2">Estado&#58;</label>
+            <span class="fs-4"> {{ stateName }} </span>
           </div>
         </div>
         <div class="col-md-4">
@@ -92,13 +92,6 @@
       <div class="row pt-3">
         <div class="col-md-4">
           <div class="form-group">
-            <label class="text-right mr-2">Estado&#58;</label>
-            <span class="fs-4"> {{ stateName }} </span>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="form-group">
             <label class="text-right mr-2">Emisora&#58;</label>
             <span class="fs-4"> {{ stationName }} </span>
           </div>
@@ -110,6 +103,13 @@
             <span class="fs-4"> {{ programming?.address }} </span>
           </div>
         </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-right mr-2">Correo Transferente&#58;</label>
+            <span class="fs-4">{{ programming?.emailTransfer }}</span>
+          </div>
+        </div>
       </div>
 
       <div class="row pt-3">
@@ -119,15 +119,13 @@
             <span class="fs-4"> {{ authorityName }} </span>
           </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Observación&#58;</label>
             <span class="fs-4"> {{ programming?.observation }} </span>
           </div>
         </div>
-      </div>
 
-      <div class="row pt-3">
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Tipo Relevante&#58;</label>

@@ -80,10 +80,13 @@ export class EmailService extends HttpService {
   }
 
   createEmailProgramming(data: any) {
-    const formData = new FormData();
-    formData.append('data', data);
     //formData.append('files', documentProgramming);
-    return this.post(`${EmailEndPoint.EmailProgramming}`, formData);
+    return this.post(`${EmailEndPoint.EmailProgramming}`, data);
+  }
+
+  createEmailNotify(data: any) {
+    //formData.append('files', documentProgramming);
+    return this.post(`${EmailEndPoint.EmailProgrammingNotify}`, data);
   }
 
   getIniEmailCentral(data: Object) {

@@ -1,12 +1,10 @@
+export let customersWhiteList: any[] = [];
+
 export const CUSTOMERS_LIST_COLUMNS = {
   id: {
     title: 'Clave Representante',
     sort: false,
   },
-  // id: {
-  //   title: 'Clave Cliente',
-  //   sort: false,
-  // },
   reasonName: {
     title: 'Nombre o Razón Social',
     sort: false,

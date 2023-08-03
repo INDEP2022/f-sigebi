@@ -17,11 +17,19 @@ export class ComerLotService extends HttpService {
     return this.get<IListResponse<IComerLot>>('comer-lot', params);
   }
 
+  getAllFilterPostQuery(params: _Params) {
+    return this.get<IListResponse<IComerLot>>('comer-lot/post-query', params);
+  }
+
   create(lot: Object) {
     return this.post<IComerLot>('comer-lot', lot);
   }
 
   update(id: string | number, lot: Object) {
     return this.put<IComerLot>('comer-lot/' + id, lot);
+  }
+
+  remove(id: string | number) {
+    return this.delete('comer-lot/' + id);
   }
 }

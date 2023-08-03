@@ -56,15 +56,17 @@
         </div>
         <br />
         <div class="col-md-6">
-          <form-field
-            [control]="flatFileGoodForm.get('tipoActa')"
-            label="Tipo de Acta">
-            <input
-              type="text"
-              formControlName="tipoActa"
-              placeholder=""
-              class="form-control" />
-          </form-field>
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="flatFileGoodForm.get('tipoActa')"
+              label="Tipo de Acta">
+              <select class="form-control" formControlName="tipoActa">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="1">1</option>
+                <option [value]="2">2</option>
+              </select>
+            </form-field>
+          </div>
         </div>
         <br />
         <div class="col-md-6">

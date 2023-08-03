@@ -33,10 +33,11 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   actId: number = 0;
   statusReceipt: string = '';
   loadingTable: boolean = false;
+  loadingCreateReceipt: boolean = false;
   delegationDes: string = '';
   keyTransferent: string = '';
   typeReceipt: string = '';
-  proceedign: IProceedings;
+  proceedigns: IProceedings[] = [];
   constructor(
     private modalRef: BsModalRef,
     private modalService: BsModalService,
@@ -78,21 +79,19 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     params.getValue()['filter.idPrograming'] = this.programming.id;
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        this.proceedign = response.data[0];
+        this.proceedigns = response.data;
       },
       error: error => {},
     });
   }
 
   receiptSelect(receipt: IReceipt) {
-    console.log('receipt', receipt);
     this.receiptId = receipt.id;
     this.actId = receipt.actId;
     this.statusReceipt = receipt.statusReceipt;
   }
 
   async confirm() {
-    console.log('this.statusReceipt', this.statusReceipt);
     if (this.statusReceipt == 'ABIERTO') {
       const updateProgrammingGood = await this.updateProgGoood();
 
@@ -124,6 +123,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           programmingId: this.programming.id,
           goodId: item.goodId,
           status: 'EN_RECEPCION_TMP',
+          actaId: this.actId,
         };
 
         this.programminGoodService.updateGoodProgramming(formData).subscribe({
@@ -192,12 +192,141 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
   }
 
   createReceipt() {
-    if (this.receipts[this.receipts.length]?.statusReceipt == 'ABIERTO') {
+    if (this.proceedigns.length > 0) {
+      const filterProceedingOpen = this.proceedigns.filter(item => {
+        return item.statusProceeedings == 'ABIERTO';
+      });
+
+      if (filterProceedingOpen.length == 0) {
+        const form: Object = {
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
+        };
+        this.proceedingService.createProceedings(form).subscribe({
+          next: async response => {
+            const createKeyAct = await this.createKeyAct(response);
+            if (createKeyAct == true) {
+              const receiptForm: Object = {
+                id: 1,
+                actId: response.id,
+                programmingId: this.programming.id,
+                statusReceipt: 'ABIERTO',
+              };
+
+              this.receptionGoodService.createReceipt(receiptForm).subscribe({
+                next: async response => {
+                  const folioReceipt = await this.createKeyReceipt(response);
+                  if (folioReceipt) {
+                    this.getReceipts();
+                    this.loadingCreateReceipt = false;
+                  }
+                },
+                error: error => {},
+              });
+            }
+          },
+        });
+      } else {
+        const filterReceipt = this.receipts.filter(item => {
+          return item.actId == filterProceedingOpen[0].id;
+        });
+        const receiptForm: Object = {
+          id: filterReceipt.length + 1,
+          actId: filterProceedingOpen[0].id,
+          programmingId: this.programming.id,
+          statusReceipt: 'ABIERTO',
+        };
+
+        this.receptionGoodService.createReceipt(receiptForm).subscribe({
+          next: async response => {
+            const folioReceipt = await this.createKeyReceipt(response);
+            if (folioReceipt) {
+              this.getReceipts();
+              this.loadingCreateReceipt = false;
+            }
+          },
+          error: error => {},
+        });
+      }
+    } else {
+      this.loadingCreateReceipt = true;
+      const form: Object = {
+        idPrograming: this.programming.id,
+        statusProceeedings: 'ABIERTO',
+      };
+      this.proceedingService.createProceedings(form).subscribe({
+        next: async response => {
+          const createKeyAct = await this.createKeyAct(response);
+          if (createKeyAct == true) {
+            const receiptForm: Object = {
+              id: 1,
+              actId: response.id,
+              programmingId: this.programming.id,
+              statusReceipt: 'ABIERTO',
+            };
+
+            this.receptionGoodService.createReceipt(receiptForm).subscribe({
+              next: async response => {
+                const folioReceipt = await this.createKeyReceipt(response);
+                if (folioReceipt) {
+                  this.getReceipts();
+                  this.loadingCreateReceipt = false;
+                }
+              },
+              error: error => {},
+            });
+          }
+        },
+      });
+    }
+    /*this.loadingCreateReceipt = true;
+    console.log('this.receipts', this.receipts);
+    const receiptOpen = this.receipts.filter(receipt => {
+      return receipt.statusReceipt == 'ABIERTO';
+    });
+
+    console.log('receiptOpen', receiptOpen);
+
+    if (receiptOpen.length == 0) {
+      const form: Object = {
+        idPrograming: this.programming.id,
+        statusProceeedings: 'ABIERTO',
+      };
+      this.proceedingService.createProceedings(form).subscribe({
+        next: async response => {
+          const createKeyAct = await this.createKeyAct(response);
+          if (createKeyAct == true) {
+            if (response.id == 1) {
+              const receiptForm: Object = {
+                id: 1,
+                actId: response.id,
+                programmingId: this.programming.id,
+                statusReceipt: 'ABIERTO',
+              };
+
+              this.receptionGoodService.createReceipt(receiptForm).subscribe({
+                next: async response => {
+                  const folioReceipt = await this.createKeyReceipt(response);
+                  if (folioReceipt) {
+                    this.getReceipts();
+                    this.loadingCreateReceipt = false;
+                  }
+                },
+                error: error => {},
+              });
+            }
+          }
+        },
+      });
+    }
+
+    if (receiptOpen[0]?.statusReceipt == 'ABIERTO') {
       this.alert(
         'warning',
         'Acción Inválida',
         'Aún se encuentran recibos abiertos'
       );
+      this.loadingCreateReceipt = false;
     } else {
       if (this.proceedign?.proceedingStatus == 'ABIERTO') {
         const receiptForm: Object = {
@@ -217,6 +346,67 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
+        if (this.proceedign?.statusProceeedings == 'ABIERTO') {
+          const receiptNumber = this.receipts.filter(receipt => {
+            return (
+              receipt.statusReceipt == 'CERRADO' &&
+              receipt.actId == this.proceedign.id
+            );
+          });
+
+          const receiptForm: Object = {
+            id: receiptNumber.length + 1,
+            actId: this.proceedign.id,
+            programmingId: this.programming.id,
+            statusReceipt: 'ABIERTO',
+          };
+          this.receptionGoodService.createReceipt(receiptForm).subscribe({
+            next: async response => {
+              const folioReceipt = await this.createKeyReceipt(response);
+              if (folioReceipt) {
+                this.getReceipts();
+                this.loadingCreateReceipt = false;
+              }
+            },
+            error: error => {},
+          });
+        } else {
+          const form: Object = {
+            idPrograming: this.programming.id,
+            statusProceeedings: 'ABIERTO',
+          };
+          this.proceedingService.createProceedings(form).subscribe({
+            next: async response => {
+              const createKeyAct = await this.createKeyAct(response);
+              if (createKeyAct == true) {
+                if (response.id == 1) {
+                  const receiptForm: Object = {
+                    id: 1,
+                    actId: response.id,
+                    programmingId: this.programming.id,
+                    statusReceipt: 'ABIERTO',
+                  };
+
+                  this.receptionGoodService
+                    .createReceipt(receiptForm)
+                    .subscribe({
+                      next: async response => {
+                        const folioReceipt = await this.createKeyReceipt(
+                          response
+                        );
+                        if (folioReceipt) {
+                          this.getReceipts();
+                          this.loadingCreateReceipt = false;
+                        }
+                      },
+                      error: error => {},
+                    });
+                }
+              }
+            },
+          });
+        }
+
         const form: Object = {
           idPrograming: this.programming.id,
           statusProceeedings: 'ABIERTO',
@@ -225,27 +415,49 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           next: async response => {
             const createKeyAct = await this.createKeyAct(response);
             if (createKeyAct == true) {
-              const receiptForm: Object = {
-                id: this.receipts.length + 1,
-                actId: response.id,
-                programmingId: this.programming.id,
-                statusReceipt: 'ABIERTO',
-              };
-              this.receptionGoodService.createReceipt(receiptForm).subscribe({
-                next: async response => {
-                  const folioReceipt = await this.createKeyReceipt(response);
-                  if (folioReceipt) {
-                    this.getReceipts();
-                  }
-                },
-                error: error => {},
-              });
+              if (response.id == 1) {
+                const receiptForm: Object = {
+                  id: 1,
+                  actId: response.id,
+                  programmingId: this.programming.id,
+                  statusReceipt: 'ABIERTO',
+                };
+
+                this.receptionGoodService.createReceipt(receiptForm).subscribe({
+                  next: async response => {
+                    const folioReceipt = await this.createKeyReceipt(response);
+                    if (folioReceipt) {
+                      this.getReceipts();
+                      this.loadingCreateReceipt = false;
+                    }
+                  },
+                  error: error => {},
+                });
+              } else if (response.id > 1) {
+                const receiptForm: Object = {
+                  id: 1,
+                  actId: response.id,
+                  programmingId: this.programming.id,
+                  statusReceipt: 'ABIERTO',
+                };
+                console.log('receiptForm', receiptForm);
+                this.receptionGoodService.createReceipt(receiptForm).subscribe({
+                  next: async response => {
+                    const folioReceipt = await this.createKeyReceipt(response);
+                    if (folioReceipt) {
+                      this.getReceipts();
+                      this.loadingCreateReceipt = false;
+                    }
+                  },
+                  error: error => {},
+                });
+              }
             }
           },
           error: error => {},
-        });
+        }); 
       }
-    }
+    } */
   }
 
   createKeyAct(act: IProceedings) {
