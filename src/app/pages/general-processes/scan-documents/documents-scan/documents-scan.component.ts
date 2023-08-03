@@ -612,7 +612,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         {
           queryParams: {
             folio: this.originFolio,
-            expediente: this.expedientNumber,
+            expedientNumber: this.expedientNumber,
             tipoConv: this.tipoConv,
             pGoodFatherNumber: this.pGoodFatherNumber,
           },
