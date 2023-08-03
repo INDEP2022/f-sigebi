@@ -9,12 +9,12 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  user: {
+  usuario_revision: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  regionalCoord: {
+  no_delegacion: {
     title: 'Coordinación Regional',
     type: 'number',
     sort: false,
