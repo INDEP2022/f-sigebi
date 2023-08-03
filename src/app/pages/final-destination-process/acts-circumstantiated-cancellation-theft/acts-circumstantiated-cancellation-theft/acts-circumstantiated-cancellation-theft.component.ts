@@ -83,10 +83,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
   goods: string;
   bienesLoading: boolean = false;
   formTable2: FormGroup;
+  loadingBienes: boolean = true;
   actaRecepttionForm: FormGroup;
   validPermisos: boolean = true;
   goodFormFormGroup: FormGroup;
   disabledBtnCerrar: boolean = true;
+  showScanForm: boolean = true;
   ocultarPaginado: boolean = false;
   transfer: number = 0;
   dataRecepcion: any[] = [];
@@ -238,8 +240,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   ngOnInit(): void {
     this.goodForm();
     this.actaForm();
-    this.loading = false;
-    this.loadingExpedient = false;
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
   }
 
@@ -360,9 +360,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.loadingExpedient = true;
     this.expedientService.getById(id).subscribe({
       next: (data: any) => {
+        this.loadingExpedient = false;
         this.response = !this.response;
         this.validateEx = true;
-        this.loadingExpedient = false;
         this.expedient = data;
         this.fileNumber = Number(this.expedient.id);
         this.aprevia = this.expedient.preliminaryInquiry;
@@ -397,8 +397,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   getGoodsByStatus(id: number) {
-    this.loading = true;
-
+    this.loadingBienes = true;
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -406,8 +405,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log('1412212', params);
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
+        this.loadingBienes = false;
         this.bienes = data.data;
-
         console.log('Bienes', this.bienes);
 
         let result = data.data.map(async (item: any) => {
@@ -429,7 +428,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.dataTableGood.refresh();
           // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
-          this.loading = false;
+          this.loadingBienes = false;
           // console.log(this.bienes);
         });
       },
@@ -606,6 +605,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
   gestionTramite() {
+    this.bienesLoading = false;
     this.filterParams
       .getValue()
       .addFilter('expedient', this.fileNumber, SearchFilter.EQ);
@@ -1004,6 +1004,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actualizarActa() {}
   agregarActa() {}
   cleanActa() {}
+  btnDetail() {}
+  sendOffice() {}
 }
 
 const EXAMPLE_DATA1 = [
