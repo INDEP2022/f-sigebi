@@ -133,6 +133,7 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
       this.alert('error', 'Error', 'Selecciona un Evento');
       return;
     }
+
     this.eventForm.patchValue(
       {
         ...this.eventSelected,
@@ -148,6 +149,11 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
       }
       // { emitEvent: false }
     );
+    console.warn('SETEO DEL FORMULARIO');
+    console.log(this.eventSelected);
+
+    console.log(this.eventForm.value);
+
     this.onOpenEvent.emit();
   }
 }

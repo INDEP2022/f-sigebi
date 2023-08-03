@@ -6,4 +6,5 @@ export enum PaymentEndPoints {
   SendReadSirsaeFcomer113 = 'application/sendReadSirsaeFcomer113',
   SendSirsaeFcomer112 = 'application/sendSirsaeFcomer112',
   GetAllV2 = 'comer-payment-ref/getAllV2',
+  getAllV2Total = 'comer-payment-ref/getAllV2Total',
 }

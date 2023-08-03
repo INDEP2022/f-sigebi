@@ -18,26 +18,24 @@
           </form-field>
         </div>
         <div class="col-md-6 mt-3">
-          <form-field [control]="form.get('bankKey')" label="Banco">
-            <input
-              maxlength="10"
-              type="text"
-              class="form-control"
-              formControlName="bankKey" />
-            <!-- <ngx-select [searchOnInit]="true" [form]="form" control="bankKey" [data]="banks" value="cveBank"
-              bindLabel="bankAndNumber" label="Banco" (fetchItems)="getBanks($event)">
-            </ngx-select> -->
+          <form-field [control]="form.get('bankKey')">
+            <!-- <input maxlength="10" type="text" class="form-control" formControlName="bankKey" /> -->
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="form"
+              control="bankKey"
+              [data]="banks"
+              bindLabel="bankAndNumber"
+              label="Banco"
+              (fetchItems)="getBanks($event)">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('code')" label="Código">
-            <input
-              maxlength="4"
-              type="text"
-              class="form-control"
-              formControlName="code" />
+            <input maxlength="4" type="text" class="form-control" formControlName="code" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6 mt-2">
           <form-field
             [control]="form.get('movementNumber')"
