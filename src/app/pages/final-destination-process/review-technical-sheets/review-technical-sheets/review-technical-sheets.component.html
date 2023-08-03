@@ -140,7 +140,9 @@
       </form>
       <div class="row mt-3 justify-content-md-center">
         <div class="col-12 col-md-3 text-md-center">
-          <button class="btn btn-primary btn-sm active">Consultar</button>
+          <button class="btn btn-primary btn-sm active" (click)="save()">
+            Consultar
+          </button>
           <button
             class="btn btn-danger btn-sm active mr-3"
             (click)="clean()"

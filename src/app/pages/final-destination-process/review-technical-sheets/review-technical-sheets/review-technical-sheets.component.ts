@@ -1,10 +1,15 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -21,7 +26,7 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilters: any = [];
-  data: any;
+  data: LocalDataSource = new LocalDataSource();
   selectReview: any = [];
 
   get initDate() {
@@ -33,6 +38,7 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     private authService: AuthService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
+    private datePipe: DatePipe,
     private modalService: BsModalService
   ) {
     super();
@@ -42,6 +48,35 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+
+    this.totalItems = 0;
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            //console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+        }
+      });
+
+    this.params.pipe(takeUntil(this.$unSubscribe));
   }
 
   initForm() {
@@ -103,19 +138,65 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
-  save(filter: any) {
+  save() {
     this.loading = true;
+
+    const fechaInicio = this.form.get('initDate').value;
+    const fechaFin = this.form.get('endDate').value;
+
+    const ActaInicio = this.form.get('initAct').value;
+    const ActaFin = this.form.get('endAct').value;
+
+    const fechaInicioFormateada = this.datePipe.transform(
+      fechaInicio,
+      'dd-MM-yyyy'
+    );
+    const fechaFinFormateada = this.datePipe.transform(fechaFin, 'dd-MM-yyyy');
+    const fechaActaInicio = this.datePipe.transform(ActaInicio, 'dd-MM-yyyy');
+    const fechaActaFin = this.datePipe.transform(ActaFin, 'dd-MM-yyyy');
+
     let params = {
       ...this.params.getValue(),
-      ...(this.columnFilters = []),
+      ...this.columnFilters,
     };
-    /*
-        if (this.form.get('initDate').value !== null)
-          params['filter.initDate'] = `$ilike:${this.form.get('initDate').value}`;
-    
-        if (this.form.get('endDate').value !== null)
-          params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
-    */
+
+    if (fechaInicioFormateada !== null)
+      params['filter.fechaInicioFormateada'] = `$eq:${fechaInicioFormateada}`;
+
+    if (fechaFinFormateada !== null)
+      params['filter.fechaFinFormateada'] = `$eq:${fechaFinFormateada}`;
+
+    if (this.form.get('proceedingsSiab').value !== null)
+      params['filter.proceedingsSiab'] = `$eq:${
+        this.form.get('proceedingsSiab').value
+      }`;
+
+    if (fechaActaInicio !== null)
+      params['filter.fechaActaInicio'] = `$eq:${fechaActaInicio}`;
+
+    if (fechaActaFin !== null)
+      params['filter.fechaActaFin'] = `$eq:${fechaActaFin}`;
+
+    if (this.form.get('userUploadAct').value !== null)
+      params['filter.userUploadAct'] = `$eq:${
+        this.form.get('userUploadAct').value
+      }`;
+
+    if (this.form.get('regCoordination').value !== null)
+      params['filter.regCoordination'] = `$eq:${
+        this.form.get('regCoordination').value
+      }`;
+
+    if (this.form.get('transf').value !== null)
+      params['filter.transf'] = `$eq:${this.form.get('transf').value}`;
+
+    if (this.form.get('issuing').value !== null)
+      params['filter.issuing'] = `$eq:${this.form.get('issuing').value}`;
+
+    if (this.form.get('authority').value !== null)
+      params['filter.authority'] = `$eq:${this.form.get('authority').value}`;
+
+    console.log(params);
   }
 
   settingsChange(event: any) {
