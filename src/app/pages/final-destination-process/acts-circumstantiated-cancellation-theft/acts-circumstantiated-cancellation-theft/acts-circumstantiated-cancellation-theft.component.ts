@@ -1004,8 +1004,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actualizarActa() {}
   agregarActa() {}
   cleanActa() {}
+  cargueMasive() {}
   btnDetail() {}
   sendOffice() {}
+  Generar() {}
+  cerrarActa() {}
 }
 
 const EXAMPLE_DATA1 = [

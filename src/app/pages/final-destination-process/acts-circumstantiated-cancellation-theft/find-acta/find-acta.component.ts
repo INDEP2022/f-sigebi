@@ -141,16 +141,16 @@ export class FindActaComponent extends BasePage implements OnInit {
       .subscribe({
         next: data => {
           console.log(data);
-          // let result = data.data.map((item: any) => {
-          //   item['numTransfer_'] = item.numTransfer
-          //     ? item.numTransfer.id
-          //     : null;
-          // });
+          let result = data.data.map((item: any) => {
+            item['numTransfer_'] = item.numTransfer
+              ? item.numTransfer.id
+              : null;
+          });
           this.dataFactActas.load(data.data);
           this.dataFactActas.refresh();
           this.loading = false;
           this.totalItems2 = data.count;
-          // console.log(this.dataTableGoodsActa);
+          console.log(this.dataTableGoodsActa);
         },
         error: error => {
           this.loading = false;
