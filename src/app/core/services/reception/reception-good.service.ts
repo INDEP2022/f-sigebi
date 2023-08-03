@@ -92,4 +92,8 @@ export class ReceptionGoodService extends HttpService {
   deleteReceiptWitness(formData: Object) {
     return this.delete(`${this.ReceiptWitness}`, formData);
   }
+
+  deleteReceiptGood(formData: Object) {
+    return this.delete(`${this.ReceiptGood}`, formData);
+  }
 }

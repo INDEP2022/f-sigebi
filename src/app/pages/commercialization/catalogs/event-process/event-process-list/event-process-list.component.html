@@ -53,7 +53,7 @@
             <app-columns-select
               [(settings)]="settings"
               [leftList]="true"
-              [defaultColumns]="2"></app-columns-select>
+              [defaultColumns]="3"></app-columns-select>
           </div>
         </div>
         <div [class]="loading ? 'table-loading' : ''">
@@ -69,7 +69,7 @@
         </div>
       </div>
 
-      <div class="col-md-6" *ngIf="rowTypeProcess">
+      <div class="col-md-6">
         <div class="row">
           <div class="ch-content">
             <h5 class="title">Procesos</h5>
@@ -83,7 +83,7 @@
                 containerclass="tooltip-style"
                 class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="openForm()"
-                *ngIf="totalItems1 < 1">
+                *ngIf="totalItems1 < 1 && button == true">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
@@ -102,37 +102,6 @@
             [params]="params1"
             [totalItems]="totalItems1"></app-pagination>-->
         </div>
-      </div>
-
-      <div class="col-md-6" *ngIf="rowTypeProcess">
-        <div class="row">
-          <div class="ch-content">
-            <h5 class="title">Subtipo de bien</h5>
-          </div>
-          <div class="col-md-8 mb-3"></div>
-          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
-            <div>
-              <button
-                type="button"
-                tooltip="Nuevo"
-                containerclass="tooltip-style"
-                class="btn btn-info btn-sm active ml-2 mr-2"
-                (click)="openForm()">
-                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        <!--<div class="table-responsive">
-          <ng2-smart-table
-            [settings]="settings2"
-            [source]="data1"
-            (delete)="openForm($event)"
-            (edit)="showDeleteAlert($event)"></ng2-smart-table>
-          <app-pagination
-            [params]="params1"
-            [totalItems]="totalItems1"></app-pagination>
-        </div>-->
       </div>
     </div>
   </div>
