@@ -114,8 +114,13 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       },
     };
   }
+  selectGoodstickets(data: any) {
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.selectGoodsticketss(data));
+  }
 
-  selectGoodstickets(data: any, params?: ListParams) {
+  selectGoodsticketss(data: any) {
     this.loading = true;
     console.log(data);
     let datos = {
@@ -125,24 +130,26 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       typeTicket: data.data.tipo_recibo,
     };
     console.log(datos);
-    this.receptionGoodService.createQueryGoodsTickets(datos, params).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.data1.load(resp.data);
-        this.data1.refresh();
-        this.totalItems1 = resp.count;
-        this.loading = false;
-      },
-      error: eror => {
-        this.data1.load([]);
-        this.data1.refresh();
-        this.alert(
-          'warning',
-          'Generación de Recibos',
-          'No se encontraron Bienes'
-        );
-        this.loading = false;
-      },
-    });
+    this.receptionGoodService
+      .createQueryGoodsTickets(datos, this.params1.getValue())
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          this.data1.load(resp.data);
+          this.data1.refresh();
+          this.totalItems1 = resp.count;
+          this.loading = false;
+        },
+        error: eror => {
+          this.data1.load([]);
+          this.data1.refresh();
+          this.alert(
+            'warning',
+            'Generación de Recibos',
+            'No se encontraron Bienes'
+          );
+          this.loading = false;
+        },
+      });
   }
 }

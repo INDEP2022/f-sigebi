@@ -218,6 +218,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   }
   searchPrograming() {
     this.loader.load = true;
+
     this.programmingGoodReceipt(new ListParams());
   }
   programmingGoodReceipt(params: ListParams) {
@@ -444,7 +445,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         ''
                       );
                       this.downloadResultsGoods = false;
-                      this.searchPrograming();
+                      this.count++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -537,6 +538,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         `Proceso terminado correctamente, ya puede descargar el resultado`,
                         ''
                       );
+                      this.searchPrograming();
                     }, 1000);
                   })
                   .catch(error => {});
@@ -572,6 +574,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
+                    this.searchPrograming();
                   }, 1000);
                 })
                 .catch(error => {});
@@ -611,6 +614,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
+                    this.searchPrograming();
                   }, 1000);
                 })
                 .catch(error => {});
