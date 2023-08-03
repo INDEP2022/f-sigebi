@@ -612,7 +612,7 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         {
           queryParams: {
             folio: this.originFolio,
-            expedientNumber: this.expedientNumber,
+            expediente: this.expedientNumber,
             tipoConv: this.tipoConv,
             pGoodFatherNumber: this.pGoodFatherNumber,
           },
@@ -644,6 +644,14 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
           },
         }
       );
+    }
+    if (this.origin == 'FACTREFACTADEVOLU') {
+      this.router.navigate(['/pages/final-destination-process/return-acts'], {
+        queryParams: {
+          folio: this.originFolio,
+          expediente: this.expedientNumber,
+        },
+      });
     }
   }
 }
