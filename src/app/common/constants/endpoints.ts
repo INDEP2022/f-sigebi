@@ -37,6 +37,7 @@ export enum ENDPOINT_LINKS {
   EntFed = 'catalog/entfed',
   EstRepuve = 'catalog/est-repuve',
   File = 'catalog/expedientes',
+  FichaTecnica = 'views/get-v-ind-fic-tecnicas',
   Fraction = 'catalog/fractions',
   GeneralStatus = 'catalog/general-status',
   Generic = 'catalog/generics',

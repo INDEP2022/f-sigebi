@@ -47,7 +47,7 @@ export const COLUMNSCUSTOMER = {
     },
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        if(data.row.available){
+        if (data.row.available) {
           if (data.toggle) {
             console.log(goodCheckCustomer);
             goodCheckCustomer.push(data.row);
@@ -56,10 +56,9 @@ export const COLUMNSCUSTOMER = {
               valor => valor.ClientId != data.row.ClientId
             );
           }
-        }else{
-          data.toggle = false
+        } else {
+          data.toggle = false;
         }
-        
       });
     },
   },
@@ -99,147 +98,147 @@ export const COLUMNS_LOT_EVENT = {
 };
 
 export const COLUMNS_DESERT_LOTS = {
-  lotPublic:{
+  lotPublic: {
     title: 'Lote',
     type: 'text',
-    sort: false
+    sort: false,
   },
-  description:{
+  description: {
     title: 'Descripción',
     type: 'text',
-    sort: false
-  }
-}
+    sort: false,
+  },
+};
 
 export const COLUMNS_CUSTOMER_BANKS = {
   movementNumber: {
     title: 'No. Movimiento',
     type: 'number',
-    sort: false
+    sort: false,
   },
   Public_Batch: {
     title: 'Lote',
     type: 'number',
-    sort:false
+    sort: false,
   },
   bankCode: {
     title: 'Banco',
     type: 'text',
-    sort: false
+    sort: false,
   },
   reference: {
     title: 'Referencia',
     type: 'text',
-    sort: false
+    sort: false,
   },
   amount: {
     title: 'Depósito',
     type: 'number',
-    sort: false
+    sort: false,
   },
   Income_Order_ID: {
     title: 'No. Orden Ingreso',
     type: 'number',
-    sort: false
+    sort: false,
   },
   Payment_ID: {
     title: 'No. Pago',
     type: 'number',
-    sort: false
-  }
-}
+    sort: false,
+  },
+};
 
 export const COLUMNS_LOTS_BANKS = {
-  movementNumber:{
+  movementNumber: {
     title: 'No. Movimiento',
     type: 'number',
-    sort: false
+    sort: false,
   },
-  date:{
+  date: {
     title: 'Fecha',
     type: 'text',
     sort: false,
     valuePrepareFunction: (isSelected: any, row: any) => {
-      return format(new Date(row.date), 'dd/MM/yyyy')
-    }
+      return format(new Date(row.date), 'dd/MM/yyyy');
+    },
   },
-  bankKey:{
+  bankKey: {
     title: 'Banco',
     type: 'text',
-    sort: false
+    sort: false,
   },
-  reference:{
+  reference: {
     title: 'Referencia',
     type: 'text',
-    sort: false
+    sort: false,
   },
-  amount:{
+  amount: {
     title: 'Depósito',
     type: 'number',
-    sort: false
+    sort: false,
   },
-  entryOrderId:{
+  entryOrderId: {
     title: 'No. Orden Ingreso',
     type: 'number',
-    sort: false
+    sort: false,
   },
-  paymentId:{
-    title:'No.Pago',
-    type:'number',
-    sort:false
-  }
-}
+  paymentId: {
+    title: 'No.Pago',
+    type: 'number',
+    sort: false,
+  },
+};
 
 export const COLUMNS_PAYMENT_LOT = {
-  reference:{
-    title:'Referencia',
-    type:'text',
-    sort:false
-  },
-  amountAppVat:{
-    title:'Monto',
-    type:'number',
-    sort:false
-  },
-  vat:{
-    title:'IVA',
-    type:'number',
-    sort:false
-  },
-  amountNoAppVat:{
-    title:'Monto no Aplica IVA',
-    type: 'number',
-    sort: false
-  },
-  'transferent.nameTransferent':{
-    title:'Transferente',
-    type:'text',
-    sort:false,
-    valuePrepareFunction: (isSelected: any, row: any) => {
-      return row.transferent.nameTransferent
-    }
-  },
-  'desc_tipo':{
-    title:'Pago Origen',
+  reference: {
+    title: 'Referencia',
     type: 'text',
-    sort:false,
+    sort: false,
+  },
+  amountAppVat: {
+    title: 'Monto',
+    type: 'number',
+    sort: false,
+  },
+  vat: {
+    title: 'IVA',
+    type: 'number',
+    sort: false,
+  },
+  amountNoAppVat: {
+    title: 'Monto no Aplica IVA',
+    type: 'number',
+    sort: false,
+  },
+  'transferent.nameTransferent': {
+    title: 'Transferente',
+    type: 'text',
+    sort: false,
+    valuePrepareFunction: (isSelected: any, row: any) => {
+      return row.transferent.nameTransferent;
+    },
+  },
+  desc_tipo: {
+    title: 'Pago Origen',
+    type: 'text',
+    sort: false,
     valuePrepareFunction: (isSelected: any, row: any) => {
       switch (row.type) {
         case 'P':
-          return 'PENALIZACIÓN'
-        
+          return 'PENALIZACIÓN';
+
         case 'N':
-          return 'NORMAL'
-      
+          return 'NORMAL';
+
         case 'D':
-          return'DEVOLUCIÓN'
+          return 'DEVOLUCIÓN';
 
         default:
-          return null
+          return null;
       }
-    }
-  }
-}
+    },
+  },
+};
 
 //FUNCIONES
 export function setCheckHide(hideValue: boolean) {

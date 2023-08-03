@@ -632,5 +632,18 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+
+    if (this.origin == 'FACTCIRCUNR_0001') {
+      this.router.navigate(
+        [
+          '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+        ],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+          },
+        }
+      );
+    }
   }
 }
