@@ -238,4 +238,8 @@ export class ProceedingsService extends HttpService {
   getTmpTotGoodsProceedings(params: ListParams) {
     return this.get<IListResponse<any>>('tmp-tot-goods-proceedings', params);
   }
+
+  getAct(model: any) {
+    return this.post<IListResponse<any>>('aplication/getAct', model);
+  }
 }

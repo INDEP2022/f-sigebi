@@ -242,4 +242,8 @@ export class GoodProcessService extends HttpService {
     const route = GoodProcessPoints.UpdateMassiveStore;
     return this.put(route, form);
   }
+
+  getDisponible(model: any) {
+    return this.post('update-good-status/getOneRegister', model);
+  }
 }

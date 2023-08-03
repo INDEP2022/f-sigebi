@@ -198,12 +198,18 @@
         </div>
 
         <div class="row mt-3 pt-2">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
-            (userRowSelect)="selectRow($event)"
-            [source]="source">
-          </ng2-smart-table>
+          <div class="row pt-4 table-container">
+            <div class="col-md-12 table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings1"
+                  (userRowSelect)="selectRow($event)"
+                  [source]="source">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
         </div>
 
         <app-pagination [params]="params" [totalItems]="totalItems">
@@ -251,13 +257,16 @@
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
-            (click)="addSelect()">
-            <!-- Mover uno -->
+            (click)="addSelect()"
+            data-toggle="tooltip"
+            [title]="'Agregar'">
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            data-toggle="tooltip"
+            [title]="'Eliminar'"
             (click)="removeSelect()">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>
