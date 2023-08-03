@@ -28,4 +28,8 @@ export class ComerLotService extends HttpService {
   update(id: string | number, lot: Object) {
     return this.put<IComerLot>('comer-lot/' + id, lot);
   }
+
+  remove(id: string | number) {
+    return this.delete('comer-lot/' + id);
+  }
 }
