@@ -23,7 +23,11 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
-import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import {
+  ProceedingsDeliveryReceptionService,
+  ProceedingsService,
+} from 'src/app/core/services/ms-proceedings';
+import { ReceptionDeliveryMinutesComponent } from '../reception-delivery-minutes/reception-delivery-minutes.component';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
 
@@ -52,7 +56,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
   etapa: number = 0;
-  expediente: string | number;
+  expediente: number;
+  idActa: number;
   global: IGlobal = {
     numeroExpediente: null,
   };
@@ -71,6 +76,12 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   get userAuth() {
     return this.authService.decodeToken().username;
   }
+
+  noGood: number;
+  descriptionGood: string;
+  quantity: number;
+  noRegister: number;
+
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
@@ -82,7 +93,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     private proceedingService: ProceedingsService,
     private historygoodService: HistoryGoodService,
     private authService: AuthService,
-    private goodprocessService: GoodProcessService
+    private goodprocessService: GoodProcessService,
+    private proceedingsDetailDel: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.settings1 = {
@@ -112,7 +124,6 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     this.initForm();
     this.pupInitForm();
     this.getEdo();
-
     this.source
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -147,6 +158,9 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.response) this.getGoods();
     });
+    this.disableCampo('elabDate');
+    this.disableCampo('captureDate');
+    this.disableCampo('auditor');
   }
 
   initForm() {
@@ -204,7 +218,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   data2 = EXAMPLE_DATA2; */
 
   search(term: string | number) {
-    this.expediente = term;
+    //this.expediente = term;
     console.log(' this.expediente  ', this.expediente);
     this.loading = true;
     this.expedientService.getById(term).subscribe(
@@ -339,9 +353,27 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     this.modalService.show(DestinationActsDelegationComponent, config);
   }
 
+  openModalRepor(expediente: number | string) {
+    let config: ModalOptions = {
+      initialState: {
+        expediente: expediente,
+        callback: (next: boolean) => {
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => console.log('recibido '));
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ReceptionDeliveryMinutesComponent, config);
+  }
+
   exportData() {
-    if (this.expediente !== null && this.actForm.get('').value) {
-      /// Llamar al bloque Actas
+    if (this.expediente !== null) {
+      this.openModalRepor(this.expediente);
     } else {
       this.alert(
         'warning',
@@ -426,12 +458,133 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     }
     this.totalItems = aux;
   }
+
   calculateTotalItem2() {
     let aux = 0;
     for (let i = 0; i < this.goodsList2.length; i++) {
       aux++;
     }
     this.totalItems2 = aux;
+  }
+
+  getDetMinute(acta: number) {
+    this.proceedingsDetailDel.getDetMinutes(acta).subscribe(
+      response => {
+        console.log('det acta ', response);
+        for (let i = 0; i < response.count; i++) {
+          if (response.data[i] != null && response.data[i] != undefined) {
+            this.noGood = response.data[i].numGoodId.id;
+            this.descriptionGood = response.data[i].numGoodId.goodDescription;
+            this.quantity = response.data[i].amountReturned;
+            this.noRegister = response.data[i].numberRegister;
+          }
+        }
+        console.log('this.noGood ', this.noGood);
+        console.log('this.descriptionGood ', this.descriptionGood);
+        console.log('this.quantity ', this.quantity);
+        console.log('this.noRegister ', this.noRegister);
+      },
+      error => (this.loading = false)
+    );
+  }
+  searchByExp(term: number | string) {
+    this.expediente = Number(term);
+    console.log(' this.expediente  ', this.expediente);
+    this.proceedingsDetailDel.getProceedingByExp(this.expediente).subscribe(
+      response => {
+        console.log('resp ', response.data);
+        this.response = !this.response;
+        for (let i = 0; i < response.count; i++) {
+          if (response.data[i] != undefined) {
+            this.idActa = Number(response.data[i].id);
+            this.actForm.controls['act'].setValue(
+              response.data[i].keysProceedings
+            );
+            this.actForm.controls['observations'].setValue(
+              response.data[i].observations
+            );
+            this.actForm.controls['statusAct'].setValue(
+              response.data[i].statusProceedings
+            );
+            this.actForm.controls['address'].setValue(response.data[i].address);
+            this.actForm.controls['elabDate'].setValue(
+              this.datePipe.transform(
+                response.data[i].elaborationDate,
+                'dd/MM/yyyy'
+              )
+            );
+            this.actForm.controls['captureDate'].setValue(
+              this.datePipe.transform(
+                response.data[i].captureDate,
+                'dd/MM/yyyy'
+              )
+            );
+            this.actForm.controls['destinationDelivDate'].setValue(
+              this.datePipe.transform(
+                response.data[i].datePhysicalReception,
+                'dd/MM/yyyy'
+              )
+            );
+
+            this.actForm.controls['deliveryName'].setValue(
+              response.data[i].witness1
+            );
+            this.actForm.controls['receiverName'].setValue(
+              response.data[i].witness2
+            );
+            this.actForm.controls['auditor'].setValue(
+              response.data[i].responsible
+            );
+          }
+        }
+        if (response == null) {
+          this.alert('info', 'No se encontrarón registros', '');
+        }
+        this.getGoods();
+        this.loading = false;
+        console.log('this.idActa', this.idActa);
+        this.getDetMinute(this.idActa);
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  disableCampo(campo: string) {
+    this.actForm.get(campo).disable();
+  }
+
+  async closeAct() {
+    if (this.actForm.get('act').value == null) {
+      this.alert(
+        'error',
+        'Actas de Destino de Bienes',
+        'No Existe Ningún Acta a Cerrar.'
+      );
+    } else {
+      if (this.noGood == null) {
+        this.alert(
+          'error',
+          'Actas de Destino de Bienes',
+          'El Acta No Tiene Ningún Bien Asignado, No Se Puede Cerrar.'
+        );
+      } else if (this.noGood != null) {
+        if (this.actForm.get('statusAct').value == 'CERRADA') {
+          this.alert(
+            'error',
+            'Actas de Destino de Bienes',
+            'El Acta ya Está Cerrada.'
+          );
+        } else {
+          const resp = await this.alertQuestion(
+            'question',
+            '¿Desea continuar?',
+            'Está Seguro que Desea Cerrar el Acta.?'
+          );
+          if (resp.isConfirmed) {
+          }
+        }
+      }
+    }
   }
 
   /////////////////////// cogigo de Alexander

@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
       <div class="col-12 col-sm-12 col-md-6">
         <search-bar-simple
-          (eventEmit)="search($event)"
+          (eventEmit)="searchByExp($event)"
           [label]="''"
           id="expediente"
           [placeholder]="'N&uacute;mero de expediente'">
@@ -26,13 +26,25 @@
           </button>
         </div>
       </div>
+      <br />
+
+      <div class="d-flex justify-content-center justify-content-md-end mt-2">
+        <div class="">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="closeAct()">
+            Cerrar
+          </button>
+        </div>
+      </div>
 
       <div class="">
         <form
           class="form-material form-horizontal"
           [formGroup]="actForm"
           (ngSubmit)="onSubmit()">
-          <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <!-- <div class="row mt-5 justify-content-start justify-content-sm-end">
             <div class="col-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
@@ -45,9 +57,9 @@
                 </form-field>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="row mt-5">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="actForm.get('act')" label="Acta">
                   <input
@@ -57,7 +69,19 @@
                 </form-field>
               </div>
             </div>
-            <div class="col-md-4">
+
+            <div class="col-md-3">
+              <form-field
+                [control]="actForm.get('statusAct')"
+                label="Estatus Acta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusAct" />
+              </form-field>
+            </div>
+
+            <!-- <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('preliminaryAscertainment')"
@@ -68,8 +92,8 @@
                     formControlName="preliminaryAscertainment" />
                 </form-field>
               </div>
-            </div>
-            <div class="col-md-4">
+            </div> -->
+            <!-- <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('causePenal')"
@@ -80,7 +104,7 @@
                     formControlName="causePenal" />
                 </form-field>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="row mt-4">
             <div class="col-md-4">
@@ -241,12 +265,14 @@
               <div class="row">
                 <div class="col-6">
                   <span class="text-success mr-5"
-                    ><i class="fa fa-square"></i> Disponibles</span
+                    ><i class="bx bxs-circle me-1 text-success"></i>
+                    Disponibles</span
                   >
                 </div>
                 <div class="col-6">
                   <span class="text-danger"
-                    ><i class="fa fa-square"></i> No disponibles</span
+                    ><i class="bx bxs-circle me-1 text-black"></i> No
+                    disponibles</span
                   >
                 </div>
               </div>

@@ -115,7 +115,7 @@ export class MaintenanceFractionComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Actualización de FRACCIÓN ARANCELARIA',
-            'Realizada exitosamente'
+            'Realizada correctamente'
           );
           this.clear();
         }

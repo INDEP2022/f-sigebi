@@ -18,6 +18,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
   form: FormGroup;
   readOnlyJustify = true;
   solicitudTable: null;
+  updateTable = 0;
   constructor(
     private fb: FormBuilder,
     private requestService: RequestsService,
@@ -99,9 +100,10 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Actualización de DELEGACIÓN',
-            'Realizada exitosamente'
+            'Realizada correctamente'
           );
-          this.clear();
+          this.updateTable++;
+          // this.clear();
         }
         this.loader.load = false;
       }
