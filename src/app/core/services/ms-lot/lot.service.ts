@@ -150,7 +150,11 @@ export class LotService extends HttpService {
     return this.post('apps/get-pagos-ref-monto-tipo-d', body);
   }
 
-  getLotComerPayRef(params?: string){
-    return this.get('apps/get-lot-comer-pay-ref', params)
+  getLotComerPayRef(params?: string) {
+    return this.get('apps/get-lot-comer-pay-ref', params);
+  }
+
+  getFindAllRegistersTot(params?: _Params) {
+    return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 }

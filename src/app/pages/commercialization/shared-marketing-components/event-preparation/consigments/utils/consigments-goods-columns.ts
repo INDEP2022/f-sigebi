@@ -4,7 +4,6 @@ export const CONSIGMENTS_GOODS_COLUMNS = {
   goodNumber: {
     title: 'No. Bien',
     sort: false,
-    valuePrepareFunction: (good: any) => good?.id ?? '',
   },
   description: {
     title: 'Descripción',
