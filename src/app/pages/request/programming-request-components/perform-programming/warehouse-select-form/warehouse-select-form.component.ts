@@ -22,6 +22,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   warehouse: IWarehouse;
   delegation: number = 0;
   typeTransportable: string = '';
+  typeTrans: string = '';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -33,7 +34,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('typeTransportable', this.typeTransportable);
+    console.log('delegation', this.delegation);
+    console.log('typeTrans', this.typeTrans);
     this.prepareForm();
     if (this.typeTransportable == 'warehouse')
       this.getWarehouses(new ListParams());
@@ -48,21 +50,39 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   getStoreGuard(params: ListParams) {
-    params['filter.name'] = `$ilike:${params.text}`;
-    params['filter.regionalDelegation'] = this.data[0].idDelegation;
+    if (this.typeTrans == 'massive') {
+      params['filter.name'] = `$ilike:${params.text}`;
+      params['filter.regionalDelegation'] = this.delegation;
 
-    this.goodsQueryService.getCatStoresView(params).subscribe({
-      next: data => {
-        this.warehouses = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.alert(
-          'error',
-          'Error de Información',
-          'La Transferente no cuenta con Almacenes'
-        );
-      },
-    });
+      this.goodsQueryService.getCatStoresView(params).subscribe({
+        next: data => {
+          this.warehouses = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error de Información',
+            'La Transferente no cuenta con Almacenes'
+          );
+        },
+      });
+    } else {
+      params['filter.name'] = `$ilike:${params.text}`;
+      params['filter.regionalDelegation'] = this.data[0].idDelegation;
+
+      this.goodsQueryService.getCatStoresView(params).subscribe({
+        next: data => {
+          this.warehouses = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.alert(
+            'error',
+            'Error de Información',
+            'La Transferente no cuenta con Almacenes'
+          );
+        },
+      });
+    }
   }
 
   getWarehouses(params: ListParams) {

@@ -49,26 +49,26 @@ export const ALLOTMENT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  // camp1: {
-  //   title: '',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // camp2: {
-  //   title: '',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // camp3: {
-  //   title: '',
-  //   type: 'string',
-  //   sort: false,
-  // },
-  // camp4: {
-  //   title: '',
-  //   type: 'string',
-  //   sort: false,
-  // },
+  camp2: {
+    title: '',
+    type: 'string',
+    sort: false,
+  },
+  camp3: {
+    title: '',
+    type: 'string',
+    sort: false,
+  },
+  camp4: {
+    title: '',
+    type: 'string',
+    sort: false,
+  },
+  camp5: {
+    title: '',
+    type: 'string',
+    sort: false,
+  },
 };
 export const BANK_COLUMNS = {
   movementNumber: {

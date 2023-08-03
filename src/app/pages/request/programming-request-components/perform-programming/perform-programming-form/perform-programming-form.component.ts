@@ -1635,61 +1635,80 @@ export class PerformProgrammingFormComponent
         'Todos los Bienes serán enviados a resguardo'
       ).then(question => {
         if (question.isConfirmed) {
-          let tranferent: number = 0;
-          let typeRelevant: number = 0;
-          if (this.transferentId) {
-            tranferent = this.transferentId;
-          } else if (this.dataProgramming.tranferId)
-            tranferent = this.dataProgramming.tranferId;
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+          config.initialState = {
+            typeTransportable: 'guard',
+            typeTrans: 'massive',
+            delegation: this.delegationId,
+            callback: async (_data: any) => {
+              if (_data) {
+                let tranferent: number = 0;
+                let typeRelevant: number = 0;
+                if (this.transferentId) {
+                  tranferent = this.transferentId;
+                } else if (this.dataProgramming.tranferId)
+                  tranferent = this.dataProgramming.tranferId;
 
-          if (this.idTypeRelevant) {
-            typeRelevant = this.idTypeRelevant;
-          } else if (this.dataProgramming.typeRelevantId) {
-            typeRelevant = this.dataProgramming.typeRelevantId;
-          }
+                if (this.idTypeRelevant) {
+                  typeRelevant = this.idTypeRelevant;
+                } else if (this.dataProgramming.typeRelevantId) {
+                  typeRelevant = this.dataProgramming.typeRelevantId;
+                }
 
-          const formData = {
-            regionalDelegation: Number(
-              this.dataProgramming.regionalDelegationNumber
-            ),
-            transferent: tranferent,
-            relevantType: typeRelevant,
-            statusGood: 'APROBADO',
-            programmingId: this.idProgramming,
-            creationUser: 'Sigebi admon',
-            modificationUser: 'Sigebi admon',
-            version: '1',
-            status: 'EN_RESGUARDO_TMP',
+                const formData = {
+                  regionalDelegation: Number(
+                    this.dataProgramming.regionalDelegationNumber
+                  ),
+                  transferent: tranferent,
+                  relevantType: typeRelevant,
+                  statusGood: 'APROBADO',
+                  programmingId: this.idProgramming,
+                  creationUser: 'Sigebi admon',
+                  modificationUser: 'Sigebi admon',
+                  version: '1',
+                  status: 'EN_RESGUARDO_TMP',
+                };
+
+                this.massiveGoodService
+                  .createProgGoodMassive(formData)
+                  .subscribe({
+                    next: response => {
+                      const data = {
+                        programmingId: this.idProgramming,
+                        status: 'EN_RESGUARDO_TMP',
+                        storeNumber: _data,
+                      };
+                      this.goodProcessService
+                        .updateMassiveStore(data)
+                        .subscribe({
+                          next: response => {},
+                          error: error => {},
+                        });
+                      this.params
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.getProgGoods());
+                      this.paramsTransportableGoods
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.showGuard());
+
+                      this.alert(
+                        'success',
+                        'Acción Correcta',
+                        'Bienes agregados a almacén correctamente'
+                      );
+                    },
+                    error: error => {
+                      console.log('error', error);
+                    },
+                  });
+              }
+            },
           };
 
-          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
-            next: response => {
-              const data = {
-                programmingId: this.idProgramming,
-                status: 'EN_RESGUARDO_TMP',
-                storeNumber: this.warehouseId,
-              };
-              this.goodProcessService.updateMassiveStore(data).subscribe({
-                next: response => {},
-                error: error => {},
-              });
-              this.params
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.getProgGoods());
-              this.paramsTransportableGoods
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.showGuard());
-
-              this.alert(
-                'success',
-                'Acción Correcta',
-                'Bienes agregados a almacén correctamente'
-              );
-            },
-            error: error => {
-              console.log('error', error);
-            },
-          });
+          this.modalService.show(WarehouseSelectFormComponent, config);
         }
       });
     } else {
@@ -1882,6 +1901,90 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
+        'Todos los Bienes serán enviados a almacén'
+      ).then(question => {
+        if (question.isConfirmed) {
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+          config.initialState = {
+            typeTransportable: 'warehouse',
+            typeTrans: 'massive',
+            delegation: this.delegationId,
+            callback: async (_data: any) => {
+              if (_data) {
+                let tranferent: number = 0;
+                let typeRelevant: number = 0;
+                if (this.transferentId) {
+                  tranferent = this.transferentId;
+                } else if (this.dataProgramming.tranferId)
+                  tranferent = this.dataProgramming.tranferId;
+
+                if (this.idTypeRelevant) {
+                  typeRelevant = this.idTypeRelevant;
+                } else if (this.dataProgramming.typeRelevantId) {
+                  typeRelevant = this.dataProgramming.typeRelevantId;
+                }
+
+                const formData = {
+                  regionalDelegation: Number(
+                    this.dataProgramming.regionalDelegationNumber
+                  ),
+                  transferent: tranferent,
+                  relevantType: typeRelevant,
+                  statusGood: 'APROBADO',
+                  programmingId: this.idProgramming,
+                  creationUser: 'Sigebi admon',
+                  modificationUser: 'Sigebi admon',
+                  version: '1',
+                  status: 'EN_ALMACEN_TMP',
+                };
+
+                this.massiveGoodService
+                  .createProgGoodMassive(formData)
+                  .subscribe({
+                    next: response => {
+                      const data = {
+                        programmingId: this.idProgramming,
+                        status: 'EN_ALMACEN_TMP',
+                        storeNumber: _data,
+                      };
+                      this.goodProcessService
+                        .updateMassiveStore(data)
+                        .subscribe({
+                          next: response => {},
+                          error: error => {},
+                        });
+                      this.params
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.getProgGoods());
+                      this.paramsWarehouseGoods
+                        .pipe(takeUntil(this.$unSubscribe))
+                        .subscribe(() => this.showWarehouseGoods());
+                      this.goodSelect = [];
+
+                      this.alert(
+                        'success',
+                        'Acción Correcta',
+                        'Bienes agregados a almacén correctamente'
+                      );
+                    },
+                    error: error => {
+                      console.log('error', error);
+                    },
+                  });
+              }
+            },
+          };
+
+          this.modalService.show(WarehouseSelectFormComponent, config);
+        }
+      });
+      /*
+      this.alertQuestion(
+        'warning',
+        'Acción',
         'Todos los Bienes serán enviados a Almacén'
       ).then(question => {
         if (question.isConfirmed) {
@@ -1942,7 +2045,7 @@ export class PerformProgrammingFormComponent
             },
           });
         }
-      });
+      }); */
     } else {
       if (this.goodSelect.length) {
         this.alertQuestion(
@@ -2231,82 +2334,152 @@ export class PerformProgrammingFormComponent
   //Actualizar programación con información de la programación
   confirm() {
     if (
-      this.performForm.get('startDate').value &&
-      this.dataProgramming.startDate == null
+      this.dataProgramming.startDate &&
+      this.dataProgramming.endDate &&
+      this.dataProgramming.address &&
+      this.dataProgramming.stateKey &&
+      this.dataProgramming.tranferId &&
+      this.dataProgramming.autorityId
     ) {
-      this.performForm
-        .get('startDate')
-        .setValue(new Date(this.performForm.get('startDate').value));
-    }
-    if (
-      this.performForm.get('endDate').value &&
-      this.dataProgramming.endDate == null
-    ) {
-      this.performForm
-        .get('endDate')
-        .setValue(new Date(this.performForm.get('endDate').value));
-    }
+      if (this.transferentId)
+        this.performForm.get('tranferId').setValue(this.transferentId);
+      if (this.stationId)
+        this.performForm.get('stationId').setValue(this.stationId);
+      if (this.autorityId) {
+        this.performForm.get('autorityId').setValue(this.autorityId);
+      }
 
-    if (this.transferentId)
-      this.performForm.get('tranferId').setValue(this.transferentId);
-    if (this.stationId)
-      this.performForm.get('stationId').setValue(this.stationId);
-    if (this.autorityId) {
-      this.performForm.get('autorityId').setValue(this.autorityId);
-    }
+      if (this.warehouseId > 0)
+        this.performForm.get('storeId').setValue(this.warehouseId);
 
-    this.performForm
-      .get('regionalDelegationNumber')
-      .setValue(this.delegationId);
+      const data = {
+        emailTransfer: this.performForm.get('emailTransfer').value,
+        address: this.performForm.get('address').value,
+        city: this.performForm.get('city').value,
+        observation: this.performForm.get('observation').value,
+        regionalDelegationNumber: this.delegationId,
+        stateKey: this.performForm.get('stateKey').value,
+        tranferId: this.performForm.get('tranferId').value,
+        stationId: this.performForm.get('stationId').value,
+        autorityId: this.performForm.get('autorityId').value,
+        typeRelevantId: this.performForm.get('typeRelevantId').value,
+        storeId: this.performForm.get('storeId').value,
+      };
 
-    this.performForm.get('delregAttentionId').setValue(this.delegationId);
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Desea guardar la información de la programación?'
-    ).then(async question => {
-      if (question.isConfirmed) {
-        this.loading = true;
-        this.formLoading = true;
-        const folio: any = await this.generateFolio(this.performForm.value);
-        this.performForm.get('folio').setValue(folio);
-        if (this.warehouseId > 0)
-          this.performForm.get('storeId').setValue(this.warehouseId);
-        const task = JSON.parse(localStorage.getItem('Task'));
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar la información de la programación?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.formLoading = true;
+          const folio: any = await this.generateFolio(this.performForm.value);
+          this.performForm.get('folio').setValue(folio);
+          if (this.warehouseId > 0)
+            this.performForm.get('storeId').setValue(this.warehouseId);
+          const task = JSON.parse(localStorage.getItem('Task'));
 
-        const updateTask = await this.updateTask(folio, task.id);
-        if (updateTask) {
-          this.programmingGoodService
-            .updateProgramming(this.idProgramming, this.performForm.value)
-            .subscribe({
-              next: async () => {
-                this.loading = false;
-                this.alert(
-                  'success',
-                  'Acción correcta',
-                  'Programacíón guardada correctamente'
-                );
-                this.performForm
-                  .get('regionalDelegationNumber')
-                  .setValue(this.delegation);
-                if (this.warehouseId > 0) {
-                  const updateWarehouseGood = await this.updateWarehouseGood();
-                  if (updateWarehouseGood) {
+          const updateTask = await this.updateTask(folio, task.id);
+          if (updateTask) {
+            this.programmingGoodService
+              .updateProgramming(this.idProgramming, data)
+              .subscribe({
+                next: async () => {
+                  this.loading = false;
+                  this.alert(
+                    'success',
+                    'Acción correcta',
+                    'Programacíón guardada correctamente'
+                  );
+                  this.performForm
+                    .get('regionalDelegationNumber')
+                    .setValue(this.delegation);
+                  if (this.warehouseId > 0) {
+                    const updateWarehouseGood =
+                      await this.updateWarehouseGood();
+                    if (updateWarehouseGood) {
+                      this.getProgrammingData();
+                      this.formLoading = false;
+                      this.newTransferent = false;
+                    }
+                  } else {
                     this.getProgrammingData();
                     this.formLoading = false;
                     this.newTransferent = false;
                   }
-                } else {
-                  this.getProgrammingData();
-                  this.formLoading = false;
-                  this.newTransferent = false;
-                }
-              },
-              error: error => {},
-            });
+                },
+                error: error => {},
+              });
+          }
         }
+      });
+    } else {
+      console.log('data', this.performForm.value);
+      if (this.transferentId)
+        this.performForm.get('tranferId').setValue(this.transferentId);
+      if (this.stationId)
+        this.performForm.get('stationId').setValue(this.stationId);
+      if (this.autorityId) {
+        this.performForm.get('autorityId').setValue(this.autorityId);
       }
-    });
+
+      this.performForm
+        .get('regionalDelegationNumber')
+        .setValue(this.delegationId);
+
+      this.performForm.get('delregAttentionId').setValue(this.delegationId);
+
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Desea guardar la información de la programación?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          this.loading = true;
+          this.formLoading = true;
+          const folio: any = await this.generateFolio(this.performForm.value);
+          this.performForm.get('folio').setValue(folio);
+          if (this.warehouseId > 0)
+            this.performForm.get('storeId').setValue(this.warehouseId);
+          const task = JSON.parse(localStorage.getItem('Task'));
+
+          const updateTask = await this.updateTask(folio, task.id);
+          if (updateTask) {
+            this.programmingGoodService
+              .updateProgramming(this.idProgramming, this.performForm.value)
+              .subscribe({
+                next: async () => {
+                  this.loading = false;
+                  this.alert(
+                    'success',
+                    'Acción correcta',
+                    'Programacíón guardada correctamente'
+                  );
+                  this.performForm
+                    .get('regionalDelegationNumber')
+                    .setValue(this.delegation);
+                  if (this.warehouseId > 0) {
+                    const updateWarehouseGood =
+                      await this.updateWarehouseGood();
+                    if (updateWarehouseGood) {
+                      this.getProgrammingData();
+                      this.formLoading = false;
+                      this.newTransferent = false;
+                    }
+                  } else {
+                    this.getProgrammingData();
+                    this.formLoading = false;
+                    this.newTransferent = false;
+                  }
+                },
+                error: error => {},
+              });
+          }
+        }
+      });
+    }
   }
 
   updateWarehouseGood() {
@@ -2452,86 +2625,139 @@ export class PerformProgrammingFormComponent
     if (error > 0) {
       this.alert('warning', 'Advertencia', `${message}`);
     } else if (error == 0) {
-      if (this.performForm.get('startDate').value) {
-        this.performForm
-          .get('startDate')
-          .setValue(new Date(this.performForm.get('startDate').value));
-      }
-      if (this.performForm.get('endDate').value) {
-        this.performForm
-          .get('endDate')
-          .setValue(new Date(this.performForm.get('endDate').value));
-      }
+      if (
+        this.dataProgramming.startDate &&
+        this.dataProgramming.endDate &&
+        this.dataProgramming.address &&
+        this.dataProgramming.stateKey &&
+        this.dataProgramming.tranferId &&
+        this.dataProgramming.autorityId
+      ) {
+        if (this.transferentId)
+          this.performForm.get('tranferId').setValue(this.transferentId);
+        if (this.stationId)
+          this.performForm.get('stationId').setValue(this.stationId);
+        if (this.autorityId) {
+          this.performForm.get('autorityId').setValue(this.autorityId);
+        }
 
-      this.performForm.get('tranferId').setValue(this.transferentId);
-      this.performForm.get('stationId').setValue(this.stationId);
-      this.performForm.get('storeId').setValue(this.warehouseId);
-      this.performForm.get('autorityId').setValue(this.autorityId);
-      this.performForm
-        .get('regionalDelegationNumber')
-        .setValue(this.delegationId);
-      this.performForm.get('delregAttentionId').setValue(this.delegationId);
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
-      ).then(async question => {
-        if (question.isConfirmed) {
-          this.loading = true;
-          const folio: any = await this.generateFolio(this.performForm.value);
-          this.performForm.get('folio').setValue(folio);
-          const task = JSON.parse(localStorage.getItem('Task'));
-          const updateTask = await this.updateTask(folio, task.id);
-          if (updateTask) {
-            this.programmingGoodService
-              .updateProgramming(this.idProgramming, this.performForm.value)
-              .subscribe({
-                next: async () => {
-                  this.performForm
-                    .get('regionalDelegationNumber')
-                    .setValue(this.delegation);
+        if (this.warehouseId > 0)
+          this.performForm.get('storeId').setValue(this.warehouseId);
 
-                  if (this.warehouseId > 0) {
-                    const updateWarehouseGood =
-                      await this.updateWarehouseGood();
-                    if (updateWarehouseGood) {
+        const data = {
+          emailTransfer: this.performForm.get('emailTransfer').value,
+          address: this.performForm.get('address').value,
+          city: this.performForm.get('city').value,
+          observation: this.performForm.get('observation').value,
+          regionalDelegationNumber: this.delegationId,
+          stateKey: this.performForm.get('stateKey').value,
+          tranferId: this.performForm.get('tranferId').value,
+          stationId: this.performForm.get('stationId').value,
+          autorityId: this.performForm.get('autorityId').value,
+          typeRelevantId: this.performForm.get('typeRelevantId').value,
+          storeId: this.performForm.get('storeId').value,
+        };
+
+        this.performForm.get('delregAttentionId').setValue(this.delegationId);
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea guardar la información de la programación?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            this.loading = true;
+            this.formLoading = true;
+            const folio: any = await this.generateFolio(this.performForm.value);
+            this.performForm.get('folio').setValue(folio);
+            if (this.warehouseId > 0)
+              this.performForm.get('storeId').setValue(this.warehouseId);
+            const task = JSON.parse(localStorage.getItem('Task'));
+
+            const updateTask = await this.updateTask(folio, task.id);
+            if (updateTask) {
+              this.programmingGoodService
+                .updateProgramming(this.idProgramming, data)
+                .subscribe({
+                  next: async () => {
+                    this.performForm
+                      .get('regionalDelegationNumber')
+                      .setValue(this.delegation);
+
+                    if (this.warehouseId > 0) {
+                      const updateWarehouseGood =
+                        await this.updateWarehouseGood();
+                      if (updateWarehouseGood) {
+                        this.generateTaskAceptProgramming(folio);
+                        this.loading = false;
+                      }
+                    } else {
                       this.generateTaskAceptProgramming(folio);
                       this.loading = false;
                     }
-                  } else {
-                    this.generateTaskAceptProgramming(folio);
-                    this.loading = false;
-                  }
-                },
-                error: error => {},
-              });
+                  },
+                  error: error => {},
+                });
+            }
           }
-        }
-      });
-
-      /*this.alertQuestion(
-        'question',
-        'Enviar Programación',
-        `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
-      ).then(async question => {
-        if (question.isConfirmed) {
-          this.loading = true;
+        });
+      } else {
+        if (this.performForm.get('startDate').value) {
           this.performForm
-            .get('regionalDelegationNumber')
-            .setValue(this.delegationId);
-          const folio: any = await this.generateFolio(this.performForm.value);
-          this.performForm.get('folio').setValue(folio);
-          //const updateTask = await this.updateTask(folio);
-          this.programmingGoodService
-            .updateProgramming(this.idProgramming, this.performForm.value)
-            .subscribe({
-              next: async () => {
-                this.generateTaskAceptProgramming(folio);
-                this.loading = false;
-              },
-            });
+            .get('startDate')
+            .setValue(new Date(this.performForm.get('startDate').value));
         }
-      }); */
+        if (this.performForm.get('endDate').value) {
+          this.performForm
+            .get('endDate')
+            .setValue(new Date(this.performForm.get('endDate').value));
+        }
+
+        this.performForm.get('tranferId').setValue(this.transferentId);
+        this.performForm.get('stationId').setValue(this.stationId);
+        this.performForm.get('storeId').setValue(this.warehouseId);
+        this.performForm.get('autorityId').setValue(this.autorityId);
+        this.performForm
+          .get('regionalDelegationNumber')
+          .setValue(this.delegationId);
+        this.performForm.get('delregAttentionId').setValue(this.delegationId);
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
+        ).then(async question => {
+          if (question.isConfirmed) {
+            this.loading = true;
+            const folio: any = await this.generateFolio(this.performForm.value);
+            this.performForm.get('folio').setValue(folio);
+            const task = JSON.parse(localStorage.getItem('Task'));
+            const updateTask = await this.updateTask(folio, task.id);
+            if (updateTask) {
+              this.programmingGoodService
+                .updateProgramming(this.idProgramming, this.performForm.value)
+                .subscribe({
+                  next: async () => {
+                    this.performForm
+                      .get('regionalDelegationNumber')
+                      .setValue(this.delegation);
+
+                    if (this.warehouseId > 0) {
+                      const updateWarehouseGood =
+                        await this.updateWarehouseGood();
+                      if (updateWarehouseGood) {
+                        this.generateTaskAceptProgramming(folio);
+                        this.loading = false;
+                      }
+                    } else {
+                      this.generateTaskAceptProgramming(folio);
+                      this.loading = false;
+                    }
+                  },
+                  error: error => {},
+                });
+            }
+          }
+        });
+      }
     }
   }
 
