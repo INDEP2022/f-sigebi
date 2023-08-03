@@ -597,12 +597,18 @@ export class ClassificationAssetsTabComponent
     const index = this.goodSaeModified.indexOf(good);
     if (index != -1) {
       this.goodSaeModified[index] = good;
+      if (this.goodSaeModified[index].descriptionGoodSae == '') {
+        this.goodSaeModified[index].descriptionGoodSae = null;
+      }
     } else {
       this.goodSaeModified.push(good);
     }
   }
 
   saveGoodSaeDescrip() {
+    if (this.goodSaeModified.length == 0) {
+      return;
+    }
     this.loading = true;
     this.goodSaeModified.map(async (item: any, _i: number) => {
       const index = _i + 1;

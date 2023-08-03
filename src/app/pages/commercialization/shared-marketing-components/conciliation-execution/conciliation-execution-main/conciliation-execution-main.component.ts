@@ -202,6 +202,7 @@ export class ConciliationExecutionMainComponent
             const search: any = {
               customerId: () => (searchFilter = SearchFilter.EQ),
               name: () => (searchFilter = SearchFilter.ILIKE),
+              indicted: () => (searchFilter = SearchFilter.EQ),
               process: () => (searchFilter = SearchFilter.EQ),
               executionDate: () => (searchFilter = SearchFilter.EQ),
             };
@@ -235,24 +236,45 @@ export class ConciliationExecutionMainComponent
     this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
       description: [null],
-      date: [null, [Validators.required]],
-      phase: [null, [Validators.required]],
+      date: [null],
+      phase: [null],
       batch: [null],
       price: [null],
     });
   }
 
   getData() {
-    this.conciliationColumns = this.clientsTestData;
-    this.totalItems = this.conciliationColumns.length;
+    if (!this.selectedEvent) {
+      this.alert('warning', 'Es Necesario Especificar el Evento', '');
+      this.conciliationForm.get('event').markAsTouched();
+      return;
+    }
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.getComerClientsXEvent('no');
   }
 
-  selectEvent(event: any) {
+  mostrarLotes: boolean = false;
+  async selectEvent(event: any) {
     console.log(event);
     this.selectedEvent = event;
     if (event) {
-      this.conciliationForm.get('description').setValue(event.cve_proceso);
-      this.getLotes(new ListParams(), 'si');
+      const V_PROCESO_FASE = await this.getType(event.id_evento);
+      if (!V_PROCESO_FASE) {
+        return this.alert(
+          'warning',
+          `El Evento ${event.id_evento} no está Asociado al tipo de Proceso, verifique`,
+          ''
+        );
+      } else {
+        if (V_PROCESO_FASE == 1) {
+          this.mostrarLotes = false;
+        } else if (V_PROCESO_FASE == 2) {
+          this.mostrarLotes = true;
+          this.conciliationForm.get('description').setValue(event.cve_proceso);
+          this.getLotes(new ListParams(), 'si');
+        }
+      }
     }
   }
 
@@ -426,10 +448,13 @@ export class ConciliationExecutionMainComponent
     this.data.load([]);
     this.data.refresh();
     this.totalItems = 0;
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
     this.selectedEvent = null;
     this.globalFASES = null;
+    this.mostrarLotes = false;
     this.getComerEvents(new ListParams());
     this.clearSubheaderFields();
   }
@@ -680,6 +705,22 @@ export class ConciliationExecutionMainComponent
         }
         this.lotes = new DefaultSelect([], 0);
       },
+    });
+  }
+
+  async getType(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.getByIdComerTEvents(id).subscribe({
+        next: (response: any) => {
+          // this.alert('success', 'Proceso Ejecutado Correctamente', '');
+          // this.getPayments();
+          resolve(response.phase);
+        },
+        error: error => {
+          resolve(null);
+          // this.alert('error', 'Ocurrió un Error al Intentar Ejecutar el Proceso', error.error.message);
+        },
+      });
     });
   }
 }

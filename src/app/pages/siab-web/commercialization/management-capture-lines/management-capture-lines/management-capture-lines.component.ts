@@ -4,8 +4,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RFC_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { managementCaptureLinesModalComponent } from '../management-capture-lines-modal/management-capture-lines-modal.component';
 import { CAPTURA_LINES_COLUMNS } from './capture-lines-columns';
 
@@ -25,7 +27,13 @@ export class managementCaptureLinesComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  eventList = new DefaultSelect<any>();
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private capturelineService: CapturelineService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -43,14 +51,15 @@ export class managementCaptureLinesComponent
     this.prepareFormSearch();
     this.prepareFormAdm();
     this.getPagination();
+    this.getAdminCaptureLine(new ListParams());
   }
 
   private prepareFormSearch() {
     this.formSearch = this.fb.group({
       idEvent: [null, [Validators.required]],
       allotment: [null, [Validators.required]],
-      idClient: [null, [Validators.required]],
-      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
+      idClient: [null],
+      rfc: [null, [Validators.pattern(RFC_PATTERN)]],
     });
   }
 
@@ -97,6 +106,29 @@ export class managementCaptureLinesComponent
   getPagination() {
     this.columns = this.data;
     this.totalItems = this.columns.length;
+  }
+  getAdminCaptureLine(params: ListParams) {
+    this.capturelineService.getAllAdminCaptureLine(params).subscribe({
+      next: response => {
+        this.eventList = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {
+        this.eventList = new DefaultSelect([], 0, true);
+      },
+    });
+  }
+  searchLC() {
+    if (
+      this.formSearch.controls['idClient'].value != null ||
+      this.formSearch.controls['rfc'].value != null
+    ) {
+    } else {
+      this.alert(
+        'warning',
+        'Líneas de Captura',
+        'Debe ingresar ID Cliente o RFC'
+      );
+    }
   }
 
   data = [

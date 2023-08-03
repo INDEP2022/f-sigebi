@@ -64,6 +64,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
+      paymentId: [null],
       reference: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -80,22 +81,25 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       lotId: [null, Validators.required],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
-      recordDate: [new Date()],
-      referenceOri: [null, [Validators.pattern(STRING_PATTERN)]],
+      recordDate: [null],
+      referenceOri: [null],
       dateOi: [null],
       entryOrderId: [null, Validators.pattern(NUMBERS_PATTERN)],
       validSystem: [null, Validators.pattern(STRING_PATTERN)],
       description: [null, Validators.pattern(STRING_PATTERN)],
-      branchOffice: [null, [Validators.pattern(STRING_PATTERN)]],
+      branchOffice: [null],
       reconciled: [null, Validators.pattern(STRING_PATTERN)],
       appliedTo: [null],
       clientId: [null],
+      rfc: [null],
+      name: [null],
     });
 
     if (this.data != null) {
       this.valInitClient = false;
       this.edit = true;
       this.form.patchValue({
+        paymentId: this.data.paymentId,
         reference: this.data.reference,
         movementNumber: this.data.movementNumber,
         date: secondFormatDateToDate2(this.returnParseDate_(this.data.date)),
@@ -104,9 +108,9 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         code: this.data.code,
         type: this.data.type,
         result: this.data.result,
-        recordDate: secondFormatDateToDate2(
-          this.returnParseDate_(this.data.recordDate)
-        ),
+        // recordDate: secondFormatDateToDate2(
+        //   this.returnParseDate_(this.data.recordDate)
+        // ),
         referenceOri: this.data.referenceOri,
         // dateOi: secondFormatDateToDate2(
         //   this.returnParseDate_(this.data.dateOi)
@@ -117,10 +121,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         branchOffice: this.data.branchOffice,
         // reconciled: this.data.reconciled,
         appliedTo: this.data.appliedTo,
-        clientId: this.data.clientId,
+        // clientId: this.data.idAndName,
         lotId: this.data.lotId,
       });
 
+      this.form.get('clientId').setValue(this.data.idAndName);
       console.log('this.data', this.data);
 
       // if (this.data.clientId) {
@@ -144,27 +149,29 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   update() {
+    const client = this.form.value.clientId;
     const requestBody: any = {
       paymentId: this.data.paymentId,
-      reference: Number(this.form.value.reference),
+      reference: this.form.value.reference,
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
       bankKey: this.form.value.bankKey,
       code: Number(this.form.value.code),
       lotId: this.form.value.lotId,
-      type: this.form.value.type,
-      result: this.form.value.result,
-      recordDate: this.form.value.recordDate,
-      referenceOri: this.form.value.referenceOri,
+      // type: this.form.value.type,
+      // result: this.form.value.result,
+      // recordDate: this.form.value.recordDate,
+      // referenceOri: this.form.value.referenceOri,
       // dateOi: this.form.value.dateOi,
       entryOrderId: this.form.value.entryOrderId,
-      validSystem: this.form.value.validSystem,
-      description: this.form.value.description,
-      branchOffice: this.form.value.branchOffice,
+      // validSystem:
+      //   this.form.value.validSystem == '' ? null : this.form.value.validSystem,
+      // description: this.form.value.description,
+      // branchOffice: this.form.value.branchOffice,
       // reconciled: this.form.value.reconciled,
       appliedTo: this.form.value.appliedTo,
-      clientId: this.form.value.clientId,
+      clientId: client ? client.id : null,
     };
 
     this.paymentService.update(this.data.paymentId, requestBody).subscribe({

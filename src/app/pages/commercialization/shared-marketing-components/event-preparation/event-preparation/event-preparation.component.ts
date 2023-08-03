@@ -3,11 +3,20 @@ import { FormBuilder } from '@angular/forms';
 //XLSX
 import { sub } from 'date-fns';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
-import { catchError, firstValueFrom, map, of, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  firstValueFrom,
+  map,
+  of,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { EventPreparationService } from '../event-preparation.service';
@@ -24,6 +33,7 @@ enum TABS {
   AVAILABLE_GOODS_TAB = 4,
   BASE_TAB = 5,
 }
+const BANK_PARAMETER = 'GENREF';
 
 @Component({
   selector: 'app-event-preparation',
@@ -59,7 +69,9 @@ export class EventPreparationComponent
     private comerEventosService: ComerEventosService,
     private lotService: LotService,
     private eventPreparationService: EventPreparationService,
-    private globalVarsService: GlobalVarsService
+    private globalVarsService: GlobalVarsService,
+    private eventAppService: EventAppService,
+    private parametersModService: ParametersModService
   ) {
     super();
     // TODO: Recibir los parametros
@@ -82,7 +94,47 @@ export class EventPreparationComponent
   async ngOnInit() {
     this.initForm();
     this.getUserInfo();
+    this.newEventSelected().subscribe();
     await this.checkState();
+  }
+
+  newEventSelected() {
+    return this.eventControls.id.valueChanges.pipe(
+      takeUntil(this.$unSubscribe),
+      tap(async eventId => {
+        if (!eventId) {
+          this.parameters.pBank = null;
+          return;
+        }
+        const bank = await this.getBankParameter();
+        console.log(bank);
+        this.parameters.pBank = bank;
+        const { eventTpId } = this.eventControls;
+        if (eventTpId.value == 6) {
+          this.eventFormVisual.thirdId = false;
+          this.eventFormVisual.baseCost = false;
+          this.eventFormVisual.applyButton = false;
+        } else {
+          this.eventFormVisual.thirdId = true;
+          this.eventFormVisual.baseCost = true;
+          this.eventFormVisual.applyButton = true;
+        }
+      })
+    );
+  }
+
+  async getBankParameter() {
+    const { eventTpId } = this.eventControls;
+    const params = new FilterParams();
+    params.addFilter('parameter', BANK_PARAMETER);
+    params.addFilter('address', this.parameters.pDirection);
+    params.addFilter('tpEventId', eventTpId.value);
+    return await firstValueFrom(
+      this.parametersModService.getAllFilter(params.getParams()).pipe(
+        catchError(() => of({ data: [{ value: 'BANAMEX' }] })),
+        map(response => response.data[0]?.value ?? 'BANAMEX')
+      )
+    );
   }
 
   getUserInfo() {
@@ -397,8 +449,66 @@ export class EventPreparationComponent
     });
   }
 
-  exitConsignment() {
-    this.selectTab(TABS.LOTES_TAB);
+  async exitConsignment(resp: { refresh: boolean; preparation: boolean }) {
+    const { refresh, preparation } = resp;
+    const params = new FilterParams();
+    if (!refresh) {
+      this.selectTab(TABS.LOTES_TAB);
+      return;
+    }
+    this.loader.load = true;
+    try {
+      if (!preparation) {
+        console.log('ACTU_MANDATO');
+
+        await this.updateMand();
+      }
+      console.log('VERIFICA_RECHAZADOS');
+
+      await this.verifyRejectedGoods();
+      this.loader.load = false;
+      this.comerLotsListParams.next(params);
+      this.selectTab(TABS.LOTES_TAB);
+    } catch (error) {
+      this.loader.load = false;
+    }
+  }
+
+  async verifyRejectedGoods() {
+    const { id } = this.eventControls;
+    return firstValueFrom(
+      this.eventAppService.verifyRejectedGoods(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          if (response.data > 0) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              'Hubo Bienes Rechazados pulse el botón de Bienes no Cargados'
+            );
+          }
+        })
+      )
+    );
+  }
+
+  async updateMand() {
+    return firstValueFrom(
+      this.lotService
+        .updateMandate({
+          pGood: 0,
+          pLot: 1,
+          lotId: this.lotSelected.id,
+        })
+        .pipe(
+          catchError(error => {
+            return throwError(() => error);
+          }),
+          tap(res => {})
+        )
+    );
   }
 
   viewBase() {

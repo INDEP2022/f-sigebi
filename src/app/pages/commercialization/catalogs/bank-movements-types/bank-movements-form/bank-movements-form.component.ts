@@ -45,7 +45,10 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       accountKey: [null],
       bankKey: [null, [Validators.required]],
-      coinKey: [null, [Validators.pattern(STRING_PATTERN)]],
+      coinKey: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       branchOffice: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       rateCalculationInterest: [null],
       registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -129,9 +132,32 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    console.log(this.form.value);
+    const accountKey = this.form.get('accountKey');
+    const bankKey = this.form.get('bankKey');
+    const coinKey = this.form.get('coinKey');
+    const branchOffice = this.form.get('branchOffice');
+    const rateCalculationInterest = this.form.get('rateCalculationInterest');
+    const registryNumber = this.form.get('registryNumber');
+    const accountType = this.form.get('accountType');
+    const square = this.form.get('square');
+
+    const model: any = {
+      accountKey: accountKey.value,
+      accountType: accountType.value,
+      coinKey: coinKey.value,
+      square: square.value,
+      branchOffice: branchOffice.value,
+      rateCalculationInterest: rateCalculationInterest.value,
+      bankKey: bankKey.value.bankCode,
+      accountNumberTransfer: null,
+      registryNumber: registryNumber.value,
+      delegationNumber: null,
+      esReference: null,
+    };
+
+    console.log(model);
     if (this.form.valid) {
-      this.bankMovementTypeService.create(this.form.value).subscribe({
+      this.bankMovementTypeService.create(model).subscribe({
         next: data => {
           this.loading = false;
           this.handleSuccess();

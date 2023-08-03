@@ -1,6 +1,6 @@
 export const RECEIPTGENERATION_COLUMNS = {
   ID: {
-    title: 'Id Recorrido',
+    title: 'ID Recorrido',
     sort: false,
   },
   ID_BIEN: {
@@ -31,19 +31,19 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Cantidad INDEP',
     sort: false,
   },
-  unitMeasure: {
+  UNIDAD_MEDIDA_TRASFERENTE: {
     title: 'Unidad Medida',
     sort: false,
   },
-  unitMeasureSae: {
+  UNIDAD_MEDIDA_SAE: {
     title: 'Unidad Medida INDEP',
     sort: false,
   },
-  physicalState: {
+  ESTADO_FISICO_TRASFERENTE: {
     title: 'Estado Físico',
     sort: false,
   },
-  physicalStateSae: {
+  ESTADO_FISICO_SAE: {
     title: 'Estado Físico INDEP',
     sort: false,
   },

@@ -7,12 +7,21 @@
   <div body>
     <form class="form-material" [formGroup]="formSearch">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="formSearch.get('idEvent')" label="ID Evento">
-            <input type="text" class="form-control" formControlName="idEvent" />
+        <div class="col-md-6">
+          <form-field [control]="formSearch.get('idEvent')">
+            <ngx-select
+              (fetchItems)="getAdminCaptureLine($event)"
+              [data]="eventList"
+              [form]="formSearch"
+              value="id_evento"
+              bindLabel="evento"
+              label="Id Evento"
+              control="idEvent">
+            </ngx-select>
+            <!-- <input type="text" class="form-control" formControlName="idEvent" /> -->
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-6">
           <form-field
             [control]="formSearch.get('allotment')"
             label="Lote p&uacute;blico">
@@ -22,7 +31,9 @@
               formControlName="allotment" />
           </form-field>
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
           <form-field [control]="formSearch.get('idClient')" label="ID Cliente">
             <input
               type="text"
@@ -30,7 +41,7 @@
               formControlName="idClient" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="formSearch.get('rfc')" label="RFC">
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
@@ -40,7 +51,8 @@
             <button
               type="button"
               class="btn btn-primary btn-sm active"
-              [disabled]="!formSearch.valid">
+              [disabled]="!formSearch.valid"
+              (click)="searchLC()">
               Buscar
             </button>
           </div>

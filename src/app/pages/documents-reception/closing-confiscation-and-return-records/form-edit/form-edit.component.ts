@@ -42,6 +42,8 @@ export class FormEditComponent extends BasePage implements OnInit {
       'CERRADA'
     ) {
       this.flagSave = false;
+    } else {
+      this.flagSave = true;
     }
   }
 
