@@ -23,7 +23,8 @@
         [attr.class]="'table-bordered'"
         [settings]="settings"
         (userRowSelect)="selectEvent($event)"
-        [source]="events">
+        [source]="events"
+        (delete)="onDeleteEvent($event.data)">
       </ng2-smart-table>
     </div>
   </div>

@@ -17,6 +17,7 @@ export class ReceiptTablesComponent extends BasePage {
   @Input() folio: string;
   @Input() id_programacion: string;
   @Input() count = 0;
+  @Input() update = 0;
   estatus_bien_programacion: string;
   receiptType = EReceiptType;
   divcanmas = false;
