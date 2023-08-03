@@ -3482,6 +3482,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
+          actaId: null,
           status: 'EN_TRANSPORTABLE',
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
