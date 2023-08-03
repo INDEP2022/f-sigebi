@@ -1628,55 +1628,114 @@ export class PerformProgrammingFormComponent
 
   /*------------ Enviar datos a resguardo ----------------------*/
   sendGuard() {
-    if (this.goodSelect.length) {
+    if (this.selectMasiveGood) {
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los Bienes seleccionados serán enviados a resguardo'
-      ).then(async question => {
+        'Todos los Bienes serán enviados a resguardo'
+      ).then(question => {
         if (question.isConfirmed) {
-          const params = new ListParams();
-          if (this.idTypeRelevant == 1) {
-            const tieneMenaje = '';
-            const menajes = 0;
-            this.goodSelect.map(item => {
-              params['filter.id'] = item.googId;
+          let tranferent: number = 0;
+          let typeRelevant: number = 0;
+          if (this.transferentId) {
+            tranferent = this.transferentId;
+          } else if (this.dataProgramming.tranferId)
+            tranferent = this.dataProgramming.tranferId;
 
-              this.goodService.getAll(params).subscribe(data => {});
-            });
-          } else {
-            const data = this.goodSelect.map(item => {
+          if (this.idTypeRelevant) {
+            typeRelevant = this.idTypeRelevant;
+          } else if (this.dataProgramming.typeRelevantId) {
+            typeRelevant = this.dataProgramming.typeRelevantId;
+          }
+
+          const formData = {
+            regionalDelegation: Number(
+              this.dataProgramming.regionalDelegationNumber
+            ),
+            transferent: tranferent,
+            relevantType: typeRelevant,
+            statusGood: 'APROBADO',
+            programmingId: this.idProgramming,
+            creationUser: 'Sigebi admon',
+            modificationUser: 'Sigebi admon',
+            version: '1',
+            status: 'EN_RESGUARDO_TMP',
+          };
+
+          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
+            next: response => {
               const data = {
-                idTransferent: item.transfereeId,
-                idDelegation: item.delegationRegionalId,
-                typeTransferent: item.typeTransfer,
+                programmingId: this.idProgramming,
+                status: 'EN_RESGUARDO_TMP',
+                storeNumber: this.warehouseId,
               };
-              return data;
-            });
+              this.goodProcessService.updateMassiveStore(data).subscribe({
+                next: response => {},
+                error: error => {},
+              });
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
+              this.paramsTransportableGoods
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.showGuard());
 
-            let config = {
-              ...MODAL_CONFIG,
-              class: 'modal-lg modal-dialog-centered',
-            };
-            config.initialState = {
-              data,
-              typeTransportable: 'guard',
-              callback: async (data: any) => {
-                if (data) {
-                  if (!this.selectMasiveGood) {
-                    const createProgGood = await this.addGoodsGuards();
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Bienes agregados a almacén correctamente'
+              );
+            },
+            error: error => {
+              console.log('error', error);
+            },
+          });
+        }
+      });
+    } else {
+      if (this.goodSelect.length) {
+        this.alertQuestion(
+          'warning',
+          'Acción',
+          'Los Bienes seleccionados serán enviados a resguardo'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            const params = new ListParams();
+            if (this.idTypeRelevant == 1) {
+              const tieneMenaje = '';
+              const menajes = 0;
+              this.goodSelect.map(item => {
+                params['filter.id'] = item.googId;
 
-                    if (createProgGood) {
-                      const updateGood: any = await this.changeStatusGoodGuard(
-                        data
-                      );
+                this.goodService.getAll(params).subscribe(data => {});
+              });
+            } else {
+              const data = this.goodSelect.map(item => {
+                const data = {
+                  idTransferent: item.transfereeId,
+                  idDelegation: item.delegationRegionalId,
+                  typeTransferent: item.typeTransfer,
+                };
+                return data;
+              });
 
-                      if (updateGood) {
-                        const showGoods: any = await this.getFilterGood(
-                          'EN_RESGUARDO_TMP'
-                        );
+              let config = {
+                ...MODAL_CONFIG,
+                class: 'modal-lg modal-dialog-centered',
+              };
+              config.initialState = {
+                data,
+                typeTransportable: 'guard',
+                callback: async (data: any) => {
+                  if (data) {
+                    if (!this.selectMasiveGood) {
+                      const createProgGood = await this.addGoodsGuards();
 
-                        if (showGoods) {
+                      if (createProgGood) {
+                        const updateGood: any =
+                          await this.changeStatusGoodGuard(data);
+
+                        if (updateGood) {
                           this.params
                             .pipe(takeUntil(this.$unSubscribe))
                             .subscribe(() => this.getProgGoods());
@@ -1684,89 +1743,24 @@ export class PerformProgrammingFormComponent
                             .pipe(takeUntil(this.$unSubscribe))
                             .subscribe(() => this.showGuard());
                           this.goodSelect = [];
-                          //const _showGoods = await this.showGoodsGuard(showGoods);
-                          /*console.log('showGoods', _showGoods);
-                        
-                        if (_showGoods) {
-                          
-                        } */
                         }
                       }
                     }
-                  } else {
-                    this.alertQuestion(
-                      'warning',
-                      'Acción',
-                      'Todos los Bienes serán enviados a resguardo'
-                    ).then(question => {
-                      if (question.isConfirmed) {
-                        let tranferent: number = 0;
-                        let typeRelevant: number = 0;
-                        if (this.transferentId) {
-                          tranferent = this.transferentId;
-                        } else if (this.dataProgramming.tranferId)
-                          tranferent = this.dataProgramming.tranferId;
-
-                        if (this.idTypeRelevant) {
-                          typeRelevant = this.idTypeRelevant;
-                        } else if (this.dataProgramming.typeRelevantId) {
-                          typeRelevant = this.dataProgramming.typeRelevantId;
-                        }
-
-                        const formData = {
-                          regionalDelegation: Number(
-                            this.dataProgramming.regionalDelegationNumber
-                          ),
-                          transferent: tranferent,
-                          relevantType: typeRelevant,
-                          statusGood: 'APROBADO',
-                          programmingId: this.idProgramming,
-                          creationUser: 'Sigebi admon',
-                          modificationUser: 'Sigebi admon',
-                          version: '1',
-                          status: 'EN_RESGUARDO',
-                        };
-
-                        this.massiveGoodService
-                          .createProgGoodMassive(formData)
-                          .subscribe({
-                            next: async response => {
-                              const updateWarehouseTransportable =
-                                await this.updateWarehouseGuard(data);
-
-                              if (updateWarehouseTransportable) {
-                                this.params
-                                  .pipe(takeUntil(this.$unSubscribe))
-                                  .subscribe(() => this.getProgGoods());
-                                this.paramsGuardGoods
-                                  .pipe(takeUntil(this.$unSubscribe))
-                                  .subscribe(() => this.showGuard());
-                                this.goodSelect = [];
-
-                                this.alert(
-                                  'success',
-                                  'Acción Correcta',
-                                  'Bienes agregados a resguardo correctamente'
-                                );
-                              }
-                            },
-                            error: error => {
-                              console.log('error', error);
-                            },
-                          });
-                      }
-                    });
                   }
-                }
-              },
-            };
+                },
+              };
 
-            this.modalService.show(WarehouseSelectFormComponent, config);
+              this.modalService.show(WarehouseSelectFormComponent, config);
+            }
           }
-        }
-      });
-    } else {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Error',
+          'Se necesita tener un bien seleccionado'
+        );
+      }
     }
   }
 
@@ -1884,41 +1878,102 @@ export class PerformProgrammingFormComponent
 
   /* Enviar datos a almacén */
   sendWarehouse() {
-    if (this.goodSelect.length) {
+    if (this.selectMasiveGood) {
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los Bienes seleccionados serán enviados a Almacén'
+        'Todos los Bienes serán enviados a Almacén'
       ).then(question => {
         if (question.isConfirmed) {
-          let config = {
-            ...MODAL_CONFIG,
-            class: 'modal-lg modal-dialog-centered',
+          let tranferent: number = 0;
+          let typeRelevant: number = 0;
+          if (this.transferentId) {
+            tranferent = this.transferentId;
+          } else if (this.dataProgramming.tranferId)
+            tranferent = this.dataProgramming.tranferId;
+
+          if (this.idTypeRelevant) {
+            typeRelevant = this.idTypeRelevant;
+          } else if (this.dataProgramming.typeRelevantId) {
+            typeRelevant = this.dataProgramming.typeRelevantId;
+          }
+
+          const formData = {
+            regionalDelegation: Number(
+              this.dataProgramming.regionalDelegationNumber
+            ),
+            transferent: tranferent,
+            relevantType: typeRelevant,
+            statusGood: 'APROBADO',
+            programmingId: this.idProgramming,
+            creationUser: 'Sigebi admon',
+            modificationUser: 'Sigebi admon',
+            version: '1',
+            status: 'EN_ALMACEN_TMP',
           };
-          const idTransferent = this.transferentId;
-          config.initialState = {
-            idTransferent,
-            delegation: this.delegationId,
-            typeTransportable: 'warehouse',
-            callback: async (warehouse: number) => {
-              if (warehouse) {
-                const createProgGood = await this.addGoodsWarehouse();
 
-                if (createProgGood) {
-                  const updateGood: any = await this.changeStatusGoodWarehouse(
-                    warehouse
-                  );
+          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
+            next: response => {
+              console.log('response', response);
+              const data = {
+                programmingId: this.idProgramming,
+                status: 'EN_ALMACEN_TMP',
+                storeNumber: this.warehouseId,
+              };
+              this.goodProcessService.updateMassiveStore(data).subscribe({
+                next: response => {},
+                error: error => {},
+              });
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
+              this.paramsTransportableGoods
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.showWarehouseGoods());
 
-                  if (updateGood) {
-                    const showGoods: any = await this.getFilterGood(
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Bienes agregados a almacén correctamente'
+              );
+            },
+            error: error => {
+              console.log('error', error);
+            },
+          });
+        }
+      });
+    } else {
+      if (this.goodSelect.length) {
+        this.alertQuestion(
+          'warning',
+          'Acción',
+          'Los Bienes seleccionados serán enviados a Almacén'
+        ).then(question => {
+          if (question.isConfirmed) {
+            let config = {
+              ...MODAL_CONFIG,
+              class: 'modal-lg modal-dialog-centered',
+            };
+            const idTransferent = this.transferentId;
+            config.initialState = {
+              idTransferent,
+              delegation: this.delegationId,
+              typeTransportable: 'warehouse',
+              callback: async (warehouse: number) => {
+                if (warehouse) {
+                  const createProgGood = await this.addGoodsWarehouse();
+                  if (createProgGood) {
+                    const updateGood: any =
+                      await this.changeStatusGoodWarehouse(warehouse);
+                    if (updateGood) {
+                      /*const showGoods: any = await this.getFilterGood(
                       'EN_ALMACEN_TMP'
-                    );
+                    ); */
 
-                    if (showGoods) {
-                      /* const _showGoods = await this.showGoodsWarehouse(
+                      /*const _showGoods = await this.showGoodsWarehouse(
                         showGoods
                       ); */
-
                       this.params
                         .pipe(takeUntil(this.$unSubscribe))
                         .subscribe(() => this.getProgGoods());
@@ -1929,15 +1984,19 @@ export class PerformProgrammingFormComponent
                     }
                   }
                 }
-              }
-            },
-          };
+              },
+            };
 
-          this.modalService.show(WarehouseSelectFormComponent, config);
-        }
-      });
-    } else {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+            this.modalService.show(WarehouseSelectFormComponent, config);
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Error',
+          'Se necesita tener un bien seleccionado'
+        );
+      }
     }
   }
 
@@ -1978,7 +2037,8 @@ export class PerformProgrammingFormComponent
           storeId: warehouse,
         };
         this.goodService.updateByBody(formData).subscribe({
-          next: () => {
+          next: response => {
+            console.log('response', response);
             resolve(true);
           },
           error: error => {
@@ -2170,12 +2230,18 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
-    if (this.performForm.get('startDate').value) {
+    if (
+      this.performForm.get('startDate').value &&
+      this.dataProgramming.startDate == null
+    ) {
       this.performForm
         .get('startDate')
         .setValue(new Date(this.performForm.get('startDate').value));
     }
-    if (this.performForm.get('endDate').value) {
+    if (
+      this.performForm.get('endDate').value &&
+      this.dataProgramming.endDate == null
+    ) {
       this.performForm
         .get('endDate')
         .setValue(new Date(this.performForm.get('endDate').value));
