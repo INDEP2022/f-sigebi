@@ -398,7 +398,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     ''
                   );
                   this.downloadResultsGoods = false;
-                  this.searchPrograming();
+                  this.update++;
                 }, 1000);
               })
               .catch(error => {});
@@ -446,7 +446,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         ''
                       );
                       this.downloadResultsGoods = false;
-                      this.count++;
+                      this.update++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -493,7 +493,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       ''
                     );
                     this.downloadResultsGoods = false;
-                    this.searchPrograming();
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -539,7 +539,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         `Proceso terminado correctamente, ya puede descargar el resultado`,
                         ''
                       );
-                      this.searchPrograming();
+                      this.update++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -575,7 +575,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
-                    this.searchPrograming();
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -615,7 +615,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
-                    this.searchPrograming();
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
