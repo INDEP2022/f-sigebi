@@ -3193,6 +3193,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
+        resolve(true);
       }
     });
   }
@@ -3488,6 +3489,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
             await this.changeStatusGoodReceipt();
+            await this.deleteReceipt();
           },
           error: error => {},
         });
@@ -3499,6 +3501,45 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Necesitas tener un bien seleccionado'
       );
     }
+  }
+
+  deleteReceipt() {
+    this.selectGood.map((item: any) => {
+      const data = {
+        programmationId: this.programmingId,
+        goodId: item.goodId,
+      };
+      this.receptionGoodService.getReceiptGoodByIds(data).subscribe({
+        next: response => {
+          const deleteObject = {
+            receiptId: response.receiptId,
+            goodId: response.goodId,
+            programmationId: response.programmationId,
+            actId: response.actId,
+          };
+
+          this.receptionGoodService.deleteReceiptGood(deleteObject).subscribe({
+            next: response => {
+              console.log('delete', response);
+            },
+          });
+        },
+      });
+    });
+
+    /*
+    if (this.goodIdSelect > 0) {
+      this.selectGood.map((item: any) => {
+        console.log('item', item);
+        const formData = {
+          receiptId: item.id,
+          goodId: item.goodId,
+          programmationId: 8450,
+          actId: 112,
+        };
+        //this.receptionGoodService.deleteReceipt()
+      });
+    } */
   }
 
   deleteGoodRep() {
