@@ -825,8 +825,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     const showTransportableData = await this.showTransportableEmail();
+
     if (showTransportableData) {
       const showGuardData = await this.showGuardEmail();
+
       if (showGuardData) {
         const showGuardData = await this.showWarehouseEmail();
 
@@ -983,7 +985,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             //this.goodService.getAll;
           });
         },
-        error: error => {},
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }
