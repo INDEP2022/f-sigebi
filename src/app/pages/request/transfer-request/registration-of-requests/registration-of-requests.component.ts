@@ -1370,7 +1370,7 @@ export class RegistrationOfRequestsComponent
               this.verifyCumplianteMsg(
                 'No se pudo turnar la solicitud',
                 'Guarde el formulario antes de turnar la solicitud',
-                'info'
+                'warning'
               );
             }
             this.question = false;
