@@ -557,10 +557,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     });
   }
 
+  loadingButton: boolean = false;
+
   openMessage(message: string): void {
     this.alertQuestion('warning', 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
+          this.loadingButton = true;
           this.firm();
         }
       }
@@ -656,6 +659,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
         next: data => {
+          this.loadingButton = false;
           console.log('XML Generado: ', data);
           this.xml = data;
           this.msjCheck = true;
@@ -670,6 +674,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
           //this.updateStatusSigned();
         },
         error: error => {
+          this.loadingButton = false;
           this.alertInfo(
             'error',
             'Acción Inválida',

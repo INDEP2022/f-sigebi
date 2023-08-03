@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -32,13 +33,15 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
   globalDate: number;
   numberCumplio: number;
   functionCumplioIndicador = new FunctionCumplioIndicador();
+  resultDate: number = 0;
 
   //
 
   constructor(
     private viewService: GoodsQueryService,
     private _domSanitizer: DomSanitizer,
-    private dynamicCatalogService: DynamicCatalogService
+    private dynamicCatalogService: DynamicCatalogService,
+    private datePipe: DatePipe
   ) {
     super();
     this.settings = {
@@ -139,10 +142,6 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
           title: 'Captura y Digitalización',
           sort: false,
           filter: false,
-          // type: 'html',
-          // valuePrepareFunction: (image: any, row: ICaptureDigViewHistoryIndicators) => {
-          //    return this.assignAndValidateImageOne(row);
-          // },
           type: 'custom',
           renderComponent: EventEmmiterComponent,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -156,7 +155,11 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
           type: 'custom',
           renderComponent: EventEmmiterComponent,
           valuePrepareFunction: (cell: any, row: any) => {
-            return { value: cell, type: 'column-dict', rowData: row };
+            return {
+              value: this.resultDate,
+              type: 'column-dict',
+              rowData: row,
+            };
           },
         },
         column7: {
@@ -221,8 +224,19 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
 
   //
 
-  onCustomEvent(event: any): void {
-    console.log('Saludando desde abajo: ', event);
+  getDate(date: string) {
+    let dateLocal = this.convertDate(date);
+    console.log(
+      'La fecha que se recibe desde arriba, la fecha inicial: ',
+      dateLocal
+    );
+    if (dateLocal != undefined && dateLocal != null) {
+      this.vEtapa(dateLocal);
+      console.log(
+        'El resultado de la fecha que se pasa del primer formulario: ',
+        this.resultDate
+      );
+    }
   }
 
   getData(params: any) {
@@ -292,11 +306,24 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
       this.dynamicCatalogService.faEtapaind(fecha).subscribe({
         next: resp => {
           console.log(resp);
-          res(Number(resp.data[0].fa_etapaind));
+          this.resultDate = Number(resp.data[0].fa_etapaind);
+          console.log(
+            'Primero la variable que almacena la fecha: ',
+            this.resultDate,
+            ' --- ahora la variable que se recibe con el valor ---',
+            Number(resp.data[0].fa_etapaind)
+          );
         },
-        error: _err => res(1),
+        error: _err =>
+          console.log('Algo salio mal en el resultado de la fecha.'),
       });
     });
+  }
+
+  convertDate(value: string) {
+    let date: string;
+    date = this.datePipe.transform(value, 'dd/MM/yyyy');
+    return date;
   }
 
   //

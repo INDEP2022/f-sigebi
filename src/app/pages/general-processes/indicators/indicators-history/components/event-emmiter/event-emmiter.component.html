@@ -27,19 +27,45 @@
         </button>
       </div>
     </div>
-    <div>
-      <ng-template #elseBlock>
-        <div>
-          <div>
-            <button (click)="onClick()" *ngIf="varTwo">Imagen Verde</button>
-          </div>
-          <div>
-            <ng-template #elseBlockTwo>
-              <button (click)="onClick()" *ngIf="varThree">Imagen Azul</button>
-            </ng-template>
-          </div>
-        </div>
-      </ng-template>
+
+    <div *ngIf="varTwo">
+      <div>
+        <button
+          (click)="openModal(rowData)"
+          style="
+            height: 20;
+            width: 100%;
+            text-decoration: none;
+            border: none;
+            padding: 0%;
+          ">
+          <img
+            src="../../../../../../../assets/images/cumplido.png"
+            alt="Cargando..."
+            height="20"
+            width="100%" />
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="varThree">
+      <div>
+        <button
+          (click)="openModal(rowData)"
+          style="
+            height: 20;
+            width: 100%;
+            text-decoration: none;
+            border: none;
+            padding: 0%;
+          ">
+          <img
+            src="../../../../../../../assets/images/destiempo.png"
+            alt="Cargando..."
+            height="20"
+            width="100%" />
+        </button>
+      </div>
     </div>
   </div>
   <!-- <div>

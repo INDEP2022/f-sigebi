@@ -33,6 +33,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
   @Output() consultEmmit = new EventEmitter<any>();
+  @Output() dateFinicia = new EventEmitter<string>();
   delegations = new DefaultSelect();
   affairName = new DefaultSelect();
   station = new DefaultSelect();
@@ -252,6 +253,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
       }
     }
     this.consultEmmit.emit(params);
+    this.dateFinicia.emit(this.formCapture.controls['finicia'].value);
   }
 
   valid(value: any) {

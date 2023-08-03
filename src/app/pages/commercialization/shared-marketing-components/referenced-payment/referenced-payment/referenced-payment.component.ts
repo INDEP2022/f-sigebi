@@ -5,7 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
   ListParams,
@@ -14,12 +14,14 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS } from './columns';
+import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
   selector: 'app-referenced-payment',
@@ -35,6 +37,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   comerEventSelect = new DefaultSelect();
   banks = new DefaultSelect();
   layout: string = '';
+  loadingBtn: boolean = false;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -45,7 +48,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private comerEventService: ComerEventService,
     private accountMovementService: AccountMovementService,
     private comerEventosService: ComerEventosService,
-    private bankService: BankService
+    private bankService: BankService,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.settings = {
@@ -131,15 +135,35 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     });
   }
 
+  edit(event: any) {
+    console.log('aaa', event);
+    if (event == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event;
+    }
+    this.openForm(event, true);
+  }
   add() {
-    //this.openModal();
+    this.openForm(null, false);
   }
 
-  edit(data: any) {
-    //console.log(data)
-    //this.openModal({ edit: true, paragraph });
+  openForm(data: any, editVal: boolean) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        edit: editVal,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NewAndUpdateComponent, config);
   }
-
   questionDelete(data: any) {
     console.log(data);
     this.alertQuestion(
@@ -157,7 +181,14 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 
-  rowsSelected(event: any) {}
+  valAcc: any = null;
+  rowsSelected(event: any) {
+    if (event.data == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event.data;
+    }
+  }
   getPayments() {
     this.loading = true;
     this.totalItems = 0;
@@ -305,8 +336,63 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   clear() {
     this.form.reset();
   }
-  carga() {}
-  setValuesFormEvent(event?: any) {}
+  async carga() {
+    if (!this.eventSelected)
+      return this.alert(
+        'warning',
+        'Es Necesario Especificar un Evento para Realizar la Carga',
+        ''
+      );
+
+    const respEvent: any = await this.getSelectFase(this.eventSelected.id);
+
+    if (!respEvent) {
+      return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
+    } else {
+      if (respEvent.phase == 1) {
+        this.alertInfo('info', 'Carga de Pagos Fase: 1', '').then(question => {
+          if (question.isConfirmed) {
+          }
+        });
+      } else if (respEvent.phase == 2) {
+        this.alertInfo('info', 'Carga de Pagos Fase: 2', '').then(question => {
+          if (question.isConfirmed) {
+          }
+        });
+      } else {
+        return this.alert(
+          'warning',
+          'El Evento no se Encuentra en una fase',
+          ''
+        );
+      }
+    }
+    console.log(respEvent);
+  }
+
+  async getSelectFase(id_evento: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.getFcomer612Get1(id_evento).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: err => {
+          resolve(null);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  ratificar() {}
+  referencia() {}
+
+  pago() {}
+
+  eventSelected: any = null;
+  setValuesFormEvent(event?: any) {
+    this.eventSelected = event;
+  }
 
   setValuesFormBank(event?: any) {}
 }

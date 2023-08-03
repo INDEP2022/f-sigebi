@@ -77,7 +77,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       date: [null, Validators.required],
       amount: [null, [Validators.pattern(NUMBERS_POINT_PATTERN)]],
       bankKey: [null, [Validators.required]],
-      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      code: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       lotId: [null, Validators.required],
       type: [null, Validators.pattern(STRING_PATTERN)],
       result: [null, Validators.pattern(STRING_PATTERN)],
@@ -126,11 +126,13 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       });
 
       this.form.get('clientId').setValue(this.data.idAndName);
+
+      this.form.get('bankKey').setValue(this.data.bankAndNumber);
       console.log('this.data', this.data);
 
       // if (this.data.clientId) {
       //   const params = new ListParams()
-      //   params.text = this.data.clientId;
+      //   params.te  returnDate(date: Date) {}
       //   this.getClientsById(params)
       // }
     } else {
@@ -149,6 +151,10 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   update() {
+    // console.log(this.form.value.bankKey)
+    // console.log(this.form.value.clientId)
+    // return
+    const bank = this.form.value.bankKey;
     const client = this.form.value.clientId;
     const requestBody: any = {
       paymentId: this.data.paymentId,
@@ -156,15 +162,15 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
-      bankKey: this.form.value.bankKey,
-      code: Number(this.form.value.code),
+      bankKey: bank.cveBank,
+      code: bank.idCode,
       lotId: this.form.value.lotId,
       // type: this.form.value.type,
       // result: this.form.value.result,
       // recordDate: this.form.value.recordDate,
       // referenceOri: this.form.value.referenceOri,
       // dateOi: this.form.value.dateOi,
-      entryOrderId: this.form.value.entryOrderId,
+      // entryOrderId: this.form.value.entryOrderId,
       // validSystem:
       //   this.form.value.validSystem == '' ? null : this.form.value.validSystem,
       // description: this.form.value.description,
@@ -341,7 +347,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params.addFilter('cveAccount', lparams.text, SearchFilter.EQ);
+        params.addFilter('idCode', lparams.text, SearchFilter.EQ);
       } else {
         console.log('NO');
         params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
@@ -351,23 +357,25 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.accountMovementService.getAccountBank(params.getParams()).subscribe({
-        next: response => {
-          console.log('ress1', response);
-          let result = response.data.map(item => {
-            item['bankAndNumber'] = item.cveBank + ' - ' + item.cveAccount;
-          });
+      this.accountMovementService
+        .getPaymentControl(params.getParams())
+        .subscribe({
+          next: response => {
+            console.log('ress1', response);
+            let result = response.data.map(item => {
+              item['bankAndNumber'] = item.idCode + ' - ' + item.cveBank;
+            });
 
-          Promise.all(result).then((resp: any) => {
-            this.banks = new DefaultSelect(response.data, response.count);
-            this.loading = false;
-          });
-        },
-        error: err => {
-          this.banks = new DefaultSelect();
-          console.log(err);
-        },
-      });
+            Promise.all(result).then((resp: any) => {
+              this.banks = new DefaultSelect(response.data, response.count);
+              this.loading = false;
+            });
+          },
+          error: err => {
+            this.banks = new DefaultSelect();
+            console.log(err);
+          },
+        });
     });
   }
 
