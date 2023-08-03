@@ -1,5 +1,4 @@
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
-import { formatForIsoDate } from 'src/app/shared/utils/date';
 
 export const COLUMNS = {
   parameter: {
@@ -51,21 +50,21 @@ export const COLUMNS = {
     //   }
     // },
   },
-  creationDate: {
-    title: 'Fecha de creación',
-    type: 'string',
-    sort: false,
-    editable: false,
-    valuePrepareFunction: (cell: any, row: IParameterConcept) => {
-      return row.creationDate
-        ? formatForIsoDate(row.creationDate, 'string')
-        : null;
-    },
-  },
-  creationUser: {
-    title: 'Usuario de creación',
-    type: 'string',
-    sort: false,
-    editable: false,
-  },
+  // creationDate: {
+  //   title: 'Fecha de creación',
+  //   type: 'string',
+  //   sort: false,
+  //   editable: false,
+  //   valuePrepareFunction: (cell: any, row: IParameterConcept) => {
+  //     return row.creationDate
+  //       ? formatForIsoDate(row.creationDate, 'string')
+  //       : null;
+  //   },
+  // },
+  // creationUser: {
+  //   title: 'Usuario de creación',
+  //   type: 'string',
+  //   sort: false,
+  //   editable: false,
+  // },
 };
