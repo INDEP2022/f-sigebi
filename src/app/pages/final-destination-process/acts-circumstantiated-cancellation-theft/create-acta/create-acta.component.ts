@@ -281,7 +281,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       approvalUserXAdmon: null,
       numRegister: null,
       captureDate: new Date(),
-      numDelegation1: this.delegationToolbar,
+      numDelegation1: 6,
       numDelegation2: null,
       identifier: null,
       label: null,
