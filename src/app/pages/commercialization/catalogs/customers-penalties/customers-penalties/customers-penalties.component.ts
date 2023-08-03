@@ -128,6 +128,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
 
   rowsSelected(event: any) {
     this.penalties = event.data;
+    console.log(this.penalties);
   }
 
   getDeductives() {

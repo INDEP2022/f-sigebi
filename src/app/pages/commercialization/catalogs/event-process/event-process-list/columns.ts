@@ -92,6 +92,28 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
+  address: {
+    title: 'Dirección',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == 'M')
+        return '<strong><span class="badge badge-pill badge-soft-info">MUEBLES</span></strong>';
+      if (value == 'I')
+        return '<strong><span class="badge badge-pill badge-soft-info">INMUEBLES</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'M', title: 'MUEBLES' },
+          { value: 'I', title: 'INMUEBLES' },
+        ],
+      },
+    },
+  },
   eventTpId: {
     title: 'Tipo',
     type: 'number',
