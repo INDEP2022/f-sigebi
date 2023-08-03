@@ -56,7 +56,11 @@ export class PaymentService extends HttpService {
     return this.get(route);
   }
 
-  getPaymentPagoRed(params?: string){
-    return this.get('application/get-payment-pagoref',params)
+  getPaymentPagoRed(params?: string) {
+    return this.get('application/get-payment-pagoref', params);
+  }
+
+  getComerPaymentRefgetAllV2Total(params: _Params) {
+    return this.get(PaymentEndPoints.getAllV2Total, params);
   }
 }

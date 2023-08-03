@@ -1409,14 +1409,14 @@ export class DetailAssetsTabComponentComponent
     if (this.immovablesAssets === true) {
       if (this.domicileForm.controls['id'].value === null) {
         this.message(
-          'info',
+          'warning',
           'Error',
-          `Se reguiqere ingresar el domicilio del bien`
+          `Se requiere ingresar el domicilio del Bien`
         );
       } else {
         if (this.goodDomicilieForm.invalid == true) {
           setTimeout(() => {
-            this.onLoadToast('info', 'Recuerda llenar los campos faltantes');
+            this.onLoadToast('warning', 'Recuerde llenar los campos faltantes');
           }, 1000);
           return;
         }
@@ -1448,19 +1448,19 @@ export class DetailAssetsTabComponentComponent
                 this.message(
                   'error',
                   'Error',
-                  `¡El menaje no se pudo guardar!\n. ${data.message}`
+                  `El menaje no se pudo guardar\n. ${data.message}`
                 );
-                reject('¡El registro del bien del domicilio no se guardó!');
+                reject('El registro del Bien del domicilio no se guardó');
               }
 
               if (data.id != null) {
                 this.message(
                   'success',
-                  'Menaje guardado',
+                  'Menaje Guardado',
                   `Se guardaron los menajes exitosamente`
                 );
                 this.isSaveMenaje = false;
-                resolve('¡Se guardó correctamente el menaje!');
+                resolve('Se guardó correctamente el menaje');
               }
             },
           });
@@ -1482,7 +1482,7 @@ export class DetailAssetsTabComponentComponent
               this.message(
                 'error',
                 'Error',
-                `El registro de domicilio del bien no se pudo actualizar!\n. ${data.message}`
+                `El registro de domicilio del bien no se pudo actualizar\n. ${data.message}`
               );
               reject(
                 'No se puedo actualizar el registro del domicilio del bien'
@@ -1498,7 +1498,7 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
+              `El registro de domicilio del bien no se pudo actualizar\n. ${error.error.message}`
             );
           },
         });
@@ -1532,7 +1532,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se guardo!\n. ${error.error.message}`
+            `El registro del inmueble no se guardo\n. ${error.error.message}`
           );
         },
       });
@@ -1558,7 +1558,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+            `El registro del inmueble no se actualizo\n. ${error.error.message}`
           );
         },
       });

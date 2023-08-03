@@ -140,7 +140,7 @@ export class RegistrationHelper extends BasePage {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 2) {
+    } else if (!lisDocument || lisDocument < 1) {
       this.message(
         'warning',
         'Se debe asociar un documento a la solicitud para continuar',
