@@ -645,5 +645,13 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+    if (this.origin == 'FACTREFACTADEVOLU') {
+      this.router.navigate(['/pages/final-destination-process/return-acts'], {
+        queryParams: {
+          folio: this.originFolio,
+          expediente: this.expedientNumber,
+        },
+      });
+    }
   }
 }
