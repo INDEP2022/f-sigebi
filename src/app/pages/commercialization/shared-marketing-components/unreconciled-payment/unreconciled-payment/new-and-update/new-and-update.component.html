@@ -6,6 +6,18 @@
     <form class="form-material" [formGroup]="form">
       <div class="row p-1" style="height: 300px; overflow-y: scroll">
         <div class="col-md-6 mt-3">
+          <form-field [control]="form.get('paymentId')" label="ID Pago">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="paymentId" />
+            <!-- <ngx-select [searchOnInit]="true" [form]="form" control="bankKey" [data]="banks" value="cveBank"
+                      bindLabel="bankAndNumber" label="Banco" (fetchItems)="getBanks($event)">
+                    </ngx-select> -->
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-3">
           <form-field [control]="form.get('bankKey')" label="Banco">
             <input
               maxlength="10"
@@ -17,7 +29,7 @@
             </ngx-select> -->
           </form-field>
         </div>
-        <div class="col-md-6 mt-3">
+        <div class="col-md-6 mt-2">
           <form-field [control]="form.get('code')" label="Código">
             <input
               maxlength="4"
@@ -87,8 +99,7 @@
               [form]="form"
               control="clientId"
               [data]="clients"
-              value="id"
-              bindLabel="id"
+              bindLabel="idAndName"
               label="Cliente"
               (fetchItems)="getClients($event)">
             </ngx-select>
@@ -103,6 +114,16 @@
               formControlName="amount" />
           </form-field>
         </div>
+        <!-- <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input readonly type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-6 mt-2">
+          <form-field [control]="form.get('name')" label="Nombre Cliente">
+            <input readonly type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div> -->
 
         <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('dateOi')" label="Fecha OI">
@@ -121,7 +142,7 @@
             <input bsDatepicker maxlength="11" type="text" class="form-control" formControlName="recordDate" />
           </form-field>
         </div> -->
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field
             [control]="form.get('referenceOri')"
             label="Referencia Ori">
@@ -131,64 +152,39 @@
               class="form-control"
               formControlName="referenceOri" />
           </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
+        </div> -->
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('branchOffice')" label="Sucursal">
-            <input
-              maxlength="30"
-              type="text"
-              class="form-control"
-              formControlName="branchOffice" />
+            <input maxlength="30" type="text" class="form-control" formControlName="branchOffice" />
           </form-field>
-        </div>
-        <div class="col-md-3 mt-2">
-          <form-field
-            [control]="form.get('validSystem')"
-            label="Sistema Válido">
-            <input
-              maxlength="1"
-              type="text"
-              class="form-control"
-              formControlName="validSystem" />
+        </div> -->
+        <!-- <div class="col-md-3 mt-2">
+          <form-field [control]="form.get('validSystem')" label="Sistema Válido">
+            <input maxlength="1" type="text" class="form-control" formControlName="validSystem" />
           </form-field>
-        </div>
-        <div class="col-md-3 mt-2">
+        </div> -->
+        <!-- <div class="col-md-3 mt-2">
           <form-field [control]="form.get('type')" label="Tipo">
-            <input
-              maxlength="1"
-              type="text"
-              class="form-control"
-              formControlName="type" />
+            <input maxlength="1" type="text" class="form-control" formControlName="type" />
           </form-field>
-        </div>
+        </div> -->
 
-        <div class="col-12">
+        <!-- <div class="col-12">
           <div class="row">
             <div class="col-md-6 mt-2">
-              <form-field
-                [control]="form.get('description')"
-                label="Descripción">
-                <textarea
-                  maxlength="200"
-                  class="form-control"
-                  cols="5"
-                  rows="5"
+              <form-field [control]="form.get('description')" label="Descripción">
+                <textarea maxlength="200" class="form-control" cols="5" rows="5"
                   formControlName="description"></textarea>
               </form-field>
             </div>
             <div class="col-md-6 mt-2">
               <form-field [control]="form.get('result')" label="Resultado">
-                <textarea
-                  maxlength="200"
-                  type="text"
-                  cols="5"
-                  rows="5"
-                  class="form-control"
+                <textarea maxlength="200" type="text" cols="5" rows="5" class="form-control"
                   formControlName="result"></textarea>
               </form-field>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
@@ -198,8 +194,6 @@
         <button
           [disabled]="
             !form.valid ||
-            form.get('recordDate').value == undefined ||
-            form.get('recordDate') == null ||
             form.get('date').value == undefined ||
             form.get('date') == null
           "
@@ -209,17 +203,6 @@
           Guardar
           <span><i aria-hidden="true" class="fa fa-save"></i></span>
         </button>
-        <!-- <button
-          [disabled]="form.valid"
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="confirm()">
-          {{ edit ? 'Actualizar' : 'Guardar' }}
-          <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
-          <span *ngIf="!edit"
-            ><i aria-hidden="true" class="fa fa-save"></i
-          ></span>
-        </button> -->
       </div>
       <div class="m-3">
         <button

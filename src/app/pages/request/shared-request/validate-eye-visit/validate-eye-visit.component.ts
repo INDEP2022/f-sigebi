@@ -352,7 +352,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     });
     /* ACTUALIZA LA TABLA */
     this.selectedGoodColumns.getElements().then(data => {
-      debugger;
+      //debugger;
       for (let i = 0; i < data.length; i++) {
         const dataColumns = data[i];
         for (let j = 0; j < this.selectedList.length; j++) {

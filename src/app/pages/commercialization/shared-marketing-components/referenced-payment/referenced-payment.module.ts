@@ -9,11 +9,13 @@ import { ReferencedPaymentRoutingModule } from './referenced-payment-routing.mod
 //Components
 import { ReferencedPaymentComponent } from './referenced-payment/referenced-payment.component';
 //@Standalone Components
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-shared/banks-shared.component';
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
+import { NewAndUpdateComponent } from './referenced-payment/new-and-update/new-and-update.component';
 
 @NgModule({
-  declarations: [ReferencedPaymentComponent],
+  declarations: [ReferencedPaymentComponent, NewAndUpdateComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -22,6 +24,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
     ReferencedPaymentRoutingModule,
     EventsSharedComponent,
     BanksSharedComponent,
+    FormLoaderComponent,
   ],
 })
 export class ReferencedPaymentModule {}

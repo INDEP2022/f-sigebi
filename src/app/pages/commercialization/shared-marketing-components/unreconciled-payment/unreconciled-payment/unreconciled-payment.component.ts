@@ -204,6 +204,9 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
           item['event'] = item.lots ? item.lots.idEvent : null;
           item['lotPub'] = item.lots ? item.lots.lotPublic : null;
           item['move'] = item.ctrl ? item.ctrl.description : null;
+          item['idAndName'] = item.customers
+            ? item.customers.idClient + ' - ' + item.customers.nomRazon
+            : null;
         });
         Promise.all(result).then(resp => {
           this.data.load(response.data);
@@ -293,33 +296,45 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   async enviarSIRSAE() {
     if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
 
-    // if (!this.valAcc.lots)
-    //   return this.alert('warning', 'Este Pago No tiene Lote Asociado', '');
+    if (!this.valAcc.lots)
+      return this.alert('warning', 'Este Pago no está Asociado a un Lote', '');
 
     this.loadingBtn = true;
     // CREA_CABECERA;
     const a = await this.creaCabecera();
     // ENVIA_LEE_SIRSAE(1, NULL);
-    const resss = await this.enviaLeeSirsae(1, null);
-    if (
-      resss == 'ERROR EN LA CONEXION A SIRSAE' ||
-      resss ==
-        'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
-      resss ==
-        'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
-      resss ==
-        'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
-      resss ==
-        'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
-    ) {
-      this.alert(
-        'error',
-        'Error de Conexión',
-        'No se pudo Conectar a la Base de Datos (SIRSAE)'
-      );
-      this.loadingBtn = false;
-      this.getPayments();
-      return;
+    const resss: any = await this.enviaLeeSirsae(1, null);
+    console.log(resss);
+    if (resss.status == 400 || resss.status == 500) {
+      if (
+        resss.message == 'ERROR EN LA CONEXION A SIRSAE' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+      ) {
+        this.alert(
+          'error',
+          'Error de Conexión',
+          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+        );
+        this.loadingBtn = false;
+        this.getPayments();
+        return;
+      } else {
+        this.alert(
+          'error',
+          'Ha Ocurrido un Error al Intentar Enviar a SIRSAE',
+          ''
+        );
+        this.loadingBtn = false;
+        this.getPayments();
+        return;
+      }
     } else {
       this.loadingBtn = false;
       this.getPayments();
@@ -366,7 +381,11 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.paymentService.sendReadSirsaeFcomer113(obj).subscribe({
         next: response => {
-          resolve('OK');
+          let obj = {
+            status: 200,
+            message: 'OK',
+          };
+          resolve(obj);
           // this.alert('success', 'Proceso Ejecutado Correctamente', '');
           // this.getPayments();
         },
@@ -392,7 +411,11 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
           //   'Ocurrió un Error al Intentar Ejecutar el Proceso',
           //   error.error.message
           // );
-          resolve(error.error.message);
+          let obj = {
+            status: error.status,
+            message: error.error.message,
+          };
+          resolve(obj);
           //   return;
           // }
         },

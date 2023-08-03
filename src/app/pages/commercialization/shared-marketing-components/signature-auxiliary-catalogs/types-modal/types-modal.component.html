@@ -1,25 +1,32 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Comercializaci&oacute;n Origenes
+    </h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="typeForm">
+    <form class="form-material" [formGroup]="formGroup">
       <div class="row">
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-8">
           <form-field
-            [control]="typeForm.get('denomination')"
-            label="Denominación">
+            [control]="formGroup.get('denomination')"
+            label="Denominaci&oacute;n">
             <input
               type="text"
               class="form-control"
+              maxlength="100"
               formControlName="denomination" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-4">
           <form-field
-            [control]="typeForm.get('order')"
-            label="Orden de Presentación">
-            <input type="number" class="form-control" formControlName="order" />
+            [control]="formGroup.get('orderId')"
+            label="Orden de Presentaci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="2"
+              formControlName="orderId" />
           </form-field>
         </div>
       </div>
@@ -29,7 +36,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!typeForm.valid"
+          [disabled]="formGroup.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>

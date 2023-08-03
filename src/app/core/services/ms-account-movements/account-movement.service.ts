@@ -179,6 +179,13 @@ export class AccountMovementService extends HttpService {
   postValidateClosingAccounts(body: any) {
     return this.post('aplication/get-vc-dummy', body);
   }
+
+  getPaymentControl(params?: _Params) {
+    return this.get<IListResponse<any>>(
+      AccountmvmntEndpoint.PaymentControl,
+      params
+    );
+  }
 }
 
 //``
