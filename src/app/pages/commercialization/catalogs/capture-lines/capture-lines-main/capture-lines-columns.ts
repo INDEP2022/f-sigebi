@@ -1,4 +1,4 @@
-import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 
 export const EVENT_COLUMNS = {
   eventId: {
@@ -41,8 +41,13 @@ export const EVENT_COLUMNS = {
     },
     filter: {
       type: 'custom',
-      component: CustomDateDayFilterComponent,
+      component: CustomDateFilterComponent,
     },
+
+    /*filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },*/
   },
 };
 

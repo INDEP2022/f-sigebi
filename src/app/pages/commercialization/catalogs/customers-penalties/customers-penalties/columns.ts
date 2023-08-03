@@ -70,6 +70,17 @@ export const COLUMNS = {
   endDate: {
     title: 'Fecha Final',
     sort: false,
+
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
     /*valuePrepareFunction: (cell: any, row: any) => {
       const parts = cell.split('-');
       const year = parts[0];
@@ -81,7 +92,7 @@ export const COLUMNS = {
     filter: {
       type: 'custom',
       component: CustomDateFilterComponent,
-    },
+    },*/
   },
   refeOfficeOther: {
     title: 'Referencia/Oficio/Otros',
