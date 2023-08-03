@@ -26,6 +26,7 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -82,6 +83,7 @@ export class CustomSelectWidthLoading
   valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
+  inputLoad$ = new Subject<string>();
   items: any[] = [];
   totalItems: number = 0;
   inputAttrs: Attr = {
@@ -137,7 +139,40 @@ export class CustomSelectWidthLoading
       this.input$.next(changes['externalSearch'].currentValue);
     }
     if (changes['load']) {
-      this.input$.next('');
+      console.log('Entro a recargar');
+      this.page = 1;
+      this.isLoading = true;
+      this.getItemsObservable('')
+        .pipe(
+          take(1),
+          map((resp: any) => {
+            if (!resp) {
+              return [];
+            }
+            return this.getDataForPath(resp);
+          })
+        )
+        .subscribe({
+          next: (resp: any[]) => {
+            console.log(resp);
+            this.isLoading = false;
+            if (resp) {
+              this.items = resp;
+
+              if (resp.length === 1) {
+                this.getObject.emit(resp[0]);
+              }
+            } else {
+              this.isLoading = false;
+              this.items = [];
+            }
+          },
+          error: err => {
+            this.isLoading = false;
+            this.items = [];
+          },
+        });
+      // this.input$.next('');
     }
   }
 

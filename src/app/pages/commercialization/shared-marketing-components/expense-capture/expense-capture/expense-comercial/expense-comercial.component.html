@@ -15,29 +15,43 @@
     <app-card [header]="false">
       <div body>
         <form class="form-material" [formGroup]="form">
-          <div class="row mt-4">
-            <div class="col-md-3">
-              <form-field [control]="expenseNumber" label="Id">
+          <div class="row mt-4 ml-0">
+            <div class="col-md-2 col-6 p-0">
+              <ng-custom-select-loading
+                [form]="form"
+                formControlName="expenseNumber"
+                label="Id"
+                [path]="pathComerExpenses"
+                value="expenseNumber"
+                bindLabel="expenseNumber"
+                paramSearch="filter.expenseNumber"
+                prefixSearch="$eq"
+                (valueChange)="fillForm($event)">
+              </ng-custom-select-loading>
+
+              <!-- <form-field [control]="expenseNumber" label="Id">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="expenseNumber"
                   maxlength="11" />
-              </form-field>
+              </form-field> -->
             </div>
           </div>
-          <div class="row mt-4">
+          <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
               formControlName="conceptNumber"
               label="Concepto"
-              path="comerconcepts/api/v1/concepts/get-all"
+              [path]="pathConcept"
               value="id"
               bindLabel="description"
-              paramSearch="filter.description"
-              prefixSearch="$ilike"
+              paramSearch="filter.id"
+              prefixSearch="$eq"
+              [updateValues]="true"
               [labelTemplate]="conceptLabel"
-              [optionTemplate]="conceptOption">
+              [optionTemplate]="conceptOption"
+              (valueChange)="getParams($event)">
             </ng-custom-select-loading>
             <ng-template #conceptLabel let-item="item">
               {{ item.id }} - {{ item.description }}
@@ -76,18 +90,19 @@
               Datos del evento al cual se asociará el gasto
             </h5>
           </div>
-          <div class="row mt-4">
+          <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
               formControlName="eventNumber"
               label="Evento"
               [path]="pathEvent"
               value="id_evento"
-              bindLabel="processKey"
-              paramSearch="filter.id_evento"
-              prefixSearch="$eq"
+              bindLabel="cve_proceso"
+              paramSearch="filter.cve_proceso"
+              prefixSearch="$ilike"
               [labelTemplate]="eventLabel"
-              [optionTemplate]="eventOption">
+              [optionTemplate]="eventOption"
+              (valueChange)="reloadLoteEvent($event)">
             </ng-custom-select-loading>
             <ng-template #eventLabel let-item="item">
               {{ item.id_evento }} - {{ item.cve_proceso }}
@@ -98,7 +113,7 @@
               </div>
             </ng-template>
           </div>
-          <div class="row mt-4">
+          <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
               formControlName="lotNumber"
@@ -108,6 +123,7 @@
               bindLabel="description"
               paramSearch="filter.idLot"
               prefixSearch="$eq"
+              [load]="reloadLote"
               [labelTemplate]="lotLabel"
               [optionTemplate]="lotOption">
             </ng-custom-select-loading>
@@ -120,8 +136,8 @@
               </div>
             </ng-template>
           </div>
-          <div class="row mt-4">
-            <div class="col-6">
+          <div class="row mt-4 ml-0">
+            <div class="col-6 pl-0">
               <form-field
                 [control]="folioAtnCustomer"
                 label="Folio Atn. Cliente">
@@ -148,7 +164,7 @@
           <div class="ch-content">
             <h5 style="font-size: 14px">Datos del beneficiario o proveedor</h5>
           </div>
-          <div class="row mt-4">
+          <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
               formControlName="lotNumber"
@@ -170,6 +186,24 @@
               </div>
             </ng-template>
           </div>
+          <div class="row mt-4">
+            <div class="col-12">
+              <form-field [control]="comment" label="Servicio">
+                <textarea
+                  class="form-control"
+                  formControlName="comment"
+                  rows="3"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <br />
+          <app-data-receipt [expense]="data"></app-data-receipt>
+          <button
+            type="button"
+            class="btn btn-primary active"
+            (click)="sendToSIRSAE()">
+            Envíar Solicitud de pago a SIRSAE
+          </button>
         </form>
       </div>
     </app-card>

@@ -71,16 +71,16 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      addresseeName: [
+      addresseeName: [null, [Validators.maxLength(50)]],
+      positionAddressee: [null, [Validators.maxLength(50)]],
+      senderName: [
         this.request?.nameOfOwner || null,
         [Validators.maxLength(50)],
       ],
-      positionAddressee: [
-        this.request?.nameOfOwner || null,
+      senderCharge: [
+        this.request?.holderCharge || null,
         [Validators.maxLength(50)],
       ],
-      senderName: [null, [Validators.maxLength(50)]],
-      senderCharge: [null, [Validators.maxLength(50)]],
       clarification: [null, [Validators.maxLength(800)]],
       paragraphInitial: [null, [Validators.maxLength(1000)]],
       paragraphFinal: [null, [Validators.maxLength(1000)]],
@@ -137,16 +137,40 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
-      next: response => {
-        this.openReport(response);
-        this.loading = false;
-        this.close();
+      next: data => {
+        const createClarGoodDoc = this.createClarGoodDoc(data);
+
+        console.log('Tabla de bienes en reporte generado');
+
+        setTimeout(() => {
+          if (createClarGoodDoc) {
+            this.openReport(data);
+            this.loading = false;
+            this.close();
+          }
+        }, 250);
       },
       error: error => {
         this.loading = false;
 
         //this.onLoadToast('error', 'No se pudo guardar', '');
       },
+    });
+  }
+
+  createClarGoodDoc(docImpro: IClarificationDocumentsImpro) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        documentId: docImpro.id,
+        version: '1',
+        clarificationRequestId: docImpro.rejectNoticeId,
+      };
+      this.documentService.createClarDocGood(formData).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 

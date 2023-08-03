@@ -11,8 +11,6 @@ import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
 import { StoreModule } from '@ngrx/store';
-import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-modal.component';
-import { AvailableGoodsTableComponent } from './available-goods-table/available-goods-table.component';
 import { ComerEventTraspComponent } from './components/comer-event-trasp/comer-event-trasp.component';
 import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
 import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
@@ -29,27 +27,15 @@ import { ConsigmentsContainerComponent } from './consigments/componets/consigmen
 import { ConsigmentsEventsComponent } from './consigments/componets/consigments-events/consigments-events.component';
 import { ConsigmentsGoodsComponent } from './consigments/componets/consigments-goods/consigments-goods.component';
 import { ConsigmentsLotsComponent } from './consigments/componets/consigments-lots/consigments-lots.component';
-import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
-import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
 import { EventPreparationRoutingModule } from './event-preparation-routing.module';
 import { EventPreparationComponent } from './event-preparation/event-preparation.component';
 import { GroundsStatusModalComponent } from './grounds-status-modal/grounds-status-modal.component';
 import { ReasonsModelComponent } from './reasons-model/reasons-model.component';
-import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goods-table.component';
-import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
 import { eventPreparationReducer } from './store/event-preparation.reducer';
 
 @NgModule({
   declarations: [
-    EventPreparationComponent,
-    SelectEventModalComponent,
-    CreateNewEventModalComponent,
-    AddEditLoteModalComponent,
-    CustomerCatalogsTableComponent,
-    AvailableGoodsTableComponent,
-    RejectedGoodsTableComponent,
     GroundsStatusModalComponent,
-    ReasonsModelComponent,
     EventDataFormComponent,
     CommerEventsListComponent,
     CommerPackagesLotsComponent,
@@ -66,6 +52,8 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     ConsigmentsLotsComponent,
     ConsigmentsGoodsComponent,
     ConsigmentsContainerComponent,
+    ReasonsModelComponent,
+    EventPreparationComponent,
   ],
   imports: [
     CommonModule,
@@ -77,11 +65,6 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     TabsModule,
     ModalModule,
     StoreModule.forFeature('eventPreparation', eventPreparationReducer),
-  ],
-  exports: [
-    CustomerCatalogsTableComponent,
-    AvailableGoodsTableComponent,
-    RejectedGoodsTableComponent,
   ],
   providers: [ExcelService],
 })
