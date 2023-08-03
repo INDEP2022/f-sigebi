@@ -1628,70 +1628,139 @@ export class PerformProgrammingFormComponent
 
   /*------------ Enviar datos a resguardo ----------------------*/
   sendGuard() {
-    if (this.goodSelect.length) {
+    if (this.selectMasiveGood) {
       this.alertQuestion(
         'warning',
         'Acción',
-        'Los Bienes seleccionados serán enviados a resguardo'
-      ).then(async question => {
+        'Todos los Bienes serán enviados a resguardo'
+      ).then(question => {
         if (question.isConfirmed) {
-          const params = new ListParams();
-          if (this.idTypeRelevant == 1) {
-            const tieneMenaje = '';
-            const menajes = 0;
-            this.goodSelect.map(item => {
-              params['filter.id'] = item.googId;
+          let tranferent: number = 0;
+          let typeRelevant: number = 0;
+          if (this.transferentId) {
+            tranferent = this.transferentId;
+          } else if (this.dataProgramming.tranferId)
+            tranferent = this.dataProgramming.tranferId;
 
-              this.goodService.getAll(params).subscribe(data => {});
-            });
-          } else {
-            const data = this.goodSelect.map(item => {
-              const data = {
-                idTransferent: item.transfereeId,
-                idDelegation: item.delegationRegionalId,
-                typeTransferent: item.typeTransfer,
-              };
-              return data;
-            });
-
-            let config = {
-              ...MODAL_CONFIG,
-              class: 'modal-lg modal-dialog-centered',
-            };
-            config.initialState = {
-              data,
-              typeTransportable: 'guard',
-              callback: async (data: any) => {
-                if (data) {
-                  if (!this.selectMasiveGood) {
-                    const createProgGood = await this.addGoodsGuards();
-
-                    if (createProgGood) {
-                      const updateGood: any = await this.changeStatusGoodGuard(
-                        data
-                      );
-
-                      if (updateGood) {
-                        this.params
-                          .pipe(takeUntil(this.$unSubscribe))
-                          .subscribe(() => this.getProgGoods());
-                        this.paramsGuardGoods
-                          .pipe(takeUntil(this.$unSubscribe))
-                          .subscribe(() => this.showGuard());
-                        this.goodSelect = [];
-                      }
-                    }
-                  }
-                }
-              },
-            };
-
-            this.modalService.show(WarehouseSelectFormComponent, config);
+          if (this.idTypeRelevant) {
+            typeRelevant = this.idTypeRelevant;
+          } else if (this.dataProgramming.typeRelevantId) {
+            typeRelevant = this.dataProgramming.typeRelevantId;
           }
+
+          const formData = {
+            regionalDelegation: Number(
+              this.dataProgramming.regionalDelegationNumber
+            ),
+            transferent: tranferent,
+            relevantType: typeRelevant,
+            statusGood: 'APROBADO',
+            programmingId: this.idProgramming,
+            creationUser: 'Sigebi admon',
+            modificationUser: 'Sigebi admon',
+            version: '1',
+            status: 'EN_RESGUARDO_TMP',
+          };
+
+          this.massiveGoodService.createProgGoodMassive(formData).subscribe({
+            next: response => {
+              const data = {
+                programmingId: this.idProgramming,
+                status: 'EN_RESGUARDO_TMP',
+                storeNumber: this.warehouseId,
+              };
+              this.goodProcessService.updateMassiveStore(data).subscribe({
+                next: response => {},
+                error: error => {},
+              });
+              this.params
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.getProgGoods());
+              this.paramsTransportableGoods
+                .pipe(takeUntil(this.$unSubscribe))
+                .subscribe(() => this.showGuard());
+
+              this.alert(
+                'success',
+                'Acción Correcta',
+                'Bienes agregados a almacén correctamente'
+              );
+            },
+            error: error => {
+              console.log('error', error);
+            },
+          });
         }
       });
     } else {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+      if (this.goodSelect.length) {
+        this.alertQuestion(
+          'warning',
+          'Acción',
+          'Los Bienes seleccionados serán enviados a resguardo'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            const params = new ListParams();
+            if (this.idTypeRelevant == 1) {
+              const tieneMenaje = '';
+              const menajes = 0;
+              this.goodSelect.map(item => {
+                params['filter.id'] = item.googId;
+
+                this.goodService.getAll(params).subscribe(data => {});
+              });
+            } else {
+              const data = this.goodSelect.map(item => {
+                const data = {
+                  idTransferent: item.transfereeId,
+                  idDelegation: item.delegationRegionalId,
+                  typeTransferent: item.typeTransfer,
+                };
+                return data;
+              });
+
+              let config = {
+                ...MODAL_CONFIG,
+                class: 'modal-lg modal-dialog-centered',
+              };
+              config.initialState = {
+                data,
+                typeTransportable: 'guard',
+                callback: async (data: any) => {
+                  if (data) {
+                    if (!this.selectMasiveGood) {
+                      const createProgGood = await this.addGoodsGuards();
+
+                      if (createProgGood) {
+                        const updateGood: any =
+                          await this.changeStatusGoodGuard(data);
+
+                        if (updateGood) {
+                          this.params
+                            .pipe(takeUntil(this.$unSubscribe))
+                            .subscribe(() => this.getProgGoods());
+                          this.paramsGuardGoods
+                            .pipe(takeUntil(this.$unSubscribe))
+                            .subscribe(() => this.showGuard());
+                          this.goodSelect = [];
+                        }
+                      }
+                    }
+                  }
+                },
+              };
+
+              this.modalService.show(WarehouseSelectFormComponent, config);
+            }
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Error',
+          'Se necesita tener un bien seleccionado'
+        );
+      }
     }
   }
 
@@ -1846,6 +1915,15 @@ export class PerformProgrammingFormComponent
           this.massiveGoodService.createProgGoodMassive(formData).subscribe({
             next: response => {
               console.log('response', response);
+              const data = {
+                programmingId: this.idProgramming,
+                status: 'EN_ALMACEN_TMP',
+                storeNumber: this.warehouseId,
+              };
+              this.goodProcessService.updateMassiveStore(data).subscribe({
+                next: response => {},
+                error: error => {},
+              });
               this.params
                 .pipe(takeUntil(this.$unSubscribe))
                 .subscribe(() => this.getProgGoods());
