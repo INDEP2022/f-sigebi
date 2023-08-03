@@ -8,7 +8,7 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -26,15 +26,46 @@ import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import { COPY } from '../acts-cir-columns';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
-import { COLUMNS1 } from './columns1';
-import { COLUMNS2 } from './columns2';
 
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
-  styles: [],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienes table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+      .registros-movidos {
+        background-color: yellow;
+      }
+    `,
+  ],
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
@@ -46,6 +77,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formFind: FormGroup;
   totalItems2: number = 0;
   loading2: boolean = false;
+  goods: string;
   bienesLoading: boolean = false;
   formTable2: FormGroup;
   actaRecepttionForm: FormGroup;
@@ -106,10 +138,95 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private router: Router
   ) {
     super();
-    this.settings = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS1;
-    this.settings2 = { ...this.settings, actions: false };
-    this.settings2.columns = COLUMNS2;
+    // this.settings = { ...this.settings, actions: false };
+    // this.settings.columns = COLUMNS1;
+    // this.settings2 = { ...this.settings, actions: false };
+    // this.settings2.columns = COLUMNS2;
+    this.validPermisos = !this.validPermisos;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
+      },
+    };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...COPY },
+      rowClassFunction: (row: any) => {
+        // if (row.data.di_disponible == 'S') {
+        //   return 'text-white';
+        // } else {
+        return 'bg-light text-black';
+        // }
+      },
+    };
   }
 
   ngOnInit(): void {
@@ -192,6 +309,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       acta: [null],
       type: [null],
       claveTrans: [null],
+      direccion: [null],
       administra: [null],
       cveReceived: [null],
       consec: [null],
@@ -199,7 +317,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       anio: [null],
       mes: [null],
       cveActa: [null],
-      direccion: [null],
       observaciones: [null],
       testigoOIC: [null],
       testigoTwo: [null],
@@ -484,6 +601,226 @@ export class ActsCircumstantiatedCancellationTheftComponent
       },
     });
   }
+  onGoodSelect(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChange(data.row, data.toggle),
+    });
+  }
+  isGoodSelected(_good: IGood) {
+    const exists = this.selectedGooods.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChange(good: IGood, selected: boolean) {
+    if (selected) {
+      this.selectedGooods.push(good);
+    } else {
+      this.selectedGooods = this.selectedGooods.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  onGoodSelectValid(instance: CheckboxElementComponent) {
+    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
+      next: data => this.goodSelectedChangeValid(data.row, data.toggle),
+    });
+  }
+  isGoodSelectedValid(_good: IGood) {
+    const exists = this.selectedGooodsValid.find(good => good.id == _good.id);
+    return !exists ? false : true;
+  }
+  goodSelectedChangeValid(good: IGood, selected?: boolean) {
+    if (selected) {
+      this.selectedGooodsValid.push(good);
+    } else {
+      this.selectedGooodsValid = this.selectedGooodsValid.filter(
+        _good => _good.id != good.id
+      );
+    }
+  }
+  selectedGooodsValid: any[] = [];
+  selectedGooods: any[] = [];
+  goodsValid: any;
+  async addSelect() {
+    if (this.selectedGooods.length > 0) {
+      if (this.actasDefault == null) {
+        this.alert(
+          'warning',
+          'No Existe un Acta en la cual Asignar el Bien.',
+          'Debe capturar un acta.'
+        );
+        return;
+      } else {
+        if (this.statusCanc == 'CERRADA') {
+          this.alert(
+            'warning',
+            'El Acta ya está Cerrada, no puede Realizar Modificaciones a esta',
+            ''
+          );
+          return;
+        } else {
+          console.log('aaa', this.goods);
+
+          let result = this.selectedGooods.map(async (good: any) => {
+            if (good.di_acta != null) {
+              this.alert(
+                'warning',
+                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                'Debe Capturar un Acta.'
+              );
+            } else if (good.di_disponible == 'N') {
+              this.onLoadToast(
+                'warning',
+                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+              );
+              return;
+            } else {
+              console.log('GOOD', good);
+              this.loading2 = true;
+
+              if (!this.dataRecepcion.some((v: any) => v === good)) {
+                let indexGood = this.dataTableGood_.findIndex(
+                  _good => _good.id == good.id
+                );
+                console.log('indexGood', indexGood);
+                // if (indexGood != -1)
+                // this.dataTableGood_[indexGood].di_disponible = 'N';
+
+                await this.createDET(good);
+                // this.dataTableGood_ = this.bienes;
+                // this.dataRecepcion.push(good);
+                // this.dataRecepcion = [...this.dataRecepcion];
+              }
+            }
+          });
+
+          Promise.all(result).then(async item => {
+            this.getGoodsByStatus(Number(this.fileNumber));
+            await this.getDetailProceedingsDevollution(this.actasDefault.id);
+          });
+        }
+      }
+    } else {
+      this.alert('warning', 'Seleccione Primero el Bien a Asignar.', '');
+    }
+  }
+  async createDET(good: any) {
+    // if (this.dataRecepcion.length > 0) {
+    // let result = this.dataRecepcion.map(async good => {
+    let obj: any = {
+      numberProceedings: this.actasDefault.id,
+      numberGood: good.id,
+      amount: good.quantity,
+      received: null,
+      approvedXAdmon: null,
+      approvedDateXAdmon: null,
+      approvedUserXAdmon: null,
+      dateIndicatesUserApproval: null,
+      numberRegister: null,
+      reviewIndft: null,
+      correctIndft: null,
+      idftUser: null,
+      idftDate: null,
+      numDelegationIndft: null,
+      yearIndft: null,
+      monthIndft: null,
+      idftDateHc: null,
+      packageNumber: null,
+      exchangeValue: null,
+    };
+
+    await this.saveGoodActas(obj);
+
+    // let obj_: any = {
+    //   id: good.id,
+    //   goodId: good.id,
+    //   status: await this.getScreenStatus(good),
+    // };
+    // // UPDATE BIENES
+    // await this.updateGood(obj_);
+
+    // // INSERT HISTORIC
+    // await this.saveHistoric(obj_);
+    // });
+
+    // }
+  }
+  async saveGoodActas(body: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.addGoodToProceedings(body).subscribe({
+        next: data => {
+          // this.alert('success', 'Bien agregado correctamente', '');
+          resolve(true);
+        },
+        error: error => {
+          // this.authorityName = '';
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  // async deleteDET(good: any) {
+  //   // if (this.selectedGooodsValid.length > 0) {
+  //   //   this.loading2 = true;
+  //   //   let result = this.selectedGooodsValid.map(async good => {
+
+  //   const valid: any = await this.getGoodsDelete(good.numberGood);
+  //   if (valid != null) {
+  //     let obj: any = {
+  //       numberGood: good.numberGood,
+  //       numberProceedings: this.actasDefault.id,
+  //     };
+
+  //     await this.deleteDetailProcee(obj);
+  //   }
+
+  //   // let obj_: any = {
+  //   //   id: good.id,
+  //   //   goodId: good.id,
+  //   //   status: await this.getScreenStatus(good),
+  //   // };
+  //   // // UPDATE BIENES
+  //   // await this.updateGood(obj_);
+
+  //   // // INSERT HISTORIC
+  //   // await this.saveHistoric(obj_);
+  //   //   });
+
+  //   //   Promise.all(result).then(async (item) => {
+  //   //     await this.getDetailProceedingsDevollution(this.actasDefault.id);
+  //   //   })
+  //   // }
+  // }
+
+  async deleteDetailProcee(params: any) {
+    return new Promise((resolve, reject) => {
+      this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
+        next: data => {
+          console.log('data', data);
+          // this.loading2 = false;
+          resolve(true);
+        },
+        error: error => {
+          // this.loading2 = false;
+          resolve(false);
+        },
+      });
+    });
+  }
+  // async getGoodsDelete(id: any) {
+  //   const params = new ListParams();
+  //   params['filter.id'] = `$eq:${id}`;
+  //   return new Promise((resolve, reject) => {
+  //     this.goodService.getByExpedient_(this.fileNumber, params).subscribe({
+  //       next: data => {
+  //         resolve(true);
+  //       },
+  //       error: error => {
+  //         resolve(null);
+  //       },
+  //     });
+  //   });
+  // }
 
   actualizarActa() {}
   agregarActa() {}

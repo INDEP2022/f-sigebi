@@ -144,16 +144,32 @@
                                           </form-field>
                                         </div>
                                       </div> -->
-                  <div class="col-md-8 mt-2">
+                  <div class="col-md-4 mt-3">
                     <div>
                       <form-field
-                        [control]="actaRecepttionForm.get('cveActa')"
+                        [control]="actaRecepttionForm.get('type')"
                         label="Acta">
                         <input
                           #inputValue
                           type="text"
                           class="form-control"
-                          formControlName="cveActa"
+                          formControlName="type"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('claveTrans')"
+                        label="Autoridad">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="claveTrans"
+                          class="form-control"
                           readonly />
                       </form-field>
                     </div>
@@ -162,7 +178,7 @@
                     <div>
                       <form-field
                         [control]="actaRecepttionForm.get('respConv')"
-                        label="Responsable">
+                        label="Recibe">
                         <input
                           #inputValue
                           type="text"
@@ -205,7 +221,7 @@
                     <div>
                       <form-field
                         [control]="actaRecepttionForm.get('testigoTree')"
-                        label="Testigo">
+                        label="Admin.">
                         <input
                           readonly
                           #inputValue
@@ -216,6 +232,99 @@
                       </form-field>
                     </div>
                   </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('consec')"
+                        label="Folio">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="consec"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('anio')"
+                        label="Año">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="anio"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('mes')"
+                        label="Mes">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="mes"
+                          class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-12 mt-2">
+                    <div>
+                      <form-field
+                        [control]="actaRecepttionForm.get('cveActa')"
+                        label="Acta">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="cveActa"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <form-field
+                      class="col-md-12 col-sm-12 col-12 p-2"
+                      [control]="actaRecepttionForm.get('direccion')"
+                      label="Dirección">
+                      <textarea
+                        maxlength="500"
+                        class="form-control text-justify"
+                        formControlName="direccion"
+                        rows="5"
+                        readonly></textarea>
+                    </form-field>
+                  </div>
+                  <div class="card-body">
+                    <form-field
+                      class="col-md-12 col-sm-12 col-12 p-2"
+                      [control]="actaRecepttionForm.get('observaciones')"
+                      label="Observaciones">
+                      <textarea
+                        maxlength="500"
+                        class="form-control text-justify"
+                        formControlName="observaciones"
+                        rows="5"
+                        readonly></textarea>
+                    </form-field>
+                  </div>
+                  <!--      <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field [control]="actaRecepttionForm.get('ident')" label="Ident">
+                        <input #inputValue type="text" class="form-control" formControlName="ident" class="form-control"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div> -->
                   <!-- <div class="col-md-4">
                                         <div>
                                           <form-field [control]="
@@ -227,20 +336,14 @@
                                         </div>
                                       </div> -->
                 </div>
-                <div class="row mt-5">
+                <!-- <div class="row mt-5">
                   <div class="col-md-12 col-sm-12 col-xs-12 pl-5 pr-5">
-                    <form-field
-                      [control]="actaRecepttionForm.get('direccion')"
-                      label="Direcci&oacute;n">
-                      <textarea
-                        maxlength="2000"
-                        type="text"
-                        class="form-control"
-                        formControlName="direccion"
+                    <form-field [control]="actaRecepttionForm.get('direccion')" label="Direcci&oacute;n">
+                      <textarea maxlength="2000" type="text" class="form-control" formControlName="direccion"
                         rows="5"></textarea>
                     </form-field>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
