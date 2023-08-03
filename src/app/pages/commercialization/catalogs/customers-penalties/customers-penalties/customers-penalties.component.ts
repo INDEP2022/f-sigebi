@@ -57,12 +57,13 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
-                field = `filter.${filter.field}.id`;
+                //field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'publicLot':
                 searchFilter = SearchFilter.EQ;
                 break;
+
               /*case 'startDate':
                 if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
@@ -164,6 +165,17 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   //Modal para crear o editar clientes penalizados
+  /*openForm(customersPenalties?: ICustomersPenalties) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      customersPenalties,
+      callback: (next: boolean) => {
+        if (next) this.getDeductives();
+      },
+    };
+    this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
+  }*/
+
   openForm(customersPenalties?: ICustomersPenalties) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {

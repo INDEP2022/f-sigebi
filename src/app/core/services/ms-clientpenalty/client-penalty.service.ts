@@ -59,10 +59,11 @@ export class ClientPenaltyService extends HttpService {
   }
 
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
-    return this.clientPenaltyRepository.create(
-      `${this.route}/create-penalty`,
+    return this.post(ClientPenaltyEndpoints.CreatePenalty, model);
+    /*return this.clientPenaltyRepository.create(
+      ClientPenaltyEndpoints.CreatePenalty,
       model
-    );
+    );*/
   }
 
   //ACTUALIZAR
