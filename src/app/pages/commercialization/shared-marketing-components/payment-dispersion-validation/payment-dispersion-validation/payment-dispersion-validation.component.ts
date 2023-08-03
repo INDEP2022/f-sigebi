@@ -297,6 +297,10 @@ export class PaymentDispersionValidationComponent
               description: () => (searchFilter = SearchFilter.ILIKE),
               finalPrice: () => (searchFilter = SearchFilter.EQ),
               finalVat: () => (searchFilter = SearchFilter.EQ),
+              camp2: () => (searchFilter = SearchFilter.ILIKE),
+              camp3: () => (searchFilter = SearchFilter.ILIKE),
+              camp4: () => (searchFilter = SearchFilter.ILIKE),
+              camp5: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
 
