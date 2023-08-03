@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -29,7 +29,6 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FindReleaseLetterComponent } from './find-release-letter/find-release-letter.component';
 import { COMEMR_BIENES_COLUMNS } from './release-letter-collumn';
@@ -193,49 +192,19 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       this.authService.decodeToken().preferred_username
     );
     this.comerLibsForm = this.fb.group({
-      oficio: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(50)],
-      ],
-      diridoA: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      puesto: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      parrafo1: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
-      factura: [
-        null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
-      ],
+      oficio: [null],
+      diridoA: [null],
+      puesto: [null],
+      parrafo1: [null],
+      adjudicatorio: [null],
+      factura: [null],
       fechaFactura: [null],
-      parrafo2: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      firmante: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp1: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      ccp2: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      ccp3: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      ccp4: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
+      parrafo2: [null],
+      firmante: [null],
+      ccp1: [null],
+      ccp2: [null],
+      ccp3: [null],
+      ccp4: [null],
       fechaCarta: [null],
       fechaFallo: [null],
       cveProceso: [null],
@@ -593,7 +562,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
         next: data => {
           this.bienesLoading = false;
           this.bienes = data.data;
-          console.log(this.bienes);
+          console.log(this.bienes.description);
+          console.log(this.bienes.cant);
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
