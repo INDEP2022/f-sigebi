@@ -15,6 +15,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -54,6 +55,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   loadingCustomerBanks = false;
   loadingLotBanks = false;
   loadingPaymentLots = false;
+
+  loadingExcel = false;
 
   form: FormGroup;
   formCustomerEvent: FormGroup;
@@ -118,6 +121,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private comerTpEventsService: ComerTpEventosService,
     private comerLotsService: LotService,
     private spentService: SpentService,
+    private comerEventosService: ComerEventosService,
     private customersService: ComerClientsService
   ) {
     super();
@@ -622,6 +626,71 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.dataPaymentLots.load([]);
         this.totalItemsPaymentLots = 0;
         this.loadingPaymentLots = false;
+      }
+    );
+  }
+
+  //!EXCELS
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    console.log(this.form.value);
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loadingExcel = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  //Exportar a Excel de Ventas Vs. Pagos
+  exportExcelSellPayment() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+    };
+
+    this.comerEventosService.pupExpxcVenvspag(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('VENTAS VS PAGOS', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
       }
     );
   }

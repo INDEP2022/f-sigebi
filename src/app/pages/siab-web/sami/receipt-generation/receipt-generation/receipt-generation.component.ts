@@ -226,32 +226,34 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         programmingId: this.programmingForm.controls['programmingId'].value,
       };
       this.folio = this.programmingForm.controls['programmingId'].value.trim();
-      this.programmingGoodReceiptService.getProgrammingGoods(data).subscribe({
-        next: resp => {
-          console.log(resp);
-          if (resp.data) {
-            this.id_programacion = resp.data[0].id_programacion;
-          } else {
-            this.id_programacion = null;
-          }
-          this.goodsList = new DefaultSelect(resp.data, resp.count);
-          this.goods = resp.data;
-          this.downloadResultsGoods = true;
-          this.count = resp.count ?? 0;
-          this.programmingForm.controls['managementId'].enable();
-          this.loader.load = false;
-        },
-        error: eror => {
-          this.loader.load = false;
-          this.count = 0;
-          this.goodsList = new DefaultSelect([], 0, true);
-          this.alert(
-            'warning',
-            'Generación de Recibos',
-            'Esta Programación no tiene Bienes'
-          );
-        },
-      });
+      this.programmingGoodReceiptService
+        .getProgrammingGoods(data, params)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            if (resp.data) {
+              this.id_programacion = resp.data[0].id_programacion;
+            } else {
+              this.id_programacion = null;
+            }
+            this.goodsList = new DefaultSelect(resp.data, resp.count);
+            this.goods = resp.data;
+            this.downloadResultsGoods = true;
+            this.count = resp.count ?? 0;
+            this.programmingForm.controls['managementId'].enable();
+            this.loader.load = false;
+          },
+          error: eror => {
+            this.loader.load = false;
+            this.count = 0;
+            this.goodsList = new DefaultSelect([], 0, true);
+            this.alert(
+              'warning',
+              'Generación de Recibos',
+              'Esta Programación no tiene Bienes'
+            );
+          },
+        });
     } else {
       this.alert(
         'warning',
@@ -269,6 +271,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.getGenericE(new ListParams());
       this.getGenericEC(new ListParams());
       this.recepiptGood = data;
+      console.log(data);
       this.indepForm.patchValue(data);
       console.log(this.indepForm.value);
       this.goodID = this.recepiptGood.id_bien;
@@ -876,14 +879,17 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         good.unidad_medida = '';
       }
       if (data.UNIDAD_MEDIDA_SAE) {
+        console.log(data.UNIDAD_MEDIDA_SAE);
         let unidadSae: any = '';
         unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
+        console.log(unidadSae);
         if (unidadSae == '0') {
           good.unidad_medida_sae = '';
           good.observaciones =
             good.observaciones + ', Se necesita una Unidad de Medida INDEP';
           console.log(good.observaciones);
         } else {
+          console.log(unidadSae);
           good.unidad_medida_sae = unidadSae;
         }
       } else {
@@ -891,7 +897,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.ESTADO_FISICO_TRASFERENTE) {
         estado_fisico = await this.obtCat(
-          'Estado Físico',
+          'Estado Fisico',
           data.ESTADO_FISICO_TRASFERENTE
         );
         if (estado_fisico != '0') {
@@ -902,7 +908,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       }
       if (data.ESTADO_FISICO_SAE) {
         let fisicoSae: any = '';
-        fisicoSae = await this.obtCat('Estado Físico', data.ESTADO_FISICO_SAE);
+        fisicoSae = await this.obtCat('Estado Fisico', data.ESTADO_FISICO_SAE);
         if (fisicoSae != '0') {
           good.estado_fisico_sae = Number(fisicoSae);
         } else {
@@ -922,7 +928,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       if (data.ESTADO_CONSERVACION_SAE) {
         let estadoConservacionSae: any = '';
         estadoConservacionSae = await this.obtCat(
-          'Estado Conservación',
+          'Estado Conservacion',
           data.ESTADO_CONSERVACION_SAE
         );
         console.log(estadoConservacionSae);
@@ -1157,63 +1163,6 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     return result;
   }
   dowloadGoods() {
-    // this.goodsDownloadPrograming = [];
-    // this.goods.forEach((element: any) => {
-    //   console.log(element);
-    //   if (element.guardado == 0) {
-    //     this.goodsDownloadPrograming.push({
-    //       ID: Number(element.id_recorrido),
-    //       ID_BIEN: Number(element.id_bien),
-    //       CLAVE_UNICA: element.clave_unica,
-    //       NO_EXPEDIENTE: element.no_expediente,
-    //       DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-    //       DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae_letra,
-    //       CANTIDAD_TRASFERENTE:
-    //         element.cantidad != null ? element.cantidad.toString() : '',
-    //       CANTIDAD_SAE:
-    //         element.cantidad_sae != null ? element.cantidad_sae.toString() : '',
-    //       UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida_letra,
-    //       UNIDAD_MEDIDA_SAE: element.unidad_medida_sae_letra,
-    //       ESTADO_FISICO_TRASFERENTE:
-    //         element.estado_fisico_letra != null
-    //           ? element.estado_fisico_letra.toString()
-    //           : '',
-    //       ESTADO_FISICO_SAE:
-    //         element.estado_conservacion_sae_letra != null
-    //           ? element.estado_conservacion_sae_letra.toString()
-    //           : '',
-    //       ESTADO_CONSERVACION_TRASFERENTE:
-    //         element.estado_conservacion_letra != null
-    //           ? element.estado_conservacion_letra.toString()
-    //           : '',
-    //       ESTADO_CONSERVACION_SAE:
-    //         element.estado_conservacion_sae_letra != null
-    //           ? element.estado_conservacion_sae_letra.toString()
-    //           : '',
-    //       DESTINO:
-    //         element.destino_letra != null
-    //           ? element.destino_letra.toString()
-    //           : '',
-    //       DESTINO_TRASFERENTE:
-    //         element.destino_transferente_letra != null
-    //           ? element.destino_transferente_letra.toString()
-    //           : '',
-    //       DESTINO_SAE:
-    //         element.destino_sae_letra != null
-    //           ? element.destino_sae_letra.toString()
-    //           : '',
-    //       ID_PROGRAMACION: element.id_programacion,
-    //     });
-    //   }
-    // });
-    // console.log(this.goodsDownloadPrograming);
-    // const filename: string =
-    //   'Bienes de la Programación ' +
-    //   this.programmingForm.controls['programmingId'].value;
-    // this.excelService.export(this.goodsDownloadPrograming, {
-    //   type: 'xlsx',
-    //   filename,
-    // });
     let data = {
       programmingId: this.programmingForm.controls['programmingId'].value,
     };
@@ -1225,6 +1174,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.loader.load = false;
       },
       error: eror => {
+        this.alert(
+          'warning',
+          'El Archivo no tiene Bienes Disponibles para Trabajar',
+          ''
+        );
         this.loader.load = false;
       },
     });

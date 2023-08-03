@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
@@ -22,6 +23,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import {
   DetailProceedingsDevolutionService,
   ProceedingsService,
@@ -44,6 +46,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     { value: 'REST', text: 'REST' },
   ];
   response: boolean = false;
+  data = new LocalDataSource();
   actForm: FormGroup;
   formTable1: FormGroup;
   formTable2: FormGroup;
@@ -55,13 +58,11 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
-  data = EXAMPLE_DATA;
-  data2 = EXAMPLE_DATA2;
   settingsDetailProceedings: any;
   settingsGoods: any;
   proceedingsColumns: any;
   fileNumber: number;
-  flag: boolean;
+  flag: boolean = true;
   selectedProceedings: boolean;
   proceedingsData: any[] = [];
   proceedingsData2: any[] = [];
@@ -77,18 +78,23 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   // dataTable: any[] = [];
   proceedingsNumb: number;
   //paginacion
-  firsTime: boolean = false;
+  firsTime: boolean = true;
   paginatorGoods: any = {};
+  formadd: FormGroup = new FormGroup({});
   paginatorProceedings: any = {};
   paramsDetailProceedings = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
   paramsProceedings = new BehaviorSubject<ListParams>(new ListParams());
+  fechaActual: Date;
+  fechaActualFormateada: string;
+  cause: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private expedientService: ExpedientService
   ) {
     super();
 
@@ -115,6 +121,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     this.initPaginatorProceedings();
     this.initPaginatorGoods();
     this.initPaginatorDetailProceedings();
+    this.fechaActual = new Date();
+    this.formatoFechaActual();
   }
 
   onRowSelect(event: any): void {
@@ -137,7 +145,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
 
   search(term: string | number) {
     this.fileNumber = Number(term);
-    this.getInfo();
+    //this.getInfo();
+    this.getBlkExp(this.fileNumber);
   }
 
   handleError(error: HttpErrorResponse, msg: string) {
@@ -405,6 +414,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      typeexpe: [null, [Validators.required]],
+      delito: [null, [Validators.required]],
       //DELITO     FALTA
     });
 
@@ -414,6 +425,26 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
 
     this.formTable2 = this.fb.group({
       detail: [null, []],
+    });
+    this.formadd = this.fb.group({
+      preva: [null, [Validators.required]],
+      record: [null, [Validators.required]],
+      status: [null, [Validators.required]],
+      entity: [null, [Validators.required]],
+      admin: [null, [Validators.required]],
+      folio: [null, [Validators.required]],
+      year: [null],
+      mes: [null],
+      oficea: [null, [Validators.required]],
+      autority: [null, [Validators.required]],
+      nameEnt: [null],
+      witness: [null],
+      dateElab: [null, [Validators.required]],
+      propben: [null, [Validators.required]],
+      audit: [null],
+      observations: [null],
+      scanFolio: [null],
+      estado: [null],
     });
   }
 
@@ -433,66 +464,40 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  formatoFechaActual() {
+    const month = this.fechaActual.getMonth() + 1;
+    const year = this.fechaActual.getFullYear();
+
+    this.fechaActualFormateada = `${month.toString().padStart(2, '0')}/${year}`;
+    console.log('fecha: ', this.fechaActualFormateada);
+
+    let dataform = {
+      year: this.fechaActualFormateada,
+    };
+    this.formadd.patchValue(dataform);
+  }
+
+  getBlkExp(id: number | string) {
+    this.expedientService.getExpedienteById(id).subscribe({
+      next: resp => {
+        console.log('Respuesta: ', resp);
+        if (resp.expedientType == 'T') {
+          this.cause = true;
+          console.log('es true!!!', this.cause);
+        } else {
+          this.cause = false;
+          console.log('es false!!!');
+        }
+        let dataform = {
+          previewFind: resp.transferNumber,
+          penaltyCause: resp.criminalCase,
+          delito: resp.crimeKey + ' - ' + 'NO SE PUEDE MAPEAR LA DESCRIPCIÓN',
+          typeexpe: resp.expedientType,
+        };
+        console.log('Response: ', dataform);
+        this.actForm.patchValue(dataform);
+      },
+    });
+  }
 }
-
-const EXAMPLE_DATA = [
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: '1',
-    cantidad: 1,
-    importe: '1',
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: '1',
-    cantidad: 1,
-    importe: '1',
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: '1',
-    cantidad: 1,
-    importe: '1',
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    proceso: '1',
-    cantidad: 1,
-    importe: '1',
-  },
-];
-
-const EXAMPLE_DATA2 = [
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    proceso: '2',
-    cantidad: 3,
-    importe: 5,
-  },
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    proceso: '2',
-    cantidad: 3,
-    importe: 5,
-  },
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    proceso: '2',
-    cantidad: 3,
-    importe: 5,
-  },
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    proceso: '2',
-    cantidad: 3,
-    importe: 5,
-  },
-];

@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 
 export const COLUMNS = {
@@ -5,11 +6,11 @@ export const COLUMNS = {
     title: 'Tipo de Penalización',
     sort: false,
   },
-  eventId: {
+  'clientId.id': {
     title: 'Clave Evento',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return cell.id;
+      return row.clientId.id;
     },
   },
   publicLot: {
@@ -20,12 +21,13 @@ export const COLUMNS = {
     title: 'Fecha Inicial',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
+      return format(new Date(row.startDate), 'dd/MM/yyyy');
+      // const parts = cell.split('-');
+      // const year = parts[0];
+      // const month = parts[1];
+      // const day = parts[2];
+      // const formattedDate = `${day}/${month}/${year}`;
+      // return formattedDate;
     },
     filter: {
       type: 'custom',
@@ -36,12 +38,13 @@ export const COLUMNS = {
     title: 'Fecha Final',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
+      return format(new Date(row.endDate), 'dd/MM/yyyy');
+      // const parts = cell.split('-');
+      // const year = parts[0];
+      // const month = parts[1];
+      // const day = parts[2];
+      // const formattedDate = `${day}/${month}/${year}`;
+      // return formattedDate;
     },
     filter: {
       type: 'custom',

@@ -153,4 +153,8 @@ export class LotService extends HttpService {
   getLotComerPayRef(params?: string) {
     return this.get('apps/get-lot-comer-pay-ref', params);
   }
+
+  getFindAllRegistersTot(params?: _Params) {
+    return this.get(LotEndpoints.FindAllRegistersTot, params);
+  }
 }

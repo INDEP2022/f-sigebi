@@ -126,13 +126,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       });
 
       this.form.get('clientId').setValue(this.data.idAndName);
-
-      this.form.get('bankKey').setValue(this.data.bankAndNumber);
       console.log('this.data', this.data);
 
       // if (this.data.clientId) {
       //   const params = new ListParams()
-      //   params.te  returnDate(date: Date) {}
+      //   params.text = this.data.clientId;
       //   this.getClientsById(params)
       // }
     } else {
@@ -151,10 +149,6 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   update() {
-    // console.log(this.form.value.bankKey)
-    // console.log(this.form.value.clientId)
-    // return
-    const bank = this.form.value.bankKey;
     const client = this.form.value.clientId;
     const requestBody: any = {
       paymentId: this.data.paymentId,
@@ -162,15 +156,15 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
-      bankKey: bank.cveBank,
-      code: bank.idCode,
+      bankKey: this.form.value.bankKey,
+      code: Number(this.form.value.code),
       lotId: this.form.value.lotId,
       // type: this.form.value.type,
       // result: this.form.value.result,
       // recordDate: this.form.value.recordDate,
       // referenceOri: this.form.value.referenceOri,
       // dateOi: this.form.value.dateOi,
-      // entryOrderId: this.form.value.entryOrderId,
+      entryOrderId: this.form.value.entryOrderId,
       // validSystem:
       //   this.form.value.validSystem == '' ? null : this.form.value.validSystem,
       // description: this.form.value.description,
@@ -192,13 +186,14 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   }
 
   create() {
+    const client = this.form.value.clientId;
     const requestBody: any = {
       reference: Number(this.form.value.reference),
       movementNumber: this.form.value.movementNumber,
       date: this.form.value.date,
       amount: Number(this.form.value.amount),
       bankKey: this.form.value.bankKey,
-      code: Number(this.form.value.code),
+      // code: Number(this.form.value.code),
       lotId: this.form.value.lotId,
       type: this.form.value.type,
       result: this.form.value.result,
@@ -211,7 +206,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       branchOffice: this.form.value.branchOffice,
       reconciled: this.form.value.reconciled,
       appliedTo: this.form.value.appliedTo,
-      clientId: this.form.value.clientId,
+      clientId: client ? client.id : null,
     };
 
     this.paymentService.create(requestBody).subscribe({
@@ -347,7 +342,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     if (lparams?.text.length > 0)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params.addFilter('idCode', lparams.text, SearchFilter.EQ);
+        params.addFilter('cveAccount', lparams.text, SearchFilter.EQ);
       } else {
         console.log('NO');
         params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
@@ -357,25 +352,23 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
     // this.hideError();
     return new Promise((resolve, reject) => {
-      this.accountMovementService
-        .getPaymentControl(params.getParams())
-        .subscribe({
-          next: response => {
-            console.log('ress1', response);
-            let result = response.data.map(item => {
-              item['bankAndNumber'] = item.idCode + ' - ' + item.cveBank;
-            });
+      this.accountMovementService.getAccountBank(params.getParams()).subscribe({
+        next: response => {
+          console.log('ress1', response);
+          let result = response.data.map(item => {
+            item['bankAndNumber'] = item.cveBank + ' - ' + item.cveAccount;
+          });
 
-            Promise.all(result).then((resp: any) => {
-              this.banks = new DefaultSelect(response.data, response.count);
-              this.loading = false;
-            });
-          },
-          error: err => {
-            this.banks = new DefaultSelect();
-            console.log(err);
-          },
-        });
+          Promise.all(result).then((resp: any) => {
+            this.banks = new DefaultSelect(response.data, response.count);
+            this.loading = false;
+          });
+        },
+        error: err => {
+          this.banks = new DefaultSelect();
+          console.log(err);
+        },
+      });
     });
   }
 
