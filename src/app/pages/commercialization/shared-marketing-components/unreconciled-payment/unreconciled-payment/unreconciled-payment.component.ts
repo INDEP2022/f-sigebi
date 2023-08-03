@@ -207,6 +207,10 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
           item['idAndName'] = item.customers
             ? item.customers.idClient + ' - ' + item.customers.nomRazon
             : null;
+
+          item['bankAndNumber'] = item.ctrl
+            ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+            : null;
         });
         Promise.all(result).then(resp => {
           this.data.load(response.data);
