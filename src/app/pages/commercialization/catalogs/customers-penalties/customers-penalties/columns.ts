@@ -6,7 +6,7 @@ export const COLUMNS = {
     title: 'Tipo de Penalización',
     sort: false,
   },
-  eventId: {
+  'clientId.id': {
     title: 'Clave Evento',
     sort: false,
     /*valuePrepareFunction: (cell: any, row: any) => {
@@ -77,16 +77,6 @@ export const COLUMNS = {
       const day = parts[2];
       const formattedDate = `${day}/${month}/${year}`;
       return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },*/
-    valuePrepareFunction: (date: Date) => {
-      var raw = new Date(date);
-
-      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
-      return formatted;
     },
     filter: {
       type: 'custom',
