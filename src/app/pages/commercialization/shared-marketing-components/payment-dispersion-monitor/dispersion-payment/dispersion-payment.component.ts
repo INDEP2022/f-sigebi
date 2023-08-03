@@ -15,6 +15,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
@@ -33,7 +34,6 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
-import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -56,7 +56,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   loadingLotBanks = false;
   loadingPaymentLots = false;
 
-  loadingExcel = false
+  loadingExcel = false;
 
   form: FormGroup;
   formCustomerEvent: FormGroup;
@@ -122,7 +122,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private comerLotsService: LotService,
     private spentService: SpentService,
     private comerEventosService: ComerEventosService,
-    private customersService: ComerClientsService,
+    private customersService: ComerClientsService
   ) {
     super();
   }
@@ -547,11 +547,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerLotsService.getAllComerLotsFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
-        this.loadingDesertLots = false
+        this.loadingDesertLots = false;
       },
       err => {
         console.log(err);
-        this.loadingDesertLots = false
+        this.loadingDesertLots = false;
       }
     );
   }
@@ -578,11 +578,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataCustomerBanks.load(res.data);
         this.totalItemsCustomerBanks = res.count;
-        this.loadingCustomerBanks = false
+        this.loadingCustomerBanks = false;
       },
       err => {
         console.log(err);
-        this.loadingCustomerBanks = false
+        this.loadingCustomerBanks = false;
         this.dataCustomerBanks.load([]);
         this.totalItemsCustomerBanks = 0;
       }
@@ -599,13 +599,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataLotsBanks.load(res.data);
         this.totalItemsLotsBanks = res.count;
-        this.loadingLotBanks = false
+        this.loadingLotBanks = false;
       },
       err => {
         console.log(err);
         this.dataLotsBanks.load([]);
         this.totalItemsLotsBanks = 0;
-        this.loadingLotBanks = false
+        this.loadingLotBanks = false;
       }
     );
   }
@@ -619,13 +619,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         console.log(res);
         this.dataPaymentLots.load(res.data);
         this.totalItemsPaymentLots = res.count;
-        this.loadingPaymentLots = false
+        this.loadingPaymentLots = false;
       },
       err => {
         console.log(err);
         this.dataPaymentLots.load([]);
         this.totalItemsPaymentLots = 0;
-        this.loadingPaymentLots = false
+        this.loadingPaymentLots = false;
       }
     );
   }
@@ -661,7 +661,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     a.click();
     document.body.removeChild(a);
     this._toastrService.clear();
-    this.loadingExcel = false
+    this.loadingExcel = false;
     this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
     URL.revokeObjectURL(objURL);
   }
@@ -677,21 +677,21 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //Exportar a Excel de Ventas Vs. Pagos
-  exportExcelSellPayment(){
-    this.loadingExcel = true
+  exportExcelSellPayment() {
+    this.loadingExcel = true;
 
     const body = {
-      pEventKey: this.event.value
-    }
+      pEventKey: this.event.value,
+    };
 
     this.comerEventosService.pupExpxcVenvspag(body).subscribe(
       res => {
-        console.log(res)
-        this.downloadDocument('VENTAS VS PAGOS', 'excel', res.base64File)
+        console.log(res);
+        this.downloadDocument('VENTAS VS PAGOS', 'excel', res.base64File);
       },
       err => {
-        console.log(err)
+        console.log(err);
       }
-    )
+    );
   }
 }

@@ -29,6 +29,10 @@ export class ComerEventService extends HttpService {
     return this.post<IComerEvent>('comer-event', event);
   }
 
+  removeEvent(eventId: string | number) {
+    return this.delete(PrepareEventEndpoints.ComerEvent + '/' + eventId);
+  }
+
   getAllFilterComerGood(params: any) {
     return this.get<IListResponse<any>>(`comer-good-xlot`, params);
   }

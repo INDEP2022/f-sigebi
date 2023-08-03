@@ -13,6 +13,7 @@ import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ExpenseConceptsService } from '../../services/expense-concepts.service';
 import { COLUMNS } from './columns';
+
 @Component({
   selector: 'app-params-concepts-modal',
   templateUrl: './params-concepts-modal.component.html',
@@ -23,6 +24,7 @@ export class ParamsConceptsModalComponent
   implements OnInit
 {
   form: FormGroup;
+  addressParam: string;
   conceptId: string;
   edit: boolean = false;
   title: string = 'Parámetro del concepto';
@@ -62,11 +64,22 @@ export class ParamsConceptsModalComponent
     // debugger;
     let newColumnFilters = this.columnFilters;
     if (newColumnFilters['filter.address']) {
-      newColumnFilters['filter.address'] =
-        '$eq:' +
-        this.getAddressCode(
-          (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-        );
+      let filterAddress = this.getAddressCode(
+        (newColumnFilters['filter.address'] + '').replace('$eq:', '')
+      );
+      let addresss = ['C'];
+      if (this.addressParam) {
+        addresss.push(this.addressParam);
+      }
+      if (addresss.includes(filterAddress)) {
+        newColumnFilters['filter.address'] = '$eq:' + filterAddress;
+      }
+    } else {
+      if (this.addressParam) {
+        newColumnFilters['filter.address'] = '$in:' + this.addressParam + ',C';
+      } else {
+        newColumnFilters['filter.address'] = '$in:C';
+      }
     }
     return {
       ...this.params.getValue(),

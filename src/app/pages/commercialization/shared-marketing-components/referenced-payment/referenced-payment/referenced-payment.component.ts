@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ActivatedRoute } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
   ListParams,
@@ -14,12 +14,14 @@ import {
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BankService } from 'src/app/core/services/catalogs/bank.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS } from './columns';
+import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
   selector: 'app-referenced-payment',
@@ -35,6 +37,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   comerEventSelect = new DefaultSelect();
   banks = new DefaultSelect();
   layout: string = '';
+  loadingBtn: boolean = false;
+  cargado: boolean = true;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -45,7 +50,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private comerEventService: ComerEventService,
     private accountMovementService: AccountMovementService,
     private comerEventosService: ComerEventosService,
-    private bankService: BankService
+    private bankService: BankService,
+    private comerDetailsService: ComerDetailsService
   ) {
     super();
     this.settings = {
@@ -111,13 +117,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           });
           this.params = this.pageFilter(this.params);
           //Su respectivo metodo de busqueda de datos
-          this.getPayments();
+          this.getPayments('no');
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getPayments());
+      .subscribe(() => this.getPayments('no'));
 
     this.prepareForm();
   }
@@ -131,15 +137,35 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     });
   }
 
+  edit(event: any) {
+    console.log('aaa', event);
+    if (event == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event;
+    }
+    this.openForm(event, true);
+  }
   add() {
-    //this.openModal();
+    this.openForm(null, false);
   }
 
-  edit(data: any) {
-    //console.log(data)
-    //this.openModal({ edit: true, paragraph });
+  openForm(data: any, editVal: boolean) {
+    let config: ModalOptions = {
+      initialState: {
+        data,
+        edit: editVal,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments('no');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NewAndUpdateComponent, config);
   }
-
   questionDelete(data: any) {
     console.log(data);
     this.alertQuestion(
@@ -157,8 +183,15 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 
-  rowsSelected(event: any) {}
-  getPayments() {
+  valAcc: any = null;
+  rowsSelected(event: any) {
+    if (event.data == this.valAcc) {
+      this.valAcc = null;
+    } else {
+      this.valAcc = event.data;
+    }
+  }
+  getPayments(filter: any) {
     this.loading = true;
     this.totalItems = 0;
     let params = {
@@ -195,18 +228,24 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       delete params['filter.lotPub'];
     }
 
-    if (params['filter.event']) {
-      params['filter.lots.idEvent'] = params['filter.event'];
-      delete params['filter.event'];
+    if (this.searchWithEvent == true) {
+      params['filter.lots.idEvent'] = this.eventSelected.id;
+    } else {
+      if (params['filter.event']) {
+        params['filter.lots.idEvent'] = params['filter.event'];
+        delete params['filter.event'];
+      }
     }
 
     if (params['filter.move']) {
       params['filter.ctrl.description'] = params['filter.move'];
       delete params['filter.move'];
     }
+    // FECHA, NO_MOVIMIENTO, CVE_BANCO
 
     // params['filter.entryOrderId'] = `$null`;
-    params['sortBy'] = `paymentId:DESC`;
+    // params['sortBy'] = `movementNumber:DESC`;
+    params['sortBy'] = `date:DESC`;
     this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
@@ -217,6 +256,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           item['event'] = item.lots ? item.lots.idEvent : null;
           item['lotPub'] = item.lots ? item.lots.lotPublic : null;
           item['move'] = item.ctrl ? item.ctrl.description : null;
+          item['idAndName'] = item.customers
+            ? item.customers.idClient + ' - ' + item.customers.nomRazon
+            : null;
+
+          item['bankAndNumber'] = item.ctrl
+            ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+            : null;
         });
         Promise.all(result).then(resp => {
           this.data.load(response.data);
@@ -229,6 +275,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
+        if (filter == 'si') {
+          this.alert('warning', 'No se Encontraron Resultados', '');
+        }
         this.loading = false;
         console.log(error);
       },
@@ -301,12 +350,91 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       });
     });
   }
-  search() {}
+
+  searchWithEvent: boolean = false;
+  search() {
+    this.searchWithEvent = true;
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getPayments('si'));
+    setTimeout(() => {
+      this.performScroll();
+    }, 500);
+  }
   clear() {
     this.form.reset();
+    this.eventSelected = null;
+    this.searchWithEvent = false;
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getPayments('no'));
   }
-  carga() {}
-  setValuesFormEvent(event?: any) {}
+  async carga() {
+    if (!this.eventSelected)
+      return this.alert(
+        'warning',
+        'Es Necesario Especificar un Evento para Realizar la Carga',
+        ''
+      );
+
+    const respEvent: any = await this.getSelectFase(this.eventSelected.id);
+
+    if (!respEvent) {
+      return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
+    } else {
+      if (respEvent.phase == 1) {
+        this.alertInfo('info', 'Carga de Pagos Fase: 1', '').then(question => {
+          if (question.isConfirmed) {
+          }
+        });
+      } else if (respEvent.phase == 2) {
+        this.alertInfo('info', 'Carga de Pagos Fase: 2', '').then(question => {
+          if (question.isConfirmed) {
+          }
+        });
+      } else {
+        return this.alert(
+          'warning',
+          'El Evento no se Encuentra en una fase',
+          ''
+        );
+      }
+    }
+    console.log(respEvent);
+  }
+
+  async getSelectFase(id_evento: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.getFcomer612Get1(id_evento).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: err => {
+          resolve(null);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  ratificar() {}
+  referencia() {}
+
+  pago() {}
+
+  eventSelected: any = null;
+  setValuesFormEvent(event?: any) {
+    this.eventSelected = event;
+  }
 
   setValuesFormBank(event?: any) {}
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
 }
