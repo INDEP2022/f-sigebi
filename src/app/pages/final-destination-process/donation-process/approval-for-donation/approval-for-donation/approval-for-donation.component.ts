@@ -7,9 +7,12 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { APPROVAL_COLUMNS } from './approval-columns';
 
 @Component({
@@ -24,11 +27,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilter: any = [];
+  users = new DefaultSelect<IUser>();
 
   constructor(
     private fb: FormBuilder,
     private donationService: DonationService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private serviceUser: UsersService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -38,7 +43,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.search();
+    // this.search();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -82,7 +87,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   initForm() {
     this.form = this.fb.group({
       cveAct: [null, []],
-      estatusAct: [null, []],
+      estatusAct: ['todos', []],
       noDelegation1: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborated: [null, []],
     });
@@ -90,15 +95,48 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
-  search() {
+  filterButton() {
+    this.params.value.page = 1;
+    this.search(false);
+  }
+
+  search(filter: boolean = true) {
     this.loading = true;
+    //Poner this.form.value en una variable para poder modificarla
+    let forma: any = {};
+    Object.keys(this.form.value).forEach(key => {
+      const value = this.form.value[key];
+      console.log(key + ': ' + value);
+      if (value !== null && value !== '') {
+        forma['filter.' + key] = '$ilike:' + value;
+      }
+    });
+
     let params = {
       ...this.params.value,
-      ...this.columnFilter,
+      ...forma,
     };
+
+    if (filter) {
+      params = {
+        ...params,
+        ...this.columnFilter,
+      };
+    }
+
+    //si el valor de estatusAct es "todos" se elimina del objeto
+    if (params['filter.estatusAct'] == '$ilike:todos') {
+      delete params['filter.estatusAct'];
+    }
+
+    console.log(JSON.stringify(params));
+
     this.donationService.getEventComDonation(params).subscribe(
       data => {
-        this.response = true;
+        if (!filter) {
+          this.columnFilter = [];
+          this.response = true;
+        }
         this.data.load(data.data);
         this.data.refresh();
         this.totalItems = data.count;
@@ -117,4 +155,13 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
       this.excelService.export(data, { filename: 'hoja1.xls' });
     });
   }
+
+  getUsers(params: ListParams) {
+    const routeUser = `?filter.name=$ilike:${params.text}`;
+    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
+      this.users = new DefaultSelect(res.data, res.count);
+    });
+  }
+
+  onUsersChange(type: any) {}
 }
