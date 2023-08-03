@@ -142,5 +142,22 @@
         </button>
       </div>
     </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <ng-scrollbar
+      [track]="'all'"
+      [ngStyle]="{ height: loading ? '0px' : '400px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings"
+        [source]="data"
+        (edit)="edit($event.data)"
+        (userRowSelect)="rowsSelected($event)"
+        (delete)="questionDelete($event.data)">
+      </ng2-smart-table>
+    </ng-scrollbar>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>

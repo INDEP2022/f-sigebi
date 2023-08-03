@@ -58,8 +58,8 @@ export class managementCaptureLinesComponent
     this.formSearch = this.fb.group({
       idEvent: [null, [Validators.required]],
       allotment: [null, [Validators.required]],
-      idClient: [null, [Validators.required]],
-      rfc: [null, [Validators.required, Validators.pattern(RFC_PATTERN)]],
+      idClient: [null],
+      rfc: [null, [Validators.pattern(RFC_PATTERN)]],
     });
   }
 
@@ -116,6 +116,19 @@ export class managementCaptureLinesComponent
         this.eventList = new DefaultSelect([], 0, true);
       },
     });
+  }
+  searchLC() {
+    if (
+      this.formSearch.controls['idClient'].value != null ||
+      this.formSearch.controls['rfc'].value != null
+    ) {
+    } else {
+      this.alert(
+        'warning',
+        'Líneas de Captura',
+        'Debe ingresar ID Cliente o RFC'
+      );
+    }
   }
 
   data = [
