@@ -20,7 +20,13 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
   form: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  columnFilters: any = [];
   data: any;
+  selectReview: any = [];
+
+  get initDate() {
+    return this.form.get('initDate');
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -97,6 +103,21 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
+  save(filter: any) {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...(this.columnFilters = []),
+    };
+    /*
+        if (this.form.get('initDate').value !== null)
+          params['filter.initDate'] = `$ilike:${this.form.get('initDate').value}`;
+    
+        if (this.form.get('endDate').value !== null)
+          params['filter.storeNumber'] = `$eq:${this.form.get('warehouse').value}`;
+    */
+  }
+
   settingsChange(event: any) {
     this.settings = event;
   }
@@ -140,4 +161,13 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  selectData(event: { data: any; selected: any }) {
+    console.log('AQUI', event);
+    this.selectReview = [];
+    this.selectReview.push(event.data);
+    console.log('this.selectReview', this.selectReview);
+  }
+
+  clean() {}
 }
