@@ -22,6 +22,7 @@ import { EXPEDIENT_COLUMNS } from '../acts-cir-columns';
 export class FindAllExpedientComponent extends BasePage implements OnInit {
   // loading: boolean = false;
   provider: any;
+  loadingModalE: boolean = false;
   expedients: IExpedient[] = [];
   providerForm: FormGroup = new FormGroup({});
   dataFactExp: LocalDataSource = new LocalDataSource();
@@ -48,7 +49,7 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loading = false;
+    this.loadingModalE = true;
     this.providerForm.patchValue(this.provider);
     this.dataFactExp
       .onChanged()
@@ -112,6 +113,7 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
   // }
 
   getExpedient(lparams: ListParams) {
+    this.loadingModalE = true;
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
@@ -120,9 +122,8 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
 
     this.expedientService.getExpedientList(params.getParams()).subscribe({
       next: data => {
-        this.loading = false;
+        this.loadingModalE = false;
         this.expedients = data.data;
-        console.log(this.expedients);
         this.totalItems = data.count;
         this.dataFactExp.load(this.expedients);
         this.dataFactExp.refresh();

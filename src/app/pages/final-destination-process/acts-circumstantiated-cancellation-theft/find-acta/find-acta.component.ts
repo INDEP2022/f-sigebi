@@ -85,7 +85,7 @@ export class FindActaComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            this.cve = filter.field == 'cveActaConv';
+            this.cve = filter.field == 'cveActa';
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'statusProceedings':
