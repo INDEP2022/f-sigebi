@@ -51,4 +51,9 @@ export class StrategyServiceTypeService extends HttpService {
     const route = `${StrategyEndpoints.StrategyServiceType}/${id}`;
     return this.delete(route);
   }
+
+  postFindByFilter(body: any) {
+    const route = `${StrategyEndpoints.postByFilter}`;
+    return this.post(route, body);
+  }
 }

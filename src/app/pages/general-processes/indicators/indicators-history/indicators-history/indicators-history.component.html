@@ -36,7 +36,7 @@
         <ng2-smart-table
           [settings]="settings"
           [source]="data"
-          (userRowSelect)="onUserRowSelect($event)">
+          (customEvent)="onCustomEvent($event)">
         </ng2-smart-table>
       </div>
       <app-pagination
@@ -49,16 +49,15 @@
         <i class="bx bx-download float-icon"></i>
       </button>
     </div>
-    <div class="mt-5">
-      <app-indicators-history-detail
-        [noVolante]="noVolante"
+    <!-- <div class="mt-5">
+      <app-indicators-history-detail [noVolante]="noVolante"
         [noExpediente]="noExpediente"></app-indicators-history-detail>
-    </div>
+    </div> -->
     <div class="mt-5">
       <app-indicators-history-service-orders></app-indicators-history-service-orders>
     </div>
-    <div class="mt-5">
+    <!-- <div class="mt-5">
       <app-indicators-history-technical-datasheet></app-indicators-history-technical-datasheet>
-    </div>
+    </div> -->
   </div>
 </app-card>

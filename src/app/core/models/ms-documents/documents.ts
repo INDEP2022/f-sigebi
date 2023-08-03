@@ -100,36 +100,62 @@ export interface ICaptureDig {
   column5: string;
 }
 
-export interface ICaptureHistoryIndicators {
-  num: number;
-  indicador: string;
-  no_expediente: number;
-  no_volante: number;
-  usr_trabaja: string;
-  fec_ingreso: string;
-  fec_trabajo: string;
-  fecha_max: string;
-  cumplio: string;
-  no_dias: number;
+export interface ICaptureDigViewHistoryIndicators {
+  // no_expediente: number;
+  // desalojo_diadia: number;
+  // finicia: string;
+  // coordinacion_regional: number;
+  // urecepcion: string;
+  // cve_asunto: string;
+  // tipo_volante: string;
+  // no_transferente: number;
+  // no_emisora: number;
+  // no_autoridad: number;
+  // cve_oficio_externo: string;
+  // no_volante: number;
+  // no_tramite: number;
+  // ufinaliza: string;
+  // fescaneo: string;
+  // fmaxima: string;
+  // cant_bien: number;
+  // tipo_tramite: number;
+  // cantidad: number;
+
+  //
+
+  fileNumber: number;
+  evictionToday: number;
+  startDate: string;
+  regionalCoordination: number;
+  receptionUnit: string;
+  subjectCode: string;
+  flyerType: string;
+  transferorNumber: number;
+  emissaryNumber: number;
+  authorityNumber: number;
+  externalLetterCode: string;
+  flyerNumber: number;
+  procedureNumber: number;
+  endDate: string;
+  scanningDate: string;
+  maximumDate: string;
+  quantityGoods: number;
+  procedureType: number;
+  quantity: number;
 }
 
-// @Injectable()
-// export class CaptureDig {
-//   coordinacion_regional: number;
-//   cve_oficio_externo: string;
-//   no_expediente: IExpedient;
-//   no_volante: number;
-//   no_tramite: number;
-//   urecepcion: number;
-//   programa: string;
-//   fescaneo: string;
-//   cant_bien: number;
-//   finicia: string;
-//   fmaxima: string;
-//   cumplio: boolean;
-//   column5: string;
-//   image: string;
-// }
+export interface ICaptureHistoryIndicators {
+  num: number;
+  id: string;
+  proceedingsNum: number;
+  flierNum: number;
+  userWorks: string;
+  admissionDate: string;
+  workDate: string;
+  maxDate: string;
+  complied: string;
+  daysNum: number;
+}
 
 export interface ICaptureDigFilter {
   cveJobExternal: string;

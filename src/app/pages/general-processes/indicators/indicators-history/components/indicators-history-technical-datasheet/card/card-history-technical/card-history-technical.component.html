@@ -6,7 +6,11 @@
           label="Estatus"
           [control]="form.get('status')"
           class="col-md-12">
-          <input type="text" class="form-control" formControlName="status" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="status"
+            readonly />
         </form-field>
       </div>
       <div class="row pt-3">
@@ -22,10 +26,18 @@
       </div>
       <div class="row pt-3">
         <form-field label="Año" [control]="form.get('year')" class="col-md-6">
-          <input type="text" class="form-control" formControlName="year" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="year"
+            readonly />
         </form-field>
         <form-field label="Mes" [control]="form.get('month')" class="col-md-6">
-          <input type="text" class="form-control" formControlName="month" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="month"
+            readonly />
         </form-field>
       </div>
       <div class="card-information mb-3">
@@ -33,10 +45,10 @@
         <div class="row pt-3 justify-content-center mr-2 ml-2">
           <div class="col-md-6">
             <div>
-              <h4 class="col-md-12 title">
+              <h5 class="col-md-12 title">
                 Número de Estrategias y Reportes de Implementación que se
                 Debieron Preparar
-              </h4>
+              </h5>
             </div>
             <form-field
               label="Estrategias de Administración"
@@ -45,7 +57,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="stragy" />
+                formControlName="stragy"
+                readonly />
             </form-field>
             <form-field
               label="Reporte Implementación"
@@ -54,13 +67,15 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="report" />
+                formControlName="report"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-6">
             <div>
               <h4 class="col-md-12 title">
                 Número de Estrategias y Reportes Entregados en Tiempo
+                <span style="visibility: hidden">IIIIIIIIIIIIIIIIIIII</span>
               </h4>
             </div>
             <form-field
@@ -70,7 +85,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="stragy" />
+                formControlName="stragy"
+                readonly />
             </form-field>
             <form-field
               label="Reporte Implementación"
@@ -79,7 +95,8 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="report" />
+                formControlName="report"
+                readonly />
             </form-field>
           </div>
         </div>
