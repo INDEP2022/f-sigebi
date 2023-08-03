@@ -226,32 +226,34 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         programmingId: this.programmingForm.controls['programmingId'].value,
       };
       this.folio = this.programmingForm.controls['programmingId'].value.trim();
-      this.programmingGoodReceiptService.getProgrammingGoods(data).subscribe({
-        next: resp => {
-          console.log(resp);
-          if (resp.data) {
-            this.id_programacion = resp.data[0].id_programacion;
-          } else {
-            this.id_programacion = null;
-          }
-          this.goodsList = new DefaultSelect(resp.data, resp.count);
-          this.goods = resp.data;
-          this.downloadResultsGoods = true;
-          this.count = resp.count ?? 0;
-          this.programmingForm.controls['managementId'].enable();
-          this.loader.load = false;
-        },
-        error: eror => {
-          this.loader.load = false;
-          this.count = 0;
-          this.goodsList = new DefaultSelect([], 0, true);
-          this.alert(
-            'warning',
-            'Generación de Recibos',
-            'Esta Programación no tiene Bienes'
-          );
-        },
-      });
+      this.programmingGoodReceiptService
+        .getProgrammingGoods(data, params)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            if (resp.data) {
+              this.id_programacion = resp.data[0].id_programacion;
+            } else {
+              this.id_programacion = null;
+            }
+            this.goodsList = new DefaultSelect(resp.data, resp.count);
+            this.goods = resp.data;
+            this.downloadResultsGoods = true;
+            this.count = resp.count ?? 0;
+            this.programmingForm.controls['managementId'].enable();
+            this.loader.load = false;
+          },
+          error: eror => {
+            this.loader.load = false;
+            this.count = 0;
+            this.goodsList = new DefaultSelect([], 0, true);
+            this.alert(
+              'warning',
+              'Generación de Recibos',
+              'Esta Programación no tiene Bienes'
+            );
+          },
+        });
     } else {
       this.alert(
         'warning',
@@ -269,6 +271,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.getGenericE(new ListParams());
       this.getGenericEC(new ListParams());
       this.recepiptGood = data;
+      console.log(data);
       this.indepForm.patchValue(data);
       console.log(this.indepForm.value);
       this.goodID = this.recepiptGood.id_bien;
