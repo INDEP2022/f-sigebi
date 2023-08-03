@@ -227,6 +227,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   }
 
   failureDateChange(failDate: Date) {
+    console.log({ failDate });
+
     if (!failDate) {
       return;
     }
@@ -244,6 +246,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
 
   closingDateChange() {
     const { eventDate, failureDate, eventClosingDate } = this.controls;
+    console.log({ eventClosingDate });
     if (!eventClosingDate.value) {
       return;
     }
