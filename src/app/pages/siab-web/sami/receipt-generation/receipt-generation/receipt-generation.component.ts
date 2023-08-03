@@ -48,6 +48,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  update = 0;
   programmingForm: FormGroup;
   fileProgrammingForm: FormGroup;
   folio: string;
@@ -218,6 +219,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   }
   searchPrograming() {
     this.loader.load = true;
+
     this.programmingGoodReceipt(new ListParams());
   }
   programmingGoodReceipt(params: ListParams) {
@@ -396,7 +398,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     ''
                   );
                   this.downloadResultsGoods = false;
-                  this.searchPrograming();
+                  this.update++;
                 }, 1000);
               })
               .catch(error => {});
@@ -444,7 +446,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         ''
                       );
                       this.downloadResultsGoods = false;
-                      this.searchPrograming();
+                      this.update++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -491,7 +493,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       ''
                     );
                     this.downloadResultsGoods = false;
-                    this.searchPrograming();
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -537,6 +539,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         `Proceso terminado correctamente, ya puede descargar el resultado`,
                         ''
                       );
+                      this.update++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -572,6 +575,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -611,6 +615,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       `Proceso terminado correctamente, ya puede descargar el resultado`,
                       ''
                     );
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});

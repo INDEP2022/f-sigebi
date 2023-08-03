@@ -62,7 +62,7 @@ export class ExpenseConceptsListComponent
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        position: 'left',
+        position: 'right',
         add: false,
         edit: true,
         delete: true,
@@ -113,13 +113,18 @@ export class ExpenseConceptsListComponent
   }
 
   openModal(concept: IConcept = null) {
+    let newConcept;
+    if (concept) {
+      newConcept = {
+        ...concept,
+        numerary: concept.numerary ? concept.numerary === 'S' : false,
+        automatic: concept.automatic ? concept.automatic === 'S' : false,
+      };
+    }
+
     let config: ModalOptions = {
       initialState: {
-        concept: {
-          ...concept,
-          numerary: concept.numerary ? concept.numerary === 'S' : false,
-          automatic: concept.automatic ? concept.automatic === 'S' : false,
-        },
+        concept: newConcept,
         callback: (next: boolean) => {
           if (next) {
             this.getData();
@@ -172,7 +177,7 @@ export class ExpenseConceptsListComponent
                   this.alert(
                     'success',
                     'Copiado de Parametros',
-                    'Realizado correctamente'
+                    'Realizado Correctamente'
                   );
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
@@ -223,11 +228,24 @@ export class ExpenseConceptsListComponent
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;
-    if (this.address) {
-      newColumnFilters['filter.address'] = '$eq:' + this.address;
-      // this.getAddressCode(
-      //   (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-      // );
+
+    if (newColumnFilters['filter.address']) {
+      let filterAddress = this.getAddressCode(
+        (newColumnFilters['filter.address'] + '').replace('$eq:', '')
+      );
+      let addresss = ['C'];
+      if (this.address) {
+        addresss.push(this.address);
+      }
+      if (addresss.includes(filterAddress)) {
+        newColumnFilters['filter.address'] = '$eq:' + filterAddress;
+      }
+    } else {
+      if (this.address) {
+        newColumnFilters['filter.address'] = '$in:' + this.address + ',C';
+      } else {
+        newColumnFilters['filter.address'] = '$in:C';
+      }
     }
     return {
       ...this.params.getValue(),
@@ -261,7 +279,7 @@ export class ExpenseConceptsListComponent
               this.alert(
                 'success',
                 'Eliminación de Concepto de Pago ' + event.data.id,
-                'Eliminado correctamente'
+                'Eliminado Correctamente'
               );
               this.getData();
             },

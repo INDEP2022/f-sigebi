@@ -8,10 +8,15 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { ExpenseCaptureRoutingModule } from './expense-capture-routing.module';
 import { ExpenseCaptureComponent } from './expense-capture/expense-capture.component';
+import { DataReceiptComponent } from './expense-capture/expense-comercial/data-receipt/data-receipt.component';
 import { ExpenseComercialComponent } from './expense-capture/expense-comercial/expense-comercial.component';
 
 @NgModule({
-  declarations: [ExpenseCaptureComponent, ExpenseComercialComponent],
+  declarations: [
+    ExpenseCaptureComponent,
+    ExpenseComercialComponent,
+    DataReceiptComponent,
+  ],
   imports: [
     CommonModule,
     ExpenseCaptureRoutingModule,
