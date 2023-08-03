@@ -1,12 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
+import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -35,10 +46,25 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
-  data = EXAMPLE_DATA;
+  //data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
+  columnFilters: any = [];
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  data: LocalDataSource = new LocalDataSource();
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private rNomenclaService: RNomenclaService,
+    private procedureManagementService: ProcedureManagementService,
+    //Transferente
+    private stationService: StationService,
+    //HistoricoGood
+    private historyGoodService: HistoryGoodService,
+    private expedientService: ExpedientService,
+    private goodService: GoodService,
+    private statusGoodService: StatusGoodService
+  ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
@@ -49,6 +75,44 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.startCalendars();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*  SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventTpId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(filter.search);
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getGood();
+        }
+      });
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGood());
   }
 
   initForm() {
@@ -119,7 +183,16 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       ],
     });
 
+    this.actForm;
+
     this.formTable1 = this.fb.group({
+      id: [null, []],
+      preliminaryInquiry: [null, []],
+      criminalCase: [null, []],
+      crimeKey: [null, []],
+      registerNumber: [null, []],
+
+      transferNumber: [null, []],
       detail: [null, []],
     });
   }
@@ -164,6 +237,30 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       initialState
     );
     this.bsModalRef.content.closeBtnName = 'Close';
+  }
+
+  getGood() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.goodService.getAll(params).subscribe({
+      next: response => {
+        //this.comerEvent = response.data;
+        this.data.load(response.data);
+        this.totalItems = response.count || 0;
+        this.data.refresh();
+        //this.params.value.page = 1;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
 }
 

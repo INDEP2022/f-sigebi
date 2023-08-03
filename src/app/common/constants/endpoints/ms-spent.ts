@@ -6,4 +6,5 @@ export enum SpentEndpoints {
   ExpenseComer = 'comer-expenses',
   ComerPaymentRefGens = 'comer-payment-ref-gens',
   ComerPaymentRefGensV2 = 'comer-payment-ref-gens/V2',
+  V2Total = 'comer-payment-ref-gens/V2Total',
 }

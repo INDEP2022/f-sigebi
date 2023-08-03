@@ -6,4 +6,5 @@ export enum LotEndpoints {
   Event = 'apps/get-global-event-id',
   EventGlobalGood = 'apps/get-global-good-number',
   GoodByLotsEvent = 'eat-lots/getGoods',
+  FindAllRegistersTot = 'eat-lots/findAllRegistersTot',
 }
