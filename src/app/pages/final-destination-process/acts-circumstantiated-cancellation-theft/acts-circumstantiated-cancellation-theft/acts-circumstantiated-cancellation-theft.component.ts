@@ -71,6 +71,38 @@ import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/e
       }
     `,
   ],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienes table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+      .registros-movidos {
+        background-color: yellow;
+      }
+    `,
+  ],
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
@@ -78,6 +110,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
 {
   response: boolean = false;
   form: FormGroup;
+  selectedRow: IGood;
+  statusGood_: any;
   selectedRow: IGood;
   statusGood_: any;
   formTable1: FormGroup;
@@ -103,9 +137,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formTag: FormGroup;
   gTramite: IProceduremanagement[] = [];
   statusCanc: string | number = '';
+  gTramite: IProceduremanagement[] = [];
+  statusCanc: string | number = '';
   expedient: IExpedient;
   validateEx: boolean = true;
   loadingExpedient: boolean = false;
+  screenKey = 'FACTCIRCUNR_0001';
+  dataRecepcionGood: LocalDataSource = new LocalDataSource();
   screenKey = 'FACTCIRCUNR_0001';
   dataRecepcionGood: LocalDataSource = new LocalDataSource();
   bsValueFromYear: Date = new Date();
@@ -117,6 +155,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -125,11 +164,18 @@ export class ActsCircumstantiatedCancellationTheftComponent
   aprevia: string = '';
   causa: string = '';
   annio: string = '';
+  annio: string = '';
   noExpediente: number = 0;
+  fileNumber: number;
   fileNumber: number;
   columnFilters: any = [];
   columnFilters2: any = [];
   dataTableGood_: any[] = [];
+  cveActa: string = '';
+  to: string = '';
+  from: string = '';
+  time = new Date();
+  dateElaboration: string = '';
   cveActa: string = '';
   to: string = '';
   from: string = '';
@@ -245,9 +291,101 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // }
       },
     };
+    // this.settings = { ...this.settings, actions: false };
+    // this.settings.columns = COLUMNS1;
+    // this.settings2 = { ...this.settings, actions: false };
+    // this.settings2.columns = COLUMNS2;
+    this.validPermisos = !this.validPermisos;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
+      },
+    };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...COPY },
+      rowClassFunction: (row: any) => {
+        // if (row.data.di_disponible == 'S') {
+        //   return 'text-white';
+        // } else {
+        return 'bg-light text-black';
+        // }
+      },
+    };
   }
 
   ngOnInit(): void {
+    this.goodForm();
+    this.actaForm();
+    this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
     this.goodForm();
     this.actaForm();
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
@@ -349,6 +487,33 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // witness2: [null],
     });
   }
+  private actaForm() {
+    this.actaRecepttionForm = this.fb.group({
+      acta: [null],
+      type: [null],
+      claveTrans: [null],
+      direccion: [null],
+      administra: [null],
+      cveReceived: [null],
+      consec: [null],
+      fechaCaptura: [null],
+      anio: [null],
+      mes: [null],
+      receive: [null],
+      ident: [null],
+      cveActa: [null],
+      observaciones: [null],
+      testigoOIC: [null],
+      testigoTwo: [null],
+      testigoTree: [null],
+      respConv: [null],
+      parrafo1: [null],
+      parrafo2: [null],
+      parrafo3: [null],
+      // witness1: [null],
+      // witness2: [null],
+    });
+  }
 
   goodForm() {
     this.actaGoodForm = this.fb.group({
@@ -359,6 +524,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   onSubmit() {}
 
   search(event: any) {
+    // this.loadingExpedient = true;
     // this.loadingExpedient = true;
     this.getExpedient(event);
     event = '';
@@ -371,9 +537,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.expedientService.getById(id).subscribe({
       next: (data: any) => {
         this.loadingExpedient = false;
+        this.loadingExpedient = false;
         this.response = !this.response;
         this.validateEx = true;
         this.expedient = data;
+        this.fileNumber = Number(this.expedient.id);
         this.fileNumber = Number(this.expedient.id);
         this.aprevia = this.expedient.preliminaryInquiry;
         this.causa = this.expedient.criminalCase;
@@ -420,6 +588,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
         this.loadingBienes = false;
+        this.loadingBienes = false;
         this.bienes = data.data;
         console.log('Bienes', this.bienes);
 
@@ -442,6 +611,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.dataTableGood.refresh();
           // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
+          this.loadingBienes = false;
           this.loadingBienes = false;
           // console.log(this.bienes);
         });

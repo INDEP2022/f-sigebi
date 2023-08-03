@@ -3490,6 +3490,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: async response => {
             await this.changeStatusGoodReceipt();
             await this.deleteReceipt();
+            this.selectGood = [];
+            this.goodIdSelect = null;
           },
           error: error => {},
         });
@@ -4004,6 +4006,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else {
       _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
     }
 
     if (saePhysical && stateConservation && _quantitySae) {
@@ -4189,8 +4193,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else {
       _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
     }
-
+    this.count == 0;
+    this.goodId = '';
     if (saePhysical && stateConservation && _quantitySae) {
       if (this.goodsGuards.value.length > 0) {
         this.alertQuestion(
@@ -4418,6 +4425,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else {
       _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
     }
 
     if (saePhysical && stateConservation && _quantitySae) {
@@ -4651,6 +4660,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else {
       _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
     }
 
     if (saePhysical && stateConservation && _quantitySae) {
@@ -4884,6 +4895,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       }
     } else {
       _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
     }
 
     if (saePhysical && stateConservation && _quantitySae) {

@@ -38,6 +38,7 @@
         </div>
         <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
           <button
+            [disabled]="!eventSelected"
             (click)="search()"
             class="btn btn-sm btn-block btn-primary active">
             Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -58,7 +59,7 @@
           </button>
         </div>
       </div>
-      <div class="row">
+      <div #scrollContainer class="row">
         <div class="col-6 mt-2">
           <form-field
             [control]="form.get('event_')"
@@ -98,6 +99,25 @@
         </div>
       </div>
     </div>
+    <div *ngIf="!cargado" class="row mb-3">
+      <form-loader *ngIf="loading"></form-loader>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '400px' }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          class="table-responsive"
+          [settings]="settings"
+          [source]="data"
+          (edit)="edit($event.data)"
+          (userRowSelect)="rowsSelected($event)"
+          (delete)="questionDelete($event.data)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
     <form-loader *ngIf="loading"></form-loader>
     <ng-scrollbar
       [track]="'all'"
@@ -116,7 +136,7 @@
       [params]="params"
       [totalItems]="totalItems"></app-pagination>
 
-    <div class="row justify-content-center mt-3">
+    <div class="row justify-content-center mt-5">
       <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
         <button
           [disabled]="!valAcc || loadingBtn"
@@ -142,22 +162,5 @@
         </button>
       </div>
     </div>
-    <form-loader *ngIf="loading"></form-loader>
-    <ng-scrollbar
-      [track]="'all'"
-      [ngStyle]="{ height: loading ? '0px' : '400px' }">
-      <ng2-smart-table
-        [attr.class]="'table-bordered table-responsive'"
-        class="table-responsive"
-        [settings]="settings"
-        [source]="data"
-        (edit)="edit($event.data)"
-        (userRowSelect)="rowsSelected($event)"
-        (delete)="questionDelete($event.data)">
-      </ng2-smart-table>
-    </ng-scrollbar>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
   </div>
 </app-card>
