@@ -186,6 +186,13 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
+
+  getPaymentTypeSat(params?: _Params) {
+    return this.get<IListResponse<any>>(
+      AccountmvmntEndpoint.PaymentTypeSat,
+      params
+    );
+  }
 }
 
 //``
