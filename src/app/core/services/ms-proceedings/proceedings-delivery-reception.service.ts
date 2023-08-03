@@ -329,4 +329,20 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`
     );
   }
+
+  getProceeding(
+    id: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}?filter.numFile=${id}` //  &filter.typeProceedings='DESTINO'`
+    );
+  }
+
+  getProceedingByExp(
+    id: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=DESTINO`
+    );
+  }
 }

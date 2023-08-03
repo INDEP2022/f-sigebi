@@ -7,11 +7,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DestinationActsDelegationComponent } from './destination-acts-delegation/destination-acts-delegation.component';
 import { DestinationGoodsActsComponent } from './destination-acts/destination-goods-acts.component';
 import { DestinationGoodsActsRoutingModule } from './destination-goods-acts-routing.module';
+import { ReceptionDeliveryMinutesComponent } from './reception-delivery-minutes/reception-delivery-minutes.component';
 
 @NgModule({
   declarations: [
     DestinationGoodsActsComponent,
     DestinationActsDelegationComponent,
+    ReceptionDeliveryMinutesComponent,
   ],
   imports: [
     CommonModule,
