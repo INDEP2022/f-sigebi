@@ -48,6 +48,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  update = 0;
   programmingForm: FormGroup;
   fileProgrammingForm: FormGroup;
   folio: string;
