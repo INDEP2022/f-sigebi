@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -28,6 +29,14 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   data: LocalDataSource = new LocalDataSource();
   selectReview: any = [];
+  technicalSheets: any[] = [];
+  totCumplidos: number = 0;
+  totNoCumplidos: number = 0;
+  totCumplimiento: number = 0;
+  totRegistros: number = 0;
+  DWHERE: string;
+  BLK_PARAM: any;
+  myService: any;
 
   get initDate() {
     return this.form.get('initDate');
@@ -39,17 +48,68 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private datePipe: DatePipe,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     super();
     this.settings = { ...this.settings, actions: false, hideSubHeader: false };
     this.settings.columns = COLUMNS;
   }
 
+  private parseDate(dateString: string | null): string | null {
+    // Verifica si dateString es "null" y devuelve null si es así
+    if (dateString === 'null') {
+      return null;
+    }
+    // Procede a analizar la fecha si no es "null"
+    const date = dateString ? new Date(dateString) : null;
+    return date ? date.toISOString().substring(0, 10) : null;
+  }
+
+  private parseValue(value: string | null): string | null {
+    if (value === 'null') {
+      return null;
+    }
+    return value;
+  }
+  private isValidDate(dateString: string | null): boolean {
+    // Verifica si dateString es "null" o si es una fecha válida
+    return dateString !== 'null' && !isNaN(Date.parse(dateString));
+  }
+
   ngOnInit(): void {
     this.initForm();
+    this.route.paramMap.subscribe(params => {
+      console.log(params);
 
-    this.totalItems = 0;
+      const startDate = params.get('fechaInicial');
+      const endDate = params.get('fechaFinal');
+      const username = params.get('usuarioRevision');
+      const noDelegacion = +params.get('noDelegacion'); // Convierte a número si es necesario
+
+      // Asigna los valores obtenidos a los campos en el formulario
+      const currentInitDate = this.form.get('initDate').value;
+      const currentEndDate = this.form.get('endDate').value;
+      const currentUserUploadAct = this.form.get('userUploadAct').value;
+
+      // Asigna los valores de los parámetros solo si no son "null"
+      this.form
+        .get('initDate')
+        .setValue(startDate !== 'null' ? startDate : currentInitDate);
+      this.form
+        .get('endDate')
+        .setValue(endDate !== 'null' ? endDate : currentEndDate);
+      this.form
+        .get('userUploadAct')
+        .setValue(username !== 'null' ? username : currentUserUploadAct);
+
+      // Convierte a número solo si noDelegacion no es nulo o indefinido
+      if (!isNaN(noDelegacion)) {
+        this.form.get('regCoordination').setValue(noDelegacion);
+      }
+    }),
+      (this.totalItems = 0);
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -250,5 +310,196 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     console.log('this.selectReview', this.selectReview);
   }
 
-  clean() {}
+  clean() {
+    this.form.reset();
+
+    this.totalItems = 0;
+    this.data.load([]);
+    this.data.refresh();
+
+    this.router.navigate(['pages/final-destination-process/technical-sheets']);
+  }
+
+  calculateTotals(): void {
+    this.totCumplidos = 0;
+    this.totNoCumplidos = 0;
+    this.totCumplimiento = 0;
+    this.totRegistros = this.technicalSheets.length;
+
+    for (const sheet of this.technicalSheets) {
+      if (sheet.NO_BIEN !== null) {
+        if (sheet.CUMPLIO_FT === 1) {
+          this.totCumplidos++;
+        } else {
+          this.totNoCumplidos++;
+        }
+      }
+    }
+
+    if (this.totRegistros !== 0) {
+      this.totCumplimiento = (this.totCumplidos / this.totRegistros) * 100;
+    }
+  }
+
+  generateWhereClause(): void {
+    // Obtener los valores del formulario
+    const initDate = this.form.get('initDate').value;
+    const endDate = this.form.get('endDate').value;
+    const proceedingsSiab = this.form.get('proceedingsSiab').value;
+    const initAct = this.form.get('initAct').value;
+    const endAct = this.form.get('endAct').value;
+    const userUploadAct = this.form.get('userUploadAct').value;
+    const regCoordination = this.form.get('regCoordination').value;
+    const transf = this.form.get('transf').value;
+    const issuing = this.form.get('issuing').value;
+    const authority = this.form.get('authority').value;
+
+    // Lógica para generar la cláusula WHERE a partir de los valores del formulario
+    let vBAN = false;
+    let lv_ranfechas = '';
+    let lv_expedient = '';
+    let lv_rang_acta: string = '';
+
+    let lv_coor_regi: string = '';
+    let lv_usuarios: string = '';
+    // Resto de la lógica de generación de la cláusula WHERE ...
+
+    // Asignar la cláusula WHERE generada al atributo DWHERE
+    this.DWHERE = '';
+
+    if (
+      initDate >= new Date('2008-05-01') &&
+      initDate <= new Date('2300-12-01')
+    ) {
+      this.DWHERE = ` ESTATUS not in ('ATP') AND TIPO_ACTA in ('ENTREGA') ${lv_ranfechas} ${lv_expedient} ${lv_rang_acta} ${lv_coor_regi} ${lv_usuarios}`;
+    } else {
+      this.DWHERE = ` ESTATUS not in ('ATP') AND DESALOJO_DIADIA = 0 and TIPO_ACTA in ('ENTREGA') and DESTINO in(1,3) ${lv_ranfechas} ${lv_expedient} ${lv_rang_acta} ${lv_coor_regi} ${lv_usuarios}`;
+    }
+
+    // PUP_GENERA_WHERE - Parte faltante
+    if (this.form.get('NO_TRANSFERENTE').value) {
+      this.DWHERE = `${this.DWHERE} AND (NO_TRANSFERENTE IN (${
+        this.form.get('NO_TRANSFERENTE').value
+      })`;
+      vBAN = true;
+    }
+    if (this.form.get('NO_EMISORA').value) {
+      if (vBAN) {
+        this.DWHERE = `${this.DWHERE} OR (NO_TRANSFERENTE, NO_EMISORA) IN (${
+          this.form.get('NO_EMISORA').value
+        })`;
+      } else {
+        this.DWHERE = `${this.DWHERE} AND ((NO_TRANSFERENTE, NO_EMISORA) IN (${
+          this.form.get('NO_EMISORA').value
+        })`;
+        vBAN = true;
+      }
+    }
+    if (this.form.get('NO_AUTORIDAD').value) {
+      if (vBAN) {
+        this.DWHERE = `${
+          this.DWHERE
+        } OR (NO_TRANSFERENTE, NO_EMISORA, NO_AUTORIDAD) IN (${
+          this.form.get('NO_AUTORIDAD').value
+        })`;
+      } else {
+        this.DWHERE = `${
+          this.DWHERE
+        } AND ((NO_TRANSFERENTE, NO_EMISORA, NO_AUTORIDAD) IN (${
+          this.form.get('NO_AUTORIDAD').value
+        })`;
+        vBAN = true;
+      }
+    }
+    if (vBAN) {
+      this.DWHERE = `${this.DWHERE})`;
+    }
+  }
+
+  exportarArchivoBase() {
+    const params = {
+      fechaInicial: this.BLK_PARAM.FEC_INICIAL,
+      fechaFinal: this.BLK_PARAM.FEC_FINAL,
+      noDelegacion: this.BLK_PARAM.NO_DELEGACION,
+    };
+
+    // Determina qué cursor utilizar (C_DATOS o C_DATOS2) según la fecha
+    const cursor = this.isBeforeMayDate(this.BLK_PARAM.FEC_INICIAL)
+      ? this.myService.getDatosCursorC_DATOS(params)
+      : this.myService.getDatosCursorC_DATOS2(params);
+
+    // Realizar solicitud al backend para obtener los datos
+    cursor.subscribe(
+      (response: any[]) => {
+        // Generar el contenido del archivo CSV con los datos obtenidos
+        const csvContent = this.generateCSVContent(response);
+
+        // Guardar el archivo CSV en el servidor o proporcionar un enlace de descarga al usuario
+        //this.saveCSVFile(csvContent);
+      },
+      (error: any) => {
+        console.error(
+          'Error al obtener los datos para el archivo base: ',
+          error
+        );
+      }
+    );
+  }
+
+  isBeforeMayDate(date: Date): boolean {
+    const mayDate = new Date('2008-05-01');
+    return date.getTime() < mayDate.getTime();
+  }
+
+  generateCSVContent(data: any[]): string {
+    let csvContent =
+      'CVE_DICTAMEN,OFICIO,EXPEDIENTE,PROGRAMA,VOLANTE,FEC_VOLANTE,FEC_DESAHOGO,FEC_MAXIMA,USUARIO,CUMPLIO\n';
+    for (const item of data) {
+      csvContent +=
+        item.DESALOJO_DIADIA +
+        ',"' +
+        (item.NO_BIEN ? item.NO_BIEN : '') +
+        '","' +
+        (item.ESTATUS ? item.ESTATUS : '') +
+        '","' +
+        (item.FEC_RECEP ? item.FEC_RECEP : '') +
+        '","' +
+        (item.FEC_FOTO ? item.FEC_FOTO : '') +
+        '","' +
+        (item.FEC_MAXIMA ? item.FEC_MAXIMA : '') +
+        '","' +
+        (item.FOTOGRAFIA ? item.FOTOGRAFIA : '') +
+        '","' +
+        (item.FEC_MAXIMA ? item.FEC_MAXIMA : '') +
+        '","' +
+        (item.CUMPLIO ? item.CUMPLIO : '') +
+        '","' +
+        (item.TIPO_ACTA ? item.TIPO_ACTA : '') +
+        '","' +
+        (item.DESTINO ? item.DESTINO : '') +
+        '","' +
+        (item.USUARIO ? item.USUARIO : '') +
+        '"\n';
+    }
+    return csvContent;
+  }
+
+  saveCSVFile() {
+    let csvContent: string;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const downloadLink = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    downloadLink.href = url;
+    downloadLink.setAttribute('download', 'archivo_base.csv');
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
+  // ... Resto de la lógica para el manejo de NO_TRANSFERENTE, NO_EMISORA, NO_AUTORIDAD ...
+  // Se omite aquí para no extender demasiado el código
+
+  /*exportToCSV(): void {
+    const filename = 'hoja1.csv'; // Nombre del archivo CSV
+    this.exportService.exportToCSV(this.technicalSheets, filename);
+  }*/
 }

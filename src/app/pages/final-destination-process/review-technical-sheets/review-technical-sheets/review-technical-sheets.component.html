@@ -200,7 +200,9 @@
                   <h5 class="font-size-14">Total de Registros:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success">{{
+                    totRegistros
+                  }}</span>
                   <button class="btn btn-sm btn-success active">
                     <i class="bx bx-download float-icon"></i>
                   </button>
@@ -213,7 +215,9 @@
                   <h5 class="font-size-14">Total de Cumplidos:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success">{{
+                    totCumplidos
+                  }}</span>
                   <button class="btn btn-sm btn-success active">
                     <i class="bx bx-download float-icon"></i>
                   </button>
@@ -226,8 +230,12 @@
                   <h5 class="font-size-14">Total de No Cumplidos:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
-                  <button class="btn btn-sm btn-success active">
+                  <span class="badge rounded-pill badge-soft-success">{{
+                    totNoCumplidos
+                  }}</span>
+                  <button
+                    class="btn btn-sm btn-success active"
+                    (click)="saveCSVFile()">
                     <i class="bx bx-download float-icon"></i>
                   </button>
                 </div>
@@ -239,7 +247,9 @@
                   <h5 class="font-size-14">% Cumplimiento:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success"
+                    >{{ totCumplimiento }}%</span
+                  >
                 </div>
               </div>
             </div>
