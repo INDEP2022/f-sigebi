@@ -1,9 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">
-        Generaci&oacute;n de Recibos Programación (Masivo por Excel)
-      </h5>
+      <h5 class="title">Generaci&oacute;n de Recibos Programación Masiva</h5>
     </div>
   </div>
   <div body>
@@ -135,7 +133,7 @@
     </div>
     <div class="margin-input">
       <form [formGroup]="fileProgrammingForm" class="form-material">
-        <div class="row pt-2 col-md-3">
+        <div class="col-md-12">
           <label class="title" for=""
             >Seleccione el archivo a procesar (excel)</label
           >
@@ -148,37 +146,35 @@
           </form-field>
         </div>
       </form>
-
-      <!-- <h5 class="title"></h5>
-      
-      <input type="file" (change)="chargeFile($event.target)" /> -->
+    </div>
+    <div class="row" style="margin-left: 0%">
+      <div class="col-md-3 pt-4">
+        <button
+          type="submit"
+          class="btn btn-primary active btn-sm"
+          (click)="upload()"
+          [disabled]="!receiptGenerationForm.valid">
+          Cargar <i class="bx bx-send"></i>
+        </button>
+      </div>
+      <div class="col-md-3 pt-4">
+        <button
+          type="button"
+          class="btn btn-success active btn-sm"
+          [disabled]="!downloadResults"
+          (click)="goodsDownloadResults()">
+          Descargar Resultados <i class="bi bi-file-earmark-excel-fill"></i>
+        </button>
+      </div>
+      <div class="col-md-3 pt-4">
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="clearInsertOperation()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
     </div>
 
-    <div class="col-md-3 pt-5">
-      <button
-        type="submit"
-        class="btn btn-primary active btn-sm"
-        (click)="upload()"
-        [disabled]="!receiptGenerationForm.valid">
-        Cargar <i class="bx bx-send"></i>
-      </button>
-    </div>
-    <div class="col-md-3 pt-5">
-      <button
-        type="button"
-        class="btn btn-success active btn-sm"
-        [disabled]="!downloadResults"
-        (click)="goodsDownloadResults()">
-        Descargar Resultados <i class="bi bi-file-earmark-excel-fill"></i>
-      </button>
-    </div>
-    <div class="col-md-3 pt-5">
-      <button
-        class="btn btn-danger btn-sm active"
-        (click)="clearInsertOperation()">
-        Limpiar <i class="fas fa-eraser"> </i>
-      </button>
-    </div>
     <hr />
     <div>
       <div class="d-flex justify-content-end pr-2">
