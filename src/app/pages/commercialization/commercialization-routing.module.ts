@@ -11,7 +11,20 @@ const routes: Routes = [
           './shared-marketing-components/event-preparation/event-preparation.module'
         )
       ).EventPreparationModule,
-    data: { title: 'Preparación del evento', screen: 'FCOMEREVENTOS' },
+    data: { title: 'Preparación de Eventos Muebles', screen: 'FCOMEREVENTOS' },
+  },
+  {
+    path: 'event-preparation-i',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/event-preparation/event-preparation.module'
+        )
+      ).EventPreparationModule,
+    data: {
+      title: 'Preparación de Eventos Inmuebles',
+      screen: 'FCOMEREVENTOS_I',
+    },
   },
   {
     path: 'payment-dispersion-validation',
