@@ -2625,86 +2625,139 @@ export class PerformProgrammingFormComponent
     if (error > 0) {
       this.alert('warning', 'Advertencia', `${message}`);
     } else if (error == 0) {
-      if (this.performForm.get('startDate').value) {
-        this.performForm
-          .get('startDate')
-          .setValue(new Date(this.performForm.get('startDate').value));
-      }
-      if (this.performForm.get('endDate').value) {
-        this.performForm
-          .get('endDate')
-          .setValue(new Date(this.performForm.get('endDate').value));
-      }
+      if (
+        this.dataProgramming.startDate &&
+        this.dataProgramming.endDate &&
+        this.dataProgramming.address &&
+        this.dataProgramming.stateKey &&
+        this.dataProgramming.tranferId &&
+        this.dataProgramming.autorityId
+      ) {
+        if (this.transferentId)
+          this.performForm.get('tranferId').setValue(this.transferentId);
+        if (this.stationId)
+          this.performForm.get('stationId').setValue(this.stationId);
+        if (this.autorityId) {
+          this.performForm.get('autorityId').setValue(this.autorityId);
+        }
 
-      this.performForm.get('tranferId').setValue(this.transferentId);
-      this.performForm.get('stationId').setValue(this.stationId);
-      this.performForm.get('storeId').setValue(this.warehouseId);
-      this.performForm.get('autorityId').setValue(this.autorityId);
-      this.performForm
-        .get('regionalDelegationNumber')
-        .setValue(this.delegationId);
-      this.performForm.get('delregAttentionId').setValue(this.delegationId);
-      this.alertQuestion(
-        'question',
-        'Confirmación',
-        `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
-      ).then(async question => {
-        if (question.isConfirmed) {
-          this.loading = true;
-          const folio: any = await this.generateFolio(this.performForm.value);
-          this.performForm.get('folio').setValue(folio);
-          const task = JSON.parse(localStorage.getItem('Task'));
-          const updateTask = await this.updateTask(folio, task.id);
-          if (updateTask) {
-            this.programmingGoodService
-              .updateProgramming(this.idProgramming, this.performForm.value)
-              .subscribe({
-                next: async () => {
-                  this.performForm
-                    .get('regionalDelegationNumber')
-                    .setValue(this.delegation);
+        if (this.warehouseId > 0)
+          this.performForm.get('storeId').setValue(this.warehouseId);
 
-                  if (this.warehouseId > 0) {
-                    const updateWarehouseGood =
-                      await this.updateWarehouseGood();
-                    if (updateWarehouseGood) {
+        const data = {
+          emailTransfer: this.performForm.get('emailTransfer').value,
+          address: this.performForm.get('address').value,
+          city: this.performForm.get('city').value,
+          observation: this.performForm.get('observation').value,
+          regionalDelegationNumber: this.delegationId,
+          stateKey: this.performForm.get('stateKey').value,
+          tranferId: this.performForm.get('tranferId').value,
+          stationId: this.performForm.get('stationId').value,
+          autorityId: this.performForm.get('autorityId').value,
+          typeRelevantId: this.performForm.get('typeRelevantId').value,
+          storeId: this.performForm.get('storeId').value,
+        };
+
+        this.performForm.get('delregAttentionId').setValue(this.delegationId);
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea guardar la información de la programación?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            this.loading = true;
+            this.formLoading = true;
+            const folio: any = await this.generateFolio(this.performForm.value);
+            this.performForm.get('folio').setValue(folio);
+            if (this.warehouseId > 0)
+              this.performForm.get('storeId').setValue(this.warehouseId);
+            const task = JSON.parse(localStorage.getItem('Task'));
+
+            const updateTask = await this.updateTask(folio, task.id);
+            if (updateTask) {
+              this.programmingGoodService
+                .updateProgramming(this.idProgramming, data)
+                .subscribe({
+                  next: async () => {
+                    this.performForm
+                      .get('regionalDelegationNumber')
+                      .setValue(this.delegation);
+
+                    if (this.warehouseId > 0) {
+                      const updateWarehouseGood =
+                        await this.updateWarehouseGood();
+                      if (updateWarehouseGood) {
+                        this.generateTaskAceptProgramming(folio);
+                        this.loading = false;
+                      }
+                    } else {
                       this.generateTaskAceptProgramming(folio);
                       this.loading = false;
                     }
-                  } else {
-                    this.generateTaskAceptProgramming(folio);
-                    this.loading = false;
-                  }
-                },
-                error: error => {},
-              });
+                  },
+                  error: error => {},
+                });
+            }
           }
-        }
-      });
-
-      /*this.alertQuestion(
-        'question',
-        'Enviar Programación',
-        `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
-      ).then(async question => {
-        if (question.isConfirmed) {
-          this.loading = true;
+        });
+      } else {
+        if (this.performForm.get('startDate').value) {
           this.performForm
-            .get('regionalDelegationNumber')
-            .setValue(this.delegationId);
-          const folio: any = await this.generateFolio(this.performForm.value);
-          this.performForm.get('folio').setValue(folio);
-          //const updateTask = await this.updateTask(folio);
-          this.programmingGoodService
-            .updateProgramming(this.idProgramming, this.performForm.value)
-            .subscribe({
-              next: async () => {
-                this.generateTaskAceptProgramming(folio);
-                this.loading = false;
-              },
-            });
+            .get('startDate')
+            .setValue(new Date(this.performForm.get('startDate').value));
         }
-      }); */
+        if (this.performForm.get('endDate').value) {
+          this.performForm
+            .get('endDate')
+            .setValue(new Date(this.performForm.get('endDate').value));
+        }
+
+        this.performForm.get('tranferId').setValue(this.transferentId);
+        this.performForm.get('stationId').setValue(this.stationId);
+        this.performForm.get('storeId').setValue(this.warehouseId);
+        this.performForm.get('autorityId').setValue(this.autorityId);
+        this.performForm
+          .get('regionalDelegationNumber')
+          .setValue(this.delegationId);
+        this.performForm.get('delregAttentionId').setValue(this.delegationId);
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          `¿Esta seguro de enviar la programación ${this.dataProgramming.id}?`
+        ).then(async question => {
+          if (question.isConfirmed) {
+            this.loading = true;
+            const folio: any = await this.generateFolio(this.performForm.value);
+            this.performForm.get('folio').setValue(folio);
+            const task = JSON.parse(localStorage.getItem('Task'));
+            const updateTask = await this.updateTask(folio, task.id);
+            if (updateTask) {
+              this.programmingGoodService
+                .updateProgramming(this.idProgramming, this.performForm.value)
+                .subscribe({
+                  next: async () => {
+                    this.performForm
+                      .get('regionalDelegationNumber')
+                      .setValue(this.delegation);
+
+                    if (this.warehouseId > 0) {
+                      const updateWarehouseGood =
+                        await this.updateWarehouseGood();
+                      if (updateWarehouseGood) {
+                        this.generateTaskAceptProgramming(folio);
+                        this.loading = false;
+                      }
+                    } else {
+                      this.generateTaskAceptProgramming(folio);
+                      this.loading = false;
+                    }
+                  },
+                  error: error => {},
+                });
+            }
+          }
+        });
+      }
     }
   }
 
