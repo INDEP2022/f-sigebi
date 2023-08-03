@@ -204,6 +204,13 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
           item['event'] = item.lots ? item.lots.idEvent : null;
           item['lotPub'] = item.lots ? item.lots.lotPublic : null;
           item['move'] = item.ctrl ? item.ctrl.description : null;
+          item['idAndName'] = item.customers
+            ? item.customers.idClient + ' - ' + item.customers.nomRazon
+            : null;
+
+          item['bankAndNumber'] = item.ctrl
+            ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+            : null;
         });
         Promise.all(result).then(resp => {
           this.data.load(response.data);
