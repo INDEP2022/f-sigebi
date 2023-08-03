@@ -21,7 +21,7 @@ export const COLUMNS = {
     title: 'Fecha Inicial',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return format(new Date(row.startDate), 'dd/MM/yyyy')
+      return format(new Date(row.startDate), 'dd/MM/yyyy');
       // const parts = cell.split('-');
       // const year = parts[0];
       // const month = parts[1];
@@ -38,7 +38,7 @@ export const COLUMNS = {
     title: 'Fecha Final',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
-      return format(new Date(row.endDate), 'dd/MM/yyyy')
+      return format(new Date(row.endDate), 'dd/MM/yyyy');
       // const parts = cell.split('-');
       // const year = parts[0];
       // const month = parts[1];
