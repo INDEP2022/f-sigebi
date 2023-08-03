@@ -372,7 +372,35 @@
               [params]="paramsLotEvent"
               [totalItems]="totalItemsLotEvent"
               [limit]="limitLotEvent"></app-pagination>
-
+            <div class="row mb-3 mt-3">
+              <form-field
+                [control]="formLotEvent.get('totalTableWarranty')"
+                class="col"
+                label="Total Garantía">
+                <input
+                  type="number"
+                  readOnly
+                  formControlName="totalTableWarranty"
+                  class="form-control" />
+              </form-field>
+              <form-field
+                [control]="formLotEvent.get('totalTableAdvance')"
+                class="col"
+                label="Total Anticipo">
+                <input
+                  type="number"
+                  readOnly
+                  formControlName="totalTableAdvance"
+                  class="form-control" />
+              </form-field>
+              <form-field [control]="formLotEvent.get('txtCancel')" class="col">
+                <input
+                  type="text"
+                  readOnly
+                  formControlName="txtCancel"
+                  class="form-control" />
+              </form-field>
+            </div>
             <div class="row mb-3 mt-3">
               <div class="col-md-1"></div>
               <table class="table table-bordered col-md-9">
@@ -396,6 +424,7 @@
                         <input
                           type="text"
                           formControlName="finalPrice"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -406,6 +435,7 @@
                         <input
                           type="text"
                           formControlName="warranty"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -415,6 +445,7 @@
                         <input
                           type="text"
                           formControlName="liquidateAmount"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -427,6 +458,7 @@
                         <input
                           type="text"
                           formControlName="totalFinalPrice"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -437,6 +469,7 @@
                         <input
                           type="text"
                           formControlName="totalWarranty"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -446,6 +479,7 @@
                         <input
                           type="text"
                           formControlName="totalLiquidateAmount"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
