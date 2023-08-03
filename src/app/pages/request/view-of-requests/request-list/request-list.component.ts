@@ -313,6 +313,23 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'GRAnalisisResarcimiento',
   },
+  {
+    title: 'Validar Dictamen Resarcimiento(EN ESPECIE), No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'ValDictamenResarcimiento',
+  },
+  {
+    title:
+      'Notificación al Contribuyente(Resarcimiento EN ESPECIE), No. Solicitud: 44907',
+    noRequest: 44907,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'NotContribuyenteResEspecie',
+  },
 ];
 
 //AP_Amparo
@@ -623,6 +640,21 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+      case 'ValDictamenResarcimiento':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'NotContribuyenteResEspecie':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+
       default:
         break;
     }

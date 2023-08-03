@@ -95,6 +95,16 @@
             <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
           </button>
         </div>
+        <div class="mx-1" *ngIf="createReportDictum">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openReport()">
+            <i class="bx bx-notepad mr-1 float-icon"></i> Documento validar
+            dictamen
+          </button>
+        </div>
         <div class="mx-1">
           <button class="btn btn-primary active btn-sm" (click)="close()">
             Regresar

@@ -51,6 +51,7 @@ export class RequestCompDocTasksComponent
   validateGoodForEyeVisit: boolean = false;
   resultEyeVisitReport: boolean = false;
   resultVisits: boolean = false;
+  createReportDictum: boolean = false;
   /**
    * SET STATUS ACTIONS
    **/
