@@ -475,7 +475,7 @@ export class ClarificationsComponent
     } else if (this.goodsSelected.length > 1) {
       this.rowSelected = null;
       this.paragraphs = [];
-      this.onLoadToast('error', 'Solo se puede seleccionar un bien');
+      this.onLoadToast('warning', 'Solo se puede seleccionar un Bien');
     } else {
       this.rowSelected = null;
       this.paragraphs = [];
@@ -581,7 +581,7 @@ export class ClarificationsComponent
   newClarification() {
     let data = this.clariArraySelected[0];
     if (data === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
     this.openForm();
@@ -590,15 +590,15 @@ export class ClarificationsComponent
   deleteClarification() {
     let data = this.clariArraySelected[0];
     if (data === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
 
     const clarifycationLength = this.paragraphs.length;
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar el registro?'
+      'question',
+      'Atención',
+      '¿Desea eliminar el registro?'
     ).then(async val => {
       if (val.isConfirmed) {
         const idChatClarification = data.chatClarification.idClarification;
@@ -608,7 +608,7 @@ export class ClarificationsComponent
           next: async val => {
             this.onLoadToast(
               'success',
-              'Eliminada con exito',
+              'Eliminada',
               'La aclaración fue eliminada con éxito'
             );
 
@@ -668,7 +668,7 @@ export class ClarificationsComponent
     if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
-      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
+      this.alert('warning', 'Error', 'Seleccione solo una Aclaración');
     }
   }
 
@@ -718,7 +718,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo eliminar el bien-res-deb'
+            'No se pudo eliminar el Bien'
           );
         },
       });
@@ -737,7 +737,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Erro Interno',
-            'No se actualizo el campo bien-res-dev en bien'
+            'No se actualizó el campo bien en bien'
           );
           reject(false);
         },
@@ -781,7 +781,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo obtener el bien-res-dev'
+            'No se pudo obtener el Bien'
           );
         },
       });
@@ -804,7 +804,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo obtener el bien-res-dev'
+            'No se pudo obtener el Bien'
           );
         },
       });
@@ -850,7 +850,7 @@ export class ClarificationsComponent
       if (this.goodSaeModified.length == index) {
         this.loading = false;
         this.goodSaeModified = [];
-        this.onLoadToast('success', 'Bienes actualizados');
+        this.onLoadToast('success', 'Bienes Actualizados');
       }
     });
   }
