@@ -61,6 +61,11 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   contador: number = 0;
   totalValue: number = 0;
 
+  noGood: number;
+  descriptionGood: string;
+  quantity: number;
+  noRegister: number;
+
   constructor(
     private fb: FormBuilder,
     private expedientService: ExpedientService,
@@ -363,6 +368,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     }
     this.totalItems = aux;
   }
+
   calculateTotalItem2() {
     let aux = 0;
     for (let i = 0; i < this.goodsList2.length; i++) {
@@ -371,6 +377,26 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     this.totalItems2 = aux;
   }
 
+  getDetMinute(acta: number) {
+    this.proceedingsDetailDel.getDetMinutes(acta).subscribe(
+      response => {
+        console.log('det acta ', response);
+        for (let i = 0; i < response.count; i++) {
+          if (response.data[i] != null && response.data[i] != undefined) {
+            this.noGood = response.data[i].numGoodId.id;
+            this.descriptionGood = response.data[i].numGoodId.goodDescription;
+            this.quantity = response.data[i].amountReturned;
+            this.noRegister = response.data[i].numberRegister;
+          }
+        }
+        console.log('this.noGood ', this.noGood);
+        console.log('this.descriptionGood ', this.descriptionGood);
+        console.log('this.quantity ', this.quantity);
+        console.log('this.noRegister ', this.noRegister);
+      },
+      error => (this.loading = false)
+    );
+  }
   searchByExp(term: number | string) {
     this.expediente = Number(term);
     console.log(' this.expediente  ', this.expediente);
@@ -427,6 +453,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
         this.getGoods();
         this.loading = false;
         console.log('this.idActa', this.idActa);
+        this.getDetMinute(this.idActa);
       },
       error => (this.loading = false)
     );
@@ -444,25 +471,31 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
         'No Existe Ningún Acta a Cerrar.'
       );
     } else {
-      if (this.actForm.get('statusAct').value == 'CERRADA') {
+      if (this.noGood == null) {
         this.alert(
           'error',
           'Actas de Destino de Bienes',
-          'El Acta ya Está Cerrada.'
+          'El Acta No Tiene Ningún Bien Asignado, No Se Puede Cerrar.'
         );
-      } else {
-        const resp = await this.alertQuestion(
-          'question',
-          '¿Desea continuar?',
-          'Está Seguro que Desea Cerrar el Acta.?'
-        );
-        if (resp.isConfirmed) {
+      } else if (this.noGood != null) {
+        if (this.actForm.get('statusAct').value == 'CERRADA') {
+          this.alert(
+            'error',
+            'Actas de Destino de Bienes',
+            'El Acta ya Está Cerrada.'
+          );
+        } else {
+          const resp = await this.alertQuestion(
+            'question',
+            '¿Desea continuar?',
+            'Está Seguro que Desea Cerrar el Acta.?'
+          );
+          if (resp.isConfirmed) {
+          }
         }
       }
     }
   }
-
-  async getDetailsActa() {}
 
   /////////////////////// cogigo de Alexander
 
