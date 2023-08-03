@@ -1,33 +1,37 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
-  BehaviorSubject,
-  catchError,
-  concatMap,
-  EMPTY,
-  from,
-  map,
-  of,
-  switchMap,
-  takeUntil,
-  tap,
-  toArray,
-} from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IPAAbrirActasPrograma } from 'src/app/core/models/good-programming/good-programming';
+import { IDepositaryAppointments_custom } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
+import { FractionsService } from 'src/app/core/services/catalogs/fractions.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import {
   DetailProceedingsDevolutionService,
   ProceedingsService,
 } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodService } from './../../../../core/services/ms-good/good.service';
@@ -70,7 +74,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   goodsData: any[] = [];
   dataResp: IProceedings;
   totalProceedings: number;
-  totalGoods: number;
+  totalGoods: number = 0;
   totalDetailProceedings: number;
   copyDataProceedings: any;
   quantityOfGoods: number;
@@ -88,13 +92,45 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   fechaActual: Date;
   fechaActualFormateada: string;
   cause: boolean = false;
+  bcause: boolean = false;
+  goodsList = new LocalDataSource();
+  goodsListTable = new LocalDataSource();
+  dataGood: any[] = [];
+  dataGoodtable: any[] = [];
+  selectedRow: any = null;
+  deleteselectedRow: any;
+  @ViewChild('mySmartTable') mySmartTable: any;
+  invoiceDetailsForm: ModelForm<any>;
+  formScan: FormGroup;
+  disabled: boolean = true;
+  _saveDataDepositary: boolean = false;
+  depositaryAppointment: IDepositaryAppointments_custom;
+  user: any;
+  userdelegacion: any;
+  userDepartament: any;
+  userSubdelegacion: any;
+  folioScan: any;
+  reportParams: any;
+  labelActa: string;
+  btnCSSAct = 'btn-primary';
+  saveDataAct: any[] = [];
+  reopening = false;
 
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
     private goodService: GoodService,
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService,
+    private router: Router,
+    private notificationService: NotificationService,
+    private authService: AuthService,
+    private fractionsService: FractionsService,
+    private documentsForDictumService: DocumentsForDictumService,
+    private serviceProgrammingGood: ProgrammingGoodService
   ) {
     super();
 
@@ -118,20 +154,13 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.initPaginatorProceedings();
     this.initPaginatorGoods();
     this.initPaginatorDetailProceedings();
     this.fechaActual = new Date();
     this.formatoFechaActual();
-  }
-
-  onRowSelect(event: any): void {
-    const selectedRow = event.data;
-    this.proceedingsData.forEach(row => {
-      row.isSelected = false;
-    });
-    selectedRow.isSelected = true;
-    // this.gridService.grid.dataSet.select(selectedRow);
+    this.getuser();
+    this.labelActa = 'Cerrar acta';
+    this.btnCSSAct = 'btn-primary';
   }
 
   getGoods() {
@@ -155,14 +184,6 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     }
   }
 
-  getProceedings(fileNumber: number) {
-    this.selectedProceedings = false;
-    return this.proceedingsService.getActByFileNumber(
-      fileNumber,
-      this.paginatorProceedings
-    );
-  }
-
   getDetailProceedings(proceedingsNumb: number) {
     console.log(proceedingsNumb);
     return this.detailProceedingsDevolutionService.getDetailProceedingsDevolutionByProceedingsNumb(
@@ -170,7 +191,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       this.paginatorGoods
     );
   }
-
+  /*
   getInfo() {
     this.flag = false;
     this.firsTime = false;
@@ -255,7 +276,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
           console.log(error);
         },
       });
-  }
+  }*/
 
   prepareData(data: {
     proceedings: IListResponse<IProceedings>;
@@ -348,7 +369,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {}
-
+  /*
   initPaginatorProceedings() {
     console.log('Inicio');
     this.paramsProceedings
@@ -364,7 +385,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
           });
         }
       });
-  }
+  }*/
 
   initPaginatorDetailProceedings() {
     this.paramsDetailProceedings
@@ -416,6 +437,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       ],
       typeexpe: [null, [Validators.required]],
       delito: [null, [Validators.required]],
+      noExp: [null, [Validators.required]],
       //DELITO     FALTA
     });
 
@@ -443,9 +465,20 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       propben: [null, [Validators.required]],
       audit: [null],
       observations: [null],
-      scanFolio: [null],
+      returnFoli: [null],
       estado: [null],
+      scanningFoli: [null],
     });
+    // this.formScan = this.fb.group({
+    //   scanningFoli: [
+    //     { value: '', disabled: false },
+    //     [Validators.maxLength(15)],
+    //   ],
+    //   returnFoli: [
+    //     { value: '', disabled: false },
+    //     [Validators.maxLength(15)],
+    //   ],
+    // });
   }
 
   startCalendars() {
@@ -478,7 +511,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     this.formadd.patchValue(dataform);
   }
 
-  getBlkExp(id: number | string) {
+  getBlkExp(id: number) {
     this.expedientService.getExpedienteById(id).subscribe({
       next: resp => {
         console.log('Respuesta: ', resp);
@@ -489,15 +522,379 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
           this.cause = false;
           console.log('es false!!!');
         }
+        if (resp.expedientType != 'T') {
+          this.bcause = true;
+        } else {
+          this.bcause = false;
+        }
         let dataform = {
-          previewFind: resp.transferNumber,
+          previewFind: resp.preliminaryInquiry,
+
           penaltyCause: resp.criminalCase,
           delito: resp.crimeKey + ' - ' + 'NO SE PUEDE MAPEAR LA DESCRIPCIÓN',
           typeexpe: resp.expedientType,
+          noExp: resp.transferNumber,
         };
         console.log('Response: ', dataform);
+        this.getGoodsTable(id);
         this.actForm.patchValue(dataform);
       },
     });
   }
+
+  getGoodsTable(expediente: number): void {
+    this.goodService
+      .getByExpedient(expediente, this.params.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          for (let i = 0; i < response.count; i++) {
+            console.log('BIENES: ', response);
+            if (response.data[i] != undefined) {
+              let item: IGood = {
+                id: response.data[i].goodId,
+                description: response.data[i].description,
+                quantity: response.data[i].quantity,
+                extDomProcess: response.data[i].extDomProcess,
+                appraisedValue: response.data[i].appraisedValue,
+                status: response.data[i].status,
+              };
+              this.dataGood.push(item);
+            }
+          }
+          this.totalGoods = response.count;
+          this.loading = false;
+          this.goodsList.load(this.dataGood);
+          this.goodsList.refresh();
+        },
+        error: error => (this.loading = false),
+      });
+  }
+  /*
+  getProceedings(fileNumber: number) {
+    this.selectedProceedings = false;
+    return this.proceedingsService.getActByFileNumber(
+      fileNumber,
+      this.paginatorProceedings
+    );
+  }*/
+
+  onRowSelect(event: any) {
+    this.selectedRow = event.data;
+    console.log(this.selectedRow);
+  }
+  deleteRowSelect(event: any) {
+    this.deleteselectedRow = event.data;
+  }
+
+  addSelect() {
+    this.dataGoodtable = this.dataGoodtable;
+    if (this.selectedRow == null) {
+      this.onLoadToast('error', 'Debe seleccionar un registro');
+      return;
+    } else {
+      this.totalItems = 0;
+      let dataForm = {
+        goodId: this.selectedRow.id,
+        description: this.selectedRow.description,
+        extDomProcess: this.selectedRow.extDomProcess,
+        quantity: this.selectedRow.quantity,
+      };
+      this.dataGoodtable.push(dataForm);
+      this.loading = false;
+      this.goodsListTable.load(this.dataGoodtable);
+      this.goodsListTable.refresh();
+      this.clearSelection();
+      this.countFacture();
+    }
+  }
+  countFacture() {
+    this.totalItems = 0;
+    for (let i = 0; i < this.dataGoodtable.length; i++) {
+      this.totalItems++;
+    }
+  }
+
+  clearSelection() {
+    const selectedRows = this.mySmartTable.grid.getSelectedRows();
+    selectedRows.forEach((row: any) => {
+      row.isSelected = false;
+    });
+  }
+
+  removeSelect() {
+    this.dataGoodtable = [];
+    if (this.deleteselectedRow == null) {
+      this.onLoadToast('error', 'Debe seleccionar un registro');
+      return;
+    } else {
+      this.goodsListTable.remove(this.deleteselectedRow);
+      this.goodsListTable.remove(this.dataGoodtable);
+      this.totalItems = 0;
+      this.clearSelection();
+      this.countFacture();
+      this.goodsListTable.load([]);
+    }
+  }
+
+  initSolicitud() {
+    if (
+      this.formadd.get('status').value != 'CERRADA' &&
+      this.formadd.get('status').value != null
+    ) {
+      if (this.formadd.get('oficea').value != null) {
+        if (this.formadd.get('scanningFoli').value != null) {
+          this.alertQuestion(
+            'info',
+            'Se generará un nuevo folio de escaneo para el acta abierta. ¿Deseas continuar?',
+            '',
+            'Aceptar',
+            'Cancelar'
+          ).then(res => {
+            console.log(res);
+            if (res.isConfirmed) {
+              this.notificationService
+                .getByFileNumber(this.fileNumber)
+                .subscribe({
+                  next: resp => {
+                    console.log('Respuesta primer: ', resp);
+                    let params = {
+                      fileNumber: this.fileNumber,
+                      actKey: this.formadd.get('oficea').value,
+                      delegationNumber: this.userdelegacion,
+                      subDelegationNumber: this.userSubdelegacion,
+                      departmentNumber: this.userDepartament,
+                      flyerNumber: resp.data.max,
+                    };
+                    this.documentsForDictumService
+                      .postDocuemntFolio(params)
+                      .subscribe({
+                        next: response => {
+                          this.folioScan = response.data[0].folio_universal;
+                          let formparams = {
+                            scanningFoli: response.data[0].folio_universal,
+                          };
+                          this.actForm.patchValue(formparams);
+                          this.getReport();
+                        },
+                      });
+                  },
+                });
+            }
+          });
+        } else {
+          this.alertInfo('warning', 'El acta ya tiene folio de escaneo.', '');
+        }
+      }
+    }
+  }
+
+  getuser() {
+    let token = this.authService.decodeToken();
+    this.user = token.name.toUpperCase();
+    let userDepartament = token.department.toUpperCase();
+    this.getdepartament(userDepartament);
+    console.log('User: ', token);
+  }
+
+  getdepartament(id: number | string) {
+    this.fractionsService.getDepartament(id).subscribe({
+      next: response => {
+        this.userDepartament = response.data[0].id;
+        this.userdelegacion = response.data[0].numDelegation;
+        this.userSubdelegacion = response.data[0].numSubDelegation.id;
+      },
+    });
+  }
+
+  getReport() {
+    let params = {
+      PN_FOLIO: this.folioScan,
+    };
+    if (this.params != null) {
+      this.siabService.fetchReport('RGERGENSOLICDIGIT', params).subscribe({
+        next: res => {
+          if (res !== null) {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          } else {
+            const blob = new Blob([res], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              },
+              class: 'modal-lg modal-dialog-centered',
+              ignoreBackdropClick: true,
+            };
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        },
+        error: (error: any) => {
+          console.log('error', error);
+        },
+      });
+    }
+  }
+
+  openScannerPage() {
+    if (this.invoiceDetailsForm.get('scanFolio').value != null) {
+      this.alertQuestion(
+        'info',
+        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.router.navigate([`/pages/general-processes/scan-documents`], {
+            queryParams: {
+              origin: 'FACTREFACTADEVOLU',
+              folio: this.folioScan,
+              expedientNumber: this.fileNumber,
+            },
+          });
+        }
+      });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+        ''
+      );
+    }
+  }
+
+  //PUP_MOVIMIENTO_ACTA
+  closeopenactas() {
+    let statusacta = this.formadd.get('estado').value;
+    if ((statusacta = 'CERRADA')) {
+      this.alertQuestion(
+        'info',
+        'Está seguro de abrir el Acta?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          let acta = 'S';
+          let cve_acta = 'NA/PGR/6/DAB/DAB/0085/00/02';
+          let tipoActa = 'DEVOLU';
+          //PUP BUSCA ACTA
+          if (cve_acta.substr(0, 5) === 'RESAR') {
+            tipoActa = 'RESAR';
+          } else {
+            tipoActa = 'DEVOLU';
+          }
+          const lv_TIP_ACTA = `RF,${tipoActa}`;
+          //OPEN PROCEEDING
+          const modelPaOpen: IPAAbrirActasPrograma = {
+            P_NOACTA: this.formadd.get('acta').value,
+            P_AREATRA: lv_TIP_ACTA,
+            P_PANTALLA: 'FACTREFACTADEVOLU',
+            P_TIPOMOV: 2,
+            USUARIO:
+              localStorage.getItem('username') == 'sigebiadmon'
+                ? localStorage.getItem('username')
+                : localStorage.getItem('username').toLocaleUpperCase(),
+          };
+          console.log(modelPaOpen);
+          this.serviceProgrammingGood
+            .paOpenProceedingProgam(modelPaOpen)
+            .subscribe(
+              resp => {
+                const paramsF = new FilterParams();
+                let VAL_MOVIMIENTO = 0;
+                paramsF.addFilter(
+                  'valUser',
+                  localStorage.getItem('username') == 'sigebiadmon'
+                    ? localStorage.getItem('username')
+                    : localStorage.getItem('username').toLocaleUpperCase()
+                );
+                this.serviceProgrammingGood
+                  .getTmpProgValidation(paramsF.getParams())
+                  .subscribe(
+                    res => {
+                      console.log(res);
+                      VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                      if (VAL_MOVIMIENTO == 1) {
+                        this.serviceProgrammingGood
+                          .paRegresaEstAnterior(modelPaOpen)
+                          .subscribe(
+                            res => {
+                              this.labelActa = 'Cerrar acta';
+                              this.btnCSSAct = 'btn-primary';
+                              this.formadd.get('estado').setValue('ABIERTA');
+                              this.reopening = true;
+                              this.saveDataAct = [];
+                              this.alert(
+                                'success',
+                                'Acta abierta',
+                                `El acta ${
+                                  this.formadd.get('acta').value
+                                } fue abierta`
+                              );
+                              this.loading = false;
+                            },
+                            err => {
+                              this.loading = false;
+                              console.log(err);
+                              this.alert(
+                                'error',
+                                'No se pudo abrir el acta',
+                                'Ocurrió un error que no permite abrir el acta'
+                              );
+                            }
+                          );
+                      }
+                    },
+                    err => {
+                      this.loading = false;
+                      console.log(err);
+                      VAL_MOVIMIENTO = 0;
+                      this.alert(
+                        'error',
+                        'No se pudo abrir el acta',
+                        'Ocurrió un error que no permite abrir el acta'
+                      );
+                    }
+                  );
+              },
+              err => {
+                console.log(err);
+                this.alert(
+                  'error',
+                  'No se pudo abrir el acta',
+                  err.error.message
+                );
+                this.loading = false;
+              }
+            );
+        }
+      });
+    } else {
+      let acta = 'N';
+      //
+    }
+  }
+
+  viewPictures() {}
 }

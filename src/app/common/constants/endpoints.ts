@@ -193,4 +193,5 @@ export enum ENDPOINT_LINKS {
   SubTypeGood = 'fractions?search=&filter.id=',
   FractionS = 'catalog',
   Departamentuser = 'departament',
+  insertDocumentFolio = 'application/insertDocumentFolio',
 }
