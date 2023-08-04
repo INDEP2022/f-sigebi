@@ -83,7 +83,6 @@ export class CaptureFilterDictaminaComponent implements OnInit {
   }
 
   onConsultar(): void {
-    console.log(this.form);
     let paramsSeleccion = {
       de: this.datePipe.transform(this.form.value.de, 'yyyy-MM-dd'),
       a: this.datePipe.transform(this.form.value.a, 'yyyy-MM-dd'),
@@ -105,6 +104,5 @@ export class CaptureFilterDictaminaComponent implements OnInit {
     };
 
     this.reportEmite.emit(paramsSeleccion);
-    console.log(this.form);
   }
 }

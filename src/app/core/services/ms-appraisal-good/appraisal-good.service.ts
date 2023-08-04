@@ -33,4 +33,8 @@ export class AppraisalGoodService extends HttpService {
       tap(() => (this.microservice = ''))
     );
   }
+
+  getExpedientGood(id?: string): Observable<IListResponse<IAppraisersGood>> {
+    return this.get<IListResponse>(`good/expedient/search/${id}`);
+  }
 }
