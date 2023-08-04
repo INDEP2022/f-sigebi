@@ -48,6 +48,11 @@ export const EVENT_COLUMNS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+
+    /*filter: {
+      type: 'custom',
+      component: CustomDateDayFilterComponent,
+    },*/
   },
 };
 

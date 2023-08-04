@@ -215,8 +215,8 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
               next: () => {
                 this.onLoadToast(
                   'success',
-                  'Acta Eliminada',
-                  'El acta ha sido eliminada exitosamente'
+                  'Acta de Decomiso Y Devolución',
+                  'Eliminada Correctamente'
                 );
                 setTimeout(() => {
                   this.getInfo(this.fileNumber);
@@ -1380,8 +1380,8 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
               if (proceedingUpdated) {
                 this.onLoadToast(
                   'success',
-                  'Acta actualizada',
-                  'El acta ha sido actualizada exitosamente'
+                  'Acta de Decomiso Y Devolución',
+                  'Actualizado Correctamente'
                 );
                 let paginatedProceedings: any;
                 let paginatedGoods: any;

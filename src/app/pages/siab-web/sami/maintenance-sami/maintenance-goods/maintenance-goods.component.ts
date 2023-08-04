@@ -67,7 +67,7 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
   updateDescription() {
     this.alertQuestion(
       'question',
-      'Se actualizará la descripción del BIEN ',
+      'Se actualizará la descripción del Bien ',
       '¿Desea continuar?',
       'Continuar'
     ).then(question => {
@@ -88,7 +88,7 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
                 this.loader.load = false;
                 this.alert(
                   'success',
-                  'Actualización de descripción del BIEN',
+                  'Actualización de descripción del Bien',
                   'Realizada correctamente'
                 );
                 this.clear();
@@ -96,7 +96,7 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
                 this.loader.load = false;
                 this.alert(
                   'error',
-                  'Actualización de descripción del BIEN',
+                  'Actualización de descripción del Bien',
                   'No realizada'
                 );
               }
@@ -105,7 +105,7 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
               this.loader.load = false;
               this.alert(
                 'error',
-                'Actualización de descripción del BIEN',
+                'Actualización de descripción del Bien',
                 'No realizada'
               );
             },

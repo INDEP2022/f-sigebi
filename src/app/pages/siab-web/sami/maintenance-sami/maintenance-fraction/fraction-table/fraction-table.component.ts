@@ -3,7 +3,7 @@ import {
   GoodFractionService,
   IFraction,
 } from 'src/app/core/services/ms-good/good-fraction.service';
-import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { BasePageTableNotServerPagination } from 'src/app/core/shared/base-page-table-not-server-pagination';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -11,14 +11,14 @@ import { COLUMNS } from './columns';
   templateUrl: './fraction-table.component.html',
   styleUrls: ['./fraction-table.component.scss'],
 })
-export class FractionTableComponent extends BasePageWidhtDinamicFiltersExtra<IFraction> {
+export class FractionTableComponent extends BasePageTableNotServerPagination<IFraction> {
   @Input() goodNumber: number;
   @Input() fractionCod: string;
   constructor(private goodFractionService: GoodFractionService) {
     super();
     this.haveInitialCharge = false;
     this.service = this.goodFractionService;
-    this.ilikeFilters = ['descripcion_fraccion'];
+    // this.ilikeFilters = ['descripcion_fraccion'];
     this.settings = {
       ...this.settings,
       actions: null,
@@ -32,7 +32,7 @@ export class FractionTableComponent extends BasePageWidhtDinamicFiltersExtra<IFr
       if (changes['goodNumber'].currentValue) {
         this.getData();
       } else {
-        this.dataNotFound();
+        this.notGetData();
       }
       return;
     }
@@ -40,13 +40,13 @@ export class FractionTableComponent extends BasePageWidhtDinamicFiltersExtra<IFr
       if (changes['fractionCod'].currentValue) {
         this.getData();
       } else {
-        this.dataNotFound();
+        this.notGetData();
       }
     }
   }
 
   override getParams() {
-    let newColumnFilters = this.columnFilters;
+    let newColumnFilters: any = [];
     if (this.goodNumber) {
       newColumnFilters['filter.no_bien'] = '$eq:' + this.goodNumber;
     }

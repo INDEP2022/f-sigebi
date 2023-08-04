@@ -61,7 +61,7 @@ export class MaintenanceAclarationComponent extends BasePage implements OnInit {
   async update() {
     this.alertQuestion(
       'question',
-      'Se actualizará el ESTATUS',
+      'Se actualizará el Estatus',
       '¿Desea continuar?',
       'Continuar'
     ).then(async question => {
@@ -78,7 +78,7 @@ export class MaintenanceAclarationComponent extends BasePage implements OnInit {
             .pipe(catchError(x => of(null)))
         );
         if (!res) {
-          this.alert('error', 'Actualización de ESTATUS', 'No realizada');
+          this.alert('error', 'Actualización de Estatus', 'No realizada');
           this.loader.load = false;
           return;
         }
@@ -93,12 +93,12 @@ export class MaintenanceAclarationComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de ESTATUS', 'No realizada');
+          this.alert('error', 'Actualización de Estatus', 'No realizada');
           return;
         } else {
           this.alert(
             'success',
-            'Actualización de ESTATUS',
+            'Actualización de Estatus',
             'Realizada correctamente'
           );
           this.clear();

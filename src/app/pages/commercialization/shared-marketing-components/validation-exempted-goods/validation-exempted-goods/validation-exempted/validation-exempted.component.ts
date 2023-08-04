@@ -115,7 +115,7 @@ export class ValidationExemptedListComponent
             this.loading = false;
             this.data = new LocalDataSource();
             this.totalItems = 0;
-            this.alert('warning', 'Bien no Tiene Bienes Excentos', '');
+            this.alert('warning', 'Bien no Tiene Bienes Exentos', '');
           },
         });
     }
