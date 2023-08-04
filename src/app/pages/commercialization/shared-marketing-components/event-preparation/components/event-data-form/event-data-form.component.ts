@@ -20,6 +20,7 @@ import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdpart
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { EventFormVisualProperties } from '../../utils/classes/comer-event-properties';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
@@ -43,6 +44,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() isOpenEvent = false;
   readonly minEventDate = new Date('2000-01-01');
   readonly maxEventDate = new Date(addYears(startOfYear(new Date()), 5));
+  @Output() onSuccessApply = new EventEmitter<void>();
   viewApplyButton = true;
   get controls() {
     return this.eventForm.controls;
@@ -311,9 +313,27 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       );
       return;
     }
+    this.applyCost().subscribe();
   }
 
-  applyCost() {}
+  applyCost() {
+    const { baseCost, id } = this.controls;
+    const body = {
+      cotobase: baseCost.value,
+      lotId: 1, // ! Ni se deberia de enviar xd
+      eventId: id.value,
+    };
+    return this.lotService.applyBaseCost(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.alert('success', 'Proceso Completado', '');
+        this.onSuccessApply.emit();
+      })
+    );
+  }
 
   consignment() {
     const { eventTpId } = this.controls;
