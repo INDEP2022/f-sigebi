@@ -18,6 +18,11 @@ import { DestinationActsDelegationComponent } from '../destination-acts-delegati
 import { LocalDataSource } from 'ng2-smart-table';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import {
+  IDetailProceedingsDevollution,
+  IDetailProceedingsDevollutionDelete,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -73,6 +78,10 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   contador: number = 0;
   totalValue: number = 0;
   columnFilters: any = [];
+  columnFilters2: any = [];
+  loading2: boolean = this.loading;
+  disableClosedAct: boolean = false;
+  title: string = 'Actas de Destino de Bienes';
   get userAuth() {
     return this.authService.decodeToken().username;
   }
@@ -109,17 +118,23 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
         }
       },
     };
-    this.settings2 = { ...this.settings, hideSubHeader: false, actions: false };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: '',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
+      edit: {
+        editButtonContent: '<i class="fas fa-edit bx-sm float-icon"></i>',
+      },
+    };
     this.settings1.columns = COLUMNS1;
     this.settings2.columns = COLUMNS2;
   }
-  /* rowClassFunction: (row: any) => {
-        if (row.data.di_disponible == 'S') {
-          return 'bg-success text-white';
-        } else {
-          return 'bg-dark text-white';
-        }
-      }, */
   ngOnInit(): void {
     this.initForm();
     this.pupInitForm();
@@ -251,11 +266,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
             )
           );
         } else {
-          this.alert(
-            'warning',
-            'Actas de Destino de Bienes',
-            'No se encontrarón registros.'
-          );
+          this.alert('warning', this.title, 'No se encontrarón registros.');
         }
         this.getGoods();
         this.loading = false;
@@ -331,8 +342,8 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   }
 
   onUserRowSelect(good: any) {
-    console.log('good', good.data);
-    this.openModal(good.data);
+    console.log('good', good.good);
+    this.openModal(good.good);
   }
 
   openModal(good: any) {
@@ -341,9 +352,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
         good: good,
         callback: (next: boolean) => {
           if (next) {
-            this.params
-              .pipe(takeUntil(this.$unSubscribe))
-              .subscribe(() => console.log('recibido '));
+            this.getDetailProceedingsDevolution(this.idActa);
           }
         },
       },
@@ -377,7 +386,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Actas de Destino de Bienes',
+        this.title,
         'Necesitas un número de expedientes con acta (s)'
       );
     }
@@ -416,14 +425,14 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     if (!this.validAdd(this.selectedGood.data)) {
       return;
     }
-    console.log('Selected Row: ->', this.selectedGood.data);
     if (this.selectedGood === null) {
       this.onLoadToast('error', 'Debe Seleccionar un Registro');
     } else {
-      this.goodsList2.push(this.selectedGood.data);
-      this.source2.load(this.goodsList2);
-      this.calculateTotalItem2();
-      //this.selectedGood.data = null;
+      this.preInsert(this.selectedGood.data);
+      this.createDetailProceedingsDevolution(
+        this.selectedGood.data,
+        this.idActa
+      );
     }
   }
 
@@ -434,20 +443,30 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     });
   }
 
-  removeSelect() {
-    this.box = [];
-    if (this.deleteselectedRow == null) {
-      this.onLoadToast('error', 'Debe seleccionar un registro');
-      return;
+  async removeSelect() {
+    if (this.selectedGood2.data === null) {
+      this.alert('error', this.title, 'Debe Seleccionar un Registro');
     } else {
-      this.strategy.remove(this.deleteselectedRow);
-      this.strategy.remove(this.box);
-      this.contador = 0;
-      this.totalValue = 0;
-      this.countRowTotal();
-      this.clearSelection();
-      this.countFacture();
-      this.strategy.load([]);
+      if (this.actForm.get('statusAct').value === 'CERRADA') {
+        this.alert(
+          'error',
+          this.title,
+          'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+        );
+      } else {
+        const data: any[] = await this.source.getAll();
+        data.forEach(item => {
+          if (item.id === this.selectedGood2.data.numberGood) {
+            item.di_disponible = 'S';
+          }
+        });
+        this.source.load(data);
+        this.source.refresh();
+        this.deleteDetailProceedingsDevolution(
+          this.selectedGood2.data.numberGood,
+          this.idActa
+        );
+      }
     }
   }
 
@@ -470,7 +489,6 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
   getDetMinute(acta: number) {
     this.proceedingsDetailDel.getDetMinutes(acta).subscribe(
       response => {
-        console.log('det acta ', response);
         for (let i = 0; i < response.count; i++) {
           if (response.data[i] != null && response.data[i] != undefined) {
             this.noGood = response.data[i].numGoodId.id;
@@ -479,21 +497,15 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
             this.noRegister = response.data[i].numberRegister;
           }
         }
-        console.log('this.noGood ', this.noGood);
-        console.log('this.descriptionGood ', this.descriptionGood);
-        console.log('this.quantity ', this.quantity);
-        console.log('this.noRegister ', this.noRegister);
       },
       error => (this.loading = false)
     );
   }
   searchByExp(term: number | string) {
     this.expediente = Number(term);
-    console.log(' this.expediente  ', this.expediente);
     this.proceedingsDetailDel.getProceedingByExp(this.expediente).subscribe(
       response => {
-        console.log('resp ', response.data);
-        this.response = !this.response;
+        this.response = true;
         for (let i = 0; i < response.count; i++) {
           if (response.data[i] != undefined) {
             this.idActa = Number(response.data[i].id);
@@ -540,12 +552,20 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
         if (response == null) {
           this.alert('info', 'No se encontrarón registros', '');
         }
+        if (this.actForm.controls['statusAct'].value === 'CERRADA') {
+          this.disableClosedAct = true;
+        }
         this.getGoods();
         this.loading = false;
-        console.log('this.idActa', this.idActa);
-        this.getDetMinute(this.idActa);
+        this.getDetailProceedingsDevolution(this.idActa);
       },
-      error => (this.loading = false)
+      error => {
+        this.alert(
+          'error',
+          this.title,
+          'No se encontraron registros con este numero'
+        );
+      }
     );
   }
 
@@ -555,33 +575,26 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   async closeAct() {
     if (this.actForm.get('act').value == null) {
-      this.alert(
-        'error',
-        'Actas de Destino de Bienes',
-        'No Existe Ningún Acta a Cerrar.'
-      );
+      this.alert('error', this.title, 'No existe ningún acta a cerrar.');
     } else {
-      if (this.noGood == null) {
+      console.log('ENTRO A CERRAR EL ACTA');
+      const data2: any[] = await this.source2.getAll();
+      if (data2.length === 0) {
         this.alert(
           'error',
-          'Actas de Destino de Bienes',
+          this.title,
           'El Acta No Tiene Ningún Bien Asignado, No Se Puede Cerrar.'
         );
-      } else if (this.noGood != null) {
-        if (this.actForm.get('statusAct').value == 'CERRADA') {
-          this.alert(
-            'error',
-            'Actas de Destino de Bienes',
-            'El Acta ya Está Cerrada.'
-          );
-        } else {
-          const resp = await this.alertQuestion(
-            'question',
-            '¿Desea continuar?',
-            'Está Seguro que Desea Cerrar el Acta.?'
-          );
-          if (resp.isConfirmed) {
-          }
+      } else if (this.actForm.get('statusAct').value === 'CERRADA') {
+        this.alert('error', this.title, 'El Acta ya Está Cerrada.');
+      } else {
+        const resp = await this.alertQuestion(
+          'question',
+          '¿Desea continuar?',
+          'Está Seguro que Desea Cerrar el Acta.?'
+        );
+        if (resp.isConfirmed) {
+          this.updateAct();
         }
       }
     }
@@ -607,15 +620,15 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     if (good.di_disponible === 'N') {
       this.onLoadToast(
         'warning',
-        'Actas de Destino de Bienes',
-        'El bien tiene un estatus invalido para ser asignado a alguna acta'
+        this.title,
+        'El bien tiene un estatus inválido para ser asignado a alguna acta'
       );
       return false;
     }
     if (cve_act === null) {
       this.onLoadToast(
         'warning',
-        'Actas de Destino de Bienes',
+        this.title,
         'Debe registrar un acta antes de poder mover el bien'
       );
       return false;
@@ -623,7 +636,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     if (good.goodClassNumber === 62 && cve_act.substring(0, 2) !== 'NA') {
       this.onLoadToast(
         'warning',
-        'Actas de Destino de Bienes',
+        this.title,
         'Para este bien la clave de acta dede iniciar con " NA "'
       );
       return false;
@@ -635,7 +648,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     ) {
       this.onLoadToast(
         'warning',
-        'Actas de Destino de Bienes',
+        this.title,
         'En la parte de quien administra en la clave de acta debe ser para este bien " DAB "'
       );
       return false;
@@ -643,7 +656,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     if (status_act === 'CERRADA') {
       this.onLoadToast(
         'warning',
-        'Actas de Destino de Bienes',
+        this.title,
         'El acta ya esta cerrada, no puede realizar modificaciones a esta'
       );
       return false;
@@ -651,7 +664,7 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
       if (good.acta !== null) {
         this.onLoadToast(
           'warning',
-          'Actas de Destino de Bienes',
+          this.title,
           'Ese bien ya se encuentra en la acta ' + good.acta
         );
         return false;
@@ -680,27 +693,35 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   async preInsert(good: any) {
     if (this.actForm.get('statusAct').value === 'CERRADA') {
-      const data: any[] = await this.statusFinal();
-      data.forEach(element => {
-        if (element.status_final !== null) {
-          this.updateGood(good, element.status_final);
-          this.insertHistoryStatus(good, element.status_final, this.userAuth);
-        }
-      });
+      const data: any[] = await this.statusFinal(good.goodId);
+      if (data.length === 0) {
+        data.forEach(element => {
+          if (element.estatus_final !== null) {
+            this.updateGood(good, element.estatus_final);
+            this.insertHistoryStatus(
+              good,
+              element.estatus_final,
+              this.userAuth
+            );
+          }
+        });
+      }
     }
   }
   ////////// Falta que entregen esto de Back
-  statusFinal() {
+  statusFinal(goodNumber: number) {
     return new Promise<any[]>((res, rej) => {
-      const params: ListParams = {};
-      params['filter.status'] = `$eq:${this.statusFinal}`;
-      this.statusGoodService.getAll(params).subscribe({
+      const model = {
+        vcScreen: 'FACTDESACTASUTILI',
+        goodNumber,
+      };
+      this.goodprocessService.getStatusFinal(model).subscribe({
         next: (response: any) => {
-          console.log(response.data);
-          this.formTable1.get('detail').setValue(response.data[0].description);
+          res(response.data.filter((index: number) => index === 0));
         },
         error: error => {
           console.log(error);
+          res([]);
         },
       });
     });
@@ -747,9 +768,9 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
     const day = String(currentDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  //http://sigebimstest.indep.gob.mx/goodprocess/api/v1/update-good-status/getOneRegister
+
   getDisponible(goodNumber: number) {
-    return new Promise((res, rej) => {
+    return new Promise((res, _rej) => {
       const model = {
         vcScreen: 'FACTDESACTASUTILI',
         goodNumber,
@@ -763,6 +784,90 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
           res('N');
         },
       });
+    });
+  }
+
+  createDetailProceedingsDevolution(good: IGood, numberProceedings: number) {
+    const { id, quantity } = good;
+    const model: IDetailProceedingsDevollution = {
+      numberGood: id,
+      amount: quantity,
+      numberProceedings,
+    };
+    console.log(model);
+    this.proceedingService.createDetailProceedingsDevolution(model).subscribe({
+      next: (response: any) => {
+        this.getDetailProceedingsDevolution(numberProceedings);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  getDetailProceedingsDevolution(numberAct: number) {
+    this.loading2 = true;
+    let params = {
+      ...this.params2,
+      ...this.columnFilters2,
+    };
+    params['filter.numberProceedings'] = `$eq:${numberAct}`;
+    this.proceedingService.getDetailProceedingsDevolution(params).subscribe({
+      next: response => {
+        this.source2.load(response.data);
+        this.source2.refresh();
+        this.totalItems2 = response.count;
+        this.loading2 = false;
+      },
+      error: error => {
+        this.source2.load([]);
+        this.source2.refresh();
+        this.loading2 = false;
+        console.log(error);
+      },
+    });
+  }
+
+  deleteDetailProceedingsDevolution(
+    numberGood: number,
+    numberProceedings: number
+  ) {
+    const model: IDetailProceedingsDevollutionDelete = {
+      numberGood,
+      numberProceedings,
+    };
+    this.proceedingService.deleteDetailProceedingsDevolution(model).subscribe({
+      next: (response: any) => {
+        console.log(response.data);
+        this.getDetailProceedingsDevolution(numberProceedings);
+        this.alert(
+          'success',
+          this.title,
+          'Se ha eliminado el registro correctamente'
+        );
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  updateAct() {
+    const model: IProccedingsDeliveryReception = {};
+    model.closeDate = this.getCurrentDate();
+    model.statusProceedings = 'CERRADA';
+    model.id = this.idActa;
+    console.log(model);
+    this.proceedingsDetailDel.update(this.idActa, model).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.alert('success', this.title, 'El acta ha sido cerrada.');
+        this.disableClosedAct = true;
+        this.searchByExp(this.expediente);
+      },
+      error: err => {
+        this.alert('error', this.title, 'No se ha podido cerrar la acta.');
+      },
     });
   }
   ////////////////////////

@@ -246,4 +246,8 @@ export class GoodProcessService extends HttpService {
   getDisponible(model: any) {
     return this.post('update-good-status/getOneRegister', model);
   }
+
+  getStatusFinal(model: any) {
+    return this.post('update-good-status/getFinalStatus', model);
+  }
 }

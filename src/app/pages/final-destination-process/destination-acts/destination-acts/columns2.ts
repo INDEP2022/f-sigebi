@@ -1,15 +1,18 @@
 export const COLUMNS2 = {
-  id: {
+  numberGood: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  description: {
+  good: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
   },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
