@@ -161,4 +161,8 @@ export class LotService extends HttpService {
   getSumLotComerPayRef(body: { dateComer: string }, params?: string) {
     return this.post('apps/get-lot-comer-pay-ref-count', body, params);
   }
+
+  applyBaseCost(body: {}) {
+    return this.post('blk-ctr-main-l-pb-apply-when-button-pressed', body);
+  }
 }

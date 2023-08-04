@@ -14,6 +14,7 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -51,7 +52,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     private thirdPartyService: ThirdPartyService,
     private parametersModService: ParametersModService,
     private segAccessXAreas: SegAcessXAreasService,
-    private comerEventsService: ComerEventService
+    private comerEventsService: ComerEventService,
+    private lotService: LotService
   ) {
     super();
   }
@@ -310,6 +312,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       return;
     }
   }
+
+  applyCost() {}
 
   consignment() {
     const { eventTpId } = this.controls;
