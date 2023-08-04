@@ -10,12 +10,14 @@ import { ExpenseCaptureRoutingModule } from './expense-capture-routing.module';
 import { ExpenseCaptureComponent } from './expense-capture/expense-capture.component';
 import { DataReceiptComponent } from './expense-capture/expense-comercial/data-receipt/data-receipt.component';
 import { ExpenseComercialComponent } from './expense-capture/expense-comercial/expense-comercial.component';
+import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
 
 @NgModule({
   declarations: [
     ExpenseCaptureComponent,
     ExpenseComercialComponent,
     DataReceiptComponent,
+    ExpenseCompositionComponent,
   ],
   imports: [
     CommonModule,
