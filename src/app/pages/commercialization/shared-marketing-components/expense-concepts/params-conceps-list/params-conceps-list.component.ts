@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
@@ -55,6 +55,34 @@ export class ParamsConcepsListComponent
           }
         },
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['address'] && changes['address'].currentValue) {
+      const list = [{ value: 'C', title: 'GENERAL' }];
+      if (changes['address'].currentValue === 'M') {
+        list.push({ value: 'M', title: 'MUEBLES' });
+      }
+      if (changes['address'].currentValue === 'I') {
+        list.push({ value: 'I', title: 'INMUEBLES' });
+      }
+      this.settings = {
+        ...this.settings,
+        columns: {
+          ...COLUMNS,
+          address: {
+            ...COLUMNS.address,
+            filter: {
+              type: 'list',
+              config: {
+                selectText: 'Seleccionar',
+                list,
+              },
+            },
+          },
+        },
+      };
+    }
   }
 
   protected override dataNotFound() {
@@ -225,35 +253,23 @@ export class ParamsConcepsListComponent
     if (this.selectedConcept) {
       newColumnFilters['filter.conceptId'] = '$eq:' + this.selectedConcept.id;
     }
+    if (newColumnFilters['filter.description']) {
+      let description = newColumnFilters['filter.description'];
+      delete newColumnFilters['filter.description'];
+      newColumnFilters['filter.parameterFk.description'] = description;
+    }
+
     if (newColumnFilters['filter.address']) {
-      let filterAddress = this.getAddressCode(
-        (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-      );
-      let addresss = ['C'];
-      if (this.address) {
-        addresss.push(this.address);
-      }
-      if (addresss.includes(filterAddress)) {
-        newColumnFilters['filter.address'] = '$eq:' + filterAddress;
-      }
+      return {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      };
     } else {
       if (this.address) {
         newColumnFilters['filter.address'] = '$in:' + this.address + ',C';
       } else {
         newColumnFilters['filter.address'] = '$in:C';
       }
-    }
-    // if (newColumnFilters['filter.address']) {
-    //   newColumnFilters['filter.address'] =
-    //     '$eq:' +
-    //     this.getAddressCode(
-    //       (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-    //     );
-    // }
-    if (newColumnFilters['filter.description']) {
-      let description = newColumnFilters['filter.description'];
-      delete newColumnFilters['filter.description'];
-      newColumnFilters['filter.parameterFk.description'] = description;
     }
     return {
       ...this.params.getValue(),

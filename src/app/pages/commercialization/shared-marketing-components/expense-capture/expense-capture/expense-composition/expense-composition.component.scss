@@ -11,7 +11,6 @@
           }
         }
       }
-
       ng2-smart-table {
         thead {
           checkbox-filter {
@@ -22,20 +21,20 @@
               margin-left: 10px;
             }
           }
-          td:nth-child(2) {
-            ng2-smart-table-cell {
-              table-cell-edit-mode {
-                table-cell-default-editor {
-                  input-editor {
-                    input {
-                      display: none;
-                    }
-                  }
-                }
-              }
-            }
-          }
         }
+      }
+    }
+  }
+}
+
+:host ::ng-deep .hideFilters ng2-smart-table {
+  ::ng-deep {
+    .ng2-smart-filters {
+      display: none;
+    }
+    tr:last-child {
+      ng2-st-tbody-edit-delete {
+        display: none;
       }
     }
   }

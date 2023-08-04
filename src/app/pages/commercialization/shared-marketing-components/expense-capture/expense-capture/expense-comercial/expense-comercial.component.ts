@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { BasePage } from 'src/app/core/shared';
@@ -16,25 +15,8 @@ import { ExpenseCaptureDataService } from '../../services/expense-capture-data.s
 export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
-  PMONTOXMAND: string;
-  PDEVCLIENTE: string;
-  PCAMBIAESTATUS: string;
-  PCONDIVXMAND: string;
-  PCANVTA: string;
-  P_MANDCONTIPO: string;
-  PDEVPARCIAL: string;
-  PCHATMORSINFLUJOPM: string;
-  PCHATMORSINFLUJOPF: string;
-  PCHATMORSINFLUJOPFSR: string;
-  PCHATMORSINFLUJOPMSR: string;
-  PCANFACT: string;
-  PCREAFACT: string;
-  VALBIEVEND: string;
-  PNOENVIASIRSAE: string;
-  PDEVPARCIALBIEN: string;
-  PVALIDADET: string;
+
   //
-  data: IComerExpense;
   toggleInformation = true;
   reloadLote = false;
   reloadConcepto = false;
@@ -44,6 +26,14 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   ) {
     super();
     this.prepareForm();
+  }
+
+  get data() {
+    return this.dataService.data;
+  }
+
+  set data(value) {
+    this.dataService.data = value;
   }
 
   get form() {
@@ -93,80 +83,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   ngOnInit() {}
 
-  private resetParams() {
-    this.PMONTOXMAND = 'N';
-    this.PDEVCLIENTE = 'N';
-    this.PCAMBIAESTATUS = 'N';
-    this.PCONDIVXMAND = 'N';
-    this.PCANVTA = 'N';
-    this.P_MANDCONTIPO = 'N';
-    this.PDEVPARCIAL = 'N';
-    this.PCHATMORSINFLUJOPM = 'N';
-    this.PCHATMORSINFLUJOPF = 'N';
-    this.PCHATMORSINFLUJOPFSR = 'N';
-    this.PCHATMORSINFLUJOPMSR = 'N';
-    this.PCANFACT = 'N';
-    this.PCREAFACT = 'N';
-    this.VALBIEVEND = 'N';
-    this.PNOENVIASIRSAE = 'N';
-    this.PDEVPARCIALBIEN = 'N';
-    this.PVALIDADET = 'N';
-  }
-
-  private fillParams(row: IParameterConcept) {
-    if (row.parameter === 'MONTOXMAND') {
-      this.PMONTOXMAND = row.value;
-    }
-    if (row.parameter === 'DEVXCLIENTE') {
-      this.PDEVCLIENTE = row.value;
-    }
-    if (row.parameter === 'ESTATUS_NOCOMER') {
-      this.PCAMBIAESTATUS = row.value;
-    }
-    if (row.parameter === 'CONDIVXMAND') {
-      this.PCONDIVXMAND = row.value;
-    }
-    if (row.parameter === 'CANVTA') {
-      this.PCANVTA = row.value;
-    }
-    if (row.parameter === 'MANDCONTXTIPO') {
-      this.P_MANDCONTIPO = row.value;
-    }
-    if (row.parameter === 'DEVPARCIAL') {
-      this.PDEVPARCIAL = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPM') {
-      this.PCHATMORSINFLUJOPM = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPF') {
-      this.PCHATMORSINFLUJOPF = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPFSR') {
-      this.PCHATMORSINFLUJOPFSR = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPMSR') {
-      this.PCHATMORSINFLUJOPMSR = row.value;
-    }
-    if (row.parameter === 'CANFACT') {
-      this.PCANFACT = row.value;
-    }
-    if (row.parameter === 'CREAFACT') {
-      this.PCREAFACT = row.value;
-    }
-    if (row.parameter === 'VALBIEVENSP') {
-      this.VALBIEVEND = row.value;
-    }
-    if (row.parameter === 'ENVIASIRSAEMAND') {
-      this.PNOENVIASIRSAE = row.value;
-    }
-    if (row.parameter === 'DEVPARCIALBIEN') {
-      this.PDEVPARCIALBIEN = row.value;
-    }
-    if (row.parameter === 'VALIDADET') {
-      this.PVALIDADET = row.value;
-    }
-  }
-
   getParams(concept: { id: string }) {
     const filterParams = new FilterParams();
     filterParams.limit = 100000;
@@ -178,9 +94,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         next: response => {
           if (response && response.data) {
             if (response.count > 5 || concept.id === '324') {
-              this.resetParams();
+              this.dataService.resetParams();
               response.data.forEach(row => {
-                this.fillParams(row);
+                this.dataService.fillParams(row);
               });
               return;
             }
@@ -203,6 +119,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   fillForm(event: IComerExpense) {
     console.log(event);
     this.data = event;
+    this.dataService.updateExpenseComposition.next(true);
     this.conceptNumber.setValue(event.conceptNumber);
     if (event.conceptNumber) this.getParams({ id: event.conceptNumber });
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
