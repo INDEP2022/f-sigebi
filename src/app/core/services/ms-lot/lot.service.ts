@@ -162,19 +162,21 @@ export class LotService extends HttpService {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 
-  getSumLotComerPayRef(body: {dateComer: string, clientId: string, eventId: string}){
-    return this.post('apps/get-lot-comer-pay-ref-count', body)
+  getSumLotComerPayRef(body: {
+    dateComer: string;
+    clientId: string;
+    eventId: string;
+  }) {
+    return this.post('apps/get-lot-comer-pay-ref-count', body);
   }
 
-  getSumAllComerPayRef(body: {clientId: string, eventId: string}){
-    return this.post('apps/get-lot-comer-pay-ref-countAll', body)
+  getSumAllComerPayRef(body: { clientId: string; eventId: string }) {
+    return this.post('apps/get-lot-comer-pay-ref-countAll', body);
   }
 
   btnEjecutar(body: any) {
     return this.post(LotEndpoints.pupEntar, body);
   }
-
-  
 
   applyBaseCost(body: {
     cotobase: string | number;

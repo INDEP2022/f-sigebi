@@ -130,18 +130,21 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                   count = count + 1;
                   this.goodServices.getById(good.goodNumber).subscribe({
                     next: response => {
-                      console.log(response)
-                      const newGoodId = JSON.parse(JSON.stringify(response)).data[0].goodId;
-                      console.log(newGoodId)
-                      const exists = this.goods.some((e) => e.goodId === newGoodId);
-                      console.log(exists)
-                      if(!exists){
+                      console.log(response);
+                      const newGoodId = JSON.parse(JSON.stringify(response))
+                        .data[0].goodId;
+                      console.log(newGoodId);
+                      const exists = this.goods.some(
+                        e => e.goodId === newGoodId
+                      );
+                      console.log(exists);
+                      if (!exists) {
                         this.goods.push({
                           ...JSON.parse(JSON.stringify(response)).data[0],
                           avalaible: null,
                         });
                       }
-                      
+
                       console.log(this.goods);
                       this.addStatus();
                       /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
@@ -281,7 +284,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                 });
                 //Pintar la fila no_disponible
               } else if (count > 0) {
-                good.avalaible = true;;
+                good.avalaible = true;
                 this.availableToUpdate.push({
                   goodId: good.goodId,
                   message: 'disponible para actualizar',
