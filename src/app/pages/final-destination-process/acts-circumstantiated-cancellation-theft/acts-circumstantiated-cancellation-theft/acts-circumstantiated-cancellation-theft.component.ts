@@ -17,6 +17,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -88,6 +89,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   statusGood_: any;
   formTable1: FormGroup;
   formFind: FormGroup;
+  loadingExcel: boolean = true;
   totalItems2: number = 0;
   loading2: boolean = false;
   goods: string;
@@ -107,6 +109,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   disabledBtnActas: boolean = true;
   actaGoodForm: FormGroup;
   formTag: FormGroup;
+  actaReception: IProceduremanagement;
   gTramite: IProceduremanagement[] = [];
   statusCanc: string | number = '';
   expedient: IExpedient;
@@ -155,6 +158,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private expedientService: ExpedientService,
     private goodService: GoodService,
     private screenStatusService: ScreenStatusService,
+    private excelService: ExcelService,
     private procedureManagementService: ProcedureManagementService,
     protected modalService: BsModalService,
     private GoodprocessService_: GoodprocessService,
@@ -350,6 +354,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   ngOnInit(): void {
+    this.actaReception = this.actasDefault;
     this.goodForm();
     this.actaForm();
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
@@ -655,6 +660,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
       //   next.dateElaborationReceipt,
       //   'dd/MM/yyyy'
       // );
+      this.to = this.datePipe.transform(
+        this.actaRecepttionForm.controls['mes'].value,
+        'MM/yyyy'
+      );
+      this.annio = this.datePipe.transform(
+        this.actaRecepttionForm.controls['anio'].value,
+        'MM/yyyy'
+      );
       this.statusCanc = next.statusProceedings;
       if (this.statusCanc == 'CERRADA') {
         this.disabledBtnCerrar = false;
@@ -673,22 +686,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
         type: next.idTypeProceedings,
         claveTrans: next.numTransfer,
         cveActa: next.keysProceedings,
-        // mes: next.dateElaborationReceipt,
+        mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
-        // anio: new Date(next.dateElaborationReceipt),
+        anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
-        // parrafo1: next.parrafo1,
+        parrafo1: next.parrafo1,
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-      this.to = this.datePipe.transform(
-        this.actaRecepttionForm.controls['mes'].value,
-        'MM/yyyy'
-      );
-      this.annio = this.datePipe.transform(
-        this.actaRecepttionForm.controls['anio'].value,
-        'MM/yyyy'
-      );
+
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
       // this.getActasByConversion(next.cve_acta_conv);
     });
@@ -1312,22 +1318,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
                   .editProceeding(this.actasDefault.id, this.actasDefault)
                   .subscribe({
                     next: async data => {
-                      let objConver: any = {
-                        id: Number(this.expedient.circumstantialRecord),
-                        statusConv: 3,
-                        cveActa: this.actaRecepttionForm.value.cveActa,
-                      };
-                      // this.convertiongoodService
-                      //   .update(this.expedient.circumstantialRecord, objConver)
-                      //   .subscribe({
-                      //     next: resp => {
-                      //       this.cveActa =
-                      //         this.actaRecepttionForm.value.cveActa;
-                      //       console.log('SIIII', resp);
-                      //     },
-                      //     error: error => { },
-                      //   });
-                      // this.loading = false;
+                      this.loading = false;
+                      console.log(data);
                       let obj = {
                         pActaNumber: this.actasDefault.id,
                         pStatusActa: 'CERRADA',
@@ -1343,7 +1335,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                         'Se Cerró el Acta Correctamente',
                         ''
                       );
-                      // this.alert('success', 'Acta cerrada', '');
+                      this.alert('success', 'Acta cerrada', '');
                       this.disabledBtnCerrar = false;
                       this.disabledBtnActas = false;
                       this.getGoodsByStatus(this.fileNumber);
@@ -1443,6 +1435,19 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'Debe tener el folio en pantalla para poder imprimir'
       );
     }
+  }
+  exportToExcel() {
+    this.loadingExcel = true;
+    if (this.cveActa == 'null' && this.fileNumber == null) {
+      this.alert('info', 'Necesitas un número de expedientes con acta', '');
+      this.loadingExcel = false;
+      return;
+    }
+    const filename: string =
+      this.authService.decodeToken().preferred_username + '-ActaporRobo';
+    // El type no es necesario ya que por defecto toma 'xlsx'
+    this.loading = false;
+    this.excelService.export(this.dataRecepcion, { filename });
   }
 }
 // confirm() {
