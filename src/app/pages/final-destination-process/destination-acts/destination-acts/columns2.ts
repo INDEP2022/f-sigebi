@@ -1,5 +1,5 @@
 export const COLUMNS2 = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -9,7 +9,7 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,

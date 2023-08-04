@@ -92,7 +92,7 @@ export class ExpenseConceptsListModalComponent
             this.alert(
               'success',
               'Edición de Concepto de Pago ' + body.id,
-              'Actualizado correctamente'
+              'Actualizado Correctamente'
             );
             this.modalRef.content.callback(true);
             this.modalRef.hide();

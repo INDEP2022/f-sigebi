@@ -13,6 +13,9 @@ export const EVENT_COLUMNS = {
     valuePrepareFunction: (cell: any, row: any) => {
       return cell.processKey;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
   },
   customerBmx: {
     title: 'Cliente Bmx',
