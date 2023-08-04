@@ -1643,6 +1643,7 @@ export class PerformProgrammingFormComponent
             typeTransportable: 'guard',
             typeTrans: 'massive',
             delegation: this.delegationId,
+            idTransferent: this.dataProgramming.tranferId,
             callback: async (_data: any) => {
               if (_data) {
                 let tranferent: number = 0;
