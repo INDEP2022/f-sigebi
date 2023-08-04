@@ -197,27 +197,34 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
-        let result = response.data.map(async (item: any) => {
-          // const client: any = await this.getClients(item.clientId);
-          item['rfc'] = item.customers ? item.customers.rfc : null;
-          item['name'] = item.customers ? item.customers.nomRazon : null;
-          item['event'] = item.lots ? item.lots.idEvent : null;
-          item['lotPub'] = item.lots ? item.lots.lotPublic : null;
-          item['move'] = item.ctrl ? item.ctrl.description : null;
-          item['idAndName'] = item.customers
-            ? item.customers.idClient + ' - ' + item.customers.nomRazon
-            : null;
-
-          item['bankAndNumber'] = item.ctrl
-            ? item.ctrl.code + ' - ' + item.ctrl.cveBank
-            : null;
-        });
-        Promise.all(result).then(resp => {
-          this.data.load(response.data);
+        if (response.count == 0) {
+          this.data.load([]);
           this.data.refresh();
-          this.totalItems = response.count;
+          this.totalItems = 0;
           this.loading = false;
-        });
+        } else {
+          let result = response.data.map(async (item: any) => {
+            // const client: any = await this.getClients(item.clientId);
+            item['rfc'] = item.customers ? item.customers.rfc : null;
+            item['name'] = item.customers ? item.customers.nomRazon : null;
+            item['event'] = item.lots ? item.lots.idEvent : null;
+            item['lotPub'] = item.lots ? item.lots.lotPublic : null;
+            item['move'] = item.ctrl ? item.ctrl.description : null;
+            item['idAndName'] = item.customers
+              ? item.customers.idClient + ' - ' + item.customers.nomRazon
+              : null;
+
+            item['bankAndNumber'] = item.ctrl
+              ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+              : null;
+          });
+          Promise.all(result).then(resp => {
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          });
+        }
       },
       error: error => {
         this.data.load([]);

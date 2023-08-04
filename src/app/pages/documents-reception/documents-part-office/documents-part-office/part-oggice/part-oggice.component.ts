@@ -961,7 +961,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   viewPictures() {
     if (!this.selectedRow?.flierNumber) {
-      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      this.onLoadToast('warning', 'Atención', NO_FLYER_NUMBER);
       return;
     }
     this.getDocumentsByFlyer(this.selectedRow.flierNumber);
@@ -1016,7 +1016,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   turnPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un trámite');
+      this.onLoadToast('warning', 'Atención', 'Primero selecciona un trámite');
       return;
     }
     // TODO: descomentar cuando los permisos esten habilitados
@@ -1043,7 +1043,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   async onCancelPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('warning', 'Atención', 'Primero selecciona un tramite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1059,7 +1059,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   async onFinishPaperwork() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero selecciona un tramite');
+      this.onLoadToast('warning', 'Atención', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1139,7 +1139,7 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   scanDocuments() {
     if (!this.selectedRow?.flierNumber) {
-      this.onLoadToast('error', 'Error', NO_FLYER_NUMBER);
+      this.onLoadToast('warning', 'Atención', NO_FLYER_NUMBER);
       return;
     }
     const title = RELATED_FOLIO_TITLE;
@@ -1167,13 +1167,13 @@ export class PartOggiceComponent extends BasePage implements OnInit {
 
   replicate() {
     if (!this.selectedRow) {
-      this.onLoadToast('error', 'Error', 'Primero elige un trámite');
+      this.onLoadToast('warning', 'Atención', 'Primero elige un trámite');
       return;
     }
     if (!this.selectedRow.flierNumber) {
       this.onLoadToast(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'El trámite no tiene un número de volante'
       );
       return;
@@ -1184,8 +1184,8 @@ export class PartOggiceComponent extends BasePage implements OnInit {
         this.getNotificationByFlyer().subscribe(notification => {
           if (!notification) {
             this.alert(
-              'error',
-              'Error',
+              'warning',
+              'Atención',
               'No existe un folio universal escaneado para replicar'
             );
             return;
@@ -1197,8 +1197,8 @@ export class PartOggiceComponent extends BasePage implements OnInit {
             this.getDocumentsByFlyers(flyers.join(',')).subscribe(documents => {
               if (!documents.data[0]) {
                 this.alert(
-                  'error',
-                  'Error',
+                  'warning',
+                  'Atención',
                   'No existe un folio universal escaneado para replicar'
                 );
                 return;

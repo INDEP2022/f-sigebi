@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 
+interface IValidateStatus {
+  val: string | number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -158,7 +162,37 @@ export class LotService extends HttpService {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 
+  btnEjecutar(body: any) {
+    return this.post(LotEndpoints.pupEntar, body);
+  }
+
   getSumLotComerPayRef(body: { dateComer: string }, params?: string) {
     return this.post('apps/get-lot-comer-pay-ref-count', body, params);
+  }
+
+  applyBaseCost(body: {
+    cotobase: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post('apps/blk-ctr-main-l-pb-apply-when-button-pressed', body);
+  }
+
+  validateStatusCPV(eventId: string | number) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query1',
+      { eventId }
+    );
+  }
+
+  afterRemoveGoods(body: {
+    goodId: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query2',
+      body
+    );
   }
 }
