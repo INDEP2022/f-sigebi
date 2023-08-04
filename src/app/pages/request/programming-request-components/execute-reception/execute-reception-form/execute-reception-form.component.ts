@@ -2523,7 +2523,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
                     this.goodsGuards.clear();
-                    //this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
                     this.totalItemsGuard = 0;
                     this.paramsGuardGoods
@@ -2592,7 +2592,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   if (updateGood) {
                     this.goodsWarehouse.clear();
                     this.totalItemsWarehouse = 0;
-                    //this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
                     this.selectGood = [];
                     this.paramsGoodsWarehouse
                       .pipe(takeUntil(this.$unSubscribe))
@@ -3229,6 +3229,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         guardReception: this.goodsReception,
         callback: (next: boolean) => {
           if (next) {
+            this.goodsReception.clear();
             if (typeFirm != 'electronica') {
               this.uplodadReceiptDelivery();
             } else {
