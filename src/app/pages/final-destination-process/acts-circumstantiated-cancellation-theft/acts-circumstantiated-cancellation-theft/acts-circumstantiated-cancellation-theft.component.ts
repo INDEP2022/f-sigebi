@@ -71,6 +71,38 @@ import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/e
       }
     `,
   ],
+  styles: [
+    `
+      :host ::ng-deep form-radio .form-group {
+        margin: 0;
+        padding-bottom: 0;
+        padding-top: 0;
+      }
+      .disabled[disabled] {
+        color: red;
+      }
+      .disabled-input {
+        color: #939393;
+        pointer-events: none;
+      }
+      #bienes table:not(.normal-hover) tbody tr:hover {
+        color: black !important;
+        font-weight: bold;
+      }
+      .row-verde {
+        background-color: green;
+        font-weight: bold;
+      }
+
+      .row-negro {
+        background-color: black;
+        font-weight: bold;
+      }
+      .registros-movidos {
+        background-color: yellow;
+      }
+    `,
+  ],
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
@@ -78,6 +110,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
 {
   response: boolean = false;
   form: FormGroup;
+  selectedRow: IGood;
+  statusGood_: any;
   selectedRow: IGood;
   statusGood_: any;
   formTable1: FormGroup;
@@ -103,9 +137,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formTag: FormGroup;
   gTramite: IProceduremanagement[] = [];
   statusCanc: string | number = '';
+  gTramite: IProceduremanagement[] = [];
+  statusCanc: string | number = '';
   expedient: IExpedient;
   validateEx: boolean = true;
   loadingExpedient: boolean = false;
+  screenKey = 'FACTCIRCUNR_0001';
+  dataRecepcionGood: LocalDataSource = new LocalDataSource();
   screenKey = 'FACTCIRCUNR_0001';
   dataRecepcionGood: LocalDataSource = new LocalDataSource();
   bsValueFromYear: Date = new Date();
@@ -117,6 +155,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -125,11 +164,18 @@ export class ActsCircumstantiatedCancellationTheftComponent
   aprevia: string = '';
   causa: string = '';
   annio: string = '';
+  annio: string = '';
   noExpediente: number = 0;
+  fileNumber: number;
   fileNumber: number;
   columnFilters: any = [];
   columnFilters2: any = [];
   dataTableGood_: any[] = [];
+  cveActa: string = '';
+  to: string = '';
+  from: string = '';
+  time = new Date();
+  dateElaboration: string = '';
   cveActa: string = '';
   to: string = '';
   from: string = '';
@@ -442,7 +488,40 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // witness2: [null],
     });
   }
+  private actaForm() {
+    this.actaRecepttionForm = this.fb.group({
+      acta: [null],
+      type: [null],
+      claveTrans: [null],
+      direccion: [null],
+      administra: [null],
+      cveReceived: [null],
+      consec: [null],
+      fechaCaptura: [null],
+      anio: [null],
+      mes: [null],
+      receive: [null],
+      ident: [null],
+      cveActa: [null],
+      observaciones: [null],
+      testigoOIC: [null],
+      testigoTwo: [null],
+      testigoTree: [null],
+      respConv: [null],
+      parrafo1: [null],
+      parrafo2: [null],
+      parrafo3: [null],
+      // witness1: [null],
+      // witness2: [null],
+    });
+  }
 
+  goodForm() {
+    this.actaGoodForm = this.fb.group({
+      goodId: [null],
+      statusGood: [null],
+    });
+  }
   goodForm() {
     this.actaGoodForm = this.fb.group({
       goodId: [null],
