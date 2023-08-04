@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -34,15 +35,14 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
-import { format } from 'date-fns';
 
 @Component({
   selector: 'app-dispersion-payment',
   templateUrl: './dispersion-payment.component.html',
   styles: [
     `
-    input.loading:after{
-      content: '';
+      input.loading:after {
+        content: '';
         display: inline-block;
         width: 12px;
         height: 12px;
@@ -53,14 +53,14 @@ import { format } from 'date-fns';
         animation: spin 0.8s linear infinite;
         margin-left: 5px;
         vertical-align: middle;
-    }
-    
-    @keyframes spin {
+      }
+
+      @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
-    `
+    `,
   ],
 })
 export class DispersionPaymentComponent extends BasePage implements OnInit {
@@ -650,17 +650,17 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
   selectRowClientEvent(e: any) {
     console.log(e.data);
-    this.loadingCustomerBanks = true
+    this.loadingCustomerBanks = true;
     this.getPaymentByCustomer(e.data.ClientId);
   }
 
   //SELECCIONAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
   selectRowLotsEvent(e: any) {
     console.log(e.data);
-    this.formLotEvent.get('finalPrice').setValue(e.data.finalPrice)
-    this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice)
-    this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount)
-    this.formLotEvent.get('txtCancel').setValue(e.data.txtCan)
+    this.formLotEvent.get('finalPrice').setValue(e.data.finalPrice);
+    this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice);
+    this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount);
+    this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
     this.getLotsBanks(e.data.lotId);
     this.getPaymentLots(e.data.lotId);
   }
@@ -683,20 +683,24 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.totalItemsCustomerBanks = 0;
       }
     );
-    
-    const model = {
-      dateComer: format(this.dateMaxWarranty.value, 'yyyy-MM-dd')
-    }
 
-    this.comerLotsService.getSumLotComerPayRef(model, paramsF.getParams()).subscribe(
-      res => {
-        console.log(res)
-        this.formCustomerBanks.get('validAmount').setValue(res.data[0].suma_total)
-      },
-      err => {
-        console.log(err)
-      }
-    )
+    const model = {
+      dateComer: format(this.dateMaxWarranty.value, 'yyyy-MM-dd'),
+    };
+
+    this.comerLotsService
+      .getSumLotComerPayRef(model, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.formCustomerBanks
+            .get('validAmount')
+            .setValue(res.data[0].suma_total);
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE

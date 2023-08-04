@@ -45,6 +45,10 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
               case 'eventId':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'eatEventDetail':
+                field = `filter.${filter.field}.processKey`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
               case 'customerBmx':
                 searchFilter = SearchFilter.EQ;
                 break;
@@ -67,11 +71,26 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
+
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
             } else {
               delete this.columnFilters[field];
             }
+            /*if (filter.search !== '') {
+              if (filter.field === 'eatEventDetail') {
+                this.columnFilters[
+                  'filter.eatEventDetail.processKey'
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+            } else {
+              delete this.columnFilters[field];
+            }*/
           });
           this.params = this.pageFilter(this.params);
           this.getDeductives();
@@ -118,7 +137,13 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
           this.totalItems = 0;
         }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        //this.loading = false
+      },
     });
   }
 }
