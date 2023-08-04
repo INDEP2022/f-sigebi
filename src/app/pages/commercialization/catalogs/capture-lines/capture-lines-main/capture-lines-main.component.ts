@@ -31,7 +31,6 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDeductives();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -55,6 +54,10 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 break;
               case 'userCreated':
                 searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'eatEventDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.processKey`;
                 break;
               case 'creationDate':
                 if (filter.search != null) {
@@ -121,12 +124,18 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
     };
     this.capturelineService.getAll2(params).subscribe({
       next: response => {
-        this.captureLinesMain = response.data;
-        this.data.load(response.data);
-        console.log(this.data);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        if (response.count > 0) {
+          this.captureLinesMain = response.data;
+          this.data.load(response.data);
+          console.log(this.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        } else {
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+        }
       },
       error: error => {
         this.loading = false;

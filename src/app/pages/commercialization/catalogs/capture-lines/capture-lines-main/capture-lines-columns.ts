@@ -8,13 +8,18 @@ export const EVENT_COLUMNS = {
   },
   eatEventDetail: {
     title: 'Clave Procedimiento',
-    type: 'string',
+    // type: 'string',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return cell.processKey;
     },
     filterFunction(cell?: any, search?: string): boolean {
-      return true;
+      let column = cell.processKey;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
   customerBmx: {
@@ -29,7 +34,7 @@ export const EVENT_COLUMNS = {
   },
   creationDate: {
     title: 'Fecha',
-    type: 'string',
+    type: 'html',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       const parts = cell.split('-');

@@ -242,7 +242,7 @@ export class GoodService extends HttpService {
     // if (params) {
     //   params['expedient'] = expedient;
     // }
-    const route = `${GoodEndpoints.SearchByExpedient}?expedient=${expedient}`;
+    const route = `${GoodEndpoints.SearchByExpedient}/${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
 
