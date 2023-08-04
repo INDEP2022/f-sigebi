@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -8,17 +9,21 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -31,46 +36,15 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import * as XLSX from 'xlsx';
 import { COPY } from '../acts-cir-columns';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
-import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
+//import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
-  styles: [
-    `
-      :host ::ng-deep form-radio .form-group {
-        margin: 0;
-        padding-bottom: 0;
-        padding-top: 0;
-      }
-      .disabled[disabled] {
-        color: red;
-      }
-      .disabled-input {
-        color: #939393;
-        pointer-events: none;
-      }
-      #bienes table:not(.normal-hover) tbody tr:hover {
-        color: black !important;
-        font-weight: bold;
-      }
-      .row-verde {
-        background-color: green;
-        font-weight: bold;
-      }
-
-      .row-negro {
-        background-color: black;
-        font-weight: bold;
-      }
-      .registros-movidos {
-        background-color: yellow;
-      }
-    `,
-  ],
   styles: [
     `
       :host ::ng-deep form-radio .form-group {
@@ -112,8 +86,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   form: FormGroup;
   selectedRow: IGood;
   statusGood_: any;
-  selectedRow: IGood;
-  statusGood_: any;
   formTable1: FormGroup;
   formFind: FormGroup;
   totalItems2: number = 0;
@@ -137,13 +109,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formTag: FormGroup;
   gTramite: IProceduremanagement[] = [];
   statusCanc: string | number = '';
-  gTramite: IProceduremanagement[] = [];
-  statusCanc: string | number = '';
   expedient: IExpedient;
   validateEx: boolean = true;
   loadingExpedient: boolean = false;
-  screenKey = 'FACTCIRCUNR_0001';
-  dataRecepcionGood: LocalDataSource = new LocalDataSource();
   screenKey = 'FACTCIRCUNR_0001';
   dataRecepcionGood: LocalDataSource = new LocalDataSource();
   bsValueFromYear: Date = new Date();
@@ -155,7 +123,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
   paramsList2 = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -164,9 +131,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   aprevia: string = '';
   causa: string = '';
   annio: string = '';
-  annio: string = '';
   noExpediente: number = 0;
-  fileNumber: number;
   fileNumber: number;
   columnFilters: any = [];
   columnFilters2: any = [];
@@ -176,13 +141,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
   from: string = '';
   time = new Date();
   dateElaboration: string = '';
-  cveActa: string = '';
-  to: string = '';
-  from: string = '';
-  time = new Date();
-  dateElaboration: string = '';
   dataTableGood: LocalDataSource = new LocalDataSource();
   bienes: IGood[] = [];
+  folioScan: number;
+  loadingDoc: boolean = false;
+  invoiceDetailsForm: ModelForm<any>;
+  dataDelivery: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
@@ -198,6 +163,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private router: Router,
     private statusGoodService: StatusGoodService,
     private changeDetectorRef: ChangeDetectorRef,
+    private jasperService: SiabService,
+    private sanitizer: DomSanitizer,
     private authService: AuthService,
     private usersService: UsersService
   ) {
@@ -488,40 +455,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // witness2: [null],
     });
   }
-  private actaForm() {
-    this.actaRecepttionForm = this.fb.group({
-      acta: [null],
-      type: [null],
-      claveTrans: [null],
-      direccion: [null],
-      administra: [null],
-      cveReceived: [null],
-      consec: [null],
-      fechaCaptura: [null],
-      anio: [null],
-      mes: [null],
-      receive: [null],
-      ident: [null],
-      cveActa: [null],
-      observaciones: [null],
-      testigoOIC: [null],
-      testigoTwo: [null],
-      testigoTree: [null],
-      respConv: [null],
-      parrafo1: [null],
-      parrafo2: [null],
-      parrafo3: [null],
-      // witness1: [null],
-      // witness2: [null],
-    });
-  }
 
-  goodForm() {
-    this.actaGoodForm = this.fb.group({
-      goodId: [null],
-      statusGood: [null],
-    });
-  }
   goodForm() {
     this.actaGoodForm = this.fb.group({
       goodId: [null],
@@ -676,6 +610,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
       FindAllExpedientComponent,
       modalConfig
     );
+    // ocultar loading
+    modalRef.onHidden.subscribe(() => {
+      this.loadingExpedient = false;
+    });
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
       this.getExpedient(next.id);
@@ -1194,10 +1132,52 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   actualizarActa() {}
   cleanActa() {}
-  cargueMasive() {}
+
+  cargueMasive() {
+    const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
+      skipHeader: true,
+    });
+    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
+    this.cleanPlaceholder('nameFileA', 'reporteEntrega.xlsx');
+    XLSX.writeFile(workBook, 'reporteEntrega.xlsx');
+  }
+
+  cleanPlaceholder(element: string, newMsg: string) {
+    const nameFile = document.getElementById(element) as HTMLInputElement;
+    nameFile.placeholder = `${newMsg}`;
+  }
+
   btnDetail() {}
   sendOffice() {}
-  Generar() {}
+
+  Scanner() {
+    if (this.actaRecepttionForm.get('consec').value) {
+      this.alertQuestion(
+        'info',
+        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.router.navigate([`/pages/general-processes/scan-documents`], {
+            queryParams: {
+              origin: 'FACTCIRCUNR_0001',
+              folio: this.actaRecepttionForm.get('consec').value,
+            },
+          });
+        }
+      });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+        ''
+      );
+    }
+  }
   agregarActa() {
     const responsable = this.actaRecepttionForm.get('respConv').value;
     const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
@@ -1412,40 +1392,57 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
     }
   }
-
-  updateGoodEInsertHistoric(good: any) {
-    return new Promise((resolve, reject) => {
-      this.proceedingsDeliveryReceptionService
-        .updateGoodEInsertHistoric(good)
-        .subscribe({
-          next: (resp: any) => {
-            resolve(true);
-          },
-          error: (error: any) => {
-            resolve(false);
-          },
-        });
-    });
+  updateGoodEInsertHistoric(obj: {
+    pActaNumber: any;
+    pStatusActa: string;
+    pVcScreen: string;
+    pUser: string;
+  }) {
+    throw new Error('Method not implemented.');
   }
 
-  getScreenStatus(good: any) {
-    let obj = {
-      estatus: good.status,
-      vc_pantalla: 'FACTCIRCUNR_0001',
+  Generar() {
+    let params = {
+      PN_FOLIO: this.actaRecepttionForm.get('consec').value,
     };
-
-    // console.log('re', obj);
-    return new Promise((resolve, reject) => {
-      this.screenStatusService.getAllFiltro_(obj).subscribe({
-        next: (resp: any) => {
-          console.log('RFI', resp);
-          resolve(resp.data[0].statusFinal);
-        },
-        error: (error: any) => {
-          resolve(null);
-        },
-      });
-    });
+    if (params.PN_FOLIO) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', params)
+          .pipe(
+            tap(response => {
+              /*  this.alert(
+                  'success',
+                  'Generado correctamente',
+                  'Generado correctamente con folio: ' + this.folioScan
+                );*/
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe tener el folio en pantalla para poder imprimir'
+      );
+    }
   }
 }
 // confirm() {
