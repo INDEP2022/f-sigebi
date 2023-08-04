@@ -12,6 +12,7 @@
         [eventFormVisual]="eventFormVisual"
         *ngIf="canvas.main"
         [eventForm]="eventForm"
+        [isOpenEvent]="true"
         [parameters]="parameters"
         [loggedUser]="loggedUser"></event-data-form>
     </div>
@@ -103,7 +104,8 @@
               [preparation]="preparation"
               (exit)="exitConsignment($event)"
               [parameters]="parameters"
-              [eventForm]="eventForm"></consigments-container>
+              [eventForm]="eventForm"
+              [parentLot]="lotSelected"></consigments-container>
           </tab>
           <tab (selectTab)="viewBase()">
             <ng-template tabHeading>

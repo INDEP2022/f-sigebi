@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -145,6 +146,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       evet: [null],
       startTime: [null],
       celebrates: [null],
+      closingDate: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -154,7 +156,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('acta', response);
         this.infoForm.get('nameWorker1').setValue(response.data[0].nameWorker1);
 
         if (response.data[0].electronicSignatureWorker1 == 1) {
@@ -324,6 +325,10 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     }
 
     this.infoForm.get('startTime').setValue(this.horaActual);
+    this.infoForm
+      .get('closingDate')
+      .setValue(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
+
     this.infoForm.get('idPrograming').setValue(this.programming.id);
 
     if (
@@ -410,9 +415,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           );
           //this.processInfoProceeding();
         },
-        error: error => {
-          console.log('errror update', error);
-        },
+        error: error => {},
       });
     } else if (
       this.infoForm.get('electronicSignatureWorker1').value == 1 &&
@@ -433,9 +436,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           );
           //this.processInfoProceeding();
         },
-        error: error => {
-          console.log('errror update', error);
-        },
+        error: error => {},
       });
     }
 
@@ -467,7 +468,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         });
 
         let token = this.authService.decodeToken();
-        console.log('goodId', this.goodId);
+
         const modelReport: IReceipyGuardDocument = {
           keyDoc: this.receiptGuards.id,
           autografos: true,
@@ -497,7 +498,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
-        console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
       error: error => {},

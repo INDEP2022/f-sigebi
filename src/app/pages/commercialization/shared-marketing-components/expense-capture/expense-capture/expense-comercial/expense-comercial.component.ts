@@ -1,18 +1,43 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
+import { takeUntil } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
+import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { BasePage } from 'src/app/core/shared';
+import { secondFormatDateToDate } from 'src/app/shared/utils/date';
+import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
 
 @Component({
   selector: 'app-expense-comercial',
   templateUrl: './expense-comercial.component.html',
   styleUrls: ['./expense-comercial.component.scss'],
 })
-export class ExpenseComercialComponent implements OnInit {
+export class ExpenseComercialComponent extends BasePage implements OnInit {
+  // params
   @Input() address: string;
-  form: FormGroup;
+
+  //
   toggleInformation = true;
-  constructor(private fb: FormBuilder) {
+  reloadLote = false;
+  reloadConcepto = false;
+  constructor(
+    private dataService: ExpenseCaptureDataService,
+    private parameterService: ParametersConceptsService
+  ) {
+    super();
     this.prepareForm();
+  }
+
+  get data() {
+    return this.dataService.data;
+  }
+
+  set data(value) {
+    this.dataService.data = value;
+  }
+
+  get form() {
+    return this.dataService.form;
   }
 
   get expenseNumber() {
@@ -52,30 +77,86 @@ export class ExpenseComercialComponent implements OnInit {
     return this.form.get('descurcoord');
   }
 
+  get comment() {
+    return this.form.get('comment');
+  }
+
   ngOnInit() {}
 
+  getParams(concept: { id: string }) {
+    const filterParams = new FilterParams();
+    filterParams.limit = 100000;
+    filterParams.addFilter('conceptId', concept.id);
+    this.parameterService
+      .getAll(filterParams.getParams())
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: response => {
+          if (response && response.data) {
+            if (response.count > 5 || concept.id === '324') {
+              this.dataService.resetParams();
+              response.data.forEach(row => {
+                this.dataService.fillParams(row);
+              });
+              return;
+            }
+          }
+          this.alert('error', 'El concepto no está parametrizado', '');
+        },
+        error: err => {
+          this.alert('error', 'El concepto no está parametrizado', '');
+        },
+      });
+  }
+
+  reloadLoteEvent(event: any) {
+    console.log(event);
+    setTimeout(() => {
+      this.reloadLote = !this.reloadLote;
+    }, 500);
+  }
+
+  fillForm(event: IComerExpense) {
+    console.log(event);
+    this.data = event;
+    this.dataService.updateExpenseComposition.next(true);
+    this.conceptNumber.setValue(event.conceptNumber);
+    if (event.conceptNumber) this.getParams({ id: event.conceptNumber });
+    this.paymentRequestNumber.setValue(event.paymentRequestNumber);
+    this.idOrdinginter.setValue(event.idOrdinginter);
+    this.folioAtnCustomer.setValue(event.folioAtnCustomer);
+
+    this.dateOfResolution.setValue(
+      event.dateOfResolution
+        ? secondFormatDateToDate(event.dateOfResolution)
+        : null
+    );
+    this.comment.setValue(event.comment);
+    // this.reloadConcepto = !this.reloadConcepto;
+  }
+
   private prepareForm() {
-    this.form = this.fb.group({
-      expenseNumber: [
-        null,
-        [Validators.required, Validators.pattern(NUM_POSITIVE)],
-      ],
-      conceptNumber: [null, [Validators.required]],
-      paymentRequestNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
-      idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
-      eventNumber: [null],
-      lotNumber: [null],
-      folioAtnCustomer: [null, [Validators.pattern(NUM_POSITIVE)]],
-      dateOfResolution: [null],
-      clkpv: [null],
-      descurcoord: [null],
-    });
+    this.dataService.prepareForm();
+  }
+
+  get pathComerExpenses() {
+    return (
+      'spent/api/v1/comer-expenses' +
+      (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
+    );
+  }
+
+  get pathConcept() {
+    return (
+      'comerconcepts/api/v1/concepts/get-all' +
+      (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
+    );
   }
 
   get pathEvent() {
     return (
       'prepareevent/api/v1/comer-event/getProcess' +
-      (this.address ? '?filter.id=' + this.address : '')
+      (this.address ? '?filter.id=' + this.address + ',C' : 'C')
     );
   }
 
@@ -87,4 +168,6 @@ export class ExpenseComercialComponent implements OnInit {
         : '')
     );
   }
+
+  sendToSIRSAE() {}
 }

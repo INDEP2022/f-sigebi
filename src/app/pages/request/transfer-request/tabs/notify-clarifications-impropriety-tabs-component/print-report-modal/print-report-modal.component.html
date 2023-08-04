@@ -76,22 +76,26 @@
               selectedRow?.rfcUser != null &&
               selectedRow?.validationocsp == 'true'
             ">
-            <button class="btn btn-primary btn-sm active" (click)="sendSign()">
+            <confirm-button
+              [text]="'Enviar a firmar'"
+              [loadingText]="'Firmando'"
+              [loading]="loadingButton"
+              [btnSmall]="true"
+              [icon]="'bx bxs-right-arrow-square'"
+              (confirm)="sendSign()"></confirm-button>
+
+            <!-- <button class="btn btn-primary btn-sm active" (click)="sendSign()">
               <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
-            </button>
+            </button> -->
           </div>
           <div class="p-2">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="backStep()">
-              <i class="bx bx-left-arrow-alt"></i> Anterior Paso
+            <button class="btn btn-primary btn-sm active" (click)="backStep()">
+              <i class="bx bx-left-arrow-alt"></i> Paso Anterior
             </button>
           </div>
           <div class="p-2" *ngIf="msjCheck == true">
-            <button
-              class="btn btn-secondary btn-sm active"
-              (click)="nextStep()">
-              <i class="bx bx-right-arrow-alt"></i> Siguiente Paso
+            <button class="btn btn-primary btn-sm active" (click)="nextStep()">
+              Paso Siguiente <i class="bx bx-right-arrow-alt"></i>
             </button>
           </div>
         </div>
@@ -114,9 +118,11 @@
               </app-pagination>
             </div>
           </div>
-          <span
-            >Seleccione un firmante con datos completos para firmar el
-            reporte</span
+          <span>
+            <b
+              >Seleccione un firmante con datos completos para firmar el
+              reporte</b
+            ></span
           >
         </div>
       </div>

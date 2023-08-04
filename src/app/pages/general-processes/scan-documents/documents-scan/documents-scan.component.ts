@@ -632,5 +632,37 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         }
       );
     }
+
+    if (this.origin == 'FACTCIRCUNR_0001') {
+      this.router.navigate(
+        [
+          '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+        ],
+        {
+          queryParams: {
+            folioScan: this.originFolio,
+          },
+        }
+      );
+    }
+    if (this.origin == 'FACTREFACTADEVOLU') {
+      this.router.navigate(['/pages/final-destination-process/return-acts'], {
+        queryParams: {
+          folio: this.originFolio,
+          expediente: this.expedientNumber,
+        },
+      });
+    }
+
+    if (this.origin == 'FACTREFACTAPOSTER') {
+      this.router.navigate(
+        ['/pages/final-destination-process/third-possession-acts'],
+        {
+          queryParams: {
+            folio: this.originFolio,
+          },
+        }
+      );
+    }
   }
 }

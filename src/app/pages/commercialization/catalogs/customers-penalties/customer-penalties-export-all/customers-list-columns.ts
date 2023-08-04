@@ -6,9 +6,15 @@ export const COLUMNS = {
   eventId: {
     title: 'Clave Evento',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return cell.id;
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.id : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
+    /*valuePrepareFunction: (cell: any, row: any) => {
+      return cell.id;
+    },*/
   },
   publicLot: {
     title: 'Lote',

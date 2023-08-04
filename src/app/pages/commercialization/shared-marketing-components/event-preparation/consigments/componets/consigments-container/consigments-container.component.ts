@@ -37,6 +37,7 @@ export class ConsigmentsContainerComponent
   }>();
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Input() parameters: IEventPreparationParameters;
+  @Input() parentLot: IComerLot = null;
   eventSelected: IComerEvent = null;
   lotSelected: IComerLot = null;
 
@@ -79,7 +80,7 @@ export class ConsigmentsContainerComponent
     return this.utilComerV1Service
       .acceptPreparation({
         eventId: Number(id.value),
-        lotId: Number(this.lotSelected.id),
+        lotId: Number(this.parentLot.id),
         tpeventId: Number(eventTpId.value),
         blkPrepGood,
       })
@@ -113,11 +114,12 @@ export class ConsigmentsContainerComponent
   }
 
   onAcceptConsigment(goods: IComerGoodXLot[]) {
+    const { id } = this.controls;
     const blkRemittancesGood = goods.map(good => this.consigmentItem(good));
     return this.utilComerV1Service
       .acceptConsigment({
-        eventId: Number(this.eventSelected.id),
-        lotId: Number(this.lotSelected.id),
+        eventId: Number(id.value),
+        lotId: Number(this.parentLot.id),
         blkRemittancesGood,
       })
       .pipe(
@@ -136,9 +138,7 @@ export class ConsigmentsContainerComponent
       goodNumber: good.goodNumber ? Number(good.goodNumber) : null,
       statusAnt: good.previousStatus,
       statusComer: good.commercialStatus,
-      transferenceNumber: good.transferNumber
-        ? Number(good.transferNumber)
-        : null,
+      transferenceNumber: good.transferNumber ? `${good.transferNumber}` : null,
       storeNumber: good.warehouseNumber ? Number(good.warehouseNumber) : null,
       eventId: good.commercialEventId ? Number(good.commercialEventId) : null,
       lotId: good.idLot ? Number(good.idLot) : null,
