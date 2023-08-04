@@ -277,7 +277,12 @@
         <!-- PAGOS RECIBIDOS EN EL BANCO POR CLIENTE -->
         <tab heading="Pagos Recibidos en el Banco por Cliente" id="tab2">
           <form [formGroup]="formCustomerBanks" class="form-material">
-            <div [class]="loadingCustomerBanks ? 'table-loading' : ''">
+            <div
+              [class]="
+                loadingCustomerBanks
+                  ? 'table-loading row mb-3 mt-3'
+                  : 'row mb-3 mt-3'
+              ">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsCustomerBanks"
@@ -289,21 +294,30 @@
               [totalItems]="totalItemsCustomerBanks"
               [limit]="limitCustomerBanks"></app-pagination>
             <div class="row mb-3 mt-3 text-center">
-              <form-field
+              <div class="col-md-4 text-center">
+                <span>Cargando Monto Válido...</span>
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Cargando...</span>
+                </div>
+              </div>
+              
+              <!-- <form-field
                 [control]="formCustomerBanks.get('validAmount')"
                 label="Monto Válido"
                 class="col-md-4">
                 <input
                   type="text"
+                  readOnly
                   class="form-control"
                   formControlName="validAmount" />
-              </form-field>
+              </form-field> -->
               <form-field
                 [control]="formCustomerBanks.get('total')"
                 label="Total"
                 class="col-md-4">
                 <input
                   type="text"
+                  readOnly
                   class="form-control"
                   formControlName="total" />
               </form-field>

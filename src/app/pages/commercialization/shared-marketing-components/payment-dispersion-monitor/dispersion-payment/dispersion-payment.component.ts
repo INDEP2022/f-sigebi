@@ -34,11 +34,34 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-dispersion-payment',
   templateUrl: './dispersion-payment.component.html',
-  styles: [],
+  styles: [
+    `
+    input.loading:after{
+      content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+    
+    @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `
+  ],
 })
 export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Preparar los setting de las tablas
@@ -345,7 +368,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingCustomer = true;
     this.loadingLotEvent = true;
     this.loadingDesertLots = true;
-    this.loadingCustomerBanks = true;
     this.loadingLotBanks = true;
     this.loadingPaymentLots = true;
     const paramsF = new FilterParams();
@@ -628,6 +650,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
   selectRowClientEvent(e: any) {
     console.log(e.data);
+    this.loadingCustomerBanks = true
     this.getPaymentByCustomer(e.data.ClientId);
   }
 
@@ -660,6 +683,20 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.totalItemsCustomerBanks = 0;
       }
     );
+    
+    const model = {
+      dateComer: format(this.dateMaxWarranty.value, 'yyyy-MM-dd')
+    }
+
+    this.comerLotsService.getSumLotComerPayRef(model, paramsF.getParams()).subscribe(
+      res => {
+        console.log(res)
+        this.formCustomerBanks.get('validAmount').setValue(res.data[0].suma_total)
+      },
+      err => {
+        console.log(err)
+      }
+    )
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
