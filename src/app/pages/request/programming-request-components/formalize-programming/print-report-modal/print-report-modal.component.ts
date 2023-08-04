@@ -546,10 +546,13 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     });
   }
 
+  loadingButton: boolean = false;
+
   openMessage(message: string): void {
     this.alertQuestion('warning', 'Confirmación', message, 'Aceptar').then(
       question => {
         if (question.isConfirmed) {
+          this.loadingButton = true;
           this.firm();
           console.log('enviar a firmar');
         }
@@ -600,14 +603,20 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.gelectronicFirmService
       .firmDocument(requestInfo, nameTypeReport, formData)
       .subscribe({
-        next: data => (console.log('correcto', data), this.handleSuccess()),
+        next: data => (
+          (this.loadingButton = false),
+          console.log('correcto', data),
+          this.handleSuccess()
+        ),
         error: error => {
           if (error.status == 200) {
+            this.loadingButton = false;
             this.msjCheck = true;
             console.log('correcto');
             this.alert('success', 'Firmado correctamente', '');
             this.updateStatusclarifications();
           } else {
+            this.loadingButton = false;
             this.alert(
               'info',
               'Error al generar firma electrónic',

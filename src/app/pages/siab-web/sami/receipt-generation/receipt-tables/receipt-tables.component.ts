@@ -17,6 +17,7 @@ export class ReceiptTablesComponent extends BasePage {
   @Input() folio: string;
   @Input() id_programacion: string;
   @Input() count = 0;
+  @Input() update = 0;
   estatus_bien_programacion: string;
   receiptType = EReceiptType;
   divcanmas = false;
@@ -206,9 +207,21 @@ export class ReceiptTablesComponent extends BasePage {
     }
     this.divcanmas = false;
     this.divrepmas = false;
+    let message: string = '';
+    if (receiptType == 'RECIBO') {
+      message = 'Recibo';
+    } else if (receiptType == 'RESGUARDO') {
+      message = 'Resguardo';
+    } else if (receiptType == 'ALMACEN') {
+      message = 'Almacén';
+    } else if (receiptType == 'REPROGRAMACION') {
+      message = 'Reprogramación';
+    } else if (receiptType == 'CANCELACION') {
+      message = 'Cancelación';
+    }
     this.alertQuestion(
       'question',
-      '¿Desea Registrar los Bienes con Tipo ' + receiptType + '?',
+      '¿Desea registrar los Bienes con tipo ' + message + '?',
       ''
     ).then(question => {
       if (question.isConfirmed) {
@@ -234,10 +247,23 @@ export class ReceiptTablesComponent extends BasePage {
         recibos +=
           selected + (index < this.selectedGoods.length - 1 ? ',' : '');
       });
+      let message: string = '';
+      if (receiptType == 'RECIBO') {
+        message = 'Recibo';
+      } else if (receiptType == 'RESGUARDO') {
+        message = 'Resguardo';
+      } else if (receiptType == 'ALMACEN') {
+        message = 'Almacén';
+      } else if (receiptType == 'REPROGRAMACION') {
+        message = 'Reprogramación';
+      } else if (receiptType == 'CANCELACION') {
+        message = 'Cancelación';
+      }
       this.alert(
         'success',
-        'Registro de Recibos ' + receiptType,
-        `Se registraron No. ${recibos} ` + this.showMessageNotAddeds(notAddeds)
+        'Registro de Recibos ' + message,
+        ''
+        // `Se registraron No. ${recibos} ` + this.showMessageNotAddeds(notAddeds)
       );
     } else {
       if (notAddeds.length > 0) {

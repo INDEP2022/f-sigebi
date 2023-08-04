@@ -59,7 +59,7 @@ export const DETAILS_OI_COLUMNS = {
     sort: false,
   },
   amountRetained: {
-    title: 'retenido',
+    title: 'Retenido',
     type: 'string',
     sort: false,
   },

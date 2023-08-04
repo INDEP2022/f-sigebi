@@ -123,6 +123,7 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           programmingId: this.programming.id,
           goodId: item.goodId,
           status: 'EN_RECEPCION_TMP',
+          actaId: this.actId,
         };
 
         this.programminGoodService.updateGoodProgramming(formData).subscribe({
