@@ -26,6 +26,13 @@ export class DetailProceedingsDevolutionService extends HttpService {
     );
   }
 
+  getAllProceedingsDevolution(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      ProceedingsEndpoints.ProeedingsDevolutionCustome,
+      params
+    );
+  }
+
   getTotalReconciledGoods(proceedingId: string | number) {
     return this.get<IListResponse<ITotalReconciledGoods>>(
       `${this.endpoint}/get-total-movement-accounts-by-proceeding/${proceedingId}`

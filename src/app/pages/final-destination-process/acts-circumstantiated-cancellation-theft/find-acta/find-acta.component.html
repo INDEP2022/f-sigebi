@@ -1,10 +1,9 @@
 <app-modal>
   <div header class="d-flex justify-content-between">
     <div>
-      <h5 class="modal-title">BÚSQUEDA DE EXPEDIENTES</h5>
+      <h5 class="modal-title">BÚSQUEDA DE ACTAS</h5>
     </div>
   </div>
-
   <div body>
     <div class="table-padding"></div>
     <div class="justify-content-end d-flex mb-2">
@@ -12,21 +11,23 @@
     </div>
     <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false"> -->
     <form-loader *ngIf="loading"></form-loader>
-    <div class="table-padding"></div>
-    <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+    <div class="col-md-12">
       <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-      <ng2-smart-table
-        class="table-responsive"
-        [attr.class]="'table-responsive table-bordered'"
-        [settings]="settings"
-        [source]="dataFactExp"
-        (userRowSelect)="onUserRowSelect($event)">
-      </ng2-smart-table>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-      <div class="table-padding"></div>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '300px' }">
+        <ng2-smart-table
+          [attr.class]="'table-responsive table-bordered'"
+          [settings]="settings"
+          [source]="dataFactActas"
+          (userRowSelect)="onUserRowSelect($event)"
+          (delete)="showDeleteMsg($event)">
+        </ng2-smart-table>
+      </ng-scrollbar>
       <!-- </div> -->
-    </ng-scrollbar>
+      <app-pagination [params]="params" [totalItems]="totalItems2">
+      </app-pagination>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">

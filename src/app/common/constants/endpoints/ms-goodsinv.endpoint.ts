@@ -10,4 +10,5 @@ export enum IGoodsinvEndpoint {
   GetCatBrandWithFilter = 'views/cat-auto-brands-view-sb',
   GetCatSubBrandWithFilter = 'views/cat-auto-sub-brands-view-sb',
   GetDescription = 'application/query-description',
+  GetGoodResDevInvVew = 'views/goods-res-dev-inv-view',
 }
