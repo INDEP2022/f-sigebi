@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
@@ -8,17 +9,20 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -28,6 +32,7 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+import * as XLSX from 'xlsx';
 import { COPY } from '../acts-cir-columns';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
@@ -131,6 +136,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   dateElaboration: string = '';
   dataTableGood: LocalDataSource = new LocalDataSource();
   bienes: IGood[] = [];
+  folioScan: number;
+  loadingDoc: boolean = false;
+  invoiceDetailsForm: ModelForm<any>;
+  dataDelivery: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private detailProceeDelRecService: DetailProceeDelRecService,
@@ -143,7 +153,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private datePipe: DatePipe,
     private router: Router,
     private statusGoodService: StatusGoodService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private jasperService: SiabService,
+    private sanitizer: DomSanitizer
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -485,6 +497,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
       FindAllExpedientComponent,
       modalConfig
     );
+    // ocultar loading
+    modalRef.onHidden.subscribe(() => {
+      this.loadingExpedient = false;
+    });
     modalRef.content.onSave.subscribe((next: any) => {
       console.log(next);
       this.getExpedient(next.id);
@@ -1004,10 +1020,96 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actualizarActa() {}
   agregarActa() {}
   cleanActa() {}
-  cargueMasive() {}
+
+  cargueMasive() {
+    const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
+      skipHeader: true,
+    });
+    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Hoja1');
+    this.cleanPlaceholder('nameFileA', 'reporteEntrega.xlsx');
+    XLSX.writeFile(workBook, 'reporteEntrega.xlsx');
+  }
+
+  cleanPlaceholder(element: string, newMsg: string) {
+    const nameFile = document.getElementById(element) as HTMLInputElement;
+    nameFile.placeholder = `${newMsg}`;
+  }
+
   btnDetail() {}
   sendOffice() {}
-  Generar() {}
+
+  Scanner() {
+    if (this.invoiceDetailsForm.get('folioScan').value) {
+      this.alertQuestion(
+        'info',
+        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.router.navigate([`/pages/general-processes/scan-documents`], {
+            queryParams: {
+              origin: 'FACTCIRCUNR_0001',
+              folio: this.folioScan,
+            },
+          });
+        }
+      });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+        ''
+      );
+    }
+  }
+
+  Generar() {
+    let params = {
+      PN_FOLIO: this.actaRecepttionForm.get('consec').value,
+    };
+    if (params.PN_FOLIO) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', params)
+          .pipe(
+            tap(response => {
+              /*  this.alert(
+                  'success',
+                  'Generado correctamente',
+                  'Generado correctamente con folio: ' + this.folioScan
+                );*/
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => {},
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe tener el folio en pantalla para poder imprimir'
+      );
+    }
+  }
   cerrarActa() {}
 }
 
