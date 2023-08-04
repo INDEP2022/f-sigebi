@@ -31,7 +31,6 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDeductives();
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -47,6 +46,7 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eatEventDetail':
+                field = `filter.${filter.field}.processKey`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'customerBmx':
@@ -55,19 +55,34 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
               case 'userCreated':
                 searchFilter = SearchFilter.ILIKE;
                 break;
+              case 'eatEventDetail':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.processKey`;
+                break;
               case 'creationDate':
-                if (filter.search != null) {
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                /*if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
-                }
+                }*/
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
+
             if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log(
+                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+              );
+            } else {
+              delete this.columnFilters[field];
+            }
+            /*if (filter.search !== '') {
               if (filter.field === 'eatEventDetail') {
                 this.columnFilters[
                   'filter.eatEventDetail.processKey'
@@ -77,7 +92,7 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
               }
             } else {
               delete this.columnFilters[field];
-            }
+            }*/
           });
           this.params = this.pageFilter(this.params);
           this.getDeductives();
@@ -111,14 +126,27 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
     };
     this.capturelineService.getAll2(params).subscribe({
       next: response => {
-        this.captureLinesMain = response.data;
-        this.data.load(response.data);
-        console.log(this.data);
-        this.data.refresh();
-        this.totalItems = response.count;
-        this.loading = false;
+        if (response.count > 0) {
+          this.captureLinesMain = response.data;
+          this.data.load(response.data);
+          console.log(this.data);
+          this.data.refresh();
+          this.totalItems = response.count;
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+        }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+        //this.loading = false
+      },
     });
   }
 }

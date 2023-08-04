@@ -511,6 +511,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: () => {
           resolve(true);
         },
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }

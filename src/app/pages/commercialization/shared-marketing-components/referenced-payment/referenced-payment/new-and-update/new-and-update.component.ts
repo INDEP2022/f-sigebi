@@ -176,8 +176,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         this.form.value.validSistem == '' ? null : this.form.value.validSistem,
       description: this.form.value.description,
       branchOffice: this.form.value.branchOffice,
-      reconciled: this.form.value.reconciled,
-      // appliedTo: this.form.value.appliedTo,
+      // reconciled: this.form.value.reconciled,
+      appliedTo: this.form.value.appliedTo,
       clientId: client ? client.id : null,
       typeSatId: typeSatId ? typeSatId.idType : null,
     };
@@ -215,8 +215,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         this.form.value.validSistem == '' ? null : this.form.value.validSistem,
       description: this.form.value.description,
       branchOffice: this.form.value.branchOffice,
-      reconciled: this.form.value.reconciled,
-      // appliedTo: this.form.value.appliedTo,
+      // reconciled: this.form.value.reconciled,
+      appliedTo: this.form.value.appliedTo,
       clientId: client ? client.id : null,
       typeSatId: typeSatId ? typeSatId.idType : null,
     };

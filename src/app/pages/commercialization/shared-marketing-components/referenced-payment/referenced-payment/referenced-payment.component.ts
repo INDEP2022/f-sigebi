@@ -248,6 +248,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       params['filter.ctrl.description'] = params['filter.move'];
       delete params['filter.move'];
     }
+    // FECHA, NO_MOVIMIENTO, CVE_BANCO
 
     if (params['filter.descriptionSAT']) {
       params['filter.satInfo.description'] = params['filter.descriptionSAT'];

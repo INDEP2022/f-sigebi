@@ -394,8 +394,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                   this.totalItems = this.goodsDownloadExcel.length;
                   this.alert(
                     'success',
-                    `Proceso terminado correctamente, ya puede descargar el resultado`,
-                    ''
+                    `Proceso Terminado`,
+                    'Puede descargar el Resultado'
                   );
                   this.downloadResultsGoods = false;
                   this.update++;
@@ -442,8 +442,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso terminado correctamente, ya puede descargar el resultado`,
-                        ''
+                        `Proceso Terminado`,
+                        'Puede descargar el Resultado'
                       );
                       this.downloadResultsGoods = false;
                       this.update++;
@@ -489,8 +489,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso terminado correctamente, ya puede descargar el resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
                     this.downloadResultsGoods = false;
                     this.update++;
@@ -536,8 +536,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso terminado correctamente, ya puede descargar el resultado`,
-                        ''
+                        `Proceso Terminado`,
+                        'Puede descargar el Resultado'
                       );
                       this.update++;
                     }, 1000);
@@ -572,8 +572,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso terminado correctamente, ya puede descargar el resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
                     this.update++;
                   }, 1000);
@@ -612,8 +612,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso terminado correctamente, ya puede descargar el resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
                     this.update++;
                   }, 1000);
@@ -1295,7 +1295,19 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log(resp);
-          this.alert('success', `Bien agregado a ${operation}`, '');
+          let message: string = '';
+          if (operation == 'RECIBO') {
+            message = 'Recibo';
+          } else if (operation == 'RESGUARDO') {
+            message = 'Resguardo';
+          } else if (operation == 'ALMACEN') {
+            message = 'Almacén';
+          } else if (operation == 'REPROGRAMACION') {
+            message = 'Reprogramación';
+          } else if (operation == 'CANCELACION') {
+            message = 'Cancelación';
+          }
+          this.alert('success', `Bien agregado a ${message}`, '');
           this.cleanInsert();
           this.programmingGoodReceipt(new ListParams());
         },
@@ -1312,7 +1324,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['cancellation'].value != null) {
       this.alertQuestion(
         'question',
-        'Se cancelará la programación',
+        'Se cancelará la Programación',
         '¿Desea continuar?',
         'Continuar'
       ).then(q => {
@@ -1346,7 +1358,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debe seleccionar el motivo, de la cancelación'
+        'Debe seleccionar el motivo, de la Cancelación'
       );
       return;
     }

@@ -6,6 +6,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IComerDestXML,
   IComerDocumentsXML,
+  IComerModifyXML,
   IComerOrigins,
   IComerTypeSignatories,
   IUpdateComerPagosRef,
@@ -122,6 +123,15 @@ export class ElectronicFirmService extends HttpService {
   ): Observable<IListResponse<IComerTypeSignatories>> {
     return this.post<IListResponse<IComerTypeSignatories>>(
       ElectronicFirmEndpoint.ComerTypeSignatories,
+      body
+    );
+  }
+
+  comerModifyXML(
+    body: Partial<IComerModifyXML>
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerModifyXML,
       body
     );
   }

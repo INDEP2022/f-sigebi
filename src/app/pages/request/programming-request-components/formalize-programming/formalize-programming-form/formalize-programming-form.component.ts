@@ -1217,9 +1217,6 @@ export class FormalizeProgrammingFormComponent
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: async response => {
         if (response.data.length > 0) {
-          const showBase64: any = await this.showBase64(
-            response.data[0].id_content
-          );
           const data = {
             //recipients: `gustavoangelsantosclemente@gmail.com, al221810743@gmail.com`,
             recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
@@ -1234,7 +1231,7 @@ export class FormalizeProgrammingFormComponent
             typeAtt: 'application/pdf;',
             //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
             process: 'FORMALIZAR',
-            fileB64: showBase64,
+            wcontent: response.data[0].id_content,
           };
           this.emailService.createEmailNotify(data).subscribe({
             next: response => {

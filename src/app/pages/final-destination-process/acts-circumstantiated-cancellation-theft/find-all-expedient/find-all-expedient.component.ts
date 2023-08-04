@@ -120,7 +120,12 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
     if (lparams?.text.length > 0)
       params.addFilter('preliminaryInquiry', lparams.text, SearchFilter.LIKE);
 
-    this.expedientService.getExpedientList(params.getParams()).subscribe({
+    // para filtrar
+    const params2 = {
+      ...params,
+      ...this.columnFilters,
+    };
+    this.expedientService.getExpedientList(params2).subscribe({
       next: data => {
         this.loadingModalE = false;
         this.expedients = data.data;
