@@ -17,14 +17,18 @@ import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { IComerLetter } from 'src/app/core/models/ms-parametercomer/comer-letter';
-import { IComerLotsEG } from 'src/app/core/models/ms-parametercomer/parameter';
-import { IResLetter } from 'src/app/core/models/ms-parametercomer/resp-letter';
+import {
+  IClientLot,
+  IComerLotsEG,
+  IRespLetter,
+} from 'src/app/core/models/ms-parametercomer/parameter';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
 import { ComerLetterService } from 'src/app/core/services/ms-parametercomer/comer-letter.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
+import { RespLetterService } from 'src/app/core/services/ms-parametercomer/resp-letter';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
@@ -46,6 +50,7 @@ export class ResponsibilityLettersReportComponent
   comerLibsForm: FormGroup;
   bienesLotesForm: FormGroup;
   respForm: FormGroup;
+  clientForm: FormGroup;
   goodList: IGood;
   dataGood: any;
   totalItems: number = 0;
@@ -54,7 +59,7 @@ export class ResponsibilityLettersReportComponent
   descArea: string;
   event: IComerEvent;
   area: IDepartment;
-  respLetter: IResLetter;
+  respLetter: IRespLetter;
   comerLots: IComerLotsEG;
   dataTableGood: LocalDataSource = new LocalDataSource();
   selectEvent = new DefaultSelect<IComerLotsEG>();
@@ -64,7 +69,9 @@ export class ResponsibilityLettersReportComponent
   paramsBienes = new BehaviorSubject<ListParams>(new ListParams());
   idLot: number = 0;
   bienes: any;
+  client: IClientLot;
   faEtapaCreada: number = 0;
+  maxDate = new Date();
   letter: IComerLetter;
   read: boolean = false;
   update: boolean = false;
@@ -74,6 +81,7 @@ export class ResponsibilityLettersReportComponent
   idGood: number = null;
   dateLetter = new Date();
   valid: boolean = false;
+  dateFinal: string;
   validPermisos: boolean = false;
   start: string;
   department: string = '';
@@ -96,12 +104,6 @@ export class ResponsibilityLettersReportComponent
   get diridoA() {
     return this.comerLibsForm.get('diridoA');
   }
-  get puesto() {
-    return this.comerLibsForm.get('puesto');
-  }
-  get parrafo1() {
-    return this.comerLibsForm.get('parrafo1');
-  }
 
   get adjudicatorio() {
     return this.comerLibsForm.get('adjudicatorio');
@@ -111,24 +113,6 @@ export class ResponsibilityLettersReportComponent
   }
   get fechaFactura() {
     return this.comerLibsForm.get('fechaFactura');
-  }
-  get parrafo2() {
-    return this.comerLibsForm.get('parrafo2');
-  }
-  get firmante() {
-    return this.comerLibsForm.get('firmante');
-  }
-  get ccp1() {
-    return this.comerLibsForm.get('ccp1');
-  }
-  get puestoCcp1() {
-    return this.comerLibsForm.get('puestoCcp1');
-  }
-  get ccp2() {
-    return this.comerLibsForm.get('ccp2');
-  }
-  get puestoCcp2() {
-    return this.comerLibsForm.get('puestoCcp2');
   }
 
   get lote() {
@@ -144,23 +128,37 @@ export class ResponsibilityLettersReportComponent
   get descEvent() {
     return this.bienesLotesForm.get('descEvento');
   }
+
   get rfc() {
-    return this.respForm.get('rfc');
+    return this.clientForm.get('rfc');
   }
-  get domicilio() {
-    return this.respForm.get('domicilio');
+  get calle() {
+    return this.clientForm.get('calle');
   }
   get delegation() {
-    return this.respForm.get('delegation');
+    return this.clientForm.get('delegation');
   }
   get colonia() {
-    return this.respForm.get('colonia');
+    return this.clientForm.get('colonia');
   }
   get estado() {
-    return this.respForm.get('colonia');
+    return this.clientForm.get('estado');
+  }
+  get ciudad() {
+    return this.clientForm.get('ciudad');
   }
   get cp() {
-    return this.respForm.get('cp');
+    return this.clientForm.get('cp');
+  }
+
+  get paragraph1() {
+    return this.respForm.get('paragraph1');
+  }
+  get paragraph2() {
+    return this.respForm.get('paragraph2');
+  }
+  get paragraph3() {
+    return this.respForm.get('paragraph3');
   }
 
   constructor(
@@ -175,12 +173,12 @@ export class ResponsibilityLettersReportComponent
     private subDelegationService: SubDelegationService,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
+    private respLetterService: RespLetterService,
     private authService: AuthService,
     private comerEventService: ComerEventService,
     private router: Router
   ) {
     super();
-    this.validPermisos = !this.validPermisos;
     this.settings = {
       ...TABLE_SETTINGS,
       hideSubHeader: true,
@@ -195,6 +193,8 @@ export class ResponsibilityLettersReportComponent
   ngOnInit(): void {
     this.prepareForm();
     this.bienlotForm();
+    this.comerClientForm();
+    this.dateFinal = this.datePipe.transform(this.maxDate, 'dd/MM/yyyy');
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
   }
@@ -214,45 +214,12 @@ export class ResponsibilityLettersReportComponent
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(50)],
       ],
-      diridoA: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      puesto: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      parrafo1: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
       adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
       factura: [
         null,
         [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
       ],
       fechaFactura: [null, [Validators.required]],
-      parrafo2: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(500)],
-      ],
-      firmante: [null, [Validators.pattern(STRING_PATTERN)]],
-      ccp1: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      ccp2: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      ccp3: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
-      ccp4: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
-      ],
       fechaCarta: [null],
       fechaFallo: [null],
       cveProceso: [null],
@@ -273,14 +240,23 @@ export class ResponsibilityLettersReportComponent
       cveProceso: [null],
     });
   }
-  comerRespForm() {
-    this.respForm = this.fb.group({
+  comerClientForm() {
+    this.clientForm = this.fb.group({
       rfc: [null],
-      domicilio: [null],
-      delegation: [null],
+      calle: [null],
       colonia: [null],
+      ciudad: [null],
+      delegacion: [null],
       estado: [null],
       cp: [null],
+    });
+  }
+  comerRespForm() {
+    this.respForm = this.fb.group({
+      id: [null],
+      paragraph1: [null],
+      paragraph2: [null],
+      paragraph3: [null],
     });
   }
   confirm(): void {
@@ -294,11 +270,11 @@ export class ResponsibilityLettersReportComponent
       OFICIO_CARTALIB: this.comerLibsForm.value.oficio,
       DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
       PUESTO: this.comerLibsForm.controls['puesto'].value,
-      PARRAFO1: this.comerLibsForm.controls['parrafo1'].value,
+      PARRAFO1: this.comerLibsForm.controls['paragraph1'].value,
       ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
       NO_FACTURA: this.comerLibsForm.controls['factura'].value,
       FECHA_FACTURA: this.start,
-      PARRAFO2: this.comerLibsForm.controls['parrafo2'].value,
+      PARRAFO2: this.comerLibsForm.controls['paragraph2'].value,
       FIRMANTE: this.comerLibsForm.controls['firmante'].value,
       PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
       CCP1: this.comerLibsForm.controls['ccp1'].value,
@@ -347,41 +323,6 @@ export class ResponsibilityLettersReportComponent
       });
   }
 
-  getComerRespById(id: string) {
-    this.loading = true;
-    this.comerLetterService.getById(id).subscribe({
-      next: data => {
-        this.loading = false;
-        this.letter = data;
-        this.carta = this.datePipe.transform(
-          this.letter.invoiceDate,
-          'dd/MM/yyyy'
-        );
-        this.start = this.datePipe.transform(
-          this.letter.invoiceDate,
-          'dd/MM/yyyy'
-        );
-        this.comerLibsForm.get('oficio').setValue(this.letter.id);
-        // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
-        // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
-        this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
-        this.comerLibsForm.get('puesto').setValue(this.letter.position);
-        this.comerLibsForm.get('firmante').setValue(this.puestoUser);
-        this.comerLibsForm.get('parrafo2').setValue(this.letter.paragraph2);
-        this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
-        this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
-        this.comerLibsForm.get('fechaFactura').setValue(this.start);
-        this.comerLibsForm.get('ccp1').setValue(this.letter.ccp1);
-        this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
-        this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
-        this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
-      },
-      error: () => {
-        console.log('error');
-      },
-    });
-  }
-
   getComerLetterById(id: number) {
     this.loading = true;
     this.comerLetterService.getById(id).subscribe({
@@ -397,23 +338,45 @@ export class ResponsibilityLettersReportComponent
           'dd/MM/yyyy'
         );
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
-        // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
         // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
-        this.comerLibsForm.get('diridoA').setValue(this.letter.addressedTo);
-        this.comerLibsForm.get('puesto').setValue(this.letter.position);
-        this.comerLibsForm.get('firmante').setValue(this.puestoUser);
-        this.comerLibsForm.get('parrafo2').setValue(this.letter.paragraph2);
         this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
-        this.comerLibsForm.get('fechaFactura').setValue(this.start);
-        this.comerLibsForm.get('ccp1').setValue(this.letter.ccp1);
-        this.comerLibsForm.get('ccp2').setValue(this.letter.ccp2);
-        this.comerLibsForm.get('ccp3').setValue(this.letter.ccp3);
-        this.comerLibsForm.get('ccp4').setValue(this.letter.ccp4);
+        // this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.getComerLotes(this.letter.lotsId);
+        this.getComerRespById(this.letter.id);
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
+        this.comerLibsForm.value.paragraph1 =
+          'Derivado de la ' +
+          this.bienesLotesForm.get('description').value +
+          ' para la enajenación de vehiculos y/o bienes diversos ' +
+          this.bienesLotesForm.get('cveProceso').value +
+          ' celebrada el dia ' +
+          this.carta;
+        '' +
+          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
+        this.comerLibsForm
+          .get('paragraph1')
+          .setValue(this.comerLibsForm.value.paragraph1);
       },
       error: () => {
+        console.log('error');
+      },
+    });
+  }
+  getComerRespById(id: string) {
+    this.loading = true;
+    this.respLetterService.getByIdResp(id).subscribe({
+      next: data => {
+        this.loading = false;
+        this.respLetter = data;
+        console.log(this.respLetter);
+        this.respForm.get('paragraph1').setValue(this.respLetter.paragraph1);
+        this.respForm.get('paragraph2').setValue(this.respLetter.paragraph2);
+        this.respForm.get('paragraph3').setValue(this.respLetter.paragraph3);
+      },
+      error: () => {
+        this.loading = false;
         console.log('error');
       },
     });
@@ -513,11 +476,11 @@ export class ResponsibilityLettersReportComponent
       OFICIO_CARTALIB: this.comerLibsForm.controls['oficio'].value,
       DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
       PUESTO: this.comerLibsForm.controls['puesto'].value,
-      PARRAFO1: this.comerLibsForm.controls['parrafo1'].value,
+      PARRAFO1: this.comerLibsForm.controls['paragraph1'].value,
       ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
       NO_FACTURA: this.comerLibsForm.controls['factura'].value,
       FECHA_FACTURA: this.start,
-      PARRAFO2: this.comerLibsForm.controls['parrafo2'].value,
+      PARRAFO2: this.comerLibsForm.controls['paragraph2'].value,
       FIRMANTE: this.comerLibsForm.controls['firmante'].value,
       PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
       CCP1: this.comerLibsForm.controls['ccp1'].value,
@@ -555,6 +518,25 @@ export class ResponsibilityLettersReportComponent
         }
       });
   }
+  getClientLotes(id: number) {
+    this.comerLotService.getByClient(id).subscribe({
+      next: data => {
+        this.client = data;
+        this.clientForm.get('rfc').setValue(this.client.rfc);
+        this.clientForm.get('calle').setValue(this.client.calle);
+        this.clientForm.get('colonia').setValue(this.client.colonia);
+        this.clientForm.get('ciudad').setValue(this.client.ciudad);
+        this.clientForm.get('delegacion').setValue(this.client.delegacion);
+        this.clientForm.get('estado').setValue(this.client.estado);
+        this.clientForm.get('cp').setValue(this.client.cp);
+        console.log(this.client);
+      },
+      error: error => {
+        this.loading = false;
+        console.error(error);
+      },
+    });
+  }
 
   getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
@@ -564,6 +546,7 @@ export class ResponsibilityLettersReportComponent
         this.bienesLotesForm.get('description').setValue(data.description);
         this.bienesLotesForm.get('evento').setValue(data.idEvent);
         this.getComerEvent(data.idEvent);
+        this.getClientLotes(data.idEvent);
         console.log(this.comerLots);
       },
       error: error => {
@@ -584,17 +567,6 @@ export class ResponsibilityLettersReportComponent
         this.comerLibsForm.get('adjudicatario').setValue(this.event.signatory);
         this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
         // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
-        this.comerLibsForm.value.parrafo1 =
-          'Derivado de la ' +
-          this.bienesLotesForm.get('description').value +
-          ' para la enajenación de vehiculos y/o bienes diversos ' +
-          this.bienesLotesForm.get('cveProceso').value +
-          ' celebrada el dia ' +
-          '' +
-          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
-        this.comerLibsForm
-          .get('parrafo1')
-          .setValue(this.comerLibsForm.value.parrafo1);
         console.log(this.event);
       },
       error: error => {
@@ -606,6 +578,8 @@ export class ResponsibilityLettersReportComponent
   cleanForm(): void {
     this.comerLibsForm.reset();
     this.bienesLotesForm.reset();
+    this.dataTableGood.load([]);
+    this.dataTableGood.refresh();
   }
   goBack() {}
 

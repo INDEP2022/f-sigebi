@@ -99,7 +99,7 @@ export class MaintenanceAclarationComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Actualización de ESTATUS',
-            'Realizada exitosamente'
+            'Realizada correctamente'
           );
           this.clear();
         }

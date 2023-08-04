@@ -1,6 +1,6 @@
 export interface IComerLot {
   id?: string | number;
-  statusVtaId: number;
+  statusVtaId: string;
   eventId: number;
   publicLot: number;
   description: string;

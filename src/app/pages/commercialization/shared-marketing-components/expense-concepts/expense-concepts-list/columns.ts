@@ -28,7 +28,6 @@ export const COLUMNS = {
     title: 'Dirección',
     type: 'string',
     sort: false,
-    filter: false,
     class: 'w-md',
     editor: {
       type: 'list',

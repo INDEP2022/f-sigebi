@@ -8,7 +8,7 @@ export const COMMERCIALIZATION_ROUTES = [
         icon: 'bx-folder',
         subItems: [
           {
-            label: 'Preparación del evento',
+            label: 'Preparación de Eventos Muebles',
             link: '/pages/commercialization/event-preparation',
           },
           {
@@ -137,6 +137,10 @@ export const COMMERCIALIZATION_ROUTES = [
         label: 'Bienes Inmuebles',
         icon: 'home-outline',
         subItems: [
+          {
+            label: 'Preparación de Eventos Inmuebles',
+            link: '/pages/commercialization/event-preparation-i',
+          },
           {
             label: 'Bienes exentos de validación',
             link: '/pages/commercialization/validation-exempted-goods',

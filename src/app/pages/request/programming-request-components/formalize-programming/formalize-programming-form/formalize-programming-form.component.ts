@@ -1180,6 +1180,7 @@ export class FormalizeProgrammingFormComponent
               this.getProccedings();
               this.proceeding.clear();
               this.totalItemsProceedings = 0;
+              this.sendEmail();
             }
           }
         },

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -145,6 +146,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       evet: [null],
       startTime: [null],
       celebrates: [null],
+      closingDate: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -324,6 +326,10 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     }
 
     this.infoForm.get('startTime').setValue(this.horaActual);
+    this.infoForm
+      .get('closingDate')
+      .setValue(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
+
     this.infoForm.get('idPrograming').setValue(this.programming.id);
 
     if (

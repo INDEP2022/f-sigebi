@@ -93,16 +93,13 @@
                             Buscar carta
                             <i class="bx bx-plus bx-sm float-icon"></i>
                           </button> -->
+                  <!-- <button type="button" class="btn btn-primary active btn-sm mr-3" (click)="searchEvent()">
+                    Buscar Evento
+                    <i class="bx bx-search bx-sm float-icon"></i>
+                  </button> -->
                   <button
                     type="button"
                     class="btn btn-primary active btn-sm mr-3"
-                    (click)="searchEvent()">
-                    Buscar Evento
-                    <i class="bx bx-search bx-sm float-icon"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-info active btn-sm mr-3"
                     (click)="searchComer()">
                     Buscar Oficio
                     <i class="bx bx-search bx-sm float-icon"></i>
@@ -124,7 +121,6 @@
                         [control]="bienesLotesForm.get('evento')"
                         label="Evento">
                         <input
-                          [readonly]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
@@ -149,11 +145,11 @@
                         [control]="bienesLotesForm.get('descEvento')"
                         label="Descripción de Evento">
                         <input
-                          [readonly]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="descEvento" />
+                          formControlName="descEvento"
+                          readonly />
                       </form-field>
                     </div>
                   </div> -->
@@ -163,11 +159,11 @@
                         [control]="bienesLotesForm.get('lote')"
                         label="Lote">
                         <input
-                          [disabled]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="lote" />
+                          formControlName="lote"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -177,11 +173,11 @@
                         [control]="bienesLotesForm.get('description')"
                         label="Descripción de Lote">
                         <input
-                          [disabled]="!validPermisos"
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="description" />
+                          formControlName="description"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -193,9 +189,9 @@
                         <input
                           type="text"
                           maxlength="50"
-                          [disabled]="!validPermisos"
                           class="form-control"
-                          formControlName="oficio" />
+                          formControlName="oficio"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -207,9 +203,9 @@
                         <input
                           type="text"
                           maxlength="20"
-                          [disabled]="!validPermisos"
                           class="form-control"
-                          formControlName="factura" />
+                          formControlName="factura"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
@@ -221,38 +217,12 @@
                         <input
                           bsDatepicker
                           class="form-control"
-                          [disabled]="!validPermisos"
-                          formControlName="fechaFactura" />
+                          formControlName="fechaFactura"
+                          readonly />
                       </form-field>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <!-- <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field [control]="comerLibsForm.get('diridoA')" label="Dirigido a:">
-                        <input #inputValue type="text" [disabled]="!validPermisos" class="form-control"
-                          formControlName="diridoA" maxlength="50" />
-                      </form-field>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field [control]="comerLibsForm.get('puesto')" label="Puesto">
-                        <input type="text" [disabled]="!validPermisos" class="form-control" formControlName="puesto"
-                          maxlength="50" />
-                      </form-field>
-                    </div>
-                  </div> 
-                  <div class="card-body">
-                    <form-field class="col-md-12 col-sm-12 col-12 p-2" [control]="comerLibsForm.get('parrafo1')"
-                      label="P&aacute;rrafo 1">
-                      <textarea maxlength="500" class="form-control text-justify" [disabled]="!validPermisos"
-                        formControlName="parrafo1" rows="5"></textarea>
-                    </form-field>
-                  </div>-->
+
                   <div class="col-md-4 mt-2">
                     <div>
                       <form-field
@@ -266,6 +236,147 @@
                       </form-field>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- <div class="card">
+
+            
+
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="clientForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field [control]="clientForm.get('rfc')" label="RFC">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="rfc"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('calle')"
+                        label="Calle">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="calle"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('colonia')"
+                        label="Colonia">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="colonia"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('ciudad')"
+                        label="Ciudad">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="ciudad"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('delegacion')"
+                        label="Delegación">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="delegacion"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('estado')"
+                        label="Estado">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="estado"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field [control]="clientForm.get('cp')" label="CP">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="cp"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <form [formGroup]="respForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <form-field
+                    class="col-md-12 col-sm-12 col-12 p-2"
+                    [control]="respForm.get('paragraph1')"
+                    label="P&aacute;rrafo 1">
+                    <textarea
+                      maxlength="500"
+                      class="form-control text-justify"
+                      formControlName="paragraph1"
+                      rows="5"
+                      readonly></textarea>
+                  </form-field>
                 </div>
               </div>
 
@@ -297,63 +408,32 @@
                   </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-body">
-                  <div class="card-body">
-                    <form-field
-                      class="col-md-12 col-sm-12 col-12 p-2"
-                      [control]="comerLibsForm.get('parrafo2')"
-                      label="P&aacute;rrafo 2">
-                      <textarea
-                        maxlength="500"
-                        class="form-control text-justify"
-                        [disabled]="!validPermisos"
-                        formControlName="parrafo2"
-                        rows="5"></textarea>
-                    </form-field>
-                  </div>
-                  <div class="card-body">
-                    <form-field
-                      class="col-md-12 col-sm-12 col-12 p-2"
-                      [control]="comerLibsForm.get('firmante')"
-                      label="Firmante">
-                      <textarea
-                        maxlength="500"
-                        class="form-control"
-                        [disabled]="!validPermisos"
-                        formControlName="firmante"
-                        rows="5"></textarea>
-                    </form-field>
-                  </div>
-                  <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field
-                        [control]="comerLibsForm.get('ccp1')"
-                        label="CCP1">
-                        <input
-                          type="text"
-                          [disabled]="!validPermisos"
-                          maxlength="50"
-                          class="form-control"
-                          formControlName="ccp1" />
-                      </form-field>
-                    </div>
-                  </div>
-                  <div class="col-md-4 mt-3">
-                    <div>
-                      <form-field
-                        [control]="comerLibsForm.get('ccp2')"
-                        label="CCP2">
-                        <input
-                          [disabled]="!validPermisos"
-                          type="text"
-                          maxlength="50"
-                          class="form-control"
-                          formControlName="ccp2" />
-                      </form-field>
-                    </div>
-                  </div>
-                </div>
+
+              <div class="card-body">
+                <form-field
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="respForm.get('paragraph2')"
+                  label="P&aacute;rrafo 2">
+                  <textarea
+                    maxlength="500"
+                    class="form-control text-justify"
+                    formControlName="paragraph2"
+                    rows="5"
+                    readonly></textarea>
+                </form-field>
+              </div>
+              <div class="card-body">
+                <form-field
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="respForm.get('paragraph3')"
+                  label="P&aacute;rrafo 2">
+                  <textarea
+                    maxlength="500"
+                    class="form-control text-justify"
+                    formControlName="paragraph3"
+                    rows="5"
+                    readonly></textarea>
+                </form-field>
               </div>
             </div>
           </div>
@@ -375,10 +455,10 @@
                         label="Descripción">
                         <input
                           type="text"
-                          [readonly]="!validPermisos"
                           class="form-control"
                           formControlName="description"
-                          maxlength="100" />
+                          maxlength="100"
+                          readonly />
                       </form-field>
                     </div>
                   </div>

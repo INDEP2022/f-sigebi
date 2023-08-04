@@ -363,3 +363,21 @@ export interface IComerLotsEG {
   affectationDate: string;
   eventDad: number;
 }
+
+export interface IClientLot {
+  rfc: string;
+  calle: string;
+  delegacion: string;
+  colonia: string;
+  ciudad: string;
+  estado: string;
+  cp: string;
+  idEvento: number;
+}
+
+export interface IRespLetter {
+  id: string;
+  paragraph1: string;
+  paragraph2: string;
+  paragraph3: string;
+}

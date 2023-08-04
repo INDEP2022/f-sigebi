@@ -28,6 +28,10 @@ export class ClientPenaltyService extends HttpService {
     return this.get<IListResponse<any>>(`${this.route}`, params);
   }
 
+  getAllHist(params?: string) {
+    return this.get<IListResponse<any>>(`${this.route2}`, params);
+  }
+
   getAll2() {
     return this.get<any>(`${this.route}/export`);
   }
@@ -41,7 +45,7 @@ export class ClientPenaltyService extends HttpService {
   }
 
   getByIdComerPenaltyHis(
-    id: string | number,
+    id?: string | number,
     params?: string
   ): Observable<IListResponse<IHistoryCustomersPenalties>> {
     const route = `${this.route2}?filter.customerId=$eq:${id}`;
@@ -55,16 +59,22 @@ export class ClientPenaltyService extends HttpService {
   }
 
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
-    return this.clientPenaltyRepository.create(
-      `${this.route}/create-penalty`,
+    return this.post(ClientPenaltyEndpoints.CreatePenalty, model);
+    /*return this.clientPenaltyRepository.create(
+      ClientPenaltyEndpoints.CreatePenalty,
       model
-    );
+    );*/
   }
 
   //ACTUALIZAR
   updateCustomers(customersPenalties: IHistoryCustomersPenalties) {
     console.log(customersPenalties);
     return this.put(`${this.route}/update-penalty`, customersPenalties);
+  }
+
+  updateCustomers2(customersPenalties: IHistoryCustomersPenalties) {
+    console.log(customersPenalties);
+    return this.put(`${this.route2}`, customersPenalties);
   }
 
   updateCustomers1(customersPenalties: ICustomerPenaltiesModal) {
