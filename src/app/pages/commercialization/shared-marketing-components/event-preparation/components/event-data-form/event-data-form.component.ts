@@ -286,4 +286,17 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       return;
     }
   }
+
+  onApply() {
+    let valid = this.consignment();
+    if (!valid) {
+      this.alert('error', 'Error', 'Este evento no tiene esta funcionalidad');
+      return;
+    }
+  }
+
+  consignment() {
+    const { eventTpId } = this.controls;
+    return !(eventTpId.value == 6);
+  }
 }

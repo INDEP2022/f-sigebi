@@ -102,7 +102,7 @@ export class GoodsTableService {
       sort: false,
       class: 'bg-primary',
     },
-    goodStatus: {
+    status: {
       title: 'Estatus',
       sort: false,
       class: 'bg-primary',
