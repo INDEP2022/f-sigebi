@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -34,7 +35,6 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
-import { format } from 'date-fns';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -638,10 +638,10 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //SELECCIONAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
   selectRowLotsEvent(e: any) {
     console.log(e.data);
-    this.formLotEvent.get('finalPrice').setValue(e.data.finalPrice)
-    this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice)
-    this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount)
-    this.formLotEvent.get('txtCancel').setValue(e.data.txtCan)
+    this.formLotEvent.get('finalPrice').setValue(e.data.finalPrice);
+    this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice);
+    this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount);
+    this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
     this.getLotsBanks(e.data.lotId);
     this.getPaymentLots(e.data.lotId);
   }

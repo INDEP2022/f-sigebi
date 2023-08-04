@@ -75,6 +75,7 @@ import { SearchRequestsComponent } from './search-requests/search-requests.compo
 import { ModifyDatesModalComponent } from './select-good-eye-visit/modify-dates-modal/modify-dates-modal.component';
 import { SelectGoodEyeVisitComponent } from './select-good-eye-visit/select-good-eye-visit.component';
 import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goods-button.component';
+import { GrouperGoodFieldComponent } from './select-goods/grouper-good-field/grouper-good-field.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
@@ -200,6 +201,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ConfirmValidationModalComponent,
     SeeExpedientComponent,
     MailFieldModalComponent,
+    GrouperGoodFieldComponent,
   ],
   imports: [
     CommonModule,

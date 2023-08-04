@@ -39,6 +39,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() loadFromGoodsTracker = false;
   @Output() onLoadFromGoodsTracker = new EventEmitter<void>();
   @Input() eventFormVisual = new EventFormVisualProperties();
+  @Input() isOpenEvent = false;
   readonly minEventDate = new Date('2000-01-01');
   readonly maxEventDate = new Date(addYears(startOfYear(new Date()), 5));
   viewApplyButton = true;
@@ -285,5 +286,33 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       failureDate.reset();
       return;
     }
+  }
+
+  onApply() {
+    let valid = this.consignment();
+    const { baseCost } = this.controls;
+    if (!valid) {
+      this.alert('error', 'Error', 'Este evento no tiene esta funcionalidad');
+      return;
+    }
+
+    if (baseCost.value <= 0) {
+      this.alert('error', 'Error', 'Debe especificar el costo de las bases');
+      return;
+    }
+
+    if (!this.isOpenEvent) {
+      this.alert(
+        'error',
+        'Error',
+        'Necesita abrir un evento para generar las referencia para las bases'
+      );
+      return;
+    }
+  }
+
+  consignment() {
+    const { eventTpId } = this.controls;
+    return !(eventTpId.value == 6);
   }
 }

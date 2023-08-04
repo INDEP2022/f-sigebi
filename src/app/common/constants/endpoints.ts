@@ -138,7 +138,7 @@ export enum ENDPOINT_LINKS {
   DetailIndParameter = 'parametergood/detail-ind-parameter',
   parametergood = 'parametergood/time-max-close-certificate-dev',
   parametergoodActa = 'proceeding/proceedings-validators',
-  parametergoodCat = 'parametergood/cat-motivosrev',
+  parametergoodCat = 'parametergood/cat-motivesrev',
   WarehouseTypeWarehouse = 'parametergood/warehouse-types-warehouse',
   WarehouseClassifyCosts = 'parametergood/warehouse-classif-costs',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
