@@ -1,8 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
-import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
@@ -20,10 +17,7 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   toggleInformation = true;
   reloadLote = false;
   reloadConcepto = false;
-  constructor(
-    private dataService: ExpenseCaptureDataService,
-    private parameterService: ParametersConceptsService
-  ) {
+  constructor(private dataService: ExpenseCaptureDataService) {
     super();
     this.prepareForm();
   }
@@ -83,32 +77,6 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   ngOnInit() {}
 
-  getParams(concept: { id: string }) {
-    const filterParams = new FilterParams();
-    filterParams.limit = 100000;
-    filterParams.addFilter('conceptId', concept.id);
-    this.parameterService
-      .getAll(filterParams.getParams())
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response && response.data) {
-            if (response.count > 5 || concept.id === '324') {
-              this.dataService.resetParams();
-              response.data.forEach(row => {
-                this.dataService.fillParams(row);
-              });
-              return;
-            }
-          }
-          this.alert('error', 'El concepto no está parametrizado', '');
-        },
-        error: err => {
-          this.alert('error', 'El concepto no está parametrizado', '');
-        },
-      });
-  }
-
   reloadLoteEvent(event: any) {
     console.log(event);
     setTimeout(() => {
@@ -121,7 +89,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     this.data = event;
     this.dataService.updateExpenseComposition.next(true);
     this.conceptNumber.setValue(event.conceptNumber);
-    if (event.conceptNumber) this.getParams({ id: event.conceptNumber });
+    if (event.conceptNumber)
+      this.dataService.getParams({ id: event.conceptNumber }).subscribe();
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);

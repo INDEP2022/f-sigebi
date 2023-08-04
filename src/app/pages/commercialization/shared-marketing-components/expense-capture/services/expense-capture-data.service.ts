@@ -1,14 +1,20 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { catchError, map, of, Subject, take } from 'rxjs';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
+import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { ClassWidthAlert } from 'src/app/core/shared';
 import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ExpenseCaptureDataService {
+export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
   updateExpenseComposition = new Subject();
@@ -29,7 +35,18 @@ export class ExpenseCaptureDataService {
   PNOENVIASIRSAE: string;
   PDEVPARCIALBIEN: string;
   PVALIDADET: string;
-  constructor(private fb: FormBuilder) {}
+  amount = 0;
+  vat = 0;
+  isrWithholding = 0;
+  vatWithholding = 0;
+  total = 0;
+  totalMandatos = 0;
+  constructor(
+    private fb: FormBuilder,
+    private parameterService: ParametersConceptsService
+  ) {
+    super();
+  }
 
   resetParams() {
     this.PMONTOXMAND = 'N';
@@ -102,6 +119,241 @@ export class ExpenseCaptureDataService {
     }
     if (row.parameter === 'VALIDADET') {
       this.PVALIDADET = row.value;
+    }
+  }
+
+  getParams(concept: { id: string }) {
+    const filterParams = new FilterParams();
+    filterParams.limit = 100000;
+    filterParams.addFilter('conceptId', concept.id);
+    return this.parameterService.getAll(filterParams.getParams()).pipe(
+      take(1),
+      catchError(x => {
+        this.alert('error', 'El concepto no está parametrizado', '');
+        return of(null);
+      }),
+      map(response => {
+        if (response && response.data) {
+          if (response.count > 5 || concept.id === '324') {
+            this.resetParams();
+            response.data.forEach(row => {
+              this.fillParams(row);
+            });
+            return null;
+          }
+        }
+        this.alert('error', 'El concepto no está parametrizado', '');
+        return null;
+      })
+    );
+  }
+
+  get payDay() {
+    return this.form.get('payDay');
+  }
+
+  get capturedUser() {
+    return this.form.get('capturedUser');
+  }
+
+  get authorizedUser() {
+    return this.form.get('authorizedUser');
+  }
+
+  get requestedUser() {
+    return this.form.get('requestedUser');
+  }
+
+  private eventoChatarra() {
+    if (this.data.comerEven && this.data.comerEven.eventTpId === '5') {
+      return true;
+    } else {
+      this.alert(
+        'error',
+        'Evento ' + this.data.eventNumber,
+        'No corresponde a un tipo de evento de intercambio no se puede continuar'
+      );
+      return false;
+    }
+  }
+
+  private VAL_CHATARRA_MOR_SIN_FLUJOPF() {
+    if (this.vatWithholding <= 0) {
+      this.alert(
+        'error',
+        '',
+        'En este concepto se requiere capturar el importe de IVA retenido, no se puede tramitar el pago'
+      );
+      return false;
+    }
+    return this.VALIDA_CHATARRA_MOR_SIN_FLUJO();
+  }
+
+  private VALIDA_CHATARRA_MOR_SIN_FLUJO() {
+    if (this.isrWithholding <= 0) {
+      this.alert(
+        'error',
+        '',
+        'En este concepto se requiere capturar el importe de ISR retenido, no se puede tramitar el pago'
+      );
+      return false;
+    }
+    if (this.data.comerLot && this.data.comerLot.finalPrice) {
+      if (
+        +this.data.comerLot.finalPrice !==
+        this.amount + this.vat - this.isrWithholding - this.vatWithholding
+      ) {
+        this.alert(
+          'error',
+          'El monto de la factura no es igual al del evento',
+          ''
+        );
+        return false;
+      }
+    } else {
+      this.alert('error', 'No cuenta con precio Final por Lote', '');
+      return false;
+    }
+    if (!this.eventoChatarra()) {
+      return false;
+    }
+    if (!this.payDay.value) {
+      this.alert('error', 'Debe tener Fecha de Pago', '');
+      return false;
+    }
+    if (!this.capturedUser.value) {
+      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      return false;
+    }
+    if (!this.authorizedUser.value) {
+      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      return false;
+    }
+    if (!this.requestedUser.value) {
+      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      return false;
+    }
+    return true;
+  }
+
+  private processPay() {
+    // ENVIA_SIRSAE_CHATARRA_OI
+    // ENVIA_SIRSAE_CHATARRA_SP
+    // PROCESA_EVENTO_CHATARRA(:COMER_GASTOS.ID_EVENTO, NVL(:COMER_GASTOS.ISR_RETENIDO,0)+ NVL(:COMER_GASTOS.IVA_RETENIDO,0));
+  }
+
+  private processPayChatarraPM() {
+    let aux2 = false;
+    aux2 = this.VALIDA_CHATARRA_MOR_SIN_FLUJO();
+    if (aux2) {
+      this.processPay();
+    } else {
+      this.alert('error', 'No se puede procesar la solicitud', '');
+    }
+  }
+
+  private processPayChatarraPF() {
+    let aux2 = false;
+    aux2 = this.VAL_CHATARRA_MOR_SIN_FLUJOPF();
+    if (aux2) {
+      this.processPay();
+    } else {
+      this.alert('error', 'No se puede procesar la solicitud', '');
+    }
+  }
+
+  private async VALIDACIONES_SOLICITUD() {
+    if (!this.capturedUser.value) {
+      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      return false;
+    }
+    if (!this.authorizedUser.value) {
+      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      return false;
+    }
+    if (!this.requestedUser.value) {
+      this.alert('error', 'Debe tener el Usuario que Captura', '');
+      return false;
+    }
+    if (!this.data.comproafmandsae) {
+      this.alert(
+        'error',
+        'Falta especificar si el comprobante fiscal afecta al SAE o al mandato',
+        ''
+      );
+      return false;
+    }
+    if (!this.data.clkpv) {
+      this.alert('error', 'Debe seleccionar un beneficiario', '');
+      return false;
+    }
+    if (!this.payDay.value) {
+      this.alert('error', 'Debe tener una fecha de pago', '');
+      return false;
+    }
+  }
+
+  private VALIDACIONES_SOLICITUD2() {
+    if (
+      !this.form.get('monthExpense').value &&
+      !this.form.get('monthExpense2').value &&
+      !this.form.get('monthExpense3').value &&
+      !this.form.get('monthExpense4').value &&
+      !this.form.get('monthExpense5').value &&
+      !this.form.get('monthExpense6').value &&
+      !this.form.get('monthExpense7').value &&
+      !this.form.get('monthExpense8').value &&
+      !this.form.get('monthExpense9').value &&
+      !this.form.get('monthExpense10').value &&
+      !this.form.get('monthExpense11').value &&
+      !this.form.get('monthExpense12').value
+    ) {
+      this.alert('error', 'Debe capturar un mes de gasto', '');
+      return false;
+    }
+    const TOT_CABECERA = this.data.totDocument;
+    const TOT_DETALLES = this.total;
+    const TOT_MANDATOS = this.totalMandatos;
+    SearchFilter;
+  }
+
+  private normalSolicitud() {
+    let aux = false;
+    aux = this.VALIDACIONES_SOLICITUD2();
+    // let AUX_INTERCAMBIO = this.PUF_VALIDA_PAGOXEVENTO(this.data.formPayment);
+    // if (aux) {
+    //   if (!AUX_INTERCAMBIO) {
+    //     this.alert(
+    //       'error',
+    //       'Lote ' + this.data.lotNumber,
+    //       'Debe tener un pago registrado para la forma de pago seleccionada'
+    //     );
+    //   } else {
+    //     // this.ENVIAR_SIRSAE();
+    //   }
+    // }
+    if (this.data.formPayment !== 'INTERCAMBIO') {
+      // this.VERIFICA_ACTUALIZACION_EST();
+    } else {
+      // this.VALIDA_SUBTOTAL_PRECIO(
+      //   this.data.expenseNumber,
+      //   this.data.eventNumber,
+      //   this.data.lotNumber
+      // );
+    }
+  }
+
+  processSolitud() {
+    if (this.PCHATMORSINFLUJOPM === 'S') {
+      this.processPayChatarraPM();
+    } else if (this.PCHATMORSINFLUJOPF === 'S') {
+      this.processPayChatarraPF();
+    } else if (this.PCHATMORSINFLUJOPFSR === 'S') {
+      this.processPayChatarraPF();
+    } else if (this.PCHATMORSINFLUJOPMSR === 'S') {
+      this.processPayChatarraPF();
+    } else {
+      this.normalSolicitud();
     }
   }
 

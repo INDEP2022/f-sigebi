@@ -236,10 +236,24 @@ export class ReceiptTableGoodsComponent
             this.data.refresh();
             this.loading = false;
             this.extraOperationsGetData();
+          } else {
+            this.dataNotFound();
+            if (this.estatus_bien_programacion === 'CANCELADO') {
+              this.dataService.cancelacion = this.totalItems;
+            }
+            if (this.estatus_bien_programacion === 'EN_PROGRAMACION') {
+              this.dataService.programacion = this.totalItems;
+            }
           }
         },
         error: err => {
           this.dataNotFound();
+          if (this.estatus_bien_programacion === 'CANCELADO') {
+            this.dataService.cancelacion = this.totalItems;
+          }
+          if (this.estatus_bien_programacion === 'EN_PROGRAMACION') {
+            this.dataService.programacion = this.totalItems;
+          }
         },
       });
   }
