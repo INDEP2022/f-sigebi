@@ -107,6 +107,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     } else {
       this.title = 'Imprimir Reporte';
     }
+
+    if (this.typeFirm == 'autografa' || this.typeFirm == 'autograf') {
+      this.btnTitle = 'Adjuntar Documento';
+    }
     this.formLoading = true;
     this.showReportByTypeDoc();
     this.getReceipt();

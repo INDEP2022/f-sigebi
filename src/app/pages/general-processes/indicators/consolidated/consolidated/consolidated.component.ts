@@ -4,7 +4,10 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { DictaminacionService } from 'src/app/common/services/dictaminacion.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
@@ -18,9 +21,9 @@ import { CONSOLIDATED_COLUMNS } from './consolidated-columns';
   styles: [],
 })
 export class ConsolidatedComponent extends BasePage implements OnInit {
-  data: any = [];
+  dataTable: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paramsFilter$ = new BehaviorSubject<any>(null);
+  paramsFilter$ = new BehaviorSubject<ListParams>(new ListParams());
   dataReporte: LocalDataSource = new LocalDataSource();
   username: string = '';
   lv_par_anio: number;
@@ -31,6 +34,7 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
   params_no_delegacion: string = '2';
   toolbar_no_delegacion: string = '2';
   lv_totreg: number;
+  columnFilter: any = [];
 
   totalItems: number = 0;
   constructor(
@@ -53,14 +57,41 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getUserInfo();
 
-    this.paramsFilter$
+    this.dataTable
+      .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(paramsFilter => {
-        if (paramsFilter) {
-          this.params.next(new ListParams());
-          this.getDataForTable(paramsFilter);
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            switch (filter.field) {
+              case 'desShort':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilter[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+
+          this.getDataForTable(this.params.getValue());
         }
       });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getDataForTable(this.params.getValue());
+    });
     this.getFilterParams();
   }
 
@@ -93,14 +124,16 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
       this.username = data.username;
       console.log('Usuario logueado: ', this.username);
       const userprueba = 'HTORTOLERO';
-      this.dictaminaService.getUserLevel(this.username).subscribe({
-        next: data => {
-          this.nivel_usuar = data.nivel_usar;
-        },
-        error: () => {
-          this.nivel_usuar = '1';
-        },
-      });
+      this.dictaminaService
+        .getUserLevel(this.username.toLocaleUpperCase())
+        .subscribe({
+          next: data => {
+            this.nivel_usuar = data.nivel_usar;
+          },
+          error: () => {
+            this.nivel_usuar = '1';
+          },
+        });
     });
   }
 
@@ -109,26 +142,30 @@ export class ConsolidatedComponent extends BasePage implements OnInit {
       return;
     } else {
       this.loading = true;
-      this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-        let params = {
-          ...this.params.getValue(),
-          'filter.iniDate': `$btw:${paramsFilter.de},${paramsFilter.a}`,
-        };
-        this.dictaminaService.getDictamina(params).subscribe({
-          next: (data: any) => {
-            this.data = data.data;
-            this.totalItems = data.count;
-            this.loading = false;
-          },
-          error: () => (this.loading = false),
-        });
+      let params = {
+        ...this.params.getValue(),
+        ...this.columnFilter,
+        'filter.iniDate': `$btw:${paramsFilter.de},${paramsFilter.a}`,
+      };
+
+      this.dictaminaService.getDictamina(params).subscribe({
+        next: (data: any) => {
+          this.dataTable.load(data.data);
+          this.totalItems = data.count;
+          this.loading = false;
+        },
+        error: () => (this.loading = false),
       });
     }
   }
 
   getFilterParams() {
     this.dictaminaService.paramsDictamina.subscribe((data: any) => {
-      this.paramsFilter$.next(data);
+      const param1 = {
+        ...data,
+        ...new ListParams(),
+      };
+      this.params.next(param1);
     });
   }
 

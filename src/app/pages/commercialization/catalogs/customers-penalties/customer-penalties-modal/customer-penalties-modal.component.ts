@@ -93,20 +93,34 @@ export class CustomerPenaltiesModalComponent
       userPenalty: [
         null,
         [
-          Validators.required,
+          //Validators.required,
           Validators.maxLength(30),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      penaltiDate: [null, [Validators.required]],
+      penaltiDate: [
+        null,
+        [
+          //Validators.required
+        ],
+      ],
       publicLot: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      user: [
+        null,
+        [
+          //Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       pFlag: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       registernumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.customersPenalties != null) {
       this.edit = true;
       this.form.patchValue(this.customersPenalties);
+
+      //this.form.controls['clientId'].setValue(this.customersPenalties.clientId.id);
+      console.log(this.customersPenalties);
 
       if (this.form.get('startDate').value === null) {
         this.form.get('startDate').value.reset();
@@ -182,11 +196,13 @@ export class CustomerPenaltiesModalComponent
     const user = this.customersPenalties.user;
     const userPenalty = this.customersPenalties.userPenalty;
     const model: any = {
-      customerId: clientId,
+      //customerId: clientId,
+      /*clientId: this.form.controls['clientId'].value,
+      //customerId: 
       batchId: lotId.value,
       eventId: eventId.value,
       finalDate: endDate.value,
-      penaltyId: penaltyId,
+      penaltyId: this.form.controls['id'].value,
       pFlag: pFlag,
       penalizesDate: penaltiDate.value,
       batchPublic: publicLot,
@@ -196,19 +212,36 @@ export class CustomerPenaltiesModalComponent
       processType: typeProcess.value,
       user: user,
       usrPenalize: userPenalty,
+      nbOrigin: null,*/
+
+      customerId: this.form.controls['clientId'].value,
+      batchId: lotId.value,
+      penaltyId: this.form.controls['id'].value,
+      eventId: eventId.value,
+      batchPublic: publicLot,
+      initialDate: startDate.value,
+      finalDate: endDate.value,
+      processType: typeProcess.value,
+      referenceJobOther: refeOfficeOther.value,
+      user: user,
+      pFlag: pFlag,
+      recordNumber: registernumber,
+      usrPenalize: userPenalty,
+      penalizesDate: penaltiDate.value,
       nbOrigin: null,
     };
     console.log(model);
     this.clientPenaltyService.updateCustomers1(model).subscribe({
       next: data => {
-        this.handleSuccess(), this.modalRef.hide();
+        this.handleSuccess();
+        this.modalRef.hide();
       },
       error: (error: any) => {
         this.alert('warning', `No es Posible Actualizar el Cliente`, '');
-        this.modalRef.hide();
+        //this.modalRef.hide();
       },
     });
-    this.modalRef.hide();
+    //this.modalRef.hide();
   }
 
   create() {
@@ -237,21 +270,37 @@ export class CustomerPenaltiesModalComponent
     const user = this.form.get('user');
     const userPenalty = this.form.get('userPenalty');
     const model: any = {
-      clientId: clientId.value,
-      customerId: clientId.value,
+      //clientId: clientId.value,
+      /*customerId: clientId.value,
+      batchId: lotId.value,
       eventId: eventId.value,
       batchPublic: publicLot.value,
       penaltyDate: penaltiDate,
       penaltyId: id.value,
-      refeOfficeOther: refeOfficeOther.value,
+      referenceJobOther: refeOfficeOther.value,
       userPenalty: userPenalty.value,
       lotId: lotId.value,
-      startDate: startDate,
-      endDate: endDate,
-      typeProcess: typeProcess.value,
+      initialDate: startDate,
+      finalDate: endDate,
+      processType: typeProcess.value,
       pFlag: pFlag.value,
       user: user.value,
       registernumber: registernumber.value,
+      nbOrigin: null,*/
+      customerId: clientId.value,
+      batchId: lotId.value,
+      penaltyId: id.value,
+      eventId: eventId.value,
+      batchPublic: publicLot.value,
+      initialDate: startDate,
+      finalDate: endDate,
+      processType: typeProcess.value,
+      referenceJobOther: refeOfficeOther.value,
+      user: user.value,
+      pFlag: pFlag.value,
+      recordNumber: registernumber.value,
+      usrPenalize: userPenalty.value,
+      penalizesDate: penaltiDate,
       nbOrigin: null,
     };
     console.log(model);
@@ -260,7 +309,7 @@ export class CustomerPenaltiesModalComponent
         next: data => {
           this.loading = false;
           this.handleSuccess();
-          this.modalRef.hide();
+          //this.modalRef.hide();
         },
         error: error => {
           this.alert('warning', `No es Posible Crear el Cliente`, '');
