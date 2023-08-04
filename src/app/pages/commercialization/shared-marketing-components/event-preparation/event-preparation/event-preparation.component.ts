@@ -547,4 +547,10 @@ export class EventPreparationComponent
     }
     this.fillStadistics();
   }
+
+  onApply() {
+    const params = new FilterParams();
+    this.comerLotsListParams.next(params);
+    this.selectTab(TABS.LOTES_TAB);
+  }
 }
