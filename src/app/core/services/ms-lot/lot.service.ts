@@ -162,6 +162,10 @@ export class LotService extends HttpService {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 
+  btnEjecutar(body: any) {
+    return this.post(LotEndpoints.pupEntar, body);
+  }
+
   getSumLotComerPayRef(body: { dateComer: string }, params?: string) {
     return this.post('apps/get-lot-comer-pay-ref-count', body, params);
   }
