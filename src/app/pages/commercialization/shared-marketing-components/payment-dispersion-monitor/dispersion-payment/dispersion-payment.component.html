@@ -294,14 +294,12 @@
               [totalItems]="totalItemsCustomerBanks"
               [limit]="limitCustomerBanks"></app-pagination>
             <div class="row mb-3 mt-3 text-center">
-              <div class="col-md-4 text-center">
-                <span>Cargando Monto Válido...</span>
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Cargando...</span>
-                </div>
+              <div *ngIf="loadingValidAmount" class="col-md-4 text-center">
+                <span class="mr-2">Cargando Monto Válido...</span>
+                <div class="spinner-border" role="status"></div>
               </div>
-              
-              <!-- <form-field
+              <form-field
+                *ngIf="!loadingValidAmount"
                 [control]="formCustomerBanks.get('validAmount')"
                 label="Monto Válido"
                 class="col-md-4">
@@ -310,8 +308,13 @@
                   readOnly
                   class="form-control"
                   formControlName="validAmount" />
-              </form-field> -->
+              </form-field>
+              <div *ngIf="loadingTotal" class="col-md-4 text-center">
+                <span class="mr-2">Cargando Monto Válido...</span>
+                <div class="spinner-border" role="status"></div>
+              </div>
               <form-field
+                *ngIf="!loadingTotal"
                 [control]="formCustomerBanks.get('total')"
                 label="Total"
                 class="col-md-4">
