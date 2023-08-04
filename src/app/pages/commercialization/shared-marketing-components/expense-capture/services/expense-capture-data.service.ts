@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { catchError, map, of, Subject, take } from 'rxjs';
-import {
-  FilterParams,
-  SearchFilter,
-} from 'src/app/common/repository/interfaces/list-params';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
@@ -314,7 +311,8 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     const TOT_CABECERA = this.data.totDocument;
     const TOT_DETALLES = this.total;
     const TOT_MANDATOS = this.totalMandatos;
-    SearchFilter;
+    // SearchFilter;
+    return true;
   }
 
   private normalSolicitud() {
