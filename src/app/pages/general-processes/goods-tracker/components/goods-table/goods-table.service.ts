@@ -209,6 +209,10 @@ export class GoodsTableService {
       class: 'bg-warning',
     },
     keyReceptionMinutes: {
+      title: 'Acta Entrega Recepción',
+      sort: false,
+    },
+    keyCancelationMinutes: {
       title: 'Acta Recepción Canc. / Susp.',
       sort: false,
       type: 'custom',
