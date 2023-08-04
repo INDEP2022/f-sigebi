@@ -8,10 +8,11 @@
         <div class="col-md-12">
           <app-delegation-shared
             [form]="form"
+            [init]="true"
             [showDelegation]="true"
-            [delegationField]="'delegation'"
+            [delegationField]="'delegationNumber'"
             labelDelegation="Delegación Recibe"
-            [subdelegationField]="'subdelegation'"
+            [subdelegationField]="'subDelegationNumber'"
             [showSubdelegation]="true"></app-delegation-shared>
         </div>
       </div>

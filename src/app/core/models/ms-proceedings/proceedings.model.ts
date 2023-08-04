@@ -99,3 +99,30 @@ export interface IUpdateActasEntregaRecepcionDelegation {
   minutesNumber: [];
   delegation2Number: [];
 }
+
+export interface IDetailProceedingsDevollution {
+  numberProceedings: string | number;
+  numberGood: string | number;
+  amount: string | number;
+  received?: string;
+  approvedXAdmon?: string;
+  approvedDateXAdmon?: string;
+  approvedUserXAdmon?: string;
+  dateIndicatesUserApproval?: string;
+  numberRegister?: string;
+  reviewIndft?: string;
+  correctIndft?: string;
+  idftUser?: string;
+  idftDate?: string;
+  numDelegationIndft?: string;
+  yearIndft?: string;
+  monthIndft?: string;
+  idftDateHc?: string;
+  packageNumber?: string;
+  exchangeValue?: string;
+}
+
+export interface IDetailProceedingsDevollutionDelete {
+  numberGood: string | number;
+  numberProceedings: string | number;
+}

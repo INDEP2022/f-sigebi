@@ -60,12 +60,14 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}.processKey`;
                 break;
               case 'creationDate':
-                if (filter.search != null) {
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                /*if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
-                }
+                }*/
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -132,6 +134,7 @@ export class CaptureLinesMainComponent extends BasePage implements OnInit {
           this.totalItems = response.count;
           this.loading = false;
         } else {
+          this.loading = false;
           this.data.load([]);
           this.data.refresh();
           this.totalItems = 0;
