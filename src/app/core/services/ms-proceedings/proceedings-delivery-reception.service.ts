@@ -351,4 +351,12 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
       `${ProceedingsEndpoints.DetailProceedingsDevollution}?filter.numGoodProceedingsId=${id}`
     );
   }
+
+  getFilterProceeding(id: number | string) {
+    return this.get(`${ProceedingsEndpoints.ActasDeliveryReception}/${id}`);
+  }
+
+  getFilterProceeding2(id: number | string) {
+    return this.get(`${ProceedingsEndpoints.ActasDeliveryReception2}/${id}`);
+  }
 }

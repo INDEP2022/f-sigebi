@@ -409,8 +409,80 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     }
 
     const id = object.data.id;
+
+    let exp = this.form.get('expediente').value;
+    console.log(id, ' - ', exp);
+    console.log(' -> ', `${exp}?filter.goodId=$eq:${id}`);
+
+    this.serviceGood
+      .getByExpedient(`${exp}?filter.goodId=$eq:${id}`)
+      .subscribe({
+        next: async (res: any) => {
+          console.log(JSON.parse(JSON.stringify(res)).data);
+          const data = JSON.parse(JSON.stringify(res)).data[0];
+          console.log(data.goodStatus);
+          this.goodDataSave = data;
+          this.goodSelected = `Seleccionó el Bien con id: ${data.id}`;
+          this.idGood = data.id;
+          this.goodStatus = data.goodStatus;
+          this.getgoodCategory = data.goodCategory;
+          this.getoriginSignals = data.originSignals;
+          console.log('data.notifyDate ', data.notifyDate);
+          this.getnotifyDate =
+            data.notifyDate != null
+              ? (this.getnotifyDate = this.formatDate(
+                  new Date(data.notifyDate)
+                ))
+              : null;
+          //this.getnotifyDate = format(data.notifyDate, 'dd-MM-yyyy');
+
+          this.getnotifyA = data.notifyA || null;
+          this.getplaceNotify = data.placeNotify;
+          this.getfechaDictamen =
+            data.dateOpinion != null
+              ? this.formatDate(new Date(data.dateOpinion))
+              : null;
+          this.getdictamenPerenidad = data.opinion;
+          this.getdictamenPerito = data.proficientOpinion;
+          this.getdictamenInstitucion = data.valuerOpinion;
+          this.getregisterInscrSol =
+            data.registerInscrSol === 'S' ? true : false;
+          this.getExpedientGoog();
+          this.getAppraisalGoodTab();
+          this.fillFormData(data.goodCategory, 'clasificacion');
+          this.fillFormData(this.getregisterInscrSol, 'solicitud');
+          this.fillFormData(data.originSignals, 'remarks');
+          data.dateOpinion != null
+            ? this.form
+                .get('fechaDictamen')
+                .setValue(this.formatDate(new Date(data.dateOpinion)))
+            : this.form.get('fechaDictamen').setValue('');
+          this.fillFormData(data.proficientOpinion, 'dictamenPerito');
+          this.fillFormData(data.valuerOpinion, 'dictamenInstitucion');
+          this.fillFormData(data.opinion, 'dictamenPerenidad');
+          data.notifyDate != null
+            ? this.form
+                .get('fechaAseg')
+                .setValue(this.formatDate(new Date(data.notifyDate)))
+            : this.form.get('fechaAseg').setValue('');
+          this.fillFormData(data.notifyA, 'notificado');
+          this.fillFormData(data.placeNotify, 'lugar');
+          console.log('cargado ');
+        },
+        error: (err: any) => {
+          console.error(err);
+
+          this.alert(
+            'warning',
+            'Error al Consultar Bien',
+            'El número de bien no existe o presentó un error inesperado'
+          );
+        },
+      });
+    /*   
     this.serviceGood.getById(id).subscribe(
       res => {
+
         console.log(JSON.parse(JSON.stringify(res)).data);
         const data = JSON.parse(JSON.stringify(res)).data[0];
         console.log(data.goodStatus);
@@ -437,7 +509,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
         this.getdictamenPerito = data.proficientOpinion;
         this.getdictamenInstitucion = data.valuerOpinion;
         this.getregisterInscrSol = data.registerInscrSol === 'S' ? true : false;
-        this.getAppraisalGood();
+        this.getExpedientGoog();
         this.getAppraisalGoodTab();
         this.fillFormData(data.goodCategory, 'clasificacion');
         this.fillFormData(this.getregisterInscrSol, 'solicitud');
@@ -463,7 +535,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
       }
-    );
+    ); */
   }
 
   /* updateGoodData() {
@@ -650,17 +722,16 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
 
   //Datos de valuo de un bien
 
-  getAppraisalGood() {
+  getExpedientGoog() {
     if (this.idGood != '' && this.idGood != null && this.idGood != undefined) {
       const paramsF = new FilterParams();
+      let exp = this.form.get('expediente').value;
       paramsF.addFilter('noGood', this.idGood);
       paramsF['sortBy'] = 'noRequest:DESC';
-      this.serviceAppraiser
-        .getAppraisalGood(paramsF.getParams())
-        .subscribe(res => {
-          console.log(res);
-          this.dataApprasialGood = res.data;
-        });
+      this.serviceGood.getByExpedient(paramsF.getParams()).subscribe(res => {
+        console.log('dataApprasialGood ', res);
+        this.dataApprasialGood = res.data;
+      });
     }
   }
 
@@ -669,54 +740,53 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       const paramsF = new FilterParams();
       paramsF.addFilter('noGood', this.idGood);
       paramsF['sortBy'] = 'noRequest:DESC';
-      this.serviceAppraiser
-        .getAppraisalGood(paramsF.getParams())
-        .subscribe(res => {
-          const resApprais = JSON.parse(JSON.stringify(res.data[0]));
-          this.form.get('importe').setValue(resApprais.valueAppraisal);
-          this.form
-            .get('moneda')
-            .setValue(resApprais.requestXAppraisal.cveCurrencyAppraisal);
-          this.form
-            .get('fechaAvaluo')
-            .setValue(new Date(resApprais.appraisalDate));
-          this.form
-            .get('fechaVigencia')
-            .setValue(new Date(resApprais.effectiveDate));
-          if (resApprais.requestXAppraisal.noExpert != null) {
-            this.serviceProeficient
-              .getById(resApprais.requestXAppraisal.noExpert)
-              .subscribe(
-                res => {
-                  this.form.get('perito').setValue(res);
-                },
-                err => {
-                  this.form.get('perito').setValue(null);
-                }
-              );
-          }
-          console.log(resApprais.requestXAppraisal.noAppraiser);
-          if (resApprais.requestXAppraisal.noAppraiser != null) {
-            this.serviceCatalogAppraise
-              .getById(resApprais.requestXAppraisal.noAppraiser)
-              .subscribe(
-                res => {
-                  console.log(res);
-                  console.log(res.data[0]['description']);
-                  this.form
-                    .get('institucion')
-                    .setValue(res.data[0]['description']);
-                },
-                err => {
-                  this.form.get('institucion').setValue(null);
-                }
-              );
-          }
-          /* this.form
+      this.serviceGood.getByExpedient(paramsF.getParams()).subscribe(res => {
+        console.log('getAppraisalGoodTab', res);
+        const resApprais = JSON.parse(JSON.stringify(res.data[0]));
+        this.form.get('importe').setValue(resApprais.valueAppraisal);
+        this.form
+          .get('moneda')
+          .setValue(resApprais.requestXAppraisal.cveCurrencyAppraisal);
+        this.form
+          .get('fechaAvaluo')
+          .setValue(new Date(resApprais.appraisalDate));
+        this.form
+          .get('fechaVigencia')
+          .setValue(new Date(resApprais.effectiveDate));
+        if (resApprais.requestXAppraisal.noExpert != null) {
+          this.serviceProeficient
+            .getById(resApprais.requestXAppraisal.noExpert)
+            .subscribe(
+              res => {
+                this.form.get('perito').setValue(res);
+              },
+              err => {
+                this.form.get('perito').setValue(null);
+              }
+            );
+        }
+        console.log(resApprais.requestXAppraisal.noAppraiser);
+        if (resApprais.requestXAppraisal.noAppraiser != null) {
+          this.serviceCatalogAppraise
+            .getById(resApprais.requestXAppraisal.noAppraiser)
+            .subscribe(
+              res => {
+                console.log(res);
+                console.log(res.data[0]['description']);
+                this.form
+                  .get('institucion')
+                  .setValue(res.data[0]['description']);
+              },
+              err => {
+                this.form.get('institucion').setValue(null);
+              }
+            );
+        }
+        /* this.form
             .get('institucion')
             .setValue(resApprais.requestXAppraisal.noAppraiser); */
-          //!Se necesita agregar filtro dinámico a este endpoint http://sigebimsdev.indep.gob.mx/catalog/api/v1/appraisers?filter.id=$eq:85
-        });
+        //!Se necesita agregar filtro dinámico a este endpoint http://sigebimsdev.indep.gob.mx/catalog/api/v1/appraisers?filter.id=$eq:85
+      });
     }
   }
 
@@ -760,7 +830,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
             this.serviceAppraiser.postAppraisalGood(dataAG).subscribe(
               res => {
                 this.alert('success', 'El Bien se avaluó con éxito', '');
-                this.getAppraisalGood();
+                this.getExpedientGoog();
               },
               err => {
                 console.log('Ocurrió un error');
