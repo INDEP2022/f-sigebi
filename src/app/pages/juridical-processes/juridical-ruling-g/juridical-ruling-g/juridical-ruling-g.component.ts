@@ -44,6 +44,7 @@ import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model'
 import { IDictationCopies } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import { DictumData } from 'src/app/core/models/ms-notification/notification.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -64,6 +65,7 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
@@ -76,6 +78,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { environment } from 'src/environments/environment';
 import { AbandonmentsDeclarationTradesService } from '../../abandonments-declaration-trades/service/abandonments-declaration-trades.service';
+import { FileUpdateCommunicationService } from '../../file-data-update/services/file-update-communication.service';
 import { RDictaminaDocModalComponent } from '../r-dictamina-doc-modal/r-dictamina-doc-modal.component';
 import { TempGood } from './dataTemp';
 import { DOCUMENTS_COLUMNS } from './documents-columns';
@@ -373,6 +376,8 @@ export class JuridicalRulingGComponent
   disabledSend: boolean = true;
 
   @ViewChild('datepickerElement') datepickerElement: ElementRef;
+  cve_Dictum: any;
+  objetoDictumKey: DictumData;
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -403,7 +408,9 @@ export class JuridicalRulingGComponent
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
     private jobDictumTextsService: JobDictumTextsService,
     private AccountMovements: AccountMovements,
-    private comerDetailsService: ComerDetailsService
+    private comerDetailsService: ComerDetailsService,
+    private notificationService: NotificationService,
+    private fileUpdateCommunicationService: FileUpdateCommunicationService
   ) {
     super();
     this.dictamen = {
@@ -455,6 +462,12 @@ export class JuridicalRulingGComponent
   ngOnInit(): void {
     this.prepareForm();
     this.loading = true;
+
+    const objetoGuardado = localStorage.getItem('dictumKey');
+    if (objetoGuardado) {
+      this.objetoDictumKey = JSON.parse(objetoGuardado);
+      console.log('this.objetoDictumKey', this.objetoDictumKey);
+    }
     this.activatedRoute.queryParams.subscribe((params: any) => {
       this.expedientesForm.get('noExpediente').setValue(params?.expediente);
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.tipoDic);
@@ -1435,7 +1448,10 @@ export class JuridicalRulingGComponent
           // await this.deleteDictamen(V_NO_OF_DICTA, V_TIPO_DICTA);
 
           this.dictationService.deletePupDeleteDictum(object).subscribe({
-            next: (value: any) => {
+            next: async (value: any) => {
+              await this.updateNotificationsBorrar(
+                this.dictaminacionesForm.get('wheelNumber').value
+              );
               this.buttonApr = true;
               this.alert(
                 'success',
@@ -1899,30 +1915,16 @@ export class JuridicalRulingGComponent
   }
 
   // UPDATE NOTIFICACIONES
-  async updateNotifications(noVolante: any) {
+  async updateNotificationsBorrar(noVolante: any) {
     const body: any = {
       dictumKey: null,
     };
     console.log('UPDATE NOTIFICACIONES', body);
 
-    // this.notificationService.updateWithBody(noVolante, body).subscribe({
-    //   next: (resp: any) => {
-    //     // this.alert(
-    //     //   'success',
-    //     //   'Datos actualizados correctamente',
-    //     //   'tabla: NOTIFICACIONES'
-    //     // );
-    //     this.loading = false;
-    //   },
-    //   error: error => {
-    //     // this.onLoadToast(
-    //     //   'error',
-    //     //   'Error al actualizar el volante.',
-    //     //   'tabla: NOTIFICACIONES'
-    //     // );
-    //     this.loading = false;
-    //   },
-    // });
+    this.notificationService.updateWithBody(noVolante, body).subscribe({
+      next: (resp: any) => {},
+      error: error => {},
+    });
   }
 
   async updateGoodXGoodNumber(params: any, body: any) {
@@ -4475,10 +4477,14 @@ export class JuridicalRulingGComponent
           await this.generateCveOficio(this.dictamen.id);
           this.cveOficio.nativeElement.focus();
           this.buttonApr = false;
+          await this.updateNotificationsAprobar(
+            this.dictaminacionesForm.get('wheelNumber').value
+          );
           for (let i = 0; i < this.documents.length; i++) {
             console.log('DSADS', this.documents[i]);
             await this.createDocumentDictum(this.documents[i]);
           }
+
           this.alertInfo('success', 'Dictamen creado correctamente', '').then(
             () => {
               let cveOficio = this.dictaminacionesForm.get('cveOficio').value;
@@ -4571,6 +4577,19 @@ export class JuridicalRulingGComponent
       //   },
       // });
     }
+  }
+
+  // UPDATE NOTIFICACIONES
+  async updateNotificationsAprobar(noVolante: any) {
+    const body: any = {
+      dictumKey: this.objetoDictumKey.description,
+    };
+    console.log('UPDATE NOTIFICACIONES', body);
+
+    this.notificationService.updateWithBody(noVolante, body).subscribe({
+      next: (resp: any) => {},
+      error: error => {},
+    });
   }
 
   async getDocumentsDictums(data: any) {
@@ -4986,7 +5005,10 @@ export class JuridicalRulingGComponent
     this.totalItems2 = 0;
     this.getDocumentDicXStateM(null);
     this.onTypesChange(obj);
+    this.get111();
   }
+
+  get111() {}
 
   listDictums() {
     const expedient = this.expedientesForm.get('noExpediente').value;

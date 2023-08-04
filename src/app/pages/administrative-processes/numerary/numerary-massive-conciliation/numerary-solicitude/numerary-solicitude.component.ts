@@ -182,7 +182,7 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
 
   newProposalFn() {
     this.loading = true;
-
+    console.log(this.id);
     const model: IRequesNum = {
       deposit: this.form.get('deposit').value,
       relayTesofDate: null,
@@ -214,6 +214,9 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
   }
 
   newDetailFn() {
+    console.log('Sí entra');
+    console.log(this.id);
+
     const model: IRequesNumMov = {
       applicationId: parseInt(this.id),
       motionNumber: this.form2.get('movement').value,

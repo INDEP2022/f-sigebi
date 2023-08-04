@@ -1,0 +1,52 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material pt-0 mt-n5" [formGroup]="grouperForm">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="grouperForm.get('goodGrouper')"
+            label="Nombre del Bien Agrupador">
+            <input
+              class="form-control"
+              type="text"
+              formControlName="goodGrouper" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="grouperForm.invalid"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+
+<!-- <div>
+    <input 
+        class="form-control"
+        style="width: 30rem !important"
+        type="text" 
+        id="grouper" 
+        [(ngModel)]="value" 
+        (keyup)="onKeyUp($event)">
+</div> -->

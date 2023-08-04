@@ -40,23 +40,13 @@
             </form-field>
           </div>
         </div>
-        <div class="col-md-3 text-right">
-          <div class="mb-3 pl-4">
-            <button
-              class="btn btn-primary btn-sm active"
-              [disabled]="flag == false"
-              (click)="deleteExpedient()">
-              Borrar Expediente
-            </button>
-          </div>
-        </div>
       </div>
     </form>
     <div *ngIf="flag">
-      <div class="row pr-4 pl-4 justify-content-end">
-        <div class="col-md-3 text-right pr-0">
+      <div class="row pr-4 pl-4">
+        <div class="col-md-2 text-right pr-0">
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-primary btn-sm active m-3"
             [routerLink]="[
               '/pages/documents-reception/records-validation',
               fileNumber,
@@ -65,6 +55,15 @@
             ]">
             Validadores de Acta
           </button>
+        </div>
+        <div class="col-md-2 text-right">
+          <div class="mb-3 pl-4">
+            <button
+              class="btn btn-red btn-sm active m-3"
+              (click)="deleteExpedient()">
+              Borrar Expediente <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
         </div>
       </div>
 

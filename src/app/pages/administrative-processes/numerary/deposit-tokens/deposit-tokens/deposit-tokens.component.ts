@@ -789,7 +789,7 @@ export class DepositTokensComponent
       }
       this.clearInput();
     } catch (error) {
-      this.alert('warning', 'Ocurrio un Error al leer el Archivo', '');
+      this.alert('warning', 'Ocurrió un error al leer el archivo', '');
       this.clearInput();
     }
   }
@@ -890,13 +890,13 @@ export class DepositTokensComponent
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
               'error',
-              'El Archivo no Cumple con las Condiciones de Inserción',
+              'El archivo no cumple con las condiciones de inserción',
               ''
             );
           } else {
             this.alert(
               'error',
-              'Ha Ocurrido un Error al Intentar Cargar el Archivo',
+              'Ha ocurrido un error al intentar cargar el archivo',
               err.error.message
             );
           }
@@ -1001,7 +1001,7 @@ export class DepositTokensComponent
       error: err => {
         this.form
           .get('descriptionGood')
-          .setValue('No se encontró la descripción del bien');
+          .setValue('No se encontró la descripción del Bien');
       },
     });
   }
@@ -1049,7 +1049,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede Eliminar un Movimiento que ya está Asociado a un Expediente-Bien',
+        'No puede eliminar un movimiento que ya está asociado a un expediente',
         ''
       );
     } else {
@@ -1060,7 +1060,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se uede Eliminar una Ficha mientras tenga Devoluciones Registradas',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
           ''
         );
       } else {
@@ -1098,7 +1098,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
+        'No puede eliminar un movimiento que ya está asociado a un expediente',
         ''
       );
     } else {
@@ -1109,7 +1109,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se puede Eliminar una Ficha Mientras tenga Devoluciones Registradas',
+          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
           ''
         );
       } else {

@@ -8,6 +8,8 @@ import {
   IResponse,
 } from '../../interfaces/list-response.interface';
 import {
+  IDetailProceedingsDevollution,
+  IDetailProceedingsDevollutionDelete,
   IProceedings,
   IUpdateActasEntregaRecepcion,
 } from '../../models/ms-proceedings/proceedings.model';
@@ -237,5 +239,39 @@ export class ProceedingsService extends HttpService {
 
   getTmpTotGoodsProceedings(params: ListParams) {
     return this.get<IListResponse<any>>('tmp-tot-goods-proceedings', params);
+  }
+
+  getAct(model: any) {
+    return this.post<IListResponse<any>>('aplication/getAct', model);
+  }
+
+  createDetailProceedingsDevolution(model: IDetailProceedingsDevollution) {
+    return this.post(
+      `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`,
+      model
+    );
+  }
+
+  getDetailProceedingsDevolution(params: ListParams) {
+    return this.get<IListResponse<IDetailProceedingsDevollution>>(
+      `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`,
+      params
+    );
+  }
+
+  deleteDetailProceedingsDevolution(
+    model: IDetailProceedingsDevollutionDelete
+  ) {
+    return this.delete(
+      `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`,
+      model
+    );
+  }
+
+  updateDetailProceedingsDevolution(model: IDetailProceedingsDevollution) {
+    return this.put(
+      `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`,
+      model
+    );
   }
 }
