@@ -75,3 +75,12 @@ export interface IComerTypeSignatories {
   recordNumber: number;
   nbOrigin: string;
 }
+
+export interface IComerModifyXML {
+  documXmlId?: number;
+  screenKey?: string;
+  reportKey?: string;
+  referenceId?: string;
+  documentId?: string;
+  consecutiveNumber?: number;
+}

@@ -69,14 +69,14 @@ export const COMEMR_BIENES_COLUMNS = {
     type: 'text',
     sort: false,
   },
-  lotDescription: {
+  description: {
     title: 'Descripción',
     type: 'text',
     sort: false,
   },
-  baseValue: {
-    title: 'Valor',
-    type: 'text',
-    sort: false,
-  },
+  // baseValue: {
+  //   title: 'Valor',
+  //   type: 'text',
+  //   sort: false,
+  // },
 };
