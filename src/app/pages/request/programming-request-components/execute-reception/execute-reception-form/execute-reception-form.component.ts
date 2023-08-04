@@ -2523,7 +2523,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
                     this.goodsGuards.clear();
-                    //this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
                     this.totalItemsGuard = 0;
                     this.paramsGuardGoods
@@ -3229,17 +3229,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         guardReception: this.goodsReception,
         callback: (next: boolean) => {
           if (next) {
-            this.goodsReception.clear();
             if (typeFirm != 'electronica') {
               this.uplodadReceiptDelivery();
             } else {
               this.getReceipts();
-              this.paramsReception
-                .pipe(takeUntil(this.$unSubscribe))
-                .subscribe(() => this.getInfoReception());
+              this.showDataProgramming();
               this.goodsReception.clear();
               this.totalItemsReception = 0;
-              this.goodsSelect = [];
             }
           }
         },
@@ -3260,12 +3256,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       callback: (data: boolean) => {
         if (data) {
           this.getReceipts();
-          this.paramsReception
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.getInfoReception());
+          this.showDataProgramming();
           this.goodsReception.clear();
           this.totalItemsReception = 0;
-          this.goodsSelect = [];
         }
       },
     };
@@ -3320,7 +3313,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
               selectGoods: this.selectGood,
               callback: (data: boolean) => {
                 if (data) {
-                  this.selectGood = [];
                   this.goodsTransportable.clear();
                   this.getReceipts();
                   this.getOpenProceeding();
