@@ -21,6 +21,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
@@ -28,15 +29,19 @@ import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.ser
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import * as XLSX from 'xlsx';
 import { COPY } from '../acts-cir-columns';
+import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
-
+//import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -86,8 +91,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   totalItems2: number = 0;
   loading2: boolean = false;
   goods: string;
+  delete: boolean = false;
   bienesLoading: boolean = false;
   formTable2: FormGroup;
+  witnessOic: string = '';
   loadingBienes: boolean = true;
   actaRecepttionForm: FormGroup;
   validPermisos: boolean = true;
@@ -119,8 +126,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  data1 = EXAMPLE_DATA1;
-  data2 = EXAMPLE_DATA2;
+  // data1 = EXAMPLE_DATA1;
+  // data2 = EXAMPLE_DATA2;
   aprevia: string = '';
   causa: string = '';
   annio: string = '';
@@ -143,9 +150,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   constructor(
     private fb: FormBuilder,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
+    private screenStatusService: ScreenStatusService,
     private procedureManagementService: ProcedureManagementService,
     protected modalService: BsModalService,
     private GoodprocessService_: GoodprocessService,
@@ -155,9 +164,100 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private statusGoodService: StatusGoodService,
     private changeDetectorRef: ChangeDetectorRef,
     private jasperService: SiabService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService,
+    private usersService: UsersService
   ) {
     super();
+    // this.settings = { ...this.settings, actions: false };
+    // this.settings.columns = COLUMNS1;
+    // this.settings2 = { ...this.settings, actions: false };
+    // this.settings2.columns = COLUMNS2;
+    this.validPermisos = !this.validPermisos;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      // selectMode: 'multi',
+      selectedRowIndex: -1,
+      mode: 'external',
+      // columns: { ...GOODSEXPEDIENT_COLUMNS_GOODS },
+      columns: {
+        name: {
+          filter: false,
+          sort: false,
+          title: 'Selección',
+          type: 'custom',
+          showAlways: true,
+          valuePrepareFunction: (isSelected: boolean, row: IGood) =>
+            this.isGoodSelectedValid(row),
+          renderComponent: CheckboxElementComponent,
+          onComponentInitFunction: (instance: CheckboxElementComponent) =>
+            this.onGoodSelectValid(instance),
+        },
+        goodId: {
+          title: 'No. Bien',
+          type: 'number',
+          sort: false,
+        },
+        description: {
+          title: 'Descripción',
+          type: 'string',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          type: 'string',
+          sort: false,
+        },
+        acta_: {
+          title: 'Acta',
+          type: 'string',
+          sort: false,
+          // valuePrepareFunction: (cell: any, row: any) => {
+          //   return row.acta_;
+          // },
+        },
+        status: {
+          title: 'Estatus',
+          type: 'string',
+          sort: false,
+        },
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.di_disponible == 'S') {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+
+        // if (row.data.status === 'CNE') {
+        //   return 'bg-success text-white';
+        // } else if (
+        //   row.data.status === 'RRE' ||
+        //   row.data.status === 'VXR' ||
+        //   row.data.status === 'DON'
+        // ) {
+        //   return 'bg-dark text-white';
+        // } else {
+        //   return 'bg-success text-white';
+        // }
+      },
+    };
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...COPY },
+      rowClassFunction: (row: any) => {
+        // if (row.data.di_disponible == 'S') {
+        //   return 'text-white';
+        // } else {
+        return 'bg-light text-black';
+        // }
+      },
+    };
     // this.settings = { ...this.settings, actions: false };
     // this.settings.columns = COLUMNS1;
     // this.settings2 = { ...this.settings, actions: false };
@@ -253,6 +353,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.goodForm();
     this.actaForm();
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
+    this.goodForm();
+    this.actaForm();
+    this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
   }
 
   initForm() {
@@ -324,6 +427,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       tag: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
       acta: [null],
@@ -362,6 +466,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   search(event: any) {
     // this.loadingExpedient = true;
+    // this.loadingExpedient = true;
     this.getExpedient(event);
     event = '';
   }
@@ -373,9 +478,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.expedientService.getById(id).subscribe({
       next: (data: any) => {
         this.loadingExpedient = false;
+        this.loadingExpedient = false;
         this.response = !this.response;
         this.validateEx = true;
         this.expedient = data;
+        this.fileNumber = Number(this.expedient.id);
         this.fileNumber = Number(this.expedient.id);
         this.aprevia = this.expedient.preliminaryInquiry;
         this.causa = this.expedient.criminalCase;
@@ -396,8 +503,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('testigoTwo')
           .setValue(this.expedient.indicatedName);
-
-        // console.log(this.expedient);
+        this.actaRecepttionForm
+          .get('testigoTree')
+          .setValue(this.expedient.indicatedName);
+        this.actaRecepttionForm
+          .get('testigoOIC')
+          .setValue(this.expedient.authorityOrdersDictum); // console.log(this.expedient);
         this.getGoodsByStatus(this.fileNumber);
       },
       error: () => {
@@ -417,6 +528,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log('1412212', params);
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
+        this.loadingBienes = false;
         this.loadingBienes = false;
         this.bienes = data.data;
         console.log('Bienes', this.bienes);
@@ -440,6 +552,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.dataTableGood.refresh();
           // Define la función rowClassFunction para cambiar el color de las filas en función del estado de los bienes
           this.totalItems = data.count;
+          this.loadingBienes = false;
           this.loadingBienes = false;
           // console.log(this.bienes);
         });
@@ -1018,7 +1131,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   actualizarActa() {}
-  agregarActa() {}
   cleanActa() {}
 
   cargueMasive() {
@@ -1040,7 +1152,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   sendOffice() {}
 
   Scanner() {
-    if (this.invoiceDetailsForm.get('folioScan').value) {
+    if (this.actaRecepttionForm.get('consec').value) {
       this.alertQuestion(
         'info',
         'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
@@ -1053,7 +1165,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.router.navigate([`/pages/general-processes/scan-documents`], {
             queryParams: {
               origin: 'FACTCIRCUNR_0001',
-              folio: this.folioScan,
+              folio: this.actaRecepttionForm.get('consec').value,
             },
           });
         }
@@ -1065,6 +1177,228 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
     }
+  }
+  agregarActa() {
+    const responsable = this.actaRecepttionForm.get('respConv').value;
+    const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
+    const testigoTree = this.actaRecepttionForm.get('testigoTree').value;
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      delegationToolbar: this.delegationToolbar,
+      fileNumber: this.fileNumber,
+      witnessOic: this.witnessOic,
+      expedient: this.expedient,
+      testigoTree,
+      responsable,
+      testigoTwo,
+    };
+
+    let modalRef = this.modalService.show(CreateActaComponent, modalConfig);
+    modalRef.content.onSave.subscribe(async (next: any) => {
+      if (next) {
+        this.alert(
+          'success',
+          'Se Cargó la Información del Acta',
+          next.keysProceedings
+        );
+      }
+
+      console.log(next);
+      this.totalItems2 = 0;
+      this.actasDefault = next;
+      // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
+      this.statusCanc = next.statusProceedings;
+      if (this.statusCanc == 'CERRADA') {
+        this.disabledBtnCerrar = false;
+        this.disabledBtnActas = false;
+      } else {
+        this.disabledBtnActas = true;
+        this.disabledBtnCerrar = true;
+      }
+
+      this.actaRecepttionForm.patchValue({
+        acta: next.id,
+        administra: next.approvedXAdmon,
+        // ejecuta: next.ejecuta,
+        consec: next.numeraryFolio,
+        type: next.idTypeProceedings,
+        claveTrans: next.numTransfer,
+        cveActa: next.keysProceedings,
+        // mes: next.dateElaborationReceipt,
+        cveReceived: next.receiptKey,
+        // anio: new Date(next.dateElaborationReceipt),
+        direccion: next.address,
+        // parrafo1: next.parrafo1,
+        // parrafo2: next.parrafo2,
+        // parrafo3: next.parrafo3,
+      });
+      // this.to = this.datePipe.transform(
+      //   this.actaRecepttionForm.controls['mes'].value,
+      //   'MM/yyyy'
+      // );
+      // this.annio = this.datePipe.transform(
+      //   this.actaRecepttionForm.controls['anio'].value,
+      //   'MM/yyyy'
+      // );
+      await this.getDetailProceedingsDevollution(this.actasDefault.id);
+    });
+    console.log(this.authService.decodeToken());
+  }
+  delegationToolbar: any = null;
+  getDelegation(params: FilterParams) {
+    params.addFilter(
+      'id',
+      this.authService.decodeToken().preferred_username,
+      SearchFilter.EQ
+    );
+    return this.usersService.getAllSegUsers(params.getParams()).subscribe({
+      next: (value: any) => {
+        const data = value.data[0].usuario;
+        if (data) this.delegationToolbar = data.delegationNumber;
+
+        console.log('SI', value);
+      },
+      error(err) {
+        console.log('NO');
+      },
+    });
+  }
+  async cerrarActa() {
+    console.log('this.actasDefault', this.actasDefault);
+    console.log(
+      'this.circumstantialRecord',
+      this.expedient.circumstantialRecord
+    );
+    if (this.actasDefault != null) {
+      if (this.actasDefault.keysProceedings == null) {
+        this.alert('warning', 'No Existe Acta para Cerrar', '');
+        return;
+      }
+
+      if (this.dataRecepcionGood.count() == 0) {
+        this.alertInfo(
+          'warning',
+          'El Acta no tiene ningún Bien asignado, no se puede Cerrar.',
+          ''
+        );
+        return;
+      }
+
+      if (this.actasDefault.comptrollerWitness == null) {
+        this.alert('warning', 'Indique el Testigo de la Contraloría', '');
+        return;
+      }
+
+      const toolbar_user = this.authService.decodeToken().preferred_username;
+      const cadena = this.cveActa ? this.cveActa.indexOf('?') : 0;
+      console.log('cadena', cadena);
+
+      if (
+        cadena != 0 &&
+        this.authService.decodeToken().preferred_username == toolbar_user
+      ) {
+        null;
+      } else {
+        if (this.delete == true) {
+          this.alertQuestion('question', '¿Desea Cerrar el Acta?', '').then(
+            async question => {
+              if (question.isConfirmed) {
+                // await this.createDET();
+                this.actasDefault.statusProceedings = 'CERRADA';
+                delete this.actasDefault.numDelegation1Description;
+                delete this.actasDefault.numDelegation2Description;
+                delete this.actasDefault.numTransfer_;
+                this.proceedingsDeliveryReceptionService
+                  .editProceeding(this.actasDefault.id, this.actasDefault)
+                  .subscribe({
+                    next: async data => {
+                      let objConver: any = {
+                        id: Number(this.expedient.circumstantialRecord),
+                        statusConv: 3,
+                        cveActa: this.actaRecepttionForm.value.cveActa,
+                      };
+                      // this.convertiongoodService
+                      //   .update(this.expedient.circumstantialRecord, objConver)
+                      //   .subscribe({
+                      //     next: resp => {
+                      //       this.cveActa =
+                      //         this.actaRecepttionForm.value.cveActa;
+                      //       console.log('SIIII', resp);
+                      //     },
+                      //     error: error => { },
+                      //   });
+                      // this.loading = false;
+                      let obj = {
+                        pActaNumber: this.actasDefault.id,
+                        pStatusActa: 'CERRADA',
+                        pVcScreen: 'FACTCIRCUNR_0001',
+                        pUser:
+                          this.authService.decodeToken().preferred_username,
+                      };
+
+                      await this.updateGoodEInsertHistoric(obj);
+
+                      this.alertInfo(
+                        'success',
+                        'Se Cerró el Acta Correctamente',
+                        ''
+                      );
+                      // this.alert('success', 'Acta cerrada', '');
+                      this.disabledBtnCerrar = false;
+                      this.disabledBtnActas = false;
+                      this.getGoodsByStatus(this.fileNumber);
+                      await this.getDetailProceedingsDevollution(
+                        this.actasDefault.id
+                      );
+                      // this.initForm();
+                    },
+                    error: error => {
+                      this.alert(
+                        'error',
+                        'Ocurrió un Error al Cerrar el Acta',
+                        ''
+                      );
+                      // this.loading = false
+                    },
+                  });
+              }
+            }
+          );
+        } else {
+          if (this.delete == false) {
+            this.alert(
+              'warning',
+              'El Usuario no está Autorizado para Cerrar Acta',
+              // 'El Usuario no está autorizado para cerrar acta',
+              ''
+            );
+          }
+          if (this.delete == null) {
+            this.alert(
+              'warning',
+              'El Usuario no está Autorizado para Cerrar Acta',
+              // 'El Usuario no está autorizado para cerrar acta',
+              ''
+            );
+          }
+        }
+      }
+    } else {
+      this.alert(
+        'warning',
+        'No Existe Ningún Acta a Cerrar.',
+        // 'El Usuario no está autorizado para cerrar acta',
+        ''
+      );
+    }
+  }
+  updateGoodEInsertHistoric(obj: {
+    pActaNumber: any;
+    pStatusActa: string;
+    pVcScreen: string;
+    pUser: string;
+  }) {
+    throw new Error('Method not implemented.');
   }
 
   Generar() {
@@ -1110,8 +1444,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
     }
   }
-  cerrarActa() {}
 }
+// confirm() {
+//   this.edit ? this.update() : this.create();
+// }
+
+// confirm() {
+//   this.edit ? this.update() : this.create();
+// }
 
 const EXAMPLE_DATA1 = [
   {
