@@ -31,6 +31,7 @@ import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import Swal from 'sweetalert2';
 import { EventPreparationService } from '../../event-preparation.service';
+import { GroundsStatusModalComponent } from '../../grounds-status-modal/grounds-status-modal.component';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { ComerEventTraspComponent } from '../comer-event-trasp/comer-event-trasp.component';
@@ -593,7 +594,9 @@ export class EventGoodsLotsListActionsComponent
     const ESTATUS = this.reverseType();
     const ID_EVENTO = eventTpId.value;
     const P_DIRECCION = this.parameters.pDirection;
-    // TODO: LLAMAR A LA PANTALLA FMMOTCAMBIOREV
+    this.modalService.show(GroundsStatusModalComponent, {
+      ...MODAL_CONFIG,
+    });
   }
 
   /**TIPO_REVERSA */

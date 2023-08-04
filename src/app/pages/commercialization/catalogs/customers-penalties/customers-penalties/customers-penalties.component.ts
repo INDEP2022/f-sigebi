@@ -34,10 +34,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = COLUMNS;
     this.settings.hideSubHeader = false;
-    this.settings.actions.add = false;
+    /*this.settings.actions.add = false;
     this.settings.actions.edit = true;
     this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';
+    this.settings.actions.position = 'right';*/
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
@@ -57,26 +58,36 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
+                field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'publicLot':
                 searchFilter = SearchFilter.EQ;
                 break;
+
+              /*case 'startDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;*/
               case 'startDate':
-                if (filter.search != null) {
-                  filter.search = this.formatDate(filter.search);
-                  searchFilter = SearchFilter.EQ;
-                } else {
-                  filter.search = '';
-                }
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'endDate':
+              /*case 'endDate':
                 if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
                 }
+                break;*/
+              case 'endDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'refeOfficeOther':
                 searchFilter = SearchFilter.ILIKE;
@@ -84,13 +95,16 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
               case 'userPenalty':
                 searchFilter = SearchFilter.ILIKE;
                 break;
-              case 'penaltiDate':
+              /*case 'penaltiDate':
                 if (filter.search != null) {
                   filter.search = this.formatDate(filter.search);
                   searchFilter = SearchFilter.EQ;
                 } else {
                   filter.search = '';
-                }
+                }*/
+              case 'penaltiDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -137,6 +151,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(params);
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
         this.customersPenalties = response.data;
@@ -146,11 +161,28 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        //this.loading = false;
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
   //Modal para crear o editar clientes penalizados
+  /*openForm(customersPenalties?: ICustomersPenalties) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      customersPenalties,
+      callback: (next: boolean) => {
+        if (next) this.getDeductives();
+      },
+    };
+    this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
+  }*/
+
   openForm(customersPenalties?: ICustomersPenalties) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
