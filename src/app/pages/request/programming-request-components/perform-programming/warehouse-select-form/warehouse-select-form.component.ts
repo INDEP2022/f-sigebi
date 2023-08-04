@@ -71,7 +71,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     } else {
       params['filter.name'] = `$ilike:${params.text}`;
       params['filter.regionalDelegation'] = this.data[0].idDelegation;
-      //params['filter.administratorName'] = this.data[0].idTransferent;
+      params['filter.administratorName'] = this.data[0].idTransferent;
 
       this.goodsQueryService.getCatStoresView(params).subscribe({
         next: data => {

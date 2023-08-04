@@ -57,7 +57,7 @@ export class CustomersPenaltiesExportAllComponent
                 break;
               case 'eventId':
                 field = `filter.${filter.field}.id`;
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'publicLot':
                 searchFilter = SearchFilter.ILIKE;
@@ -105,7 +105,7 @@ export class CustomersPenaltiesExportAllComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.clientPenaltyService.getAll(params).subscribe({
+    this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
         if (response.count > 0) {
           this.customersPenalties = response.data;
