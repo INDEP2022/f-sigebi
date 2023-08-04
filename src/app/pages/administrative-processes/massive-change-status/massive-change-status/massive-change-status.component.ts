@@ -130,10 +130,18 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                   count = count + 1;
                   this.goodServices.getById(good.goodNumber).subscribe({
                     next: response => {
-                      this.goods.push({
-                        ...JSON.parse(JSON.stringify(response)).data[0],
-                        avalaible: null,
-                      });
+                      console.log(response)
+                      const newGoodId = JSON.parse(JSON.stringify(response)).data[0].goodId;
+                      console.log(newGoodId)
+                      const exists = this.goods.some((e) => e.goodId === newGoodId);
+                      console.log(exists)
+                      if(!exists){
+                        this.goods.push({
+                          ...JSON.parse(JSON.stringify(response)).data[0],
+                          avalaible: null,
+                        });
+                      }
+                      
                       console.log(this.goods);
                       this.addStatus();
                       /* this.validGood(JSON.parse(JSON.stringify(response)).data[0]); */ //!SE TIENE QUE REVISAR
@@ -273,13 +281,12 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                 });
                 //Pintar la fila no_disponible
               } else if (count > 0) {
-                good.avalaible = true;
-                good.status = this.goodStatus.value.status;
+                good.avalaible = true;;
                 this.availableToUpdate.push({
                   goodId: good.goodId,
                   message: 'disponible para actualizar',
                 });
-                if (this.goodStatus.value.status == 'CAN') {
+                if (this.goodStatus.value == 'CAN') {
                   good.observations = `${this.observation.value}. ${good.observations}`;
                 }
               }
@@ -305,7 +312,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         const model: IGood = {
           id: good.id,
           goodId: good.goodId,
-          status: good.status,
+          status: this.goodStatus.value,
           observations: good.observations,
         };
 
@@ -313,7 +320,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
           res => {
             const modelHistory: IHistoryGood = {
               propertyNum: good.goodId,
-              status: this.goodStatus.value.status,
+              status: this.goodStatus.value,
               changeDate: new Date().toISOString(),
               userChange:
                 localStorage.getItem('username') == 'sigebiadmon'
@@ -322,7 +329,6 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
               statusChangeProgram: 'FACTADBCAMBIOESTAT',
               reasonForChange: this.observation.value,
             };
-
             this.historyStatusGoodService.create(modelHistory).subscribe(
               res => {
                 this.idsUpdated.push(good);
