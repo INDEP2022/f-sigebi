@@ -12,7 +12,6 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -96,6 +95,7 @@ export class ResponsibilityLettersReportComponent
   screenKey = 'FCOMERCARTARESP_I';
   // params = new BehaviorSubject<ListParams>(new ListParams());
   dataUserLoggedTokenData: any;
+  selectDataEvent = new DefaultSelect();
 
   get oficio() {
     return this.comerLibsForm.get('oficio');
@@ -181,7 +181,7 @@ export class ResponsibilityLettersReportComponent
     super();
     this.settings = {
       ...TABLE_SETTINGS,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: false,
       columns: {
         ...COMEMR_BIENES_COLUMNS,
@@ -599,29 +599,69 @@ export class ResponsibilityLettersReportComponent
 
   // }
 
-  comerBienesLetter(lotId: number, params: ListParams) {
-    this.bienesLoading = true;
-    this.filterParams.getValue().removeAllFilters();
-    this.filterParams.getValue().page = params.page;
-    this.filterParams.getValue().search = params.text;
-    this.filterParams
-      .getValue()
-      .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
-    this.comerEventService
-      .getAllFilterLetter(lotId, this.params.getValue())
-      .subscribe({
-        next: data => {
-          this.bienesLoading = false;
-          this.bienes = data.data;
+  comerBienesLetter(lotId: number, params1: ListParams) {
+    // this.bienesLoading = true;
+    // this.filterParams.getValue().removeAllFilters();
+    // this.filterParams.getValue().page = params.page;
+    // this.filterParams.getValue().search = params.text;
+    // this.filterParams
+    //   .getValue()
+    //   .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
+    const params: any = new FilterParams();
+    params['filter.lotId'] = '$eq:' + this.letter.lotsId;
+    // params.addFilter('lotId', this.letter.lotsId);
+    params.page = this.paramsBienes.value.page;
+    params.limit = this.paramsBienes.value.limit;
+    delete params['search'];
+    delete params['sortBy'];
+    console.log(params);
+    this.comerEventService.getFindAllComerGoodXlotTotal(params).subscribe({
+      next: (data: any) => {
+        this.bienesLoading = false;
+        if (data) {
+          this.bienes = data.items.map((i: any) => {
+            i['description'] = i.good ? i.good.description : '';
+            return i;
+          });
+          console.log(this.bienes);
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
-        },
-        error: () => {
-          this.bienesLoading = false;
-          console.error('error al filtrar bienes');
-        },
-      });
+        }
+      },
+      error: () => {
+        console.error('error al filtrar bienes');
+      },
+    });
   }
   searchEvent() {}
+
+  getDepositaryType(paramsData: ListParams, getByValue: boolean = false) {
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    if (getByValue) {
+      paramsData['filter.eventTpId'] =
+        '$eq:' + this.bienesLotesForm.get('evento').value;
+    }
+    // paramsData['sortBy'] = 'townshipKey:DESC';
+    console.log('DATA SELECT ', paramsData);
+
+    this.comerEventService.getAllEvent(paramsData).subscribe({
+      next: data => {
+        console.log('DATA SELECT ', data.data);
+        this.selectDataEvent = new DefaultSelect(
+          data.data.map((i: any) => {
+            i['nameDesc'] = i.otkey + ' -- ' + i.otvalor;
+            return i;
+          }),
+          data.count
+        );
+        console.log(data, this.selectDataEvent);
+      },
+      error: error => {
+        this.selectDataEvent = new DefaultSelect();
+      },
+    });
+  }
 }

@@ -9,6 +9,9 @@ export const COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
+    },
     /*valuePrepareFunction: (cell: any, row: any) => {
       return cell.id;
     },*/

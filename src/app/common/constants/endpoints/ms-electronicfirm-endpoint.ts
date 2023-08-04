@@ -9,4 +9,5 @@ export enum ElectronicFirmEndpoint {
   ComerOrigins = 'comer-origins',
   ComerDestXML = 'comer-dest-xml',
   ComerTypeSignatories = 'comer-type-signatories',
+  ComerModifyXML = 'comer-xml/modify-xml',
 }

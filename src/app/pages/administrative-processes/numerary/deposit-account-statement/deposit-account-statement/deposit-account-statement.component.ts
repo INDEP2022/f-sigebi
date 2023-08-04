@@ -1013,7 +1013,7 @@ export class DepositAccountStatementComponent
         this.transferDate = firstFormatDateToDate(date);
       }
       console.log(date);
-      debugger;
+      // debugger;
       if (
         this.form.controls['toReturn'].value &&
         this.form.controls['depositDate'].value &&
@@ -1063,7 +1063,7 @@ export class DepositAccountStatementComponent
     if (!this.updatePupReturnsByDates) return;
     if (date) {
       console.log(date);
-      debugger;
+      // debugger;
       this.form.controls['expeditionDate'].setValue(date);
       // this.form
       if (
@@ -1254,7 +1254,7 @@ export class DepositAccountStatementComponent
 
   private async calculateReturn() {
     console.log('Calculate return');
-    debugger;
+    // debugger;
     if (!this.updatePupReturnsByDates) {
       return;
     }
@@ -1513,7 +1513,7 @@ export class DepositAccountStatementComponent
   }
 
   private async detailReturn() {
-    debugger;
+    // debugger;
     if (!this.updatePupReturnsByDates) {
       return null;
     }
@@ -1808,9 +1808,11 @@ export class DepositAccountStatementComponent
   }
 
   async interestCheck() {
+    this.loader.load = true;
     let priorInterest: number;
     const valid = await this.validComplementary();
     if (!valid) {
+      this.loader.load = false;
       return;
     }
 
@@ -1827,6 +1829,8 @@ export class DepositAccountStatementComponent
         'El interes calculado es igual al que ya se ha pagado',
         'Por lo que no es necesario generar ningun cheque complementario'
       );
+      this.loader.load = false;
+      return;
     } else {
       /*SELECT seq_num_devolucion.nextval
       INTO: blk_dev.no_devolucion
@@ -1879,6 +1883,8 @@ export class DepositAccountStatementComponent
         onlySelf: true,
         emitEvent: false,
       });
+      this.loader.load = false;
+      this.alert('success', 'Cheque Complementario', 'Creado correctamente');
     }
     // llamar al servicio de deposit
   }
