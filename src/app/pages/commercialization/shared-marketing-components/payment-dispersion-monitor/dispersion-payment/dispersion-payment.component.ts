@@ -39,29 +39,7 @@ import {
 @Component({
   selector: 'app-dispersion-payment',
   templateUrl: './dispersion-payment.component.html',
-  styles: [
-    `
-      input.loading:after {
-        content: '';
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2px solid #fff;
-        border-top-color: transparent;
-        border-right-color: transparent;
-        animation: spin 0.8s linear infinite;
-        margin-left: 5px;
-        vertical-align: middle;
-      }
-
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-    `,
-  ],
+  styles: [],
 })
 export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Preparar los setting de las tablas
@@ -78,6 +56,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   loadingCustomerBanks = false;
   loadingLotBanks = false;
   loadingPaymentLots = false;
+
+  loadingValidAmount = false
+  loadingTotal = false
 
   loadingExcel = false;
 
@@ -650,8 +631,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
   selectRowClientEvent(e: any) {
     console.log(e.data);
-    this.loadingCustomerBanks = true;
-    this.getPaymentByCustomer(e.data.ClientId);
+    this.loadingCustomerBanks = true
+    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
   }
 
   //SELECCIONAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
@@ -666,9 +647,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
-  getPaymentByCustomer(clientId: string) {
+  getPaymentByCustomer(clientId: string, eventId: string) {
+    this.loadingValidAmount = true
+    this.loadingTotal = true
+
     const paramsF = new FilterParams();
     paramsF.addFilter('Customer_ID', clientId);
+    paramsF.addFilter('Event_ID', eventId)
     this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -683,24 +668,41 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.totalItemsCustomerBanks = 0;
       }
     );
-
+    
     const model = {
       dateComer: format(this.dateMaxWarranty.value, 'yyyy-MM-dd'),
-    };
+      clientId: clientId,
+      eventId: eventId
+    }
 
-    this.comerLotsService
-      .getSumLotComerPayRef(model, paramsF.getParams())
-      .subscribe(
-        res => {
-          console.log(res);
-          this.formCustomerBanks
-            .get('validAmount')
-            .setValue(res.data[0].suma_total);
-        },
-        err => {
-          console.log(err);
-        }
-      );
+    this.comerLotsService.getSumLotComerPayRef(model).subscribe(
+      res => {
+        console.log(res)
+        this.loadingValidAmount = false
+        this.formCustomerBanks.get('validAmount').setValue(res.data[0].suma_total)
+      },
+      err => {
+        console.log(err)
+        this.loadingValidAmount = false
+      }
+    )
+
+    const model2 = {
+      clientId: clientId,
+      eventId: eventId
+    }
+
+    this.comerLotsService.getSumAllComerPayRef(model2).subscribe(
+      res => {
+        console.log(res)
+        this.formCustomerBanks.get('total').setValue(res.data[0].suma_total)
+        this.loadingTotal = false
+      },
+      err => {
+        console.log(err)
+        this.loadingTotal = false
+      }
+    )
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
