@@ -7,7 +7,11 @@ import {
   IListResponse,
   IListResponseMessage,
 } from '../../interfaces/list-response.interface';
-import { IDescInv, IGoodsInv } from '../../models/ms-goodsinv/goodsinv.model';
+import {
+  IDescInv,
+  IGoodResDevInvView,
+  IGoodsInv,
+} from '../../models/ms-goodsinv/goodsinv.model';
 
 @Injectable({
   providedIn: 'root',
@@ -63,5 +67,12 @@ export class GoodsInvService extends HttpService {
 
   getAllSubBrandWithFilter(params: ListParams | string) {
     return this.get(IGoodsinvEndpoint.GetCatSubBrandWithFilter, params);
+  }
+
+  getAllGoodResDevInvView(
+    params: ListParams | string
+  ): Observable<IGoodResDevInvView> {
+    const route = IGoodsinvEndpoint.GetGoodResDevInvVew;
+    return this.get(`${route}`, params);
   }
 }

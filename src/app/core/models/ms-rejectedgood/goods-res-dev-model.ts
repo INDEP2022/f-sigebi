@@ -1,7 +1,7 @@
 import { IGood } from '../good/good.model';
 
 export interface IGoodsResDev {
-  applicationId: number;
+  applicationId?: number;
 
   goodId?: number;
   creationUser?: string;

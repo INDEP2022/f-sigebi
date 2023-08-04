@@ -24,6 +24,16 @@ export class AffairService
     return this.affairRepository.getAllPaginated(this.route, params);
   }
 
+  getCrime(params?: ListParams) {
+    const route1 = 'catalog/apps/getOtPass';
+    return this.affairRepository.getAllPaginated(route1, params);
+  }
+
+  getCveTransfer(body: any, params?: ListParams) {
+    const route1 = 'catalog/apps/getTransferKey';
+    return this.affairRepository.create3(route1, body, params);
+  }
+
   /**
    * @deprecated
    **/

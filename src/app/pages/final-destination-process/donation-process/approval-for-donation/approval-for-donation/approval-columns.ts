@@ -28,9 +28,4 @@ export const APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noDelegation1: {
-    title: 'Coord. Regional',
-    type: 'string',
-    sort: false,
-  },
 };
