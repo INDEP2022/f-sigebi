@@ -130,6 +130,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                   count = count + 1;
                   this.goodServices.getById(good.goodNumber).subscribe({
                     next: response => {
+                      console.log(response)
                       this.goods.push({
                         ...JSON.parse(JSON.stringify(response)).data[0],
                         avalaible: null,
