@@ -56,7 +56,7 @@ export enum ENDPOINT_LINKS {
   IndicatorDeadline = 'catalog/indicator-deadlines',
   Indiciados = 'catalog/indiciados',
   IndicatorReport = 'catalog/indicator-report',
-  IndicatorGood = 'indicatorgood/api/v1/ind-consolid',
+  IndicatorGood = 'ind-consolid',
   InstitutionClasification = 'catalog/institution-classification',
   IssuingInstitution = 'catalog/issuing-institution',
   LabelOkey = 'catalog/label-good',
