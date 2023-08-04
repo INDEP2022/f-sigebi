@@ -56,6 +56,7 @@ export class CustomersPenaltiesExportAllComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
+                field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'publicLot':
@@ -106,13 +107,25 @@ export class CustomersPenaltiesExportAllComponent
     };
     this.clientPenaltyService.getAll(params).subscribe({
       next: response => {
-        this.customersPenalties = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
+        if (response.count > 0) {
+          this.customersPenalties = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+        }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 

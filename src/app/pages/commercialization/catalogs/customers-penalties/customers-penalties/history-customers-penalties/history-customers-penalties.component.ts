@@ -41,9 +41,10 @@ export class HistoryCustomersPenaltiesComponent
   set penalties(value: ICustomersPenalties) {
     if (value) {
       this._penalties = value;
-      this.params
+      this.getData(value.clientId.id);
+      /*this.params
         .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData(value.clientId.id));
+        .subscribe(() => this.getData(value.clientId.id));*/
       //this.getData(value.clientId.id);
     }
   }
@@ -58,11 +59,12 @@ export class HistoryCustomersPenaltiesComponent
     super();
     this.settings.columns = COLUMNS2;
     this.settings.hideSubHeader = false;
-    this.settings.actions.columnTitle = 'Acciones';
+    /*this.settings.actions.columnTitle = 'Acciones';
     this.settings.actions.edit = true;
     this.settings.actions.add = false;
     this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';
+    this.settings.actions.position = 'right';*/
+    this.settings.actions = false;
   }
 
   settingsChange($event: any): void {
@@ -84,7 +86,7 @@ export class HistoryCustomersPenaltiesComponent
               case 'processType':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'eventId':
+              case 'event':
                 field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;

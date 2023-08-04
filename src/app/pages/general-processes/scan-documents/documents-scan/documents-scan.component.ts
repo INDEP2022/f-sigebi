@@ -653,5 +653,16 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         },
       });
     }
+
+    if (this.origin == 'FACTREFACTAPOSTER') {
+      this.router.navigate(
+        ['/pages/final-destination-process/third-possession-acts'],
+        {
+          queryParams: {
+            folio: this.originFolio,
+          },
+        }
+      );
+    }
   }
 }
