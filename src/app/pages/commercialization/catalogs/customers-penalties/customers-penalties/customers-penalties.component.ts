@@ -152,7 +152,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log(params);
-    this.clientPenaltyService.getAll(params).subscribe({
+    this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
         if (response.count > 0) {
           this.customersPenalties = response.data;
