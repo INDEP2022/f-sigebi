@@ -133,7 +133,7 @@ export class CustomdbclickdepositComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se encontró ningún Bien que cumpla con el criterio de conciliación',
+          'No se encontró algún Bien que cumpla con el criterio de conciliación',
           ''
         );
       }
