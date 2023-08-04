@@ -126,6 +126,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
 
   //Exportar Detalle de Eventos
   CaptureLines() {
+    console.log(this.capture)
     if (!this.capture) {
       this.alert(
         'warning',

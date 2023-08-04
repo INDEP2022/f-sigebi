@@ -13,22 +13,6 @@
           <h5 class="title">Cabecera OI</h5>
         </div>
         <div body>
-          <div class="row mb-5">
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary active btn-sm mr-3"
-                (click)="searchOI()">
-                Buscar
-                <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-              <button
-                class="btn btn-danger btn-sm active mr-3"
-                (click)="clearAll()">
-                Limpiar <i class="fas fa-eraser"> </i>
-              </button>
-            </div>
-          </div>
           <div class="row mb-3 mt-3">
             <form-field [control]="form.get('idOI')" class="col" label="OI">
               <input type="text" formControlName="idOI" class="form-control" />
@@ -163,7 +147,7 @@
             <form-field
               [control]="form.get('idPayment')"
               class="col"
-              label="Idpago">
+              label="Id Pago">
               <input
                 type="text"
                 readonly
@@ -173,6 +157,18 @@
           </div>
           <div class="row mb-3 mt-3 text-center">
             <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="searchOI()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clearAll()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
               <button
                 type="button"
                 (click)="sendSIRSAE()"
