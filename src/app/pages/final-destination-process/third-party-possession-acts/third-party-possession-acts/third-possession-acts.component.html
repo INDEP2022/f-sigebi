@@ -305,7 +305,14 @@
             </div>
           </div>
         </form>
-
+        <button
+          class="btn btn-primary active btn-sm m-2"
+          (click)="openModalApplicant('nuevo')">
+          Guardar Folio
+        </button>
+        <button class="btn btn-info active btn-sm" (click)="openScannerPage()">
+          Escanear <i class="bx bx-file bx-sm float-icon"></i>
+        </button>
         <div class="row mt-5">
           <app-divider class=""></app-divider>
         </div>
@@ -368,7 +375,6 @@
             </div>
           </div>
         </div>
-
         <div class="row mt-5">
           <app-divider></app-divider>
         </div>

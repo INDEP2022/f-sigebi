@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -21,6 +24,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { DetailDelegationsComponent } from '../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
+import { DocumentFormModalComponent } from '../document-form-modal/document-form-modal/document-form-modal.component';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -31,11 +35,15 @@ import { COLUMNS } from './columns';
 export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   response: boolean = false;
   actForm: FormGroup;
+  boolScan: boolean = true;
   formTable1: FormGroup;
+  folioScan: number;
+  folioScan2: number;
   bsModalRef?: BsModalRef;
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  invoiceDetailsForm: ModelForm<any>;
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
@@ -49,6 +57,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private rNomenclaService: RNomenclaService,
+    private router: Router,
     private procedureManagementService: ProcedureManagementService,
     //Transferente
     private stationService: StationService,
@@ -56,6 +65,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private historyGoodService: HistoryGoodService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
+    private activatedRoute: ActivatedRoute,
     private statusGoodService: StatusGoodService
   ) {
     super();
@@ -63,6 +73,25 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS;
     this.settings2.columns = COLUMNS;
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.folioScan2 = params['folio'] ? Number(params['folio']) : null;
+      });
+    /* this.settings.columns = IMPLEMENTATION_COLUMNS;
+    this.settings.rowClassFunction = (row: { data: { estatus: any } }) =>
+      row.data.estatus != null
+        ? row.data.estatus === 'AUTORIZADA'
+          ? 'bg-success text-white'
+          : 'bg-dark text-white'
+        : '';
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...IMPLEMENTATION_COLUMNS },
+    };
+    this.settings2.columns = INVOICE_COLUMNS;*/
   }
 
   ngOnInit(): void {
@@ -170,6 +199,18 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   onSubmit() {}
 
+  openModalApplicant(context?: any) {
+    console.log(context);
+    const modalRef = this.modalService.show(DocumentFormModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onConfirm.subscribe(data => {
+      if (data) this.initForm();
+    });
+  }
+
   openModal() {
     const initialState: ModalOptions = {
       initialState: {
@@ -183,6 +224,37 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       initialState
     );
     this.bsModalRef.content.closeBtnName = 'Close';
+  }
+  openScannerPage() {
+    this.boolScan = false;
+    if (this.actForm.get('folioScan').value) {
+      this.alertQuestion(
+        'info',
+        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.router.navigate(
+            [`/pages/final-destination-process/third-possession-acts`],
+            {
+              queryParams: {
+                origin: 'FACTREFACTAPOSTER',
+                folio: this.actForm.value.folioScan,
+              },
+            }
+          );
+        }
+      });
+    } else {
+      this.alertInfo(
+        'warning',
+        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
+        ''
+      );
+    }
   }
 }
 
