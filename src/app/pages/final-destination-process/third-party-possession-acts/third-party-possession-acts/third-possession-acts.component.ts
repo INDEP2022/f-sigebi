@@ -11,12 +11,14 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
+import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -40,6 +42,10 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
+  params4 = new BehaviorSubject<ListParams>(new ListParams());
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
@@ -52,6 +58,10 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   data: LocalDataSource = new LocalDataSource();
 
+  expedientSearch: number | string;
+  expedient: any;
+  proceedingDev: any;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -63,7 +73,10 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private historyGoodService: HistoryGoodService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
-    private statusGoodService: StatusGoodService
+    private statusGoodService: StatusGoodService,
+    private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
+    //crime
+    private affairService: AffairService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -113,6 +126,9 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGood());
+    /*const noTransfer = 1;
+    const type = 'P'
+    this.getCveTransferent(noTransfer,type);*/
   }
 
   initForm() {
@@ -191,9 +207,11 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       criminalCase: [null, []],
       crimeKey: [null, []],
       registerNumber: [null, []],
-
       transferNumber: [null, []],
+      expTransferNumber: [null, []],
+      expedientType: [null, []],
       detail: [null, []],
+      crime: [null, []],
     });
   }
 
@@ -219,10 +237,136 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   }
 
   search(term: string | number) {
-    this.response = !this.response;
+    this.expedientSearch = term;
+    console.log(this.expedientSearch);
+    //this.response = !this.response;
+    this.getExpedient(term);
   }
 
   onSubmit() {}
+
+  getExpedient(id?: number | string) {
+    if (id) {
+      this.params1.getValue()['filter.id'] = `$eq:${id}`;
+    }
+    let params = {
+      ...this.params1.getValue(),
+    };
+    this.expedientService.getAll(params).subscribe({
+      next: response => {
+        this.expedient = response.data;
+        this.formTable1.controls['id'].setValue(this.expedient[0].id);
+        this.formTable1.controls['preliminaryInquiry'].setValue(
+          this.expedient[0].preliminaryInquiry
+        );
+        this.formTable1.controls['criminalCase'].setValue(
+          this.expedient[0].criminalCase
+        );
+        this.formTable1.controls['crimeKey'].setValue(
+          this.expedient[0].crimeKey
+        );
+        this.formTable1.controls['expTransferNumber'].setValue(
+          this.expedient[0].expTransferNumber
+        );
+        this.formTable1.controls['expedientType'].setValue(
+          this.expedient[0].expedientType
+        );
+        console.log(response.data);
+        this.response = !this.response;
+        this.getCrime(this.formTable1.controls['crimeKey'].value);
+        this.getProceedingsDevolution(this.formTable1.controls['id'].value);
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'No se Encontro el Expediente',
+          `Intente con Otro`
+        );
+      },
+    });
+  }
+
+  getProceedingsDevolution(idExp: string | number) {
+    if (idExp) {
+      this.params2.getValue()['filter.fileNumber.filesId'] = `$eq:${idExp}`;
+    }
+    let params = {
+      ...this.params2.getValue(),
+    };
+    this.detailProceedingsDevolutionService
+      .getAllProceedingsDevolution(params)
+      .subscribe({
+        next: response => {
+          this.proceedingDev = response.data;
+          console.log(this.proceedingDev[0]);
+          this.actForm.controls['actSelect'].setValue(
+            this.proceedingDev[0].proceeding
+          );
+          this.actForm.controls['status'].setValue(
+            this.proceedingDev[0].proceedingsTypeId
+          );
+          this.actForm.controls['delivery'].setValue(
+            this.proceedingDev[0].receiptCve
+          );
+          this.actForm.controls['delivery'].setValue(
+            this.proceedingDev[0].receiptCve
+          );
+
+          /*proceedingsTypeId
+        receiptCve
+        elaborationDate
+        closingDate
+        authorityOrder
+        witnessOne
+        witnessTwo
+        observations
+        beneficiaryOwner
+        auditor
+        proceedingStatus
+        elaborated
+        id
+        proceedingsType
+        delegationNumberOne
+        delegationNumberTwo
+        numRegister
+
+        transferNumber
+        proceedingsCve*/
+        },
+        error: err => {},
+      });
+  }
+
+  getCrime(cveCrime?: string | number) {
+    if (cveCrime) {
+      this.params2.getValue()['filter.otclave'] = `$eq:${cveCrime}`;
+    }
+    let params = {
+      ...this.params3.getValue(),
+    };
+    this.affairService.getCrime(params).subscribe({
+      next: response => {
+        console.log(response.data);
+      },
+      error: err => {},
+    });
+  }
+
+  getCveTransferent(noTranfer: string | number, typeExpe: string) {
+    let body = {
+      transferNumber: noTranfer,
+      fileType: typeExpe,
+    };
+    let params = {
+      ...this.params4.getValue(),
+    };
+    this.affairService.getCveTransfer(body, params).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {},
+    });
+  }
 
   openModal() {
     const initialState: ModalOptions = {
@@ -262,6 +406,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  closeExpedient() {}
 }
 
 const EXAMPLE_DATA = [
