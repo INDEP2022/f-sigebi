@@ -61,6 +61,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   expedientSearch: number | string;
   expedient: any;
   proceedingDev: any;
+  crime: any;
 
   constructor(
     private fb: FormBuilder,
@@ -339,14 +340,17 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   getCrime(cveCrime?: string | number) {
     if (cveCrime) {
-      this.params2.getValue()['filter.otclave'] = `$eq:${cveCrime}`;
+      this.params3.getValue()['filter.id'] = cveCrime;
     }
     let params = {
       ...this.params3.getValue(),
     };
     this.affairService.getCrime(params).subscribe({
       next: response => {
-        console.log(response.data);
+        this.crime = response.data;
+        this.formTable1.controls['crime'].setValue(this.crime[0].otvalor);
+        //otvalor
+        //console.log(response.data);
       },
       error: err => {},
     });

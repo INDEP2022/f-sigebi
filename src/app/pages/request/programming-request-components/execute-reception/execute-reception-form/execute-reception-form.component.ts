@@ -2523,7 +2523,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   const updateGood = await this.updateGoodGuard();
                   if (updateGood) {
                     this.goodsGuards.clear();
-                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    //this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
                     this.totalItemsGuard = 0;
                     this.paramsGuardGoods
