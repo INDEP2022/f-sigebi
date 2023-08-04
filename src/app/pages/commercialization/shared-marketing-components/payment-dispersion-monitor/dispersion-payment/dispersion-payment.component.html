@@ -77,7 +77,7 @@
                 </h5>
                 <form-field [control]="form.get('dateEvent')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateEvent').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateEvent').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -91,7 +91,7 @@
                 <form-field [control]="form.get('dateNotification')">
                   <p class="text-muted mb-0">
                     {{
-                      form.get('dateNotification').value | date: 'dd-MM-yyyy'
+                      form.get('dateNotification').value | date : 'dd-MM-yyyy'
                     }}
                   </p>
                 </form-field>
@@ -105,7 +105,7 @@
                 </h5>
                 <form-field [control]="form.get('dateClose')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateClose').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateClose').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -118,7 +118,9 @@
                 </h5>
                 <form-field [control]="form.get('dateMaxWarranty')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateMaxWarranty').value | date: 'dd-MM-yyyy' }}
+                    {{
+                      form.get('dateMaxWarranty').value | date : 'dd-MM-yyyy'
+                    }}
                   </p>
                 </form-field>
               </div>
@@ -131,7 +133,7 @@
                 </h5>
                 <form-field [control]="form.get('dateFail')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateFail').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateFail').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -144,7 +146,7 @@
                 </h5>
                 <form-field [control]="form.get('dateMaxPayment')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateMaxPayment').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateMaxPayment').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -275,7 +277,12 @@
         <!-- PAGOS RECIBIDOS EN EL BANCO POR CLIENTE -->
         <tab heading="Pagos Recibidos en el Banco por Cliente" id="tab2">
           <form [formGroup]="formCustomerBanks" class="form-material">
-            <div [class]="loadingCustomerBanks ? 'table-loading' : ''">
+            <div
+              [class]="
+                loadingCustomerBanks
+                  ? 'table-loading row mb-3 mt-3'
+                  : 'row mb-3 mt-3'
+              ">
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsCustomerBanks"
@@ -287,21 +294,30 @@
               [totalItems]="totalItemsCustomerBanks"
               [limit]="limitCustomerBanks"></app-pagination>
             <div class="row mb-3 mt-3 text-center">
-              <form-field
+              <div class="col-md-4 text-center">
+                <span>Cargando Monto Válido...</span>
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Cargando...</span>
+                </div>
+              </div>
+
+              <!-- <form-field
                 [control]="formCustomerBanks.get('validAmount')"
                 label="Monto Válido"
                 class="col-md-4">
                 <input
                   type="text"
+                  readOnly
                   class="form-control"
                   formControlName="validAmount" />
-              </form-field>
+              </form-field> -->
               <form-field
                 [control]="formCustomerBanks.get('total')"
                 label="Total"
                 class="col-md-4">
                 <input
                   type="text"
+                  readOnly
                   class="form-control"
                   formControlName="total" />
               </form-field>
@@ -370,7 +386,35 @@
               [params]="paramsLotEvent"
               [totalItems]="totalItemsLotEvent"
               [limit]="limitLotEvent"></app-pagination>
-
+            <div class="row mb-3 mt-3">
+              <form-field
+                [control]="formLotEvent.get('totalTableWarranty')"
+                class="col"
+                label="Total Garantía">
+                <input
+                  type="number"
+                  readOnly
+                  formControlName="totalTableWarranty"
+                  class="form-control" />
+              </form-field>
+              <form-field
+                [control]="formLotEvent.get('totalTableAdvance')"
+                class="col"
+                label="Total Anticipo">
+                <input
+                  type="number"
+                  readOnly
+                  formControlName="totalTableAdvance"
+                  class="form-control" />
+              </form-field>
+              <form-field [control]="formLotEvent.get('txtCancel')" class="col">
+                <input
+                  type="text"
+                  readOnly
+                  formControlName="txtCancel"
+                  class="form-control" />
+              </form-field>
+            </div>
             <div class="row mb-3 mt-3">
               <div class="col-md-1"></div>
               <table class="table table-bordered col-md-9">
@@ -394,6 +438,7 @@
                         <input
                           type="text"
                           formControlName="finalPrice"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -404,6 +449,7 @@
                         <input
                           type="text"
                           formControlName="warranty"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -413,6 +459,7 @@
                         <input
                           type="text"
                           formControlName="liquidateAmount"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -425,6 +472,7 @@
                         <input
                           type="text"
                           formControlName="totalFinalPrice"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -435,6 +483,7 @@
                         <input
                           type="text"
                           formControlName="totalWarranty"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
@@ -444,6 +493,7 @@
                         <input
                           type="text"
                           formControlName="totalLiquidateAmount"
+                          readOnly
                           class="form-control" />
                       </form-field>
                     </td>
