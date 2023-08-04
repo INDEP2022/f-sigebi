@@ -1203,6 +1203,7 @@ export class FormalizeProgrammingFormComponent
           this.proceeding.clear();
           this.totalItemsProceedings = 0;
           this.sendEmail();
+          this.formLoading = false;
         }
       },
     };
