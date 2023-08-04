@@ -34,10 +34,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = COLUMNS;
     this.settings.hideSubHeader = false;
-    this.settings.actions.add = false;
+    /*this.settings.actions.add = false;
     this.settings.actions.edit = true;
     this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';
+    this.settings.actions.position = 'right';*/
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
@@ -57,7 +58,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
-                //field = `filter.${filter.field}.id`;
+                field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'publicLot':

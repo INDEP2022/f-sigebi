@@ -12,12 +12,12 @@ export const COLUMNS = {
     /*valuePrepareFunction: (cell: any, row: any) => {
       
     },*/
-    /*valuePrepareFunction: (value: any) => {
+    valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
     },
     filterFunction(cell?: any, search?: string): boolean {
       return true;
-    },*/
+    },
     /*filterFunction(cell?: any, search?: string): boolean {
       console.log(cell.id);
       let column123 = cell.id;
@@ -135,13 +135,13 @@ export const COLUMNS2 = {
     title: 'Tipo de Penalización',
     sort: false,
   },
-  eventId: {
+  event: {
     title: 'Clave Evento',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
     },
-    filterFunction(cell?: any, search?: string): boolean {
+    /*filterFunction(cell?: any, search?: string): boolean {
       console.log(cell.id);
       let column123 = cell.id;
       if (column123?.toUpperCase() >= search.toUpperCase() || search === '') {
@@ -149,6 +149,9 @@ export const COLUMNS2 = {
       } else {
         return false;
       }
+    },*/
+    filterFunction(cell?: any, search?: string): boolean {
+      return true;
     },
   },
   batchPublic: {

@@ -6,14 +6,15 @@
     <div class="ch-content">
       <h5 class="title">Penalizaciones</h5>
       <div class="buttons">
-        <div>
+        <!--<div>
           <button
             class="btn btn-info btn-sm active ml-2 mr-4"
             (click)="openForm()">
             Nueva <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
-        </div>
-        <app-columns-select [(settings)]="settings"> </app-columns-select>
+        </div>-->
+        <app-columns-select [(settings)]="settings" [leftList]="true">
+        </app-columns-select>
         <div>
           <div class="btn-group col-md-2" dropdown>
             <button
