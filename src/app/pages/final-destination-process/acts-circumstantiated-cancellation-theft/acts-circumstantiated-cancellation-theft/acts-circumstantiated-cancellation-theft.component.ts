@@ -460,6 +460,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       tag: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
+
   private actaForm() {
     this.actaRecepttionForm = this.fb.group({
       acta: [null],
