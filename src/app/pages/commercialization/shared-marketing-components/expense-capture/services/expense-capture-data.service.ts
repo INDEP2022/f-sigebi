@@ -288,6 +288,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.alert('error', 'Debe tener una fecha de pago', '');
       return false;
     }
+    return true;
   }
 
   private VALIDACIONES_SOLICITUD2() {

@@ -84,13 +84,17 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }, 500);
   }
 
+  getParams(concept: { id: string }) {
+    return this.dataService.getParams(concept);
+  }
+
   fillForm(event: IComerExpense) {
     console.log(event);
     this.data = event;
     this.dataService.updateExpenseComposition.next(true);
     this.conceptNumber.setValue(event.conceptNumber);
     if (event.conceptNumber)
-      this.dataService.getParams({ id: event.conceptNumber }).subscribe();
+      this.getParams({ id: event.conceptNumber }).subscribe();
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
