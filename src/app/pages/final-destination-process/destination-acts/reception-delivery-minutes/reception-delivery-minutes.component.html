@@ -4,32 +4,33 @@
   </div>
   <div body>
     <div class="row justify-content-center">
-      <div class="row margin-select justify-content-center">
-        <div class="row margin-form justify-content-center">
-          <div class="col-md-3">
-            <h6>Clave del Acta</h6>
-          </div>
-          <div class="col-md-5">
-            <select class="form-control">
-              <option [value]="null">Seleccione una clave</option>
-              <option *ngFor="let item of proceedingsList" [value]="item">
-                {{ item }}
-              </option>
-            </select>
+      <form class="form-material" [formGroup]="form">
+        <div class="row margin-ngx-select justify-content-center">
+          <div class="col-md-8">
+            <form-field [control]="form.get('actas')">
+              <ngx-select
+                [form]="form"
+                control="actas"
+                value="id"
+                bindLabel="descCondition"
+                [data]="cities"
+                label="Clave del Acta"
+                (change)="stateChange($event)">
+              </ngx-select>
+            </form-field>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
   <div footer>
     <div class="row justify-content-center">
       <form class="form-material" [formGroup]="form">
         <div class="row margin-input justify-content-center">
-          <div class="col-md-3">
-            <h6>Nombre del Archivo</h6>
-          </div>
-          <div class="col-md-5">
-            <form-field [control]="form.get('nameAr')">
+          <div class="col-md-8">
+            <form-field
+              [control]="form.get('nameAr')"
+              label="Nombre del Archivo">
               <input
                 type="text"
                 class="form-control"
