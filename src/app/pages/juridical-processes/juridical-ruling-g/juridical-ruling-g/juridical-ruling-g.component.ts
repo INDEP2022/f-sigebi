@@ -84,6 +84,7 @@ import { GoodSubtype } from './model/good.model';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
+import { TmpNotificationService } from 'src/app/core/services/ms-notification/tmp-notification.service';
 
 /** ROUTING MODULE */
 
@@ -403,7 +404,8 @@ export class JuridicalRulingGComponent
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
     private jobDictumTextsService: JobDictumTextsService,
     private AccountMovements: AccountMovements,
-    private comerDetailsService: ComerDetailsService
+    private comerDetailsService: ComerDetailsService,
+    private tmpNotificationService: TmpNotificationService
   ) {
     super();
     this.dictamen = {
@@ -1331,7 +1333,7 @@ export class JuridicalRulingGComponent
     if (V_BAN == true && V_ELIMINA == 'S') {
       this.alertQuestion(
         'question',
-        `Se borra dictamen cerrado (Exp.: ${object.vProceedingsNumber} Tipo: ${object.vTypeDicta} No.Dict.: ${this.dictNumber})?`,
+        `Se borrará dictamen cerrado (Exp.: ${object.vProceedingsNumber} Tipo: ${object.vTypeDicta} No.Dict.: ${this.dictNumber})`,
         '¿Deseas continuar?'
       ).then(async question => {
         if (question.isConfirmed) {
@@ -1355,7 +1357,7 @@ export class JuridicalRulingGComponent
             if (V_EXIST == 'S') {
               this.alert(
                 'warning',
-                'Al menos un bien se encuentra en otra fase...',
+                'Al menos un Bien se encuentra en otra fase...',
                 ''
               );
               return;
@@ -1442,6 +1444,7 @@ export class JuridicalRulingGComponent
                 'Se ha eliminado el Dictamen correctamente',
                 ''
               );
+
               this.onLoadGoodList(0, 'all');
               this.resetALL();
               setTimeout(() => {

@@ -177,7 +177,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se Encontró ningún bien que Cumpliera con el Criterio de Conciliación',
+          'No se encontró ningún Bien que cumpla con el criterio de conciliación',
           ''
         );
       }
@@ -186,7 +186,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       this.ejecutarloadingConciliar();
       this.alert(
         'warning',
-        'No tiene Capturados todos los Criterios para Realizar la Conciliación',
+        'No se encontró ningún Bien que cumpla con el criterio de conciliación',
         ''
       );
     }
