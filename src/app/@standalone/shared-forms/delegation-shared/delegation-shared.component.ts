@@ -44,6 +44,7 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
   @Input() delegationChange: boolean = true;
+  @Input() init: boolean = false;
   @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
   @Output() emitDelegation = new EventEmitter<IDelegation>();
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -68,6 +69,10 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    if (this.init) {
+      this.getDelegations(new ListParams());
+      this.getSubDelegations(new ListParams());
+    }
     console.log(this.showDelegation);
     if (this.showSubdelegation) {
       this.form.get(this.delegationField).valueChanges.subscribe(res => {
