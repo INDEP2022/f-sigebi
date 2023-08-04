@@ -157,4 +157,8 @@ export class LotService extends HttpService {
   getFindAllRegistersTot(params?: _Params) {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
+
+  btnEjecutar(body: any) {
+    return this.post(LotEndpoints.pupEntar, body);
+  }
 }
