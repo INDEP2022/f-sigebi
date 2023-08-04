@@ -68,18 +68,16 @@ export const COMEMR_BIENES_COLUMNS = {
     title: 'No. Bien',
     sort: false,
   },
-  lotDescription: {
+  description: {
     title: 'Descripción',
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       return row.good.description;
     },
   },
-  baseValue: {
-    title: 'Valor',
-    sort: false,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.good.cant;
-    },
-  },
+  // baseValue: {
+  //   title: 'Valor',
+  //   type: 'text',
+  //   sort: false,
+  // },
 };

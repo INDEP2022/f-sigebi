@@ -14,6 +14,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerDocumentsXML,
+  IComerModifyXML,
   IUpdateComerPagosRef,
 } from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { IUserAccessAreaRelational } from 'src/app/core/models/ms-users/seg-access-area-relational.model';
@@ -770,7 +771,24 @@ export class ElectronicSignaturesMainComponent
   }
 
   uploadFirmPDF() {
-    this.updateComerActXml();
+    let body: IComerModifyXML = {
+      documXmlId: this.selectedRow.documensxmltid,
+      screenKey: this.selectedRow.screenkey,
+      reportKey: this.selectedRow.reportkey,
+      referenceId: this.selectedRow.referenceid + '',
+      documentId: this.selectedRow.documentid + '',
+      consecutiveNumber: this.selectedRow.consecutivenumber,
+    };
+    this.svElectronicSignatures.comerModifyXML(body).subscribe({
+      next: res => {
+        console.log('DATA MODIFY XML', res);
+        this.updateComerActXml();
+      },
+      error: error => {
+        console.log(error);
+        this.alert('error', 'Error', error.error.message);
+      },
+    });
   }
 
   updateComerActXml() {
