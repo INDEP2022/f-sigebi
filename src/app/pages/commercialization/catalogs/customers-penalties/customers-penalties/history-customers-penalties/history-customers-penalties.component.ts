@@ -41,9 +41,10 @@ export class HistoryCustomersPenaltiesComponent
   set penalties(value: ICustomersPenalties) {
     if (value) {
       this._penalties = value;
-      this.params
+      this.getData(value.clientId.id);
+      /*this.params
         .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData(value.clientId.id));
+        .subscribe(() => this.getData(value.clientId.id));*/
       //this.getData(value.clientId.id);
     }
   }
