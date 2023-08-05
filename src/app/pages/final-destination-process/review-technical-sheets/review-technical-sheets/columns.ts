@@ -1,11 +1,11 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-export let COLUMNS = {
-  program: {
+export const COLUMNS = {
+  recordKey: {
     title: 'Programa',
     type: 'string',
     sort: false,
   },
-  goodNumb: {
+  assetNumber: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -25,7 +25,7 @@ export let COLUMNS = {
     type: 'string',
     sort: false,
   },
-  receptDate: {
+  physicalReceptionDate: {
     title: 'Fecha Recepción',
     type: 'string',
     sort: false,
@@ -35,7 +35,7 @@ export let COLUMNS = {
     type: 'string',
     sort: false,
   },
-  photo: {
+  photograph: {
     title: 'Fotografía',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
@@ -51,7 +51,7 @@ export let COLUMNS = {
   //     type: 'string',
   //     sort: false,
   //   },
-  revised: {
+  reviewIndft: {
     title: 'Revisó',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
@@ -62,7 +62,7 @@ export let COLUMNS = {
     },
     sort: false,
   },
-  fulfilled: {
+  fulfilledFt: {
     title: 'Cumplió',
     type: 'custom',
     renderComponent: CheckboxElementComponent,

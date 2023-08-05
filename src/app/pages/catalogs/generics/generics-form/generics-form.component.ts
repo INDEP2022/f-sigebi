@@ -114,7 +114,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     this.genericsService.create(this.genericsForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
-        this.alert('error', 'El Registro ya Existe', '');
+        this.alert('error', 'El Identficador Clave ya fue registrado', '');
         this.loading = false;
       },
     });

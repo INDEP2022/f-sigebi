@@ -23,6 +23,16 @@ export interface IDetailProceedingsDeliveryReception {
   exchangeValue?: number;
 }
 
+export interface IDetailProceedings {
+  numberProceedings: string;
+  numberGood: string;
+  reviewIndft: string;
+  correctIndft: string;
+  idftDate?: Date;
+  idftUser?: string;
+  numDelegationIndft?: number;
+}
+
 export interface IDeleteDetailProceeding {
   numberGood: string | number;
   numberProceedings: string | number;

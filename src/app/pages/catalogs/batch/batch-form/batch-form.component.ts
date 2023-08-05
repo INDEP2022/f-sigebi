@@ -105,7 +105,11 @@ export class BatchFormComponent extends BasePage implements OnInit {
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
-        this.alert('error', 'El Almacen ya fue registrado', '');
+        this.alert(
+          'error',
+          'El Codigo Lote con el No. Almacen ya fueron registrados',
+          ''
+        );
       },
     });
   }

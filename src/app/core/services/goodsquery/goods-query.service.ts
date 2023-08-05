@@ -13,6 +13,7 @@ import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
 import { ICaptureDig } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
+  IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
 
@@ -27,6 +28,7 @@ export class GoodsQueryService extends HttpService {
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private routeGoodsProg = GoodsQueryEndpoints.ProgrammingGood;
+  private routeindicators = GoodsQueryEndpoints.indicatorsEntRecep;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private catMeasureUnitsView: GoodsQueryEndpoints.MeasureUnitsView;
 
@@ -135,6 +137,12 @@ export class GoodsQueryService extends HttpService {
     params?: string
   ): Observable<IListResponse<IAttribClassifGoods>> {
     return this.get(`${this.attribClassifGoodRoute}?${params}`);
+  }
+
+  getIndicatorsEntRecep(
+    params?: ListParams
+  ): Observable<IListResponse<IindicatorsEntRecep>> {
+    return this.get(`${this.routeindicators}?${params}`);
   }
 
   create(model: IAttribClassifGoods): Observable<IAttribClassifGoods> {

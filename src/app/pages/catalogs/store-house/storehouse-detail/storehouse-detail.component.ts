@@ -10,6 +10,7 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -94,7 +95,10 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
           Validators.maxLength(80),
         ],
       ],
-      idEntity: [null, [Validators.maxLength(60)]],
+      idEntity: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.storeHouse != null) {
       console.log(this.storeHouse);
