@@ -15,6 +15,7 @@ export class ListReferenceComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  dataParams: any;
   constructor(private modalRef: BsModalRef) {
     super();
     this.settings = {

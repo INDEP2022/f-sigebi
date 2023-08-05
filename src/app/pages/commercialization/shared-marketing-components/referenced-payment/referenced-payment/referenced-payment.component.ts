@@ -21,6 +21,7 @@ import { PaymentService } from 'src/app/core/services/ms-payment/payment-service
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS } from './columns';
+import { ListReferenceComponent } from './list-reference/list-reference.component';
 import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
@@ -443,8 +444,176 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     });
   }
 
-  ratificar() {}
-  referencia() {}
+  async ratificar() {
+    console.log(this.valAcc);
+    if (!this.valAcc) {
+      this.alert('warning', 'Debe Seleccionar un Pago', '');
+      return;
+    }
+
+    let L_LOTE: any = 0;
+    let L_PUBLICO: any = 0;
+    let L_IMPORTE: any = null;
+    if (!this.valAcc.entryOrderId) {
+      // BEGIN
+      // SELECT		CPG.RECHAZAR, CPG.RELACIONA
+      // INTO			L_RECHAZAR, L_RELACIONA
+      // FROM			COMER_CTRLPAGOS CPG
+      // WHERE			CPG.CVE_BANCO = : COMER_PAGOREF.CVE_BANCO
+      // AND				CPG.CODIGO = : COMER_PAGOREF.CODIGO;
+      // EXCEPTION WHEN NO_DATA_FOUND THEN
+      // LIP_MENSAJE('No existe el tipo de movimiento', 'A');
+      // 					RAISE FORM_TRIGGER_FAILURE;
+
+      const LLL: any = await this.getPaymentControl(
+        this.valAcc.bankKey,
+        this.valAcc.code
+      );
+      if (LLL.reject == 'N') {
+        const comerLotes: any = await this.getFcomerC3(this.valAcc.reference);
+        if (comerLotes.count == 0) {
+          L_LOTE = 0;
+          const requestBody: any = {
+            paymentId: this.valAcc.paymentId,
+            lotId: null,
+            validSistem: 'R',
+            result: 'Referencia Invalida',
+          };
+          await this.updatePago(this.valAcc.idPayment, requestBody);
+          this.alert('warning', 'El Movimiento Sigue por Ratificarse', '');
+        } else {
+          // if (comerLotes.length > 1) {
+          this.alert(
+            'warning',
+            'Referencia Repetida en otro Evento ' + this.valAcc.reference,
+            ''
+          );
+
+          const comerLotesAndEvent: any = await this.getFcomerC4(
+            this.valAcc.reference
+          );
+          L_LOTE = comerLotesAndEvent.maxidlote;
+          L_PUBLICO = comerLotesAndEvent.maxlotpub;
+        }
+
+        if (L_LOTE > 0 && L_PUBLICO != 0) {
+          const requestBody: any = {
+            paymentId: this.valAcc.paymentId,
+            lotId: L_LOTE,
+            validSistem: 'A',
+            result: 'Referencia Valida',
+          };
+          await this.updatePago(this.valAcc.idPayment, requestBody);
+        } else if (L_LOTE > 0 && L_PUBLICO == 0) {
+          const requestBody: any = {
+            paymentId: this.valAcc.paymentId,
+            lotId: L_LOTE,
+            validSistem: 'B',
+            result: 'Referencia Pago Bases',
+          };
+
+          await this.updatePago(this.valAcc.idPayment, requestBody);
+        }
+      } else if (LLL.reject == 'S') {
+        this.valAcc.amount;
+        // L_IMPORTE:= : COMER_PAGOREF.MONTO;
+        // : PARAMETER.PAR_RECORD := : SYSTEM.CURSOR_RECORD;
+        //   GO_BLOCK('BLK_DEVO');
+        //   CLEAR_BLOCK;
+        //   FIRST_RECORD;
+        // OPEN C1(L_IMPORTE);
+        //   LOOP
+        //   FETCH C1 INTO: BLK_DEVO.ID_PAGO,	: BLK_DEVO.NUM_MOVTO, : BLK_DEVO.FECHA, : BLK_DEVO.REFERENCIA,
+        //                 : BLK_DEVO.IMPORTE,	: BLK_DEVO.SUCURSAL,  : BLK_DEVO.ID_LOTE;
+
+        //   EXIT WHEN C1 % NOTFOUND;
+        //   NEXT_RECORD;
+        // END LOOP;
+        // CLOSE C1;
+        //   PREVIOUS_RECORD;
+      } else {
+        this.alert('warning', 'No se Encontraron', '');
+        return;
+      }
+      console.log('LLL', LLL);
+    } else {
+      this.alert(
+        'warning',
+        'El Movimiento ya no Puede Modificarse, ya fue Asignado',
+        ''
+      );
+      return;
+    }
+  }
+
+  async updatePago(paymentId: any, requestBody: any) {
+    this.paymentService.update(paymentId, requestBody).subscribe({
+      next: response => {},
+      error: error => {
+        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+      },
+    });
+  }
+  async getPaymentControl(bankKey: any, idCode: any) {
+    const params = new ListParams();
+    params['filter.cveBank'] = `$eq:${bankKey}`;
+    params['filter.idCode'] = `$eq:${idCode}`;
+    return new Promise((resolve, reject) => {
+      this.accountMovementService.getPaymentControl(params).subscribe({
+        next: response => {
+          resolve(response.data[0]);
+        },
+        error: err => {
+          resolve(null);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+  async getFcomerC3(params: any) {
+    return new Promise((resolve, reject) => {
+      this.paymentService.getFcomerC3(params).subscribe({
+        next(value) {
+          resolve(value);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
+  }
+  async getFcomerC4(params: any) {
+    return new Promise((resolve, reject) => {
+      this.paymentService.getFcomerC4(params).subscribe({
+        next(value) {
+          resolve(value.data[0]);
+        },
+        error(err) {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  openFormList(dataParams: any) {
+    let config: ModalOptions = {
+      initialState: {
+        dataParams,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments('no');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ListReferenceComponent, config);
+  }
+
+  referencia() {
+    console.log(this.valAcc);
+  }
 
   pago() {}
 

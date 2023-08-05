@@ -12,9 +12,12 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -151,7 +154,10 @@ export class ConciliationExecutionMainComponent
     private modalService: BsModalService,
     private comerEventosService: ComerEventosService,
     private lotService: LotService,
-    private comerDetailsService: ComerDetailsService
+    private comerDetailsService: ComerDetailsService,
+    private token: AuthService,
+    private msDepositaryService: MsDepositaryService,
+    private msInvoiceService: MsInvoiceService
   ) {
     super();
     this.settings = {
@@ -306,19 +312,6 @@ export class ConciliationExecutionMainComponent
         ''
       );
 
-    let obj: any = {
-      fase: eventProcess.phase,
-      fases: this.globalFASES,
-      v_cl: this.GLOBALV_CL,
-      evento: this.selectedEvent.id_evento,
-      lote: this.selectedBatch ? this.selectedBatch.lotId : null,
-      lotePublico: this.selectedBatch ? this.selectedBatch.lotPublic : null,
-      noNombramiento: 0,
-      fecha: this.conciliationForm.value.date,
-      descripcion: this.selectedEvent.cve_proceso,
-    };
-    const endpointEjecutar: any = await this.ejecutarBTN(obj); //PUP_ENTRA
-
     if (eventProcess.phase == 1) {
       if (eventProcess.id.tpeventoId == 11) {
         // CARGA_PAGOSREFGENS;
@@ -328,8 +321,6 @@ export class ConciliationExecutionMainComponent
           this.selectedEvent.id_evento,
           this.selectedEvent.cve_proceso
         );
-        // CARGA_COMER_DETALLES;
-        // VALIDA_PAGOSREF.PREP_OI_BASES_CA(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION);
       } else {
         let L_PARAME: any = await this.VALIDA_PAGOSREF_OBT_PARAMETROS(
           this.selectedEvent.id_evento,
@@ -409,29 +400,174 @@ export class ConciliationExecutionMainComponent
         evento: this.selectedEvent.id_evento,
         lote: this.selectedBatch ? this.selectedBatch.lotId : null,
         lotePublico: this.selectedBatch ? this.selectedBatch.lotPublic : null,
-        noNombramiento: 0,
         fecha: this.conciliationForm.value.date,
         descripcion: this.selectedEvent.cve_proceso,
       };
-      const endpointEjecutar: any = await this.ejecutarBTN(obj); //PUP_ENTRA
+      const endpointEjecutar: any = await this.PUP_ENTRA(obj); //PUP_ENTRA
     }
   }
 
-  async CARGA_PAGOSREFGENS() {}
-  async CARGA_COMER_DETALLES() {}
-  async VALIDA_PAGOSREF_PREP_OI_BASES_CA(id_evento: any, cve_proceso: any) {}
-  async VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento: any, layout: any) {}
-  async VALIDA_ESTATUS() {}
-  async VALIDA_MANDATO() {}
-  async VALIDA_LISTANEGRA() {}
-  async VALIDA_PAGOSREF_VALIDA_COMER(id_evento: any, date: any) {}
-  async VALIDA_PAGOSREF_VENTA_SBM(id_evento: any, date: any) {}
-  async VALIDA_PAGOSREF_PREP_OI(id_evento: any, cve_proceso: any) {}
+  async CARGA_PAGOSREFGENS() {
+    return new Promise((resolve, reject) => {
+      this.lotService
+        .CARGA_PAGOSREFGENS(this.selectedEvent.id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(err.message[0]);
+          },
+        });
+    });
+  }
+
+  async CARGA_COMER_DETALLES() {
+    return new Promise((resolve, reject) => {
+      this.lotService
+        .CARGA_COMER_DETALLES(this.selectedEvent.id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(err.message[0]);
+          },
+        });
+    });
+  }
+
+  async VALIDA_PAGOSREF_PREP_OI_BASES_CA(id_evento: any, cve_proceso: any) {
+    let obj = {
+      event: id_evento,
+      descrption: cve_proceso,
+      user: this.token.decodeToken().preferred_username,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_PREP_OI_BASES_CA(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento: any, layout: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(err.message[0]);
+          },
+        });
+    });
+  }
+
+  async VALIDA_ESTATUS() {
+    let obj = {
+      appointmentNo: 1,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_ESTATUS(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_MANDATO() {
+    return new Promise((resolve, reject) => {
+      this.lotService.VALIDA_MANDATO(this.selectedEvent.id_evento).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err);
+        },
+      });
+    });
+  }
+
+  async VALIDA_LISTANEGRA() {
+    // no_nombramiento
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_LISTANEGRA(1).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_VALIDA_COMER(id_evento: any, date: any) {
+    let obj = {
+      event: id_evento,
+      date: date,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_VALIDA_COMER(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_VENTA_SBM(id_evento: any, date: any) {
+    let obj = {
+      event: id_evento,
+      date: date,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_VENTA_SBM(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_PREP_OI(id_evento: any, cve_proceso: any) {
+    let obj = {
+      name: 2,
+      description: cve_proceso,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_PREP_OI(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
 
   // PUP_ENTRA
-  ejecutarBTN(body: any) {
+  PUP_ENTRA(body: any) {
     return new Promise((resolve, reject) => {
-      this.lotService.btnEjecutar(body).subscribe({
+      this.lotService.PUP_ENTRA(body).subscribe({
         next: data => {
           resolve(data);
         },
