@@ -31,8 +31,8 @@ export interface IProccedingsDeliveryReception {
   receiptKey?: string;
   comptrollerWitness?: string;
   numRequest?: number;
-  closeDate?: number;
-  maxDate?: number;
+  closeDate?: string;
+  maxDate?: string;
   indFulfilled?: number;
   dateCaptureHc?: number;
   dateCloseHc?: number;

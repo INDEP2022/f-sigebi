@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -52,6 +53,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('goodsReception', this.guardReception);
     this.prepareForm();
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
@@ -289,12 +291,13 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: async response => {
             const updateReceipt = await this.updateReceipt(response.dDocName);
 
+            console.log('updateReceipt', updateReceipt);
             if (updateReceipt) {
               const updateProgrammingGood = await this.updateProgrammingGood();
-
+              console.log('updateProgrammingGood', updateProgrammingGood);
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGood();
-
+                console.log('updateGood', updateGood);
                 if (updateGood) {
                   this.alertInfo(
                     'success',
@@ -484,6 +487,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         idPrograming: this.programming.id,
         statusProceeedings: 'CERRADO',
         id_content: docName,
+        closingDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
       };
 
       this.proceedingService.updateProceeding(formData).subscribe({
@@ -509,6 +513,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: () => {
           resolve(true);
         },
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }
@@ -516,6 +523,8 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   updateProgrammingGood() {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
+
+      console.log('goodsReception', goodsReception);
       goodsReception.map((item: IGood) => {
         const formData: Object = {
           programmingId: this.programming.id,

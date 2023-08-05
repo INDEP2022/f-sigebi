@@ -65,18 +65,19 @@ export const RELEASE_REPORT_COLUMNS = {
 };
 export const COMEMR_BIENES_COLUMNS = {
   goodNumber: {
-    title: 'Bien',
-    type: 'text',
+    title: 'No. Bien',
     sort: false,
   },
-  lotDescription: {
+  description: {
     title: 'Descripción',
-    type: 'text',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good.description;
+    },
   },
-  baseValue: {
-    title: 'Valor',
-    type: 'text',
-    sort: false,
-  },
+  // baseValue: {
+  //   title: 'Valor',
+  //   type: 'text',
+  //   sort: false,
+  // },
 };

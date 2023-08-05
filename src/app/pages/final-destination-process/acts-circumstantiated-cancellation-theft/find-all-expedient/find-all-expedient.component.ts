@@ -22,6 +22,7 @@ import { EXPEDIENT_COLUMNS } from '../acts-cir-columns';
 export class FindAllExpedientComponent extends BasePage implements OnInit {
   // loading: boolean = false;
   provider: any;
+  loadingModalE: boolean = false;
   expedients: IExpedient[] = [];
   providerForm: FormGroup = new FormGroup({});
   dataFactExp: LocalDataSource = new LocalDataSource();
@@ -48,7 +49,7 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loading = false;
+    this.loadingModalE = true;
     this.providerForm.patchValue(this.provider);
     this.dataFactExp
       .onChanged()
@@ -61,18 +62,18 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'lotsId' ||
-            filter.field == 'addressedTo' ||
-            filter.field == 'position' ||
-            filter.field == 'paragraph1' ||
-            filter.field == 'invoiceNumber' ||
-            filter.field == 'invoiceDate' ||
+            filter.field == 'preliminaryInquiry' ||
+            filter.field == 'criminalCase' ||
+            filter.field == 'expTransferNumber' ||
+            filter.field == 'insertDate' ||
+            filter.field == 'authorityNumber' ||
+            filter.field == 'identifier' ||
             filter.field == 'signatory' ||
-            filter.field == 'ccp1' ||
-            filter.field == 'ccp2' ||
-            filter.field == 'ccp3' ||
-            filter.field == 'ccp4' ||
-            filter.field == 'ccp5'
+            filter.field == 'crimeKey' ||
+            filter.field == 'expedientType' ||
+            filter.field == 'courtName' ||
+            filter.field == 'indicatedName' ||
+            filter.field == 'insertedBy'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -112,15 +113,21 @@ export class FindAllExpedientComponent extends BasePage implements OnInit {
   // }
 
   getExpedient(lparams: ListParams) {
+    this.loadingModalE = true;
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
       params.addFilter('preliminaryInquiry', lparams.text, SearchFilter.LIKE);
 
-    this.expedientService.getExpedientList(params.getParams()).subscribe({
+    // para filtrar
+    const params2 = {
+      ...params,
+      ...this.columnFilters,
+    };
+    this.expedientService.getExpedientList(params2).subscribe({
       next: data => {
-        this.loading = false;
+        this.loadingModalE = false;
         this.expedients = data.data;
         this.totalItems = data.count;
         this.dataFactExp.load(this.expedients);

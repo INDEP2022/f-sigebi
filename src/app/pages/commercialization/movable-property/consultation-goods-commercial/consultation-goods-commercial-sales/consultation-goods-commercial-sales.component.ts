@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -70,7 +73,15 @@ export class ConsultationGoodsCommercialSalesComponent
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      console.log(this.dataGoods['data'].length);
+      if (this.dataGoods['data'].length > 0) {
+        this.executeConsult('pag');
+      }
+    });
+  }
 
   getData() {
     this.loading = true;
@@ -360,7 +371,7 @@ export class ConsultationGoodsCommercialSalesComponent
   }
 
   //Ejecutar Consulta
-  executeConsult() {
+  executeConsult(procedence: string) {
     this.loading = true;
     let model: IGoodCharge = {};
 
@@ -407,7 +418,15 @@ export class ConsultationGoodsCommercialSalesComponent
       );
       this.loading = false;
     } else {
-      this.goodService.chargeGoods(model).subscribe(
+      const paramsF = new FilterParams();
+      if (procedence != 'pag') {
+        this.params.value.page = 1;
+        this.params.value.limit = 10;
+      }
+      paramsF.page = this.params.value.page;
+      paramsF.limit = this.params.value.limit;
+
+      this.goodService.chargeGoods(model, paramsF.getParams()).subscribe(
         res => {
           console.log(res);
           this.dataGoods.load(res.data);

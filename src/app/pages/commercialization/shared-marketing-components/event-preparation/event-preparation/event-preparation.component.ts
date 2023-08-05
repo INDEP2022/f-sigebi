@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 //XLSX
+import { ActivatedRoute } from '@angular/router';
 import { sub } from 'date-fns';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
@@ -72,11 +73,14 @@ export class EventPreparationComponent
     private eventPreparationService: EventPreparationService,
     private globalVarsService: GlobalVarsService,
     private eventAppService: EventAppService,
-    private parametersModService: ParametersModService
+    private parametersModService: ParametersModService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     // TODO: Recibir los parametros
     this.parameters.pDirection = 'M';
+    const screen = this.activatedRoute.snapshot.data['screen'];
+    this.parameters.pDirection = screen == 'FCOMEREVENTOS' ? 'M' : 'I';
   }
 
   async checkState() {
@@ -148,7 +152,8 @@ export class EventPreparationComponent
   /** PUP_INCIALIZA_FORMA */
   initForm() {
     this.defaultMenu();
-    this.blkTasks.tDirection = 'MUEBLES';
+    this.blkTasks.tDirection =
+      this.parameters.pDirection == 'M' ? 'MUEBLES' : 'INMUEBLES';
     // TODO: SET_ITEM_PROPERTY('BLK_BIENES_LOTES.CAMPO1', PROMPT_TEXT, 'Nombre Prod');
     this.blkCtrlMain.chkLocation = true;
     this.blkCtrlMain.chkProc = true;
@@ -541,5 +546,11 @@ export class EventPreparationComponent
       return;
     }
     this.fillStadistics();
+  }
+
+  onApply() {
+    const params = new FilterParams();
+    this.comerLotsListParams.next(params);
+    this.selectTab(TABS.LOTES_TAB);
   }
 }

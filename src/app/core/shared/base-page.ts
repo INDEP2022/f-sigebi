@@ -107,6 +107,9 @@ export abstract class BasePage
   protected loaderProgress = inject(LoadingPercentService);
   protected _toastrService = inject(ToastrService);
   private _store = inject(GlobalVarsService);
+  get _codeScreen() {
+    return this._screenCode.$id.getValue();
+  }
   constructor() {
     super();
     this.bsConfig = {

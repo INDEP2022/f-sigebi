@@ -1997,6 +1997,7 @@ export class JuridicalRecordUpdateComponent
 
     this.change_Dict = dictum;
     this.fileUpdComService.enviarDatos(this.change_Dict);
+    localStorage.setItem('dictumKey', JSON.stringify(this.change_Dict));
     // this.datosEnviados.emit(this.change_Dict)
     if (this.dictum == 'CONOCIMIENTO') {
       this.formControls.reserved.enable();
