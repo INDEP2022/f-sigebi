@@ -24,18 +24,16 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('coordination')">
-            <ngx-select
-              [form]="form"
-              [data]="coordinationsItems"
-              label="Coordinación"
-              value="no_delegacion"
-              bindLabel="descripcion"
-              (fetchItems)="getCoordinations($event)"
-              (change)="selectCoordination($event)"
-              control="coordination">
-            </ngx-select>
-          </form-field>
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="coordination"
+            [multiple]="false"
+            label="Coordinación Regional"
+            value="id"
+            bindLabel="description"
+            paramSearch="search"
+            path="catalog/api/v1/delegation/get-all">
+          </ng-custom-select-loading>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('opcion')" label="Opción">
@@ -71,6 +69,7 @@
         <div class="col-md-2">
           <app-event-type-shared
             [form]="form"
+            formControlName="event"
             [bindLabel]="'descripcion'"></app-event-type-shared>
         </div>
       </div>
@@ -89,6 +88,7 @@
           <button
             type="button"
             class="btn btn-sm btn-success active"
+            (click)="exportExcel()"
             [disabled]="!form.valid">
             Exportar Excel
           </button>

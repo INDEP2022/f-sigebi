@@ -6,7 +6,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IValidations } from '../../models/ms-proceedings/validations.model';
+import { IProceedingsValidation } from '../../models/ms-proceedings/validations.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,17 +18,23 @@ export class ProceedingsValidationsService extends HttpService {
     this.microservice = ProceedingsEndpoints.BasePath;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IValidations>> {
+  getAll(
+    params?: ListParams
+  ): Observable<IListResponse<IProceedingsValidation>> {
     // const url = this.endpoint;
-    const url = ` ${environment.API_URL}proceeding/api/v1/proceedings-validations`;
-    return this.http.get<IListResponse<IValidations>>(url, { params });
+    const url = ` ${environment.API_URL}proceeding/api/v1/proceedings-validations/custom`;
+    return this.http.get<IListResponse<IProceedingsValidation>>(url, {
+      params,
+    });
   }
 
   getTotalRegisters(
-    params?: ListParams
-  ): Observable<IListResponse<IValidations>> {
+    params?: any
+  ): Observable<IListResponse<IProceedingsValidation>> {
     // const url = this.endpoint;
-    const url = ` ${environment.API_URL}proceeding/api/v1/proceedings-validations`;
-    return this.http.get<IListResponse<IValidations>>(url, { params });
+    const url = ` ${environment.API_URL}proceeding/api/v1/proceedings-validations/custom`;
+    return this.http.get<IListResponse<IProceedingsValidation>>(url, {
+      params,
+    });
   }
 }
