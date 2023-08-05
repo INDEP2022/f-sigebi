@@ -250,4 +250,19 @@ export class GoodProcessService extends HttpService {
   getStatusFinal(model: any) {
     return this.post('update-good-status/getFinalStatus', model);
   }
+
+  getDisponible2(model: any) {
+    return this.post('update-good-status/getOneStatus', model);
+  }
+
+  getStatusProcess(model: any) {
+    return this.post(
+      'update-good-status/getStatusProcess?limit=10&page=1',
+      model
+    );
+  }
+
+  getData(params: ListParams) {
+    return this.get<IListResponse<any>>('update-good-status/getData', params);
+  }
 }
