@@ -174,10 +174,6 @@ export class LotService extends HttpService {
     return this.post('apps/get-lot-comer-pay-ref-countAll', body);
   }
 
-  btnEjecutar(body: any) {
-    return this.post(LotEndpoints.pupEntar, body);
-  }
-
   applyBaseCost(body: {
     cotobase: string | number;
     lotId: string | number;
@@ -202,5 +198,27 @@ export class LotService extends HttpService {
       'apps/form-query2',
       body
     );
+  }
+
+  // ------------------------
+  PUP_ENTRA(body: any) {
+    // PUP_ENTRA
+    return this.post(LotEndpoints.PupEntra, body);
+  }
+
+  CARGA_PAGOSREFGENS(evento: any) {
+    return this.post(`${LotEndpoints.CargaPagosRefGens}/${evento}`, {});
+  }
+
+  CARGA_COMER_DETALLES(evento: any) {
+    return this.post(`${LotEndpoints.CargaComerDetalles}/${evento}`, {});
+  }
+
+  VALIDA_MANDATO(evento: any) {
+    return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
+  }
+
+  VALIDA_ESTATUS(body: any) {
+    return this.post(`${LotEndpoints.ValidateStatus}`, body);
   }
 }
