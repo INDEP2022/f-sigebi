@@ -8,7 +8,7 @@ export const COLUMNS = {
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+        data.row.changeStatus = data.toggle;
       });
     },
     filter: {
@@ -27,7 +27,7 @@ export const COLUMNS = {
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+        data.row.reportDelit = data.toggle;
       });
     },
     filter: {

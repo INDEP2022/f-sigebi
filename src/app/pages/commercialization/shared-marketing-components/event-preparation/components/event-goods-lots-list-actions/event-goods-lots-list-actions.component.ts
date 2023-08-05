@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -594,9 +594,20 @@ export class EventGoodsLotsListActionsComponent
     const ESTATUS = this.reverseType();
     const ID_EVENTO = eventTpId.value;
     const P_DIRECCION = this.parameters.pDirection;
-    this.modalService.show(GroundsStatusModalComponent, {
-      ...MODAL_CONFIG,
-    });
+    // this.modalService.show(GroundsStatusModalComponent, {
+    //   ...MODAL_CONFIG,
+    // });
+    let config: ModalOptions = {
+      initialState: {
+        ESTATUS,
+        ID_EVENTO,
+        P_DIRECCION,
+        callback: (next: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GroundsStatusModalComponent, config);
   }
 
   /**TIPO_REVERSA */
