@@ -86,10 +86,10 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
 
             switch (filter.field) {
-              case 'year':
+              case 'yearEvaluates':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'month':
+              case 'monthValues':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -252,10 +252,10 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
         let dataCreada: any[] = [];
         for (let ficha of data.data) {
           let fichaObjeto: any = {};
-          fichaObjeto.year = ficha.anio_evalua;
-          fichaObjeto.month = ficha.mes_evalua;
-          fichaObjeto.usuario_revision = ficha.usuario_revision;
-          fichaObjeto.no_delegacion = ficha.no_delegacion;
+          fichaObjeto.yearEvaluates = ficha.yearEvaluates;
+          fichaObjeto.monthValues = ficha.monthValues;
+          fichaObjeto.userReview = ficha.userReview;
+          fichaObjeto.delegationNumber = ficha.delegationNumber;
           dataCreada.push(fichaObjeto);
         }
         this.dataTable.load(dataCreada);
