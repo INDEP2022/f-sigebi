@@ -475,7 +475,7 @@ export class ConciliationExecutionMainComponent
       appointmentNo: 1,
     };
     return new Promise((resolve, reject) => {
-      this.msDepositaryService.VALIDA_ESTATUS(obj).subscribe({
+      this.lotService.VALIDA_ESTATUS(obj).subscribe({
         next: data => {
           resolve(data);
         },

@@ -217,4 +217,8 @@ export class LotService extends HttpService {
   VALIDA_MANDATO(evento: any) {
     return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
   }
+
+  VALIDA_ESTATUS(body: any) {
+    return this.post(`${LotEndpoints.ValidateStatus}`, body);
+  }
 }

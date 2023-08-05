@@ -64,8 +64,8 @@ export class PaymentService extends HttpService {
     return this.get(PaymentEndPoints.getAllV2Total, params);
   }
 
-  getFcomerC1(params: _Params) {
-    return this.get(PaymentEndPoints.getFcomerC1, params);
+  getFcomerC1(params: any) {
+    return this.get(`${PaymentEndPoints.getFcomerC1}?amount=${params}`);
   }
 
   getFcomerC2(params: _Params) {

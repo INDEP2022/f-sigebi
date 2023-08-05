@@ -515,7 +515,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           await this.updatePago(this.valAcc.idPayment, requestBody);
         }
       } else if (LLL.reject == 'S') {
-        this.valAcc.amount;
+        L_IMPORTE = this.valAcc.amount;
+        this.openFormList(this.valAcc, L_IMPORTE);
         // L_IMPORTE:= : COMER_PAGOREF.MONTO;
         // : PARAMETER.PAR_RECORD := : SYSTEM.CURSOR_RECORD;
         //   GO_BLOCK('BLK_DEVO');
@@ -595,10 +596,11 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     });
   }
 
-  openFormList(dataParams: any) {
+  openFormList(dataParams: any, L_IMPORTE: any) {
     let config: ModalOptions = {
       initialState: {
         dataParams,
+        L_IMPORTE,
         callback: (next: boolean) => {
           if (next) {
             this.getPayments('no');

@@ -12,4 +12,5 @@ export enum LotEndpoints {
   CargaComerDetalles = 'apps/carga-comer-detalles', // CARGA_COMER_DETALLES
   ValidaMandato = 'apps/validaMandato', //VALIDA_MANDATO
   PupEntra = 'apps/pup-entra', // PUP_ENTRA
+  ValidateStatus = 'apps/valida-estatus',
 }
