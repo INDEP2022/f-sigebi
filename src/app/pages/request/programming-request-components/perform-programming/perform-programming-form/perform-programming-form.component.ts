@@ -1497,9 +1497,7 @@ export class PerformProgrammingFormComponent
                 'Bienes agregados a transportable correctamente'
               );
             },
-            error: error => {
-              console.log('error', error);
-            },
+            error: error => {},
           });
         }
       });
@@ -1701,9 +1699,7 @@ export class PerformProgrammingFormComponent
                         'Bienes agregados a almacén correctamente'
                       );
                     },
-                    error: error => {
-                      console.log('error', error);
-                    },
+                    error: error => {},
                   });
               }
             },
@@ -1971,9 +1967,7 @@ export class PerformProgrammingFormComponent
                         'Bienes agregados a almacén correctamente'
                       );
                     },
-                    error: error => {
-                      console.log('error', error);
-                    },
+                    error: error => {},
                   });
               }
             },
@@ -2142,7 +2136,6 @@ export class PerformProgrammingFormComponent
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
-            console.log('response', response);
             resolve(true);
           },
           error: error => {
@@ -2417,7 +2410,6 @@ export class PerformProgrammingFormComponent
         }
       });
     } else {
-      console.log('data', this.performForm.value);
       if (this.transferentId)
         this.performForm.get('tranferId').setValue(this.transferentId);
       if (this.stationId)
@@ -3277,7 +3269,44 @@ export class PerformProgrammingFormComponent
   }
 
   checkInfoDate(startDate: Date) {
-    const _startDateFormat = moment(startDate).format('DD/MM/YYYY');
+    const _startDate = moment(this.performForm.get('startDate').value).format(
+      'DD/MM/YYYY'
+    );
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'DD/MM/YYYY'
+    );
+    const date = moment(new Date()).format('YYYY/MM/DD');
+    const formData = {
+      days: 5,
+      hours: 0,
+      minutes: 0,
+      date: date,
+    };
+
+    this.programmingService.getDateProgramming(formData).subscribe({
+      next: (response: any) => {
+        const correctDate = moment(response).format('DD/MM/YYYY');
+        if (correctDate > _startDate || correctDate > _endDateFormat) {
+          this.performForm
+            .get('startDate')
+            .addValidators([minDate(new Date(response))]);
+          this.performForm
+            .get('startDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+
+          this.performForm
+            .get('endDate')
+            .addValidators([minDate(new Date(response))]);
+          this.performForm
+            .get('endDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+        }
+      },
+      error: error => {},
+    });
+    /*
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
       'DD/MM/YYYY'
     );
@@ -3314,7 +3343,7 @@ export class PerformProgrammingFormComponent
           this.performForm.markAllAsTouched();
         }
       },
-    });
+    }); */
     /*
 
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
@@ -3372,6 +3401,28 @@ export class PerformProgrammingFormComponent
     }); */
   }
 
+  checkInfoEndDate(endDate: Date) {
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'DD/MM/YYYY'
+    );
+    const _startDateFormat = moment(
+      this.performForm.get('startDate').value
+    ).format('DD/MM/YYYY');
+
+    if (_startDateFormat > _endDateFormat) {
+      const correctDate = moment(
+        this.performForm.get('startDate').value
+      ).format('DD/MM/YYYY HH:mm:ss');
+      this.performForm
+        .get('endDate')
+        .addValidators([minDate(new Date(correctDate))]);
+      this.performForm
+        .get('endDate')
+        .setErrors({ minDate: { min: new Date(correctDate) } });
+      this.performForm.markAllAsTouched();
+    }
+  }
+
   selectAllGoods() {
     this.selectMasiveGood = true;
   }
@@ -3411,9 +3462,7 @@ export class PerformProgrammingFormComponent
             this.headingTransportable = `Transportable(${deleteGood})`;
             this.totalItemsTransportableGoods = deleteGood;
           },
-          error: error => {
-            console.log('error date', error);
-          },
+          error: error => {},
         });
       }
     });
@@ -3449,9 +3498,7 @@ export class PerformProgrammingFormComponent
             this.headingGuard = `Resguardo(${deleteGood})`;
             this.totalItemsTransportableGuard = deleteGood;
           },
-          error: error => {
-            console.log('error date', error);
-          },
+          error: error => {},
         });
       }
     });
@@ -3489,9 +3536,7 @@ export class PerformProgrammingFormComponent
             this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
             this.totalItemsTransportableWarehouse = deleteGood;
           },
-          error: error => {
-            console.log('error date', error);
-          },
+          error: error => {},
         });
       }
     });

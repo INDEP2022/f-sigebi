@@ -34,11 +34,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = COLUMNS;
     this.settings.hideSubHeader = false;
-    /*this.settings.actions.add = false;
+    this.settings.actions.add = false;
     this.settings.actions.edit = true;
     this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';*/
-    this.settings.actions = false;
+    this.settings.actions.position = 'right';
+    //this.settings.actions = false;
   }
 
   ngOnInit(): void {
@@ -195,7 +195,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
   }*/
 
-  openForm(customersPenalties?: ICustomersPenalties) {
+  openForm(customersPenalties?: any) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       customersPenalties,
@@ -233,7 +233,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.clientPenaltyService.remove(id).subscribe({
       next: () => {
         this.getDeductives();
-        this.alert('success', 'Borrado Correctamente', '');
+        this.alert('success', 'Penalizacion', 'Borrado Correctamente');
       },
     });
   }
