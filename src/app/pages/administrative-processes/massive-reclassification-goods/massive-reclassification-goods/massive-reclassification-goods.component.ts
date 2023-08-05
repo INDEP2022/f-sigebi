@@ -120,7 +120,7 @@ export class MassiveReclassificationGoodsComponent
   openQuestion() {
     this.alertQuestion(
       'question',
-      '¿Desea reclasificar los bienes seleccionados?',
+      '¿Desea reclasificar los Bienes Seleccionados?',
       ''
     ).then(resp => {
       if (resp.isConfirmed) {
@@ -149,7 +149,7 @@ export class MassiveReclassificationGoodsComponent
         this.alert(
           'success',
           'Reclasificación Masiva',
-          'Se han reclasificado los bienes seleccionados.'
+          'Se han reclasificado los Bienes Seleccionados.'
         );
         this.loadGoods();
       });

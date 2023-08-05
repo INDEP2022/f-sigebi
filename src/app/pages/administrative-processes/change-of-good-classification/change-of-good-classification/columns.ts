@@ -1,12 +1,12 @@
 export const ATRIBUT_ACT_COLUMNS = {
   attribute: {
-    title: 'ATRIBUTO',
+    title: 'Atributo',
     sort: false,
     filter: true,
     editable: false,
   },
   value: {
-    title: 'VALORES',
+    title: 'Valores',
     sort: false,
     filter: true,
     editable: false,
