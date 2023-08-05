@@ -12,6 +12,7 @@ import {
 } from '../../models/ms-donation/donation.model';
 
 const api: string = DonationEndPoint.donation;
+const donationEvent = DonationEndPoint.eventComDonation;
 
 @Injectable({
   providedIn: 'root',
@@ -50,5 +51,9 @@ export class DonationService
 
   remove(id: string): Observable<any> {
     return this.donationRepository.remove(api, id);
+  }
+
+  getEventComDonation(params?: ListParams): Observable<IListResponse<any>> {
+    return this.donationRepository.getAll(donationEvent, params);
   }
 }

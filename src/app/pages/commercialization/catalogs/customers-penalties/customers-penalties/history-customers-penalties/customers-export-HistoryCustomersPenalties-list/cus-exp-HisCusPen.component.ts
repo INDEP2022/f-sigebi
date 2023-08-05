@@ -115,16 +115,78 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
       });
   }
 
-  //Exportar lista blanca de clientes
-  exportSelected(): void {
-    const data = this.customersPenalties.map((row: any) =>
-      this.transFormColums(row)
-    );
-    this.excelService.exportAsExcelFile(
-      data,
-      'TodosLosRepresentantesDelCliente'
-    );
+  //Exportar todos los clientes con penalizaciones
+  exportAll(): void {
+    this.loading = true;
+    this.clientPenaltyService.getByIdComerPenaltyHis2(this.clientId).subscribe({
+      next: response => {
+        this.downloadDocument(
+          'HISTORICO_DE_PENALIZACIONES_DEL_CLIENTE',
+          'excel',
+          response.base64File
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  //Exportar lista blanca de clientes//getByIdComerPenaltyHis2
+  // exportAll(): void {
+  //   const data = this.customersPenalties.map((row: any) =>
+  //     this.transFormColums(row)
+  //   );
+  //   this.excelService.exportAsExcelFile(
+  //     data,
+  //     'TodosLosRepresentantesDelCliente'
+  //   );
+  // }
 
   private transFormColums(row: any) {
     return {

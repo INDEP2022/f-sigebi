@@ -14,7 +14,7 @@
     </div>
   </div>
 </div>
-<div class="row">
+<div class="row pt-2">
   <div class="col-md-12">
     <app-pagination
       [filterParams]="params"
@@ -25,7 +25,10 @@
 <div class="row">
   <div class="col-md-12 d-flex justify-content-center">
     <div>
-      <button type="button" class="btn btn-primary btn-sm active">
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active"
+        (click)="_onAccept()">
         Aceptar
       </button>
     </div>

@@ -81,6 +81,10 @@ export class PaymentDispersionValidationComponent
   };
   form: FormGroup = new FormGroup({});
   form2: FormGroup = new FormGroup({});
+  amountForm: FormGroup = new FormGroup({});
+  amountForm2: FormGroup = new FormGroup({});
+  amountForm3: FormGroup = new FormGroup({});
+  amountForm4: FormGroup = new FormGroup({});
   show = false;
   eventSelected: any = null;
   comerEventSelect = new DefaultSelect();
@@ -203,6 +207,26 @@ export class PaymentDispersionValidationComponent
       montoPenalizacion: [''],
       listaNegra: [''],
     });
+
+    this.amountForm = this.fb.group({
+      tot_precio_final: [''],
+    });
+
+    this.amountForm2 = this.fb.group({
+      tot_precio_final: [''],
+      tot_iva_final: [''],
+    });
+
+    this.amountForm3 = this.fb.group({
+      tot_deposit: [''],
+    });
+
+    this.amountForm4 = this.fb.group({
+      tot_monto_con_iva: [''],
+      tot_iva: [''],
+      tot_monto_sin_iva: [''],
+      suma_totales: [''],
+    });
   }
 
   // FILTRADO DE LA TABLA 1 - LOTES //
@@ -273,6 +297,10 @@ export class PaymentDispersionValidationComponent
               description: () => (searchFilter = SearchFilter.ILIKE),
               finalPrice: () => (searchFilter = SearchFilter.EQ),
               finalVat: () => (searchFilter = SearchFilter.EQ),
+              camp2: () => (searchFilter = SearchFilter.ILIKE),
+              camp3: () => (searchFilter = SearchFilter.ILIKE),
+              camp4: () => (searchFilter = SearchFilter.ILIKE),
+              camp5: () => (searchFilter = SearchFilter.ILIKE),
             };
             search[filter.field]();
 
@@ -738,17 +766,46 @@ export class PaymentDispersionValidationComponent
 
     params['filter.idEvent'] = `$eq:${this.eventSelected.id}`;
     params['sortBy'] = 'lotPublic:ASC';
-    this.lotService.getLotbyEvent_(params).subscribe({
-      next: data => {
-        console.log('LOTES', data);
-        let result = data.data.map(async (item: any) => {
+    this.lotService.getFindAllRegistersTot(params).subscribe({
+      next: response => {
+        console.log('LOTES', response);
+
+        const items = response.items;
+        const count = response.count;
+        const finalPriceTot = response.finalPriceTot;
+
+        // let finalPrice = 0;
+        let result = items.map(async (item: any) => {
           item['rfc'] = item.client ? item.client.rfc : null;
+          // if (item.finalPrice)
+          //   finalPrice = finalPrice + Number(item.finalPrice);
         });
 
         Promise.all(result).then(resp => {
-          this.lotByEvent.load(data.data);
+          this.amountForm.get('tot_precio_final').setValue(finalPriceTot);
+          this.lotByEvent.load(items);
           this.lotByEvent.refresh();
-          this.totalItems = data.count;
+          this.totalItems = count;
+
+          if (filter == 'si') {
+            this.dataBienes_.load([]);
+            this.dataBienes_.refresh();
+            this.dataPagosBanco_.load([]);
+            this.dataPagosBanco_.refresh();
+            this.dataCompos_.load([]);
+            this.dataCompos_.refresh();
+
+            this.totalItems2 = 0;
+            this.totalItems3 = 0;
+            this.totalItems4 = 0;
+
+            this.disabledBtnCerrar2 = false;
+
+            this.acordionOpen2 = false;
+            this.acordionOpen3 = false;
+            this.acordionOpen4 = false;
+          }
+
           this.loading = false;
         });
       },
@@ -756,9 +813,26 @@ export class PaymentDispersionValidationComponent
         if (filter == 'si') {
           this.alert('warning', 'No hay Lotes Asociados a este Evento', '');
         }
+        this.amountForm.get('tot_precio_final').setValue(0);
         this.lotByEvent.load([]);
         this.lotByEvent.refresh();
+        this.dataBienes_.load([]);
+        this.dataBienes_.refresh();
+        this.dataPagosBanco_.load([]);
+        this.dataPagosBanco_.refresh();
+        this.dataCompos_.load([]);
+        this.dataCompos_.refresh();
+
         this.totalItems = 0;
+        this.totalItems2 = 0;
+        this.totalItems3 = 0;
+        this.totalItems4 = 0;
+
+        this.disabledBtnCerrar2 = false;
+
+        this.acordionOpen2 = false;
+        this.acordionOpen3 = false;
+        this.acordionOpen4 = false;
         this.loading = false;
       },
     });
@@ -778,24 +852,44 @@ export class PaymentDispersionValidationComponent
     }
 
     params2['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
-    this.comerGoodsRejectedService.getComerGoodXLote(params2).subscribe({
-      next: response => {
-        console.log(response);
-        let result = response.data.map(async (item: any) => {
-          item['description'] = item.good ? item.good.description : null;
-        });
-        this.dataBienes_.load(response.data);
-        this.dataBienes_.refresh();
-        this.totalItems2 = response.count;
-        this.loading2 = false;
-      },
-      error: error => {
-        this.dataBienes_.load([]);
-        this.dataBienes_.refresh();
-        this.totalItems2 = 0;
-        this.loading2 = false;
-      },
-    });
+    this.comerGoodsRejectedService
+      .getFindAllComerGoodXlotTotal(params2)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          // let tot_precio_final = 0;
+          // let tot_iva_final = 0;
+          const data = response.items;
+          const count = response.count;
+          const totFinalPrice = response.totFinalPrice;
+          const totFinalVat = response.totFinalVat;
+          let result = data.map(async (item: any) => {
+            item['description'] = item.good ? item.good.description : null;
+
+            // if (item.finalPrice)
+            //   tot_precio_final = tot_precio_final + Number(item.finalPrice);
+
+            // if (item.finalVat)
+            //   tot_iva_final = tot_iva_final + Number(item.finalVat);
+          });
+          Promise.all(result).then(resp => {
+            this.amountForm2.get('tot_precio_final').setValue(totFinalPrice);
+            this.amountForm2.get('tot_iva_final').setValue(totFinalVat);
+            this.dataBienes_.load(data);
+            this.dataBienes_.refresh();
+            this.totalItems2 = count;
+            this.loading2 = false;
+          });
+        },
+        error: error => {
+          this.amountForm2.get('tot_precio_final').setValue(0);
+          this.amountForm2.get('tot_iva_final').setValue(0);
+          this.dataBienes_.load([]);
+          this.dataBienes_.refresh();
+          this.totalItems2 = 0;
+          this.loading2 = false;
+        },
+      });
   }
 
   // COMER_PAGOREF
@@ -824,18 +918,28 @@ export class PaymentDispersionValidationComponent
     params3['filter.validSistem'] = `$not:$in:R,D`;
     params3['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
     params3['sortBy'] = `paymentId:ASC`;
-    this.paymentService.getComerPaymentRefGetAllV2(params3).subscribe({
+    this.paymentService.getComerPaymentRefgetAllV2Total(params3).subscribe({
       next: response => {
         console.log('PAYMENTS', response);
-        let result = response.data.map(async (item: any) => {});
+        let tot_deposit = 0;
+        const data = response.items;
+        const count = response.count;
+        const totFinalPrice = response.totFinalPrice;
+        const totAmount = response.totAmount;
+
+        let result = data.map(async (item: any) => {
+          // if (item.amount) tot_deposit = tot_deposit + Number(item.amount);
+        });
         Promise.all(result).then(resp => {
-          this.dataPagosBanco_.load(response.data);
+          this.amountForm3.get('tot_deposit').setValue(totAmount);
+          this.dataPagosBanco_.load(data);
           this.dataPagosBanco_.refresh();
-          this.totalItems3 = response.count;
+          this.totalItems3 = count;
           this.loading3 = false;
         });
       },
       error: error => {
+        this.amountForm3.get('tot_deposit').setValue(0);
         this.dataPagosBanco_.load([]);
         this.dataPagosBanco_.refresh();
         this.totalItems3 = 0;
@@ -861,22 +965,53 @@ export class PaymentDispersionValidationComponent
 
     params4['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
     params4['sortBy'] = `paymentId:ASC`;
-    this.spentService.getComerPaymentRefGensV2(params4).subscribe({
-      next: response => {
+    this.spentService.getComerPaymentRefGensV2Total(params4).subscribe({
+      next: (response: any) => {
         console.log('PAYMENTS', response);
-        let result = response.data.map(async (item: any) => {
+        const data = response.items;
+        const count = response.count;
+        const totalAmountAppVat = response.totalAmountAppVat;
+        const totalVat = response.totalVat;
+        const totalAmountNoAppVat = response.totalAmountNoAppVat;
+        const totalSumAmountNoAppVatVatAmountAppVat =
+          response.totalSumAmountNoAppVatVatAmountAppVat;
+        // let tot_monto_con_iva = 0;
+        // let tot_iva = 0;
+        // let tot_monto_sin_iva = 0;
+        // let suma_totales = 0;
+        let result = data.map(async (item: any) => {
           item['transference'] = item.transferent
             ? item.transferent.cvman
             : null;
+
+          // if (item.amountAppVat)
+          //   tot_monto_con_iva = tot_monto_con_iva + Number(item.amountAppVat);
+
+          // if (item.vat) tot_iva = tot_iva + Number(item.vat);
+
+          // if (item.amountNoAppVat)
+          //   tot_monto_sin_iva = tot_monto_sin_iva + Number(item.amountNoAppVat);
         });
         Promise.all(result).then(resp => {
-          this.dataCompos_.load(response.data);
+          this.amountForm4.get('tot_monto_con_iva').setValue(totalAmountAppVat);
+          this.amountForm4.get('tot_iva').setValue(totalVat);
+          this.amountForm4
+            .get('tot_monto_sin_iva')
+            .setValue(totalAmountNoAppVat);
+          this.amountForm4
+            .get('suma_totales')
+            .setValue(totalSumAmountNoAppVatVatAmountAppVat);
+          this.dataCompos_.load(data);
           this.dataCompos_.refresh();
-          this.totalItems4 = response.count;
+          this.totalItems4 = count;
           this.loading4 = false;
         });
       },
       error: error => {
+        this.amountForm4.get('tot_monto_con_iva').setValue(0);
+        this.amountForm4.get('tot_iva').setValue(0);
+        this.amountForm4.get('tot_monto_sin_iva').setValue(0);
+        this.amountForm4.get('suma_totales').setValue(0);
         this.dataCompos_.load([]);
         this.dataCompos_.refresh();
         this.totalItems4 = 0;

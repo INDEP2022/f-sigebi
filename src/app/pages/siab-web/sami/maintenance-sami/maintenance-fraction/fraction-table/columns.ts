@@ -7,9 +7,12 @@ export const COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
+  codigo: {
+    title: 'Fracción',
+    sort: false,
+  },
   clasificador_siab: {
     title: 'Clasificador Siab',
     sort: false,
-    filter: false,
   },
 };

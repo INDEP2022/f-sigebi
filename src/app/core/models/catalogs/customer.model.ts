@@ -128,7 +128,18 @@ export interface ICustomersPenalties {
   amount: number;
   bankKey: string;
   code: number;
-  lotId: number;
+  pFlag: number;
+  publicLot: number;
+  registernumber: number;
+  userPenalty: string;
+  user: string;
+  eventId: {
+    id: number;
+  };
+  lotId: {
+    id: number;
+    publicLot: number;
+  };
   clientId: {
     id: number;
   };
@@ -178,4 +189,33 @@ export interface IHistoryCustomersPenalties {
   causefree: string;
   nbOrigin: string;
   // penalty: string;
+}
+
+export interface ICustomerPenaltiesModal {
+  customerId: {
+    id: number;
+  };
+  batchId: number;
+  batchPublic: number;
+  eventId: {
+    id: number;
+  };
+  lotId: {
+    id: number;
+    publicLot: number;
+  };
+  processType: number;
+  recordNumber: number;
+  penaltyId: number;
+  pFlag: number;
+  referenceJobOther: string;
+  initialDate: string;
+  user: string;
+  finalDate: string;
+  nbOrigin: string;
+  usrPenalize: string;
+  penalizesDate: string;
+  refeOfficeOther: string;
+  userPenalty: string;
+  penaltiDate: string;
 }

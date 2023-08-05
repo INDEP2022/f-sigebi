@@ -18,4 +18,5 @@ export class EventFormVisualProperties {
   user = true;
   month = true;
   year = true;
+  applyButton = true;
 }

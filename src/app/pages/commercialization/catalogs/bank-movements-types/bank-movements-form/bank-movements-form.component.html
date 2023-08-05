@@ -20,15 +20,14 @@
         <div class="col-6">
           <form-field [control]="form.get('bankKey')">
             <ngx-select
+              label="Seleccione un Banco"
               [data]="banks"
               [form]="form"
               bindLabel="bankCode"
-              label="Seleccione un Banco"
+              style="width: 240px"
               [control]="'bankKey'"
-              [readonly]="edit"
-              (change)="onBankSelectChange($event)"
-              (input)="onSearchName($event.target)"
-              (fetchItems)="searchBanks($event)"></ngx-select>
+              (fetchItems)="searchBanks($event)"
+              (input)="onSearchName($event.target)"></ngx-select>
           </form-field>
         </div>
       </div>

@@ -141,7 +141,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   totalItemsTransportableGuard: number = 0;
   totalItemsTransportableWarehouse: number = 0;
   paramsShowWarehouse = new BehaviorSubject<ListParams>(new ListParams());
-
+  endDateEmail: string = '';
+  startDateEmail: string = '';
   // goodId: any;
   // uniqueKey: any;
   // goodDescription: any;
@@ -209,6 +210,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
+        this.startDateEmail = data.startDate;
+        this.endDateEmail = data.endDate;
+
         data.startDate = moment(data.startDate).format('DD/MM/YYYY HH:mm:ss');
         data.endDate = moment(data.endDate).format('DD/MM/YYYY HH:mm:ss');
         this.programming = data;
@@ -821,8 +825,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     const showTransportableData = await this.showTransportableEmail();
+
     if (showTransportableData) {
       const showGuardData = await this.showGuardEmail();
+
       if (showGuardData) {
         const showGuardData = await this.showWarehouseEmail();
 
@@ -831,12 +837,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
           const dataEmail = {
             folio: this.programming.folio,
-            startDate: moment(this.programming.startDate).format(
-              'YYYY-MM-DD HH:mm:ss'
-            ),
-            endDate: moment(this.programming.endDate).format(
-              'YYYY-MM-DD HH:mm:ss'
-            ),
+            startDate: this.startDateEmail,
+            endDate: this.endDateEmail,
             city: this.programming.city,
             address: this.programming.address,
             usersProg: this.infoUsers,
@@ -983,7 +985,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             //this.goodService.getAll;
           });
         },
-        error: error => {},
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }

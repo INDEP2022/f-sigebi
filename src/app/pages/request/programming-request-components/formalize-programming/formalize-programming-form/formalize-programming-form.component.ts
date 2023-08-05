@@ -729,7 +729,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   generateMinute(proceeding: IProceedings) {
-    console.log('proceeding', proceeding);
     proceeding.programmingId = this.programmingId;
     if (
       this.receiptData?.statusReceipt == 'CERRADO' ||
@@ -849,7 +848,6 @@ export class FormalizeProgrammingFormComponent
 
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('response sd', response);
         const _proceeding = response.data[0];
         let nomReport: string = '';
         let idTypeDoc: number = 0;
@@ -888,14 +886,12 @@ export class FormalizeProgrammingFormComponent
             _proceeding
           );
         } else {
-          console.log('REVISA LAS FIRMAS');
           const learnedType = idTypeDoc;
           const learnedId = this.programming.id;
           this.signatoriesService
             .getSignatoriesFilter(learnedType, learnedId)
             .subscribe({
               next: async response => {
-                console.log('firmantes', response);
                 response.data.map(async item => {
                   this.signatoriesService
                     .deleteFirmante(Number(item.signatoryId))
@@ -1095,42 +1091,24 @@ export class FormalizeProgrammingFormComponent
                     );
 
                     if (createOIC) {
-                      if (uvfv) {
-                        if (firmUvfv) {
-                          const createsig = await this.createFirm(
-                            keyDoc,
-                            idTypeDoc,
+                      if (!firmUvfv) {
+                        if (nomReport) {
+                          this.loadDocument(
+                            nomReport,
                             _proceeding.id,
-                            'ACTAS',
-                            'FIRMA_ELECT_UVFV',
-                            nomUvfv,
-                            _proceeding.positionWorkerUvfv,
-                            null,
-                            null
+                            idTypeDoc,
+                            typeFirm,
+                            _proceeding
                           );
-
-                          if (createsig) {
-                            if (nomReport) {
-                              this.loadDocument(
-                                nomReport,
-                                this.actId,
-                                idTypeDoc,
-                                typeFirm,
-                                _proceeding
-                              );
-                            }
-                          }
-                        } else {
-                          if (nomReport) {
-                            this.loadDocument(
-                              nomReport,
-                              this.actId,
-                              idTypeDoc,
-                              typeFirm,
-                              _proceeding
-                            );
-                          }
                         }
+                      } else {
+                        this.loadDocument(
+                          nomReport,
+                          _proceeding.id,
+                          idTypeDoc,
+                          typeFirm,
+                          _proceeding
+                        );
                       }
                     }
                   }
@@ -1196,13 +1174,13 @@ export class FormalizeProgrammingFormComponent
         proceedingInfo: proceeding,
         callback: (next: boolean, typeFirm: string) => {
           if (next) {
-            console.log('typeFirm', typeFirm);
             if (typeFirm == 'autografa') {
               this.uplodadReceiptDelivery(typeDoc, actId);
             } else {
               this.getProccedings();
               this.proceeding.clear();
               this.totalItemsProceedings = 0;
+              this.sendEmail();
             }
           }
         },
@@ -1224,11 +1202,47 @@ export class FormalizeProgrammingFormComponent
           this.getProccedings();
           this.proceeding.clear();
           this.totalItemsProceedings = 0;
+          this.sendEmail();
+          this.formLoading = false;
         }
       },
     };
 
     this.modalService.show(UploadReportReceiptComponent, config);
+  }
+
+  sendEmail() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idPrograming'] = this.programmingId;
+    params.getValue()['filter.statusProceeedings'] = 'CERRADO';
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: async response => {
+        if (response.data.length > 0) {
+          const data = {
+            //recipients: `gustavoangelsantosclemente@gmail.com, al221810743@gmail.com`,
+            recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
+            message: `Le informamos que el acta con folio: ${response.data[0].folioProceedings}, terminó satisfactoriamente.`,
+            userCreation: 'dr_sigebi',
+            dateCreation: '2023-07-31',
+            userModification: 'dr_sigebi',
+            dateModification: '2023-07-31',
+            version: '2',
+            subject: 'Notificación de cierre de acta de entrega recepción',
+            nameAtt: response.data[0].folioProceedings,
+            typeAtt: 'application/pdf;',
+            //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
+            process: 'FORMALIZAR',
+            wcontent: response.data[0].id_content,
+          };
+          this.emailService.createEmailNotify(data).subscribe({
+            next: response => {
+              console.log('correo enviado', response);
+            },
+          });
+        }
+      },
+      error: error => {},
+    });
   }
 
   close() {
@@ -1299,50 +1313,6 @@ export class FormalizeProgrammingFormComponent
           ).then(question => {
             if (question.isConfirmed) {
               this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-              const params = new BehaviorSubject<ListParams>(new ListParams());
-              params.getValue()['filter.idPrograming'] = this.programmingId;
-              params.getValue()['filter.statusProceeedings'] = 'CERRADO';
-              this.proceedingService
-                .getProceedings(params.getValue())
-                .subscribe({
-                  next: async response => {
-                    if (response.data.length > 0) {
-                      console.log('actas', response.data[0]);
-                      const showBase64: any = await this.showBase64(
-                        response.data[0].id_content
-                      );
-                      const data = {
-                        recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
-                        message: `Le informamos que el acta con folio: ${response.data[0].folioProceedings}, terminó satisfactoriamente.`,
-                        userCreation: 'dr_sigebi',
-                        dateCreation: '2023-07-31',
-                        userModification: 'dr_sigebi',
-                        dateModification: '2023-07-31',
-                        version: '2',
-                        subject:
-                          'Notificación de cierre de acta de entrega recepción',
-                        nameAtt: response.data[0].folioProceedings,
-                        typeAtt: 'application/pdf;',
-                        //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
-                        process: 'FORMALIZAR',
-                        fileB64: showBase64,
-                      };
-                      console.log('data', data);
-                      this.emailService.createEmailNotify(data).subscribe({
-                        next: response => {
-                          console.log('response', response);
-                        },
-                      });
-                    } else {
-                      this.alert(
-                        'error',
-                        'Acción Invalida',
-                        'Se necesita tener un acta cerrada para terminar la tarea'
-                      );
-                    }
-                  },
-                  error: error => {},
-                });
             }
           });
         }

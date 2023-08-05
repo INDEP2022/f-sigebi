@@ -13,4 +13,5 @@ export enum UserEndpoints {
   GetDisName = 'seg-access-x-areas/getDisNameEmail',
   ProNameEmail = 'seg-access-x-areas/procNameEmail',
   ComerUsersAutXEvent = 'comer-usersautxevent',
+  NameOtval = 'ind-user/get-name-otval-user',
 }

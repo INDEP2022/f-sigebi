@@ -9,7 +9,7 @@
       Asignar Recibo
     </button>
     <button
-      class="btn btn-primary btn-sm m-2 active"
+      class="btn btn-info btn-sm m-2 active"
       type="submit"
       size="small"
       [disabled]="selectedGoods.length === 0"
@@ -25,7 +25,7 @@
       Almacén
     </button>
     <button
-      class="btn btn-primary btn-sm m-2 active"
+      class="btn btn-info btn-sm m-2 active"
       type="submit"
       size="small"
       [disabled]="selectedGoods.length === 0"
@@ -33,7 +33,7 @@
       Reprogramación
     </button>
     <button
-      class="btn btn-primary btn-sm m-2 active"
+      class="btn btn-danger btn-sm m-2 active"
       type="submit"
       size="small"
       [disabled]="selectedGoods.length === 0"
@@ -100,7 +100,8 @@
 <app-receipt-table-goods
   [folio]="folio"
   [id_programacion]="id_programacion"
-  [selectEnabled]="true"></app-receipt-table-goods>
+  [selectEnabled]="true"
+  [update]="update"></app-receipt-table-goods>
 <tr>
   <td colspan="5" align="center">
     <button
@@ -113,7 +114,7 @@
     </button>
     <button
       [disabled]="count === 0"
-      class="btn btn-primary btn-sm m-2 active"
+      class="btn btn-info btn-sm m-2 active"
       type="submit"
       size="small"
       (click)="showTableByTiporecibo(receiptType.Resguardo)">
@@ -129,7 +130,7 @@
     </button>
     <button
       [disabled]="count === 0"
-      class="btn btn-primary btn-sm m-2 active"
+      class="btn btn-info btn-sm m-2 active"
       type="submit"
       size="small"
       (click)="showTableByTiporecibo(receiptType.Reprogramacion)">
@@ -137,7 +138,7 @@
     </button>
     <button
       [disabled]="count === 0"
-      class="btn btn-primary btn-sm m-2 active"
+      class="btn btn-danger btn-sm m-2 active"
       type="submit"
       size="small"
       (click)="showTableByTiporecibo(receiptType.Cancelacion)">

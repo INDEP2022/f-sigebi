@@ -14,11 +14,13 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { ParametersModService } from 'src/app/core/services/ms-commer-concepts/parameters-mod.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { ThirdPartyService } from 'src/app/core/services/ms-thirdparty/thirdparty.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { EventFormVisualProperties } from '../../utils/classes/comer-event-properties';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
@@ -39,8 +41,11 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   @Input() loadFromGoodsTracker = false;
   @Output() onLoadFromGoodsTracker = new EventEmitter<void>();
   @Input() eventFormVisual = new EventFormVisualProperties();
+  @Input() isOpenEvent = false;
   readonly minEventDate = new Date('2000-01-01');
   readonly maxEventDate = new Date(addYears(startOfYear(new Date()), 5));
+  @Output() onSuccessApply = new EventEmitter<void>();
+  viewApplyButton = true;
   get controls() {
     return this.eventForm.controls;
   }
@@ -49,7 +54,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
     private thirdPartyService: ThirdPartyService,
     private parametersModService: ParametersModService,
     private segAccessXAreas: SegAcessXAreasService,
-    private comerEventsService: ComerEventService
+    private comerEventsService: ComerEventService,
+    private lotService: LotService
   ) {
     super();
   }
@@ -171,7 +177,10 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   /**
    * BLK_EVENTO.PRE-UPDATE
    */
-  async preUpdateEvent() {}
+  async preUpdateEvent() {
+    // TIPO DE EVENTO COMER NO VALIDA NAD
+    this.updateEvent().subscribe();
+  }
 
   createEvent() {
     this.loading = true;
@@ -194,10 +203,32 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       }),
       catchError(error => {
         this.loading = false;
-        this.alert('error', 'Error', 'Ocurrio un Error al Guardar el Evento');
+        this.alert('error', 'Error', 'Ocurrió un Error al Guardar el Evento');
         return throwError(() => error);
       })
     );
+  }
+
+  updateEvent() {
+    this.loading = true;
+    const { id } = this.controls;
+    return this.comerEventsService
+      .updateComerEvent(id.value, this.eventForm.value)
+      .pipe(
+        catchError(error => {
+          this.loading = false;
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un Error al Actualizar el Evento'
+          );
+          return throwError(() => error);
+        }),
+        tap(event => {
+          this.alert('success', 'El Evento ha sido Guardado', '');
+          this.loading = false;
+        })
+      );
   }
 
   eventDateChange(_eventDate: Date) {
@@ -226,6 +257,8 @@ export class EventDataFormComponent extends BasePage implements OnInit {
   }
 
   failureDateChange(failDate: Date) {
+    console.log({ failDate });
+
     if (!failDate) {
       return;
     }
@@ -243,6 +276,7 @@ export class EventDataFormComponent extends BasePage implements OnInit {
 
   closingDateChange() {
     const { eventDate, failureDate, eventClosingDate } = this.controls;
+    console.log({ eventClosingDate });
     if (!eventClosingDate.value) {
       return;
     }
@@ -256,5 +290,53 @@ export class EventDataFormComponent extends BasePage implements OnInit {
       failureDate.reset();
       return;
     }
+  }
+
+  onApply() {
+    let valid = this.consignment();
+    const { baseCost } = this.controls;
+    if (!valid) {
+      this.alert('error', 'Error', 'Este evento no tiene esta funcionalidad');
+      return;
+    }
+
+    if (baseCost.value <= 0) {
+      this.alert('error', 'Error', 'Debe especificar el costo de las bases');
+      return;
+    }
+
+    if (!this.isOpenEvent) {
+      this.alert(
+        'error',
+        'Error',
+        'Necesita abrir un evento para generar las referencia para las bases'
+      );
+      return;
+    }
+    this.applyCost().subscribe();
+  }
+
+  applyCost() {
+    const { baseCost, id } = this.controls;
+    const body = {
+      cotobase: baseCost.value,
+      lotId: 1, // ! Ni se deberia de enviar xd
+      eventId: id.value,
+    };
+    return this.lotService.applyBaseCost(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.alert('success', 'Proceso Completado', '');
+        this.onSuccessApply.emit();
+      })
+    );
+  }
+
+  consignment() {
+    const { eventTpId } = this.controls;
+    return !(eventTpId.value == 6);
   }
 }

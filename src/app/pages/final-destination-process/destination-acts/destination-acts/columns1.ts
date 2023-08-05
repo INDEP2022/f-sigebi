@@ -1,15 +1,15 @@
 export const COLUMNS1 = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
   description: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
     sort: false,

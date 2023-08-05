@@ -242,7 +242,7 @@ export class GoodService extends HttpService {
     // if (params) {
     //   params['expedient'] = expedient;
     // }
-    const route = `${GoodEndpoints.SearchByExpedient}?expedient=${expedient}`;
+    const route = `${GoodEndpoints.SearchByExpedient}/${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
 
@@ -466,8 +466,8 @@ export class GoodService extends HttpService {
       params
     );
   }
-  chargeGoods(body: IGoodCharge) {
-    return this.post<any>('good/charge-goods', body);
+  chargeGoods(body: IGoodCharge, params?: string) {
+    return this.post<any>('good/charge-goods', body, params);
   }
 
   chargeGoodsExcel(body: IGoodCharge) {

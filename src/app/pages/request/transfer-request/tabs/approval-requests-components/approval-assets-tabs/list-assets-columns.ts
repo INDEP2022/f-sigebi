@@ -33,6 +33,7 @@ export const LIST_ASSETS_COLUMNS = {
     title: 'Cantidad de Transferente',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => Number(value),
   },
   descriptionDestiny: {
     title: 'Destino Ligie',

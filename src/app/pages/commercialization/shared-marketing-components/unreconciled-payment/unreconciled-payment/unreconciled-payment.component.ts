@@ -67,7 +67,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...COLUMNS },
@@ -105,7 +105,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
               paymentId: () => (searchFilter = SearchFilter.EQ),
-              reference: () => (searchFilter = SearchFilter.EQ),
+              reference: () => (searchFilter = SearchFilter.ILIKE),
               movementNumber: () => (searchFilter = SearchFilter.EQ),
               move: () => (searchFilter = SearchFilter.EQ),
               date: () => (searchFilter = SearchFilter.EQ),
@@ -197,20 +197,34 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
-        let result = response.data.map(async (item: any) => {
-          // const client: any = await this.getClients(item.clientId);
-          item['rfc'] = item.customers ? item.customers.rfc : null;
-          item['name'] = item.customers ? item.customers.nomRazon : null;
-          item['event'] = item.lots ? item.lots.idEvent : null;
-          item['lotPub'] = item.lots ? item.lots.lotPublic : null;
-          item['move'] = item.ctrl ? item.ctrl.description : null;
-        });
-        Promise.all(result).then(resp => {
-          this.data.load(response.data);
+        if (response.count == 0) {
+          this.data.load([]);
           this.data.refresh();
-          this.totalItems = response.count;
+          this.totalItems = 0;
           this.loading = false;
-        });
+        } else {
+          let result = response.data.map(async (item: any) => {
+            // const client: any = await this.getClients(item.clientId);
+            item['rfc'] = item.customers ? item.customers.rfc : null;
+            item['name'] = item.customers ? item.customers.nomRazon : null;
+            item['event'] = item.lots ? item.lots.idEvent : null;
+            item['lotPub'] = item.lots ? item.lots.lotPublic : null;
+            item['move'] = item.ctrl ? item.ctrl.description : null;
+            item['idAndName'] = item.customers
+              ? item.customers.idClient + ' - ' + item.customers.nomRazon
+              : null;
+
+            item['bankAndNumber'] = item.ctrl
+              ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+              : null;
+          });
+          Promise.all(result).then(resp => {
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          });
+        }
       },
       error: error => {
         this.data.load([]);
@@ -293,21 +307,48 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   async enviarSIRSAE() {
     if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
 
-    // if (!this.valAcc.lots)
-    //   return this.alert('warning', 'Este Pago No tiene Lote Asociado', '');
+    if (!this.valAcc.lots)
+      return this.alert('warning', 'Este Pago no está Asociado a un Lote', '');
 
     this.loadingBtn = true;
     // CREA_CABECERA;
     const a = await this.creaCabecera();
     // ENVIA_LEE_SIRSAE(1, NULL);
-    const b = await this.enviaLeeSirsae(1, null);
-
-    if (b == null) {
-      this.loadingBtn = false;
-      // this.alert('error', 'Error de Conexión, No se ha podido Conectar a la Base de Datos (SIRSAE)', '')
-      return;
+    const resss: any = await this.enviaLeeSirsae(1, null);
+    console.log(resss);
+    if (resss.status == 400 || resss.status == 500) {
+      if (
+        resss.message == 'ERROR EN LA CONEXION A SIRSAE' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+        resss.message ==
+          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+      ) {
+        this.alert(
+          'error',
+          'Error de Conexión',
+          'No se pudo Conectar a la Base de Datos (SIRSAE)'
+        );
+        this.loadingBtn = false;
+        this.getPayments();
+        return;
+      } else {
+        this.alert(
+          'error',
+          'Ha Ocurrido un Error al Intentar Enviar a SIRSAE',
+          ''
+        );
+        this.loadingBtn = false;
+        this.getPayments();
+        return;
+      }
     } else {
       this.loadingBtn = false;
+      this.getPayments();
       this.alert('success', 'Proceso Ejecutado Correctamente', '');
     }
     // else if (a && b) {
@@ -351,34 +392,43 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.paymentService.sendReadSirsaeFcomer113(obj).subscribe({
         next: response => {
-          resolve(true);
+          let obj = {
+            status: 200,
+            message: 'OK',
+          };
+          resolve(obj);
           // this.alert('success', 'Proceso Ejecutado Correctamente', '');
           // this.getPayments();
         },
         error: error => {
           console.log('error', error);
-          if (
-            error.error.message ==
-            'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
-          ) {
-            console.log('si');
-            this.loadingBtn = false;
-            this.alert(
-              'error',
-              'Error de Conexión',
-              'No se ha podido Conectar a la Base de Datos (SIRSAE)'
-            );
-            resolve(null);
-            return;
-          } else {
-            resolve(null);
-            this.alert(
-              'error',
-              'Ocurrió un Error al Intentar Ejecutar el Proceso',
-              error.error.message
-            );
-            return;
-          }
+          // if (
+          //   error.error.message ==
+          //   'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+          // ) {
+          //   console.log('si');
+          //   this.loadingBtn = false;
+          //   this.alert(
+          //     'error',
+          //     'Error de Conexión',
+          //     'No se ha podido Conectar a la Base de Datos (SIRSAE)'
+          //   );
+          //   resolve(error.error.message);
+          //   return;
+          // } else {
+
+          // this.alert(
+          //   'error',
+          //   'Ocurrió un Error al Intentar Ejecutar el Proceso',
+          //   error.error.message
+          // );
+          let obj = {
+            status: error.status,
+            message: error.error.message,
+          };
+          resolve(obj);
+          //   return;
+          // }
         },
       });
     });

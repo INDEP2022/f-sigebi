@@ -50,4 +50,17 @@ export class PaymentService extends HttpService {
   getComerPaymentRefGetAllV2(params: _Params) {
     return this.get(PaymentEndPoints.GetAllV2, params);
   }
+
+  getPaymentById(filter: number) {
+    const route = `comer-payment-ref?filter.lotId=$eq:${filter}`;
+    return this.get(route);
+  }
+
+  getPaymentPagoRed(params?: string) {
+    return this.get('application/get-payment-pagoref', params);
+  }
+
+  getComerPaymentRefgetAllV2Total(params: _Params) {
+    return this.get(PaymentEndPoints.getAllV2Total, params);
+  }
 }

@@ -4,135 +4,101 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="goodForm">
-      <div class="row">
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('goodId')">
-            <ngx-select
-              [form]="goodForm"
-              [data]="goodItems"
-              label="Número Bien"
-              value="id"
-              bindLabel="id"
-              (fetchItems)="getGoods($event)"
-              control="goodId">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('delegation')" label="Delegación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="delegation" />
-          </form-field>
-        </div>
-      </div>
+      <!--- <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <form-field [control]="goodForm.get('repvendcId')" label="No. Bien">
+                        <input type="text" class="form-control" formControlName="repvendcId" />
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <form-field [control]="goodForm.get('batchId')" label="Delegación">
+                        <input type="number" class="form-control" formControlName="batchId" />
+                    </form-field>
+                </div>
+            </div>---->
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('description')"
-            label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
+          <form-field [control]="goodForm.get('bill')" label="Descripción">
+            <input type="text" class="form-control" formControlName="bill" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="goodForm.get('appraisal')"
+            [control]="goodForm.get('labelsent')"
             label="Valor Avalúo">
             <input
               type="text"
               class="form-control"
-              formControlName="appraisal" />
+              formControlName="labelsent" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="goodForm.get('appraisalDate')"
-            label="Fecha Avalúo">
+            [control]="goodForm.get('sayDelivery')"
+            label="Direccion de Entrega">
             <input
               type="text"
-              formControlName="appraisalDate"
+              formControlName="sayDelivery"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('sessionNumber')"
-            label="Número Sesión">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="sessionNumber" />
+          <form-field [control]="goodForm.get('job')" label="Oficio">
+            <input type="text" class="form-control" formControlName="job" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('goodClasification')"
-            label="Clasifica Bien">
-            <ng-select
-              formControlName="goodClasification"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option
-                *ngFor="let c of goodClassification"
-                value="c.description"
-                >{{ c.description }}</ng-option
-              >
-            </ng-select>
+          <form-field [control]="goodForm.get('managed')" label="Dirigido">
+            <input type="text" class="form-control" formControlName="managed" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('location')" label="Ubicación">
+          <form-field
+            [control]="goodForm.get('addresssent')"
+            label="Direccion Origen">
             <input
               type="text"
               class="form-control"
-              formControlName="location" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5">
-        <div class="col-sm-12 col-md-6">
-          <form-field [control]="goodForm.get('mandate')" label="Mandato">
-            <input type="text" formControlName="mandate" class="form-control" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="goodForm.get('siabClassification')"
-            label="Clasifica SIAB">
-            <ng-select
-              formControlName="siabClassification"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option
-                *ngFor="let c of siabClassification"
-                value="c.description"
-                >{{ c.description }}</ng-option
-              >
-            </ng-select>
+              formControlName="addresssent" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="goodForm.get('commentary')"
-            label="Comentarios">
+            [control]="goodForm.get('labelBatch')"
+            label="Lote de Etiquetas">
+            <input
+              type="text"
+              formControlName="labelBatch"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('paragraph1')"
+            label="Descripcíon">
             <textarea
               rows="2"
-              formControlName="commentary"
-              class="form-control">
-            </textarea>
+              formControlName="paragraph1"
+              class="form-control"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('userSignature')"
+            label="Firmante">
+            <input
+              type="text"
+              formControlName="userSignature"
+              class="form-control" />
           </form-field>
         </div>
       </div>

@@ -202,6 +202,7 @@ export class ConciliationExecutionMainComponent
             const search: any = {
               customerId: () => (searchFilter = SearchFilter.EQ),
               name: () => (searchFilter = SearchFilter.ILIKE),
+              indicted: () => (searchFilter = SearchFilter.EQ),
               process: () => (searchFilter = SearchFilter.EQ),
               executionDate: () => (searchFilter = SearchFilter.EQ),
             };
@@ -235,24 +236,47 @@ export class ConciliationExecutionMainComponent
     this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
       description: [null],
-      date: [null, [Validators.required]],
-      phase: [null, [Validators.required]],
+      date: [null],
+      phase: [null],
       batch: [null],
       price: [null],
     });
   }
 
   getData() {
-    this.conciliationColumns = this.clientsTestData;
-    this.totalItems = this.conciliationColumns.length;
+    if (!this.selectedEvent) {
+      this.alert('warning', 'Es Necesario Especificar el Evento', '');
+      this.conciliationForm.get('event').markAsTouched();
+      return;
+    }
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
+    this.getComerClientsXEvent('no');
   }
 
-  selectEvent(event: any) {
+  mostrarLotes: boolean = false;
+  async selectEvent(event: any) {
     console.log(event);
     this.selectedEvent = event;
     if (event) {
-      this.conciliationForm.get('description').setValue(event.cve_proceso);
-      this.getLotes(new ListParams(), 'si');
+      const V_PROCESO_FASE = await this.getType(event.id_evento);
+      if (!V_PROCESO_FASE) {
+        return this.alert(
+          'warning',
+          `El Evento ${event.id_evento} no está Asociado al tipo de Proceso, verifique`,
+          ''
+        );
+        this.conciliationForm.get('description').setValue(event.cve_proceso);
+      } else {
+        if (V_PROCESO_FASE == 1) {
+          this.mostrarLotes = false;
+          this.conciliationForm.get('description').setValue(event.cve_proceso);
+        } else if (V_PROCESO_FASE == 2) {
+          this.mostrarLotes = true;
+          this.conciliationForm.get('description').setValue(event.cve_proceso);
+          this.getLotes(new ListParams(), 'si');
+        }
+      }
     }
   }
 
@@ -264,16 +288,172 @@ export class ConciliationExecutionMainComponent
   selectClients(rows: any[]) {
     this.clientRows = rows;
   }
-
-  execute() {
+  GLOBALV_CL: string = '';
+  async execute() {
     if (!this.selectedEvent)
       return this.alert(
         'warning',
         'Es Necesario Especificar un Evento para Ejecutar',
         ''
       );
+
+    const eventProcess: any = await this.getA(this.selectedEvent.id_evento);
+
+    if (!eventProcess)
+      return this.alert(
+        'warning',
+        `El Evento ${this.selectedEvent.id_evento} no está Asociado al tipo de Proceso, Verifique`,
+        ''
+      );
+
+    let obj: any = {
+      fase: eventProcess.phase,
+      fases: this.globalFASES,
+      v_cl: this.GLOBALV_CL,
+      evento: this.selectedEvent.id_evento,
+      lote: this.selectedBatch ? this.selectedBatch.lotId : null,
+      lotePublico: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+      noNombramiento: 0,
+      fecha: this.conciliationForm.value.date,
+      descripcion: this.selectedEvent.cve_proceso,
+    };
+    const endpointEjecutar: any = await this.ejecutarBTN(obj); //PUP_ENTRA
+
+    if (eventProcess.phase == 1) {
+      if (eventProcess.id.tpeventoId == 11) {
+        // CARGA_PAGOSREFGENS;
+        await this.CARGA_PAGOSREFGENS();
+        await this.CARGA_COMER_DETALLES();
+        await this.VALIDA_PAGOSREF_PREP_OI_BASES_CA(
+          this.selectedEvent.id_evento,
+          this.selectedEvent.cve_proceso
+        );
+        // CARGA_COMER_DETALLES;
+        // VALIDA_PAGOSREF.PREP_OI_BASES_CA(: BLK_CTRL.EVENTO, : BLK_CTRL.DESCRIPCION);
+      } else {
+        let L_PARAME: any = await this.VALIDA_PAGOSREF_OBT_PARAMETROS(
+          this.selectedEvent.id_evento,
+          this.layout
+        );
+
+        if (L_PARAME != 'OK') {
+          this.alert('warning', L_PARAME, '');
+          return;
+        }
+
+        let L_VALEST: any = await this.VALIDA_ESTATUS();
+        if (L_VALEST > 0) {
+          this.alert(
+            'warning',
+            `El Bien ${L_VALEST} no tiene Estatus Válido, Verifique`,
+            ''
+          );
+          return;
+        }
+
+        let L_VALMAN: any = await this.VALIDA_MANDATO();
+        if (L_VALMAN > 0) {
+          this.alert(
+            'warning',
+            `El Lote ${L_VALMAN} no Tiene Mandato Válido, Verifique`,
+            'Ejecute el Botón Act. Mand. en Preparación de Eventos'
+          );
+          return;
+        }
+
+        let L_LISTAN: any = await this.VALIDA_LISTANEGRA();
+        if (L_LISTAN > 0) {
+          this.alert(
+            'warning',
+            `El Cliente ${L_LISTAN} se Encuentra en la Lista Negra no se Puede Procesar`,
+            'No lo Seleccione en los Clientes'
+          );
+          return;
+        }
+
+        if (
+          eventProcess.id.tpeventoId == 1 ||
+          eventProcess.id.tpeventoId == 3
+        ) {
+          await this.VALIDA_PAGOSREF_VALIDA_COMER(
+            this.selectedEvent.id_evento,
+            this.conciliationForm.value.date
+          );
+          await this.VALIDA_PAGOSREF_PREP_OI(
+            this.selectedEvent.id_evento,
+            this.selectedEvent.cve_proceso
+          );
+        } else if (eventProcess.id.tpeventoId == 4) {
+          await this.VALIDA_PAGOSREF_VENTA_SBM(
+            this.selectedEvent.id_evento,
+            this.conciliationForm.value.date
+          );
+          await this.VALIDA_PAGOSREF_PREP_OI(
+            this.selectedEvent.id_evento,
+            this.selectedEvent.cve_proceso
+          );
+        }
+
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+      }
+    } else if (eventProcess.phase == 2) {
+      if (!this.selectedBatch) {
+        this.GLOBALV_CL = 'B';
+      } else {
+        this.GLOBALV_CL = 'A';
+      }
+      let obj: any = {
+        fase: eventProcess.phase,
+        fases: this.globalFASES,
+        v_cl: this.GLOBALV_CL,
+        evento: this.selectedEvent.id_evento,
+        lote: this.selectedBatch ? this.selectedBatch.lotId : null,
+        lotePublico: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        noNombramiento: 0,
+        fecha: this.conciliationForm.value.date,
+        descripcion: this.selectedEvent.cve_proceso,
+      };
+      const endpointEjecutar: any = await this.ejecutarBTN(obj); //PUP_ENTRA
+    }
   }
 
+  async CARGA_PAGOSREFGENS() {}
+  async CARGA_COMER_DETALLES() {}
+  async VALIDA_PAGOSREF_PREP_OI_BASES_CA(id_evento: any, cve_proceso: any) {}
+  async VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento: any, layout: any) {}
+  async VALIDA_ESTATUS() {}
+  async VALIDA_MANDATO() {}
+  async VALIDA_LISTANEGRA() {}
+  async VALIDA_PAGOSREF_VALIDA_COMER(id_evento: any, date: any) {}
+  async VALIDA_PAGOSREF_VENTA_SBM(id_evento: any, date: any) {}
+  async VALIDA_PAGOSREF_PREP_OI(id_evento: any, cve_proceso: any) {}
+
+  // PUP_ENTRA
+  ejecutarBTN(body: any) {
+    return new Promise((resolve, reject) => {
+      this.lotService.btnEjecutar(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  getA(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.getByIdComerTEvents(id).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
   modify() {
     if (!this.selectedEvent)
       return this.alert(
@@ -426,10 +606,13 @@ export class ConciliationExecutionMainComponent
     this.data.load([]);
     this.data.refresh();
     this.totalItems = 0;
+    this.params.getValue().page = 1;
+    this.params.getValue().limit = 10;
     this.disabledBtnCerrar = false;
     this.acordionOpen = false;
     this.selectedEvent = null;
     this.globalFASES = null;
+    this.mostrarLotes = false;
     this.getComerEvents(new ListParams());
     this.clearSubheaderFields();
   }
@@ -651,7 +834,7 @@ export class ConciliationExecutionMainComponent
     if (lparams.text)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params.addFilter('idLot', lparams.text, SearchFilter.EQ);
+        params.addFilter('lotPublic', lparams.text, SearchFilter.EQ);
         // params.addFilter('no_cuenta', lparams.text);
       } else {
         console.log('NO');
@@ -667,7 +850,7 @@ export class ConciliationExecutionMainComponent
       next: data => {
         console.log('EVENT', data);
         let result = data.data.map(async (item: any) => {
-          item['idAndDesc'] = item.idLot + ' - ' + item.description;
+          item['idAndDesc'] = item.lotPublic + ' - ' + item.description;
         });
 
         Promise.all(result).then(resp => {
@@ -680,6 +863,22 @@ export class ConciliationExecutionMainComponent
         }
         this.lotes = new DefaultSelect([], 0);
       },
+    });
+  }
+
+  async getType(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.getByIdComerTEvents(id).subscribe({
+        next: (response: any) => {
+          // this.alert('success', 'Proceso Ejecutado Correctamente', '');
+          // this.getPayments();
+          resolve(response.phase);
+        },
+        error: error => {
+          resolve(null);
+          // this.alert('error', 'Ocurrió un Error al Intentar Ejecutar el Proceso', error.error.message);
+        },
+      });
     });
   }
 }

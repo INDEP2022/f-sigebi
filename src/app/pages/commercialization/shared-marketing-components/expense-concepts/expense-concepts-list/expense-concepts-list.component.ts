@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { firstValueFrom, takeUntil } from 'rxjs';
 
 import { FormControl } from '@angular/forms';
@@ -24,6 +24,7 @@ export class ExpenseConceptsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IConcept>
   implements OnInit
 {
+  @Input() address: string;
   toggleInformation = true;
   pageSizeOptions = [5, 10, 20, 25];
   limit: FormControl = new FormControl(5);
@@ -61,7 +62,7 @@ export class ExpenseConceptsListComponent
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        position: 'left',
+        position: 'right',
         add: false,
         edit: true,
         delete: true,
@@ -111,14 +112,47 @@ export class ExpenseConceptsListComponent
     this.openModal(row);
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['address'] && changes['address'].currentValue) {
+      const list = [{ value: 'C', title: 'GENERAL' }];
+      if (changes['address'].currentValue === 'M') {
+        list.push({ value: 'M', title: 'MUEBLES' });
+      }
+      if (changes['address'].currentValue === 'I') {
+        list.push({ value: 'I', title: 'INMUEBLES' });
+      }
+      this.settings = {
+        ...this.settings,
+        columns: {
+          ...COLUMNS,
+          address: {
+            ...COLUMNS.address,
+            filter: {
+              type: 'list',
+              config: {
+                selectText: 'Seleccionar',
+                list,
+              },
+            },
+          },
+        },
+      };
+    }
+  }
+
   openModal(concept: IConcept = null) {
+    let newConcept;
+    if (concept) {
+      newConcept = {
+        ...concept,
+        numerary: concept.numerary ? concept.numerary === 'S' : false,
+        automatic: concept.automatic ? concept.automatic === 'S' : false,
+      };
+    }
+
     let config: ModalOptions = {
       initialState: {
-        concept: {
-          ...concept,
-          numerary: concept.numerary ? concept.numerary === 'S' : false,
-          automatic: concept.automatic ? concept.automatic === 'S' : false,
-        },
+        concept: newConcept,
         callback: (next: boolean) => {
           if (next) {
             this.getData();
@@ -171,7 +205,7 @@ export class ExpenseConceptsListComponent
                   this.alert(
                     'success',
                     'Copiado de Parametros',
-                    'Realizado correctamente'
+                    'Realizado Correctamente'
                   );
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
@@ -222,12 +256,18 @@ export class ExpenseConceptsListComponent
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;
+
     if (newColumnFilters['filter.address']) {
-      newColumnFilters['filter.address'] =
-        '$eq:' +
-        this.getAddressCode(
-          (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-        );
+      return {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      };
+    } else {
+      if (this.address) {
+        newColumnFilters['filter.address'] = '$in:' + this.address + ',C';
+      } else {
+        newColumnFilters['filter.address'] = '$in:C';
+      }
     }
     return {
       ...this.params.getValue(),
@@ -261,7 +301,7 @@ export class ExpenseConceptsListComponent
               this.alert(
                 'success',
                 'Eliminación de Concepto de Pago ' + event.data.id,
-                'Eliminado correctamente'
+                'Eliminado Correctamente'
               );
               this.getData();
             },

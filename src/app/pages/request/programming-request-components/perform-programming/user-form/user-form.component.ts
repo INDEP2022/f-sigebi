@@ -64,6 +64,7 @@ export class UserFormComponent extends BasePage implements OnInit {
 
   getChargesUsers(params?: ListParams) {
     params['filter.name'] = 'Cargos Usuarios';
+    params['sortBy'] = 'description:ASC';
     return this.genericService.getAll(params).subscribe(data => {
       this.chargesUsers = new DefaultSelect(data.data, data.count);
     });

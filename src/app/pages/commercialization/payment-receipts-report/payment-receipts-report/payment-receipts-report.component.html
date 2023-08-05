@@ -42,7 +42,10 @@
         </div>
         <div class="col-md-3">
           <form-field [control]="form.get('amount')" label="Monto">
-            <input type="text" class="form-control" formControlName="amount" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="amount" />
           </form-field>
         </div>
       </div>
@@ -97,6 +100,8 @@
             </div>
             <div class="col-md-4">
               <app-delegation-shared
+                [showDelegation]="true"
+                [delegationField]="'delegation'"
                 [showSubdelegation]="false"
                 [form]="form"></app-delegation-shared>
             </div>
