@@ -52,7 +52,6 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
             switch (filters.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
-
                 break;
               case 'keyCompany':
                 searchFilter = SearchFilter.EQ;
@@ -63,9 +62,11 @@ export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
                 field = `filter.${filter.field}`;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
+            console.log(field);
+            console.log(searchFilter);
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;

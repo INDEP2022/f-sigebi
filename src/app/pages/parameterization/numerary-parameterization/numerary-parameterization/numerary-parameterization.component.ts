@@ -36,7 +36,7 @@ export class NumeraryParameterizationComponent
     private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
   ) {
     super();
-    this.settings.actions.edit = false;
+    this.settings.actions.edit = true;
     this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings.columns = NUMERARY_PARAMETERIZATION_COLUMNS;
@@ -56,7 +56,7 @@ export class NumeraryParameterizationComponent
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'typeProceeding':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'initialCategoryDetails':
                 searchFilter = SearchFilter.ILIKE;
