@@ -703,14 +703,19 @@ export class NumeraryMassiveConciliationComponent
     if (splitData == 2) {
       const arrayData = date.split('-');
       const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
-      return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
+      return { rpta: format(this.correctDate(newDate), 'yyyy-MM-dd') };
     } else if (splitSlash == 2) {
       const arrayData = date.split('/');
       const newDate = `${arrayData[2]}-${arrayData[1]}-${arrayData[0]}`;
-      return { rpta: format(new Date(newDate), 'yyyy-MM-dd') };
+      return { rpta: format(this.correctDate(newDate), 'yyyy-MM-dd') };
     } else {
       return { rpta: 'No Tiene Formato dd-mm-yyyy' };
     }
+  }
+
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
   }
 
   //Funcion de boton conciliar
@@ -725,49 +730,12 @@ export class NumeraryMassiveConciliationComponent
       this.loading = false;
     } else {
       this.loading = false;
-      for (let item of goodCheck) {
-        const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
-        console.log(item);
-
-        if (!isNaN(Date.parse(item.RSPTAQUERY.val5))) {
-          if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
-            const model: ISearchNumerary = {
-              conciled: 'S',
-              goodNumber: item.RSPTAQUERY.no_bien,
-              fileNum: item.RSPTAQUERY.no_expediente,
-              val1: item.RSPTAQUERY.val1,
-              val2: parseInt(item.RSPTAQUERY.val2),
-              val4: item.RSPTAQUERY.val4,
-              val5: format(new Date(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
-              val6: item.RSPTAQUERY.val6,
-              fecTesofe: item.BFEC_TESOFE,
-            };
-            console.log(model);
-            this.numeraryService.pupSearchNumerary(model).subscribe(
-              res => {
-                console.log(res);
-              },
-              err => {
-                console.log(err.error.message);
-                if (
-                  err.error.message ==
-                  'La Propiedad "fecTesofe" Debe Ser una Fecha'
-                ) {
-                  this.alert('warning', 'No Tiene Fecha Tesofe', '');
-                }
-              }
-            );
-          } else {
-            this.alert(
-              'error',
-              'Fallo al Tranformar la Cantidad Numérica del Importe',
-              ''
-            );
-            return;
-          }
-        } else {
+      try {
+        for (let item of goodCheck) {
           const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
-          if (date.rpta != 'No Tiene Formato dd-mm-yyyy') {
+          console.log(date);
+
+          if (!isNaN(Date.parse(item.RSPTAQUERY.val5))) {
             if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
               const model: ISearchNumerary = {
                 conciled: 'S',
@@ -776,8 +744,12 @@ export class NumeraryMassiveConciliationComponent
                 val1: item.RSPTAQUERY.val1,
                 val2: parseInt(item.RSPTAQUERY.val2),
                 val4: item.RSPTAQUERY.val4,
-                val5: format(new Date(date.rpta), 'yyyy-MM-dd'),
+                val5: format(
+                  this.correctDate(item.RSPTAQUERY.val5),
+                  'yyyy-MM-dd'
+                ),
                 val6: item.RSPTAQUERY.val6,
+                fecTesofe: item.BFEC_TESOFE,
               };
               console.log(model);
               this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -785,7 +757,7 @@ export class NumeraryMassiveConciliationComponent
                   console.log(res);
                 },
                 err => {
-                  console.log(err);
+                  console.log(err.error.message);
                   if (
                     err.error.message ==
                     'La Propiedad "fecTesofe" Debe Ser una Fecha'
@@ -803,14 +775,63 @@ export class NumeraryMassiveConciliationComponent
               return;
             }
           } else {
-            this.alert(
-              'error',
-              'Fallo al Generar Formato Estandar para Fecha',
-              ''
-            );
-            return;
+            console.log();
+            const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
+            if (date.rpta != 'No Tiene Formato dd-mm-yyyy') {
+              if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
+                console.log(date.rpta);
+                console.log(new Date(date.rpta));
+                const model: ISearchNumerary = {
+                  conciled: 'S',
+                  goodNumber: item.RSPTAQUERY.no_bien,
+                  fileNum: item.RSPTAQUERY.no_expediente,
+                  val1: item.RSPTAQUERY.val1,
+                  val2: parseInt(item.RSPTAQUERY.val2),
+                  val4: item.RSPTAQUERY.val4,
+                  val5: format(this.correctDate(date.rpta), 'yyyy-MM-dd'),
+                  val6: item.RSPTAQUERY.val6,
+                  fecTesofe: item.BFEC_TESOFE,
+                };
+                console.log(model);
+                this.numeraryService.pupSearchNumerary(model).subscribe(
+                  res => {
+                    console.log(res);
+                  },
+                  err => {
+                    console.log(err);
+                    if (
+                      err.error.message ==
+                      'La Propiedad "fecTesofe" Debe Ser una Fecha'
+                    ) {
+                      this.alert('warning', 'No Tiene Fecha Tesofe', '');
+                      return;
+                    }
+                  }
+                );
+              } else {
+                this.alert(
+                  'error',
+                  'Fallo al Tranformar la Cantidad Numérica del Importe',
+                  ''
+                );
+                return;
+              }
+            } else {
+              this.alert(
+                'error',
+                'Fallo al Generar Formato Estandar para Fecha',
+                ''
+              );
+              return;
+            }
           }
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.alert('success', 'Conciliación Realizada', '');
+        this.loading = false;
+        this.searchFilterGood();
       }
     }
   }
