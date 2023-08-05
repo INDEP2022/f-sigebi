@@ -5,10 +5,13 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
 import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -41,9 +44,13 @@ export class CustomerPenaltiesModalComponent
   selectClient = new DefaultSelect();
   selectEvent = new DefaultSelect();
   selectLot = new DefaultSelect();
+  selectPenalty = new DefaultSelect();
+  selectUser = new DefaultSelect();
 
   clientIdAny: any;
   eventIdAny: any;
+
+  user: string;
 
   prueba: IComerClients[] = [];
 
@@ -55,7 +62,10 @@ export class CustomerPenaltiesModalComponent
     private modalRef: BsModalRef,
     private comerClientsService: ComerClientsService,
     private comerEventService: ComerEventService,
-    private lotService: LotService
+    private lotService: LotService,
+    private bankMovementType: BankMovementType,
+    private authService: AuthService,
+    private securityService: SecurityService
   ) {
     super();
     this.today = new Date();
@@ -100,14 +110,7 @@ export class CustomerPenaltiesModalComponent
         null,
         [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
       ],
-      userPenalty: [
-        null,
-        [
-          //Validators.required,
-          Validators.maxLength(30),
-          Validators.pattern(STRING_PATTERN),
-        ],
-      ],
+      userPenalty: [null, [Validators.required]],
       penaltiDate: [
         null,
         [
@@ -137,8 +140,9 @@ export class CustomerPenaltiesModalComponent
       console.log(clie);
       this.selectClient = new DefaultSelect([clie], 1);*/
       this.form.patchValue(this.customersPenalties);
+      this.getClientUp(new ListParams(), this.clientIdAny.id);
       this.form.get('clientId').setValue(this.clientIdAny.id);
-      this.form.get('eventId').setValue(this.eventIdAny.eventTpId);
+      //this.form.get('eventId').setValue(this.eventIdAny.eventTpId);
 
       //this.getClientUp(new ListParams(), this.clientIdAny.id);
       //this.form.controls['clientId'].setValue(this.clientIdAny.id);
@@ -188,11 +192,41 @@ export class CustomerPenaltiesModalComponent
           .setValue(this.addDays(new Date(dbFreeDate), 1));
       }
     }
+    const user: any = this.authService.decodeToken() as any;
+    this.user = user.username;
+    console.log(this.user);
+    this.form.get('user').setValue(this.user);
+    this.form.get('user').disable();
     setTimeout(() => {
       this.getClient(new ListParams());
       this.getEvent(new ListParams());
       this.getLot(new ListParams());
+      this.getPenalty(new ListParams());
+      this.getUser(new ListParams());
     }, 1000);
+  }
+
+  getUser(params: ListParams) {
+    this.securityService.getAllUsersTracker(params).subscribe({
+      next: resp => {
+        this.selectUser = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectUser = new DefaultSelect();
+      },
+    });
+  }
+
+  getPenalty(params: ListParams) {
+    this.bankMovementType.getAllTPenalty(params).subscribe({
+      next: resp => {
+        this.selectPenalty = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectPenalty = new DefaultSelect();
+        this.loading = false;
+      },
+    });
   }
 
   getClient(params: ListParams) {
@@ -317,7 +351,7 @@ export class CustomerPenaltiesModalComponent
     this.loading = true;
 
     const clientId: any = this.form.get('clientId');
-    const lotId = this.form.get('publicLot');
+    const lotId = this.form.get('lotId');
     const eventId: any = this.form.get('eventId');
     const endDate = this.form.get('endDate');
     const penaltyId = this.customersPenalties.id;
