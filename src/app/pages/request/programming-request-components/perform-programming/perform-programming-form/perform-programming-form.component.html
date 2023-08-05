@@ -189,6 +189,7 @@
                 <input
                   class="form-control"
                   formControlName="startDate"
+                  (ngModelChange)="checkInfoDate($event)"
                   [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
