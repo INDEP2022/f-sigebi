@@ -89,7 +89,7 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          console.log(this.params);
+
           this.getInfo();
         }
       });
@@ -123,29 +123,34 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
     this.loading = true;
     let data: any[] = [];
 
-    console.log(this.proceedingsNumb);
     const params = {
       ...this.params.getValue(),
-      'filter.numProceedings': this.proceedingsNumb,
+      'filter.actaNumber': `$eq:${this.proceedingsNumb}`,
       ...this.columnFilters,
     };
+    const params2 = {
+      ...this.params.getValue(),
+      'filter.actaNumber': `$eq:${this.proceedingsNumb}`,
+      'filter.valStatus': `$eq:1`,
+      ...this.columnFilters,
+    };
+
     this.proceedingsValidationsService.getAll(params).subscribe({
       next: resp => {
-        console.log(resp);
         for (let validation of resp.data) {
           let temp: any = {};
           (temp.valSec = validation.valSec),
-            (temp.valDescription = validation.valDescription),
-            (temp.valResult = validation.valResult),
+            (temp.valDescription =
+              validation.valDescription.charAt(0).toUpperCase() +
+              validation.valDescription.substring(1).toLowerCase()),
+            (temp.valResult =
+              validation.valResult.charAt(0).toUpperCase() +
+              validation.valResult.substring(1).toLowerCase()),
             (temp.statusValue = validation.valStatus);
           data.push(temp);
         }
 
         this.dataTable.load(data);
-        const correctos = resp.data.filter((item: any) => {
-          return item.valStatus === '1';
-        });
-        this.correctRecords = correctos.length;
         this.recordsCount = resp.count;
 
         this.totalItems = resp.count;
@@ -160,6 +165,16 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
           );
           this.loading = false;
         }
+      },
+    });
+
+    this.proceedingsValidationsService.getAll(params2).subscribe({
+      next: resp => {
+        this.correctRecords = resp.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
       },
     });
   }
