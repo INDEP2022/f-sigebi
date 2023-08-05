@@ -2420,6 +2420,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
                 );
               }
             );
+        } else {
+          this.loading = false;
         }
       });
     } else {

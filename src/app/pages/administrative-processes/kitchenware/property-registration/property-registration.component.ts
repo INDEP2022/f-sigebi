@@ -164,10 +164,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         this.idExpedient = this.expedient.id;
         this.causePenal.setValue(this.expedient.criminalCase);
         this.preliminaryInquiry.setValue(this.expedient.preliminaryInquiry);
+        this.goods = new DefaultSelect([], 0, true);
         this.searchGoods(this.idExpedient, this.paramsSubject);
       },
       error: err => {
-        this.alert('warning', 'No existe el registro', '');
+        this.alert('warning', 'No Existe el Registro', '');
       },
     });
   }
@@ -210,8 +211,9 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: err => {
+        this.goods = new DefaultSelect([], 0, true);
         this.loading = false;
-        this.alert('warning', 'Expediente sin bienes asociados', ``);
+        this.alert('warning', 'Expediente sin Bienes Asociados', ``);
       },
     });
   }
@@ -276,14 +278,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           this.totalItems = response.count;
           this.loading = false;
         } else {
-          this.alert('warning', 'Bien sin menajes asociados', ``);
+          this.alert('warning', 'Bien sin Menajes Asociados', ``);
           this.loading = false;
           this.totalItems = 0;
           this.searchGoods(this.idExpedientSearch, this.paramsSubject);
         }
       },
       error: err => {
-        this.alert('warning', 'Bien sin menajes asociados', ``);
+        this.alert('warning', 'Bien sin Menajes Asociados', ``);
         this.loading = false;
         this.totalItems = 0;
         this.searchGoods(this.idExpedientSearch, this.paramsSubject);
@@ -300,7 +302,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       },
       error: (err: any) => {
         this.loading = false;
-        this.alert('warning', 'No existen bienes', ``);
+        this.alert('warning', 'No Existen Bienes', ``);
       },
     });
   }
@@ -318,7 +320,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
           },
           error: (err: any) => {
             this.loading = false;
-            this.alert('warning', 'No existen bienes', ``);
+            this.alert('warning', 'No Existen Bienes', ``);
           },
         });
     }, 4000);
@@ -338,14 +340,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.menageServices.create(menaje).subscribe({
       next: respose => {
         this.searchGoodMenage(this.numberGoodSelect);
-        this.alert('success', 'Menaje asociado', ``);
+        this.alert('success', 'Menaje Asociado', ``);
         this.textButton = 'Agregar menaje';
         this.showSearchButton = false;
         this.addGood = false;
         this.loading = false;
       },
       error: err => {
-        this.alert('error', 'El menaje ya fue asociado', '');
+        this.alert('error', 'El Menaje ya fue Asociado', '');
       },
     });
   }
@@ -366,10 +368,10 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     this.menageServices.remove(idGood).subscribe({
       next: responde => {
         this.searchGoodMenage(this.numberGoodSelect);
-        this.alert('success', 'Menaje eliminado', '');
+        this.alert('success', 'Menaje Eliminado', '');
       },
       error: err => {
-        this.alert('error', 'No es posible eliminar el menaje', ``);
+        this.alert('error', 'No es Posible Eliminar el Menaje', ``);
       },
     });
   }

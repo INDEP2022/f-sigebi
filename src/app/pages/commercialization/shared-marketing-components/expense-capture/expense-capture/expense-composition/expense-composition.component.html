@@ -1,0 +1,94 @@
+<accordion [isAnimated]="true">
+  <accordion-group [isOpen]="true" (isOpenChange)="toggleInformation = $event">
+    <div accordion-heading class="row mt-3">
+      <h5 class="title">
+        Composición de los Gastos
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          style="float: right"
+          [ngClass]="{
+            'rotate-down': toggleInformation,
+            'rotate-up': !toggleInformation
+          }"></i>
+      </h5>
+    </div>
+    <app-card [header]="false">
+      <div body>
+        <div class="row">
+          <!--CAN WORK1 TABLE-->
+          <div class="row justify-content-end mr-1">
+            <div class="ch-content" style="justify-content: flex-end">
+              <div class="row justify-content-end pt-3 ml-2 mr-0">
+                <div class="col-6">
+                  <button
+                    (click)="add()"
+                    [disabled]="!showFilters"
+                    type="button"
+                    tooltip="Nuevo"
+                    containerClass="tooltip-style"
+                    class="btn btn-info btn-sm active ml-2 mr-2">
+                    Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                  </button>
+                </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                  <app-columns-select
+                    [leftList]="true"
+                    [(settings)]="settings"
+                    class="row justify-content-end"></app-columns-select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-12">
+              <div
+                class="table-responsive"
+                [class]="showFilters ? '' : 'hideFilters'">
+                <div [class]="loading ? 'table-loading' : ''">
+                  <ng2-smart-table
+                    #table
+                    [attr.class]="'table-bordered'"
+                    [settings]="settings"
+                    [source]="dataPaginated">
+                  </ng2-smart-table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+          <div class="row">
+            <div class="col-md-4">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary active"
+                [disabled]="!showFilters"
+                (click)="disperGasto()">
+                Dispersa Gasto/Mandato
+              </button>
+            </div>
+            <div class="col-md-4">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary active"
+                [disabled]="!showFilters"
+                (click)="loadExcel()">
+                Cargar Bienes Excel
+              </button>
+            </div>
+            <div class="coll-md-4">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary active"
+                [disabled]="!showFilters"
+                (click)="modifyEstatus()">
+                Modificar Estatus
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </accordion-group>
+</accordion>

@@ -67,48 +67,53 @@
 <app-card>
   <div body>
     <div #scrollContainer class="row justify-content-center text-center">
-      <div class="col-2">
+      <div class="col-3">
         <button
+          style="font-size: 12px"
           [disabled]="!eventSelected"
           type="button"
-          tooltip="Exportar Detalles de los Pagos"
+          tooltip=""
           containerClass="tooltip-style"
-          class="btn btn-success btn-sm active"
+          class="btn btn-success btn-sm active btn-block"
           (click)="exportAsXLSXLotes()">
-          Exportar a Excel <i class="bx bx-download float-icon"></i>
+          Exportar Detalles de los Pagos
+          <i class="bx bx-download float-icon"></i>
         </button>
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <button
+          style="font-size: 12px"
           [disabled]="!eventSelected"
           type="button"
-          tooltip="Exportar de Ventas vs Pagos"
+          tooltip=""
           containerClass="tooltip-style"
-          class="btn btn-success btn-sm active"
+          class="btn btn-success btn-sm active btn-block"
           (click)="exportAsXLSXBienes()">
-          Exportar a Excel <i class="bx bx-download float-icon"></i>
+          Exportar Ventas vs Pagos <i class="bx bx-download float-icon"></i>
         </button>
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <button
+          style="font-size: 12px"
           [disabled]="!eventSelected"
           type="button"
-          tooltip="Exportar Pagos s/m Estatus"
+          tooltip=""
           containerClass="tooltip-style"
-          class="btn btn-success btn-sm active"
+          class="btn btn-success btn-sm active btn-block"
           (click)="exportAsXLSXPagosBanco()">
-          Exportar a Excel <i class="bx bx-download float-icon"></i>
+          Exportar Pagos s/m Estatus <i class="bx bx-download float-icon"></i>
         </button>
       </div>
-      <div class="col-2">
+      <div class="col-3">
         <button
+          style="font-size: 12px"
           [disabled]="!eventSelected"
           type="button"
-          tooltip="Exportar Pagos vs Lotes"
+          tooltip=""
           containerClass="tooltip-style"
-          class="btn btn-success btn-sm active"
+          class="btn btn-success btn-sm active btn-block"
           (click)="exportAsXLSXCompos()">
-          Exportar a Excel <i class="bx bx-download float-icon"></i>
+          Exportar Pagos vs Lotes <i class="bx bx-download float-icon"></i>
         </button>
       </div>
     </div>
@@ -242,6 +247,7 @@
               <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
                 <app-columns-select
                   [(settings)]="settingsBienes"
+                  [defaultColumns]="4"
                   [leftList]="true"></app-columns-select>
               </div>
             </div>

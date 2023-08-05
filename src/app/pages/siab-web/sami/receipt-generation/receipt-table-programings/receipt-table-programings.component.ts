@@ -91,6 +91,14 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     }
   }
 
+  override dataNotFound() {
+    this.totalItems = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
+    this.extraOperationsGetData();
+  }
+
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;

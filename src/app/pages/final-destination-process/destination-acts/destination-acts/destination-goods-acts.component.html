@@ -1,13 +1,13 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Actas de Destino de Bienes</h5>
+    <h5 class="title">{{ title }}</h5>
   </div>
 
   <div body>
     <div class="row justify-content-center">
-      <div class="col-12 col-sm-12 col-md-6">
+      <div class="col col-sm-12 col-md-6">
         <search-bar-simple
-          (eventEmit)="search($event)"
+          (eventEmit)="searchByExp($event)"
           [label]="''"
           id="expediente"
           [placeholder]="'N&uacute;mero de expediente'">
@@ -16,20 +16,12 @@
     </div>
 
     <div *ngIf="response">
-      <div class="d-flex justify-content-center justify-content-md-end mt-2">
-        <div class="">
-          <button type="button" class="btn btn-success btn-sm active">
-            Exportar Datos
-          </button>
-        </div>
-      </div>
-
       <div class="">
         <form
           class="form-material form-horizontal"
           [formGroup]="actForm"
           (ngSubmit)="onSubmit()">
-          <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <!-- <div class="row mt-5 justify-content-start justify-content-sm-end">
             <div class="col-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
@@ -42,9 +34,9 @@
                 </form-field>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="row mt-5">
-            <div class="col-md-4">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="actForm.get('act')" label="Acta">
                   <input
@@ -54,7 +46,19 @@
                 </form-field>
               </div>
             </div>
-            <div class="col-md-4">
+
+            <div class="col-md-3">
+              <form-field
+                [control]="actForm.get('statusAct')"
+                label="Estatus Acta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusAct" />
+              </form-field>
+            </div>
+
+            <!-- <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('preliminaryAscertainment')"
@@ -65,8 +69,8 @@
                     formControlName="preliminaryAscertainment" />
                 </form-field>
               </div>
-            </div>
-            <div class="col-md-4">
+            </div> -->
+            <!-- <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('causePenal')"
@@ -77,9 +81,9 @@
                     formControlName="causePenal" />
                 </form-field>
               </div>
-            </div>
+            </div> -->
           </div>
-          <div class="row mt-4">
+          <div class="row mt-3">
             <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
@@ -121,7 +125,7 @@
             </div>
           </div>
 
-          <div class="row mt-4 align-items-end">
+          <div class="row mt-3 align-items-end">
             <div class="col-md-6 mb-2">
               <div class="mb-1 pl-4 pr-4">
                 <form-field
@@ -146,7 +150,7 @@
             </div>
           </div>
 
-          <div class="row mt-4">
+          <div class="row mt-3">
             <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
@@ -182,6 +186,25 @@
               </div>
             </div>
           </div>
+
+          <div
+            class="d-flex justify-content-center justify-content-md-start mt-2">
+            <div class="">
+              <button
+                type="button"
+                class="btn btn-success btn-sm active mr-3"
+                (click)="exportData()">
+                Exportar Datos <i class="bx bx-download float-icon"></i>
+              </button>
+              <button
+                [disabled]="disableClosedAct"
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="closeAct()">
+                Cerrar
+              </button>
+            </div>
+          </div>
         </form>
 
         <div class="row mt-5">
@@ -189,18 +212,24 @@
         </div>
         <div class="d-flex justify-content-end mt-5">
           <app-columns-select
-            [(settings)]="settings"
+            [(settings)]="settings1"
             class="row justify-content-end">
           </app-columns-select>
         </div>
 
         <div class="row mt-3 pt-2">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
-            (userRowSelect)="selectRow($event)"
-            [source]="source">
-          </ng2-smart-table>
+          <div class="row pt-4 table-container">
+            <div class="col-md-12 table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings1"
+                  (userRowSelect)="selectRow($event)"
+                  [source]="source">
+                </ng2-smart-table>
+              </div>
+            </div>
+          </div>
         </div>
 
         <app-pagination [params]="params" [totalItems]="totalItems">
@@ -232,29 +261,34 @@
               <div class="row">
                 <div class="col-6">
                   <span class="text-success mr-5"
-                    ><i class="fa fa-square"></i> Disponibles</span
+                    ><i class="bx bxs-circle me-1 text-success"></i>
+                    Disponibles</span
                   >
                 </div>
                 <div class="col-6">
                   <span class="text-danger"
-                    ><i class="fa fa-square"></i> No disponibles</span
+                    ><i class="bx bxs-circle me-1 text-danger"></i> No
+                    Disponibles</span
                   >
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-md-12 text-center mt-4 mb-4">
+        <div class="col-md-12 text-center mt-3 mb-4">
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
-            (click)="addSelect()">
-            <!-- Mover uno -->
+            (click)="addSelect()"
+            data-toggle="tooltip"
+            [title]="'Agregar'">
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
+            data-toggle="tooltip"
+            [title]="'Eliminar'"
             (click)="removeSelect()">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>
@@ -271,14 +305,25 @@
         </div>
 
         <div class="row mt-3">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings2"
-            (userRowSelect)="selectRow2($event)"
-            (dblclick)="onUserRowSelect($event)"
-            [source]="source2"></ng2-smart-table>
+          <div class="row pt-4 table-container">
+            <div class="col-md-12 table-responsive">
+              <div [class]="loading2 ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="settings2"
+                  (userRowSelect)="selectRow2($event)"
+                  (edit)="onUserRowSelect($event.data)"
+                  [source]="source2"></ng2-smart-table>
+              </div>
+            </div>
+          </div>
         </div>
-
+        <h6>
+          <strong
+            >Click en <i class="fas fa-edit bx-sm float-icon"></i> para asignar
+            delegación y subdelegación</strong
+          >
+        </h6>
         <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
       </div>

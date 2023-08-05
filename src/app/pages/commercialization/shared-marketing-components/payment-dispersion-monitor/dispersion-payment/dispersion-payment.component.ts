@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -55,6 +56,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   loadingCustomerBanks = false;
   loadingLotBanks = false;
   loadingPaymentLots = false;
+
+  loadingValidAmount = false;
+  loadingTotal = false;
 
   loadingExcel = false;
 
@@ -146,6 +150,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       console.log(params);
       this.limitCustomer = new FormControl(params.limit);
       if (this.dataCustomer['data'].length > 0) {
+        this.loadingCustomer = true;
         this.getDataComerCustomer();
       }
     });
@@ -163,6 +168,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
     this.settingsLotEvent = {
       ...TABLE_SETTINGS,
+      rowClassFunction: (row: { data: { available: any } }) =>
+        row.data.available ? 'bg-success text-white' : 'bg-dark text-white',
       actions: false,
       columns: COLUMNS_LOT_EVENT,
     };
@@ -281,6 +288,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       liquidateAmount: [null],
       totalLiquidateAmount: [null],
       inProcess: [null],
+      totalTableWarranty: [null],
+      totalTableAdvance: [null],
+      txtCancel: [null],
     });
     //PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
     this.formCustomerBanks = this.fb.group({
@@ -339,7 +349,6 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.loadingCustomer = true;
     this.loadingLotEvent = true;
     this.loadingDesertLots = true;
-    this.loadingCustomerBanks = true;
     this.loadingLotBanks = true;
     this.loadingPaymentLots = true;
     const paramsF = new FilterParams();
@@ -467,13 +476,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
             let disponible: boolean;
             const validate = await this.postqueryComerCustomer(e);
             disponible = JSON.parse(JSON.stringify(validate)).available;
-            console.log(disponible);
             return {
               ...e,
               available: disponible,
             };
           })
         );
+
+        //TODO: SUMATORIAS PARA TOTALES
 
         this.dataCustomer.load(newData);
         this.totalItemsCustomer = res.count;
@@ -524,9 +534,23 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerLotsService
       .getComerLotsClientsPayref(paramsF.getParams())
       .subscribe(
-        res => {
+        async res => {
           console.log(res);
-          this.dataLotEvent.load(res.data);
+          const newData = await Promise.all(
+            res.data.map(async (e: any) => {
+              let disponible: boolean;
+              const validate = await this.postQueryLots(e);
+              disponible = JSON.parse(JSON.stringify(validate)).available;
+              return {
+                ...e,
+                available: disponible,
+                txtCan:
+                  e.exceedsLack == 1 ? 'Lote Cancelado por el Usuario' : '',
+              };
+            })
+          );
+          console.log(newData);
+          this.dataLotEvent.load(newData);
           this.totalItemsLotEvent = res.count;
           this.loadingLotEvent = false;
         },
@@ -539,40 +563,97 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       );
   }
 
+  //POSQUERY LOTES
+  postQueryLots(e: any) {
+    return new Promise((resolve, reject) => {
+      if (this.id_tipo_disp == 2) {
+        if (['PAG', 'PAGE', 'CAN', 'GARA', 'DES'].includes(e.vtaStatusId)) {
+          let n_cont: number = 0;
+          let n_coni: number = 0;
+          let n_sum_pag: number = 0;
+          //TODO
+          // BEGIN
+          //       SELECT SUM(IVA+MONTO_APP_IVA+MONTO_NOAPP_IVA)
+          //         INTO n_SUM_PAG
+          //         FROM COMER_PAGOSREFGENS
+          //        WHERE ID_LOTE = :COMER_LOTES.ID_LOTE
+          //          AND TIPO = 'N';
+          //    EXCEPTION
+          //       WHEN OTHERS THEN
+          //          n_SUM_PAG := 0;
+          //    END;
+          //TODO
+          // SELECT COUNT(0), COUNT(IDORDENINGRESO)
+          //      INTO n_CONT, n_CONI
+          //      FROM COMER_PAGOREF CP
+          //     WHERE EXISTS (SELECT 1
+          //                     FROM COMER_PAGOREF_VIRT VI
+          //                    WHERE VI.ID_PAGO = CP.ID_PAGO
+          //                      AND ID_LOTE = :COMER_LOTES.ID_LOTE)
+          //       AND VALIDO_SISTEMA = 'S';
+          if (
+            (n_cont > 0 && n_cont == n_coni && n_sum_pag >= e.finalPrice) ||
+            (e.vtaStatusId == 'CAN' && n_cont == n_coni)
+          ) {
+            resolve({ available: false });
+          } else {
+            resolve({ available: true });
+          }
+        }
+      } else {
+        resolve({ available: false });
+      }
+    });
+  }
+
   //LOTES DESIERTOS
   getDataDesertLots(eventId: string | number) {
     const paramsF = new FilterParams();
-    paramsF.addFilter('idClient', null);
     paramsF.addFilter('eventId', eventId);
-    this.comerLotsService.getAllComerLotsFilter(paramsF.getParams()).subscribe(
-      res => {
-        console.log(res);
-        this.loadingDesertLots = false;
-      },
-      err => {
-        console.log(err);
-        this.loadingDesertLots = false;
-      }
-    );
+    this.comerLotsService
+      .getAllComerLotsFilter(`${paramsF.getParams()}&filter.idClient=$null`)
+      .subscribe(
+        res => {
+          console.log(res);
+          this.dataDesertedLots.load(res.data);
+          this.totalItemsDesertedLots = res.count;
+          this.loadingDesertLots = false;
+        },
+        err => {
+          console.log(err);
+          this.dataDesertedLots.load([]);
+          this.totalItemsDesertedLots = 0;
+          this.loadingDesertLots = false;
+        }
+      );
   }
 
   //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
   selectRowClientEvent(e: any) {
     console.log(e.data);
-    this.getPaymentByCustomer(e.data.ClientId);
+    this.loadingCustomerBanks = true;
+    this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
   }
 
   //SELECCIONAR REGISTRO LOTES ASIGNADOS EN EL EVENTO
   selectRowLotsEvent(e: any) {
     console.log(e.data);
+    this.formLotEvent.get('finalPrice').setValue(e.data.finalPrice);
+    this.formLotEvent.get('warranty').setValue(e.data.guaranteePrice);
+    this.formLotEvent.get('liquidateAmount').setValue(e.data.liquidationAmount);
+    this.formLotEvent.get('txtCancel').setValue(e.data.txtCan);
     this.getLotsBanks(e.data.lotId);
     this.getPaymentLots(e.data.lotId);
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
-  getPaymentByCustomer(clientId: string) {
+  getPaymentByCustomer(clientId: string, eventId: string) {
+    this.loadingValidAmount = true;
+    this.loadingTotal = true;
+
     const paramsF = new FilterParams();
     paramsF.addFilter('Customer_ID', clientId);
+    paramsF.addFilter('Event_ID', eventId);
     this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -585,6 +666,43 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.loadingCustomerBanks = false;
         this.dataCustomerBanks.load([]);
         this.totalItemsCustomerBanks = 0;
+      }
+    );
+
+    const model = {
+      dateComer: format(this.dateMaxWarranty.value, 'yyyy-MM-dd'),
+      clientId: clientId,
+      eventId: eventId,
+    };
+
+    this.comerLotsService.getSumLotComerPayRef(model).subscribe(
+      res => {
+        console.log(res);
+        this.loadingValidAmount = false;
+        this.formCustomerBanks
+          .get('validAmount')
+          .setValue(res.data[0].suma_total);
+      },
+      err => {
+        console.log(err);
+        this.loadingValidAmount = false;
+      }
+    );
+
+    const model2 = {
+      clientId: clientId,
+      eventId: eventId,
+    };
+
+    this.comerLotsService.getSumAllComerPayRef(model2).subscribe(
+      res => {
+        console.log(res);
+        this.formCustomerBanks.get('total').setValue(res.data[0].suma_total);
+        this.loadingTotal = false;
+      },
+      err => {
+        console.log(err);
+        this.loadingTotal = false;
       }
     );
   }

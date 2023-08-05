@@ -7,62 +7,66 @@
       <form [formGroup]="requestSiabForm" class="form-material">
         <div class="col-md-6">
           <div>
-            <form-field [control]="requestSiabForm.get('regionalDelegation')">
+            <form-field [control]="requestSiabForm.get('delegationRegionalId')">
               <ngx-select
                 [form]="requestSiabForm"
-                control="regionalDelegation"
+                control="delegationRegionalId"
                 [data]="regionalsDelegations"
                 value="id"
-                bindLabel="id"
+                bindLabel="description"
                 label="Delegaci&oacute;n Regional"
-                (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+                (fetchItems)="getRegionalDelegationSelect($event)"
+                (change)="changeDelegationReg($event)"></ngx-select>
             </form-field>
           </div>
 
           <div class="pt-3">
-            <form-field [control]="requestSiabForm.get('state')">
+            <form-field [control]="requestSiabForm.get('cve_estado')">
               <ngx-select
                 [form]="requestSiabForm"
-                control="state"
+                control="cve_estado"
                 [data]="states"
                 value="id"
-                bindLabel="id"
+                bindLabel="descCondition"
                 label="Estado"
-                (fetchItems)="getStateSelect($event)"></ngx-select>
+                (fetchItems)="getStateSelect($event)"
+                (change)="changeState($event)"></ngx-select>
             </form-field>
           </div>
 
           <div class="pt-3">
-            <form-field [control]="requestSiabForm.get('transferent')">
+            <form-field [control]="requestSiabForm.get('transfereeId')">
               <ngx-select
                 [form]="requestSiabForm"
-                control="transferent"
+                control="transfereeId"
                 [data]="transferents"
                 value="id"
-                bindLabel="id"
+                bindLabel="keyTransferent"
                 label="Transferente"
-                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+                (fetchItems)="getTransferentSelect($event)"
+                (change)="changeTransferent($event)"></ngx-select>
             </form-field>
           </div>
 
           <div class="pt-3">
-            <form-field [control]="requestSiabForm.get('broadStation')">
+            <form-field [control]="requestSiabForm.get('stationId')">
               <ngx-select
                 [form]="requestSiabForm"
-                control="broadStation"
-                [data]="broadStations"
+                control="stationId"
+                [data]="stations"
                 value="id"
-                bindLabel="id"
+                bindLabel="stationName"
                 label="Emisora"
-                (fetchItems)="getBroadStationSelect($event)"></ngx-select>
+                (fetchItems)="getStationSelect($event)"
+                (change)="changeStation($event)"></ngx-select>
             </form-field>
           </div>
 
           <div class="pt-3">
-            <form-field [control]="requestSiabForm.get('authority')">
+            <form-field [control]="requestSiabForm.get('authorityId')">
               <ngx-select
                 [form]="requestSiabForm"
-                control="authority"
+                control="authorityId"
                 [data]="authorities"
                 value="id"
                 bindLabel="id"
@@ -72,13 +76,13 @@
           </div>
 
           <div class="pt-3">
-            <form-field [control]="requestSiabForm.get('typeRelevant')">
+            <form-field [control]="requestSiabForm.get('relevantTypeId')">
               <ngx-select
                 [form]="requestSiabForm"
-                control="typeRelevant"
+                control="relevantTypeId"
                 [data]="typeRelevants"
                 value="id"
-                bindLabel="id"
+                bindLabel="description"
                 label="Tipo relevante"
                 (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
             </form-field>
@@ -86,12 +90,12 @@
 
           <div class="pt-3">
             <form-field
-              [control]="requestSiabForm.get('quantityReserve')"
+              [control]="requestSiabForm.get('amountToReserve')"
               label="Cantidad a reservar">
               <input
                 type="text"
                 class="form-control"
-                formControlName="quantityReserve" />
+                formControlName="amountToReserve" />
             </form-field>
           </div>
         </div>
@@ -99,12 +103,12 @@
         <div class="col-md-6">
           <div>
             <form-field
-              [control]="requestSiabForm.get('expedientTransferent')"
+              [control]="requestSiabForm.get('proceedingsType')"
               label="Expediente transferente">
               <input
                 type="text"
                 class="form-control"
-                formControlName="expedientTransferent" />
+                formControlName="proceedingsType" />
             </form-field>
           </div>
 

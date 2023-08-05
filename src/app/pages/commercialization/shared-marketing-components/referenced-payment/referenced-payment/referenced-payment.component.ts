@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -38,6 +38,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   banks = new DefaultSelect();
   layout: string = '';
   loadingBtn: boolean = false;
+  cargado: boolean = true;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -89,20 +91,27 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
             //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
             const search: any = {
+              movementNumber: () => (searchFilter = SearchFilter.EQ),
+              date: () => (searchFilter = SearchFilter.EQ),
+              move: () => (searchFilter = SearchFilter.ILIKE),
+              account: () => (searchFilter = SearchFilter.EQ),
+              referenceOri: () => (searchFilter = SearchFilter.ILIKE),
+              bankKey: () => (searchFilter = SearchFilter.ILIKE),
+              branchOffice: () => (searchFilter = SearchFilter.EQ),
+              amount: () => (searchFilter = SearchFilter.EQ),
+              result: () => (searchFilter = SearchFilter.ILIKE),
+              validSistem: () => (searchFilter = SearchFilter.EQ),
               paymentId: () => (searchFilter = SearchFilter.EQ),
               reference: () => (searchFilter = SearchFilter.ILIKE),
-              movementNumber: () => (searchFilter = SearchFilter.EQ),
-              move: () => (searchFilter = SearchFilter.EQ),
-              date: () => (searchFilter = SearchFilter.EQ),
-              amount: () => (searchFilter = SearchFilter.EQ),
-              bankKey: () => (searchFilter = SearchFilter.ILIKE),
-              entryOrderId: () => (searchFilter = SearchFilter.EQ),
               lotPub: () => (searchFilter = SearchFilter.EQ),
               event: () => (searchFilter = SearchFilter.EQ),
-              clientId: () => (searchFilter = SearchFilter.EQ),
-              rfc: () => (searchFilter = SearchFilter.ILIKE),
-              name: () => (searchFilter = SearchFilter.ILIKE),
-              appliedTo: () => (searchFilter = SearchFilter.EQ),
+              entryOrderId: () => (searchFilter = SearchFilter.EQ),
+              affectationDate: () => (searchFilter = SearchFilter.EQ),
+              descriptionSAT: () => (searchFilter = SearchFilter.ILIKE),
+              // clientId: () => (searchFilter = SearchFilter.EQ),
+              // rfc: () => (searchFilter = SearchFilter.ILIKE),
+              // name: () => (searchFilter = SearchFilter.ILIKE),
+              // appliedTo: () => (searchFilter = SearchFilter.EQ),
             };
             search[filter.field]();
 
@@ -115,13 +124,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           });
           this.params = this.pageFilter(this.params);
           //Su respectivo metodo de busqueda de datos
-          this.getPayments();
+          this.getPayments('no');
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getPayments());
+      .subscribe(() => this.getPayments('no'));
 
     this.prepareForm();
   }
@@ -155,7 +164,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         edit: editVal,
         callback: (next: boolean) => {
           if (next) {
-            this.getPayments();
+            this.getPayments('no');
           }
         },
       },
@@ -189,7 +198,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       this.valAcc = event.data;
     }
   }
-  getPayments() {
+  getPayments(filter: any) {
     this.loading = true;
     this.totalItems = 0;
     let params = {
@@ -226,40 +235,75 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       delete params['filter.lotPub'];
     }
 
-    if (params['filter.event']) {
-      params['filter.lots.idEvent'] = params['filter.event'];
-      delete params['filter.event'];
+    if (this.searchWithEvent == true) {
+      params['filter.lots.idEvent'] = this.eventSelected.id;
+    } else {
+      if (params['filter.event']) {
+        params['filter.lots.idEvent'] = params['filter.event'];
+        delete params['filter.event'];
+      }
     }
 
     if (params['filter.move']) {
       params['filter.ctrl.description'] = params['filter.move'];
       delete params['filter.move'];
     }
+    // FECHA, NO_MOVIMIENTO, CVE_BANCO
+
+    if (params['filter.descriptionSAT']) {
+      params['filter.satInfo.description'] = params['filter.descriptionSAT'];
+      delete params['filter.descriptionSAT'];
+    }
+    // FECHA, NO_MOVIMIENTO, CVE_BANCO
 
     // params['filter.entryOrderId'] = `$null`;
-    params['sortBy'] = `paymentId:DESC`;
+    // params['sortBy'] = `movementNumber:DESC`;
+    params['sortBy'] = `date:DESC`;
     this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
-        let result = response.data.map(async (item: any) => {
-          // const client: any = await this.getClients(item.clientId);
-          item['rfc'] = item.customers ? item.customers.rfc : null;
-          item['name'] = item.customers ? item.customers.nomRazon : null;
-          item['event'] = item.lots ? item.lots.idEvent : null;
-          item['lotPub'] = item.lots ? item.lots.lotPublic : null;
-          item['move'] = item.ctrl ? item.ctrl.description : null;
-        });
-        Promise.all(result).then(resp => {
-          this.data.load(response.data);
+        if (response.count == 0) {
+          if (filter == 'si') {
+            this.alert('warning', 'No se Encontraron Resultados', '');
+          }
+          this.data.load([]);
           this.data.refresh();
-          this.totalItems = response.count;
+          this.totalItems = 0;
           this.loading = false;
-        });
+        } else {
+          let result = response.data.map(async (item: any) => {
+            // const client: any = await this.getClients(item.clientId);
+            item['rfc'] = item.customers ? item.customers.rfc : null;
+            item['name'] = item.customers ? item.customers.nomRazon : null;
+            item['event'] = item.lots ? item.lots.idEvent : null;
+            item['lotPub'] = item.lots ? item.lots.lotPublic : null;
+            item['move'] = item.ctrl ? item.ctrl.description : null;
+            item['idAndName'] = item.customers
+              ? item.customers.idClient + ' - ' + item.customers.nomRazon
+              : null;
+
+            item['bankAndNumber'] = item.ctrl
+              ? item.ctrl.code + ' - ' + item.ctrl.cveBank
+              : null;
+            item['descriptionSAT'] = item.satInfo
+              ? item.satInfo.description
+              : null;
+          });
+          Promise.all(result).then(resp => {
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          });
+        }
       },
       error: error => {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
+        if (filter == 'si') {
+          this.alert('warning', 'No se Encontraron Resultados', '');
+        }
         this.loading = false;
         console.log(error);
       },
@@ -332,9 +376,24 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       });
     });
   }
-  search() {}
+
+  searchWithEvent: boolean = false;
+  search() {
+    this.searchWithEvent = true;
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getPayments('si'));
+    setTimeout(() => {
+      this.performScroll();
+    }, 500);
+  }
   clear() {
     this.form.reset();
+    this.eventSelected = null;
+    this.searchWithEvent = false;
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getPayments('no'));
   }
   async carga() {
     if (!this.eventSelected)
@@ -395,4 +454,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   }
 
   setValuesFormBank(event?: any) {}
+
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  }
 }

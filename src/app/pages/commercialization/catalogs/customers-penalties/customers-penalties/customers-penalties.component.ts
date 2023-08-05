@@ -34,10 +34,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = COLUMNS;
     this.settings.hideSubHeader = false;
-    this.settings.actions.add = false;
+    /*this.settings.actions.add = false;
     this.settings.actions.edit = true;
     this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';
+    this.settings.actions.position = 'right';*/
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
@@ -57,7 +58,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
-                //field = `filter.${filter.field}.id`;
+                field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'publicLot':
@@ -151,16 +152,34 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log(params);
-    this.clientPenaltyService.getAll(params).subscribe({
+    this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
-        this.customersPenalties = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        console.log(this.data);
-        this.data.refresh();
-        this.loading = false;
+        if (response.count > 0) {
+          this.customersPenalties = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          console.log(this.data);
+          this.data.refresh();
+          this.loading = false;
+        } else {
+          /*this.alert(
+          'warning',
+            'No se Encontraron Registros',
+            ''
+          );*/
+          this.loading = false;
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+        }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        //this.loading = false;
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 

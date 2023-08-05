@@ -55,4 +55,14 @@ export class RejectedGoodService extends HttpService {
     const route = `${RejectedGoodEndpoint.GoodsResDev}/${idGoodResDev}`;
     return this.put(route, formData);
   }
+
+  createGoodsResDev(formData: Object) {
+    const route = `${RejectedGoodEndpoint.GoodsResDev}`;
+    return this.post(route, formData);
+  }
+
+  deleteGoodsResDev(goodresdevId: number) {
+    const route = `${RejectedGoodEndpoint.GoodsResDev}`;
+    return this.delete(`${route}/${goodresdevId}`);
+  }
 }
