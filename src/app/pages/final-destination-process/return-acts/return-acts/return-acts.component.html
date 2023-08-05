@@ -4,23 +4,38 @@
   </div>
 
   <div body>
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-12 col-md-6">
-        <search-bar-simple
-          (eventEmit)="search($event)"
-          [label]="''"
-          [placeholder]="'N&uacute;mero de expediente'">
-        </search-bar-simple>
+    <form
+      [formGroup]="expForm"
+      class="form-material justify-content-center"
+      (ngSubmit)="onSubmit()">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-12 col-md-4">
+          <form-field [control]="expForm.get('expediente')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="expediente"
+              [placeholder]="'N&uacute;mero de expediente'" />
+          </form-field>
+        </div>
+        <div class="col-md-2" style="margin-top: 0.5%">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="search()">
+            Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
 
     <div>
-      <div class="">
+      <div class="" *ngIf="actaopen">
         <form
           class="form-material form-horizontal"
           [formGroup]="actForm"
           (ngSubmit)="onSubmit()">
-          <div class="row mt-5" *ngIf="cause">
+          <div class="row mt-5" *ngIf="bcause">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
@@ -43,6 +58,21 @@
                     type="text"
                     class="form-control"
                     formControlName="penaltyCause"
+                    readonly />
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-5" *ngIf="cause">
+            <div class="col-md-6">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="actForm.get('noExp')"
+                  label="No. Expediente Transferente">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="noExp"
                     readonly />
                 </form-field>
               </div>
@@ -221,7 +251,7 @@
             </div>
           </div>
           <div class="row justify-content-center">
-            <div class="col-12 col-sm-12 col-md-4">
+            <div class="col-12 col-sm-12 col-md-4" style="text-align: center">
               <form-field [control]="formadd.get('estado')" label="Estado Acta">
                 <input
                   type="text"
@@ -231,53 +261,69 @@
               </form-field>
             </div>
             <div class="col-12 col-sm-12 col-md-1">
-              <button class="btn btn-info active btn-sm">
-                Cerrar <i class="bx bx-file bx-sm float-icon"></i>
+              <button
+                class="btn btn-primary active btn-sm"
+                (click)="validarStatusActa()"
+                [disabled]="!open || !labela"
+                *ngIf="labela">
+                {{ labelActa }} <i class="bx bx-file bx-sm float-icon"></i>
               </button>
             </div>
           </div>
-          <div class="row margin-input" style="text-align: center">
-            <div class="col-md-2" style="text-align: right">
-              <div class="justify-content-center margin-input">
-                <button type="submit" class="btn btn-primary btn-sm active">
-                  Solicitud <i class="bx bx-search-alt bx-sm float-icon"></i>
-                </button>
+          <br />
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-3 text-center">
+              <button
+                [disabled]="!sol"
+                tooltip="Generar Folio de Escaneo y Solicitud"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1"
+                (click)="initSolicitud()">
+                <i class="bx bxs-file-find"></i>
+              </button>
+              <button
+                [disabled]="!folioBoool"
+                tooltip="Escanear"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1"
+                (click)="openScannerPage()">
+                <i class="bx bxs-file"></i>
+              </button>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 w-100 p-0">
+              <div class="col-md-12 col-sm-12 col-12 p-0">
+                <div class="col-md-12 col-sm-12 col-xs-12 p-1">
+                  <form-field
+                    label="Folio De Escaneo"
+                    [control]="formadd.get('scanningFoli')">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="scanningFoli"
+                      readonly />
+                  </form-field>
+                </div>
               </div>
             </div>
-            <div class="col-md-2" style="text-align: center">
-              <div class="justify-content-center margin-input">
-                <button class="btn btn-info active btn-sm">
-                  Escanear <i class="bx bx-file bx-sm float-icon"></i>
-                </button>
-              </div>
+            <div class="col-sm-12 col-12 col-md-3 text-center">
+              <button
+                [disabled]="!folioBoool"
+                tooltip="Imprimir Solicitud de Escaneo"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1"
+                (click)="getReport()">
+                <i class="bx bxs-file-find"></i>
+              </button>
+              <button
+                [disabled]="!scanBool"
+                tooltip="Consulta de Imágenes Escaneadas"
+                containerClass="tooltip-style"
+                class="btn btn-secondary btn-sm active m-1"
+                (click)="openview()">
+                <i class="bx bxs-file"></i>
+              </button>
             </div>
-            <div class="col-md-4">
-              <form-field
-                [control]="formadd.get('scanFolio')"
-                label="Folio de escaneo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="scanFolio"
-                  readonly
-                  min="1" />
-              </form-field>
-            </div>
-            <div class="col-md-2" style="text-align: center">
-              <div class="justify-content-center margin-input">
-                <button type="button" class="btn btn-primary active btn-sm">
-                  Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
-                </button>
-              </div>
-            </div>
-            <div class="col-md-1" style="text-align: left">
-              <div class="justify-content-center margin-input">
-                <button class="btn btn-primary btn-sm active mr-3">
-                  Ver <i class="fa fa-eye" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
-            <div class="col-md-1"></div>
+            <!-- (click)="getReportViewActa()" -->
           </div>
         </form>
         <!-- Bloque VDB (Bienes)-->
@@ -287,31 +333,34 @@
             class="row justify-content-end">
           </app-columns-select>
         </div>
-        <ng-scrollbar
-          style="min-height: 300px; border: none"
-          class="mt-3"
-          track="all">
-          <div class="row mt-3 pt-2">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsGoods"
-              [source]="goodsData">
-            </ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+        <div
+          class="row pt-2 scroll-table justify-content-center"
+          style="margin-left: 5px">
+          <ng2-smart-table
+            #mySmartTable
+            [attr.class]="'table-bordered'"
+            [settings]="settingsGoods"
+            [source]="goodsList"
+            (userRowSelect)="onRowSelect($event)">
+          </ng2-smart-table>
+        </div>
         <app-pagination [params]="paramsGoods" [totalItems]="totalGoods">
         </app-pagination>
 
         <div class="col-md-12 text-center mt-4 mb-4">
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-            type="button">
+            type="button"
+            (click)="addSelect()"
+            [disabled]="!pass || !nopass">
             <!-- Mover uno -->
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-            type="button">
+            type="button"
+            (click)="removeSelect()"
+            [disabled]="!delete || !nodelete">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>
           </button>
@@ -325,20 +374,19 @@
             [settings]="settingsDetailProceedings">
           </app-columns-select>
         </div>
-        <ng-scrollbar
-          style="min-height: 300px; border: none"
-          class="mt-3"
-          track="all">
-          <div class="row mt-3">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settingsDetailProceedings"
-              [source]="detailProceedingsData"></ng2-smart-table>
-          </div>
-        </ng-scrollbar>
+        <div
+          class="row pt-2 scroll-table justify-content-center"
+          style="margin-left: 5px">
+          <ng2-smart-table
+            #mySmartTable
+            [attr.class]="'table-bordered'"
+            [settings]="settingsDetailProceedings"
+            [source]="goodsListTable"
+            (userRowSelect)="deleteRowSelect($event)"></ng2-smart-table>
+        </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
-        <div class="row">
+        <!-- <div class="row">
           <div class="d-flex align-items-center">
             <div class="col-6 align-items-center">
               <div class="mt-5">
@@ -361,7 +409,7 @@
                 </form>
               </div>
             </div>
-            <!-- <div class="col-6 align-items-center">
+             <div class="col-6 align-items-center">
               <div class="row">
                 <div class="col-6">
                   <span class="text-success mr-5"
@@ -374,9 +422,9 @@
                   >
                 </div>
               </div>
-            </div> -->
+            </div> 
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
