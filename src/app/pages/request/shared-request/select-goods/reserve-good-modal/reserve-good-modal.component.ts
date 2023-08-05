@@ -14,6 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 export class ReserveGoodModalComponent extends BasePage implements OnInit {
   title: string = 'Seleccione la Cantidad a Reservar';
   good: IGoodResDevInvView;
+  requestId: number;
   reserveForm: FormGroup = new FormGroup({});
   @Output() onReserve = new EventEmitter<any>();
 
@@ -75,7 +76,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     }
 
     let goodResDev: IGoodsResDev = {};
-    goodResDev.applicationId = this.good.solicitudId;
+    goodResDev.applicationId = this.requestId; //this.good.solicitudId;
     goodResDev.goodId = this.good.goodId;
     goodResDev.inventoryNumber = this.good.inventoryNum;
     goodResDev.jobNumber = this.good.officeNum;
@@ -112,7 +113,6 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     this.modalRef.hide();*/
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
-        debugger;
         this.onLoadToast('success', 'Se agrego el bien');
         this.onReserve.emit(resp);
         this.modalRef.hide();

@@ -11,4 +11,5 @@ export enum PrepareEventEndpoints {
   ApplicationTpEvent = 'application/get-data-eatevents-tpevents',
   SalePrices = 'util-comer-v1/priceVta',
   getFindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
+  FindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
 }

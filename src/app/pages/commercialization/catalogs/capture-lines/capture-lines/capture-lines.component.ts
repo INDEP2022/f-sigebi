@@ -122,7 +122,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
             this.data.load([]);
             this.data.refresh();
             this.totalItems = 0;
-            this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
+            //this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
           },
         });
     }

@@ -156,7 +156,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('acta', response);
         this.infoForm.get('nameWorker1').setValue(response.data[0].nameWorker1);
 
         if (response.data[0].electronicSignatureWorker1 == 1) {
@@ -416,9 +415,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           );
           //this.processInfoProceeding();
         },
-        error: error => {
-          console.log('errror update', error);
-        },
+        error: error => {},
       });
     } else if (
       this.infoForm.get('electronicSignatureWorker1').value == 1 &&
@@ -439,9 +436,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           );
           //this.processInfoProceeding();
         },
-        error: error => {
-          console.log('errror update', error);
-        },
+        error: error => {},
       });
     }
 
@@ -473,7 +468,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         });
 
         let token = this.authService.decodeToken();
-        console.log('goodId', this.goodId);
+
         const modelReport: IReceipyGuardDocument = {
           keyDoc: this.receiptGuards.id,
           autografos: true,
@@ -503,7 +498,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
-        console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
       error: error => {},
