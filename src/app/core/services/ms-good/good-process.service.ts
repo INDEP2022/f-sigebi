@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { GoodSubtype } from 'src/app/pages/juridical-processes/juridical-ruling-g/juridical-ruling-g/model/good.model';
 import { IResponse } from '../../interfaces/list-response.interface';
@@ -224,7 +224,8 @@ export class GoodProcessService extends HttpService {
     goodNumber: number[];
     arrayStatus: string[];
     dateMasiv: Date | string;
-  }) {
+  },
+  params?: _Params) {
     return this.post('application/pup-reconcilied', body);
   }
 
@@ -249,5 +250,20 @@ export class GoodProcessService extends HttpService {
 
   getStatusFinal(model: any) {
     return this.post('update-good-status/getFinalStatus', model);
+  }
+
+  getDisponible2(model: any) {
+    return this.post('update-good-status/getOneStatus', model);
+  }
+
+  getStatusProcess(model: any) {
+    return this.post(
+      'update-good-status/getStatusProcess?limit=10&page=1',
+      model
+    );
+  }
+
+  getData(params: ListParams) {
+    return this.get<IListResponse<any>>('update-good-status/getData', params);
   }
 }
