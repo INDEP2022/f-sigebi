@@ -16,4 +16,8 @@ export class HistoryIndicatorService extends HttpService {
   getHistoryIndicatorView(params?: _Params, body?: IViewBody) {
     return this.post('views/history-indicator-view', body, params);
   }
+
+  getHistoryIndicatorViewIndicators(body: any) {
+    return this.post('views/history-indicator-view', body);
+  }
 }

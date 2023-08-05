@@ -11,4 +11,5 @@ export enum ENDPOINT_INVOICE {
   ComerHeadboard = 'comer-headboard',
   ComerRectInvoice = 'comer-rectinvoices',
   ComerDetInvoice = 'comer-direct-fac',
+  ApplicationSQL = 'application/execute-sql',
 }

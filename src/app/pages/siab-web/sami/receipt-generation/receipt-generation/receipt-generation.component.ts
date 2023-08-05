@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { ApplicationGoodsQueryService } from 'src/app/core/services/ms-goodsquery/application.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingGoodReceiptService } from 'src/app/core/services/ms-programming-good/programming-good-receipt.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -47,6 +48,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   data1: LocalDataSource = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  update = 0;
   programmingForm: FormGroup;
   fileProgrammingForm: FormGroup;
   folio: string;
@@ -61,6 +63,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   detinationList = new DefaultSelect();
   recepiptGood: IReceiptItem;
   indepForm: FormGroup;
+  indepForm1: FormGroup;
   goodID: string;
   uniqueKey: string;
   noFile: string;
@@ -78,7 +81,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   fileName: string;
   dataExcel: IReceiptExceltem[];
   goodsTable: IReceiptGoodItem;
-  goodsDownload: IReceiptGoodItem[];
+  // goodsDownload: IReceiptGoodItem[];
   goodsDownloadExcel: IReceiptExceltem[];
   goodsDownloadPrograming: IReceiptExceltem[];
   goods: any = [];
@@ -91,7 +94,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     private applicationGoodsQueryService: ApplicationGoodsQueryService,
     private genericService: GenericService,
     private excelService: ExcelService,
-    private receptionGoodService: ReceptionGoodService
+    private receptionGoodService: ReceptionGoodService,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings = {
@@ -120,6 +124,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       estado_fisico_sae: [null, Validators.required],
       estado_conservacion_sae: [null, Validators.required],
       destino_sae: [null, Validators.required],
+      cancellation: [null],
+      reprogramming: [null],
+    });
+    this.indepForm1 = this.fb.group({
       cancellation: [null],
       reprogramming: [null],
     });
@@ -211,6 +219,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
   }
   searchPrograming() {
     this.loader.load = true;
+
     this.programmingGoodReceipt(new ListParams());
   }
   programmingGoodReceipt(params: ListParams) {
@@ -219,37 +228,39 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         programmingId: this.programmingForm.controls['programmingId'].value,
       };
       this.folio = this.programmingForm.controls['programmingId'].value.trim();
-      this.programmingGoodReceiptService.getProgrammingGoods(data).subscribe({
-        next: resp => {
-          console.log(resp);
-          if (resp.data) {
-            this.id_programacion = resp.data[0].id_programacion;
-          } else {
-            this.id_programacion = null;
-          }
-          this.goodsList = new DefaultSelect(resp.data, resp.count);
-          this.goods = resp.data;
-          this.downloadResultsGoods = true;
-          this.count = resp.count ?? 0;
-          this.programmingForm.controls['managementId'].enable();
-          this.loader.load = false;
-        },
-        error: eror => {
-          this.loader.load = false;
-          this.count = 0;
-          this.goodsList = new DefaultSelect([], 0, true);
-          this.alert(
-            'warning',
-            'Generación de Recibos',
-            'Esta Programación no tienes Bienes'
-          );
-        },
-      });
+      this.programmingGoodReceiptService
+        .getProgrammingGoods(data, params)
+        .subscribe({
+          next: resp => {
+            console.log(resp);
+            if (resp.data) {
+              this.id_programacion = resp.data[0].id_programacion;
+            } else {
+              this.id_programacion = null;
+            }
+            this.goodsList = new DefaultSelect(resp.data, resp.count);
+            this.goods = resp.data;
+            this.downloadResultsGoods = true;
+            this.count = resp.count ?? 0;
+            this.programmingForm.controls['managementId'].enable();
+            this.loader.load = false;
+          },
+          error: eror => {
+            this.loader.load = false;
+            this.count = 0;
+            this.goodsList = new DefaultSelect([], 0, true);
+            this.alert(
+              'warning',
+              'Generación de Recibos',
+              'Esta Programación no tiene Bienes'
+            );
+          },
+        });
     } else {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Ingresa una Programación'
+        'Ingrese una Programación'
       );
       this.loader.load = false;
       return;
@@ -262,6 +273,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.getGenericE(new ListParams());
       this.getGenericEC(new ListParams());
       this.recepiptGood = data;
+      console.log(data);
       this.indepForm.patchValue(data);
       console.log(this.indepForm.value);
       this.goodID = this.recepiptGood.id_bien;
@@ -280,7 +292,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Este Bien ya fue Guardado Anteriormente'
+        'Este Bien ya fue guardado anteriormente'
       );
     }
   }
@@ -372,52 +384,21 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             this.acceptMassive()
               .then(result => {
                 console.log(result);
-                console.log(this.goodsDownload);
-                this.loader.load = false;
                 this.goodsDownloadExcel = [];
-                console.log(this.goodsDownload.length);
-                for (let i = 0; i < this.goodsDownload.length; i++) {
-                  this.goodsDownloadExcel.push({
-                    ID: Number(this.goodsDownload[i].id_recorrido),
-                    ID_BIEN: Number(this.goodsDownload[i].id_bien),
-                    CLAVE_UNICA: this.goodsDownload[i].clave_unica,
-                    NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
-                    DESCRIPCION_BIEN_TASFERENTE:
-                      this.goodsDownload[i].descripcion_bien,
-                    DESCRIPCION_BIEN_SAE:
-                      this.goodsDownload[i].descripcion_bien_sae,
-                    CANTIDAD_TRASFERENTE:
-                      this.goodsDownload[i].cantidad.toString(),
-                    CANTIDAD_SAE: this.goodsDownload[i].cantidad_sae.toString(),
-                    UNIDAD_MEDIDA_TRASFERENTE:
-                      this.goodsDownload[i].unidad_medida,
-                    UNIDAD_MEDIDA_SAE: this.goodsDownload[i].unidad_medida_sae,
-                    ESTADO_FISICO_TRASFERENTE:
-                      this.goodsDownload[i].estado_fisico.toString(),
-                    ESTADO_FISICO_SAE:
-                      this.goodsDownload[i].estado_conservacion_sae.toString(),
-                    ESTADO_CONSERVACION_TRASFERENTE:
-                      this.goodsDownload[i].estado_conservacion.toString(),
-                    ESTADO_CONSERVACION_SAE:
-                      this.goodsDownload[i].estado_conservacion_sae.toString(),
-                    DESTINO: this.goodsDownload[i].destino.toString(),
-                    DESTINO_TRASFERENTE:
-                      this.goodsDownload[i].destino_transferente.toString(),
-                    DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
-                    ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
-                    OBSERVACIONES: this.goodsDownload[i].observaciones,
-                  });
-                }
+                this.goodsDownloadExcel = this.dataExcel;
                 setTimeout(() => {
+                  this.loader.load = false;
                   this.downloadResults = true;
                   this.data1.load(this.goodsDownloadExcel);
                   this.data1.refresh();
                   this.totalItems = this.goodsDownloadExcel.length;
                   this.alert(
                     'success',
-                    `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
-                    ''
+                    `Proceso Terminado`,
+                    'Puede descargar el Resultado'
                   );
+                  this.downloadResultsGoods = false;
+                  this.update++;
                 }, 1000);
               })
               .catch(error => {});
@@ -433,11 +414,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             let message: string = '';
             if (IdReceipt > 0) {
               message =
-                'Se Actualizará la Información de los Bienes y se Guardaran en el Recibo' +
+                'Se actualizará la información de los Bienes y se guardarán en el Recibo' +
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creara un Recibo Nuevo';
+                'Se actualizará la información de los Bienes y se creará un Recibo nuevo';
             }
             this.alertQuestion(
               'question',
@@ -449,59 +430,23 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 this.acceptMassive()
                   .then(result => {
                     console.log(result);
-                    this.loader.load = false;
                     this.goodsDownloadExcel = [];
-                    console.log(this.goodsDownload);
-                    for (let i = 0; i < this.goodsDownload.length; i++) {
-                      this.goodsDownloadExcel.push({
-                        ID: Number(this.goodsDownload[i].id_recorrido),
-                        ID_BIEN: Number(this.goodsDownload[i].id_bien),
-                        CLAVE_UNICA: this.goodsDownload[i].clave_unica,
-                        NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
-                        DESCRIPCION_BIEN_TASFERENTE:
-                          this.goodsDownload[i].descripcion_bien,
-                        DESCRIPCION_BIEN_SAE:
-                          this.goodsDownload[i].descripcion_bien_sae,
-                        CANTIDAD_TRASFERENTE:
-                          this.goodsDownload[i].cantidad.toString(),
-                        CANTIDAD_SAE:
-                          this.goodsDownload[i].cantidad_sae.toString(),
-                        UNIDAD_MEDIDA_TRASFERENTE:
-                          this.goodsDownload[i].unidad_medida,
-                        UNIDAD_MEDIDA_SAE:
-                          this.goodsDownload[i].unidad_medida_sae,
-                        ESTADO_FISICO_TRASFERENTE:
-                          this.goodsDownload[i].estado_fisico.toString(),
-                        ESTADO_FISICO_SAE:
-                          this.goodsDownload[
-                            i
-                          ].estado_conservacion_sae.toString(),
-                        ESTADO_CONSERVACION_TRASFERENTE:
-                          this.goodsDownload[i].estado_conservacion.toString(),
-                        ESTADO_CONSERVACION_SAE:
-                          this.goodsDownload[
-                            i
-                          ].estado_conservacion_sae.toString(),
-                        DESTINO: this.goodsDownload[i].destino.toString(),
-                        DESTINO_TRASFERENTE:
-                          this.goodsDownload[i].destino_transferente.toString(),
-                        DESTINO_SAE:
-                          this.goodsDownload[i].destino_sae.toString(),
-                        ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
-                        OBSERVACIONES: this.goodsDownload[i].observaciones,
-                      });
-                      console.log(this.goodsDownloadExcel);
-                    }
+                    this.goodsDownloadExcel = this.dataExcel;
+                    console.log(this.goodsDownloadExcel);
+
                     setTimeout(() => {
+                      this.loader.load = false;
                       this.downloadResults = true;
                       this.data1.load(this.goodsDownloadExcel);
                       this.data1.refresh();
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
-                        ''
+                        `Proceso Terminado`,
+                        'Puede descargar el Resultado'
                       );
+                      this.downloadResultsGoods = false;
+                      this.update++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -519,11 +464,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             let message: string = '';
             if (IdReceipt > 0) {
               message =
-                'Se Actualizará la Información de los Bienes y se Guardaran en el Recibo Almacén' +
+                'Se actualizará la información de los Bienes y se guardarán en el recibo Almacén' +
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creara un Recibo Almacén Nuevo';
+                'Se actualizará la información de los Bienes y se creará un recibo Almacén nuevo';
             }
             this.alertQuestion(
               'question',
@@ -534,70 +479,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               this.acceptMassive()
                 .then(result => {
                   console.log(result);
-                  console.log(this.goodsDownload);
-                  this.loader.load = false;
                   this.goodsDownloadExcel = [];
-                  for (const item of this.goodsDownload) {
-                    console.log(item);
-                    this.goodsDownloadExcel.push({
-                      ID: Number(item.id_recorrido),
-                      ID_BIEN: Number(item.id_bien),
-                      CLAVE_UNICA: item.clave_unica,
-                      NO_EXPEDIENTE: item.no_expediente,
-                      DESCRIPCION_BIEN_TASFERENTE: item.descripcion_bien,
-                      DESCRIPCION_BIEN_SAE: item.descripcion_bien_sae,
-                      CANTIDAD_TRASFERENTE: item.cantidad.toString(),
-                      CANTIDAD_SAE: item.cantidad_sae.toString(),
-                      UNIDAD_MEDIDA_TRASFERENTE: item.unidad_medida,
-                      UNIDAD_MEDIDA_SAE: item.unidad_medida_sae,
-                      ESTADO_FISICO_TRASFERENTE: item.estado_fisico.toString(),
-                      ESTADO_FISICO_SAE:
-                        item.estado_conservacion_sae.toString(),
-                      ESTADO_CONSERVACION_TRASFERENTE:
-                        item.estado_conservacion.toString(),
-                      ESTADO_CONSERVACION_SAE:
-                        item.estado_conservacion_sae.toString(),
-                      DESTINO: item.destino.toString(),
-                      DESTINO_TRASFERENTE: item.destino_transferente.toString(),
-                      DESTINO_SAE: item.destino_sae.toString(),
-                      ID_PROGRAMACION: item.id_programacion,
-                      OBSERVACIONES: item.observaciones,
-                    });
-                  }
-                  // for (let i = 0; i < this.goodsDownload.length; i++) {
-                  //   console.log(this.goodsDownload[i]);
-                  //   this.goodsDownloadExcel.push({
-                  //     ID: Number(this.goodsDownload[i].id_recorrido),
-                  //     ID_BIEN: Number(this.goodsDownload[i].id_bien),
-                  //     CLAVE_UNICA: this.goodsDownload[i].clave_unica,
-                  //     NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
-                  //     DESCRIPCION_BIEN_TASFERENTE:
-                  //       this.goodsDownload[i].descripcion_bien,
-                  //     DESCRIPCION_BIEN_SAE:
-                  //       this.goodsDownload[i].descripcion_bien_sae,
-                  //     CANTIDAD_TRASFERENTE:
-                  //       this.goodsDownload[i].cantidad.toString(),
-                  //     CANTIDAD_SAE: this.goodsDownload[i].cantidad_sae.toString(),
-                  //     UNIDAD_MEDIDA_TRASFERENTE:
-                  //       this.goodsDownload[i].unidad_medida,
-                  //     UNIDAD_MEDIDA_SAE: this.goodsDownload[i].unidad_medida_sae,
-                  //     ESTADO_FISICO_TRASFERENTE:
-                  //       this.goodsDownload[i].estado_fisico.toString(),
-                  //     ESTADO_FISICO_SAE:
-                  //       this.goodsDownload[i].estado_conservacion_sae.toString(),
-                  //     ESTADO_CONSERVACION_TRASFERENTE:
-                  //       this.goodsDownload[i].estado_conservacion.toString(),
-                  //     ESTADO_CONSERVACION_SAE:
-                  //       this.goodsDownload[i].estado_conservacion_sae.toString(),
-                  //     DESTINO: this.goodsDownload[i].destino.toString(),
-                  //     DESTINO_TRASFERENTE:
-                  //       this.goodsDownload[i].destino_transferente.toString(),
-                  //     DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
-                  //     ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
-                  //     OBSERVACIONES: this.goodsDownload[i].observaciones,
-                  //   });
-                  // }
-                  console.log(this.goodsDownload.length);
+                  this.goodsDownloadExcel = this.dataExcel;
                   setTimeout(() => {
                     this.loader.load = false;
                     this.downloadResults = true;
@@ -606,9 +489,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
+                    this.downloadResultsGoods = false;
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -625,11 +510,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
             let message: string = '';
             if (IdReceipt > 0) {
               message =
-                'Se Actualizará la Información de los Bienes y se Guardaran en el Recibo Resguardo' +
+                'Se actualizará la información de los Bienes y se guardarán en el recibo Resguardo' +
                 IdReceipt;
             } else {
               message =
-                'Se Actualizará la Información de los Bienes y se Creara un Recibo Resguardo Nuevo';
+                'Se actualizará la información de los Bienes y se creará un recibo Resguardo nuevo';
             }
             this.alertQuestion(
               'question',
@@ -641,49 +526,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                 this.acceptMassive()
                   .then(result => {
                     console.log(result);
-                    console.log(this.goodsDownload);
-                    this.loader.load = false;
                     this.goodsDownloadExcel = [];
-                    console.log(this.goodsDownload.length);
-                    for (let i = 0; i < this.goodsDownload.length; i++) {
-                      this.goodsDownloadExcel.push({
-                        ID: Number(this.goodsDownload[i].id_recorrido),
-                        ID_BIEN: Number(this.goodsDownload[i].id_bien),
-                        CLAVE_UNICA: this.goodsDownload[i].clave_unica,
-                        NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
-                        DESCRIPCION_BIEN_TASFERENTE:
-                          this.goodsDownload[i].descripcion_bien,
-                        DESCRIPCION_BIEN_SAE:
-                          this.goodsDownload[i].descripcion_bien_sae,
-                        CANTIDAD_TRASFERENTE:
-                          this.goodsDownload[i].cantidad.toString(),
-                        CANTIDAD_SAE:
-                          this.goodsDownload[i].cantidad_sae.toString(),
-                        UNIDAD_MEDIDA_TRASFERENTE:
-                          this.goodsDownload[i].unidad_medida,
-                        UNIDAD_MEDIDA_SAE:
-                          this.goodsDownload[i].unidad_medida_sae,
-                        ESTADO_FISICO_TRASFERENTE:
-                          this.goodsDownload[i].estado_fisico.toString(),
-                        ESTADO_FISICO_SAE:
-                          this.goodsDownload[
-                            i
-                          ].estado_conservacion_sae.toString(),
-                        ESTADO_CONSERVACION_TRASFERENTE:
-                          this.goodsDownload[i].estado_conservacion.toString(),
-                        ESTADO_CONSERVACION_SAE:
-                          this.goodsDownload[
-                            i
-                          ].estado_conservacion_sae.toString(),
-                        DESTINO: this.goodsDownload[i].destino.toString(),
-                        DESTINO_TRASFERENTE:
-                          this.goodsDownload[i].destino_transferente.toString(),
-                        DESTINO_SAE:
-                          this.goodsDownload[i].destino_sae.toString(),
-                        ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
-                        OBSERVACIONES: this.goodsDownload[i].observaciones,
-                      });
-                    }
+                    this.goodsDownloadExcel = this.dataExcel;
                     setTimeout(() => {
                       this.loader.load = false;
                       this.downloadResults = true;
@@ -692,9 +536,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
-                        ''
+                        `Proceso Terminado`,
+                        'Puede descargar el Resultado'
                       );
+                      this.update++;
                     }, 1000);
                   })
                   .catch(error => {});
@@ -706,59 +551,19 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.receiptGenerationForm.controls['operation'].value ==
         'REPROGRAMACION'
       ) {
-        if (this.indepForm.controls['reprogramming'].value != null) {
+        if (this.indepForm1.controls['reprogramming'].value != null) {
           this.alertQuestion(
             'question',
-            'Se Reprogramaran los Bienes',
+            'Se Reprogramarán los Bienes',
             '¿Desea continuar?',
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
-              this.acceptMassive()
+              this.acceptMassiveCan()
                 .then(result => {
                   console.log(result);
-                  console.log(this.goodsDownload);
-                  this.loader.load = false;
                   this.goodsDownloadExcel = [];
-                  console.log(this.goodsDownload.length);
-                  for (let i = 0; i < this.goodsDownload.length; i++) {
-                    this.goodsDownloadExcel.push({
-                      ID: Number(this.goodsDownload[i].id_recorrido),
-                      ID_BIEN: Number(this.goodsDownload[i].id_bien),
-                      CLAVE_UNICA: this.goodsDownload[i].clave_unica,
-                      NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
-                      DESCRIPCION_BIEN_TASFERENTE:
-                        this.goodsDownload[i].descripcion_bien,
-                      DESCRIPCION_BIEN_SAE:
-                        this.goodsDownload[i].descripcion_bien_sae,
-                      CANTIDAD_TRASFERENTE:
-                        this.goodsDownload[i].cantidad.toString(),
-                      CANTIDAD_SAE:
-                        this.goodsDownload[i].cantidad_sae.toString(),
-                      UNIDAD_MEDIDA_TRASFERENTE:
-                        this.goodsDownload[i].unidad_medida,
-                      UNIDAD_MEDIDA_SAE:
-                        this.goodsDownload[i].unidad_medida_sae,
-                      ESTADO_FISICO_TRASFERENTE:
-                        this.goodsDownload[i].estado_fisico.toString(),
-                      ESTADO_FISICO_SAE:
-                        this.goodsDownload[
-                          i
-                        ].estado_conservacion_sae.toString(),
-                      ESTADO_CONSERVACION_TRASFERENTE:
-                        this.goodsDownload[i].estado_conservacion.toString(),
-                      ESTADO_CONSERVACION_SAE:
-                        this.goodsDownload[
-                          i
-                        ].estado_conservacion_sae.toString(),
-                      DESTINO: this.goodsDownload[i].destino.toString(),
-                      DESTINO_TRASFERENTE:
-                        this.goodsDownload[i].destino_transferente.toString(),
-                      DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
-                      ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
-                      OBSERVACIONES: this.goodsDownload[i].observaciones,
-                    });
-                  }
+                  this.goodsDownloadExcel = this.dataExcel;
                   setTimeout(() => {
                     this.loader.load = false;
                     this.downloadResults = true;
@@ -767,9 +572,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -778,66 +584,26 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Debes Seleccionar el Motivo, de la Reprogramación',
+            'Debe seleccionar el motivo, de la reprogramación',
             ''
           );
         }
       } else if (
         this.receiptGenerationForm.controls['operation'].value == 'CANCELACION'
       ) {
-        if (this.indepForm.controls['cancellation'].value != null) {
+        if (this.indepForm1.controls['cancellation'].value != null) {
           this.alertQuestion(
             'question',
-            'Se Cancelaran los Bienes',
+            'Se cancelarán los Bienes',
             '¿Desea continuar?',
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
-              this.acceptMassive()
+              this.acceptMassiveCan()
                 .then(result => {
                   console.log(result);
-                  console.log(this.goodsDownload);
-                  this.loader.load = false;
                   this.goodsDownloadExcel = [];
-                  console.log(this.goodsDownload.length);
-                  for (let i = 0; i < this.goodsDownload.length; i++) {
-                    this.goodsDownloadExcel.push({
-                      ID: Number(this.goodsDownload[i].id_recorrido),
-                      ID_BIEN: Number(this.goodsDownload[i].id_bien),
-                      CLAVE_UNICA: this.goodsDownload[i].clave_unica,
-                      NO_EXPEDIENTE: this.goodsDownload[i].no_expediente,
-                      DESCRIPCION_BIEN_TASFERENTE:
-                        this.goodsDownload[i].descripcion_bien,
-                      DESCRIPCION_BIEN_SAE:
-                        this.goodsDownload[i].descripcion_bien_sae,
-                      CANTIDAD_TRASFERENTE:
-                        this.goodsDownload[i].cantidad.toString(),
-                      CANTIDAD_SAE:
-                        this.goodsDownload[i].cantidad_sae.toString(),
-                      UNIDAD_MEDIDA_TRASFERENTE:
-                        this.goodsDownload[i].unidad_medida,
-                      UNIDAD_MEDIDA_SAE:
-                        this.goodsDownload[i].unidad_medida_sae,
-                      ESTADO_FISICO_TRASFERENTE:
-                        this.goodsDownload[i].estado_fisico.toString(),
-                      ESTADO_FISICO_SAE:
-                        this.goodsDownload[
-                          i
-                        ].estado_conservacion_sae.toString(),
-                      ESTADO_CONSERVACION_TRASFERENTE:
-                        this.goodsDownload[i].estado_conservacion.toString(),
-                      ESTADO_CONSERVACION_SAE:
-                        this.goodsDownload[
-                          i
-                        ].estado_conservacion_sae.toString(),
-                      DESTINO: this.goodsDownload[i].destino.toString(),
-                      DESTINO_TRASFERENTE:
-                        this.goodsDownload[i].destino_transferente.toString(),
-                      DESTINO_SAE: this.goodsDownload[i].destino_sae.toString(),
-                      ID_PROGRAMACION: this.goodsDownload[i].id_programacion,
-                      OBSERVACIONES: this.goodsDownload[i].observaciones,
-                    });
-                  }
+                  this.goodsDownloadExcel = this.dataExcel;
                   setTimeout(() => {
                     this.loader.load = false;
                     this.downloadResults = true;
@@ -846,9 +612,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso Terminado Correctamente, ya puede Descargar el Resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
+                    this.update++;
                   }, 1000);
                 })
                 .catch(error => {});
@@ -857,16 +624,16 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Debes Seleccionar el Motivo, de la Cancelación',
+            'Debe seleccionar el motivo, de la Cancelación',
             ''
           );
         }
       } else {
         console.log(this.receiptGenerationForm.value);
-        this.alert('warning', 'Seleccione una Opción', '');
+        this.alert('warning', 'Seleccione una opción', '');
       }
     } else {
-      this.alert('warning', 'Seleccione Algun Archivo', '');
+      this.alert('warning', 'Seleccione algún archivo', '');
     }
   }
   async acceptMassive() {
@@ -874,12 +641,9 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       console.log(this.dataExcel.length);
       let idProgramacion: number = 0;
       idProgramacion = this.programmingForm.controls['programmingId'].value;
-      this.goodsDownload = [];
+      // this.goodsDownload = [];
       this.loader.load = true;
       for (let i = 0; i < this.dataExcel.length; i++) {
-        // }
-        // this.dataExcel.forEach(async (element, index) => {
-
         let receipGood: any = [];
         let goods: any = await this.comeBackGoodExcel(this.dataExcel[i]);
         this.goodsTable = goods;
@@ -900,7 +664,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               console.log(desc);
               this.goodsTable.observaciones = desc;
               if (this.goodsTable.observaciones != '') {
-                this.goodsTable.observaciones =
+                this.dataExcel[i].OBSERVACIONES =
                   'Error: ' + this.goodsTable.observaciones;
               } else {
                 if (
@@ -927,8 +691,9 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         idProgramacion
                       );
                       console.log(receipGood);
-                      this.goodsTable.observaciones =
+                      this.dataExcel[i].OBSERVACIONES =
                         'ACTUALIZADO CORRECTAMENTE' +
+                        ' ' +
                         receipGood[0].typeReceipt +
                         ' ' +
                         receipGood[0].idReceipt +
@@ -937,11 +702,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                         ' ' +
                         receipGood[0].idMinutes;
                     } else {
-                      this.goodsTable.observaciones = 'ERROR AL ACTUALIZAR';
+                      this.dataExcel[i].OBSERVACIONES = 'ERROR AL ACTUALIZAR';
                     }
                   } else {
                     console.log(receipGood);
-                    this.goodsTable.observaciones =
+                    this.dataExcel[i].OBSERVACIONES =
                       'ACTUALIZADO ANTERIORMENTE AL ' +
                       receipGood[0].typeReceipt +
                       ' ' +
@@ -960,21 +725,22 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     console.log(
                       '<<<<<<<<<<<res updateInfoAssets>>>>>>>>>>>' + result
                     );
-                    this.goodsTable.observaciones = 'ACTUALIZADO CORRECTAMENTE';
+                    this.dataExcel[i].OBSERVACIONES =
+                      'ACTUALIZADO CORRECTAMENTE';
                   } else {
-                    this.goodsTable.observaciones = 'ERROR AL ACTUALIZAR';
+                    this.dataExcel[i].OBSERVACIONES = 'ERROR AL ACTUALIZAR';
                   }
                 }
               }
             } else {
-              this.goodsTable.observaciones =
-                (this.goodsTable.observaciones != null
-                  ? this.goodsTable.observaciones
+              this.dataExcel[i].OBSERVACIONES =
+                (this.dataExcel[i].OBSERVACIONES != null
+                  ? this.dataExcel[i].OBSERVACIONES
                   : '') + 'Programación diferente';
             }
           } else {
-            this.goodsTable.observaciones =
-              this.goodsTable.observaciones +
+            this.dataExcel[i].OBSERVACIONES =
+              this.dataExcel[i].OBSERVACIONES +
               ' ' +
               this.goodsTable.observaciones.substring(
                 1,
@@ -982,23 +748,85 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               );
           }
         } catch (error) {
-          this.goodsTable.observaciones =
-            this.goodsTable.observaciones + '' + error;
+          this.dataExcel[i].OBSERVACIONES =
+            this.dataExcel[i].OBSERVACIONES + '' + error;
         }
-
-        console.log(this.goodsTable);
-        await this.goodsDownload.push(this.goodsTable);
-        // if (i === this.dataExcel.length - 1) {
-        //   console.log("Es el último elemento:", this.dataExcel[i]);
-        //   console.log(this.goodsDownload);
-        //   return this.goodsDownload;
-        // }
+        console.log(this.dataExcel);
+        await this.dataExcel;
       }
-      return this.goodsDownload;
+      return this.dataExcel;
     } else {
       this.alert('warning', 'El Archivo no tiene Bienes', '');
     }
-    return await this.goodsDownload;
+    return await this.dataExcel;
+  }
+  async acceptMassiveCan() {
+    if (this.dataExcel.length > 0) {
+      console.log(this.dataExcel.length);
+      let idProgramacion: number = 0;
+      idProgramacion = this.programmingForm.controls['programmingId'].value;
+      let motivCan: number = 0;
+      if (
+        this.receiptGenerationForm.controls['operation'].value == 'CANCELACION'
+      ) {
+        motivCan = this.indepForm1.controls['cancellation'].value;
+      } else if (
+        this.receiptGenerationForm.controls['operation'].value ==
+        'REPROGRAMACION'
+      ) {
+        motivCan = this.indepForm1.controls['reprogramming'].value;
+      }
+      // this.goodsDownload = [];
+      this.loader.load = true;
+      for (let i = 0; i < this.dataExcel.length; i++) {
+        let receipGood: any = [];
+        let goods: any = await this.comeBackGoodExcel(this.dataExcel[i]);
+        this.goodsTable = goods;
+        receipGood = await this.checkReceiptGood(
+          this.goodsTable.id_bien,
+          idProgramacion
+        );
+        try {
+          console.log(this.goodsTable);
+          if (idProgramacion == this.goodsTable.id_programacion) {
+            if (receipGood.length == 0) {
+              let result: any = await this.performOperation(
+                this.goodsTable,
+                motivCan
+              );
+              console.log(result);
+              if (result == 'success') {
+                console.log(
+                  '<<<<<<<<<<<res performOperation>>>>>>>>>>>' + result
+                );
+                console.log(receipGood);
+                this.dataExcel[i].OBSERVACIONES = 'ACTUALIZADO CORRECTAMENTE';
+              } else {
+                this.dataExcel[i].OBSERVACIONES = 'ERROR AL ACTUALIZAR';
+              }
+            } else {
+              this.dataExcel[i].OBSERVACIONES =
+                'AGREGADO ANTERIORMENTE AL' +
+                ' ' +
+                receipGood[0].typeReceipt +
+                ' ' +
+                receipGood[0].idReceipt;
+            }
+          } else {
+            this.dataExcel[i].OBSERVACIONES =
+              this.dataExcel[i].OBSERVACIONES + 'Programación diferente';
+          }
+        } catch (error) {
+          this.dataExcel[i].OBSERVACIONES =
+            this.dataExcel[i].OBSERVACIONES + '' + error;
+        }
+        await this.dataExcel;
+      }
+      return await this.dataExcel;
+    } else {
+      this.alert('warning', 'El Archivo no tiene Bienes', '');
+    }
+    return await this.dataExcel;
   }
   async checkReceiptGood(good: string, idProgramacion: number) {
     return new Promise((res, rej) => {
@@ -1022,9 +850,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     return new Promise(async (res, rej) => {
       let good: IReceiptGoodItem = { observaciones: null };
       let estado_fisico: any = '';
+      console.log(data);
       good.id_recorrido = data.ID.toString();
       good.id_bien = data.ID_BIEN.toString();
-      good.clave_unica = data.CLAVE_UNICA;
+      good.clave_unica = data.CLAVE_UNICA != undefined ? data.CLAVE_UNICA : '';
       good.no_expediente = data.NO_EXPEDIENTE;
       good.descripcion_bien = data.DESCRIPCION_BIEN_TASFERENTE;
       good.descripcion_bien_sae = data.DESCRIPCION_BIEN_SAE;
@@ -1041,7 +870,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } catch (error) {
           good.cantidad_sae = 0;
           good.observaciones =
-            good.observaciones + ',No se puede convertir la cantidad INDEP';
+            good.observaciones + ', No se puede convertir la cantidad INDEP';
           console.log(good.observaciones);
         }
       } else {
@@ -1055,14 +884,17 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         good.unidad_medida = '';
       }
       if (data.UNIDAD_MEDIDA_SAE) {
+        console.log(data.UNIDAD_MEDIDA_SAE);
         let unidadSae: any = '';
-        unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_TRASFERENTE);
+        unidadSae = await this.unitMeasures(data.UNIDAD_MEDIDA_SAE);
+        console.log(unidadSae);
         if (unidadSae == '0') {
           good.unidad_medida_sae = '';
           good.observaciones =
-            good.observaciones + ', Se Necesita una unidad de Medida SAE';
+            good.observaciones + ', Se necesita una Unidad de Medida INDEP';
           console.log(good.observaciones);
         } else {
+          console.log(unidadSae);
           good.unidad_medida_sae = unidadSae;
         }
       } else {
@@ -1110,7 +942,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         } else {
           good.observaciones =
             good.observaciones +
-            ', No se encuentra el estado de converción SAE';
+            ', No se encuentra el estado de conservación INDEP';
           good.estado_conservacion_sae = 0;
           console.log(good.observaciones);
         }
@@ -1137,7 +969,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           good.destino_sae = destinoSae;
         } else {
           good.observaciones =
-            good.observaciones + ', No se encuentra destino SAE';
+            good.observaciones + ', No se encuentra destino INDEP';
           good.destino_sae = 0;
           console.log(good.observaciones);
         }
@@ -1192,7 +1024,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           } else {
             coma = '';
           }
-          result = result + coma + 'La cantidad debe ser enteros';
+          result = result + coma + 'La cantidad debe ser un entero';
           console.log(result);
           res(result);
         }
@@ -1229,17 +1061,17 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
           this.receiptGenerationForm.controls['operation'].value,
         P_MOTIVOCAN: reasonCanRep,
         P_CANTIDAD_SAE: good.cantidad_sae,
-        P_DESTINO_SAE: good.destino_sae,
-        P_ESTADO_CONSERVACION_SAE: good.estado_conservacion_sae,
+        P_DESTINO_SAE: Number(good.destino_sae),
+        P_ESTADO_CONSERVACION_SAE: Number(good.estado_conservacion_sae),
         P_ESTADO_FISICO_SAE: good.estado_fisico_sae,
         P_UNIDAD_MEDIDA_SAE:
-          good.unidad_medida_sae != '' ? good.unidad_medida_sae : ' ',
+          good.unidad_medida_sae != '' ? good.unidad_medida_sae : null,
         P_DESCRIPCION_BIEN_SAE:
           good.descripcion_bien_sae != undefined
             ? good.descripcion_bien_sae != ''
               ? good.descripcion_bien_sae
-              : ' '
-            : ' ',
+              : null
+            : null,
         P_ID_BIEN: good.id_bien,
         P_ID_PROGRAMACION: good.id_programacion,
         P_USUARIO_CREACION: localStorage.getItem('username'),
@@ -1250,18 +1082,11 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         .subscribe({
           next: response => {
             console.log(response);
-            // this.alert('success', `Bien Agregado a ${operation}`, '');
             res('success');
           },
           error: eror => {
             this.loader.load = false;
             res(eror);
-
-            // this.alert(
-            //   'warning',
-            //   'Generación de Recibos',
-            //   'No se pudo Agregar el Bien al Recibo'
-            // );
           },
         });
     });
@@ -1282,16 +1107,10 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         next: resp => {
           console.log(resp);
           res(resp);
-          // this.alert('success', `Bien Agregado a ${operation}`, '');
         },
         error: eror => {
           this.loader.load = false;
           res(eror);
-          // this.alert(
-          //   'warning',
-          //   'Generación de Recibos',
-          //   'No se pudo Agregar el Bien al Recibo'
-          // );
         },
       });
     });
@@ -1349,41 +1168,24 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     return result;
   }
   dowloadGoods() {
-    this.goodsDownloadPrograming = [];
-    this.goods.forEach((element: any) => {
-      console.log(element);
-      if (element.guardado == 0) {
-        this.goodsDownloadPrograming.push({
-          ID: Number(element.id_recorrido),
-          ID_BIEN: Number(element.id_bien),
-          CLAVE_UNICA: element.clave_unica,
-          NO_EXPEDIENTE: element.no_expediente,
-          DESCRIPCION_BIEN_TASFERENTE: element.descripcion_bien,
-          DESCRIPCION_BIEN_SAE: element.descripcion_bien_sae_letra,
-          CANTIDAD_TRASFERENTE: element.cantidad.toString(),
-          CANTIDAD_SAE: element.cantidad_sae.toString(),
-          UNIDAD_MEDIDA_TRASFERENTE: element.unidad_medida_letra,
-          UNIDAD_MEDIDA_SAE: element.unidad_medida_sae_letra,
-          ESTADO_FISICO_TRASFERENTE: element.estado_fisico_letra.toString(),
-          ESTADO_FISICO_SAE: element.estado_conservacion_sae_letra.toString(),
-          ESTADO_CONSERVACION_TRASFERENTE:
-            element.estado_conservacion_letra.toString(),
-          ESTADO_CONSERVACION_SAE:
-            element.estado_conservacion_sae_letra.toString(),
-          DESTINO: element.destino_letra.toString(),
-          DESTINO_TRASFERENTE: element.destino_transferente_letra.toString(),
-          DESTINO_SAE: element.destino_sae_letra.toString(),
-          ID_PROGRAMACION: element.id_programacion,
-        });
-      }
-    });
-    console.log(this.goodsDownloadPrograming);
-    const filename: string =
-      'Bienes de la Programación ' +
-      this.programmingForm.controls['programmingId'].value;
-    this.excelService.export(this.goodsDownloadPrograming, {
-      type: 'xlsx',
-      filename,
+    let data = {
+      programmingId: this.programmingForm.controls['programmingId'].value,
+    };
+    this.loader.load = true;
+    this.massiveGoodService.postGoodsSchedules(data).subscribe({
+      next: response => {
+        console.log(response);
+        this._downloadExcelFromBase64(response.base64File, response.nameFile);
+        this.loader.load = false;
+      },
+      error: eror => {
+        this.alert(
+          'warning',
+          'El Archivo no tiene Bienes Disponibles para Trabajar',
+          ''
+        );
+        this.loader.load = false;
+      },
     });
   }
   goodsDownloadResults() {
@@ -1429,7 +1231,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Generación de Recibos',
-          'La Cantidad debe ser Enteros'
+          'La cantidad debe se un entero'
         );
         return;
       }
@@ -1439,7 +1241,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (sender == 0) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo RECIBO?',
+        '¿Desea registrar los Bienes con tipo Recibo?',
         '',
         'Continuar'
       ).then(q => {
@@ -1450,7 +1252,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     } else if (sender == 1) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo RESGUARDO?',
+        '¿Desea registrar los Bienes con tipo Resguardo?',
         '',
         'Continuar'
       ).then(q => {
@@ -1461,7 +1263,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     } else if (sender == 2) {
       this.alertQuestion(
         'question',
-        '¿Desea registrar los bienes con tipo ALMACÉN?',
+        '¿Desea registrar los Bienes con tipo Almacén?',
         '',
         'Continuar'
       ).then(q => {
@@ -1493,14 +1295,27 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log(resp);
-          this.alert('success', `Bien Agregado a ${operation}`, '');
+          let message: string = '';
+          if (operation == 'RECIBO') {
+            message = 'Recibo';
+          } else if (operation == 'RESGUARDO') {
+            message = 'Resguardo';
+          } else if (operation == 'ALMACEN') {
+            message = 'Almacén';
+          } else if (operation == 'REPROGRAMACION') {
+            message = 'Reprogramación';
+          } else if (operation == 'CANCELACION') {
+            message = 'Cancelación';
+          }
+          this.alert('success', `Bien agregado a ${message}`, '');
           this.cleanInsert();
+          this.programmingGoodReceipt(new ListParams());
         },
         error: eror => {
           this.alert(
             'warning',
             'Generación de Recibos',
-            'No se pudo Agregar el Bien al Recibo'
+            'No se pudo agregar el Bien al recibo'
           );
         },
       });
@@ -1509,8 +1324,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['cancellation'].value != null) {
       this.alertQuestion(
         'question',
-        'Se Cancelará la programació',
-        '¿Deseas continuar?',
+        'Se cancelará la Programación',
+        '¿Desea continuar?',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -1527,7 +1342,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Generación de Recibos',
-                'La Cantidad debe ser Enteros'
+                'La Cantidad debe ser un entero'
               );
               return;
             }
@@ -1543,7 +1358,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debes Seleccionar el Motivo, de la Cancelación'
+        'Debe seleccionar el motivo, de la Cancelación'
       );
       return;
     }
@@ -1552,8 +1367,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['reprogramming'].value != null) {
       this.alertQuestion(
         'question',
-        'Se ará una Reprogramación',
-        '¿Deseas continuar?',
+        'Se hará una Reprogramación',
+        '¿Desea continuar?',
         'Continuar'
       ).then(q => {
         if (q.isConfirmed) {
@@ -1570,7 +1385,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Generación de Recibos',
-                'La Cantidad debe ser Enteros'
+                'La cantidad debe ser un entero'
               );
               return;
             }
@@ -1586,7 +1401,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debes Seleccionar el Motivo, de la Reprogramación'
+        'Debe seleccionar el motivo, de la reprogramación'
       );
       return;
     }
@@ -1614,5 +1429,18 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     this.destinationLetter = '';
     this.destinoTransferenteLetra = '';
     this.indepForm.reset();
+  }
+  clearInsertOperation() {
+    this.receiptGenerationForm.reset();
+    this.fileProgrammingForm.reset();
+    this.dataExcel = [];
+    this.downloadResults = false;
+    this.goodsDownloadExcel = [];
+    this.data1.load([]);
+    this.data1.refresh();
+    this.totalItems = 0;
+    this.indepForm1.reset();
+    this.cancellationView = false;
+    this.reprogramingView = false;
   }
 }

@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent_ } from './searchDate';
+
 export const RELEASE_REPORT_COLUMNS = {
   id: {
     title: 'Oficio',
@@ -26,6 +28,15 @@ export const RELEASE_REPORT_COLUMNS = {
   invoiceDate: {
     title: 'Fecha de Factura',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent_,
+    },
   },
   signatory: {
     title: 'Adjudicatario',
@@ -54,18 +65,19 @@ export const RELEASE_REPORT_COLUMNS = {
 };
 export const COMEMR_BIENES_COLUMNS = {
   goodNumber: {
-    title: 'Bien',
-    type: 'text',
+    title: 'No. Bien',
     sort: false,
   },
-  lotDescription: {
-    title: 'Descripcion',
-    type: 'text',
+  description: {
+    title: 'Descripción',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.good.description;
+    },
   },
-  baseValue: {
-    title: 'Valor',
-    type: 'text',
-    sort: false,
-  },
+  // baseValue: {
+  //   title: 'Valor',
+  //   type: 'text',
+  //   sort: false,
+  // },
 };

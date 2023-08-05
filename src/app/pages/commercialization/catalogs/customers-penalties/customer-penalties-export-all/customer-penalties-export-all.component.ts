@@ -56,7 +56,8 @@ export class CustomersPenaltiesExportAllComponent
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'eventId':
-                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.id`;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'publicLot':
                 searchFilter = SearchFilter.ILIKE;
@@ -104,24 +105,90 @@ export class CustomersPenaltiesExportAllComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.clientPenaltyService.getAll(params).subscribe({
+    this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
-        this.customersPenalties = response.data;
-        this.totalItems = response.count;
-        this.data.load(response.data);
-        this.data.refresh();
-        this.loading = false;
+        if (response.count > 0) {
+          this.customersPenalties = response.data;
+          this.totalItems = response.count;
+          this.data.load(response.data);
+          this.data.refresh();
+          this.loading = false;
+        } else {
+          this.loading = false;
+          this.data.load([]);
+          this.data.refresh();
+          this.totalItems = 0;
+        }
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
   //Exportar todos los clientes con penalizaciones
-  exportSelected(): void {
-    const data = this.customersPenalties.map((row: any) =>
-      this.transFormColums(row)
+  exportAll(): void {
+    this.loading = true;
+    this.clientPenaltyService.getAll2().subscribe({
+      next: response => {
+        this.downloadDocument(
+          'TODOS_LOS_CLIENTES_PENALIZADOS',
+          'excel',
+          response.base64File
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
-    this.excelService.exportAsExcelFile(data, 'PenalizacionesDelCliente');
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 
   private transFormColums(row: any) {

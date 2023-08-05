@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ concept ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -16,19 +16,19 @@
         (valueChange)="changeValue($event)">
       </ng-custom-select-loading> -->
 
-      <div *ngIf="edit">
+      <div *ngIf="concept">
         <form-field [control]="form.get('id')" label="Concepto">
           <input class="form-control" formControlName="id" readonly />
         </form-field>
       </div>
-      <div>
+      <div class="pb-2">
         <form-field [control]="form.get('description')" label="Descripción">
           <textarea
             class="form-control"
             formControlName="description"></textarea>
         </form-field>
       </div>
-      <div>
+      <div class="pb-4">
         <form-field [control]="form.get('address')" label="Dirección">
           <ng-select class="form-control" formControlName="address">
             <ng-option [value]="null">Seleccione una dirección</ng-option>

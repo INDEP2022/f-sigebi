@@ -1,14 +1,14 @@
 export const RECEIPTGENERATION_COLUMNS = {
   ID: {
-    title: 'Id Recorrido',
+    title: 'ID Recorrido',
     sort: false,
   },
   ID_BIEN: {
     title: 'Bien',
     sort: false,
   },
-  CLAVE_UNICA: {
-    title: 'Clave única',
+  uniqueKey: {
+    title: 'Clave Única',
     sort: false,
   },
   NO_EXPEDIENTE: {
@@ -32,19 +32,19 @@ export const RECEIPTGENERATION_COLUMNS = {
     sort: false,
   },
   UNIDAD_MEDIDA_TRASFERENTE: {
-    title: 'Unidad medida',
+    title: 'Unidad Medida',
     sort: false,
   },
   UNIDAD_MEDIDA_SAE: {
-    title: 'Unidad medida INDEP',
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
   ESTADO_FISICO_TRASFERENTE: {
-    title: 'Estado físico',
+    title: 'Estado Físico',
     sort: false,
   },
   ESTADO_FISICO_SAE: {
-    title: 'Estado físico INDEP',
+    title: 'Estado Físico INDEP',
     sort: false,
   },
   ESTADO_CONSERVACION_TRASFERENTE: {

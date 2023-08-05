@@ -7,4 +7,6 @@ export enum AccountmvmntEndpoint {
   getDetailsInd = 'bank-account/get-details-ind',
   getBeneficiarios = 'aplication/select-cheques-devolucion',
   getDevolutionsBanks = 'aplication/selectDevoluciones',
+  PaymentControl = 'payment-control',
+  PaymentTypeSat = 'payment-type-sat',
 }

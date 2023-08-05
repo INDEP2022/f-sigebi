@@ -21,19 +21,14 @@
           (click)="newData()">
           Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
-        <confirm-button
-          [disabled]="!form.valid"
-          [btnSmall]="true"
-          [loading]="loading"
-          (confirm)="saveData()"></confirm-button>
-        <button class="btn btn-danger btn-sm active ml-3" (click)="cleanData()">
+        <button class="btn btn-danger btn-sm active" (click)="cleanData()">
           Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
           <form-field label="No. Oficio" [control]="form.get('jobNot')">
             <input
               type="number"
@@ -43,7 +38,7 @@
               (blur)="getFirmantes()" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
           <form-field [control]="form.get('expDate')" label="Fecha Expedición">
             <input
               type="text"
@@ -53,7 +48,7 @@
               [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
           <form-field label="Serie" [control]="form.get('series')">
             <input
               type="text"
@@ -63,7 +58,7 @@
               (blur)="postChangeFolio()" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
           <form-field
             label="Folio de la Factura"
             [control]="form.get('Invoice')">
@@ -75,7 +70,7 @@
               (blur)="postChangeFolio()" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mt-3">
           <form-field label="Nombre" [control]="form.get('name')">
             <input
               type="text"
@@ -84,7 +79,7 @@
               oninput="if(this.value.length > 100) this.value = this.value.slice(0, 100)" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mt-3">
           <form-field
             label="Apellido Paterno"
             [control]="form.get('lastnamePat')">
@@ -95,7 +90,7 @@
               oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mt-3">
           <form-field
             label="Apellido Materno"
             [control]="form.get('lastnameMat')">
@@ -106,9 +101,7 @@
               oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30)" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6">
+        <div class="col-md-6 mt-3">
           <form-field
             label="Representante"
             [control]="form.get('inrepresentation')">
@@ -125,7 +118,7 @@
         <h5 class="title">Datos de Atenci&oacute;n a clientes:</h5>
       </div>
       <div class="row pt-5">
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
           <form-field label="Folio" [control]="form.get('InvoiceAttention')">
             <input
               type="text"
@@ -134,7 +127,7 @@
               oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20)" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mt-3">
           <form-field [control]="form.get('attentionDate')" label="Fecha">
             <input
               type="text"
@@ -142,10 +135,10 @@
               bsDatepicker
               formControlName="attentionDate"
               [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }"
-              (ngModelChange)="setParaghrapAll()" />
+              (ngModelChange)="setParaghrapAll($event)" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mt-3">
           <form-field [control]="form.get('hourAttention')" label="Hora">
             <input
               type="text"
@@ -156,9 +149,10 @@
                 withTimepicker: true,
                 dateInputFormat: 'DD/MM/YYYY h:mm a'
               }" />
+            <!--keepDatepickerOpened: true,-->
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field label="Párrafo 1" [control]="form.get('paragraph1')">
             <textarea
               rows="4"
@@ -167,9 +161,7 @@
               oninput="if(this.value.length > 800) this.value = this.value.slice(0, 800)"></textarea>
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field
             label="Documentos Presentados"
             [control]="form.get('documentspresented')">
@@ -180,7 +172,7 @@
               oninput="if(this.value.length > 300) this.value = this.value.slice(0, 300)" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-12 mt-3">
           <form-field label="Párrafo 3" [control]="form.get('paragraph3')">
             <textarea
               rows="4"
@@ -218,7 +210,7 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
     <form class="form-material mt-5" [formGroup]="form">
-      <div class="row pt-5">
+      <div class="row">
         <div class="col-md-12">
           <form-field label="Párrafo 4" [control]="form.get('paragraph4')">
             <textarea
@@ -228,82 +220,80 @@
               oninput="if(this.value.length > 600) this.value = this.value.slice(0, 600)"></textarea>
           </form-field>
         </div>
-        <div class="row pt-5">
-          <div class="col-md-4">
-            <form-field [control]="form.get('elaborates')">
-              <ngx-select
-                [data]="dataElabora"
-                [searchOnInit]="true"
-                (fetchItems)="getParamElabora($event)"
-                [form]="form"
-                value="value"
-                bindLabel="value"
-                label="Elabora"
-                [control]="'elaborates'"
-                [searchable]="false"
-                [labelTemplate]="elb"
-                [optionTemplate]="elbd">
-              </ngx-select>
-              <ng-template #elb let-item="item">
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('elaborates')">
+            <ngx-select
+              [data]="dataElabora"
+              [searchOnInit]="true"
+              (fetchItems)="getParamElabora($event)"
+              [form]="form"
+              value="value"
+              bindLabel="value"
+              label="Elabora"
+              [control]="'elaborates'"
+              [searchable]="false"
+              [labelTemplate]="elb"
+              [optionTemplate]="elbd">
+            </ngx-select>
+            <ng-template #elb let-item="item">
+              {{ item.value }}
+            </ng-template>
+            <ng-template #elbd let-item="item">
+              <div [title]="item.value">
                 {{ item.value }}
-              </ng-template>
-              <ng-template #elbd let-item="item">
-                <div [title]="item.value">
-                  {{ item.value }}
-                </div>
-              </ng-template>
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="form.get('check')">
-              <ngx-select
-                [data]="dataVerifica"
-                [searchOnInit]="true"
-                (fetchItems)="getParamVerifica($event)"
-                [form]="form"
-                value="value"
-                bindLabel="value"
-                label="Verifica"
-                [control]="'check'"
-                [searchable]="false"
-                [labelTemplate]="verf"
-                [optionTemplate]="verfd">
-              </ngx-select>
-              <ng-template #verf let-item="item">
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('check')">
+            <ngx-select
+              [data]="dataVerifica"
+              [searchOnInit]="true"
+              (fetchItems)="getParamVerifica($event)"
+              [form]="form"
+              value="value"
+              bindLabel="value"
+              label="Verifica"
+              [control]="'check'"
+              [searchable]="false"
+              [labelTemplate]="verf"
+              [optionTemplate]="verfd">
+            </ngx-select>
+            <ng-template #verf let-item="item">
+              {{ item.value }}
+            </ng-template>
+            <ng-template #verfd let-item="item">
+              <div [title]="item.value">
                 {{ item.value }}
-              </ng-template>
-              <ng-template #verfd let-item="item">
-                <div [title]="item.value">
-                  {{ item.value }}
-                </div>
-              </ng-template>
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field [control]="form.get('issues')">
-              <ngx-select
-                [data]="dataExpide"
-                [searchOnInit]="true"
-                (fetchItems)="getParamExpide($event)"
-                [form]="form"
-                value="value"
-                bindLabel="value"
-                label="Expide"
-                [control]="'issues'"
-                [searchable]="false"
-                [labelTemplate]="exp"
-                [optionTemplate]="expd">
-              </ngx-select>
-              <ng-template #exp let-item="item">
+              </div>
+            </ng-template>
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('issues')">
+            <ngx-select
+              [data]="dataExpide"
+              [searchOnInit]="true"
+              (fetchItems)="getParamExpide($event)"
+              [form]="form"
+              value="value"
+              bindLabel="value"
+              label="Expide"
+              [control]="'issues'"
+              [searchable]="false"
+              [labelTemplate]="exp"
+              [optionTemplate]="expd">
+            </ngx-select>
+            <ng-template #exp let-item="item">
+              {{ item.value }}
+            </ng-template>
+            <ng-template #expd let-item="item">
+              <div [title]="item.value">
                 {{ item.value }}
-              </ng-template>
-              <ng-template #expd let-item="item">
-                <div [title]="item.value">
-                  {{ item.value }}
-                </div>
-              </ng-template>
-            </form-field>
-          </div>
+              </div>
+            </ng-template>
+          </form-field>
         </div>
       </div>
     </form>
@@ -311,13 +301,20 @@
   <div footer>
     <div class="ch-content">
       <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-3"
-          (click)="openPrevPdf()">
-          Reporte <i class="fa fa-file"></i>
-        </button>
+      <div class="col-md-12 d-flex justify-content-center text-center buttons">
+        <confirm-button
+          [disabled]="!form.valid"
+          [btnSmall]="true"
+          [loading]="loading"
+          (confirm)="saveData()"></confirm-button>
+        <div class="d-inline">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openPrevPdf()">
+            Reporte <i class="fa fa-file"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

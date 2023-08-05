@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
+import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { ConceptsService } from 'src/app/core/services/ms-commer-concepts/concepts.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -17,7 +18,7 @@ export class ExpenseConceptsListModalComponent
   implements OnInit
 {
   form: FormGroup;
-  edit: boolean = false;
+  concept: IConcept;
   title: string = 'Concepto de Pago';
   directions: { id: string; description: string }[] = [
     { id: 'M', description: 'MUEBLES' },
@@ -35,10 +36,14 @@ export class ExpenseConceptsListModalComponent
     private expenseConceptsService: ExpenseConceptsService
   ) {
     super();
+    this.prepareForm();
   }
 
   ngOnInit() {
-    this.prepareForm();
+    if (this.concept) {
+      console.log(this.concept);
+      this.form.setValue(this.concept);
+    }
   }
 
   private prepareForm() {
@@ -60,7 +65,7 @@ export class ExpenseConceptsListModalComponent
 
   confirm() {
     console.log(this.form.value);
-    if (this.edit) {
+    if (this.concept) {
       this.onEditConfirm(this.form.value);
     } else {
       this.onAddConfirm(this.form.value);
@@ -87,9 +92,10 @@ export class ExpenseConceptsListModalComponent
             this.alert(
               'success',
               'Edición de Concepto de Pago ' + body.id,
-              'Actualizado correctamente'
+              'Actualizado Correctamente'
             );
             this.modalRef.content.callback(true);
+            this.modalRef.hide();
           },
           error: err => {
             this.alert(
@@ -117,7 +123,7 @@ export class ExpenseConceptsListModalComponent
           next: response => {
             this.alert('success', 'Concepto de Pago', 'Creado correctamente');
             this.modalRef.content.callback(true);
-
+            this.modalRef.hide();
             // this.getData();
           },
           error: err => {

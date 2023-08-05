@@ -13,6 +13,25 @@ export class EventAppService extends HttpService {
   }
 
   verifyRejectedGoods(eventId: string | number) {
-    return this.get(`${this.endpoint}/verifyrejected/${eventId}`);
+    return this.get<{ data: number }>(
+      `${this.endpoint}/verifyrejected/${eventId}`
+    );
+  }
+
+  removeGoods(body: {
+    tpeventId: string | number;
+    remittanceEventId: string | number;
+    statusvtaId: string;
+    eventEeatId: string | number;
+    statusBefore: string;
+    goodNo: string | number;
+    toolbarUser: string;
+    eventId: string | number;
+    statusEat: string;
+    remittanceLotId: string | number;
+    remittanceGoodxGoodId: string | number;
+    lotId: string | number;
+  }) {
+    return this.post(`${this.endpoint}/deleteof-goods`, body);
   }
 }

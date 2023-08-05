@@ -3,6 +3,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MunicipalityControlMainService } from 'src/app/core/services/ms-directsale/municipality-control-main.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ApplicantsModalComponent } from '../applicants-modal/applicants-modal.component';
 import { AssignedGoodsModalComponent } from '../assigned-goods-modal/assigned-goods-modal.component';
@@ -31,7 +32,7 @@ export class MunicipalityControlMainComponent
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
-      add: true,
+      add: false,
       edit: true,
       delete: true,
     },
@@ -41,101 +42,19 @@ export class MunicipalityControlMainComponent
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
-      add: true,
+      add: false,
       edit: true,
       delete: true,
     },
   };
 
-  applicantTestData = [
-    {
-      applicationId: 136,
-      entityId: 'M63',
-      applicant: 'EJEMPLO SOLICITANTE 1',
-      position: 'ALCALDE',
-      municipality: 'EJEMPLO MUNICIPIO',
-      state: 'EJEMPLO ESTAOD',
-      applicationDate: '17/05/2021',
-      applicationQuantity: 4,
-      description: 'EJEMPLO DESCRIPTION DE APLCIANTE',
-      phone: '+52 111 111 1111',
-      adjudication: 'EJEMPLO ADJUDICACION',
-      email: 'correo123@ejemplo.com',
-    },
-    {
-      applicationId: 137,
-      entityId: 'M74',
-      applicant: 'EJEMPLO SOLICITANTE 2',
-      position: 'ALCALDE',
-      municipality: 'EJEMPLO MUNICIPIO',
-      state: 'EJEMPLO ESTAOD',
-      applicationDate: '17/05/2021',
-      applicationQuantity: 3,
-      description: 'EJEMPLO DESCRIPTION DE APLCIANTE',
-      phone: '+52 111 111 1111',
-      adjudication: 'EJEMPLO ADJUDICACION',
-      email: 'correo123@ejemplo.com',
-    },
-    {
-      applicationId: 138,
-      entityId: 'M95',
-      applicant: 'EJEMPLO SOLICITANTE 2',
-      position: 'ALCALDE',
-      municipality: 'EJEMPLO MUNICIPIO',
-      state: 'EJEMPLO ESTAOD',
-      applicationDate: '17/05/2021',
-      applicationQuantity: 5,
-      description: 'EJEMPLO DESCRIPTION DE APLCIANTE',
-      phone: '+52 111 111 1111',
-      adjudication: 'EJEMPLO ADJUDICACION',
-      email: 'correo123@ejemplo.com',
-    },
-  ];
-
-  assignedGoodTestData = [
-    {
-      goodId: 466,
-      appraisal: 17000,
-      appraisalDate: '18/06/2021',
-      sessionNumber: 468,
-      goodClasification: 'EJEMPLO CLAS.',
-      description: 'EJEMPLO DESCRICION DE BIEN ASIGNADO',
-      delegation: 'EJEMPLO DELEGACION',
-      location: 'EJEMPLO UBICACION',
-      mandate: 'EJEMPLO MANDATO',
-      siabClassification: 'EJEMPLO CLAS.',
-      commentary: 'EJEMPLO COMENTARIO',
-    },
-    {
-      goodId: 467,
-      appraisal: 14000,
-      appraisalDate: '18/06/2021',
-      sessionNumber: 469,
-      goodClasification: 'EJEMPLO CLAS.',
-      description: 'EJEMPLO DESCRICION DE BIEN ASIGNADO',
-      delegation: 'EJEMPLO DELEGACION',
-      location: 'EJEMPLO UBICACION',
-      mandate: 'EJEMPLO MANDATO',
-      siabClassification: 'EJEMPLO CLAS.',
-      commentary: 'EJEMPLO COMENTARIO',
-    },
-    {
-      goodId: 468,
-      appraisal: 24000,
-      appraisalDate: '18/06/2021',
-      sessionNumber: 470,
-      goodClasification: 'EJEMPLO CLAS.',
-      description: 'EJEMPLO DESCRICION DE BIEN ASIGNADO',
-      delegation: 'EJEMPLO DELEGACION',
-      location: 'EJEMPLO UBICACION',
-      mandate: 'EJEMPLO MANDATO',
-      siabClassification: 'EJEMPLO CLAS.',
-      commentary: 'EJEMPLO COMENTARIO',
-    },
-  ];
-
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private municipalityControlMainService: MunicipalityControlMainService
+  ) {
     super();
+    this.applicantSettings.hideSubHeader = false;
+    this.assignedGoodSettings.hideSubHeader = false;
     this.applicantSettings.columns = MUNICIPALITY_CONTROL_APPLICANT_COLUMNS;
     this.assignedGoodSettings.columns =
       MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS;
@@ -144,25 +63,26 @@ export class MunicipalityControlMainComponent
   ngOnInit(): void {
     this.getData();
   }
-
   getData() {
     this.assignedGoodColumns = [];
     this.assignedGoodTotalItems = 0;
-    this.applicantColumns = this.applicantTestData;
-    this.applicantTotalItems = this.applicantColumns.length;
+    this.municipalityControlMainService.getSolicitantes().subscribe(data => {
+      this.applicantColumns = data.data;
+      this.applicantTotalItems = this.applicantColumns.length;
+      console.log(this.applicantTotalItems);
+    });
+    this.municipalityControlMainService.getBienesAsignados().subscribe(data => {
+      this.assignedGoodColumns = data.data;
+      this.assignedGoodTotalItems = this.assignedGoodColumns.length;
+      console.log(this.assignedGoodTotalItems);
+    });
   }
-
   refreshGoods() {
     this.assignedGoodColumns = [...this.assignedGoodColumns];
     this.assignedGoodTotalItems = this.assignedGoodColumns.length;
   }
-
-  selectApplicant(row: any[]) {
-    this.assignedGoodColumns = this.assignedGoodTestData;
-    this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-  }
-
   askDelete(row: any, type: string) {
+    console.log(row, type);
     this.alertQuestion(
       'question',
       '¿Desea eliminar este registro?',
@@ -183,13 +103,45 @@ export class MunicipalityControlMainComponent
       }
     });
   }
-
   deleteApplicant(row: any) {
-    // Llamar servicio para eliminar
+    let body = {
+      typeentgobId: row.typeentgobId.typeentgobId,
+      soladjinstgobId: row.soladjinstgobId,
+    };
+    this.municipalityControlMainService.deleteSolicitante(body).subscribe({
+      next: data => {
+        this.onLoadToast('success', 'Datos eliminados correctamente', '');
+        this.getData();
+        // location.reload();
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'Lo sentimos ha ocurrido un error'
+        );
+      },
+    });
   }
 
   deleteAssignedGood(row: any) {
-    // Llamar servicio para eliminar
+    console.log(row);
+    this.municipalityControlMainService
+      .deleteBienesAsignados(row.repvendcId)
+      .subscribe({
+        next: data => {
+          this.onLoadToast('success', 'Datos eliminados correctamente', '');
+          // location.reload();
+          this.getData();
+        },
+        error: err => {
+          this.onLoadToast(
+            'warning',
+            'advertencia',
+            'Lo sentimos ha ocurrido un error'
+          );
+        },
+      });
   }
 
   openFormApplicant(applicant?: any) {
@@ -197,6 +149,7 @@ export class MunicipalityControlMainComponent
   }
 
   openModalApplicant(context?: Partial<ApplicantsModalComponent>) {
+    console.log(context);
     const modalRef = this.modalService.show(ApplicantsModalComponent, {
       initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',

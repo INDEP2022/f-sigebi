@@ -3,7 +3,10 @@ import { PrepareEventEndpoints } from 'src/app/common/constants/endpoints/ms-pre
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IComerEvent } from '../../models/ms-event/event.model';
+import {
+  IComerEvent,
+  IFindAllComerGoodXlotTotal,
+} from '../../models/ms-event/event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +30,10 @@ export class ComerEventService extends HttpService {
 
   createEvent(event: Object) {
     return this.post<IComerEvent>('comer-event', event);
+  }
+
+  removeEvent(eventId: string | number) {
+    return this.delete(PrepareEventEndpoints.ComerEvent + '/' + eventId);
   }
 
   getAllFilterComerGood(params: any) {
@@ -56,6 +63,10 @@ export class ComerEventService extends HttpService {
     return this.get(PrepareEventEndpoints.ApplicationDataEvent, params);
   }
 
+  getAllEvent(params: _Params | string) {
+    return this.get(PrepareEventEndpoints.ComerEvent, params);
+  }
+
   getDataTpEvents(idEvent: number) {
     return this.get(`${PrepareEventEndpoints.ApplicationTpEvent}/${idEvent}`);
   }
@@ -66,6 +77,12 @@ export class ComerEventService extends HttpService {
   getAllFilterLetter(id: number, params: ListParams) {
     return this.get<IListResponse<any>>(
       `comer-good-xlot?filter.lotId=${id}`,
+      params
+    );
+  }
+  getFindAllComerGoodXlotTotal(params: _Params) {
+    return this.get<IListResponse<IFindAllComerGoodXlotTotal>>(
+      PrepareEventEndpoints.FindAllComerGoodXlotTotal,
       params
     );
   }

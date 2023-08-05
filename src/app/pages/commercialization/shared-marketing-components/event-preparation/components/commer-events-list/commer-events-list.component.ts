@@ -17,6 +17,7 @@ import {
 import { IComerEvent } from 'src/app/core/models/ms-event/event.model';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { PREPARE_EVENT_EVENTS_LIST_COLUMNS } from '../../utils/table-columns/events-list-columns';
@@ -34,6 +35,7 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Output() onOpenEvent = new EventEmitter<void>();
   @Input() parameters: IEventPreparationParameters;
+  eventSelected: IComerEvent = null;
   get controls() {
     return this.eventForm.controls;
   }
@@ -42,7 +44,13 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        delete: true,
+        add: false,
+        edit: false,
+        columnTitle: 'Acciones',
+        position: 'right',
+      },
       columns: PREPARE_EVENT_EVENTS_LIST_COLUMNS,
       hideSubHeader: false,
     };
@@ -119,28 +127,82 @@ export class CommerEventsListComponent extends BasePage implements OnInit {
   selectEvent(event: any) {
     if (event.isSelected) {
       this.globalEventChange.emit(event.data);
-      this.eventForm.patchValue(
-        {
-          ...event.data,
-          eventDate: event.data?.eventDate
-            ? new Date(event.data?.eventDate)
-            : null,
-          eventClosingDate: event.data?.eventClosingDate
-            ? new Date(event.data?.eventClosingDate)
-            : null,
-          failureDate: event.data?.failureDate
-            ? new Date(event.data?.failureDate)
-            : null,
-        },
-        { emitEvent: false }
-      );
+      this.eventSelected = event.data;
     } else {
       this.globalEventChange.emit(null);
+      this.eventSelected = null;
       this.eventForm.reset();
     }
   }
 
   openEvent() {
+    if (!this.eventSelected) {
+      this.alert('error', 'Error', 'Selecciona un Evento');
+      return;
+    }
+
+    this.eventForm.patchValue(
+      {
+        ...this.eventSelected,
+        eventDate: this.eventSelected?.eventDate
+          ? new Date(this.eventSelected?.eventDate)
+          : null,
+        eventClosingDate: this.eventSelected?.eventClosingDate
+          ? new Date(this.eventSelected?.eventClosingDate)
+          : null,
+        failureDate: this.eventSelected?.failureDate
+          ? new Date(this.eventSelected?.failureDate)
+          : null,
+      }
+      // { emitEvent: false }
+    );
+    console.warn('SETEO DEL FORMULARIO');
+    console.log(this.eventSelected);
+
+    console.log(this.eventForm.value);
+
     this.onOpenEvent.emit();
+  }
+
+  async onDeleteEvent(event: IComerEvent) {
+    const confirm = await this.alertQuestion(
+      'question',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    );
+    const { isConfirmed } = confirm;
+    if (!isConfirmed) {
+      return;
+    }
+    this.deleteEvent(event.id).subscribe();
+  }
+
+  deleteEvent(eventId: string | number) {
+    this.loading = true;
+    return this.comerEventService.removeEvent(eventId).pipe(
+      catchError(error => {
+        this.loading = false;
+        if (error.error.message.includes('violates foreign key constraint')) {
+          this.alert(
+            'error',
+            'Error',
+            'Hay información relacionada a este registro, no se puede eliminar'
+          );
+        } else {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+        }
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.loading = false;
+        this.alert('success', 'El Evento ha sido Eliminado', '');
+        this.refreshTable();
+      })
+    );
+  }
+
+  refreshTable() {
+    const params = new FilterParams();
+    this.params.next(params);
   }
 }

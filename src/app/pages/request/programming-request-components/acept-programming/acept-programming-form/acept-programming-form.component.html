@@ -89,16 +89,14 @@
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4">
-              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate }}
             </span>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
-            <span class="fs-4">
-              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
-            >
+            <span class="fs-4"> {{ programming?.endDate }}</span>
           </div>
         </div>
       </div>
@@ -199,7 +197,7 @@
                 [totalItems]="totalItemsTransportableGoods"></app-pagination>
             </tab>
             <tab [heading]="headingGuard">
-              <div class="d-flex justify-content-start">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingGuardGoods"></app-columns-select>
               </div>
@@ -223,7 +221,7 @@
                 [totalItems]="totalItemsTransportableGuard"></app-pagination>
             </tab>
             <tab [heading]="headingWarehouse">
-              <div class="d-flex justify-content-start">
+              <div class="d-flex justify-content-end">
                 <app-columns-select
                   [(settings)]="settingWarehouseGoods"></app-columns-select>
               </div>

@@ -1,6 +1,6 @@
 export const COLUMNS = {
   id: {
-    title: 'Id',
+    title: 'Id.',
     sort: false,
   },
   accountKey: {
@@ -8,11 +8,11 @@ export const COLUMNS = {
     sort: false,
   },
   accountType: {
-    title: 'Tipo de cuenta',
+    title: 'Tipo de Cuenta',
     sort: false,
   },
   coinKey: {
-    title: 'Id de moneda',
+    title: 'Id. de Moneda',
     sort: false,
   },
   branchOffice: {
@@ -24,7 +24,7 @@ export const COLUMNS = {
     sort: false,
   },
   registryNumber: {
-    title: 'Numero de registro',
+    title: 'Número de Registro',
     sort: false,
   },
 };

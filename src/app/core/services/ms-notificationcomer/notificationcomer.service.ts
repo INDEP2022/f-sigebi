@@ -12,7 +12,7 @@ export class NotificationcomerService extends HttpService {
   }
 
   getcomer(id: string | number) {
-    const route = `${notificationcomerEndPoint.comer}/${id}`;
+    const route = `${notificationcomerEndPoint.comer}?filter.idEvent=$eq:${id}`;
     return this.get(route);
   }
 }

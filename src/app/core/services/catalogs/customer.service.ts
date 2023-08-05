@@ -33,6 +33,13 @@ export class CustomerService extends HttpService {
     return this.get<IListResponse<any>>(this.endpointClients, params);
   }
 
+  //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel
+  //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel?filter.blackList=$eq:S
+  getAllClientsExport() {
+    console.log('Hola');
+    return this.get<any>(`${this.endpointClients}/filterExcel`);
+  }
+
   getAllAgendId(): Observable<IListResponse<ICustomer>> {
     return this.get<IListResponse<ICustomer>>(this.endpointClients);
   }
@@ -43,10 +50,22 @@ export class CustomerService extends HttpService {
     return this.get<IListResponse<any>>(this.clientsBlackList, params);
   }
 
+  //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel?filter.blackList=$eq:S
+  getAllClientsBlackListExport() {
+    console.log('Negro');
+    return this.get<any>('comer-clients/filterExcel?filter.blackList=$eq:S');
+  }
+
   getAllClientsWhiteList(
     params?: ListParams
   ): Observable<IListResponse<IRepresentative>> {
     return this.get<IListResponse<any>>(this.clientsWhiteList, params);
+  }
+
+  //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients/filterExcel?filter.blackList=$eq:N
+  getAllClientsWhiteListExport() {
+    console.log('Blanco');
+    return this.get<any>('comer-clients/filterExcel?filter.blackList=$eq:N');
   }
 
   getAllRepresentative(
@@ -56,6 +75,11 @@ export class CustomerService extends HttpService {
       this.endpointRepresentative,
       params
     );
+  }
+
+  //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients-representative/filterExcel
+  getAllRepresentativeExport() {
+    return this.get<any>('');
   }
 
   getById(id: string | number): Observable<ICustomer> {
@@ -87,5 +111,16 @@ export class CustomerService extends HttpService {
   ): Observable<IRepresentative> {
     const route = `${this.endpointRepresentative}/${id}`;
     return this.get(route, params);
+  }
+
+  //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients-representative/filterExcel?filter.id=$eq:302
+  getRepresentativeByClientsExport(id: string | number) {
+    const route = `comer-clients-representative/filterExcel?filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getCustomerById(id: string | number): Observable<ICustomer> {
+    const route = `${this.endpointClients}/${id}`;
+    return this.get(route);
   }
 }

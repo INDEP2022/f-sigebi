@@ -6,9 +6,9 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
-import { ReceptionTicketsService } from 'src/app/core/services/reception/reception-tickets.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 // import { EReceiptType } from '../models/eReceiptType';
+import { ReceptionTicketsInService } from 'src/app/core/services/reception/reception-tickets-in.service';
 import { EReceiptType } from '../../receipt-generation-sami/models/eReceiptType';
 import { ReceiptGenerationDataService } from '../services/receipt-generation-data.service';
 import { COLUMNS, COLUMNS1 } from './columns';
@@ -30,7 +30,7 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
   // limit: FormControl = new FormControl(5);
   constructor(
     private dataService: ReceiptGenerationDataService,
-    private receptionTicketsService: ReceptionTicketsService,
+    private receptionTicketsService: ReceptionTicketsInService,
     private receptionGoodService: ReceptionGoodService
   ) {
     super();
@@ -87,8 +87,16 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       this.dataService.resguardo = this.totalItems;
     }
     if (this.typeReceiptSelected === EReceiptType.Almacen) {
-      this.dataService.resguardo = this.totalItems;
+      this.dataService.almacen = this.totalItems;
     }
+  }
+
+  override dataNotFound() {
+    this.totalItems = 0;
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
+    this.extraOperationsGetData();
   }
 
   override getParams() {
@@ -102,11 +110,12 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       newColumnFilters['filter.tipo_recibo'] =
         SearchFilter.EQ + ':' + this.typeReceiptSelected;
     }
+    newColumnFilters['filter.estatus_recibo'] = SearchFilter.EQ + ':ABIERTO';
     // if (this.folio) {
     //   newColumnFilters['filter.folio'] = this.folio;
     // }
     return {
-      folio: this.folio,
+      idProgramacion: this.id_programacion,
       params: {
         ...this.params.getValue(),
         ...newColumnFilters,
@@ -114,6 +123,12 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
     };
   }
   selectGoodstickets(data: any) {
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.selectGoodsticketss(data));
+  }
+
+  selectGoodsticketss(data: any) {
     this.loading = true;
     console.log(data);
     let datos = {
@@ -123,24 +138,26 @@ export class ReceiptTableProgramingsComponent extends BasePageWidhtDinamicFilter
       typeTicket: data.data.tipo_recibo,
     };
     console.log(datos);
-    this.receptionGoodService.createQueryGoodsTickets(datos).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.data1.load(resp.data);
-        this.data1.refresh();
-        this.totalItems1 = resp.count;
-        this.loading = false;
-      },
-      error: eror => {
-        this.data1.load([]);
-        this.data1.refresh();
-        this.alert(
-          'warning',
-          'Generación de Recibos',
-          'No se encontraron Bienes'
-        );
-        this.loading = false;
-      },
-    });
+    this.receptionGoodService
+      .createQueryGoodsTickets(datos, this.params1.getValue())
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          this.data1.load(resp.data);
+          this.data1.refresh();
+          this.totalItems1 = resp.count;
+          this.loading = false;
+        },
+        error: eror => {
+          this.data1.load([]);
+          this.data1.refresh();
+          this.alert(
+            'warning',
+            'Generación de Recibos',
+            'No se encontraron Bienes'
+          );
+          this.loading = false;
+        },
+      });
   }
 }

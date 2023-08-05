@@ -213,24 +213,24 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Debe registrar datos validos',
-            'Alguno de los campos que lleno no son válidos'
+            'Debe Registrar Datos Válidos',
+            'Alguno de los Campos que Lleno no son Válidos'
           );
           return false;
         }
       } else {
         this.alert(
           'warning',
-          'Debe registrar datos validos',
-          'La fecha inicial no puede ser mayor a la final'
+          'Debe Registrar Datos Válidos',
+          'La Fecha Inicial no Puede ser Mayor a la Final'
         );
         return false;
       }
     } else {
       this.alert(
         'warning',
-        'Debe registrar todos los datos',
-        'Faltan llenar campos que son obligatorios para imprimir el acta'
+        'Debe Registrar Todos los Datos',
+        'Faltan Llenar Campos que son Obligatorios para Imprimir el Acta'
       );
       return false;
     }
@@ -257,24 +257,24 @@ export class RecordsReportComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            'Debe registrar datos validos',
-            'Alguno de los campos que lleno no son válidos'
+            'Debe Registrar Datos Validos',
+            'Alguno de los Campos que Lleno no son Válidos'
           );
           return false;
         }
       } else {
         this.alert(
           'warning',
-          'Debe registrar datos validos',
-          'La fecha inicial no puede ser mayor a la final'
+          'Debe Registrar Datos Validos',
+          'La Fecha Inicial no Puede ser Mayor a la Final'
         );
         return false;
       }
     } else {
       this.alert(
         'warning',
-        'Debe registrar todos los datos',
-        'Faltan llenar campos que son obligatorios para imprimir el acta'
+        'Debe Registrar Todos los Datos',
+        'Faltan Llenar Campos que son Obligatorios para Imprimir el Acta'
       );
       return false;
     }
@@ -373,8 +373,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     ) {
       this.alert(
         'warning',
-        'Datos inválidos',
-        'Este campo solo acepta campos númericos y está introduciendo alguno diferente.'
+        'Datos Inválidos',
+        'Este Campo Solo Acepta Campos Númericos y Está Introduciendo Alguno Diferente.'
       );
       this.form.get('actaInicial').reset();
     } else {
@@ -404,8 +404,8 @@ export class RecordsReportComponent extends BasePage implements OnInit {
     ) {
       this.alert(
         'warning',
-        'Datos inválidos',
-        'Este campo solo acepta campos númericos y está introduciendo alguno diferente.'
+        'Datos Inválidos',
+        'Este Campo Solo Acepta Campos Númericos y Está Introduciendo Alguno Diferente.'
       );
       this.form.get('actaFinal').reset();
     } else {

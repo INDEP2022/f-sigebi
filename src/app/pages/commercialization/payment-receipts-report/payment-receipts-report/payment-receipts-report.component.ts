@@ -7,6 +7,7 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { CustomerService } from 'src/app/core/services/catalogs/customer.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -38,6 +39,11 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   showResolucion: boolean = false;
   columnFilters1: any = [];
   valLote: boolean = false;
+  v_appiva: number = 0;
+  v_noappiva: number = 0;
+  v_acumulado: number = 0;
+  del25: number = 0;
+  cadena: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +52,8 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
     private paymentService: PaymentService,
-    private lotService: LotService
+    private lotService: LotService,
+    private customerService: CustomerService
   ) {
     super();
     this.settings = {
@@ -59,6 +66,9 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareform();
     this.getGood();
+    this.getCustomers();
+    this.getLot();
+    this.observaciones();
   }
   get departament() {
     return this.form.get('departament');
@@ -322,5 +332,121 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
         this.alert('error', 'El evento no existe', '');
       },
     });
+  }
+
+  getCustomers() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters1,
+    };
+    let id = 7;
+    this.customerService.getCustomerById(id).subscribe({
+      next: response => {
+        console.log('resp ', response);
+        console.log('response.delegation ', response.delegation);
+        this.form.patchValue({
+          sender: response.reasonName,
+          domicile: response.street,
+          suburb: response.colony,
+          delegation: response.delegation,
+          cp: response.state,
+        });
+      },
+      error: error => {
+        this.alert('error', 'No hay Cliente', '');
+      },
+    });
+  }
+
+  getLot() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters1,
+    };
+    let id = 16001;
+    this.lotService.getLotById(id).subscribe({
+      next: response => {
+        console.log('Resp Lot ', response);
+        this.v_appiva = response.amountWithoutIva;
+        this.v_noappiva =
+          response.amountNoAppIva != null ? Number(response.amountNoAppIva) : 0;
+        this.v_acumulado =
+          response.accumulated != null ? Number(response.accumulated) : 0;
+        this.del25 = response.advance || 0;
+
+        this.form.patchValue({
+          price: response.finalPrice,
+          iva: response.ivaLot,
+          total: response.amount,
+          //receivedAmount: Number(this.v_acumulado),
+          //remBalance: Number(response.amount) - this.v_acumulado,
+          appIva: response.porcAppIva,
+          NoAppIva: response.porcNoAppIva,
+        });
+
+        this.form.patchValue({
+          price: Number(response.amount) - this.v_acumulado || 0,
+          total: Number(response.amount) || 0,
+          receivedAmount: this.v_acumulado || 0,
+          remBalance:
+            Number(this.form.get('total').value) - this.v_acumulado || 0,
+        });
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  ORDENES_ING(id_orden: number) {
+    let filter = 10535;
+    let AUX_CAD: string;
+    let LEN1: number = 0;
+    let AUX_FEC: Date;
+
+    this.paymentService.getPaymentById(filter).subscribe({
+      next: response => {
+        console.log('Resp Pay ', response);
+        for (let i = 0; i < response.count; i++) {
+          if (response.data[i] != undefined) {
+            if (
+              response.data[i].entryOrderId != null &&
+              response.data[i].entryOrderId != undefined
+            ) {
+              //console.log('data orden ', response.data[i]);
+              if (i == response.count - 1) {
+                this.cadena += response.data[i].entryOrderId;
+              } else {
+                this.cadena += response.data[i].entryOrderId + ',';
+              }
+            }
+          }
+        }
+        console.log('cadena -> ', this.cadena);
+      },
+      error: err => {
+        this.cadena = '';
+      },
+    });
+  }
+
+  observaciones() {
+    let AUX_CAL1: number = 0;
+    let AUX_CAL2: number = 0;
+    let AUX_CAL3: number = 0;
+    let AUX_PCT: number = 0;
+    let OIS: string;
+    if (this.form.get('observations').value != null) {
+      AUX_CAL1 = this.form.get('total').value - this.form.get('iva').value;
+      AUX_CAL2 =
+        this.form.get('receivedAmount').value - this.form.get('iva').value;
+      AUX_CAL3 = this.del25 - this.form.get('iva').value;
+      AUX_PCT = (AUX_CAL2 / AUX_CAL1) * 100;
+      this.ORDENES_ING(this.form.get('allotment').value);
+      OIS = this.cadena;
+      console.log('cadena -> ', this.cadena);
+    }
   }
 }

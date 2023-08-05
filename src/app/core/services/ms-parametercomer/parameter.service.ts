@@ -44,11 +44,11 @@ export class ParameterModService
     return this.get(`${this.route}/id/${id}`);
   }
 
-  create(tpenalty: IParameter): Observable<IParameter> {
+  create(tpenalty: Partial<IParameter>): Observable<IParameter> {
     return this.post(this.route, tpenalty);
   }
 
-  update(id: string, tpenalty: IParameter): Observable<Object> {
+  update(id: string, tpenalty: Partial<IParameter>): Observable<Object> {
     return this.put(`${this.route}/id/${id}`, tpenalty);
   }
 

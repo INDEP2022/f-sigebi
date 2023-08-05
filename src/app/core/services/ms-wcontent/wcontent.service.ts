@@ -107,7 +107,7 @@ export class WContentService extends HttpWContentService {
     idRequest: string,
     ciudad?: string
   ) {
-    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&ID_SOLICITUD=${ciudad}`;
+    const url = `${environment.API_CONTENT}${WContentEndpoint.CallReport}/${WContentEndpoint.ShowReport}?nombreReporte=${reportName}.jasper&ID_SOLICITUD=${idRequest}&NOM_CIUDAD=`;
 
     return this.http.get(url, { responseType: 'blob' });
   }

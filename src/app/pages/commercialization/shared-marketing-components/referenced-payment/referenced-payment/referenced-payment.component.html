@@ -2,39 +2,165 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">CARGA DE PAGOS REFERENCIADOS</h5>
-    <div class="col-md-5 buttons">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings"></app-columns-select>
-    </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row mb-3 mt-3">
-        <!--Events Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-events-shared [form]="form"></app-events-shared>
+      <div class="row justify-content-center">
+        <div class="col-sm-3 col-lg-3">
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormEvent($event)"
+              [form]="form"
+              control="event"
+              [data]="comerEventSelect"
+              value="id"
+              bindLabel="idAndProcess"
+              label="Evento"
+              (fetchItems)="getComerEvents($event)">
+            </ngx-select>
+          </form-field>
         </div>
-        <!--Banks Component-->
-        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-banks-shared [form]="form"></app-banks-shared>
+        <div class="col-sm-3 col-md-3">
+          <form-field [control]="form.get('bank')">
+            <ngx-select
+              [searchOnInit]="true"
+              (change)="setValuesFormBank($event)"
+              [form]="form"
+              control="bank"
+              [data]="banks"
+              value="bankCode"
+              bindLabel="bankAndCode"
+              label="Banco"
+              (fetchItems)="getBanks($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            [disabled]="!eventSelected"
+            (click)="search()"
+            class="btn btn-sm btn-block btn-primary active">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            (click)="clear()"
+            class="btn btn-sm btn-block btn-danger active">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            (click)="carga()"
+            class="btn btn-sm btn-block btn-success active">
+            Carga <i class="bx bx-download float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <div #scrollContainer class="row">
+        <div class="col-6 mt-2">
+          <form-field
+            [control]="form.get('event_')"
+            label="Si Desea Consultar un Evento en Particular, Selecciónelo">
+            <input
+              style="display: none"
+              formControlName="event_"
+              type="text"
+              class="form-control"
+              readonly />
+          </form-field>
         </div>
       </div>
     </form>
-    <div class="row pt-4">
-      <div class="col-md-12">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
-          </ng2-smart-table>
+  </div>
+</app-card>
+
+<app-card>
+  <div body>
+    <div class="row">
+      <div class="col-md-12 text-end">
+        <div class="row">
+          <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+            <app-columns-select
+              [(settings)]="settings"
+              [leftList]="true"></app-columns-select>
+            <div>
+              <button
+                [disabled]="loading"
+                (click)="add()"
+                type="button"
+                class="btn btn-info btn-sm active mb-3 mr-3">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <div *ngIf="!cargado" class="row mb-3">
+      <form-loader *ngIf="loading"></form-loader>
+      <ng-scrollbar
+        [track]="'all'"
+        [ngStyle]="{ height: loading ? '0px' : '400px' }">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          class="table-responsive"
+          [settings]="settings"
+          [source]="data"
+          (edit)="edit($event.data)"
+          (userRowSelect)="rowsSelected($event)"
+          (delete)="questionDelete($event.data)">
+        </ng2-smart-table>
+      </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <form-loader *ngIf="loading"></form-loader>
+    <ng-scrollbar
+      [track]="'all'"
+      [ngStyle]="{ height: loading ? '0px' : '400px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings"
+        [source]="data"
+        (edit)="edit($event.data)"
+        (userRowSelect)="rowsSelected($event)"
+        (delete)="questionDelete($event.data)">
+      </ng2-smart-table>
+    </ng-scrollbar>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+
+    <div class="row justify-content-center mt-5">
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAcc || loadingBtn"
+          (click)="referencia()"
+          class="btn btn-sm btn-block btn-info active">
+          Referencia
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAcc || loadingBtn"
+          (click)="ratificar()"
+          class="btn btn-sm btn-block btn-primary active">
+          Ratificar
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          [disabled]="!valAcc || loadingBtn"
+          (click)="pago()"
+          class="btn btn-sm btn-block btn-danger active">
+          Pago
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

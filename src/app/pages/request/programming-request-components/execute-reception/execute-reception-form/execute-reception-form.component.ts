@@ -66,6 +66,7 @@ import { CancelationGoodFormComponent } from '../cancelation-good-form/cancelati
 import { EditGoodFormComponent } from '../edit-good-form/edit-good-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { ShowReceiptCloseComponent } from '../show-receipt-close/show-receipt-close.component';
+import { ShowReceiptGuardCloseComponent } from '../show-receipt-guard-close/show-receipt-guard-close.component';
 import { ShowReportComponentComponent } from '../show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from '../upload-report-receipt/upload-report-receipt.component';
 import {
@@ -291,6 +292,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   receipts: LocalDataSource = new LocalDataSource();
   search: FormControl = new FormControl({});
   programming: Iprogramming;
+  proceedingOpen: IProceedings[] = [];
+  proceedingOpenId: number = 0;
   task: ITask;
   goodId: string = '';
   goodsTranportables: LocalDataSource = new LocalDataSource();
@@ -351,6 +354,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.getTypeTransferent();
     this.getTask();
     this.getDestinyIndep();
+    this.getOpenProceeding();
   }
 
   getTask() {
@@ -365,12 +369,24 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
+  getOpenProceeding() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.idPrograming'] = this.programmingId;
+    params.getValue()['filter.statusProceeedings'] = 'ABIERTO';
+    this.proceedingService.getProceedings(params.getValue()).subscribe({
+      next: response => {
+        this.proceedingOpen = response.data;
+      },
+      error: error => {},
+    });
+  }
+
   prepareForm() {
     this.executeForm = this.fb.group({
       goodsTransportable: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [null, [Validators.maxLength(50)]],
       saeMeasureUnit: [null],
@@ -396,7 +412,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsReception: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -417,7 +433,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsGuard: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -436,7 +452,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsWarehouse: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -455,7 +471,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsReprog: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -474,7 +490,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       goodsCancelation: this.fb.array([]),
       descriptionGoodSae: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(5000), Validators.pattern(STRING_PATTERN)],
       ],
       quantitySae: [
         null,
@@ -514,6 +530,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   getReceiptsGuard() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
         //this.receiptGuardGood = response.data[0];
@@ -1403,15 +1420,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   getInfoCancel() {
     const _data: any[] = [];
-    this.paramsReprogGoods.getValue()['filter.programmingId'] =
+    this.paramsCancelGoods.getValue()['filter.programmingId'] =
       this.programmingId;
-    this.paramsCancelGoods.getValue()['filter.status'] = 'EN_CANCELACION_TMP';
+    this.paramsCancelGoods.getValue()['filter.status'] = 'CANCELADO_TMP';
     this.programmingService
       .getGoodsProgramming(this.paramsCancelGoods.getValue())
       .subscribe({
         next: async data => {
           this.totalItemsCancelation = data.count;
           this.headingCancelation = `Cancelación(${data.count})`;
+          this.goodsCancelation.clear();
           data.data.map(items => {
             this.params.getValue()['filter.id'] = items.goodId;
             this.goodService.getAll(this.params.getValue()).subscribe({
@@ -1428,7 +1446,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     response.stateConservationName = 'MALO';
                   }
 
-                  this.goodsCancelation.clear();
                   this.goodData = response;
 
                   const form = this.fb.group({
@@ -1696,21 +1713,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alert(
         'error',
         'Error de captura',
-        'La cantidad indep es mayor a la cantidad transferente'
+        'La cantidad INDEP es mayor a la cantidad transferente'
       );
       this.count = 0;
     } else if (data.saePhysicalState == null) {
       this.alert(
         'error',
         'Error de captura',
-        'Se debe capturar el estado físico indep'
+        'Se debe capturar el estado físico INDEP'
       );
       this.count = 0;
     } else if (data.stateConservationSae == null) {
       this.alert(
         'error',
         'Error de captura',
-        'Se debe capturar el estado de conservación indep'
+        'Se debe capturar el estado de conservación  INDEP'
       );
       this.count = 0;
     } else {
@@ -1804,6 +1821,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 const updateInfoGood = await this.updateInfoGoodAsignAct(good);
                 if (updateInfoGood) {
                   this.checkExistAct('resguardo');
+                  this.totalItemsGuard = 0;
                 }
               }
             });
@@ -1851,7 +1869,129 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   assingMinuteReprogramation() {
-    if (this.selectGood.length > 0) {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    let _quantitySae: boolean = false;
+    const saePhysicalState = this.goodsReprog.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    //Validación estado de conservación
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsReprog.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    //Validacion Cantidad//
+    this.count == 0;
+    this.goodId = '';
+    const quantitySae = this.goodsReprog.value.map((good: any) => {
+      if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
+    });
+    if (quantitySae.length > 0) {
+      const filter = quantitySae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `La cantidad INDEP es mayor a la cantidad transferente en el Bien: ${this.goodId} `
+        );
+      } else {
+        _quantitySae = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      _quantitySae = true;
+    }
+
+    if (saePhysical && stateConservation && _quantitySae) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsReprog.value.length > 0) {
+        this.alertQuestion(
+          'warning',
+          'Confirmación',
+          '¿Desea asignar los bienes al acta?',
+          'Aceptar'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            const updateGood = await this.updateGoodProgramming(
+              'reprogramation'
+            );
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*if (this.selectGood.length > 0) {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
@@ -1891,6 +2031,55 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           }
         } else {
           if (this.count == 1) {
+            
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción inválida',
+        'Se necesita tener un bien seleccionado'
+      );
+    } */
+  }
+
+  assingMinuteCancelation() {
+    if (this.selectGood.length > 0) {
+      this.count = 0;
+      this.selectGood.map((good: IGood) => {
+        this.count = this.count + 1;
+        if (
+          Number(good.quantity) <
+          Number(this.goodsCancelation.value[0].quantitySae)
+        ) {
+          if (this.count == this.count) {
+            this.alert(
+              'error',
+              'Error de captura',
+              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
+            );
+          }
+        } else if (this.goodsCancelation.value[0].saePhysicalState == null) {
+          if (this.count == this.count) {
+            this.alert(
+              'error',
+              'Error de captura',
+              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
+            );
+          }
+        } else if (
+          this.goodsCancelation.value[0].stateConservationSae == null
+        ) {
+          if (this.count == this.count) {
+            this.alert(
+              'error',
+              'Error de captura',
+              `Se debe capturar el estado de conservación indep ${good.goodId}`
+            );
+          }
+        } else {
+          if (this.count == 1) {
             this.alertQuestion(
               'warning',
               'Confirmación',
@@ -1899,7 +2088,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             ).then(async question => {
               if (question.isConfirmed) {
                 const updateGood = await this.updateGoodProgramming(
-                  'reprogramation'
+                  'cancelalation'
                 );
               }
             });
@@ -1913,9 +2102,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Se necesita tener un bien seleccionado'
       );
     }
-  }
-
-  assingMinuteCancelation() {
+    /*
     if (this.selectGood.length > 0) {
       this.count = 0;
       this.selectGood.map((good: IGood) => {
@@ -1980,12 +2167,99 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Acción inválida',
         'Se necesita tener un bien seleccionado'
       );
-    }
+    } */
   }
 
   updateGoodProgramming(type: string) {
     if (type == 'reprogramation') {
-      this.receipts.getElements().then(item => {
+      //Acta cerrada//
+      if (this.proceedingOpen.length == 0) {
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
+        };
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            this.proceedingOpenId = response.id;
+          },
+          error: error => {},
+        });
+        this.selectGood.map(item => {
+          const formData: Object = {
+            id: item.id,
+            goodId: item.goodId,
+            goodStatus: 'EN_PROGRAMACION',
+            programmationStatus: 'EN_PROGRAMACION',
+            executionStatus: 'EN_PROGRAMACION',
+          };
+
+          this.goodService.updateByBody(formData).subscribe({
+            next: response => {
+              const formData: Object = {
+                programmingId: this.programming.id,
+                goodId: item.id,
+                status: 'EN_PROGRAMACION',
+                actaId: this.proceedingOpenId,
+              };
+              this.programmingGoodService
+                .updateGoodProgramming(formData)
+                .subscribe({
+                  next: response => {
+                    this.selectGood = [];
+                    this.goodsReprog.clear();
+
+                    this.totalItemsReprog = 0;
+                    this.paramsReprogGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoReprog());
+                    this.getOpenProceeding();
+                    this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
+                  },
+                  error: error => {},
+                });
+            },
+            error: error => {},
+          });
+        });
+      } else {
+        this.selectGood.map(item => {
+          const formData: Object = {
+            id: item.id,
+            goodId: item.goodId,
+            goodStatus: 'EN_PROGRAMACION',
+            programmationStatus: 'EN_PROGRAMACION',
+            executionStatus: 'EN_PROGRAMACION',
+          };
+
+          this.goodService.updateByBody(formData).subscribe({
+            next: response => {
+              const formData: Object = {
+                programmingId: this.programming.id,
+                goodId: item.id,
+                status: 'EN_PROGRAMACION',
+                actaId: this.proceedingOpen[0].id,
+              };
+              this.programmingGoodService
+                .updateGoodProgramming(formData)
+                .subscribe({
+                  next: response => {
+                    this.selectGood = [];
+                    this.goodsReprog.clear();
+                    this.paramsReprogGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoReprog());
+                    this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
+                  },
+                  error: error => {},
+                });
+            },
+            error: error => {},
+          });
+        });
+      }
+
+      /*this.receipts.getElements().then(item => {
         const actId = item[0].actaId;
         this.selectGood.map(item => {
           const formData: Object = {
@@ -2018,10 +2292,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             error: error => {},
           });
         });
-      });
+      }); */
     } else if (type == 'cancelalation') {
-      this.receipts.getElements().then(item => {
-        const actId = item[0].actaId;
+      //Acta cerrada//
+      if (this.proceedingOpen.length == 0) {
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
+        };
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            this.proceedingOpenId = response.id;
+          },
+          error: error => {},
+        });
         this.selectGood.map(item => {
           const formData: Object = {
             id: item.id,
@@ -2037,14 +2322,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 programmingId: this.programming.id,
                 goodId: item.id,
                 status: 'CANCELADO',
-                actaId: actId,
+                actaId: this.proceedingOpenId,
               };
               this.programmingGoodService
                 .updateGoodProgramming(formData)
                 .subscribe({
                   next: response => {
                     this.goodsCancelation.clear();
-                    this.showDataProgramming();
+                    this.selectGood = [];
+                    this.paramsCancelGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoCancel());
+                    this.getOpenProceeding();
+                    this.totalItemsCancelation = 0;
                     this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
                   },
                   error: error => {},
@@ -2053,47 +2343,84 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             error: error => {},
           });
         });
-      });
+      } else {
+        this.selectGood.map(item => {
+          const formData: Object = {
+            id: item.id,
+            goodId: item.goodId,
+            goodStatus: 'CANCELADO',
+            programmationStatus: 'CANCELADO',
+            executionStatus: 'CANCELADO',
+          };
+
+          this.goodService.updateByBody(formData).subscribe({
+            next: response => {
+              const formData: Object = {
+                programmingId: this.programming.id,
+                goodId: item.id,
+                status: 'CANCELADO',
+                actaId: this.proceedingOpen[0].id,
+              };
+              this.programmingGoodService
+                .updateGoodProgramming(formData)
+                .subscribe({
+                  next: response => {
+                    this.goodsCancelation.clear();
+                    this.paramsCancelGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoCancel());
+                    this.selectGood = [];
+                    this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
+                  },
+                  error: error => {},
+                });
+            },
+            error: error => {},
+          });
+        });
+      }
     }
   }
 
   assingMinuteWarehouse() {
     if (this.selectGood.length > 0) {
       this.count = 0;
+      this.goodId = '';
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
+        this.goodId += good.id + ', ';
         if (
           Number(good.quantity) <
           Number(this.goodsWarehouse.value[0].quantitySae)
         ) {
-          if (this.count == this.count) {
+          if (this.count == 1) {
             this.alert(
-              'error',
-              'Error de captura',
-              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
+              'warning',
+              'Advertencia',
+              `La cantidad INDEP es mayor a la cantidad transferente en el Bien ${this.goodId}`
             );
           }
         } else if (this.goodsWarehouse.value[0].saePhysicalState == null) {
-          if (this.count == this.count) {
+          if (this.count == 1) {
             this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
+              'warning',
+              'Advertencia',
+              `Se debe capturar el estado físico INDEP en el Bien ${this.goodId}`
             );
           }
         } else if (this.goodsWarehouse.value[0].stateConservationSae == null) {
-          if (this.count == this.count) {
+          if (this.count == 1) {
             this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado de conservación indep ${good.goodId}`
+              'warning',
+              'Advertencia',
+              `Se debe capturar el estado de conservación INDEP ${this.goodId}`
             );
           }
         } else {
           if (this.count == 1) {
             this.alertQuestion(
               'question',
-              '¿Seguro que quiere asignar los bienes  a una acta?',
+              '¿Seguro que quiere asignar los Bienes  a una acta?',
               'Acción irreversible',
               'Aceptar'
             ).then(question => {
@@ -2108,40 +2435,71 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Acción inválida',
-        'Se necesita tener un bien seleccionado'
+        'Necesitas tener un bien seleccionado'
       );
     }
+    /*
+    if (this.selectGood.length > 0) {
+      this.count = 0;
+      this.goodId = '';
+      this.selectGood.map((good: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += good.id + ', ';
+        if (
+          Number(good.quantity) <
+          Number(this.goodsWarehouse.value[0].quantitySae)
+        ) {
+          if (this.count == 1) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `La cantidad INDEP es mayor a la cantidad transferente en el Bien ${this.goodId}`
+            );
+          }
+        } else if (this.goodsWarehouse.value[0].saePhysicalState == null) {
+          if (this.count == 1) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `Se debe capturar el estado físico INDEP en el Bien ${this.goodId}`
+            );
+          }
+        } else if (this.goodsWarehouse.value[0].stateConservationSae == null) {
+          if (this.count == 1) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `Se debe capturar el estado de conservación INDEP ${this.goodId}`
+            );
+          }
+        } else {
+          if (this.count == 1) {
+            this.alertQuestion(
+              'question',
+              '¿Seguro que quiere asignar los Bienes  a una acta?',
+              'Acción irreversible',
+              'Aceptar'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.checkExistAct('almacen');
+              }
+            });
+          }
+        }
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción inválida',
+        'Necesitas tener un bien seleccionado'
+      );
+    }
+    */
   }
 
-  checkExistAct(type: string) {
+  async checkExistAct(type: string) {
     if (type == 'resguardo') {
-      this.formLoadingGuard = true;
-      if (this.receipts.count() > 0) {
-        this.receipts.getElements().then(async receipt => {
-          const createReceiptGood: any = await this.createReceiptGuard(
-            receipt[0]
-          );
-          if (createReceiptGood) {
-            const createReceiptGoodGuard = await this.createReceiptGoodGuard(
-              createReceiptGood
-            );
-
-            if (createReceiptGoodGuard) {
-              const updateProgrammingGood = await this.updateProgGoodGuard(
-                receipt[0]
-              );
-              if (updateProgrammingGood) {
-                const updateGood = await this.updateGoodGuard();
-                this.goodsGuards.clear();
-                this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                this.getReceiptsGuard();
-                this.showDataProgramming();
-                this.formLoadingGuard = false;
-              }
-            }
-          }
-        });
-      } else {
+      if (this.proceedingOpen.length == 0) {
         const formData: IProceedings = {
           minutesId: 1,
           idPrograming: this.programming.id,
@@ -2149,26 +2507,30 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.proceedingService.createProceedings(formData).subscribe({
           next: async response => {
-            const createKeyAct = await this.createKeyAct(response);
+            const createReceiptGood: any = await this.createReceiptGuard(
+              response
+            );
 
-            if (createKeyAct == true) {
-              const createReceiptGood: any =
-                await this.createReceiptGuardNewAct(response);
-              if (createReceiptGood) {
-                const createReceiptGoodGuard =
-                  await this.createReceiptGoodGuard(createReceiptGood);
-
-                if (createReceiptGoodGuard) {
-                  const updateProgrammingGood =
-                    await this.updateProgGoodGuardNewAct(response);
-
-                  if (updateProgrammingGood) {
-                    const updateGood = await this.updateGoodGuard();
+            if (createReceiptGood) {
+              const createReceiptGoodGuard = await this.createReceiptGoodGuard(
+                createReceiptGood
+              );
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood = await this.updateProgGoodGuard(
+                  response
+                );
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodGuard();
+                  if (updateGood) {
                     this.goodsGuards.clear();
                     this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
                     this.getReceiptsGuard();
-                    this.showDataProgramming();
-
+                    this.totalItemsGuard = 0;
+                    this.paramsGuardGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoGoodsGuard());
+                    this.getOpenProceeding();
+                    this.selectGood = [];
                     this.formLoadingGuard = false;
                   }
                 }
@@ -2177,8 +2539,103 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
+      } else {
+        const createReceiptGood: any = await this.createReceiptGuard(
+          this.proceedingOpen[0]
+        );
+
+        if (createReceiptGood) {
+          const createReceiptGoodGuard = await this.createReceiptGoodGuard(
+            createReceiptGood
+          );
+          if (createReceiptGoodGuard) {
+            const updateProgrammingGood = await this.updateProgGoodGuard(
+              this.proceedingOpen[0]
+            );
+            if (updateProgrammingGood) {
+              const updateGood = await this.updateGoodGuard();
+              if (updateGood) {
+                this.goodsGuards.clear();
+                this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                this.getReceiptsGuard();
+                this.paramsGuardGoods
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getInfoGoodsGuard());
+                this.selectGood = [];
+                this.formLoadingGuard = false;
+              }
+            }
+          }
+        }
       }
     } else if (type == 'almacen') {
+      if (this.proceedingOpen.length == 0) {
+        const formData: IProceedings = {
+          minutesId: 1,
+          idPrograming: this.programming.id,
+          statusProceeedings: 'ABIERTO',
+        };
+        this.proceedingService.createProceedings(formData).subscribe({
+          next: async response => {
+            const createReceiptGood: any = await this.createReceiptWarehouse(
+              response
+            );
+
+            if (createReceiptGood) {
+              const createReceiptGoodWarehouse =
+                await this.createReceiptGoodWarehouse(createReceiptGood);
+              if (createReceiptGoodWarehouse) {
+                const updateProgrammingGood =
+                  await this.updateProgGoodWarehouse(response);
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodWarehouse();
+                  if (updateGood) {
+                    this.goodsWarehouse.clear();
+                    this.totalItemsWarehouse = 0;
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectGood = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
+                    this.getOpenProceeding();
+                    this.getReceiptsGuard();
+                  }
+                }
+              }
+            }
+          },
+          error: error => {},
+        });
+      } else {
+        const createReceiptGood: any = await this.createReceiptWarehouse(
+          this.proceedingOpen[0]
+        );
+
+        if (createReceiptGood) {
+          const createReceiptGoodGuard = await this.createReceiptGoodWarehouse(
+            createReceiptGood
+          );
+          if (createReceiptGoodGuard) {
+            const updateProgrammingGood = await this.updateProgGoodWarehouse(
+              this.proceedingOpen[0]
+            );
+            if (updateProgrammingGood) {
+              const updateGood = await this.updateGoodWarehouse();
+              if (updateGood) {
+                this.goodsWarehouse.clear();
+                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                this.selectGood = [];
+                this.paramsGoodsWarehouse
+                  .pipe(takeUntil(this.$unSubscribe))
+                  .subscribe(() => this.getInfoWarehouse());
+
+                this.getReceiptsGuard();
+              }
+            }
+          }
+        }
+      }
+      /* console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {
         this.receipts.getElements().then(async receipt => {
           const createReceiptGood: any = await this.createReceiptWarehouse(
@@ -2239,8 +2696,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
             }
           },
           error: error => {},
-        });
-      }
+        }); 
+      } */
     }
   }
 
@@ -2304,11 +2761,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createReceiptGuard(receipt: IReceipt) {
+  createReceiptGuard(proceeding: IProceedings) {
     return new Promise((resolve, reject) => {
       const formData = {
         programmingId: this.programmingId,
-        actId: receipt.actId,
+        actId: proceeding.id,
         typeReceipt: 'RESGUARDO',
         statusReceiptGuard: 'ABIERTO',
         receiptDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ssZ'),
@@ -2323,11 +2780,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
-  createReceiptWarehouse(receipt: IReceipt) {
+  createReceiptWarehouse(proceeding: IProceedings) {
     return new Promise((resolve, reject) => {
       const formData = {
         programmingId: this.programmingId,
-        actId: receipt.actId,
+        actId: proceeding.id,
         typeReceipt: 'ALMACEN',
         statusReceiptGuard: 'ABIERTO',
         receiptDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ssZ'),
@@ -2400,12 +2857,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
-  updateProgGoodGuard(receipt: IReceipt) {
+  updateProgGoodGuard(proceeding: IProceedings) {
     return new Promise((resolve, reject) => {
       this.selectGood.map(item => {
         const formData: Object = {
           programmingId: this.programming.id,
-          actaId: receipt.actId,
+          actaId: proceeding.id,
           goodId: item.goodId,
           status: 'EN_RESGUARDO',
         };
@@ -2444,12 +2901,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     });
   }
 
-  updateProgGoodWarehouse(receipt: IReceipt) {
+  updateProgGoodWarehouse(proceeding: IProceedings) {
     return new Promise((resolve, reject) => {
       this.selectGood.map(item => {
         const formData: Object = {
           programmingId: this.programming.id,
-          actaId: receipt.actId,
+          actaId: proceeding.id,
           goodId: item.goodId,
           status: 'EN_ALMACEN',
         };
@@ -2625,6 +3082,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (data: boolean) => {
           if (data) {
             this.getReceiptsGuard();
+            this.receiptGuards = new LocalDataSource();
           }
         },
       };
@@ -2640,6 +3098,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (data: boolean) => {
           if (data) {
             this.getReceiptsGuard();
+            this.receiptWarehouse = new LocalDataSource();
           }
         },
       };
@@ -2695,6 +3154,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           typeDoc: 'request-assets',
           callback: (next: boolean) => {
             //if(next) this.getExample();
+            this.selectGood = [];
           },
         },
         class: `modalSizeXL modal-dialog-centered`,
@@ -2721,6 +3181,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
+            this.selectGood = [];
           }
         },
       };
@@ -2797,6 +3258,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.getReceipts();
           this.showDataProgramming();
           this.goodsReception.clear();
+          this.totalItemsReception = 0;
         }
       },
     };
@@ -2807,35 +3269,37 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   assignReceipt() {
     if (this.selectGood.length > 0) {
       this.count = 0;
+      this.goodId = '';
       this.selectGood.map((good: IGood) => {
         this.count = this.count + 1;
+        this.goodId += good.id + ', ';
         if (
           Number(good.quantity) <
           Number(this.goodsTransportable.value[0].quantitySae)
         ) {
-          if (this.count == this.count) {
+          if (this.count == 1) {
             this.alert(
-              'error',
-              'Error de captura',
-              `La cantidad indep es mayor a la cantidad transferente ${good.goodId}`
+              'warning',
+              'Advertencia',
+              `La cantidad INDEP es mayor a la cantidad transferente en el Bien ${this.goodId}`
             );
           }
         } else if (this.goodsTransportable.value[0].saePhysicalState == null) {
-          if (this.count == this.count) {
+          if (this.count == 1) {
             this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado físico indep en el bien ${good.goodId}`
+              'warning',
+              'Advertencia',
+              `Se debe capturar el estado físico INDEP en el Bien ${this.goodId}`
             );
           }
         } else if (
           this.goodsTransportable.value[0].stateConservationSae == null
         ) {
-          if (this.count == this.count) {
+          if (this.count == 1) {
             this.alert(
-              'error',
-              'Error de captura',
-              `Se debe capturar el estado de conservación indep ${good.goodId}`
+              'warning',
+              'Advertencia',
+              `Se debe capturar el estado de conservación INDEP ${this.goodId}`
             );
           }
         } else {
@@ -2851,8 +3315,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 if (data) {
                   this.goodsTransportable.clear();
                   this.getReceipts();
-                  this.showDataProgramming();
+                  this.getOpenProceeding();
                   this.totalItemsTransportableGoods = 0;
+                  this.paramsTransportableGoods
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getInfoGoodsTransportable());
+
+                  this.paramsReception
+                    .pipe(takeUntil(this.$unSubscribe))
+                    .subscribe(() => this.getInfoReception());
                 }
               },
             };
@@ -2956,6 +3427,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         this.showDataProgramming();
         this.goodIdSelect = null;
         this.selectGood = [];
+        this.selectGood = [];
+        resolve(true);
       }
     });
   }
@@ -3062,6 +3535,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           next: () => {},
         });
       });
+
       const showGoods: any = await this.getFilterGood('EN_PROGRAMACION_TMP');
       if (showGoods) {
         this.showDataProgramming();
@@ -3153,6 +3627,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (next: boolean) => {
           if (next) {
             this.goodsTransportable.clear();
+            this.selectGood = [];
             this.showDataProgramming();
           }
         },
@@ -3245,11 +3720,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
+          actaId: null,
           status: 'EN_TRANSPORTABLE',
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
             await this.changeStatusGoodReceipt();
+            await this.deleteReceipt();
+            this.selectGood = [];
+            this.goodIdSelect = null;
           },
           error: error => {},
         });
@@ -3261,6 +3740,43 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Necesitas tener un bien seleccionado'
       );
     }
+  }
+
+  deleteReceipt() {
+    this.selectGood.map((item: any) => {
+      const data = {
+        programmationId: this.programmingId,
+        goodId: item.goodId,
+      };
+      this.receptionGoodService.getReceiptGoodByIds(data).subscribe({
+        next: response => {
+          const deleteObject = {
+            receiptId: response.receiptId,
+            goodId: response.goodId,
+            programmationId: response.programmationId,
+            actId: response.actId,
+          };
+
+          this.receptionGoodService.deleteReceiptGood(deleteObject).subscribe({
+            next: response => {},
+          });
+        },
+      });
+    });
+
+    /*
+    if (this.goodIdSelect > 0) {
+      this.selectGood.map((item: any) => {
+        console.log('item', item);
+        const formData = {
+          receiptId: item.id,
+          goodId: item.goodId,
+          programmationId: 8450,
+          actId: 112,
+        };
+        //this.receptionGoodService.deleteReceipt()
+      });
+    } */
   }
 
   deleteGoodRep() {
@@ -3400,6 +3916,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         callback: (next: boolean) => {
           if (next) {
             this.goodsTransportable.clear();
+            this.selectGood = [];
             this.showDataProgramming();
           }
         },
@@ -3628,6 +4145,162 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   saveInfoGoodTransportable() {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    let _quantitySae: boolean = false;
+    const saePhysicalState = this.goodsTransportable.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    //Validación estado de conservación
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsTransportable.value.map(
+      (good: any) => {
+        if (good.stateConservationSae == null) return good.goodId;
+      }
+    );
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    //Validacion Cantidad//
+    this.count == 0;
+    this.goodId = '';
+    const quantitySae = this.goodsTransportable.value.map((good: any) => {
+      if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
+    });
+    if (quantitySae.length > 0) {
+      const filter = quantitySae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `La cantidad INDEP es mayor a la cantidad transferente en el Bien: ${this.goodId} `
+        );
+      } else {
+        _quantitySae = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
+    }
+
+    if (saePhysical && stateConservation && _quantitySae) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsTransportable.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsTransportable.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*
     this.count = 0;
     this.goodsTransportable.value.map((good: IGood) => {
       this.count = this.count + 1;
@@ -3640,7 +4313,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       } else if (good.saePhysicalState == null) {
-        if (this.count == 1) {
+        if (this.count == ) {
           this.alert(
             'error',
             'Error de captura',
@@ -3656,61 +4329,163 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.count = 0;
-        if (this.goodsTransportable.value.length > 0) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            '¿Desea editar el bien?'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.goodsTransportable.value.map((good: IGood) => {
-                this.count = this.count + 1;
-                const info = {
-                  id: good.id,
-                  descriptionGoodSae: good.descriptionGoodSae,
-                  fileNumber: good.fileNumber,
-                  goodDescription: good.descriptionGood,
-                  goodId: good.goodId,
-                  physicalStatus: good.physicalStatus,
-                  quantity: good.quantity,
-                  quantitySae: good.quantitySae,
-                  regionalDelegationNumber: good.delegationNumber,
-                  saeMeasureUnit: good.saeMeasureUnit,
-                  saePhysicalState: good.saePhysicalState,
-                  stateConservation: good.stateConservation,
-                  stateConservationSae: good.stateConservationSae,
-                  uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
-                  saeDestiny: good.transferentDestiny,
-                };
-
-                if (this.count == 1) {
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Bien actualizado correctamente'
-                  );
-                }
-                this.goodService.updateByBody(info).subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-              });
-            }
-          });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'No se encontraron bienes para actualizar'
-          );
-        }
+       
       }
-    });
+    }); */
   }
 
   saveInfoGoodGuard() {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    let _quantitySae: boolean = false;
+    const saePhysicalState = this.goodsGuards.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción no Permitida',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    this.count == 0;
+    this.goodId = '';
+
+    const stateConservationSae = this.goodsGuards.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+    //Cantidad
+    this.count == 0;
+    this.goodId = '';
+    const quantitySae = this.goodsGuards.value.map((good: any) => {
+      if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
+    });
+    if (quantitySae.length > 0) {
+      const filter = quantitySae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `La cantidad INDEP es mayor a la cantidad transferente en el Bien: ${this.goodId} `
+        );
+      } else {
+        _quantitySae = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
+    }
+    this.count == 0;
+    this.goodId = '';
+    if (saePhysical && stateConservation && _quantitySae) {
+      if (this.goodsGuards.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsGuards.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*
     this.count = 0;
     this.goodsGuards.value.map((good: IGood) => {
       this.count = this.count + 1;
@@ -3789,10 +4564,161 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   saveInfoGoodWarehouse() {
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    let _quantitySae: boolean = false;
+    const saePhysicalState = this.goodsWarehouse.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsWarehouse.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+    //Cantidad
+    this.count == 0;
+    this.goodId = '';
+    const quantitySae = this.goodsWarehouse.value.map((good: any) => {
+      if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
+    });
+    if (quantitySae.length > 0) {
+      const filter = quantitySae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `La cantidad INDEP es mayor a la cantidad transferente en el Bien: ${this.goodId} `
+        );
+      } else {
+        _quantitySae = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
+    }
+
+    if (saePhysical && stateConservation && _quantitySae) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsWarehouse.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsWarehouse.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*
     this.count = 0;
     this.goodsWarehouse.value.map((good: IGood) => {
       this.count = this.count + 1;
@@ -3871,11 +4797,163 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   saveInfoGoodReprog() {
-    this.count = 0;
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    let _quantitySae: boolean = false;
+    const saePhysicalState = this.goodsReprog.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
+    });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    //Validación estado de conservación
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsReprog.value.map((good: any) => {
+      if (good.stateConservationSae == null) return good.goodId;
+    });
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    //Validacion Cantidad//
+    this.count == 0;
+    this.goodId = '';
+    const quantitySae = this.goodsReprog.value.map((good: any) => {
+      if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
+    });
+    if (quantitySae.length > 0) {
+      const filter = quantitySae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `La cantidad INDEP es mayor a la cantidad transferente en el Bien: ${this.goodId} `
+        );
+      } else {
+        _quantitySae = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
+    }
+
+    if (saePhysical && stateConservation && _quantitySae) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsReprog.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsReprog.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
+
+    /*this.count = 0;
     this.goodsReprog.value.map((good: IGood) => {
       this.count = this.count + 1;
       if (Number(good.quantity) < Number(good.quantitySae)) {
@@ -3953,89 +5031,162 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           );
         }
       }
-    });
+    }); */
   }
 
   saveInfoGoodCancelation() {
-    this.count = 0;
-    this.goodsCancelation.value.map((good: IGood) => {
-      this.count = this.count + 1;
-      if (Number(good.quantity) < Number(good.quantitySae)) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            `Error de captura`,
-            `La cantidad indep es mayor a la cantidad transferente en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.saePhysicalState == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado físico indep en el bien ${good.goodId}`
-          );
-        }
-      } else if (good.stateConservationSae == null) {
-        if (this.count == 1) {
-          this.alert(
-            'error',
-            'Error de captura',
-            `Se debe capturar el estado de conservación indep en el bien ${good.goodId}`
-          );
-        }
-      } else {
-        this.count = 0;
-        if (this.goodsCancelation.value.length > 0) {
-          this.alertQuestion(
-            'question',
-            'Confirmación',
-            '¿Desea editar el bien?'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.goodsCancelation.value.map((good: IGood) => {
-                this.count = this.count + 1;
-                const info = {
-                  id: good.id,
-                  descriptionGoodSae: good.descriptionGoodSae,
-                  fileNumber: good.fileNumber,
-                  goodDescription: good.descriptionGood,
-                  goodId: good.goodId,
-                  physicalStatus: good.physicalStatus,
-                  quantity: good.quantity,
-                  quantitySae: good.quantitySae,
-                  regionalDelegationNumber: good.delegationNumber,
-                  saeMeasureUnit: good.saeMeasureUnit,
-                  saePhysicalState: good.saePhysicalState,
-                  stateConservation: good.stateConservation,
-                  stateConservationSae: good.stateConservationSae,
-                  uniqueKey: good.uniqueKey,
-                  unitMeasure: good.unitMeasure,
-                  saeDestiny: good.transferentDestiny,
-                };
-                if (this.count == 1) {
-                  this.alert(
-                    'success',
-                    'Correcto',
-                    'Bien actualizado correctamente'
-                  );
-                }
-                this.goodService.updateByBody(info).subscribe({
-                  next: () => {},
-                  error: error => {},
-                });
-              });
-            }
-          });
-        } else {
-          this.alert(
-            'warning',
-            'Acción Invalida',
-            'No se encontraron bienes para actualizar'
-          );
-        }
-      }
+    this.count == 0;
+    this.goodId = '';
+    let saePhysical: boolean = false;
+    let stateConservation: boolean = false;
+    let _quantitySae: boolean = false;
+    const saePhysicalState = this.goodsCancelation.value.map((good: any) => {
+      if (good.saePhysicalState == null) return good.goodId;
     });
+
+    if (saePhysicalState.length > 0) {
+      const filter = saePhysicalState.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado físico INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        saePhysical = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      saePhysical = true;
+    }
+
+    this.count == 0;
+    this.goodId = '';
+    const stateConservationSae = this.goodsCancelation.value.map(
+      (good: any) => {
+        if (good.stateConservationSae == null) return good.goodId;
+      }
+    );
+
+    if (stateConservationSae.length > 0) {
+      const filter = stateConservationSae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `Se requiere capturar el estado de conservación INDEP en los bienes: ${this.goodId} `
+        );
+      } else {
+        stateConservation = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      stateConservation = true;
+    }
+
+    //Validacion Cantidad//
+    this.count == 0;
+    this.goodId = '';
+    const quantitySae = this.goodsCancelation.value.map((good: any) => {
+      if (Number(good.quantity) < Number(good.quantitySae)) return good.goodId;
+    });
+    if (quantitySae.length > 0) {
+      const filter = quantitySae.filter((item: IGood) => {
+        return item;
+      });
+
+      filter.map((item: IGood) => {
+        this.count = this.count + 1;
+        this.goodId += item + ', ';
+      });
+
+      if (this.goodId) {
+        this.alert(
+          'warning',
+          'Acción Incorrecta',
+          `La cantidad INDEP es mayor a la cantidad transferente en el Bien: ${this.goodId} `
+        );
+      } else {
+        _quantitySae = true;
+        this.count == 0;
+        this.goodId = '';
+      }
+    } else {
+      _quantitySae = true;
+      this.count == 0;
+      this.goodId = '';
+    }
+
+    if (saePhysical && stateConservation && _quantitySae) {
+      this.count = 0;
+      this.goodId = '';
+      if (this.goodsCancelation.value.length > 0) {
+        this.alertQuestion(
+          'question',
+          'Confirmación',
+          '¿Desea editar el bien?'
+        ).then(question => {
+          if (question.isConfirmed) {
+            this.goodsCancelation.value.map((good: IGood) => {
+              this.count = this.count + 1;
+              const info = {
+                id: good.id,
+                descriptionGoodSae: good.descriptionGoodSae,
+                fileNumber: good.fileNumber,
+                goodDescription: good.descriptionGood,
+                goodId: good.goodId,
+                physicalStatus: good.physicalStatus,
+                quantity: good.quantity,
+                quantitySae: good.quantitySae,
+                regionalDelegationNumber: good.delegationNumber,
+                saeMeasureUnit: good.saeMeasureUnit,
+                saePhysicalState: good.saePhysicalState,
+                stateConservation: good.stateConservation,
+                stateConservationSae: good.stateConservationSae,
+                uniqueKey: good.uniqueKey,
+                unitMeasure: good.unitMeasure,
+                saeDestiny: good.transferentDestiny,
+              };
+              if (this.count == 1) {
+                this.alert(
+                  'success',
+                  'Correcto',
+                  'Bien actualizado correctamente'
+                );
+              }
+              this.goodService.updateByBody(info).subscribe({
+                next: () => {},
+                error: error => {},
+              });
+            });
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          'Acción Invalida',
+          'No se encontraron bienes para actualizar'
+        );
+      }
+    }
   }
 
   showLabelTDRTransportable() {
@@ -4069,7 +5220,33 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   showLabelTDRProgramming() {
-    if (this.goodsTransportable.value.length) {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue().limit = 100000;
+    this.programmingService.getGoodsProgramming(params.getValue()).subscribe({
+      next: response => {
+        response.data.map((good: any) => {
+          this.goodId += good.goodId + ',';
+        });
+        let config: ModalOptions = {
+          initialState: {
+            showTDR: true,
+            goodsId: this.goodId,
+            programming: this.programming,
+            callback: (next: boolean) => {
+              if (next) {
+                this.goodId = '';
+              }
+            },
+          },
+          class: 'modal-xl modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(ShowReportComponentComponent, config);
+      },
+      error: error => {},
+    });
+    /*if (this.goodsTransportable.value.length) {
       let config: ModalOptions = {
         initialState: {
           showTDR: true,
@@ -4089,7 +5266,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         'Acción Invalida',
         'No hay etiquetas que visualizar'
       );
-    }
+    } */
   }
 
   showLabelTDRReception() {
@@ -4368,5 +5545,37 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowReceiptCloseComponent, config);
+  }
+
+  showReceiptWarehouseClose() {
+    let config: ModalOptions = {
+      initialState: {
+        programming: this.programming,
+        typeReceipt: 'warehouse',
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReceiptGuardCloseComponent, config);
+  }
+
+  showReceiptGuardClose() {
+    let config: ModalOptions = {
+      initialState: {
+        programming: this.programming,
+        typeReceipt: 'guard',
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-xl modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ShowReceiptGuardCloseComponent, config);
   }
 }

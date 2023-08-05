@@ -13,11 +13,14 @@
       </h5>
       <button
         type="button"
-        class="btn btn-primary btn-sm active ml-3"
+        tooltip="Nuevo"
+        containerClass="tooltip-style"
+        class="btn btn-info btn-sm active ml-2 mr-2"
         (click)="openForm()">
-        Nuevo
+        Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
       </button>
     </div>
+    <br />
     <div class="row">
       <div class="col-md-12">
         <div [ngClass]="{ 'table-loading': loading }">

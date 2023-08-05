@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { _Params } from 'src/app/common/services/http.service';
 import { ComerceDocumentsXmlH } from 'src/app/core/models/ms-documents/documents-comerce.model';
-import { IUpdateComerPagosRef } from 'src/app/core/models/ms-electronicfirm/signatories-model';
+import {
+  IComerModifyXML,
+  IUpdateComerPagosRef,
+} from 'src/app/core/models/ms-electronicfirm/signatories-model';
 import { DocumentsComerceService } from 'src/app/core/services/ms-documents/documents-comerce.service';
 import { ElectronicFirmService } from 'src/app/core/services/ms-electronicfirm/ms-electronicfirm.service';
 import { Ssf3SignatureElecDocsService } from 'src/app/core/services/ms-electronicfirm/ms-ssf3-signature-elec-docs.service';
@@ -48,5 +51,8 @@ export class ElectronicSignaturesService {
   }
   updateComerceDocumentsXmlH(params: Partial<ComerceDocumentsXmlH>) {
     return this.msDocumentsComerceService.updateComerceDocumentsXmlH(params);
+  }
+  comerModifyXML(body: Partial<IComerModifyXML>) {
+    return this.msElectronicFirmService.comerModifyXML(body);
   }
 }

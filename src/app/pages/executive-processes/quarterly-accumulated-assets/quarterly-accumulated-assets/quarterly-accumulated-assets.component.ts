@@ -191,7 +191,7 @@ export class QuarterlyAccumulatedAssetsComponent
     this.siabService
       .fetchReport('RGERDIRBIACUMTRIM', {
         pf_anioini: format(fromMonth, 'yyyy-MM-dd'),
-        pf_anio_fin: format(toMonth, 'yyyy-MM-dd'),
+        pf_aniofin: format(toMonth, 'yyyy-MM-dd'),
         pn_deleg: delegation,
         pn_subdeleg: subdelegation,
       })

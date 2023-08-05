@@ -48,7 +48,7 @@
     <button
       type="button"
       class="dropdown-item"
-      (click)="onLoadCustomersFroThird()">
+      (click)="onLoadCustomersFromThird()">
       Lotificar / Cargar Clientes desde Tabla Tercero
     </button>
   </li>
@@ -70,14 +70,14 @@
       Verifica Mandado
     </button>
   </li>
+  <li role="menuitem">
+    <button type="button" class="dropdown-item" (click)="onLotifyCustomers()">
+      Carga de Clientes desde Excel
+    </button>
+  </li>
 </ng-container>
 
 <ng-container *ngIf="onlyBase">
-  <li role="menuitem">
-    <button type="button" (click)="onLoadFromTracker()" class="dropdown-item">
-      Incorporar Bienes desde el Rastreador
-    </button>
-  </li>
   <li role="menuitem">
     <button type="button" (click)="onBaseExportExcel()" class="dropdown-item">
       Exportar a Excel

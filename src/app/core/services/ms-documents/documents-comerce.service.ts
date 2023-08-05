@@ -23,10 +23,38 @@ export class DocumentsComerceService extends HttpService {
     );
   }
 
+  createComerceDocumentsXmlT(body: Partial<ComerceDocumentsXmlT>) {
+    return this.post<IListResponse<ComerceDocumentsXmlT>>(
+      DocumentsComersEndpoints.ComerceDocumentsXmlT,
+      body
+    );
+  }
+
+  updateComerceDocumentsXmlT(body: Partial<ComerceDocumentsXmlT>) {
+    return this.put<IListResponse<ComerceDocumentsXmlT>>(
+      DocumentsComersEndpoints.ComerceDocumentsXmlT,
+      body
+    );
+  }
+
+  getAllComerceDocumentsXmlTCatFelec(params: _Params) {
+    return this.get<IListResponse<ComerceDocumentsXmlT>>(
+      DocumentsComersEndpoints.ComerceDocumentsXmlTCatFelec,
+      params
+    );
+  }
+
   getAllComerceDocumentsXmlH(params: _Params) {
     return this.get<IListResponse<ComerceDocumentsXmlH>>(
       DocumentsComersEndpoints.ComerceDocumentsXmlH,
       params
+    );
+  }
+
+  createComerceDocumentsXmlH(body: Partial<ComerceDocumentsXmlH>) {
+    return this.post<IListResponse<any>>(
+      DocumentsComersEndpoints.ComerceDocumentsXmlH,
+      body
     );
   }
 

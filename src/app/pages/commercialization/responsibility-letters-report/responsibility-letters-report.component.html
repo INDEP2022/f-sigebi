@@ -1,172 +1,487 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte de Cartas de Responsabilidad</h5>
+    <div class="col-md-12">
+      <h5 class="title">REPORTES DE CARTAS DE RESPONSABILIDAD</h5>
+    </div>
   </div>
 
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form [formGroup]="comerLibsForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="form"
-            control="evento"
-            (fetchItems)="getEvent($event)"
-            [showTooltip]="true"
-            [data]="selectEvent"
-            bindLabel="description"
-            label="Evento"
-            value="id"></ngx-select>
-        </div>
-        <div class="col-md-4">
-          <ngx-select
-            [form]="form"
-            control="lote"
-            (fetchItems)="getLot($event)"
-            [showTooltip]="true"
-            [data]="selectLot"
-            bindLabel="description"
-            (change)="getGood($event)"
-            [searchable]="true"
-            label="Lote"
-            value="lotId"></ngx-select>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('adjudicatorio')"
-            label="Adjudicatorio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="adjudicatorio"
-              placeholder="Adjudicatorio" />
-          </form-field>
-        </div>
-      </div>
-
-      <hr class="row" />
-      <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('domicilio')" label="Domicilio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="domicilio"
-              placeholder="Domicilio" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('colonia')" label="Colonia">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="colonia"
-              placeholder="Colonia" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <ngx-select
-            [form]="form"
-            control="evento"
-            (fetchItems)="getDelegation($event)"
-            [showTooltip]="true"
-            [data]="selectedDelegation"
-            bindLabel="description"
-            label="Delegación"
-            value="id"></ngx-select>
-        </div>
-        <!-- <div class="col-md-4">
-          <form-field [control]="form.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" placeholder="RFC" />
-          </form-field>
+        <!-- <div class="d-flex justify-content-end">
+          <div class="d-inline mr-2">
+            Fecha:
+            <span class="ml-3 mr-3" style="display: initial !important">
+              {{ carta | date:'dd \'de\' MMMM \'del año\' yyyy' }}
+              {{ carta || '00/00/0000' }}
+            </span>
+            <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+            <button (click)="searchComer()" class="btn btn-primary btn-sm active m-1" tooltip="Cartas de Liberación"
+              containerClass="tooltip-style">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div>
         </div> -->
-      </div>
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="row p-3">
+                    <div class="col-md-3">
+                      <div>
+                        <label for="">Área: </label>
+                        {{ department || '' }}
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="">Delegación: </label>
+                        {{ delegationName || '' }}
+                      </div>
+                    </div>
 
-      <div class="row">
-        <div class="col-md-4">
-          <!-- <form-field [control]="form.get('estado')" label="Estado">
-            <input type="text" class="form-control" formControlName="estado" placeholder="Estado" />
-          </form-field> -->
-          <ngx-select
-            [form]="form"
-            control="estado"
-            (fetchItems)="getEntidad($event)"
-            [showTooltip]="true"
-            [data]="entidad"
-            bindLabel="description"
-            label="Estado"
-            value="id"></ngx-select>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('cp')" label="CP">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cp"
-              placeholder="CP" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="parrafo1"
-              placeholder="Parrafo 1"></textarea>
-          </form-field>
+                    <div class="col-md-3">
+                      <div style="display: flex; gap: 10px">
+                        <label style="display: flex; align-items: center">
+                          <input type="checkbox" [checked]="read" />
+                          <span style="margin-left: 5px">Lectura</span>
+                        </label>
+                        <label style="display: flex; align-items: center">
+                          <input type="checkbox" [checked]="insert" />
+                          <span style="margin-left: 5px">Escritura</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row p-3">
+                    <div class="col-md-3">
+                      <div>
+                        <label for="">Usuario: </label>
+                        {{ userName || '' }}
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div>
+                        <label for="">SubDelegación: </label>
+                        {{ subDelegation || '' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row m-3">
+                <div class="col-4"></div>
+                <div class="col-md-8 text-end">
+                  <!-- <button [disabled]="!letterDefault" (click)="actualizarLetter()" type="button"
+                            class="btn btn-info active btn-sm mr-3">
+                            Guardar
+                            <i aria-hidden="true" class="fa fa-save"></i>
+                          </button> -->
+                  <!-- <button (click)="searchComer()" type="button" class="btn btn-info active btn-sm mr-3">
+                            Buscar carta
+                            <i class="bx bx-plus bx-sm float-icon"></i>
+                          </button> -->
+                  <!-- <button type="button" class="btn btn-primary active btn-sm mr-3" (click)="searchEvent()">
+                    Buscar Evento
+                    <i class="bx bx-search bx-sm float-icon"></i>
+                  </button> -->
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm mr-3"
+                    (click)="searchComer()">
+                    Buscar Oficio
+                    <i class="bx bx-search bx-sm float-icon"></i>
+                  </button>
+                  <button
+                    (click)="cleanForm()"
+                    type="button"
+                    class="btn btn-danger active btn-sm mr-3">
+                    Limpiar
+                    <i class="fa fa-eraser" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <!-- <form-field
+                        [control]="bienesLotesForm.get('evento')"
+                        label="Evento">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="evento" />
+                      </form-field> -->
+                      <ngx-select
+                        [data]="selectDataEvent"
+                        bindLabel="observations"
+                        label="Evento"
+                        value="eventTpId"
+                        (fetchItems)="getDepositaryType($event)"
+                        [form]="bienesLotesForm"
+                        [showTooltip]="true"
+                        [searchOnInit]="true"
+                        termMaxLength="100"
+                        control="evento"></ngx-select>
+                    </div>
+                  </div>
+                  <!-- <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="bienesLotesForm.get('descEvento')"
+                        label="Descripción de Evento">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="descEvento"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div> -->
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="bienesLotesForm.get('lote')"
+                        label="Lote">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="lote"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="bienesLotesForm.get('description')"
+                        label="Descripción de Lote">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="description"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('oficio')"
+                        label="Oficio">
+                        <input
+                          type="text"
+                          maxlength="50"
+                          class="form-control"
+                          formControlName="oficio"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('factura')"
+                        label="No. Factura">
+                        <input
+                          type="text"
+                          maxlength="20"
+                          class="form-control"
+                          formControlName="factura"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('fechaFactura')"
+                        label="Fecha Factura">
+                        <input
+                          bsDatepicker
+                          class="form-control"
+                          formControlName="fechaFactura"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
 
-      <div class="row">
-        <label for="">Bienes</label>
-      </div>
-      <div class="row pt-2 scroll-table">
-        <ng2-smart-table
-          [settings]="settings1"
-          [source]="goodList"></ng2-smart-table>
-      </div>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
-      <hr class="row" />
-      <br />
+                  <div class="col-md-4 mt-2">
+                    <div>
+                      <form-field
+                        [control]="comerLibsForm.get('adjudicatorio')"
+                        label="Adjudicatorio">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="adjudicatorio"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-      <div class="row">
-        <div class="col-md-6">
-          <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="parrafo2"></textarea>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('parrafo3')" label="Parrafo 3">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="parrafo3"></textarea>
-          </form-field>
+              <!-- <div class="card">
+
+            
+
+              </div> -->
+            </div>
+          </div>
         </div>
       </div>
     </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          text="Imprimir"
-          [disabled]="!valid"
-          [loading]="loading"
-          (confirm)="Generar()">
-        </confirm-button>
+
+    <form [formGroup]="clientForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field [control]="clientForm.get('rfc')" label="RFC">
+                        <input
+                          #inputValue
+                          type="text"
+                          class="form-control"
+                          formControlName="rfc"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('calle')"
+                        label="Calle">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="calle"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('colonia')"
+                        label="Colonia">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="colonia"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('ciudad')"
+                        label="Ciudad">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="ciudad"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('delegacion')"
+                        label="Delegación">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="delegacion"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field
+                        [control]="clientForm.get('estado')"
+                        label="Estado">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="estado"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <div>
+                      <form-field [control]="clientForm.get('cp')" label="CP">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="cp"
+                          maxlength="50"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active"
-          (click)="cleanForm()">
-          Limpiar
-        </button>
+    </form>
+    <form [formGroup]="respForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <form-field
+                    class="col-md-12 col-sm-12 col-12 p-2"
+                    [control]="respForm.get('paragraph1')"
+                    label="P&aacute;rrafo 1">
+                    <textarea
+                      maxlength="500"
+                      class="form-control text-justify"
+                      formControlName="paragraph1"
+                      rows="5"
+                      readonly></textarea>
+                  </form-field>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-12 justify-content-center">
+                    <h6>BIENES</h6>
+                    <div class="row">
+                      <form-loader *ngIf="bienesLoading"></form-loader>
+                      <div class="col-md-12">
+                        <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                        <ng-scrollbar
+                          [track]="'all'"
+                          [ngStyle]="{
+                            height: bienesLoading ? '0px' : '400px'
+                          }">
+                          <ng2-smart-table
+                            [attr.class]="'table-bordered table-responsive'"
+                            [settings]="settings"
+                            [source]="dataTableGood">
+                          </ng2-smart-table>
+                        </ng-scrollbar>
+                        <!-- </div> -->
+                      </div>
+                      <app-pagination
+                        [params]="paramsBienes"
+                        [totalItems]="totalItems"></app-pagination>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <form-field
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="respForm.get('paragraph2')"
+                  label="P&aacute;rrafo 2">
+                  <textarea
+                    maxlength="500"
+                    class="form-control text-justify"
+                    formControlName="paragraph2"
+                    rows="5"
+                    readonly></textarea>
+                </form-field>
+              </div>
+              <div class="card-body">
+                <form-field
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="respForm.get('paragraph3')"
+                  label="P&aacute;rrafo 2">
+                  <textarea
+                    maxlength="500"
+                    class="form-control text-justify"
+                    formControlName="paragraph3"
+                    rows="5"
+                    readonly></textarea>
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form [formGroup]="bienesLotesForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="col-md-12 mt-3">
+                    <div>
+                      <form-field
+                        [control]="bienesLotesForm.get('description')"
+                        label="Descripción">
+                        <input
+                          type="text"
+                          class="form-control"
+                          formControlName="description"
+                          maxlength="100"
+                          readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div footer>
+      <div
+        class="d-flex flex-row justify-content-center align-items-center"></div>
+      <div class="d-flex flex-row justify-content-center align-items-center">
+        <div class="m-3">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="confirm()">
+            Imprimir
+            <i class="bx bx-printer bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>

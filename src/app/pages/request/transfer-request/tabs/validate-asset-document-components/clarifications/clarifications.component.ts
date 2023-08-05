@@ -41,7 +41,7 @@ import { CLARIFICATION_COLUMNS } from './clarifications-columns';
 @Component({
   selector: 'app-clarifications',
   templateUrl: './clarifications.component.html',
-  styles: [],
+  styleUrls: ['./clarifications.component.scss'],
 })
 export class ClarificationsComponent
   extends BasePage
@@ -76,6 +76,7 @@ export class ClarificationsComponent
   statusTask: any = '';
   columns = ASSETS_COLUMNS;
   goodsSelected: IGood[] = [];
+  goodSaeModified: any = [];
 
   constructor(
     private modalService: BsModalService,
@@ -125,6 +126,15 @@ export class ClarificationsComponent
       ...this.columns.selected,
       onComponentInitFunction: this.selectGoods.bind(this),
     };*/
+
+    this.columns.descriptionGoodSae = {
+      ...this.columns.descriptionGoodSae,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.setDescriptionGoodSae(data);
+        });
+      },
+    };
     this.prepareForm();
   }
   private prepareForm() {
@@ -465,7 +475,7 @@ export class ClarificationsComponent
     } else if (this.goodsSelected.length > 1) {
       this.rowSelected = null;
       this.paragraphs = [];
-      this.onLoadToast('error', 'Solo se puede seleccionar un bien');
+      this.onLoadToast('warning', 'Solo se puede seleccionar un Bien');
     } else {
       this.rowSelected = null;
       this.paragraphs = [];
@@ -571,7 +581,7 @@ export class ClarificationsComponent
   newClarification() {
     let data = this.clariArraySelected[0];
     if (data === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
     this.openForm();
@@ -580,15 +590,15 @@ export class ClarificationsComponent
   deleteClarification() {
     let data = this.clariArraySelected[0];
     if (data === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
 
     const clarifycationLength = this.paragraphs.length;
     this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar el registro?'
+      'question',
+      'Atención',
+      '¿Desea eliminar el registro?'
     ).then(async val => {
       if (val.isConfirmed) {
         const idChatClarification = data.chatClarification.idClarification;
@@ -598,7 +608,7 @@ export class ClarificationsComponent
           next: async val => {
             this.onLoadToast(
               'success',
-              'Eliminada con exito',
+              'Eliminada',
               'La aclaración fue eliminada con éxito'
             );
 
@@ -658,7 +668,7 @@ export class ClarificationsComponent
     if (data.length === 1) {
       this.openForm(this.clariArraySelected[0]);
     } else {
-      this.alert('warning', 'Error', '¡Seleccione solo una aclaración!');
+      this.alert('warning', 'Error', 'Seleccione solo una Aclaración');
     }
   }
 
@@ -708,7 +718,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo eliminar el bien-res-deb'
+            'No se pudo eliminar el Bien'
           );
         },
       });
@@ -727,7 +737,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Erro Interno',
-            'No se actualizo el campo bien-res-dev en bien'
+            'No se actualizó el campo bien en bien'
           );
           reject(false);
         },
@@ -771,7 +781,7 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo obtener el bien-res-dev'
+            'No se pudo obtener el Bien'
           );
         },
       });
@@ -794,10 +804,54 @@ export class ClarificationsComponent
           this.onLoadToast(
             'error',
             'Error interno',
-            'No se pudo obtener el bien-res-dev'
+            'No se pudo obtener el Bien'
           );
         },
       });
+    });
+  }
+
+  setDescriptionGoodSae(descriptionInput: any) {
+    this.assetsArray['data'].map((item: any) => {
+      if (item.id === descriptionInput.data.id) {
+        item.descriptionGoodSae = descriptionInput.text;
+
+        this.addGoodModified(item);
+      }
+    });
+  }
+
+  addGoodModified(good: any) {
+    const index = this.goodSaeModified.indexOf(good);
+    if (index != -1) {
+      this.goodSaeModified[index] = good;
+      if (this.goodSaeModified[index].descriptionGoodSae == '') {
+        this.goodSaeModified[index].descriptionGoodSae = null;
+      }
+    } else {
+      this.goodSaeModified.push(good);
+    }
+  }
+
+  saveGoodSaeDescrip() {
+    if (this.goodSaeModified.length == 0) {
+      return;
+    }
+    this.loading = true;
+    this.goodSaeModified.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      const body: any = {
+        id: item.id,
+        goodId: item.goodId,
+        descriptionGoodSae: item.descriptionGoodSae,
+      };
+      //debugger;
+      const updateResult: any = await this.updateGood(body);
+      if (this.goodSaeModified.length == index) {
+        this.loading = false;
+        this.goodSaeModified = [];
+        this.onLoadToast('success', 'Bienes Actualizados');
+      }
     });
   }
 }

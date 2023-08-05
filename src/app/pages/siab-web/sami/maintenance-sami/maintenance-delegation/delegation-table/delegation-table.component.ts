@@ -34,6 +34,11 @@ export class DelegationTableComponent extends BasePage implements OnInit {
       this.notGetData();
     }
   }
+  @Input() set update(value: number) {
+    if (value > 0 && this._solicitud) {
+      this.getData();
+    }
+  }
   totalItems = 0;
   data: IDelegation[];
   dataTemp: IDelegation[];

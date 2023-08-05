@@ -6,4 +6,5 @@ export enum CapturelineEndpoints {
   TmpLcComer = 'tmp-lc-comer',
   LoadCheckPortal = 'load-check-portal',
   ComerRefGuaranteesSearch = 'tmp-lc-comer/searchGuarantees',
+  AdminCaptureLine = 'application/admin-capture-line',
 }

@@ -8,11 +8,15 @@ export const COLUMNS = {
     sort: false,
   },
   no_expediente: {
-    title: 'EXPEDIENTE',
+    title: 'Expediente',
     sort: false,
   },
   descripcion_bien: {
-    title: 'DESCRIPCIÓN DEL BIEN',
+    title: 'Descripción del Bien',
+    sort: false,
+  },
+  descripcion_bien_sae: {
+    title: 'Descripción del Bien INDEP',
     sort: false,
   },
   cantidad: {
@@ -20,7 +24,7 @@ export const COLUMNS = {
     sort: false,
   },
   cantidad_sae: {
-    title: 'Cantidad SAE',
+    title: 'Cantidad INDEP',
     sort: false,
   },
   unidad_medida_letra: {
@@ -28,7 +32,7 @@ export const COLUMNS = {
     sort: false,
   },
   unidad_medida_sae_letra: {
-    title: 'Unidad Medida SAE',
+    title: 'Unidad Medida INDEP',
     sort: false,
   },
   estado_fisico_letra: {
@@ -36,7 +40,7 @@ export const COLUMNS = {
     sort: false,
   },
   estado_fisico_sae_letra: {
-    title: 'Estado Fisico SAE',
+    title: 'Estado Físico INDEP',
     sort: false,
   },
   estado_conservacion_letra: {
@@ -44,7 +48,7 @@ export const COLUMNS = {
     sort: false,
   },
   estado_conservacion_sae_letra: {
-    title: 'Estado Conservación SAE',
+    title: 'Estado Conservación INDEP',
     sort: false,
   },
   destino_letra: {
@@ -56,7 +60,7 @@ export const COLUMNS = {
     sort: false,
   },
   destino_sae_letra: {
-    title: 'Destino SAE',
+    title: 'Destino INDEP',
     sort: false,
   },
   id_recorrido: {

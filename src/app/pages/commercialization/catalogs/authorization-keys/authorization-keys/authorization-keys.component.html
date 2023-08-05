@@ -7,19 +7,26 @@
       <div class="row">
         <div class="col-md-2">
           <form-field [control]="eventForm.get('id')" label="ID">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              type="text"
+              formControlName="id"
+              class="form-control"
+              (blur)="getByIdTwo(eventForm.controls['id'].value)"
+              [maxLength]="7" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="eventForm.get('processKey')" label="Evento">
             <input
               type="text"
               class="form-control"
               formControlName="processKey"
-              readonly />
+              readOnly />
           </form-field>
         </div>
-        <div class="col-md-3">
+      </div>
+      <div class="row mb-2 mt-2">
+        <div class="col-md-12">
           <form-field
             [control]="eventForm.get('observations')"
             label="Descripción">
@@ -27,63 +34,57 @@
               type="text"
               class="form-control"
               formControlName="observations"
-              readonly />
+              readOnly />
           </form-field>
-        </div>
-        <div class="col-md-1">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!eventForm.valid"
-            (click)="getEventById()">
-            Buscar
-          </button>
         </div>
       </div>
     </form>
 
-    <form
-      class="form-material"
-      [formGroup]="form"
-      *ngIf="eventForm.get('processKey').value !== null">
-      <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('txtEncrip')" label="">
-            <input
-              type="hidden"
-              class="form-control"
-              formControlName="txtEncrip"
-              readonly />
-          </form-field>
-        </div>
+    <div class="d-flex justify-content-center mb-2">
+      <div>
+        <button
+          class="btn btn-sm btn-primary active"
+          [disabled]="!form.valid"
+          (click)="generateKey()">
+          Generar Clave de Autorización
+        </button>
       </div>
-      <div class="row">
-        <div class="col-md-1">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
-            (click)="generateKey()">
-            Generar Encriptación
-          </button>
+    </div>
+
+    <div class="row">
+      <form class="form-material" [formGroup]="form">
+        <div>
+          <div class="">
+            <form-field [control]="form.get('txtEncrip')" label="">
+              <input
+                type="hidden"
+                class="form-control"
+                formControlName="txtEncrip"
+                readonly />
+            </form-field>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <form-field [control]="form.get('encrip')" label="">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="encrip"
-              readonly />
-          </form-field>
+        <div class="d-flex justify-content-center mb-5">
+          <div class="col-md-5">
+            <form-field
+              [control]="form.get('encrip')"
+              label="Clave de Autorización">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="encrip"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col-md-1 mt-3">
+            <button
+              class="btn btn-sm btn-inline btn-success mt-n2 py-2 px-3"
+              (click)="copy()">
+              <i class="bx bx-copy-alt mt-2"></i>
+            </button>
+          </div>
         </div>
-        <div class="col-md-1 mt-3">
-          <button
-            class="btn btn-sm btn-inline btn-success mt-n2 py-2 px-3"
-            (click)="copy()">
-            <i class="bx bx-copy-alt mt-2"></i>
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </app-card>

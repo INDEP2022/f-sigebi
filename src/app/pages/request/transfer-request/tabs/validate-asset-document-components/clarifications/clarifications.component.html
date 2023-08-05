@@ -13,8 +13,18 @@
       </div>
     </div>
     <div class="d-flex">
-      <div class="mr-auto p-2">
-        <app-columns-select [(settings)]="goodSetting"></app-columns-select>
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <button
+          class="btn btn-sm btn-primary active"
+          (click)="saveGoodSaeDescrip()">
+          Guardar <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="p-2">
+        <app-columns-select
+          [leftList]="true"
+          [(settings)]="goodSetting"></app-columns-select>
       </div>
     </div>
   </div>

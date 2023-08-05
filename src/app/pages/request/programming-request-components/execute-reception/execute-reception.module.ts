@@ -13,6 +13,7 @@ import { ExecuteReceptionFormComponent } from './execute-reception-form/execute-
 import { ExecuteReceptionRoutingModule } from './execute-reception-routing.module';
 import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form.component';
 import { ShowReceiptCloseComponent } from './show-receipt-close/show-receipt-close.component';
+import { ShowReceiptGuardCloseComponent } from './show-receipt-guard-close/show-receipt-guard-close.component';
 import { ShowReportComponentComponent } from './show-report-component/show-report-component.component';
 import { UploadReportReceiptComponent } from './upload-report-receipt/upload-report-receipt.component';
 
@@ -26,6 +27,7 @@ import { UploadReportReceiptComponent } from './upload-report-receipt/upload-rep
     ShowReportComponentComponent,
     UploadReportReceiptComponent,
     ShowReceiptCloseComponent,
+    ShowReceiptGuardCloseComponent,
   ],
   imports: [
     CommonModule,

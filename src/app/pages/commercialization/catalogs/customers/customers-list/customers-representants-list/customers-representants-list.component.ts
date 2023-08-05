@@ -63,6 +63,9 @@ export class CustomersRepresentantsListComponent
     };
     if (this.client) {
       if (!this.client.agentId) {
+        this.loading = false;
+        this.data = new LocalDataSource();
+        this.totalItems = 0;
         this.alert('warning', 'Cliente no Tiene Representante Asociado', '');
         return;
       }
@@ -78,6 +81,9 @@ export class CustomersRepresentantsListComponent
             this.loading = false;
           },
           error: error => {
+            this.loading = false;
+            this.data = new LocalDataSource();
+            this.totalItems = 0;
             this.alert(
               'error',
               'No es Posible Traer al Representante Asociado',

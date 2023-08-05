@@ -36,159 +36,197 @@
               min="1"
               (input)="onInvoiceInputChange($event)" />
             <!-- <div *ngIf="billId" class="text-danger">
-              Ese ID de factura ya existe.
-            </div> -->
+                      Ese ID de factura ya existe.
+                    </div> -->
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('claveOficio')" label="Clave Oficio">
+          <form-field [control]="form.get('descevento')" label="Desc. Evento">
             <input
               type="text"
               class="form-control"
-              formControlName="claveOficio"
-              placeholder="Clave Oficio"
+              formControlName="descevento"
+              min="1"
               readonly />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('fechaFallo')" label="Fecha Fallo">
+          <form-field [control]="form.get('description')" label="Evento">
             <input
-              bsDatepicker
+              type="text"
               class="form-control"
-              formControlName="fechaFallo"
-              placeholder="Fecha Fallo"
+              formControlName="description"
+              min="1"
               readonly />
           </form-field>
         </div>
       </div>
-      <br /><br />
-      <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="form.get('FechaLimPago')"
-            label="Fecha Limite de Pago">
-            <input
-              bsDatepicker
-              class="form-control"
-              formControlName="FechaLimPago"
-              placeholder="Fecha Limite de Pago"
-              readonly />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('texto1')" label="Texto 1">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="texto1"
-              placeholder="texto 1"
-              readonly></textarea>
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('texto2')" label="Texto 2">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="texto2"
-              placeholder="texto 2"
-              readonly></textarea>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row">
-        <br /><br />
-
-        <div class="col-md-4">
-          <form-field [control]="form.get('texto3')" label="Texto 3">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="texto3"
-              placeholder="texto 3"
-              readonly></textarea>
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('texto4')" label="Texto 4">
-            <textarea
-              rows="2"
-              class="form-control"
-              formControlName="texto4"
-              placeholder="texto 4"
-              readonly></textarea>
-          </form-field>
-        </div>
-      </div>
-      <br /><br />
-      <!-- 
-   <div class="row pt-2 scroll-table">
-        <ng2-smart-table
-          class="col-md-12"
-          [attr.class]="'table-bordered'"
-          [settings]="settings5"
-          (userRowSelect)="userRowSelect($event)"
-          [source]="layousthList"></ng2-smart-table>
-      </div>
-
- -->
-      <div body>
+      <div *ngIf="imprimir">
         <div class="row">
-          <label for="">Lotes</label>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('claveOficio')"
+              label="Clave Oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="claveOficio"
+                placeholder="Clave Oficio" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('fechaFallo')" label="Fecha Fallo">
+              <input
+                bsDatepicker
+                class="form-control"
+                formControlName="fechaFallo"
+                placeholder="Fecha Fallo"
+                (ngModelChange)="inputFechaFallo($event)" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('FechaLimPago')"
+              label="Fecha Límite de Pago">
+              <input
+                bsDatepicker
+                class="form-control"
+                formControlName="FechaLimPago"
+                placeholder="Fecha Limite de Pago"
+                (ngModelChange)="inputFechaLimite($event)" />
+            </form-field>
+          </div>
         </div>
-        <div class="row pt-2 scroll-table justify-content-center">
+        <div class="row">
+          <div class="col-md-6">
+            <form-field [control]="form.get('texto1')" label="Texto 1">
+              <textarea
+                rows="2"
+                class="form-control"
+                formControlName="texto1"
+                placeholder="texto 1"
+                readonly></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('texto2')" label="Texto 2">
+              <textarea
+                rows="2"
+                class="form-control"
+                formControlName="texto2"
+                placeholder="texto 2"
+                readonly></textarea>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <br /><br />
+
+          <div class="col-md-6">
+            <form-field [control]="form.get('texto3')" label="Texto 3">
+              <textarea
+                rows="2"
+                class="form-control"
+                formControlName="texto3"
+                placeholder="texto 3"
+                readonly></textarea>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('texto4')" label="Texto 4">
+              <textarea
+                rows="2"
+                class="form-control"
+                formControlName="texto4"
+                placeholder="texto 4"
+                readonly></textarea>
+            </form-field>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <div class="col">
+            <form-field [control]="form.get('firmante')" label="Firmante">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="firmante"
+                placeholder="Firmante"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col">
+            <form-field [control]="form.get('elaboro')" label="Elaboro">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="elaboro"
+                placeholder="Elaboro"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col">
+            <form-field [control]="form.get('ccp1')" label="Ccp1">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ccp1"
+                placeholder="Ccp1"
+                readonly />
+            </form-field>
+          </div>
+          <div class="col">
+            <form-field [control]="form.get('ccp2')" label="Ccp2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ccp1"
+                placeholder="Ccp2"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mb-1" style="text-align: right">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="confirm()"
+              [disabled]="form.invalid || !imprimir">
+              Imprimir <i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <br /><br />
+        <!-- 
+          <div class="row pt-2 scroll-table">
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-bordered'"
-            [settings]="settings4"
-            [source]="data"></ng2-smart-table>
+            [settings]="settings5"
+            (userRowSelect)="userRowSelect($event)"
+            [source]="layousthList"></ng2-smart-table>
         </div>
-        <div class="row mt-5 d-flex justify-content-center">
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
-        </div>
-      </div>
 
-      <br /><br />
-
-      <div class="row">
-        <div class="col">
-          <form-field [control]="form.get('firmante')" label="Firmante">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="firmante"
-              placeholder="Firmante" />
-          </form-field>
-        </div>
-        <div class="col">
-          <form-field [control]="form.get('elaboro')" label="Elaboro">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="elaboro"
-              placeholder="Elaboro" />
-          </form-field>
-        </div>
-        <div class="col">
-          <form-field [control]="form.get('ccp1')" label="Ccp1">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ccp1"
-              placeholder="Ccp1" />
-          </form-field>
-        </div>
-        <div class="col">
-          <form-field [control]="form.get('ccp2')" label="Ccp2">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="ccp1"
-              placeholder="Ccp2" />
-          </form-field>
+         -->
+        <div body>
+          <div class="row">
+            <label for="">Lotes</label>
+          </div>
+          <div
+            class="row pt-2 scroll-table justify-content-center"
+            style="margin-left: 5px">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings4"
+              [source]="data"></ng2-smart-table>
+          </div>
+          <div class="row mt-5 d-flex justify-content-center">
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
         </div>
       </div>
     </form>
@@ -196,19 +234,11 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          text="Imprimir"
-          [disabled]="form.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
-      </div>
-      <div class="m-3">
         <button
           type="button"
-          class="btn btn-danger active"
+          class="btn btn-danger btn-sm active mr-3"
           (click)="cleanForm()">
-          Limpiar
+          Limpiar <i class="fas fa-eraser"> </i>
         </button>
       </div>
     </div>

@@ -13,20 +13,6 @@
           <h5 class="title">Cabecera OI</h5>
         </div>
         <div body>
-          <div class="row mb-5">
-            <div class="col">
-              <button
-                type="button"
-                class="btn btn-primary active btn-sm mr-3"
-                (click)="searchOI()">
-                Buscar
-                <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-              <button class="btn btn-danger btn-sm active mr-3">
-                Limpiar <i class="fas fa-eraser"> </i>
-              </button>
-            </div>
-          </div>
           <div class="row mb-3 mt-3">
             <form-field [control]="form.get('idOI')" class="col" label="OI">
               <input type="text" formControlName="idOI" class="form-control" />
@@ -34,14 +20,23 @@
             <form-field [control]="form.get('idArea')" label="Área" class="col">
               <input
                 type="text"
+                readonly
                 formControlName="idArea"
                 class="form-control" />
             </form-field>
             <form-field [control]="form.get('ur')" label="UR" class="col">
-              <input type="text" formControlName="ur" class="form-control" />
+              <input
+                type="text"
+                formControlName="ur"
+                readOnly
+                class="form-control" />
             </form-field>
             <form-field [control]="form.get('anexo')" label="Anexo" class="col">
-              <input type="text" formControlName="anexo" class="form-control" />
+              <input
+                type="text"
+                formControlName="anexo"
+                readOnly
+                class="form-control" />
             </form-field>
             <form-field
               [control]="form.get('typepe')"
@@ -49,6 +44,7 @@
               class="col">
               <input
                 type="text"
+                readonly
                 formControlName="typepe"
                 class="form-control" />
             </form-field>
@@ -58,6 +54,7 @@
               class="col">
               <input
                 type="text"
+                readonly
                 formControlName="idEvent"
                 class="form-control" />
             </form-field>
@@ -69,6 +66,7 @@
               class="col-md-4">
               <input
                 type="text"
+                readonly
                 formControlName="clientRFC"
                 class="form-control" />
             </form-field>
@@ -78,6 +76,7 @@
               class="col-md-8">
               <input
                 type="text"
+                readonly
                 formControlName="descriptionRFC"
                 class="form-control" />
             </form-field>
@@ -89,6 +88,7 @@
               label="Concepto">
               <input
                 type="text"
+                readonly
                 formControlName="concept"
                 class="form-control" />
             </form-field>
@@ -100,6 +100,7 @@
               label="Banco">
               <input
                 type="text"
+                readonly
                 formControlName="idBank"
                 class="form-control" />
             </form-field>
@@ -109,6 +110,7 @@
               label="Fecha Orden">
               <input
                 type="text"
+                readonly
                 formControlName="ordenDate"
                 class="form-control" />
             </form-field>
@@ -118,6 +120,7 @@
               label="Numovto">
               <input
                 type="text"
+                readonly
                 formControlName="numovto"
                 class="form-control" />
             </form-field>
@@ -127,6 +130,7 @@
               label="Monto">
               <input
                 type="text"
+                readonly
                 formControlName="amount"
                 class="form-control" />
             </form-field>
@@ -136,21 +140,35 @@
               label="Referencia">
               <input
                 type="text"
+                readonly
                 formControlName="reference"
                 class="form-control" />
             </form-field>
             <form-field
               [control]="form.get('idPayment')"
               class="col"
-              label="Idpago">
+              label="Id Pago">
               <input
                 type="text"
+                readonly
                 formControlName="idPayment"
                 class="form-control" />
             </form-field>
           </div>
           <div class="row mb-3 mt-3 text-center">
             <div class="col">
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="searchOI()">
+                Buscar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active mr-3"
+                (click)="clearAll()">
+                Limpiar <i class="fas fa-eraser"> </i>
+              </button>
               <button
                 type="button"
                 (click)="sendSIRSAE()"
