@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -27,7 +28,7 @@ import {
 } from 'src/app/core/shared/patterns';
 import { DetailDelegationsComponent } from '../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
-import { COLUMNS } from './columns';
+import { COLUMNS, COLUMNS2 } from './columns';
 
 @Component({
   selector: 'app-third-possession-acts',
@@ -40,12 +41,15 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   formTable1: FormGroup;
   bsModalRef?: BsModalRef;
   totalItems: number = 0;
+  totalItems1: number = 0;
   settings2: any;
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   params3 = new BehaviorSubject<ListParams>(new ListParams());
   params4 = new BehaviorSubject<ListParams>(new ListParams());
+  params5 = new BehaviorSubject<ListParams>(new ListParams());
+
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
@@ -53,10 +57,12 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
   //data = EXAMPLE_DATA;
-  data2 = EXAMPLE_DATA2;
+  //data2 = EXAMPLE_DATA2;
   columnFilters: any = [];
+  columnFilters1: any = [];
 
   data: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
 
   expedientSearch: number | string;
   expedient: any;
@@ -83,7 +89,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS;
-    this.settings2.columns = COLUMNS;
+    this.settings2.columns = COLUMNS2;
   }
 
   ngOnInit(): void {
@@ -124,9 +130,9 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         }
       });
 
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGood());
+      .subscribe(() => this.getGood());*/
     /*const noTransfer = 1;
     const type = 'P'
     this.getCveTransferent(noTransfer,type);*/
@@ -276,6 +282,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         this.response = !this.response;
         this.getCrime(this.formTable1.controls['crimeKey'].value);
         this.getProceedingsDevolution(this.formTable1.controls['id'].value);
+        this.getGood(this.formTable1.controls['id'].value);
       },
       error: err => {
         this.onLoadToast(
@@ -309,8 +316,38 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
           this.actForm.controls['delivery'].setValue(
             this.proceedingDev[0].receiptCve
           );
-          this.actForm.controls['delivery'].setValue(
-            this.proceedingDev[0].receiptCve
+          this.actForm.controls['act'].setValue(
+            this.proceedingDev[0].proceedingsCve
+          );
+          var formatted = new DatePipe('en-EN').transform(
+            this.proceedingDev[0].elaborationDate,
+            'dd/MM/yyyy',
+            'UTC'
+          );
+          this.actForm.controls['elabDate'].setValue(formatted);
+          this.actForm.controls['folioScan'].setValue(
+            this.proceedingDev[0].universalFolio
+          );
+          this.actForm.controls['orderingJudge'].setValue(
+            this.proceedingDev[0].authorityOrder
+          );
+          this.actForm.controls['observations'].setValue(
+            this.proceedingDev[0].observations
+          );
+          this.actForm.controls['deliveryName'].setValue(
+            this.proceedingDev[0].witnessOne
+          );
+          this.actForm.controls['beneficiary'].setValue(
+            this.proceedingDev[0].beneficiaryOwner
+          );
+          this.actForm.controls['witness'].setValue(
+            this.proceedingDev[0].witnessTwo
+          );
+          this.actForm.controls['auditor'].setValue(
+            this.proceedingDev[0].auditor
+          );
+          this.actForm.controls['statusAct'].setValue(
+            this.proceedingDev[0].proceedingStatus
           );
 
           /*proceedingsTypeId
@@ -387,8 +424,11 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.bsModalRef.content.closeBtnName = 'Close';
   }
 
-  getGood() {
+  getGood(expId?: string | number) {
     this.loading = true;
+    if (expId) {
+      this.params.getValue()['filter.fileNumber'] = `$eq:${expId}`;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -407,6 +447,33 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
+      },
+    });
+  }
+
+  getDetailProcedings(expId: string | number) {
+    this.loading = true;
+    if (expId) {
+      this.params.getValue()['filter.good.fileNumber'] = `$eq:${expId}`;
+    }
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters1,
+    };
+    this.detailProceedingsDevolutionService.getAll(params).subscribe({
+      next: response => {
+        //this.comerEvent = response.data;
+        this.data2.load(response.data);
+        this.totalItems1 = response.count || 0;
+        this.data2.refresh();
+        //this.params.value.page = 1;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data2.load([]);
+        this.data2.refresh();
+        this.totalItems1 = 0;
       },
     });
   }

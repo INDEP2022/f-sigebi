@@ -21,4 +21,9 @@ export class MsInvoiceService extends HttpService {
   getComerHeadboard(params?: string) {
     return this.get(`comer-headboard`, params);
   }
+
+  VALIDA_PAGOSREF_OBT_PARAMETROS(id: any) {
+    // VALIDA_PAGOSREF.OBT_PARAMETROS
+    return this.get(`ctrl-invoice/obt-parameters/${id}`);
+  }
 }
