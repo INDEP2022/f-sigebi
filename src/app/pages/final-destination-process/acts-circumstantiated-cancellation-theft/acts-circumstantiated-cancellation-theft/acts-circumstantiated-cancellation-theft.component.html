@@ -554,10 +554,20 @@
                   </div> -->
 
       <div class="m-3">
+        <button class="btn btn-primary active btn-sm">
+          Solicitud
+          <i class="bx bx-search bx-sm float-icon"></i>
+        </button>
+        <!--(click)="initSolicitud()" -->
+      </div>
+      <div class="m-3">
         <button class="btn btn-info active btn-sm" (click)="Scanner()">
           Escanear
           <i class="bx bx-file bx-sm float-icon"></i>
         </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary active btn-sm">Replicar Folio</button>
       </div>
       <div class="m-3">
         <button
@@ -569,10 +579,14 @@
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="openview()">
           Ver
           <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
+        <!--(click)="ViewActa()-->
       </div>
       <div class="m-3">
         <button
