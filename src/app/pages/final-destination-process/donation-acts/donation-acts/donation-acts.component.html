@@ -14,7 +14,9 @@
             <input
               type="text"
               class="form-control"
-              formControlName="no_expediente" />
+              formControlName="no_expediente"
+              [(ngModel)]="noExpe"
+              (input)="getAllBLKByFilters()" />
           </form-field>
 
           <form-field
@@ -24,37 +26,41 @@
             <input
               type="text"
               class="form-control"
-              formControlName="av_previa" />
+              formControlName="av_previa"
+              readonly />
           </form-field>
 
           <form-field
             [control]="form.get('ca_penal')"
             label="Causa Penal"
-            class="col-md-3">
+            class="col-md-2">
             <input
               type="text"
               class="form-control"
-              formControlName="ca_penal" />
+              formControlName="ca_penal"
+              readonly />
           </form-field>
 
           <form-field
             [control]="form.get('no_transferente')"
             class="col-md-2"
-            label="No. Expediente Transferente">
+            label="No. Exp. Transferente">
             <input
               type="text"
               class="form-control"
-              formControlName="no_transferente" />
+              formControlName="no_transferente"
+              readonly />
           </form-field>
 
           <form-field
             [control]="form.get('ti_expediente')"
-            class="col-md-1"
-            label="Tipo Expediente">
+            class="col-md-2"
+            label="Ti. Expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="ti_expediente" />
+              formControlName="ti_expediente"
+              readonly />
           </form-field>
         </div>
       </form>
@@ -69,7 +75,11 @@
             [control]="actForm.get('status')"
             label="Estado:"
             class="col-md-1">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              readonly />
           </form-field>
 
           <form-field
@@ -79,28 +89,34 @@
             <input
               type="text"
               class="form-control"
-              formControlName="actSelect" />
+              formControlName="actSelect"
+              readonly />
           </form-field>
 
-          <form-field
-            [control]="actForm.get('trans')"
-            label="Trans:"
-            class="col-md-1">
+          <!-- <form-field [control]="actForm.get('trans')" label="Trans:" class="col-md-1">
             <input type="text" class="form-control" formControlName="trans" />
-          </form-field>
+          </form-field> -->
 
           <form-field
             [control]="actForm.get('don')"
             label="Don."
-            class="col-md-1">
-            <input type="text" class="form-control" formControlName="don" />
+            class="col-md-2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="don"
+              readonly />
           </form-field>
 
           <form-field
             [control]="actForm.get('es_acta')"
             label="Estatus &Aacute;cta:"
             class="col-md-4">
-            <input type="text" class="form-control" formControlName="es_acta" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="es_acta"
+              readonly />
           </form-field>
         </div>
         <!--  -->
@@ -109,7 +125,11 @@
             [control]="actForm.get('cv_acta')"
             label="&Aacute;cta:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="cv_acta" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cv_acta"
+              readonly />
           </form-field>
 
           <form-field
@@ -119,7 +139,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="observations" />
+              formControlName="observations"
+              readonly />
           </form-field>
         </div>
         <!--  -->
@@ -131,7 +152,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="fec_elaboracion" />
+              formControlName="fec_elaboracion"
+              readonly />
           </form-field>
 
           <form-field
@@ -141,7 +163,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="nom_entrega" />
+              formControlName="nom_entrega"
+              readonly />
           </form-field>
         </div>
         <!--  -->
@@ -150,14 +173,22 @@
             [control]="actForm.get('fec_don')"
             label="Fec. Donaci&oacute;n:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="fec_don" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fec_don"
+              readonly />
           </form-field>
 
           <form-field
             [control]="actForm.get('nom_rec')"
             label="Nombre Recibe:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="nom_rec" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nom_rec"
+              readonly />
           </form-field>
         </div>
         <!--  -->
@@ -166,14 +197,22 @@
             [control]="actForm.get('dir')"
             label="Direcci&oacute;n:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="dir" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dir"
+              readonly />
           </form-field>
 
           <form-field
             [control]="actForm.get('audit')"
             label="Auditor:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="audit" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="audit"
+              readonly />
           </form-field>
         </div>
         <!--  -->
@@ -182,14 +221,22 @@
             [control]="actForm.get('fol_esc')"
             label="Folio de Escaneo:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="fol_esc" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fol_esc"
+              readonly />
           </form-field>
 
           <form-field
             [control]="actForm.get('tes_con')"
             label="Testigo de la Contralor&iacute;a:"
             class="col-md-6">
-            <input type="text" class="form-control" formControlName="tes_con" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tes_con"
+              readonly />
           </form-field>
         </div>
         <!--  -->
@@ -197,238 +244,7 @@
     </div>
 
     <div>
-      <form [formGroup]="actForm" class="form-materia">
-        <!-- <div class="row pt-3"> -->
-        <!-- <form-field [control]="actForm.get('actSelect')" label="&Aacute;cta" class="col-md-3">
-                      <input type="text" class="form-control" formControlName="actSelect" />
-                    </form-field> -->
-        <!-- 
-          <form-field [control]="actForm.get('actSelect')" label="&Aacute;cta" class="col-md-3">
-            <input type="text" class="form-control" formControlName="actSelect" />
-          </form-field>
-
-          <form-field [control]="actForm.get('status')" label="Estado" class="col-md-6">
-            <input type="text" class="form-control" formControlName="status" />
-          </form-field>
-        </div> -->
-        <!-- <div class="row pt-3 justify-content-start justify-content-sm-end">
-            <div class="col-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('statusAct')" label="Estatus &Aacute;cta">
-                  <input type="text" class="form-control" formControlName="statusAct" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-5">
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('preliminaryAscertainment')" label="Averiguaci&oacute;n Previa">
-                  <input type="text" class="form-control" formControlName="preliminaryAscertainment" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('causePenal')" label="Causa Penal">
-                  <input type="text" class="form-control" formControlName="causePenal" />
-                </form-field>
-              </div>
-            </div>
-          </div> -->
-
-        <!-- 
-          <div class="row mt-4">
-            <div class="col">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('trans')" label="Trans">
-                  <input type="text" class="form-control" formControlName="trans" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('don')" label="Don">
-                  <input type="text" class="form-control" formControlName="don" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('admin')" label="Admin">
-                  <input type="text" class="form-control" formControlName="admin" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('folio')" label="Folio">
-                  <input type="text" class="form-control" formControlName="folio" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-4">
-            <div class="col-md-2">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('year')" label="Año">
-                  <input type="text" class="form-control" [bsConfig]="bsConfigFromYear" #dp="bsDatepicker" bsDatepicker
-                    [(bsValue)]="bsValueFromYear" formControlName="year" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('month')" label="Mes">
-                  <input type="text" class="form-control" [bsConfig]="bsConfigFromMonth" #dp="bsDatepicker" bsDatepicker
-                    [(bsValue)]="bsValueFromMonth" formControlName="month" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('act')" label="&Aacute;cta">
-                  <input type="text" class="form-control" formControlName="act" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('address')" label="Direcci&oacute;n">
-                  <input type="text" class="form-control" formControlName="address" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('elabDate')" label="Fecha Elaboraci&oacute;n.">
-                  <input type="text" class="form-control" bsDatepicker formControlName="elabDate" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('donationDate')" label="Fecha Donaci&oacute;n">
-                  <input type="text" class="form-control" bsDatepicker formControlName="donationDate" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-4 align-items-end">
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('observations')" label="Observaciones">
-                  <textarea class="form-control" formControlName="observations">
-                  </textarea>
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-6 mb-2">
-              <div class="mb-1 pl-4 pr-4">
-                <form-field [control]="actForm.get('deliveryName')" label="Nombre Entrega">
-                  <input type="text" class="form-control" formControlName="deliveryName" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-4 align-items-end">
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('receiverName')" label="Nombre Recibe">
-                  <input type="text" class="form-control" formControlName="receiverName" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-6 mb-2">
-              <div class="mb-1 pl-4 pr-4">
-                <form-field [control]="actForm.get('auditor')" label="auditor">
-                  <input type="text" class="form-control" formControlName="auditor" />
-                </form-field>
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-4 align-items-end">
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('comptrollerWitness')" label="Testigo Contr">
-                  <input type="text" class="form-control" formControlName="comptrollerWitness" />
-                </form-field>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('folioScan')" label="Folio Esc">
-                  <input type="text" class="form-control" formControlName="folioScan" />
-                </form-field>
-              </div>
-            </div>
-          </div> -->
-      </form>
-
-      <!-- <div class="row mt-5">
-        <app-divider class=""></app-divider>
-      </div>
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select [(settings)]="settings" class="row justify-content-end">
-        </app-columns-select>
-      </div>
-      <ng-scrollbar style="min-height: 300px; border: none" class="mt-3" track="all">
-        <div class="row mt-3 pt-2">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="datas">
-          </ng2-smart-table>
-        </div>
-      </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
-      <div class="row">
-        <div class="d-flex align-items-center">
-          <div class="col-6 align-items-center">
-            <div class="mt-5">
-               <form class="form-material form-horizontal" [formGroup]="formTable1" (ngSubmit)="onSubmit()">
-                <div class="row mt-5 justify-content-start justify-content-sm-end">
-                  <div class="mb-3 pl-4 pr-4">
-                    <form-field>
-                      <input type="text" class="form-control" formControlName="detail" readonly />
-                    </form-field>
-                  </div>
-                </div>
-              </form> 
-            </div>
-          </div>
-          <div class="col-6 align-items-center">
-            <div class="row">
-              <div class="col-6">
-                <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
-              </div>
-              <div class="col-6">
-                <span class="text-danger"><i class="fa fa-square"></i> No disponibles</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row mt-5">
-        <app-divider></app-divider>
-      </div>
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select (settingsChange)="settingsChange($event, 2)" [settings]="settings2">
-        </app-columns-select>
-      </div>
-      <ng-scrollbar style="min-height: 300px; border: none" class="mt-3" track="all">
-        <div class="row mt-3">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="data2"></ng2-smart-table>
-        </div>
-      </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination> -->
+      <form [formGroup]="actForm" class="form-materia"></form>
 
       <div class="d-flex justify-content-end mt-5">
         <app-columns-select
@@ -485,7 +301,7 @@
             [source]="data2"></ng2-smart-table>
         </div>
       </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
       <div class="row">
         <div class="d-flex align-items-center">

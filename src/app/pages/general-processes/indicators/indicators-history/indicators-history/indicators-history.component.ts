@@ -245,7 +245,7 @@ export class IndicatorsHistoryComponent extends BasePage implements OnInit {
       next: response => {
         this.columns = response.data;
         this.data.load(this.columns);
-        this.totalItems = 0;
+        this.totalItems = response.count | 0;
         this.data.refresh();
         this.loading = false;
       },

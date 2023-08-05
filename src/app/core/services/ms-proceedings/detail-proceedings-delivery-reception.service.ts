@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proceedings-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -19,6 +20,11 @@ export class DetailProceeDelRecService extends HttpService {
 
   getGoodsByProceedings(id: string | number, params?: ListParams) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=${id}`;
+    return this.get(route, params);
+  }
+
+  getGoodsByProceeding(params: HttpParams) {
+    const route = `proceedings-delivery-reception`;
     return this.get(route, params);
   }
 
