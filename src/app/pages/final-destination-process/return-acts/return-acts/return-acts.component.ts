@@ -1200,6 +1200,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
           witness: resp.data[0].witnessTwo,
         };
         this.formadd.patchValue(formParams);
+        this.actaopen = true;
       },
       error: err => {
         this.actaopen = false;
@@ -1258,7 +1259,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   }
 
   openview() {
-    let folio = this.formadd.get('folio').value;
+    let folio = this.formadd.get('scanningFoli').value;
     this.getDocumentsByFolio(Number(folio), true);
   }
 
