@@ -349,7 +349,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     } else {
       this.loadingBtn = false;
       this.getPayments();
-      this.alert('success', 'Proceso Ejecutado Correctamente', '');
+      this.alert('success', 'Proceso Terminado Correctamente', '');
     }
     // else if (a && b) {
     //   this.alert('success', 'Procesos Ejecutados Correctamente', '');
