@@ -6,7 +6,7 @@ export const COLUMNS = {
     sort: false,
   },
   changeDescription: {
-    title: 'Descripción de la clasificación',
+    title: 'Descripción de la Clasificación',
     sort: false,
   },
   status: {

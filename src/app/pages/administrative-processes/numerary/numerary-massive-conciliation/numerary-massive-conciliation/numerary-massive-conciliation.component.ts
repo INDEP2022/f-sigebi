@@ -734,7 +734,7 @@ export class NumeraryMassiveConciliationComponent
         for (let item of goodCheck) {
           const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
           console.log(date);
-  
+
           if (!isNaN(Date.parse(item.RSPTAQUERY.val5))) {
             if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
               const model: ISearchNumerary = {
@@ -744,7 +744,10 @@ export class NumeraryMassiveConciliationComponent
                 val1: item.RSPTAQUERY.val1,
                 val2: parseInt(item.RSPTAQUERY.val2),
                 val4: item.RSPTAQUERY.val4,
-                val5: format(this.correctDate(item.RSPTAQUERY.val5), 'yyyy-MM-dd'),
+                val5: format(
+                  this.correctDate(item.RSPTAQUERY.val5),
+                  'yyyy-MM-dd'
+                ),
                 val6: item.RSPTAQUERY.val6,
                 fecTesofe: item.BFEC_TESOFE,
               };
@@ -772,12 +775,12 @@ export class NumeraryMassiveConciliationComponent
               return;
             }
           } else {
-            console.log()
+            console.log();
             const date = this.validateDateddmmyyyy(item.RSPTAQUERY.val5);
             if (date.rpta != 'No Tiene Formato dd-mm-yyyy') {
               if (!isNaN(parseInt(item.RSPTAQUERY.val2))) {
-                console.log(date.rpta)
-                console.log(new Date(date.rpta))
+                console.log(date.rpta);
+                console.log(new Date(date.rpta));
                 const model: ISearchNumerary = {
                   conciled: 'S',
                   goodNumber: item.RSPTAQUERY.no_bien,
@@ -787,8 +790,7 @@ export class NumeraryMassiveConciliationComponent
                   val4: item.RSPTAQUERY.val4,
                   val5: format(this.correctDate(date.rpta), 'yyyy-MM-dd'),
                   val6: item.RSPTAQUERY.val6,
-                fecTesofe: item.BFEC_TESOFE,
-
+                  fecTesofe: item.BFEC_TESOFE,
                 };
                 console.log(model);
                 this.numeraryService.pupSearchNumerary(model).subscribe(
@@ -802,7 +804,7 @@ export class NumeraryMassiveConciliationComponent
                       'La Propiedad "fecTesofe" Debe Ser una Fecha'
                     ) {
                       this.alert('warning', 'No Tiene Fecha Tesofe', '');
-                      return
+                      return;
                     }
                   }
                 );
@@ -826,12 +828,11 @@ export class NumeraryMassiveConciliationComponent
         }
       } catch (error) {
         console.log(error);
-      }finally{
+      } finally {
         this.alert('success', 'Conciliación Realizada', '');
         this.loading = false;
-        this.searchFilterGood()
+        this.searchFilterGood();
       }
-      
     }
   }
 

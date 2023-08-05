@@ -21,6 +21,10 @@ export class LotService extends HttpService {
     return this.get('eat-lots', params);
   }
 
+  getAllComerLot(params?: ListParams) {
+    return this.get('eat-lots', params);
+  }
+
   getLotbyEvent(id: string | number, params?: ListParams) {
     const route = `${LotEndpoints.ComerLot}?filter.idEvent=${id}`;
     return this.get(route, params);
@@ -162,19 +166,17 @@ export class LotService extends HttpService {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 
-  getSumLotComerPayRef(body: {dateComer: string, clientId: string, eventId: string}){
-    return this.post('apps/get-lot-comer-pay-ref-count', body)
+  getSumLotComerPayRef(body: {
+    dateComer: string;
+    clientId: string;
+    eventId: string;
+  }) {
+    return this.post('apps/get-lot-comer-pay-ref-count', body);
   }
 
-  getSumAllComerPayRef(body: {clientId: string, eventId: string}){
-    return this.post('apps/get-lot-comer-pay-ref-countAll', body)
+  getSumAllComerPayRef(body: { clientId: string; eventId: string }) {
+    return this.post('apps/get-lot-comer-pay-ref-countAll', body);
   }
-
-  btnEjecutar(body: any) {
-    return this.post(LotEndpoints.pupEntar, body);
-  }
-
-  
 
   applyBaseCost(body: {
     cotobase: string | number;
@@ -200,5 +202,27 @@ export class LotService extends HttpService {
       'apps/form-query2',
       body
     );
+  }
+
+  // ------------------------
+  PUP_ENTRA(body: any) {
+    // PUP_ENTRA
+    return this.post(LotEndpoints.PupEntra, body);
+  }
+
+  CARGA_PAGOSREFGENS(evento: any) {
+    return this.post(`${LotEndpoints.CargaPagosRefGens}/${evento}`, {});
+  }
+
+  CARGA_COMER_DETALLES(evento: any) {
+    return this.post(`${LotEndpoints.CargaComerDetalles}/${evento}`, {});
+  }
+
+  VALIDA_MANDATO(evento: any) {
+    return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
+  }
+
+  VALIDA_ESTATUS(body: any) {
+    return this.post(`${LotEndpoints.ValidateStatus}`, body);
   }
 }

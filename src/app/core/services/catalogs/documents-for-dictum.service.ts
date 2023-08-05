@@ -60,4 +60,8 @@ export class DocumentsForDictumService
   getAplication2(data: any) {
     return this.post(ENDPOINT_LINKS.DocumentAplication2, data);
   }
+
+  postDocuemntFolio(params: any) {
+    return this.post(ENDPOINT_LINKS.insertDocumentFolio, params);
+  }
 }

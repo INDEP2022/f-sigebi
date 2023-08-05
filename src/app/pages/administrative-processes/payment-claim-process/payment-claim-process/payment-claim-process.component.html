@@ -31,7 +31,7 @@
           <div class="row pt-3 pb-3">
             <div class="col-6">
               <span style="color: #1e7e34; font-weight: 500"
-                >Número de registros cargados &nbsp;&nbsp;
+                >Número de Registros Cargados &nbsp;&nbsp;
                 <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
                 <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
                   dataA
@@ -40,7 +40,7 @@
             </div>
             <div class="col-6">
               <span style="color: crimson; font-weight: 500"
-                >Número de registros NO cargados &nbsp;&nbsp;
+                >Número de Registros NO Cargados &nbsp;&nbsp;
                 <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
                 <strong *ngIf="dataD != 0" style="color: crimson">{{
                   dataD
@@ -54,10 +54,11 @@
             <div class="m-3">
               <button
                 [disabled]="!disabledImport"
-                class="btn btn-success btn-sm ml-2"
+                class="btn btn-success btn-sm ml-2 active"
                 type="button"
                 (click)="file.click()">
-                Importar archivo Excel / CSV
+                Importar Archivo Excel / CSV
+                <i class="bi bi-file-earmark-excel-fill"></i>
               </button>
               <input
                 type="file"
@@ -71,13 +72,14 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-end">
-            <div class="mt-3 mb-3 mr-3">
+            <div class="mt-3 mb-3 mr-4">
               <button
                 [disabled]="!document"
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="changeStatusGood()">
                 Actualizar Estatus
+                <i class="fas fa-sync-alt"> </i>
               </button>
             </div>
           </div>

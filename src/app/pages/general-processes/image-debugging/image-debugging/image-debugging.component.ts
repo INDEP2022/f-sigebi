@@ -581,7 +581,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Depuración de fotografías del bien ' + this.numberGood.value,
-            'Actualizadas correctamente'
+            'Actualizadas Correctamente'
           );
         },
       });
