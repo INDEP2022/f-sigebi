@@ -39,14 +39,14 @@ export class HistoryCustomersPenaltiesComponent
     return this._penalties;
   }
   set penalties(value: ICustomersPenalties) {
-    if (value) {
+    3;
+    this.getData();
+    /*if (value) {
       this._penalties = value;
       this.getData(value.clientId.id);
-      /*this.params
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.getData(value.clientId.id));*/
-      //this.getData(value.clientId.id);
-    }
+    }else{
+      this.getData();
+    }*/
   }
   downloading: boolean = false;
   clientId: number;
@@ -195,10 +195,10 @@ export class HistoryCustomersPenaltiesComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    console.log(id);
+    /*console.log(id);
     console.log(this.penalties.clientId.id);
     this.clientId = this.penalties.clientId.id;
-    this.loading = true;
+    this.loading = true;*/
     //this.data2 = new LocalDataSource();
     this.clientPenaltyService.getAllHist(params).subscribe({
       next: response => {
