@@ -107,7 +107,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   showScannerFoil() {
-    if (!this.dataRecepcion && !this.dataRecepcion) {
+    if (!this.dataRecepcion) {
       return;
     }
     if (this.formScan.get('scanningFoli').value) {
@@ -123,7 +123,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   openScannerPage() {
-    if (!this.dataRecepcion || !this.dataRecepcion) {
+    if (!this.dataRecepcion) {
       return;
     }
     if (

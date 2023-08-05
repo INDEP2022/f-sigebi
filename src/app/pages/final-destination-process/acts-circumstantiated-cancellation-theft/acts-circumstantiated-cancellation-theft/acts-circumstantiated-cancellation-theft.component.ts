@@ -10,6 +10,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -22,10 +23,12 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
+import { IDocuments } from 'src/app/core/models/ms-documents/documents';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
@@ -40,10 +43,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import * as XLSX from 'xlsx';
-import { COPY } from '../acts-cir-columns';
+import { COPY, RELATED_FOLIO_COLUMNS } from '../acts-cir-columns';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
+import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
@@ -171,6 +175,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private detailProceeDelRecService: DetailProceeDelRecService,
     private expedientService: ExpedientService,
     private goodService: GoodService,
+    private documentsService: DocumentsService,
     private screenStatusService: ScreenStatusService,
     private excelService: ExcelService,
     private procedureManagementService: ProcedureManagementService,
@@ -368,7 +373,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   ngOnInit(): void {
-    this.showScanForm = true;
+    // this.showScanForm = true;
+    this.prepareScan();
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLogged = token;
@@ -450,6 +456,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.formTag = this.fb.group({
       tag: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+  }
+  prepareScan() {
     this.formScan = this.fb.group({
       scanningFoli: [
         { value: '', disabled: false },
@@ -1184,7 +1192,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   sendOffice() {}
 
   Scanner() {
-    if (this.actaRecepttionForm.get('consec').value) {
+    if (this.formScan.get('scanningFoli').value) {
       this.alertQuestion(
         'info',
         'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
@@ -1449,6 +1457,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
               };
               this.modalService.show(PreviewDocumentsComponent, config);
               this.loadingDoc = false;
+
               clearTimeout(msg);
             })
           )
@@ -1462,36 +1471,16 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
     }
   }
-  loadImages(folio: string | number) {
-    this.fileBrowserService.getFilenamesFromFolio(folio).subscribe(
-      files => {
-        this.files = files;
-      },
-      error => {
-        if (error.status >= 500) {
-          // Handle error
-        } else {
-          this.files = [];
-        }
-      }
-    );
-  }
+
   getFileNamesByFolio(folio: number | string) {
-    this.fileBrowserService.getFilenamesFromFolio(folio).subscribe(
-      files => {
+    this.fileBrowserService.getFilenamesFromFolio(folio).subscribe({
+      next: (files: any) => {
         this.files = files;
       },
-      error => {
-        if (error.status >= 500) {
-          // Handle error
-        } else {
-          this.files = [];
-        }
+      error: () => {
+        this.files = [];
       },
-      () => {
-        // Observable completed
-      }
-    );
+    });
   }
   exportToExcel() {
     this.loadingExcel = true;
@@ -1507,37 +1496,134 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.excelService.export(this.dataRecepcion, { filename });
   }
 
-  // prepareScan() {
-  //   this.formScan.fp({
+  viewPictures(event: any) {
+    console.log(event);
+    if (!this.wheelNumber) {
+      this.onLoadToast('error', 'Error', 'ésta acta no tiene volante asignado');
+      return;
+    }
+    this.getDocumentsByFlyer(this.wheelNumber);
+  }
 
-  //   })
-  // }
+  getDocumentsByFlyer(flyerNum: string | number) {
+    const title = 'Folios relacionados al Volante';
+    const modalRef = this.openDocumentsModal(flyerNum, title);
+    modalRef.content.selected
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(document => this.getPicturesFromFolio(document));
+  }
+  openDocumentsModal(flyerNum: string | number, title: string) {
+    const params = new FilterParams();
+    params.addFilter('flyerNumber', flyerNum);
+    const $params = new BehaviorSubject(params);
+    const columns = RELATED_FOLIO_COLUMNS;
+    // const body = {
+    //   proceedingsNum: this.dictationData.expedientNumber,
+    //   flierNum: this.dictationData.wheelNumber,
+    // };
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        columns,
+        title,
+        $params,
+        proceedingsNumber: this.fileNumber,
+        wheelNumber: this.wheelNumber,
+        showConfirmButton: true,
+      },
+    };
+    return this.modalService.show(
+      ModalScanningFoilComponent<IDocuments>,
+      config
+    );
+  }
+  getPicturesFromFolio(document: IDocuments) {
+    let folio = document.id;
+    // if (document.id != this.dictationData.folioUniversal) {
+    // if (document.id) {
+    //   folio = this.dictationData.folioUniversal;
+    // }
+    if (document.associateUniversalFolio) {
+      folio = document.associateUniversalFolio;
+    }
+    if (!folio && this.actasDefault.universalFolio) {
+      folio = this.actasDefault.universalFolio;
+    }
+    console.log('PICTURES ', folio, document);
+    const config = {
+      ...MODAL_CONFIG,
+      ignoreBackdropClick: false,
+      initialState: {
+        folio,
+      },
+    };
+    this.modalService.show(DocumentsViewerByFolioComponent, config);
+  }
+
+  uploadPdfEmitter(
+    blobFile: Blob,
+    nameAndExtension: string,
+    folioUniversal: string | number
+  ) {
+    console.log(
+      'DOCUMENT PDF UPLOAD ',
+      blobFile,
+      nameAndExtension,
+      folioUniversal
+    );
+    // UPLOAD PDF TO DOCUMENTS
+    // this._blockErrors.blockAllErrors = true;
+    // const formData = new FormData();
+    // formData.append('file', blobFile, nameAndExtension);
+    let filePdf = new File([blobFile], nameAndExtension);
+    this.fileBrowserService
+      .uploadFileByFolio(folioUniversal, filePdf)
+      .subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: error => {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrió un error al subir el reporte'
+          );
+        },
+        complete: async () => {
+          console.log('COMPLETADO SUBIR PDF');
+          // this.updateSheets();
+          this.files = [];
+          this.loadImages(this.actasDefault.universalFolio);
+        },
+      });
+  }
+
+  updateSheets() {
+    const token = this.authService.decodeToken();
+    let scanStatus = null;
+    const sheets = `${this.files.length}`;
+    if (this.files.length > 0) {
+      scanStatus = 'ESCANEADO';
+    }
+    const userRegistersScan = token?.preferred_username?.toUpperCase();
+    const dateRegistrationScan = new Date();
+    this.documentsService
+      .update(this.actasDefault.universalFolio, {
+        sheets,
+        scanStatus,
+        userRegistersScan,
+        dateRegistrationScan,
+      })
+      .subscribe(() => {
+        // const params = this.documentsParams.getValue();
+        // this.documentsParams.next(params);
+      });
+  }
+  loadImages(folio: string | number) {
+    this.getFileNamesByFolio(folio);
+    this.updateSheets();
+  }
 }
-// confirm() {
-//   this.edit ? this.update() : this.create();
-// }
-
-// confirm() {
-//   this.edit ? this.update() : this.create();
-// }
-
-const EXAMPLE_DATA1 = [
-  {
-    goodNumb: '3859',
-    description: 'Inmueble ubicado...',
-    quantity: 1,
-    act: '...',
-  },
-];
-
-const EXAMPLE_DATA2 = [
-  {
-    goodNumb: '9877',
-    clasificationNumb: '7874',
-    description: '...',
-    quantity: 4,
-  },
-];
 
 export interface IParamsActaC {
   origin: string;
