@@ -22,6 +22,12 @@
             }
           }
         }
+        tr:last-child {
+          app-checkbox-element,
+          ng2-st-tbody-edit-delete {
+            display: none;
+          }
+        }
       }
     }
   }
@@ -31,11 +37,6 @@
   ::ng-deep {
     .ng2-smart-filters {
       display: none;
-    }
-    tr:last-child {
-      ng2-st-tbody-edit-delete {
-        display: none;
-      }
     }
   }
 }
