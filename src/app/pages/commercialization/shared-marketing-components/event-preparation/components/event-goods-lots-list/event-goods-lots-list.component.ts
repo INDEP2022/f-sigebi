@@ -13,6 +13,9 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  firstValueFrom,
+  map,
+  of,
   takeUntil,
   tap,
   throwError,
@@ -23,9 +26,13 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import Swal from 'sweetalert2';
 import { GroundsStatusModalComponent } from '../../grounds-status-modal/grounds-status-modal.component';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
@@ -45,6 +52,7 @@ export class EventGoodsLotsListComponent
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Input() lot: IComerLot;
+  @Input() loggedUser: TokenInfoModel;
   totalItems = 0;
   lotGoods = new LocalDataSource();
   get controls() {
@@ -52,7 +60,9 @@ export class EventGoodsLotsListComponent
   }
   constructor(
     private comerGoodsXLotService: ComerGoodsXLotService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private lotService: LotService,
+    private eventAppService: EventAppService
   ) {
     super();
     this.settings = {
@@ -169,13 +179,13 @@ export class EventGoodsLotsListComponent
     let val = 0;
     const { eventTpId } = this.controls;
     if (eventTpId.value == 10) {
-      val = this.validateStatus();
+      val = await this.validateStatus();
     }
     if (val != 0) {
       this.alert(
         'error',
         'Error',
-        'No es posible enviar el bien , verifique el estatus del evento'
+        'No es posible enviar el bien, verifique el estatus del evento'
       );
       return;
     }
@@ -196,9 +206,21 @@ export class EventGoodsLotsListComponent
     });
   }
 
-  validateStatus() {
-    // todo: implementar KEY-DELREC - PRIMER CONSULTA
-    return 1;
+  async validateStatus() {
+    this.loader.load = true;
+    const { id } = this.controls;
+    return await firstValueFrom(
+      this.lotService.validateStatusCPV(id.value).pipe(
+        catchError(error => {
+          this.loader.load = false;
+          return of({ data: [{ val: 0 }] });
+        }),
+        tap(res => {
+          this.loader.load = false;
+        }),
+        map(res => Number(res.data[0]?.val))
+      )
+    );
   }
 
   async confirmRemoveGood(good: IComerGoodXLot) {
@@ -208,14 +230,13 @@ export class EventGoodsLotsListComponent
       ''
     );
     const { isConfirmed } = confirmQuestion;
-    if (isConfirmed) {
-      this.removeGoods(good);
+    if (isConfirmed && this.canRemoveGood(good)) {
+      this.removeGoods(good).subscribe();
     }
-    this.afterRemoveGoods();
   }
 
   /**BORRADO_DE_BIENES */
-  removeGoods(good: IComerGoodXLot) {
+  canRemoveGood(good: IComerGoodXLot) {
     const { statusVtaId, eventTpId } = this.controls;
     const VALID_STATUSES = ['SOLV', 'VALV', 'VEN', 'CONC', 'CNE', 'DES'];
     if (VALID_STATUSES.includes(statusVtaId.value)) {
@@ -224,7 +245,7 @@ export class EventGoodsLotsListComponent
         'Error',
         'El bien no se puede eliminar porque este evento ya no esta en preparación'
       );
-      return;
+      return false;
     }
     const isAssociated =
       [6, 10].includes(Number(eventTpId.value)) &&
@@ -236,13 +257,71 @@ export class EventGoodsLotsListComponent
         'Error',
         'El bien no se puede eliminar porque esta asociado a otro evento'
       );
-      return;
+      return false;
     }
-    // TODO: BORRADO_DE_BIENES && ACTU_MANDATO
-    this.afterRemoveGoods();
+    return true;
+  }
+  /**BORRADO_DE_BIENES */
+  removeGoods(good: IComerGoodXLot) {
+    const body = this.transformGood(good);
+    this.loading = true;
+    return this.eventAppService.removeGoods(body).pipe(
+      catchError(error => {
+        this.loading = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(res => {
+        this.loading = false;
+        this.updateMand().subscribe();
+        this.afterRemoveGoods(good).subscribe();
+      })
+    );
   }
 
-  afterRemoveGoods() {
-    // TODO: IMPLEMENTAR KEY-DELREC SEGUNDA CONSULTA
+  /**ACTU_MANDATO */
+  updateMand() {
+    this.loading = true;
+    return this.lotService
+      .updateMandate({
+        pGood: 0,
+        pLot: 1,
+        lotId: this.lot.id,
+      })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(res => {})
+      );
+  }
+
+  transformGood(good: IComerGoodXLot) {
+    const { remittanceEventId, remittanceLotId } = good;
+    const { id, eventTpId, statusVtaId } = this.controls;
+    return {
+      tpeventId: eventTpId.value,
+      remittanceEventId: remittanceEventId,
+      statusvtaId: statusVtaId.value,
+      eventEeatId: good.commercialEventId,
+      statusBefore: good.previousStatus,
+      goodNo: good.goodNumber,
+      toolbarUser: this.loggedUser.preferred_username,
+      eventId: id.value,
+      statusEat: good.commercialStatus,
+      remittanceLotId: remittanceLotId,
+      remittanceGoodxGoodId: good.idGoodInLot,
+      lotId: this.lot.id,
+    };
+  }
+
+  afterRemoveGoods(good: IComerGoodXLot) {
+    const { id } = this.controls;
+    const body = {
+      goodId: good.goodNumber,
+      lotId: this.lot.id,
+      eventId: id.value,
+    };
+    return this.lotService.afterRemoveGoods(body);
   }
 }

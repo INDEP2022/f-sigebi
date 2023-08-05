@@ -39,7 +39,7 @@ export const EVENT_LOT_LIST_COLUMNS = {
     title: 'Transferente',
     sort: false,
     valuePrepareFunction: (value: any) =>
-      `${value?.cvman} - ${value?.nameTransferent}`,
+      value?.cvman ? `${value?.cvman} - ${value?.nameTransferent}` : null,
   },
   mandato: {
     title: 'Mandato',
