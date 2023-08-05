@@ -3,6 +3,7 @@ import { InterfaceSirsaeEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISirsaeStateAccountDetail } from '../../models/ms-interfacesirsae/interfacesirsae';
+import { ISendSirsae } from './interfacesirsae-model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,5 +31,9 @@ export class InterfacesirsaeService extends HttpService {
 
   updateInvitations(body: { sRunCommand: string; cveCertificate: string }) {
     return this.post('update-invitations/program-cs-main', body);
+  }
+
+  sendSirsae(body: ISendSirsae) {
+    return this.post('sirsae/send-sirsae', body);
   }
 }

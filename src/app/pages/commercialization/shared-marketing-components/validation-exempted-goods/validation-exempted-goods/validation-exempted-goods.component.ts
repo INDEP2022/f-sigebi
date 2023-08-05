@@ -24,7 +24,7 @@ export class ValidationExemptedGoodsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   goods: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
-  proccessList: IGood;
+  proccessList?: IGood;
   goodName: string;
 
   constructor(private goodService: GoodService) {
@@ -63,6 +63,7 @@ export class ValidationExemptedGoodsComponent
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
+              this.proccessList = null;
             }
           });
           this.params = this.pageFilter(this.params);
@@ -90,6 +91,7 @@ export class ValidationExemptedGoodsComponent
         this.goods.refresh();
         this.totalItems = response.count;
         this.loading = false;
+        this.proccessList = null;
       },
       error: error => (this.loading = false),
     });

@@ -141,7 +141,8 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
   totalItemsTransportableGuard: number = 0;
   totalItemsTransportableWarehouse: number = 0;
   paramsShowWarehouse = new BehaviorSubject<ListParams>(new ListParams());
-
+  endDateEmail: string = '';
+  startDateEmail: string = '';
   // goodId: any;
   // uniqueKey: any;
   // goodDescription: any;
@@ -209,6 +210,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.programmingId)
       .subscribe(data => {
+        this.startDateEmail = data.startDate;
+        this.endDateEmail = data.endDate;
+
         data.startDate = moment(data.startDate).format('DD/MM/YYYY HH:mm:ss');
         data.endDate = moment(data.endDate).format('DD/MM/YYYY HH:mm:ss');
         this.programming = data;
@@ -821,22 +825,18 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     });
 
     const showTransportableData = await this.showTransportableEmail();
+
     if (showTransportableData) {
       const showGuardData = await this.showGuardEmail();
+
       if (showGuardData) {
         const showGuardData = await this.showWarehouseEmail();
 
         if (showGuardData) {
-          const showBase64: any = await this.showBase64();
-
           const dataEmail = {
             folio: this.programming.folio,
-            startDate: moment(this.programming.startDate).format(
-              'YYYY-MM-DD HH:mm:ss'
-            ),
-            endDate: moment(this.programming.endDate).format(
-              'YYYY-MM-DD HH:mm:ss'
-            ),
+            startDate: this.startDateEmail,
+            endDate: this.endDateEmail,
             city: this.programming.city,
             address: this.programming.address,
             usersProg: this.infoUsers,
@@ -845,7 +845,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             goodsWarehouse: this.warehouseGoods,
             emailSend: this.emails,
             nameAtt: this.programming.folio,
-            fileB64: showBase64,
+            fileB64: this.programming.contentId,
           };
 
           this.emailService.createEmailProgramming(dataEmail).subscribe({
@@ -939,17 +939,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     ); */
   }
 
-  showBase64() {
-    return new Promise((resolve, reject) => {
-      this.wcontentService.obtainFile(this.programming.contentId).subscribe({
-        next: response => {
-          resolve(response);
-        },
-        error: error => {},
-      });
-    });
-  }
-
   showTransportableEmail() {
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -983,7 +972,9 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             //this.goodService.getAll;
           });
         },
-        error: error => {},
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }

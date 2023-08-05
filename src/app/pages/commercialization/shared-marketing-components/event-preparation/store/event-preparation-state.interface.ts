@@ -5,4 +5,5 @@ export interface IEventPreparationState {
   eventForm: FormGroup<ComerEventForm>;
   lastLot: number;
   lastPublicLot: number;
+  executionType?: 'normal' | 'base';
 }

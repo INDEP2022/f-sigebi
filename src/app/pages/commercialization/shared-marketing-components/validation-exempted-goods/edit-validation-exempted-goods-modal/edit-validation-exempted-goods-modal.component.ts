@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -40,7 +40,7 @@ export class EditValidationExemptedGoodsModalComponent
     this.goodForm = this.fb.group({
       goodNumber: [null, []],
       process: [null, []],
-      registryNumber: [null, []],
+      registryNumber: [null, [Validators.required]],
     });
     if (this.goodsTransAva != null) {
       this.edit = true;
@@ -57,17 +57,26 @@ export class EditValidationExemptedGoodsModalComponent
   }
 
   update() {
-    this.loading = true;
-    this.goodTransAvaService.update(this.goodForm.value).subscribe({
-      next: data => {
-        this.handleSuccess();
-        this.modalRef.hide();
-      },
-      error: error => {
-        this.loading = false;
-        this.alert('warning', `No es Posible Actualizar el Registro`, '');
-      },
-    });
+    if (this.goodForm.valid) {
+      this.loading = true;
+      console.log(this.goodForm.value);
+      this.goodTransAvaService.update(this.goodForm.value).subscribe({
+        next: data => {
+          this.handleSuccess();
+          this.modalRef.hide();
+        },
+        error: error => {
+          this.loading = false;
+          this.alert('warning', `No es Posible Actualizar el Registro`, '');
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'El Formulario no es Válido. Revise los Campos Requeridos',
+        ''
+      );
+    }
   }
 
   create() {
@@ -86,7 +95,7 @@ export class EditValidationExemptedGoodsModalComponent
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert('success', `${message} Correctamente`, ``);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

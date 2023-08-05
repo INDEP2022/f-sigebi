@@ -94,34 +94,28 @@ export class ValidationExemptedListComponent
 
   getData() {
     this.data = new LocalDataSource();
+    this.totalItems = 0;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    if (this.proccessList) {
-      if (!this.proccessList.id) {
-        this.alert('warning', 'Bien no Tiene Bienes Excentos', '');
-        return;
-      }
+    if (this.proccessList && this.proccessList.id) {
       this.validationExempteId = this.proccessList.id;
       this.loading = true;
       this.goodTransAvaService
         .getById(this.validationExempteId, params)
         .subscribe({
           next: response => {
-            this.validationExempte = response.data;
-            this.data.load(response.data);
+            this.data.load([response]);
             this.data.refresh();
-            this.totalItems = response.data.length;
+            this.totalItems = 1;
             this.loading = false;
           },
           error: error => {
             this.loading = false;
-            this.alert(
-              'warning',
-              'Cliente no Tiene un Histórico de Penalización',
-              ''
-            );
+            this.data = new LocalDataSource();
+            this.totalItems = 0;
+            this.alert('warning', 'Bien no Tiene Bienes Exentos', '');
           },
         });
     }

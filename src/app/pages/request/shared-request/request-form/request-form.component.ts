@@ -458,7 +458,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
               'Solicitud Creada',
               'success'
             );
-            debugger;
+            //debugger;
             //crea tareas de prueba se puede eliminar
             this.turnRequestTest();
           }
@@ -483,7 +483,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
               if (requestResult) {
                 const actualUser: any = this.authService.decodeToken();
                 let body: any = {};
-                // debugger;
                 body['idTask'] = this.taskId;
                 body['userProcess'] = actualUser.username;
 
@@ -625,7 +624,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   createOnlyTask(task: any) {
-    debugger;
+    //debugger;
     return new Promise((resolve, reject) => {
       this.taskService.createTask(task).subscribe({
         next: resp => {

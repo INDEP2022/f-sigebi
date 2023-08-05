@@ -25,6 +25,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         position: 'right',

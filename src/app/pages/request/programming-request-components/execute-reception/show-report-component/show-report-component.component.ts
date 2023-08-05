@@ -107,6 +107,10 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     } else {
       this.title = 'Imprimir Reporte';
     }
+
+    if (this.typeFirm == 'autografa' || this.typeFirm == 'autograf') {
+      this.btnTitle = 'Adjuntar Documento';
+    }
     this.formLoading = true;
     this.showReportByTypeDoc();
     this.getReceipt();
@@ -155,6 +159,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.formLoading = false;
       } else {
         let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}`;
+        console.log('linkDoc', linkDoc);
         this.src = linkDoc;
         this.formLoading = false;
       }

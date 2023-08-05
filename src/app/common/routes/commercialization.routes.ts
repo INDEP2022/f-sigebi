@@ -8,7 +8,7 @@ export const COMMERCIALIZATION_ROUTES = [
         icon: 'bx-folder',
         subItems: [
           {
-            label: 'Preparación del evento',
+            label: 'Preparación de Eventos Muebles',
             link: '/pages/commercialization/event-preparation',
           },
           {
@@ -49,7 +49,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Captura de Gastos',
-            link: '/pages/commercialization/expense-capture',
+            link: '/pages/commercialization/expense-capture/M',
           },
           {
             label: 'Terceros comercializadores',
@@ -77,7 +77,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
+            link: '/pages/commercialization/expense-concepts/M',
           },
           {
             label: 'Delegar Permisos a Eventos',
@@ -138,6 +138,10 @@ export const COMMERCIALIZATION_ROUTES = [
         icon: 'home-outline',
         subItems: [
           {
+            label: 'Preparación de Eventos Inmuebles',
+            link: '/pages/commercialization/event-preparation-i',
+          },
+          {
             label: 'Bienes exentos de validación',
             link: '/pages/commercialization/validation-exempted-goods',
           },
@@ -175,7 +179,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Captura de Gastos',
-            link: '/pages/commercialization/expense-capture',
+            link: '/pages/commercialization/expense-capture/I',
           },
           {
             label: 'Consulta de bienes',
@@ -183,7 +187,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
+            link: '/pages/commercialization/expense-concepts/I',
           },
           {
             label: 'Delegar Permisos a Eventos',

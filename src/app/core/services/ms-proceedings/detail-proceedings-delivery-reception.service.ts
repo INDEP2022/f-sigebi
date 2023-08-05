@@ -5,6 +5,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDeleteDetailProceeding,
+  IDetailProceedings,
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
@@ -20,6 +21,11 @@ export class DetailProceeDelRecService extends HttpService {
   getGoodsByProceedings(id: string | number, params?: ListParams) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=${id}`;
     return this.get(route, params);
+  }
+
+  updateGoodsByProceedings(model: IDetailProceedings) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
+    return this.put(route, model);
   }
 
   PADelActaEntrega(actNumber: string | number) {
@@ -70,6 +76,21 @@ export class DetailProceeDelRecService extends HttpService {
 
   getReport(report: number) {
     const route = `${ProceedingsEndpoints.GetProcedding}/${report}`;
+    return this.get(route);
+  }
+
+  getByExpedient(report: number | string) {
+    const route = `${ProceedingsEndpoints.GetCustom}?filter.fileNumber.filesId=$eq:${report}`;
+    return this.get(route);
+  }
+
+  getbyfile(params: any) {
+    const route = `${ProceedingsEndpoints.getAct}`;
+    return this.post(route, params);
+  }
+
+  getProcedingbyId(id: number | string) {
+    const route = `${ProceedingsEndpoints.ProeedingsDevolution}/${id}`;
     return this.get(route);
   }
 }

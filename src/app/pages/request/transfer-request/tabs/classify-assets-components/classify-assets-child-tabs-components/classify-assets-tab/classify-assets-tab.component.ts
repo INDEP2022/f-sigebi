@@ -503,7 +503,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels4(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -520,7 +520,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels3(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -536,7 +536,7 @@ export class ClassifyAssetsTabComponent
   }
   getLevels2(params: ListParams, id?: number, clean: boolean = false) {
     params['filter.parentId'] = '$eq:' + id.toString();
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -556,7 +556,7 @@ export class ClassifyAssetsTabComponent
     delete params.inicio;
     delete params.pageSize;
     delete params.take;
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -574,7 +574,7 @@ export class ClassifyAssetsTabComponent
     if (id) {
       params['filter.parentId'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -590,7 +590,7 @@ export class ClassifyAssetsTabComponent
   }
   getSection1(params: ListParams, id?: number) {
     params['filter.level'] = '$eq:' + 0;
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -609,7 +609,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -641,7 +641,7 @@ export class ClassifyAssetsTabComponent
         params['filter.id'] = '$eq:' + id.toString();
       }
     }
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -682,7 +682,7 @@ export class ClassifyAssetsTabComponent
     delete params.inicio;
     delete params.pageSize;
     delete params.take;
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -713,7 +713,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -744,7 +744,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))
@@ -775,7 +775,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.limit = 50;
+    params.limit = 100;
     this.fractionService
       .getAll(params)
       .pipe(takeUntil(this.$unSubscribe))

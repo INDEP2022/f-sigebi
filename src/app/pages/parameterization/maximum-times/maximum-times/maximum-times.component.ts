@@ -58,6 +58,7 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'certificateType':
@@ -137,7 +138,7 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
             next: () => {
               this.alert(
                 'success',
-                'Tiempo Máximo Para Cierre Actas Devolución',
+                'Tiempo Máximo para Cierre Actas Devolución',
                 'Borrando Correctamente'
               );
               this.getMaximumTimeAll();

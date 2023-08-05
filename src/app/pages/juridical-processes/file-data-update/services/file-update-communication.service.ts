@@ -22,6 +22,9 @@ export class FileUpdateCommunicationService {
   private datosEnviadosSource = new Subject<any>();
   datosEnviados$ = this.datosEnviadosSource.asObservable();
 
+  public datosEnviadosSource_ = new Subject<any>();
+  datosEnviados_$ = this.datosEnviadosSource_.asObservable();
+
   private _juridicalShiftChangeParams: IJuridicalShiftChangeParams = null;
 
   constructor() {}
@@ -71,6 +74,12 @@ export class FileUpdateCommunicationService {
   }
 
   enviarDatos(datos: any) {
+    console.log('datos', datos);
     this.datosEnviadosSource.next(datos);
+  }
+
+  getInputValue2() {
+    console.log('Value2', this.datosEnviadosSource);
+    return this.datosEnviadosSource;
   }
 }

@@ -54,6 +54,7 @@ import { GuidelinesObservationsComponent } from './guidelines/guidelines-observa
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
 import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/guidelines-revision.component';
 import { GuidelinesComponent } from './guidelines/guidelines.component';
+import { MailFieldModalComponent } from './mail-field-modal/mail-field-modal.component';
 import { OrderServiceFormComponent } from './order-service-form/order-service-form.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RegisterComplementaryDocumentationComponent } from './register-complementary-documentation/register-complementary-documentation.component';
@@ -74,6 +75,7 @@ import { SearchRequestsComponent } from './search-requests/search-requests.compo
 import { ModifyDatesModalComponent } from './select-good-eye-visit/modify-dates-modal/modify-dates-modal.component';
 import { SelectGoodEyeVisitComponent } from './select-good-eye-visit/select-good-eye-visit.component';
 import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goods-button.component';
+import { GrouperGoodFieldComponent } from './select-goods/grouper-good-field/grouper-good-field.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
@@ -198,6 +200,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ValidateEyeVisitComponent,
     ConfirmValidationModalComponent,
     SeeExpedientComponent,
+    MailFieldModalComponent,
+    GrouperGoodFieldComponent,
   ],
   imports: [
     CommonModule,

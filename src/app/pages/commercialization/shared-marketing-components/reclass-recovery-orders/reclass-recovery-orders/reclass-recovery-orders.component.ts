@@ -12,6 +12,8 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
+import { ISendSirsae } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -104,7 +106,8 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private invoiceService: MsInvoiceService,
-    private comerDetailService: ComerDetailsService
+    private comerDetailService: ComerDetailsService,
+    private sirsaeService: InterfacesirsaeService
   ) {
     super();
     this.settings = {
@@ -128,20 +131,20 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       idOI: [null, [Validators.required]],
-      idArea: [null, [Validators.required]],
-      ur: [null, [Validators.required]],
-      clientRFC: [null, [Validators.required]],
-      descriptionRFC: [null, [Validators.required]],
-      anexo: [null, [Validators.required]],
-      typepe: [null, [Validators.required]],
-      idEvent: [null, [Validators.required]],
-      concept: [null, [Validators.required]],
-      idBank: [null, [Validators.required]],
-      ordenDate: [null, [Validators.required]],
-      numovto: [null, [Validators.required]],
-      amount: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
-      idPayment: [null, [Validators.required]],
+      idArea: [null, []],
+      ur: [null, []],
+      clientRFC: [null, []],
+      descriptionRFC: [null, []],
+      anexo: [null, []],
+      typepe: [null, []],
+      idEvent: [null, []],
+      concept: [null, []],
+      idBank: [null, []],
+      ordenDate: [null, []],
+      numovto: [null, []],
+      amount: [null, []],
+      reference: [null, []],
+      idPayment: [null, []],
       chain: [null],
     });
   }
@@ -179,7 +182,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     this.reference.setValue(data.reference);
     this.idPayment.setValue(data.paymentId);
     this.idEvent.setValue(data.idEvent);
-    this.identifier = data.identifier;
+    this.identifier = data.idIdentifier;
     this.idEventParams = data.idEvent;
     this.referenceOriDat = data.reference;
 
@@ -212,6 +215,12 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
     console.log(goodCheck);
   }
 
+  //Limpiar
+  clearAll() {
+    this.form.reset();
+    this.dataComerDetails.load([]);
+  }
+
   //Enviar SIRSAE
   sendSIRSAE() {
     let motivo_reclap: string = null;
@@ -220,6 +229,26 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
       motivo_reclap = 'REFERENCIA';
       enviar = 1;
     }
+    console.log(this.identifier);
+    const model: ISendSirsae = {
+      identificator: this.identifier,
+      eventId: this.idEventParams,
+    };
+
+    this.sirsaeService.sendSirsae(model).subscribe(
+      res => {
+        console.log(res);
+        this.alert('success', 'Enviado a SIRSAE', '');
+      },
+      err => {
+        console.log(err);
+        this.alert(
+          'error',
+          'Se presentó un Error inesperado al enviar a SIRSAE',
+          ''
+        );
+      }
+    );
   }
 
   //Llenar los datos traidos

@@ -438,7 +438,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características del bien ' + this.numberGood.value,
+          'Características del Bien ' + this.numberGood.value,
           'Complete el atributo ' + row.attribute
         );
         tableValid = false;
@@ -502,8 +502,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
         next: response => {
           this.alert(
             'success',
-            'Características del bien ' + this.numberGood.value,
-            'Actualizadas correctamente'
+            'Características del Bien ' + this.numberGood.value,
+            'Actualizadas Correctamente'
           );
         },
       });

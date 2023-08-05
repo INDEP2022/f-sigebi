@@ -7,22 +7,27 @@
     <form
       class="form-material form-horizontal"
       [formGroup]="form"
-      (ngSubmit)="onSubmit()">
+      (ngSubmit)="search(false)">
       <div class="row mt-5">
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('keyEvent')" label="Clave Evento">
-              <select class="form-control" formControlName="keyEvent">
-                <option>clave evento</option>
-              </select>
+            <form-field [control]="form.get('cveAct')" label="Clave Evento">
+              <input
+                type="text"
+                formControlName="cveAct"
+                class="form-control" />
             </form-field>
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('status')" label="Estatus Evento">
-              <select class="form-control" formControlName="status">
-                <option>Estatus</option>
+            <form-field
+              [control]="form.get('estatusAct')"
+              label="Estatus Evento">
+              <select class="form-control" formControlName="estatusAct">
+                <option value="todos" selected>Todos</option>
+                <option value="ABIERTA">Abierta</option>
+                <option value="CERRADA">Cerrada</option>
               </select>
             </form-field>
           </div>
@@ -30,21 +35,27 @@
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
             <form-field
-              [control]="form.get('regionalCoord')"
+              [control]="form.get('noDelegation1')"
               label="Coord. Regional">
               <input
                 type="text"
                 class="form-control"
-                formControlName="regionalCoord" />
+                formControlName="noDelegation1" />
             </form-field>
           </div>
         </div>
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('typeUser')" label="Usuario">
-              <select class="form-control" formControlName="typeUser">
-                <option>Tipo Usuario</option>
-              </select>
+            <form-field [control]="form.get('elaborated')">
+              <ngx-select
+                (fetchItems)="getUsers($event)"
+                [data]="users"
+                [form]="form"
+                bindLabel="name"
+                label="Usuarios"
+                control="elaborated"
+                (change)="onUsersChange($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -52,7 +63,9 @@
 
       <div class="row mt-5 justify-content-center justify-content-sm-end">
         <div class="col-12 col-sm-3 text-center text-sm-right">
-          <button class="btn btn-primary active btn-sm" (click)="search()">
+          <button
+            class="btn btn-primary active btn-sm"
+            (click)="filterButton()">
             Buscar
           </button>
         </div>
@@ -67,10 +80,9 @@
     </form>
 
     <div *ngIf="response">
-      <div class="row mt-5">
-        <app-divider class=""></app-divider>
-      </div>
-      <div class="row mt-3 pt-2 scroll-table">
+      <div
+        class="row mt-3 pt-2 scroll-table"
+        [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           class="col-md-12"
@@ -81,11 +93,18 @@
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
 
-      <div class="row mt-5 justify-content-sm-end justify-content-center">
-        <div class="col-12 col-sm-3 text-center">
-          <button class="btn btn-success btn-sm">Exportar</button>
+      <!-- <div class="row mt-5 justify-content-sm-end justify-content-center">
+        <div class="col-12 col-sm-3 text-right">
+          <button class="btn btn-success btn-sm" (click)="export()">
+            Exportar
+          </button>
         </div>
-      </div>
+        <div class="col-12 col-sm-2 text-center mt-3 mt-sm-0 text-sm-left">
+          <button class="btn btn-primary active btn-sm" routerLink="capture-approval-donation">
+            Capturar Evento
+          </button>
+        </div>
+      </div> -->
     </div>
   </div>
 </app-card>

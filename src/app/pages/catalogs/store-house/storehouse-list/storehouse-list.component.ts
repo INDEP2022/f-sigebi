@@ -32,7 +32,7 @@ export class StorehouseListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = STOREHOUSE_COLUMNS;
-    this.settings.actions.delete = false;
+    this.settings.actions.delete = true;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,

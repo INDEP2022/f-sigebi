@@ -650,7 +650,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       if (getPaValidPeriod_ === 'error mes') {
         this.alert(
           'warning',
-          'Ya Existe Relación Con Este Período',
+          'Ya Existe Relación con este Período',
           'relation "lv_mes" already exists'
         );
         return;
@@ -715,7 +715,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       } else {
         this.alert(
           'error',
-          'Ha o}Ocurrido un Error al Intentar Crear los Registros',
+          'Ha Ocurrido un Error al Intentar Crear los Registros',
           ''
         );
       }
@@ -861,11 +861,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       const getPaValidPeriod_: any = await this.getPaValidaPeriodo(obj);
 
       if (getPaValidPeriod_ === 'error mes') {
-        this.alert(
-          'warning',
-          'Ya Existe Relación Con Este Período',
-          'relation "lv_mes" already exists'
-        );
+        this.alert('warning', 'Ya Existe Relación con Este Período', '');
         return;
       }
 
@@ -923,7 +919,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 } else {
                   this.alert(
                     'warning',
-                    'No Existen Carga de Bienes en este Período para Generarar Aleatorios',
+                    'No Existen Carga de Bienes en este Período para Generar Aleatorios',
                     ''
                   );
                   return;
@@ -932,7 +928,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'Ha Ocurrido un Error al Intentar Generar Aleatorios',
-                  'Verifique que no exista el periodo que intentó ingresar'
+                  'Verifique que no exista el Periodo que Intentó Ingresar'
                 );
               }
             } else {

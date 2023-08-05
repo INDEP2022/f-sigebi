@@ -5,7 +5,9 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 //models
 //Services
-import { addDays, format } from 'date-fns';
+import { DatePipe } from '@angular/common';
+import { addDays } from 'date-fns';
+import { BsDatepickerViewMode } from 'ngx-bootstrap/datepicker';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerTpEventFull,
@@ -22,26 +24,36 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class EventTProcessFormComponent extends BasePage implements OnInit {
-  title: string = 'Evento';
+  title: string = 'Proceso';
   edit: boolean = false;
 
   comerEventRlForm: ModelForm<IComerTpEventFull>;
   comerEventForm: ModelForm<IComerTpEventId>;
+
   comerEvent: any;
 
   delegations = new DefaultSelect();
   typeEvent = new DefaultSelect();
 
   today: Date;
+  eventId: string;
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private comerTpEventosService: ComerTpEventosService,
-    private delegationService: DelegationService
+    private delegationService: DelegationService,
+    private datePipe: DatePipe
   ) {
     super();
     this.today = new Date();
+    this.bsConfig = Object.assign(
+      {},
+      {
+        dateInputFormat: 'YYYY',
+        minMode: 'year' as BsDatepickerViewMode,
+      }
+    );
   }
 
   ngOnInit(): void {
@@ -97,7 +109,7 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
 
     if (this.comerEvent != null) {
       this.edit = true;
-      console.log(this.comerEvent.id);
+      console.log(this.comerEvent);
       this.comerEventRlForm.patchValue(this.comerEvent);
       if (this.comerEvent.warrantyDate) {
         this.comerEventRlForm
@@ -106,6 +118,9 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
       }
       /*       this.comerEventForm.patchValue(this.comerEventRlForm.get('id').value); */
     }
+    this.comerEventRlForm.controls['id'].setValue(this.eventId);
+    this.comerEventRlForm.controls['id'].disable();
+    console.log(this.eventId);
   }
 
   close() {
@@ -118,14 +133,22 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.comerTpEventosService.create(this.comerEventForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    let year = this.comerEventRlForm.value.year;
+    var date = new Date(year);
+    year = date.getFullYear();
+    this.comerEventRlForm.value.year = year;
+    this.comerEventRlForm.controls['year'].setValue(year);
+
+    this.comerTpEventosService
+      .create(this.comerEventRlForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
-    console.log('t' + this.comerEventRlForm.get('topost').value);
+    /*console.log('t' + this.comerEventRlForm.get('topost').value);
 
     let editTpEvent: any = {
       id: this.comerEventRlForm.get('id').value,
@@ -154,6 +177,31 @@ export class EventTProcessFormComponent extends BasePage implements OnInit {
     console.log('ed ' + JSON.stringify(editTpEvent));
     this.comerTpEventosService
       .newUpdate(this.comerEvent.id, editTpEvent)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          console.log(error);
+        },
+      });*/
+    this.loading = true;
+    let year = this.comerEventRlForm.value.year;
+    var date = new Date(year);
+    year = date.getFullYear();
+    this.comerEventRlForm.value.year = year;
+    this.comerEventRlForm.controls['year'].setValue(year);
+
+    //console.log(this.comerEventRlForm.controls['warrantyDate'].value);
+    let dateComer: Date = new Date(
+      this.comerEventRlForm.controls['warrantyDate'].value
+    );
+
+    const format = this.datePipe.transform(dateComer, 'yyyy-MM-dd');
+    console.log(format);
+    this.comerEventRlForm.controls['warrantyDate'].setValue(format);
+
+    this.comerTpEventosService
+      .newUpdate(this.eventId, this.comerEventRlForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => {

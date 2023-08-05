@@ -21,7 +21,7 @@ import { MaximumTimesUserComponent } from '../maximum-times-user/maximum-times-u
 export class MaximumTimesModalComponent extends BasePage implements OnInit {
   maximumTimesForm: ModelForm<IMaximumTimes>;
   maximumTimes: IMaximumTimes;
-  title: string = 'Tiempo Máximo Para Cierre Actas Devolución';
+  title: string = 'Tiempo Máximo para Cierre Actas Devolución';
   edit: boolean = false;
   user: IUsers;
   typeItem: any[];

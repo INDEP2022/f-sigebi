@@ -4,6 +4,7 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -59,6 +60,7 @@ export class NotificationAssetsTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
+  @ViewChild('table', { static: false }) table: any;
   @Input() isSaving: boolean;
   @Input() process: string = '';
   idRequest: number = 0;
@@ -342,6 +344,9 @@ export class NotificationAssetsTabComponent
   }
 
   goodSelect(data: any) {
+    if (data.isSelected == false) {
+      this.table.isAllSelected = false;
+    }
     if (data.length > 0) {
       this.goodsReject.load(data);
       if (this.goodsReject.count() == 1) {
@@ -1090,6 +1095,7 @@ export class NotificationAssetsTabComponent
         callback: (next: boolean, idGood: number) => {
           if (next) {
             this.checkInfoNotification(idGood);
+            this.changeStatuesTmp();
           }
         },
       },
@@ -1638,7 +1644,21 @@ export class NotificationAssetsTabComponent
   }
 
   changeStatuesTmp() {
-    if (this.rowSelected == false) {
+    if (this.requestData.typeOfTransfer === 'SAT_SAE') {
+      console.log('Soy SAT');
+
+      if (this.selectedRow.clarificationType == 'SOLICITAR_ACLARACION') {
+        this.updateChatClarificationsTmp();
+      } else if (
+        this.selectedRow.clarificationType == 'SOLICITAR_IMPROCEDENCIA'
+      ) {
+        this.updateChatImprClarificationTmp();
+      }
+    } else {
+      console.log('No soy SAT');
+    }
+
+    /*if (this.rowSelected == false) {
       this.message('warning', 'Error', 'Primero seleccione una notificación');
     } else {
       if (
@@ -1679,7 +1699,7 @@ export class NotificationAssetsTabComponent
           );
         }
       }
-    }
+    }*/
   }
 
   updateChatClarificationsTmp() {

@@ -2,14 +2,27 @@ import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 
+interface IValidateStatus {
+  val: string | number;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class LotService extends HttpService {
+  private readonly endpointComer: string = 'comer-lotes';
   constructor() {
     super();
     this.microservice = LotEndpoints.BasePath;
+  }
+
+  getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLot(params?: ListParams) {
+    return this.get('eat-lots', params);
   }
 
   getLotbyEvent(id: string | number, params?: ListParams) {
@@ -102,11 +115,114 @@ export class LotService extends HttpService {
     return this.post('apps/rejected-good', body);
   }
 
+  getComerLotsClientsPayref(params?: string) {
+    return this.get('apps/get-comer-lots-clients-payref', params);
+  }
+
+  getLotById(id: string | number) {
+    const route = `eat-lots/${id}`;
+    return this.get(route);
+  }
+
+  thirdBaseFile(eventId: string | number) {
+    return this.get<{
+      nameFile: string;
+      base64File: string;
+    }>(`apps/file-third-base/${eventId}`);
+  }
+
+  loadInvoice(eventId: string | number, file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.post(`apps/c-invoice/${eventId}`, formData);
+  }
+
+  createBases(body: {
+    eventId: string | number;
+    costBase: string | number;
+    file: File;
+  }) {
+    const { eventId, costBase, file } = body;
+    const formData = new FormData();
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('costBase', costBase ? `${costBase}` : null);
+    formData.append('file', file);
+    return this.post('apps/create-bases', formData);
+  }
+
   getPagosRefMonto(body: any) {
     return this.post('apps/get-pagos-ref-monto', body);
   }
 
   getPagosRefMontoTipod(body: any) {
     return this.post('apps/get-pagos-ref-monto-tipo-d', body);
+  }
+
+  getLotComerPayRef(params?: string) {
+    return this.get('apps/get-lot-comer-pay-ref', params);
+  }
+
+  getFindAllRegistersTot(params?: _Params) {
+    return this.get(LotEndpoints.FindAllRegistersTot, params);
+  }
+
+  getSumLotComerPayRef(body: {
+    dateComer: string;
+    clientId: string;
+    eventId: string;
+  }) {
+    return this.post('apps/get-lot-comer-pay-ref-count', body);
+  }
+
+  getSumAllComerPayRef(body: { clientId: string; eventId: string }) {
+    return this.post('apps/get-lot-comer-pay-ref-countAll', body);
+  }
+
+  applyBaseCost(body: {
+    cotobase: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post('apps/blk-ctr-main-l-pb-apply-when-button-pressed', body);
+  }
+
+  validateStatusCPV(eventId: string | number) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query1',
+      { eventId }
+    );
+  }
+
+  afterRemoveGoods(body: {
+    goodId: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query2',
+      body
+    );
+  }
+
+  // ------------------------
+  PUP_ENTRA(body: any) {
+    // PUP_ENTRA
+    return this.post(LotEndpoints.PupEntra, body);
+  }
+
+  CARGA_PAGOSREFGENS(evento: any) {
+    return this.post(`${LotEndpoints.CargaPagosRefGens}/${evento}`, {});
+  }
+
+  CARGA_COMER_DETALLES(evento: any) {
+    return this.post(`${LotEndpoints.CargaComerDetalles}/${evento}`, {});
+  }
+
+  VALIDA_MANDATO(evento: any) {
+    return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
+  }
+
+  VALIDA_ESTATUS(body: any) {
+    return this.post(`${LotEndpoints.ValidateStatus}`, body);
   }
 }

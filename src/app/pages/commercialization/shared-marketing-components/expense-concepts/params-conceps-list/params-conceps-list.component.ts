@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
@@ -21,6 +21,7 @@ export class ParamsConcepsListComponent
   extends BasePageWidhtDinamicFiltersExtra<IParameterConcept>
   implements OnInit
 {
+  @Input() address: string;
   toggleInformation = true;
   // concepto = '';
   pageSizeOptions = [5, 10, 20, 25];
@@ -39,14 +40,8 @@ export class ParamsConcepsListComponent
     this.settings = {
       ...this.settings,
       actions: {
-        ...this.settings,
-        actions: {
-          columnTitle: 'Acciones',
-          position: 'left',
-          add: false,
-          edit: true,
-          delete: true,
-        },
+        ...this.settings.actions,
+        add: false,
       },
       columns: { ...COLUMNS },
     };
@@ -60,6 +55,34 @@ export class ParamsConcepsListComponent
           }
         },
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['address'] && changes['address'].currentValue) {
+      const list = [{ value: 'C', title: 'GENERAL' }];
+      if (changes['address'].currentValue === 'M') {
+        list.push({ value: 'M', title: 'MUEBLES' });
+      }
+      if (changes['address'].currentValue === 'I') {
+        list.push({ value: 'I', title: 'INMUEBLES' });
+      }
+      this.settings = {
+        ...this.settings,
+        columns: {
+          ...COLUMNS,
+          address: {
+            ...COLUMNS.address,
+            filter: {
+              type: 'list',
+              config: {
+                selectText: 'Seleccionar',
+                list,
+              },
+            },
+          },
+        },
+      };
+    }
   }
 
   protected override dataNotFound() {
@@ -98,6 +121,7 @@ export class ParamsConcepsListComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       conceptId: this.conceptId,
+      addressParam: this.address,
       callback: (body: {
         parameter: string;
         value: string;
@@ -119,7 +143,7 @@ export class ParamsConcepsListComponent
                 this.alert(
                   'success',
                   'Parámetro por Concepto de Pago ' + this.conceptId,
-                  'Creado correctamente'
+                  'Creado Correctamente'
                 );
                 this.getData();
               },
@@ -144,6 +168,7 @@ export class ParamsConcepsListComponent
     modalConfig.initialState = {
       conceptId: this.conceptId,
       parameterValue: row,
+      addressParam: this.address,
       edit: true,
       callback: (body: {
         parameter: string;
@@ -164,7 +189,7 @@ export class ParamsConcepsListComponent
                 this.alert(
                   'success',
                   'Parámetro por Concepto de Pago ' + this.conceptId,
-                  'Actualizado correctamente'
+                  'Actualizado Correctamente'
                 );
                 this.getData();
               },
@@ -203,7 +228,7 @@ export class ParamsConcepsListComponent
             this.alert(
               'success',
               'Parámetro por Concepto de Pago',
-              'Eliminado correctamente'
+              'Eliminado Correctamente'
             );
             this.getData();
           },
@@ -228,17 +253,23 @@ export class ParamsConcepsListComponent
     if (this.selectedConcept) {
       newColumnFilters['filter.conceptId'] = '$eq:' + this.selectedConcept.id;
     }
-    if (newColumnFilters['filter.address']) {
-      newColumnFilters['filter.address'] =
-        '$eq:' +
-        this.getAddressCode(
-          (newColumnFilters['filter.address'] + '').replace('$eq:', '')
-        );
-    }
     if (newColumnFilters['filter.description']) {
       let description = newColumnFilters['filter.description'];
       delete newColumnFilters['filter.description'];
       newColumnFilters['filter.parameterFk.description'] = description;
+    }
+
+    if (newColumnFilters['filter.address']) {
+      return {
+        ...this.params.getValue(),
+        ...newColumnFilters,
+      };
+    } else {
+      if (this.address) {
+        newColumnFilters['filter.address'] = '$in:' + this.address + ',C';
+      } else {
+        newColumnFilters['filter.address'] = '$in:C';
+      }
     }
     return {
       ...this.params.getValue(),

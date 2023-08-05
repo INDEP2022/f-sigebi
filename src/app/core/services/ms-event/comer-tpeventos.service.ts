@@ -21,6 +21,13 @@ export class ComerTpEventosService extends HttpService {
     return this.get<IListResponse<IComerTpEvent>>(this.endpoint, params);
   }
 
+  getEventProGetAll(
+    params?: ListParams
+  ): Observable<IListResponse<IComerTpEvent>> {
+    const route = `${this.endpoint}/get-all`;
+    return this.get<IListResponse<IComerTpEvent>>(route, params);
+  }
+
   getAllComerTpEvent(
     params?: _Params
   ): Observable<IListResponse<IComerTpEvent>> {

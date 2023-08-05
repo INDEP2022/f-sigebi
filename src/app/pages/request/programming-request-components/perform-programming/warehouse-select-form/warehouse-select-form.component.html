@@ -4,7 +4,21 @@
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
-      <form-field [control]="form.get('warehouse')">
+      <form-field
+        [control]="form.get('warehouse')"
+        *ngIf="typeTransportable == 'guard'">
+        <ngx-select
+          [form]="form"
+          control="warehouse"
+          [data]="warehouses"
+          value="stockSiabNumber"
+          bindLabel="name"
+          label="Almac&eacute;n"
+          (fetchItems)="getStoreGuard($event)"></ngx-select>
+      </form-field>
+      <form-field
+        [control]="form.get('warehouse')"
+        *ngIf="typeTransportable == 'warehouse'">
         <ngx-select
           [form]="form"
           control="warehouse"

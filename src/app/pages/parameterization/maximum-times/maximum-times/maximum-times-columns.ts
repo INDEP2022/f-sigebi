@@ -29,6 +29,24 @@ export const MAXIMUM_TIMES_COLUMNS = {
   },
   activated: {
     title: 'Activado',
+    type: 'html',
+    valuePrepareFunction: (value: string) => {
+      if (value == 'S')
+        return '<strong><span class="badge badge-pill badge-success">Sí</span></strong>';
+      if (value == 'N')
+        return '<strong><span class="badge badge-pill badge-success">No</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'S', title: 'Sí' },
+          { value: 'N', title: 'No' },
+        ],
+      },
+    },
     sort: false,
   },
   user: {

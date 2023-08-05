@@ -4,4 +4,5 @@ export enum DonationEndPoint {
   requestGood = 'donac-request-good/getDonationData/',
   requestGoodPro = 'donac-request-good/get-v-donation-proposal-goods/',
   requestUpdate = 'donac-request-good/update-request-donation-good/',
+  eventComDonation = 'event-com-donation',
 }

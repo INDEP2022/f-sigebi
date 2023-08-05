@@ -6,7 +6,9 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IComerDestXML,
   IComerDocumentsXML,
+  IComerModifyXML,
   IComerOrigins,
+  IComerTypeSignatories,
   IUpdateComerPagosRef,
 } from '../../models/ms-electronicfirm/signatories-model';
 
@@ -53,10 +55,84 @@ export class ElectronicFirmService extends HttpService {
     );
   }
 
+  updateComerOrigins(
+    id: number,
+    body: Partial<IComerOrigins>
+  ): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerOrigins + '/' + id,
+      body
+    );
+  }
+
+  createComerOrigins(
+    body: Partial<IComerOrigins>
+  ): Observable<IListResponse<IComerOrigins>> {
+    return this.post<IListResponse<IComerOrigins>>(
+      ElectronicFirmEndpoint.ComerOrigins,
+      body
+    );
+  }
+
   getComerDestXML(params: _Params): Observable<IListResponse<IComerDestXML>> {
     return this.get<IListResponse<IComerDestXML>>(
       ElectronicFirmEndpoint.ComerDestXML,
       params
+    );
+  }
+
+  updateComerDestXML(
+    body: Partial<IComerDestXML>
+  ): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerDestXML,
+      body
+    );
+  }
+
+  createComerDestXML(
+    body: Partial<IComerDestXML>
+  ): Observable<IListResponse<IComerDestXML>> {
+    return this.post<IListResponse<IComerDestXML>>(
+      ElectronicFirmEndpoint.ComerDestXML,
+      body
+    );
+  }
+
+  getComerTypeSignatories(
+    params: _Params
+  ): Observable<IListResponse<IComerTypeSignatories>> {
+    return this.get<IListResponse<IComerTypeSignatories>>(
+      ElectronicFirmEndpoint.ComerTypeSignatories,
+      params
+    );
+  }
+
+  updateComerTypeSignatories(
+    id: number,
+    body: Partial<IComerTypeSignatories>
+  ): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerTypeSignatories + '/' + id,
+      body
+    );
+  }
+
+  createComerTypeSignatories(
+    body: Partial<IComerTypeSignatories>
+  ): Observable<IListResponse<IComerTypeSignatories>> {
+    return this.post<IListResponse<IComerTypeSignatories>>(
+      ElectronicFirmEndpoint.ComerTypeSignatories,
+      body
+    );
+  }
+
+  comerModifyXML(
+    body: Partial<IComerModifyXML>
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      ElectronicFirmEndpoint.ComerModifyXML,
+      body
     );
   }
 }

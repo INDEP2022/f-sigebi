@@ -1,20 +1,20 @@
 export const COLUMNS = {
-  year: {
+  yearEvaluates: {
     title: 'Año',
     type: 'string',
     sort: false,
   },
-  month: {
+  monthValues: {
     title: 'Mes',
     type: 'string',
     sort: false,
   },
-  user: {
+  userReview: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-  regionalCoord: {
+  delegationNumber: {
     title: 'Coordinación Regional',
     type: 'number',
     sort: false,

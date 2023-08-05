@@ -5,7 +5,9 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <app-expense-comercial [address]="address"></app-expense-comercial>
+    <app-expense-composition></app-expense-composition>
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="ch-content">
         <h5 class="title">Gastos del área comercial</h5>
       </div>
@@ -305,7 +307,7 @@
         <div class="col-md-6">
           <div class="ch-content">
             <h5 class="title">Datos de ingreso</h5>
-            <!-- <app-columns-select [(settings)]="settings1"></app-columns-select> -->
+
           </div>
           <div class="row pt-3">
             <ng2-smart-table [settings]="settings1" [source]="list1">
@@ -401,6 +403,6 @@
           </div>
         </div>
       </div>
-    </form>
+    </form> -->
   </div>
 </app-card>

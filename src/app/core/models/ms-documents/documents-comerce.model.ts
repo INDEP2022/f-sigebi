@@ -30,6 +30,22 @@ export interface ComerceDocumentsXmlT {
   };
 }
 
+export interface IComerDocumentsXmlT {
+  cargo: string;
+  description: string;
+  documentsXML: string;
+  fec_firma: Date;
+  firma: string;
+  id_docums_xml: number;
+  id_tipo_firmante: number;
+  nb_origen: number;
+  no_consec: number;
+  no_registro: number;
+  nombre: string;
+  signatoryType: string;
+  usuario: string;
+}
+
 export interface ComerceDocumentsXmlH {
   documentsXMLId: number;
   originId: number;

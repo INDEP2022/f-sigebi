@@ -18,6 +18,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
   form: FormGroup;
   readOnlyJustify = true;
   solicitudTable: null;
+  updateTable = 0;
   constructor(
     private fb: FormBuilder,
     private requestService: RequestsService,
@@ -61,7 +62,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
   async update() {
     this.alertQuestion(
       'question',
-      'Se actualizará la delegación',
+      'Se actualizará la Delegación',
       '¿Desea continuar?',
       'Continuar'
     ).then(async question => {
@@ -79,7 +80,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
         );
         if (!res) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de delegación', 'No realizada');
+          this.alert('error', 'Actualización de Delegación', 'No realizada');
           return;
         }
         const res2 = await firstValueFrom(
@@ -93,15 +94,16 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de delegación', 'No realizada');
+          this.alert('error', 'Actualización de Delegación', 'No realizada');
           return;
         } else {
           this.alert(
             'success',
-            'Actualización de delegación',
-            'Realizada exitosamente'
+            'Actualización de Delegación',
+            'Realizada correctamente'
           );
-          this.clear();
+          this.updateTable++;
+          // this.clear();
         }
         this.loader.load = false;
       }

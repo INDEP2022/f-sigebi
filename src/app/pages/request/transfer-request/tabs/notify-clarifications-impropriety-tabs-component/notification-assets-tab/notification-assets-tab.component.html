@@ -420,6 +420,7 @@
               <div class="table-responsive">
                 <div [class]="loadingGoods ? 'table-loading' : ''">
                   <ng2-smart-table
+                    #table
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings"
                     [source]="data"
@@ -441,7 +442,7 @@
           <div class="row">
             <div class="d-flex">
               <div class="mr-auto p-2"></div>
-              <div
+              <!-- <div
                 class="p-2"
                 *ngIf="
                   requestData?.typeOfTransfer == 'SAT_SAE' &&
@@ -453,7 +454,7 @@
                   (click)="changeStatuesTmp()">
                   Simular Respuesta
                 </button>
-              </div>
+              </div> -->
               <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
                   class="btn btn-success btn-sm active"

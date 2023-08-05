@@ -8,7 +8,8 @@
         [parameters]="parameters"
         [params]="comerLotsListParams"
         [onlyBase]="onlyBase"
-        (onSelectLot)="onLotSelect($event)"></event-lots-list>
+        (onSelectLot)="onLotSelect($event)"
+        (fillStadistics)="fillStadistics.emit()"></event-lots-list>
     </div>
   </div>
 
@@ -17,6 +18,7 @@
       <event-goods-lots-list
         [eventForm]="eventForm"
         [parameters]="parameters"
+        [loggedUser]="loggedUser"
         [lot]="comerLot"></event-goods-lots-list>
     </div>
   </div>

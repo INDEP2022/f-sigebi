@@ -54,6 +54,7 @@ export class PropertyAdjudicationNotificationReportComponent
   neworconsult: boolean = true;
   descevento: any;
   description: any;
+  imprimir: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -74,6 +75,7 @@ export class PropertyAdjudicationNotificationReportComponent
 
   settings4 = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
     actions: false,
     columns: {
       ...dataBatchColum,
@@ -88,7 +90,7 @@ export class PropertyAdjudicationNotificationReportComponent
           this.onSelectLote(instance),
       },
     },
-    noDataMessage: 'No se encontraron registros',
+    noDataMessage: 'No se Encontraron Registros',
   };
 
   ngOnInit(): void {
@@ -141,8 +143,8 @@ export class PropertyAdjudicationNotificationReportComponent
       descevento: [null, [Validators.required]],
       description: [null, [Validators.required]],
       claveOficio: [{ value: null }, [Validators.required]],
-      fechaFallo: [null],
-      FechaLimPago: [null],
+      fechaFallo: [null, [Validators.required]],
+      FechaLimPago: [null, [Validators.required]],
       texto1: [null, [Validators.pattern(STRING_PATTERN)]],
       texto2: [null, [Validators.pattern(STRING_PATTERN)]],
       texto3: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -165,6 +167,7 @@ export class PropertyAdjudicationNotificationReportComponent
 
   getBatch(event: string | number) {
     this.loading = true;
+    this.dataBatch = [];
     this.lotService.getLotbyEvent(event, this.params.getValue()).subscribe({
       next: response => {
         this.totalItems = response.count;
@@ -227,22 +230,19 @@ export class PropertyAdjudicationNotificationReportComponent
     if (end < start) {
       this.onLoadToast(
         'warning',
-        'advertencia',
-        'Fecha final no puede ser menor a fecha de inicio'
+        'Advertencia',
+        'La Fecha Final no Puede ser Menor a la Fecha de Inicio'
       );
       return;
     }
-
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
     this.onSubmit();
     setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
+      this.onLoadToast('success', 'Reporte Generado', '');
     }, 2000);
 
-    this.loading = false;
-    this.cleanForm();
+    //this.loading = false;
+    //this.cleanForm();
+    //this.imprimir = false;
   }
 
   onSubmit() {
@@ -345,6 +345,8 @@ export class PropertyAdjudicationNotificationReportComponent
       next: response => {
         this.inicializarVisibilidadCampos();
         this.inicializarCampos();
+        this.imprimir = true;
+        this.dataBatch = [];
         console.log('Respuesta Comer Evento: ', response);
         let dataForm = {
           claveOficio: response.data[0].numberJob,
@@ -360,36 +362,24 @@ export class PropertyAdjudicationNotificationReportComponent
           ccp2: response.data[0].ccp2,
         };
         this.form.patchValue(dataForm);
+        this.imprimir = true;
       },
       error: err => {
         console.log('Error: ', err);
         this.inicializarCampos();
         if (err.status == 400) {
-          this.enableInputs();
+          this.inicializarVisibilidadCampos();
+          this.imprimir = false;
+          this.dataBatch = [];
         }
       },
     });
   }
 
-  isLoteSelected(delegation: any) {
-    const exists = this.lotesSelected.find(lote => lote.id == delegation.id);
-    return exists ? true : false;
-  }
-  onSelectLote(instance: CheckboxElementComponent) {
-    instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
-      next: data => this.selectLote(data.row, data.toggle),
-    });
-  }
+  isLoteSelected(delegation: any) {}
+  onSelectLote(instance: CheckboxElementComponent) {}
 
-  selectLote(sele: any, selected: boolean) {
-    if (selected) {
-      this.lotesSelected.push(sele);
-    } else {
-      this.lotesSelected = this.lotesSelected.filter(
-        lote => lote.id == sele.id
-      );
-    }
-  }
+  selectLote(sele: any, selected: boolean) {}
 
   filterColumns() {
     this.data

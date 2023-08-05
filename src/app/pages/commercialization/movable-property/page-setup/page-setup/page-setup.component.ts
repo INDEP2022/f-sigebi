@@ -34,9 +34,11 @@ export class PageSetupComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
+        add: false,
         delete: true,
         position: 'right',
       },
