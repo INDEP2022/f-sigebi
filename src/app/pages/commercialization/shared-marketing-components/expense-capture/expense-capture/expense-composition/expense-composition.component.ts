@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
 import {
   FilterParams,
@@ -22,11 +23,8 @@ export class ExpenseCompositionComponent
   implements OnInit
 {
   toggleInformation = true;
-  amount = 0;
-  vat = 0;
-  isrWithholding = 0;
-  vatWithholding = 0;
-  total = 0;
+
+  @ViewChild('table') table: Ng2SmartTableComponent;
   constructor(
     private dataService: ComerDetexpensesService,
     private expenseCaptureDataService: ExpenseCaptureDataService,
@@ -56,6 +54,22 @@ export class ExpenseCompositionComponent
     return this.expenseCaptureDataService.PCONDIVXMAND;
   }
 
+  get PCHATMORSINFLUJOPMSR() {
+    return this.expenseCaptureDataService.PCHATMORSINFLUJOPMSR;
+  }
+
+  get PCHATMORSINFLUJOPFSR() {
+    return this.expenseCaptureDataService.PCHATMORSINFLUJOPFSR;
+  }
+
+  get PCANVTA() {
+    return this.expenseCaptureDataService.PCANVTA;
+  }
+
+  get PVALIDADET() {
+    return this.expenseCaptureDataService.PVALIDADET;
+  }
+
   get form() {
     return this.expenseCaptureDataService.form;
   }
@@ -76,8 +90,52 @@ export class ExpenseCompositionComponent
     return this.form.get('conceptNumber');
   }
 
+  get lotNumber() {
+    return this.form.get('lotNumber');
+  }
+
   get showFilters() {
     return this.expenseNumber && this.expenseNumber.value;
+  }
+
+  get amount() {
+    return this.expenseCaptureDataService.amount;
+  }
+
+  set amount(value) {
+    this.expenseCaptureDataService.amount = value;
+  }
+
+  get vat() {
+    return this.expenseCaptureDataService.vat;
+  }
+
+  set vat(value) {
+    this.expenseCaptureDataService.vat = value;
+  }
+
+  get isrWithholding() {
+    return this.expenseCaptureDataService.isrWithholding;
+  }
+
+  set isrWithholding(value) {
+    this.expenseCaptureDataService.isrWithholding = value;
+  }
+
+  get vatWithholding() {
+    return this.expenseCaptureDataService.vatWithholding;
+  }
+
+  set vatWithholding(value) {
+    this.expenseCaptureDataService.vatWithholding = value;
+  }
+
+  get total() {
+    return this.expenseCaptureDataService.total;
+  }
+
+  set total(value) {
+    this.expenseCaptureDataService.total = value;
   }
 
   add() {}
@@ -87,6 +145,7 @@ export class ExpenseCompositionComponent
     if (!this.service) {
       return;
     }
+    this.loading = true;
     let params = this.getParams();
     this.service
       .getAll(params)
@@ -186,9 +245,51 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private sendSolicitud() {}
+  private async preProcessSolitud(selectedGoods = false) {
+    if (!selectedGoods) {
+      selectedGoods = await this.validateSelectedGoods();
+    }
+    if (selectedGoods) {
+      this.expenseCaptureDataService.processSolitud();
+    } else {
+      this.alert(
+        'error',
+        'Modificar Estatus',
+        'Para este concepto debe marcar al menos 1 para modificar su estatus'
+      );
+    }
+  }
+
+  private async sendSolicitud(selectedGoods = false) {
+    await firstValueFrom(
+      this.expenseCaptureDataService.getParams({ id: this.conceptNumber.value })
+    );
+
+    if (
+      this.PCHATMORSINFLUJOPMSR !== 'S' &&
+      this.PCHATMORSINFLUJOPFSR !== 'S' &&
+      this.PCANVTA
+    ) {
+      this.preProcessSolitud(selectedGoods);
+    } else if (this.PVALIDADET === 'S') {
+      if (this.lotNumber && this.lotNumber.value) {
+        this.preProcessSolitud(selectedGoods);
+      } else {
+        this.alert('error', 'Para este concepto debe indicar el lote', '');
+      }
+    }
+  }
 
   private sendMotive() {}
+
+  private async validateSelectedGoods() {
+    let dataContent = await this.dataPaginated.getAll();
+    console.log(dataContent);
+    let selectedChangeStatus = dataContent.filter(
+      (row: any) => row.changeStatus === true
+    );
+    return selectedChangeStatus.length > 0;
+  }
 
   async modifyEstatus() {
     let filterParams = new FilterParams();
@@ -196,6 +297,8 @@ export class ExpenseCompositionComponent
     if (this.conceptNumber) {
       filterParams.addFilter('conceptId', this.conceptNumber.value);
     }
+    // let dataContent = await this.dataPaginated.getAll();
+    // console.log(dataContent);
     let ls_status = await firstValueFrom(
       this.parameterService.getAll(filterParams.getParams()).pipe(
         catchError(x => of(null)),
@@ -222,6 +325,22 @@ export class ExpenseCompositionComponent
           this.expense.comerEven &&
           this.expense.comerEven.eventTpId === '10'
         ) {
+          let V_VALIDA_DET = await this.validateSelectedGoods();
+          if (V_VALIDA_DET) {
+            // hideView Mandatos
+            this.sendSolicitud(V_VALIDA_DET);
+            this.alert(
+              'success',
+              'Modificar Estatus',
+              'Realizado Correctamente'
+            );
+          } else {
+            this.alert(
+              'warning',
+              'Modificar Estatus',
+              'Debe seleccionar al menos un bien'
+            );
+          }
         } else {
           this.sendMotive();
         }
