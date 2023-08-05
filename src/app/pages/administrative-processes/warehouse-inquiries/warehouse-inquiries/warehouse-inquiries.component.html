@@ -1,21 +1,22 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Consulta de Almacénes</h5>
-    <div class="d-flex justify-content-end">
-      <div class="d-inline mr-2">
-        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
-          Regresar
-          <i class="fas fa-arrow-circle-left"></i>
-        </button>
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
-    </div>
   </div>
 
   <div body>
     <div class="row pt-4">
       <div class="col-md-12">
         <div class="col-md-12 table-responsive">
+          <div class="d-flex justify-content-end">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+            <button
+              class="btn btn-primary active btn-sm m-2"
+              *ngIf="origin != null"
+              (click)="goBack()">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+          </div>
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
               [attr.class]="'table-bordered'"

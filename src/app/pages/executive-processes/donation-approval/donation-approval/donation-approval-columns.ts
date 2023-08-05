@@ -9,12 +9,12 @@ export const DONATION_APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  ubicationType: {
+  di_cve_ubicacion: {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
   },
-  direction: {
+  di_ubicacion1: {
     title: 'Dirección',
     type: 'string',
     sort: false,
@@ -29,11 +29,10 @@ export const DONATION_APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  // },
-  // availability: {
-  //   title: 'Disponibilidad',
-  //   type: 'boolean',
-  //   sort: false,
-  //   hide: true,
-  // },
+  di_disponible: {
+    title: 'Aprobado',
+    type: 'boolean',
+    sort: false,
+    filter: false,
+  },
 };
