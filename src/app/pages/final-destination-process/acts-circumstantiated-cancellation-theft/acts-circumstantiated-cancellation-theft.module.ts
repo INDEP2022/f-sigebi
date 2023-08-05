@@ -8,6 +8,8 @@ import { ActsCircumstantiatedCancellationTheftComponent } from './acts-circumsta
 import { CreateActaComponent } from './create-acta/create-acta.component';
 import { FindActaComponent } from './find-acta/find-acta.component';
 import { FindAllExpedientComponent } from './find-all-expedient/find-all-expedient.component';
+import { ModalScanningFoilComponent } from './modal-scanning-foil/modal-scanning-foil.component';
+import { ScanningFoilComponent } from './scanning-foil/scanning-foil.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +17,8 @@ import { FindAllExpedientComponent } from './find-all-expedient/find-all-expedie
     FindAllExpedientComponent,
     FindActaComponent,
     CreateActaComponent,
+    ModalScanningFoilComponent,
+    ScanningFoilComponent,
   ],
   imports: [
     CommonModule,

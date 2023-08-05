@@ -21,6 +21,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IExpedient } from 'src/app/core/models/catalogs/date-documents.model';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { IDictation } from 'src/app/core/models/ms-dictation/dictation-model';
 import { IProceduremanagement } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -28,6 +29,7 @@ import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
+import { FileBrowserService } from 'src/app/core/services/ms-ldocuments/file-browser.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
@@ -35,14 +37,14 @@ import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/scre
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUM_POSITIVE, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import * as XLSX from 'xlsx';
 import { COPY } from '../acts-cir-columns';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
-//import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
+
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -89,11 +91,17 @@ export class ActsCircumstantiatedCancellationTheftComponent
   statusGood_: any;
   formTable1: FormGroup;
   formFind: FormGroup;
+  origin: string = '';
+  origin3: string = '';
   loadingExcel: boolean = true;
   totalItems2: number = 0;
+  loadDetail: number = 0;
+  dictationData: IDictation;
   loading2: boolean = false;
   goods: string;
+  formScan: FormGroup;
   delete: boolean = false;
+  dataUserLogged: any;
   bienesLoading: boolean = false;
   formTable2: FormGroup;
   witnessOic: string = '';
@@ -101,11 +109,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actaRecepttionForm: FormGroup;
   validPermisos: boolean = true;
   goodFormFormGroup: FormGroup;
+  paramsScreen: IParamsActaC = {
+    origin: '',
+    NO_EXP: '',
+  };
   disabledBtnCerrar: boolean = true;
   showScanForm: boolean = true;
   ocultarPaginado: boolean = false;
   transfer: number = 0;
-  dataRecepcion: any[] = [];
+  dataRecepcion: any;
   disabledBtnActas: boolean = true;
   actaGoodForm: FormGroup;
   formTag: FormGroup;
@@ -114,6 +126,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   statusCanc: string | number = '';
   expedient: IExpedient;
   validateEx: boolean = true;
+  wheelNumber: number = 0;
   loadingExpedient: boolean = false;
   screenKey = 'FACTCIRCUNR_0001';
   dataRecepcionGood: LocalDataSource = new LocalDataSource();
@@ -150,9 +163,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   loadingDoc: boolean = false;
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
-
+  files: any;
   constructor(
     private fb: FormBuilder,
+    private fileBrowserService: FileBrowserService,
     private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
     private detailProceeDelRecService: DetailProceeDelRecService,
     private expedientService: ExpedientService,
@@ -354,6 +368,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   ngOnInit(): void {
+    this.showScanForm = true;
+    const token = this.authService.decodeToken();
+    console.log(token);
+    this.dataUserLogged = token;
+    // this.anotherSearchAppointment();
     this.actaReception = this.actasDefault;
     this.goodForm();
     this.actaForm();
@@ -431,6 +450,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.formTag = this.fb.group({
       tag: [null, [Validators.pattern(STRING_PATTERN)]],
     });
+    this.formScan = this.fb.group({
+      scanningFoli: [
+        { value: '', disabled: false },
+        [Validators.pattern(NUM_POSITIVE), Validators.maxLength(11)],
+      ],
+    });
   }
 
   private actaForm() {
@@ -492,6 +517,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.aprevia = this.expedient.preliminaryInquiry;
         this.causa = this.expedient.criminalCase;
         this.transfer = this.expedient.transferNumber;
+
         // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
         this.actaRecepttionForm
           .get('fechaCaptura')
@@ -1016,7 +1042,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             if (_g.di_disponible == 'S') {
               _g.di_disponible = 'N';
               let valid = this.dataRecepcion.some(
-                goodV => goodV.numberGood == _g.id
+                (goodV: any) => goodV.numberGood == _g.id
               );
 
               console.log('valid', valid);
@@ -1110,10 +1136,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         return;
       } else {
         if (this.dataRecepcion.length > 0) {
-          this.dataRecepcion.forEach(good => {
+          this.dataRecepcion.forEach((good: any) => {
             console.log('this.dataRecepcion', this.dataRecepcion);
             this.dataRecepcion = this.dataRecepcion.filter(
-              _good => _good.id != good.id
+              (_good: any) => _good.id != good.id
             );
             let index = this.dataTableGood_.findIndex(g => g.id === good.id);
             // if (index != -1) {
@@ -1436,6 +1462,37 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
     }
   }
+  loadImages(folio: string | number) {
+    this.fileBrowserService.getFilenamesFromFolio(folio).subscribe(
+      files => {
+        this.files = files;
+      },
+      error => {
+        if (error.status >= 500) {
+          // Handle error
+        } else {
+          this.files = [];
+        }
+      }
+    );
+  }
+  getFileNamesByFolio(folio: number | string) {
+    this.fileBrowserService.getFilenamesFromFolio(folio).subscribe(
+      files => {
+        this.files = files;
+      },
+      error => {
+        if (error.status >= 500) {
+          // Handle error
+        } else {
+          this.files = [];
+        }
+      },
+      () => {
+        // Observable completed
+      }
+    );
+  }
   exportToExcel() {
     this.loadingExcel = true;
     if (this.cveActa == 'null' && this.fileNumber == null) {
@@ -1449,6 +1506,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.loading = false;
     this.excelService.export(this.dataRecepcion, { filename });
   }
+
+  // prepareScan() {
+  //   this.formScan.fp({
+
+  //   })
+  // }
 }
 // confirm() {
 //   this.edit ? this.update() : this.create();
@@ -1475,3 +1538,8 @@ const EXAMPLE_DATA2 = [
     quantity: 4,
   },
 ];
+
+export interface IParamsActaC {
+  origin: string;
+  NO_EXP: string;
+}
