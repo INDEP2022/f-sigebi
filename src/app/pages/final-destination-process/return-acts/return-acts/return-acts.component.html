@@ -4,18 +4,33 @@
   </div>
 
   <div body>
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-12 col-md-6">
-        <search-bar-simple
-          (eventEmit)="search($event)"
-          [label]="''"
-          [placeholder]="'N&uacute;mero de expediente'">
-        </search-bar-simple>
+    <form
+      [formGroup]="expForm"
+      class="form-material justify-content-center"
+      (ngSubmit)="onSubmit()">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-12 col-md-4">
+          <form-field [control]="expForm.get('expediente')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="expediente"
+              [placeholder]="'N&uacute;mero de expediente'" />
+          </form-field>
+        </div>
+        <div class="col-md-2" style="margin-top: 0.5%">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="search()">
+            Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
-    </div>
+    </form>
 
     <div>
-      <div class="">
+      <div class="" *ngIf="actaopen">
         <form
           class="form-material form-horizontal"
           [formGroup]="actForm"
@@ -236,7 +251,7 @@
             </div>
           </div>
           <div class="row justify-content-center">
-            <div class="col-12 col-sm-12 col-md-4">
+            <div class="col-12 col-sm-12 col-md-4" style="text-align: center">
               <form-field [control]="formadd.get('estado')" label="Estado Acta">
                 <input
                   type="text"
@@ -246,8 +261,12 @@
               </form-field>
             </div>
             <div class="col-12 col-sm-12 col-md-1">
-              <button class="btn btn-info active btn-sm">
-                Cerrar <i class="bx bx-file bx-sm float-icon"></i>
+              <button
+                class="btn btn-primary active btn-sm"
+                (click)="validarStatusActa()"
+                [disabled]="!open || !labela"
+                *ngIf="labela">
+                {{ labelActa }} <i class="bx bx-file bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -255,7 +274,7 @@
           <div class="row">
             <div class="col-sm-12 col-12 col-md-3 text-center">
               <button
-                [disabled]="disabled"
+                [disabled]="!sol"
                 tooltip="Generar Folio de Escaneo y Solicitud"
                 containerClass="tooltip-style"
                 class="btn btn-secondary btn-sm active m-1"
@@ -263,7 +282,7 @@
                 <i class="bx bxs-file-find"></i>
               </button>
               <button
-                [disabled]="disabled"
+                [disabled]="!folioBoool"
                 tooltip="Escanear"
                 containerClass="tooltip-style"
                 class="btn btn-secondary btn-sm active m-1"
@@ -288,7 +307,7 @@
             </div>
             <div class="col-sm-12 col-12 col-md-3 text-center">
               <button
-                [disabled]="disabled"
+                [disabled]="!folioBoool"
                 tooltip="Imprimir Solicitud de Escaneo"
                 containerClass="tooltip-style"
                 class="btn btn-secondary btn-sm active m-1"
@@ -296,13 +315,15 @@
                 <i class="bx bxs-file-find"></i>
               </button>
               <button
-                [disabled]="disabled"
+                [disabled]="!scanBool"
                 tooltip="Consulta de Imágenes Escaneadas"
                 containerClass="tooltip-style"
-                class="btn btn-secondary btn-sm active m-1">
+                class="btn btn-secondary btn-sm active m-1"
+                (click)="openview()">
                 <i class="bx bxs-file"></i>
               </button>
             </div>
+            <!-- (click)="getReportViewActa()" -->
           </div>
         </form>
         <!-- Bloque VDB (Bienes)-->
@@ -316,6 +337,7 @@
           class="row pt-2 scroll-table justify-content-center"
           style="margin-left: 5px">
           <ng2-smart-table
+            #mySmartTable
             [attr.class]="'table-bordered'"
             [settings]="settingsGoods"
             [source]="goodsList"
@@ -329,14 +351,16 @@
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
-            (click)="addSelect()">
+            (click)="addSelect()"
+            [disabled]="!pass || !nopass">
             <!-- Mover uno -->
             <i class="bx bx-chevron-down bx-md"></i>
           </button>
           <button
             class="btn btn-secondary btn-sm active m-3 p-1 pointer"
             type="button"
-            (click)="removeSelect()">
+            (click)="removeSelect()"
+            [disabled]="!delete || !nodelete">
             <!-- Quitar uno -->
             <i class="bx bx-chevron-up bx-md"></i>
           </button>
@@ -354,6 +378,7 @@
           class="row pt-2 scroll-table justify-content-center"
           style="margin-left: 5px">
           <ng2-smart-table
+            #mySmartTable
             [attr.class]="'table-bordered'"
             [settings]="settingsDetailProceedings"
             [source]="goodsListTable"
@@ -361,7 +386,7 @@
         </div>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
-        <div class="row">
+        <!-- <div class="row">
           <div class="d-flex align-items-center">
             <div class="col-6 align-items-center">
               <div class="mt-5">
@@ -384,7 +409,7 @@
                 </form>
               </div>
             </div>
-            <!-- <div class="col-6 align-items-center">
+             <div class="col-6 align-items-center">
               <div class="row">
                 <div class="col-6">
                   <span class="text-success mr-5"
@@ -397,9 +422,9 @@
                   >
                 </div>
               </div>
-            </div> -->
+            </div> 
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
