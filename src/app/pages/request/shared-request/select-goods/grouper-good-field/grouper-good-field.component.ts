@@ -49,19 +49,19 @@ export class GrouperGoodFieldComponent extends BasePage implements OnInit {
       };
 
       //borrar solo de prueba
-      item.goodGrouper = 415;
+      /*item.goodGrouper = 415;
       list.push(item);
       this.event.emit(list);
       this.onLoadToast('success', 'Se agrego el valor agrupador');
-      this.close();
+      this.close();*/
 
-      /*const result = await this.updateGoodResDev(item);
+      const result = await this.updateGoodResDev(item);
       list.push(result);
       if (this.goodResDevs.length == index) {
         this.event.emit(list);
-        this.onLoadToast('success','Se agrego el valor agrupador');
+        this.onLoadToast('success', 'Se agrego el valor agrupador');
         this.close();
-      }*/
+      }
     });
   }
 
