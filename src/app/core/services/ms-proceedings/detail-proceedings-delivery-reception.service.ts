@@ -5,6 +5,7 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDeleteDetailProceeding,
+  IDetailProceedings,
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
@@ -20,6 +21,11 @@ export class DetailProceeDelRecService extends HttpService {
   getGoodsByProceedings(id: string | number, params?: ListParams) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=${id}`;
     return this.get(route, params);
+  }
+
+  updateGoodsByProceedings(model: IDetailProceedings) {
+    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
+    return this.put(route, model);
   }
 
   PADelActaEntrega(actNumber: string | number) {

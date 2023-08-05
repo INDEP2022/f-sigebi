@@ -140,13 +140,8 @@
       </form>
       <div class="row mt-3 justify-content-md-center">
         <div class="col-12 col-md-3 text-md-center">
-          <button class="btn btn-primary btn-sm active" (click)="save()">
-            Consultar
-          </button>
-          <button
-            class="btn btn-danger btn-sm active mr-3"
-            (click)="clean()"
-            style="margin: 1vh">
+          <button class="btn btn-primary btn-sm active">Consultar</button>
+          <button class="btn btn-danger btn-sm active mr-3" style="margin: 1vh">
             Limpiar <i class="fas fa-eraser"> </i>
           </button>
         </div>
@@ -166,6 +161,7 @@
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-bordered'"
+            (userRowSelect)="selectData($event)"
             [settings]="settings"
             [source]="data">
           </ng2-smart-table>
@@ -178,7 +174,9 @@
         <div class="col-12 col-md-4">
           <div class="row">
             <div class="col-12 text-center">
-              <button class="btn btn-primary btn-sm active">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="pup_refresca()">
                 Refrescar y Guardar
               </button>
             </div>
@@ -233,9 +231,7 @@
                   <span class="badge rounded-pill badge-soft-success">{{
                     totNoCumplidos
                   }}</span>
-                  <button
-                    class="btn btn-sm btn-success active"
-                    (click)="saveCSVFile()">
+                  <button class="btn btn-sm btn-success active">
                     <i class="bx bx-download float-icon"></i>
                   </button>
                 </div>

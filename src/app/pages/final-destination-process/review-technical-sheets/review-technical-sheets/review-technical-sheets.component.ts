@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
@@ -12,7 +12,9 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
@@ -23,6 +25,7 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
+  @Output() onClose = new EventEmitter<any>();
   form: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -50,7 +53,10 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private modalService: BsModalService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private servideUpdate: DetailProceeDelRecService,
+    private indicatorService: GoodsQueryService,
+    private modalRef: BsModalRef
   ) {
     super();
     this.settings = { ...this.settings, actions: false, hideSubHeader: false };
@@ -133,10 +139,12 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+          this.getData();
         }
       });
 
     this.params.pipe(takeUntil(this.$unSubscribe));
+    this.getData();
   }
 
   initForm() {
@@ -197,6 +205,30 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
   }
 
   onSubmit() {}
+
+  getData() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.indicatorService.getIndicatorsEntRecep(params).subscribe({
+      next: response => {
+        this.totalItems = response.count;
+        this.data.load(response.data);
+        console.log(response);
+        console.log(this.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
+  }
 
   save() {
     this.loading = true;
@@ -305,9 +337,84 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
 
   selectData(event: { data: any; selected: any }) {
     console.log('AQUI', event);
-    this.selectReview = [];
-    this.selectReview.push(event.data);
+    this.selectReview = event.data; // Asegúrate de que selectReview sea un objeto, no un array
     console.log('this.selectReview', this.selectReview);
+  }
+
+  pup_refresca() {
+    if (!this.selectReview) {
+      return; // Salir si no hay una selección válida
+    }
+
+    let lv_revisa: number;
+    let lv_correcto: number;
+
+    if (this.selectReview.reviewIndft === 2) {
+      lv_revisa = 0;
+    } else {
+      lv_revisa = 1;
+    }
+
+    if (this.selectReview.correctIdft === 2) {
+      lv_correcto = 0;
+    } else {
+      lv_correcto = 1;
+    }
+
+    if (lv_revisa !== 0 || lv_correcto !== 0) {
+      if (this.selectReview.user === 'USRPRU') {
+        const updateParams = {
+          reviewIndft: this.selectReview.reviewIndft,
+          correctIndft: this.selectReview.correctIdft,
+          numberGood: this.selectReview.assetNumber,
+          numberProceedings: this.selectReview.recordNumber,
+        };
+
+        console.log(updateParams);
+
+        this.servideUpdate.updateGoodsByProceedings(updateParams).subscribe({
+          next: data => {
+            this.handleSuccess();
+            console.log('Actualización exitosa:', data);
+          },
+          error: error => {
+            this.loading = false;
+            console.error('Error al actualizar:', error);
+          },
+        });
+
+        console.log(this.selectReview.user);
+      } else {
+        const updateParams1 = {
+          reviewIndft: this.selectReview.reviewIndft,
+          correctIndft: this.selectReview.correctIdft,
+          numberGood: this.selectReview.assetNumber,
+          numberProceedings: this.selectReview.recordNumber,
+          idftUser: this.selectReview.user,
+          idftDate: new Date(),
+          numDelegationIndft: this.selectReview.delegationNumberIdft,
+        };
+
+        console.log(updateParams1);
+
+        this.servideUpdate.updateGoodsByProceedings(updateParams1).subscribe({
+          next: data => {
+            this.handleSuccess();
+            console.log('Actualización exitosa:', data);
+          },
+          error: error => {
+            this.loading = false;
+            console.error('Error al actualizar:', error);
+          },
+        });
+
+        console.log(this.selectReview.user);
+      }
+    }
+  }
+
+  handleSuccess() {
+    this.alert('success', 'Actualizado', '');
   }
 
   clean() {
@@ -341,9 +448,10 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     }
   }
 
-  generateWhereClause(): void {
+  generateWhereClause(event: any) {
     // Obtener los valores del formulario
     const initDate = this.form.get('initDate').value;
+
     const endDate = this.form.get('endDate').value;
     const proceedingsSiab = this.form.get('proceedingsSiab').value;
     const initAct = this.form.get('initAct').value;
@@ -377,42 +485,44 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     }
 
     // PUP_GENERA_WHERE - Parte faltante
-    if (this.form.get('NO_TRANSFERENTE').value) {
+    if (this.form.get('transf').value) {
       this.DWHERE = `${this.DWHERE} AND (NO_TRANSFERENTE IN (${
-        this.form.get('NO_TRANSFERENTE').value
+        this.form.get('transf').value
       })`;
       vBAN = true;
     }
-    if (this.form.get('NO_EMISORA').value) {
+    if (this.form.get('issuing').value) {
       if (vBAN) {
         this.DWHERE = `${this.DWHERE} OR (NO_TRANSFERENTE, NO_EMISORA) IN (${
-          this.form.get('NO_EMISORA').value
+          this.form.get('issuing').value
         })`;
       } else {
         this.DWHERE = `${this.DWHERE} AND ((NO_TRANSFERENTE, NO_EMISORA) IN (${
-          this.form.get('NO_EMISORA').value
+          this.form.get('issuing').value
         })`;
         vBAN = true;
       }
     }
-    if (this.form.get('NO_AUTORIDAD').value) {
+    if (this.form.get('authority').value) {
       if (vBAN) {
         this.DWHERE = `${
           this.DWHERE
         } OR (NO_TRANSFERENTE, NO_EMISORA, NO_AUTORIDAD) IN (${
-          this.form.get('NO_AUTORIDAD').value
+          this.form.get('authority').value
         })`;
       } else {
         this.DWHERE = `${
           this.DWHERE
         } AND ((NO_TRANSFERENTE, NO_EMISORA, NO_AUTORIDAD) IN (${
-          this.form.get('NO_AUTORIDAD').value
+          this.form.get('authority').value
         })`;
         vBAN = true;
       }
     }
     if (vBAN) {
       this.DWHERE = `${this.DWHERE})`;
+      console.log(this.DWHERE);
+      console.log(vBAN);
     }
   }
 
