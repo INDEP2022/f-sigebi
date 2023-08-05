@@ -2,10 +2,16 @@ import { formatDate } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
+import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-customer-penalties-modal',
@@ -20,7 +26,9 @@ export class CustomerPenaltiesModalComponent
   edit: boolean = false;
 
   form: FormGroup = new FormGroup({});
-  customersPenalties: ICustomersPenalties;
+  //customersPenalties: ICustomersPenalties;
+  customersPenalties: any;
+
   penalty: any;
   penalties: ICustomersPenalties;
   today: Date;
@@ -30,12 +38,24 @@ export class CustomerPenaltiesModalComponent
   lotId: number;
   publicLot: number;
 
+  selectClient = new DefaultSelect();
+  selectEvent = new DefaultSelect();
+  selectLot = new DefaultSelect();
+
+  clientIdAny: any;
+  eventIdAny: any;
+
+  prueba: IComerClients[] = [];
+
   @Output() data = new EventEmitter<{}>();
 
   constructor(
     private fb: FormBuilder,
     private clientPenaltyService: ClientPenaltyService,
-    private modalRef: BsModalRef
+    private modalRef: BsModalRef,
+    private comerClientsService: ComerClientsService,
+    private comerEventService: ComerEventService,
+    private lotService: LotService
   ) {
     super();
     this.today = new Date();
@@ -43,7 +63,7 @@ export class CustomerPenaltiesModalComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.clientId = this.customersPenalties.clientId?.id;
+    /*this.clientId = this.customersPenalties.clientId?.id;
     this.eventId = this.customersPenalties.eventId?.id;
     this.lotId = this.customersPenalties.lotId?.id;
     this.publicLot = this.customersPenalties.lotId?.publicLot;
@@ -51,35 +71,25 @@ export class CustomerPenaltiesModalComponent
       clientId: this.clientId,
       eventId: this.eventId,
       lotId: this.lotId,
-    });
+    });*/
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      clientId: [
-        null,
-        [
-          Validators.required,
-          Validators.maxLength(13),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
+      clientId: [null, [Validators.required]],
       id: [
         null,
         [
           Validators.required,
-          Validators.maxLength(13),
           Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
         ],
       ],
       typeProcess: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      eventId: [
-        null,
-        [Validators.maxLength(7), Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      eventId: [null, []],
       lotId: [
         null,
         [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
@@ -117,14 +127,37 @@ export class CustomerPenaltiesModalComponent
     });
     if (this.customersPenalties != null) {
       this.edit = true;
+
+      //this.form.patchValue(this.customersPenalties);
+      this.clientIdAny = this.customersPenalties.clientId;
+      this.eventIdAny = this.customersPenalties.eventId;
+
+      /*let clie: IComerClients = this.clientIdAny.id as IComerClients;
+      this.form.patchValue({...this.customersPenalties, id: clie.id});
+      console.log(clie);
+      this.selectClient = new DefaultSelect([clie], 1);*/
       this.form.patchValue(this.customersPenalties);
+      this.form.get('clientId').setValue(this.clientIdAny.id);
+      this.form.get('eventId').setValue(this.eventIdAny.eventTpId);
+
+      //this.getClientUp(new ListParams(), this.clientIdAny.id);
+      //this.form.controls['clientId'].setValue(this.clientIdAny.id);
+
+      console.log(this.form.controls['clientId'].value);
+
+      console.log(String(this.clientIdAny.id));
+
+      /*this.getClientUp(new ListParams(), String(this.clientIdAny.id));
+      //this.form.controls['clientId'].setValue(this.clientIdAny.id);
+      this.getEventUp(new ListParams(), String(this.eventIdAny.eventTpId));
+      //this.getLotUp(new ListParams());
+      this.form.patchValue(this.customersPenalties);*/
 
       //this.form.controls['clientId'].setValue(this.customersPenalties.clientId.id);
+
       console.log(this.customersPenalties);
 
-      if (this.form.get('startDate').value === null) {
-        this.form.get('startDate').value.reset();
-      } else {
+      if (this.form.get('startDate').value) {
         const dbReleaseDate = this.form.get('startDate').value;
         const formattedDate1 = formatDate(dbReleaseDate, 'dd/MM/yyyy', 'en-US');
         this.form.get('startDate').setValue(formattedDate1);
@@ -133,9 +166,7 @@ export class CustomerPenaltiesModalComponent
           .setValue(this.addDays(new Date(dbReleaseDate), 1));
       }
 
-      if (this.form.get('endDate').value === null) {
-        this.form.get('endDate').value.reset();
-      } else {
+      if (this.form.get('endDate').value) {
         const dbBlackListDate = this.form.get('endDate').value;
         const formattedDate2 = formatDate(
           dbBlackListDate,
@@ -148,9 +179,7 @@ export class CustomerPenaltiesModalComponent
           .setValue(this.addDays(new Date(dbBlackListDate), 1));
       }
 
-      if (this.form.get('penaltiDate').value === null) {
-        this.form.get('penaltiDate').value.reset();
-      } else {
+      if (this.form.get('penaltiDate').value) {
         const dbFreeDate = this.form.get('penaltiDate').value;
         const formattedDate3 = formatDate(dbFreeDate, 'dd/MM/yyyy', 'en-US');
         this.form.get('penaltiDate').setValue(formattedDate3);
@@ -159,7 +188,112 @@ export class CustomerPenaltiesModalComponent
           .setValue(this.addDays(new Date(dbFreeDate), 1));
       }
     }
+    setTimeout(() => {
+      this.getClient(new ListParams());
+      this.getEvent(new ListParams());
+      this.getLot(new ListParams());
+    }, 1000);
   }
+
+  getClient(params: ListParams) {
+    this.comerClientsService.getAllV2(params).subscribe({
+      next: resp => {
+        /*id
+        reasonName*/
+        console.log(resp.data);
+        this.selectClient = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectClient = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getClientUp(params: ListParams, id?: string | number) {
+    params['filter.id'] = `$eq:${id}`;
+    this.comerClientsService.getAllV2(params).subscribe({
+      next: resp => {
+        /*id
+        reasonName*/
+        console.log(resp.data);
+        this.prueba = resp.data;
+        this.selectClient = new DefaultSelect(this.prueba, resp.count);
+      },
+      error: err => {
+        this.selectClient = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getEvent(params: ListParams) {
+    this.comerEventService.getAllFilter(params).subscribe({
+      next: resp => {
+        this.selectEvent = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectEvent = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getEventUp(params: ListParams, id?: string | number) {
+    params['filter.eventTpId'] = `$eq:${id}`;
+    this.comerClientsService.getAll(params).subscribe({
+      next: resp => {
+        /*id
+        reasonName*/
+        console.log(resp.data);
+        this.selectEvent = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectEvent = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getLot(params: ListParams) {
+    this.lotService.getAllComerLot(params).subscribe({
+      next: resp => {
+        this.selectLot = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectLot = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  getLotUp(params: ListParams, id?: string | number) {
+    params['filter.idLot'] = `$eq:${id}`;
+    this.comerClientsService.getAll(params).subscribe({
+      next: resp => {
+        /*id
+        reasonName*/
+        console.log(resp.data);
+        this.selectLot = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.selectLot = new DefaultSelect();
+        this.loading = false;
+      },
+    });
+  }
+
+  changeClient(event: any) {
+    /*console.log(event);
+    var formatted = new DatePipe('en-EN').transform(event.blackListDate, 'dd/MM/yyyy', 'UTC');
+    this.form.controls['penaltiDate'].setValue(formatted);*/
+  }
+
+  changeEvent(event: any) {
+    console.log(event);
+  }
+
+  changeLot(event: any) {}
 
   addDays(date: Date, days: number): Date {
     const result = new Date(date);
@@ -181,9 +315,10 @@ export class CustomerPenaltiesModalComponent
 
   update() {
     this.loading = true;
-    const clientId = this.customersPenalties.clientId.id;
-    const lotId = this.form.get('lotId');
-    const eventId = this.form.get('eventId');
+
+    const clientId: any = this.form.get('clientId');
+    const lotId = this.form.get('publicLot');
+    const eventId: any = this.form.get('eventId');
     const endDate = this.form.get('endDate');
     const penaltyId = this.customersPenalties.id;
     const pFlag = this.customersPenalties.pFlag;
@@ -195,7 +330,7 @@ export class CustomerPenaltiesModalComponent
     const typeProcess = this.form.get('typeProcess');
     const user = this.customersPenalties.user;
     const userPenalty = this.customersPenalties.userPenalty;
-    const model: any = {
+    let model1: any = {
       //customerId: clientId,
       /*clientId: this.form.controls['clientId'].value,
       //customerId: 
@@ -214,10 +349,10 @@ export class CustomerPenaltiesModalComponent
       usrPenalize: userPenalty,
       nbOrigin: null,*/
 
-      customerId: this.form.controls['clientId'].value,
+      customerId: this.clientIdAny.id,
       batchId: lotId.value,
       penaltyId: this.form.controls['id'].value,
-      eventId: eventId.value,
+      eventId: this.eventIdAny.eventTpId,
       batchPublic: publicLot,
       initialDate: startDate.value,
       finalDate: endDate.value,
@@ -230,8 +365,8 @@ export class CustomerPenaltiesModalComponent
       penalizesDate: penaltiDate.value,
       nbOrigin: null,
     };
-    console.log(model);
-    this.clientPenaltyService.updateCustomers1(model).subscribe({
+    console.log(model1);
+    this.clientPenaltyService.updateCustomers1(model1).subscribe({
       next: data => {
         this.handleSuccess();
         this.modalRef.hide();
@@ -342,10 +477,8 @@ export class CustomerPenaltiesModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit
-      ? 'Penalización Actualizada'
-      : 'Penalización Creada';
-    this.alert('success', `${message} Correctamente`, '');
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', 'Penalización', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
