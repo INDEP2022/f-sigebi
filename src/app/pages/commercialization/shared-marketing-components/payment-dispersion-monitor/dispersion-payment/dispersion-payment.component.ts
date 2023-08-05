@@ -57,8 +57,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   loadingLotBanks = false;
   loadingPaymentLots = false;
 
-  loadingValidAmount = false
-  loadingTotal = false
+  loadingValidAmount = false;
+  loadingTotal = false;
 
   loadingExcel = false;
 
@@ -631,7 +631,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //SELECCIONAR CLIENTES PARTICIPANTES EN EL EVENTO
   selectRowClientEvent(e: any) {
     console.log(e.data);
-    this.loadingCustomerBanks = true
+    this.loadingCustomerBanks = true;
     this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
   }
 
@@ -648,12 +648,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR CLIENTE
   getPaymentByCustomer(clientId: string, eventId: string) {
-    this.loadingValidAmount = true
-    this.loadingTotal = true
+    this.loadingValidAmount = true;
+    this.loadingTotal = true;
 
     const paramsF = new FilterParams();
     paramsF.addFilter('Customer_ID', clientId);
-    paramsF.addFilter('Event_ID', eventId)
+    paramsF.addFilter('Event_ID', eventId);
     this.comerLotsService.getLotComerPayRef(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -668,41 +668,43 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.totalItemsCustomerBanks = 0;
       }
     );
-    
+
     const model = {
       dateComer: format(this.dateMaxWarranty.value, 'yyyy-MM-dd'),
       clientId: clientId,
-      eventId: eventId
-    }
+      eventId: eventId,
+    };
 
     this.comerLotsService.getSumLotComerPayRef(model).subscribe(
       res => {
-        console.log(res)
-        this.loadingValidAmount = false
-        this.formCustomerBanks.get('validAmount').setValue(res.data[0].suma_total)
+        console.log(res);
+        this.loadingValidAmount = false;
+        this.formCustomerBanks
+          .get('validAmount')
+          .setValue(res.data[0].suma_total);
       },
       err => {
-        console.log(err)
-        this.loadingValidAmount = false
+        console.log(err);
+        this.loadingValidAmount = false;
       }
-    )
+    );
 
     const model2 = {
       clientId: clientId,
-      eventId: eventId
-    }
+      eventId: eventId,
+    };
 
     this.comerLotsService.getSumAllComerPayRef(model2).subscribe(
       res => {
-        console.log(res)
-        this.formCustomerBanks.get('total').setValue(res.data[0].suma_total)
-        this.loadingTotal = false
+        console.log(res);
+        this.formCustomerBanks.get('total').setValue(res.data[0].suma_total);
+        this.loadingTotal = false;
       },
       err => {
-        console.log(err)
-        this.loadingTotal = false
+        console.log(err);
+        this.loadingTotal = false;
       }
-    )
+    );
   }
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE

@@ -212,11 +212,11 @@ export class HistoryCustomersPenaltiesComponent
         /*this.loading = false;
           this.data2 = new LocalDataSource();
           this.totalItems = 0;*/
-        this.alert(
+        /*this.alert(
           'warning',
           'Cliente no Tiene un Histórico de Penalización',
           ''
-        );
+        );*/
         this.loading = false;
         this.data2.load([]);
         this.data2.refresh();

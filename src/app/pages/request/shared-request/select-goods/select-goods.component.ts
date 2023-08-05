@@ -165,7 +165,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       },*/
       ...this.selectedGoodSettings.columns,
     };
-    this.selectedGoodColumns = datagood;
+    //this.selectedGoodColumns = datagood;
   }
 
   getInfoRequest() {
@@ -287,52 +287,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(error);
       },
     });
-    /*this.goodProcessService
-      .getGoodPostQuery(this.params.getValue(), filters)
-      .subscribe({
-        next: response => {
-          console.log('response', response);
-          this.goodColumns = response.data;
-          this.goodTotalItems = response.count;
-          const filterData = response.data.map(async (item: any) => {
-          const destinyName: any = await this.destinyInfo(item.destiny);
-          item.destinyName = destinyName;
-          return item;
-        });
-
-        Promise.all(filterData).then(data => {
-          console.log('bienes', data);
-          
-        }); 
-        },
-      }); */
-    /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.delegationNumber'] = filters.regionalDelegationId;
-    params.getValue()['filter.origin'] = '$not:$null';
-
-    this.goodService.getAll(params.getValue()).subscribe({
-      next: response => {
-        const filterData = response.data.map(async item => {
-          const destinyName: any = await this.destinyInfo(item.destiny);
-          item.destinyName = destinyName;
-          return item;
-        });
-
-        Promise.all(filterData).then(data => {
-          console.log('bienes', data);
-          this.goodColumns = data;
-          this.goodTotalItems = response.count;
-        });
-      },
-      error: error => {},
-    }); */
-    //params.getValue()['filter.delegationNumber'] = this.regio;
-    //Llamar servicio para obtener bienes
-    /* let columns = this.goodTestData;
-    columns.forEach(c => {
-      c = Object.assign({ addGood: '' }, { viewFile: '' }, c);
-    }); */
-    //
   }
 
   destinyInfo(idDestiny: number) {
@@ -381,7 +335,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     this.modalService.show(ReserveGoodModalComponent, config); */
     const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-      initialState: { good },
+      initialState: { good: good, requestId: this.requestInfo.id },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -432,7 +386,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.processDet == 'DEVOLUCION'
           ) {
             //elimina inventario
-
             this.deleteGoodDated(item);
           } else {
             // this.deleteGoodResDev(item);
@@ -463,6 +416,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   openSiabSearch() {
     const modalRef = this.modalService.show(RequestSiabFormComponent, {
+      initialState: {
+        request: this.requestInfo,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -498,7 +454,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.event.subscribe(next => {
-      debugger;
       if (next != undefined) {
         next.map((item: any) => {
           const index = this.selectedGoodColumns.indexOf(item);
@@ -526,11 +481,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   async deleteGoodDated(goodDevRes: any) {
     if (goodDevRes.inventoryNumber != null) {
       if (goodDevRes.reservationId != null) {
-        //mandar a llamar el endpoint de presosXxsaeFacade (eliminarReservaBIen)
+        //mandar a llamar el endpoint de ProcesosXxsaeFacade (eliminarReservaBIen)
         /* metodo */
-        //const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+        //si la respuesta del endpoint ProcesosXxsaeFacade fue exitosa
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
       } else {
-        //const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
       }
     } else {
       const good: any = await this.findGoodById(goodDevRes.goodId);
@@ -541,9 +497,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           goodResdevId: null,
           compensation: null,
         };
-        //await this.updateGood(body);
+        await this.updateGood(body);
       }
-      //const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+      const goodDeleted = await this.deleteGoodResDev(goodDevRes);
     }
   }
 

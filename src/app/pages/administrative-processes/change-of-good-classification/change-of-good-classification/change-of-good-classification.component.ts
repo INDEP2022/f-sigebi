@@ -353,7 +353,7 @@ export class ChangeOfGoodClassificationComponent
         this.alertInfo(
           'error',
           'Cambio de Clasificador',
-          'Solo se podrá realizar el cambio de clasificador, de bienes en estatus ROP, STA y VXR'
+          'Solo se podrá realizar el cambio de clasificador, de Bienes en Estatus ROP, STA y VXR'
         );
         this.clear();
         return;
@@ -382,7 +382,7 @@ export class ChangeOfGoodClassificationComponent
             this.alert(
               'error',
               'Error',
-              'No se puedo cargar la descripción del clasificador'
+              'No se puedo cargar la Descripción del Clasificador'
             );
           }
           this.loading = false;
@@ -391,7 +391,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'Error',
-            'No se puedo cargar la descripción del clasificador'
+            'No se puedo cargar la Descripción del Clasificador'
           );
           this.loading = false;
         },
@@ -576,8 +576,8 @@ export class ChangeOfGoodClassificationComponent
         next: response => {
           this.alert(
             'success',
-            'ÉXITO',
-            `Se ha actualizado la clasificación del bien ${this.good.id}`
+            'Bien ' + this.good.id,
+            `Se ha actualizado la Clasificación Correctamente`
           );
           this.updateFirsTable();
           // this.dataAct.load([]);
@@ -589,7 +589,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'ERROR',
-            `Error al cambiar la clasificación del bien ${this.good.id}`
+            `Error al cambiar la clasificación del Bien ${this.good.id}`
           );
         },
       });
