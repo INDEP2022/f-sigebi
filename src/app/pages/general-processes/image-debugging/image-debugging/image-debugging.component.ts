@@ -1123,7 +1123,7 @@ export class ImageDebuggingComponent extends BasePage implements OnInit {
   // debugger;
   private async postRecord(isPostQuery = false) {
     const filterParams = new FilterParams();
-    filterParams.addFilter('typeNumber', 'CARBIEN');
+    // filterParams.addFilter('typeNumber', 'CARBIEN');
     // filterParams.addFilter('user', 'DR_SIGEBI');
     filterParams.addFilter(
       'user',
