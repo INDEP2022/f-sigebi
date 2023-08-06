@@ -158,6 +158,7 @@
         <div class="col">
           <button
             class="btn btn-sm btn-success active mr-3"
+            (click)="exportPaymentDetail()"
             [disabled]="loadingExcel">
             Exportar a Excel Detalle de los Pagos
             <i class="bx bx-download float-icon"></i>
@@ -175,12 +176,14 @@
         <div class="col">
           <button
             class="btn btn-sm btn-success active mr-3"
+            (click)="exportPaymentWithoutStatus()"
             [disabled]="loadingExcel">
             Exportar a Excel Pagos sin Estatus
             <i class="bx bx-download float-icon"></i>
           </button>
           <button
             class="btn btn-sm btn-success active"
+            (click)="exportPaymentAndLots()"
             [disabled]="loadingExcel">
             Exportar a Excel Pagos Vs. Lotes
             <i class="bx bx-download float-icon"></i>

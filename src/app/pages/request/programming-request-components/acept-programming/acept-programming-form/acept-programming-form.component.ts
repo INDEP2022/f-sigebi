@@ -833,8 +833,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         const showGuardData = await this.showWarehouseEmail();
 
         if (showGuardData) {
-          const showBase64: any = await this.showBase64();
-
           const dataEmail = {
             folio: this.programming.folio,
             startDate: this.startDateEmail,
@@ -847,7 +845,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             goodsWarehouse: this.warehouseGoods,
             emailSend: this.emails,
             nameAtt: this.programming.folio,
-            fileB64: showBase64,
+            fileB64: this.programming.contentId,
           };
 
           this.emailService.createEmailProgramming(dataEmail).subscribe({
@@ -939,17 +937,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         this.warehouseGoods.push(guardObject);
       })
     ); */
-  }
-
-  showBase64() {
-    return new Promise((resolve, reject) => {
-      this.wcontentService.obtainFile(this.programming.contentId).subscribe({
-        next: response => {
-          resolve(response);
-        },
-        error: error => {},
-      });
-    });
   }
 
   showTransportableEmail() {

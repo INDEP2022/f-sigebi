@@ -728,10 +728,12 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       let exp = this.form.get('expediente').value;
       paramsF.addFilter('noGood', this.idGood);
       paramsF['sortBy'] = 'noRequest:DESC';
-      this.serviceGood.getByExpedient(paramsF.getParams()).subscribe(res => {
-        console.log('dataApprasialGood ', res);
-        this.dataApprasialGood = res.data;
-      });
+      this.serviceGood
+        .getByExpedientV2(exp, paramsF.getParams())
+        .subscribe(res => {
+          console.log('dataApprasialGood ', res);
+          this.dataApprasialGood = res.data;
+        });
     }
   }
 
@@ -740,53 +742,56 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
       const paramsF = new FilterParams();
       paramsF.addFilter('noGood', this.idGood);
       paramsF['sortBy'] = 'noRequest:DESC';
-      this.serviceGood.getByExpedient(paramsF.getParams()).subscribe(res => {
-        console.log('getAppraisalGoodTab', res);
-        const resApprais = JSON.parse(JSON.stringify(res.data[0]));
-        this.form.get('importe').setValue(resApprais.valueAppraisal);
-        this.form
-          .get('moneda')
-          .setValue(resApprais.requestXAppraisal.cveCurrencyAppraisal);
-        this.form
-          .get('fechaAvaluo')
-          .setValue(new Date(resApprais.appraisalDate));
-        this.form
-          .get('fechaVigencia')
-          .setValue(new Date(resApprais.effectiveDate));
-        if (resApprais.requestXAppraisal.noExpert != null) {
-          this.serviceProeficient
-            .getById(resApprais.requestXAppraisal.noExpert)
-            .subscribe(
-              res => {
-                this.form.get('perito').setValue(res);
-              },
-              err => {
-                this.form.get('perito').setValue(null);
-              }
-            );
-        }
-        console.log(resApprais.requestXAppraisal.noAppraiser);
-        if (resApprais.requestXAppraisal.noAppraiser != null) {
-          this.serviceCatalogAppraise
-            .getById(resApprais.requestXAppraisal.noAppraiser)
-            .subscribe(
-              res => {
-                console.log(res);
-                console.log(res.data[0]['description']);
-                this.form
-                  .get('institucion')
-                  .setValue(res.data[0]['description']);
-              },
-              err => {
-                this.form.get('institucion').setValue(null);
-              }
-            );
-        }
-        /* this.form
+      let exp = this.form.get('expediente').value;
+      this.serviceGood
+        .getByExpedientV2(exp, paramsF.getParams())
+        .subscribe(res => {
+          console.log('getAppraisalGoodTab', res);
+          const resApprais = JSON.parse(JSON.stringify(res.data[0]));
+          this.form.get('importe').setValue(resApprais.valueAppraisal);
+          this.form
+            .get('moneda')
+            .setValue(resApprais.requestXAppraisal.cveCurrencyAppraisal);
+          this.form
+            .get('fechaAvaluo')
+            .setValue(new Date(resApprais.appraisalDate));
+          this.form
+            .get('fechaVigencia')
+            .setValue(new Date(resApprais.effectiveDate));
+          if (resApprais.requestXAppraisal.noExpert != null) {
+            this.serviceProeficient
+              .getById(resApprais.requestXAppraisal.noExpert)
+              .subscribe(
+                res => {
+                  this.form.get('perito').setValue(res);
+                },
+                err => {
+                  this.form.get('perito').setValue(null);
+                }
+              );
+          }
+          console.log(resApprais.requestXAppraisal.noAppraiser);
+          if (resApprais.requestXAppraisal.noAppraiser != null) {
+            this.serviceCatalogAppraise
+              .getById(resApprais.requestXAppraisal.noAppraiser)
+              .subscribe(
+                res => {
+                  console.log(res);
+                  console.log(res.data[0]['description']);
+                  this.form
+                    .get('institucion')
+                    .setValue(res.data[0]['description']);
+                },
+                err => {
+                  this.form.get('institucion').setValue(null);
+                }
+              );
+          }
+          /* this.form
             .get('institucion')
             .setValue(resApprais.requestXAppraisal.noAppraiser); */
-        //!Se necesita agregar filtro dinámico a este endpoint http://sigebimsdev.indep.gob.mx/catalog/api/v1/appraisers?filter.id=$eq:85
-      });
+          //!Se necesita agregar filtro dinámico a este endpoint http://sigebimsdev.indep.gob.mx/catalog/api/v1/appraisers?filter.id=$eq:85
+        });
     }
   }
 

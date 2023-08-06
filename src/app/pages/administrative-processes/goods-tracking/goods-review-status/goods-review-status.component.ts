@@ -271,7 +271,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      'Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -302,7 +302,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       // this.showPagination = false;
       // this.totalItems = this.data1.count();
     } catch (error) {
-      this.alert('error', 'Ocurrio un error al leer el archivo', 'Error');
+      this.alert('error', 'Ocurrio un Error al leer el Archivo', '');
     }
   }
 
@@ -310,7 +310,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   async attentionMassive(excelImport: any) {
     console.log('excelImport', excelImport);
     if (excelImport.length == 0) {
-      this.alert('warning', 'No hay data cargada en el archivo', '');
+      this.alert('warning', 'No hay Data Cargada en el Archivo', '');
       return;
     }
     let EXISTE: number = 0;
@@ -321,7 +321,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     let ESTATUSF: string;
     this.alertQuestion(
       'question',
-      '¿Está seguro de dar por atendidos los bienes del archivo?',
+      '¿Está Seguro de dar por Atendidos los Bienes del Archivo?',
       ''
     ).then(async question => {
       if (question.isConfirmed) {
@@ -350,7 +350,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             } else {
               let obj = {
                 goodNumber: excelImport[i].goodNumber,
-                message: 'Verifique las condiciones de atención de proceso REV',
+                message: 'Verifique las Condiciones de Atención de Proceso REV',
               };
               ArrayNoAtendidos.push(obj);
               // this.alert(
@@ -380,7 +380,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               } else {
                 let obj = {
                   goodNumber: excelImport[i].goodNumber,
-                  message: `El bien: ${excelImport[i].goodNumber} no se pudo atender en MOTIVOSREV`,
+                  message: `El Bien: ${excelImport[i].goodNumber} no se pudo Atender en MOTIVOSREV`,
                 };
                 ArrayNoAtendidos.push(obj);
                 // this.alert(
@@ -418,7 +418,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 } else {
                   let obj = {
                     goodNumber: excelImport[i].goodNumber,
-                    message: `No se identificó el estatus final para el bien: ${excelImport[i].goodNumber}`,
+                    message: `No se Identificó el Estatus Final para el Bien: ${excelImport[i].goodNumber}`,
                   };
                   ArrayNoAtendidos.push(obj);
 
@@ -444,7 +444,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
                   let obj = {
                     goodNumber: excelImport[i].goodNumber,
-                    message: `Error al actualizar el estatus del bien: ${excelImport[i].goodNumber}`,
+                    message: `Error al Actualizar el Estatus del Bien: ${excelImport[i].goodNumber}`,
                   };
                   ArrayNoAtendidos.push(obj);
 
@@ -496,8 +496,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             if (ArrayNoAtendidos.length == excelImport.length) {
               this.alertQuestion(
                 'question',
-                'Los bienes del archivo no se pudieron atender',
-                '¿Quiere visualizarlos?'
+                'Los Bienes del Archivo no se Pudieron Atender',
+                '¿Quiere Visualizarlos?'
               ).then(async question => {
                 if (question.isConfirmed) {
                   this.openForm(ArrayNoAtendidos);
@@ -506,8 +506,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             } else {
               this.alertQuestion(
                 'question',
-                'Hay bienes que no se pudieron atender',
-                '¿Quiere visualizarlos?'
+                'Hay Bienes que no se Pudieron Atender',
+                '¿Quiere Visualizarlos?'
               ).then(async question => {
                 if (question.isConfirmed) {
                   this.openForm(ArrayNoAtendidos);
@@ -518,7 +518,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'success',
-              'Todos los bienes del archivo fueron atendidos',
+              'Todos los Bienes del Archivo Fueron Atendidos',
               ''
             );
             await this.getMotives();
@@ -652,7 +652,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         this.responsable2 = this.responsable;
       }
     } else {
-      this.alert('warning', 'Falta asignar área Responsable o Delegación.', '');
+      this.alert('warning', 'Falta Asignar Área Responsable o Delegación.', '');
     }
   }
 
@@ -698,7 +698,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   // Exporta a excel 'csv'
   async exportar() {
     const filename: string = 'Data';
-    const jsonToCsv = await this.returnJsonToCsv();
+    const jsonToCsv: any = await this.returnJsonToCsv();
     console.log('jsonToCsv', jsonToCsv);
     this.jsonToCsv = jsonToCsv;
     this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
@@ -706,6 +706,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async returnJsonToCsv() {
     return this.data.getAll();
+    this.data.getAll().then(resp => {
+      let arr: any = [];
+      let result = resp.map((item: any) => {
+        arr.push(item);
+      });
+      return arr;
+    });
   }
 
   selectRow(row: any) {
@@ -723,12 +730,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async attention() {
     if (!this.selectedRow) {
-      this.alert('warning', 'No se ha seleccionado ninguna fila', '');
+      this.alert('warning', 'No se ha Seleccionado Ninguna Fila', '');
       return;
     }
 
     if (!this.selectedRow.goodNumber) {
-      this.alert('warning', 'El número de bien se encuentra vacío', '');
+      this.alert('warning', 'El Número de Bien se Encuentra Vacío', '');
       return;
     }
 
@@ -737,7 +744,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
     this.alertQuestion(
       'question',
-      `¿Desea dar por atendido el bien: ${this.selectedRow.goodNumber}?`,
+      `¿Desea dar por Atendido el Bien: ${this.selectedRow.goodNumber}?`,
       ''
     ).then(async question => {
       if (question.isConfirmed) {
@@ -757,7 +764,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'warning',
-            `El bien: ${this.selectedRow.goodNumber} no se pudo actualizar`,
+            `El Bien: ${this.selectedRow.goodNumber} no se pudo Actualizar`,
             ''
           );
           return;
@@ -790,7 +797,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             ESTATUSF = null;
             this.alert(
               'warning',
-              `No se identificó el estatus final para el bien: ${this.selectedRow.goodNumber}`,
+              `No se Identificó el Estatus Final para el Bien: ${this.selectedRow.goodNumber}`,
               ''
             );
             return;
@@ -806,7 +813,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           if (updateGood == null) {
             this.alert(
               'error',
-              `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
+              `Error al Actualizar el Estatus del Bien: ${this.selectedRow.goodNumber}`,
               ''
             );
             return;
@@ -831,7 +838,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             console.log('2', insertHistoric);
             this.alert(
               'error',
-              `Error al actualizar el estatus del bien: ${this.selectedRow.goodNumber}`,
+              `Error al Actualizar el Estatus del Bien: ${this.selectedRow.goodNumber}`,
               ''
             );
             return;
@@ -839,7 +846,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             console.log('3', insertHistoric);
             this.alert(
               'success',
-              `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
+              `El Bien: ${this.selectedRow.goodNumber} se ha Atendido Correctamente`,
               ''
             );
             this.getMotives();
@@ -847,7 +854,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         } else {
           this.alert(
             'success',
-            `El bien: ${this.selectedRow.goodNumber} se ha atendido correctamente`,
+            `El Bien: ${this.selectedRow.goodNumber} se ha Atendido Correctamente`,
             ''
           );
           this.getMotives();
@@ -897,7 +904,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     if (getCatMotivosRev_ === null) {
       V_PANTALLA = null;
       V_RESPONSABLE = null;
-      this.alert('warning', `${motivoTest} no es un motivo válido`, '');
+      this.alert('warning', `${motivoTest} no es un Motivo Válido`, '');
       return;
     } else {
       V_PANTALLA = getCatMotivosRev_.screen;
@@ -938,8 +945,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     if (this.responsable == 'REGIONALES') {
       this.alertQuestion(
         'question',
-        `El bien es administrado por: ${LV_DESC} , y ${LV_DESC1} como responsable.`,
-        '¿Desea atender el bien?'
+        `El Bien es Administrado por: ${LV_DESC}, y ${LV_DESC1} como Responsable.`,
+        '¿Desea Atender el Bien?'
       ).then(async question => {
         if (question.isConfirmed) {
           if (this.delegationNumber == 0 || this.responsable == 'REGIONALES') {
@@ -954,7 +961,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se encontró la pantalla', '');
+              this.alert('warning', 'No se Encontró la Pantalla', '');
               return;
             }
           } else if (
@@ -972,7 +979,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se encontró la pantalla', '');
+              this.alert('warning', 'No se Encontró la Pantalla', '');
             }
           }
         }
@@ -989,13 +996,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.alert('warning', 'No se encontró la pantalla', '');
+        this.alert('warning', 'No se Encontró la Pantalla', '');
         return;
       }
     } else {
       this.alert(
         'warning',
-        `No puede atender este bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
+        `No Puede Atender este Bien, ya que Usted no Corresponde al área Responsable: ${V_RESPONSABLE}`,
         ''
       );
       return;
@@ -1100,7 +1107,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         }
       );
     } else {
-      this.alert('warning', 'No se localizó la URL de la forma', '');
+      this.alert('warning', 'No se Localizó la URL de la Forma', '');
     }
   }
 

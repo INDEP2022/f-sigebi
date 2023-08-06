@@ -359,7 +359,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características del bien ' + this.goodForTableChar.id,
+          'Características del Bien ' + this.goodForTableChar.id,
           'Complete el atributo ' + row.attribute
         );
         tableValid = false;
