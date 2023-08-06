@@ -55,7 +55,7 @@ export class RecordAccountStatementsComponent
   current: string;
   balance: string;
   accountDate: number;
-
+  maxDate = new Date();
   variableOf: Date;
   variableAt: Date;
   bankCode: string;
@@ -212,7 +212,7 @@ export class RecordAccountStatementsComponent
           },
           error: (err: any) => {
             this.loading = false;
-            this.alert('warning', 'No Existen Bancos', ``);
+            this.alert('error', 'No Existen Bancos con esa Descripción', ``);
           },
         });
     }, 3000);
@@ -260,7 +260,7 @@ export class RecordAccountStatementsComponent
         // this.data.load(this.documents);
         error: (err: any) => {
           this.loading = false;
-          this.alert('warning', 'No Existen Cuentas', ``);
+          this.alert('error', 'No Existen Cuentas', ``);
         },
       });
   }
@@ -288,7 +288,7 @@ export class RecordAccountStatementsComponent
           },
           error: (err: any) => {
             this.loading = false;
-            this.alert('warning', 'No Existen Bancos', ``);
+            this.alert('error', 'No Existen Bancos con esa Descripción', ``);
           },
         });
     }, 3000);
@@ -347,13 +347,13 @@ export class RecordAccountStatementsComponent
     const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
 
     if (!balanceOf && !balanceAt) {
-      this.alert('warning', 'Error', 'Debe ingresar las fechas de saldo');
+      this.alert('error', 'Debe Ingresar las Fechas de Saldo', '');
       return;
     } else if (!balanceOf) {
-      this.alert('warning', 'Error', 'Debe ingresar la fecha de "Saldo de"');
+      this.alert('error', 'Debe Ingresar la Fecha de "Saldo de"', '');
       return;
     } else if (!balanceAt) {
-      this.alert('warning', 'Error', 'Debe ingresar la fecha de "Saldo a:"');
+      this.alert('error', 'Debe Ingresar la fecha de "Saldo a:"', '');
       return;
     }
 
@@ -370,7 +370,7 @@ export class RecordAccountStatementsComponent
           this.balance = response.result + ' ' + this.current.replace(/'/g, '');
         },
         error: (error: any) => {
-          this.alert('warning', 'Error', 'No es posible generar el saldo');
+          this.alert('error', 'No es posible generar el Saldo', '');
         },
       });
   }
@@ -411,7 +411,7 @@ export class RecordAccountStatementsComponent
         },
         error: (err: any) => {
           this.loading = false;
-          this.alert('warning', 'No Existen Bancos', ``);
+          this.alert('error', 'No Existen Bancos', ``);
         },
       });
   }
@@ -445,7 +445,7 @@ export class RecordAccountStatementsComponent
         },
         error: (err: any) => {
           this.loading = false;
-          this.alert('warning', 'No existen cheques devueltos', ``);
+          this.alert('error', 'No Existen Cheques Devueltos', ``);
         },
       });
   }
@@ -456,9 +456,9 @@ export class RecordAccountStatementsComponent
       numberMotion: movimentAccount.numberMotion,
     };
     this.alertQuestion(
-      'warning',
+      'question',
       'Eliminar',
-      '¿Desea eliminar este movimiento?'
+      '¿Desea Eliminar este Movimiento?'
     ).then((question: { isConfirmed: any }) => {
       if (question.isConfirmed) {
         this.delete(movimentAccount, modal);
