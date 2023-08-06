@@ -1,8 +1,10 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <div class="col-md-5">
+    <div class="col-md-12">
       <h5 class="title">Ubicacion de bienes en almacénes y bóvedas</h5>
     </div>
+  </div>
+  <div body>
     <div class="d-flex justify-content-end">
       <div class="d-inline mr-2">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
@@ -11,8 +13,6 @@
         </button>
       </div>
     </div>
-  </div>
-  <div body>
     <div>
       <div class="md-tabs">
         <tabset>
@@ -53,7 +53,7 @@
                       </form-field>
                     </div>
                     <div class="m-3">
-                      <label for="statusGoods">Disponible</label>&nbsp;&nbsp;
+                      <label for="statusGoods">Disponible: </label>&nbsp;&nbsp;
                       <span
                         [style.background-color]="
                           getEstatusColor(this.di_desc_est)
