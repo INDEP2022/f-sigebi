@@ -458,7 +458,7 @@ export class RecordAccountStatementsComponent
     this.alertQuestion(
       'question',
       'Eliminar',
-      '¿Desea Eliminar este Movimiento?'
+      '¿Desea Eliminar éste Movimiento?'
     ).then((question: { isConfirmed: any }) => {
       if (question.isConfirmed) {
         this.delete(movimentAccount, modal);
@@ -521,7 +521,7 @@ export class RecordAccountStatementsComponent
             this.alert('success', 'Movimiento Eliminado', '');
           },
           error: (err: any) => {
-            this.alert('error', 'No es posible eliminar el movimiento', '');
+            this.alert('error', 'No es posible Eliminar el Movimiento', '');
           },
         });
       }
