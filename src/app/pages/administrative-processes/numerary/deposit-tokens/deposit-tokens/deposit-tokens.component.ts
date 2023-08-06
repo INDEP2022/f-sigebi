@@ -789,7 +789,7 @@ export class DepositTokensComponent
       }
       this.clearInput();
     } catch (error) {
-      this.alert('warning', 'Ocurrió un error al leer el archivo', '');
+      this.alert('warning', 'Ocurrió un Error al Leer el Archivo', '');
       this.clearInput();
     }
   }
@@ -890,13 +890,13 @@ export class DepositTokensComponent
           if (err.error.message == 'No es el excel correcto') {
             this.alert(
               'error',
-              'El archivo no cumple con las condiciones de inserción',
+              'El Archivo no Cumple con las Condiciones de Inserción',
               ''
             );
           } else {
             this.alert(
               'error',
-              'Ha ocurrido un error al intentar cargar el archivo',
+              'Ha Ocurrido un Error al Intentar Cargar el Archivo',
               err.error.message
             );
           }
@@ -1049,7 +1049,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede eliminar un movimiento que ya está asociado a un expediente',
+        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
         ''
       );
     } else {
@@ -1060,7 +1060,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
           ''
         );
       } else {
@@ -1098,7 +1098,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede eliminar un movimiento que ya está asociado a un expediente',
+        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
         ''
       );
     } else {
@@ -1109,7 +1109,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se puede eliminar una ficha mientras tenga devoluciones registradas',
+          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
           ''
         );
       } else {
