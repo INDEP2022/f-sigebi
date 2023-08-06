@@ -191,7 +191,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           status:
             this.goodStatus.value === null
               ? this.good.status
-              : this.goodStatus.value.status,
+              : this.goodStatus.value,
           extDomProcess:
             this.extDomProcess.value === null
               ? this.good.extDomProcess
