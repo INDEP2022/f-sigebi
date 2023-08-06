@@ -55,4 +55,9 @@ export class ParameterBrandsService extends HttpService {
   updateSubBrand(model: IUpdateSubBrandsModel) {
     return this.put(this.route2, model);
   }
+
+  getSuperUser(params?: string) {
+    console.log(params);
+    return this.get(ParameterComerEndpoints.ParameterMod, params);
+  }
 }

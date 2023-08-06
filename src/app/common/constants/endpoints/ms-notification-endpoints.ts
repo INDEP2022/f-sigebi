@@ -32,4 +32,6 @@ export enum NotificationEndpoints {
   LastFlyerId = `notification/last-flyer-identification`,
 
   NotificationxPropertyFilter2 = `notification-x-property/filter`,
+
+  byFileNumber = `notification/maxCFlyer`,
 }

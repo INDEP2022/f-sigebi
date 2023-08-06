@@ -150,20 +150,18 @@
           </div>
 
           <div class="col-12 mt-6 mb-4">
-            <div class="table-responsive">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings"
-                  (userRowSelect)="selectRowGood($event)"
-                  [source]="dataGoods">
-                </ng2-smart-table>
-              </div>
-              <app-pagination
-                [params]="params"
-                [limit]="limit"
-                [totalItems]="totalItems"></app-pagination>
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                (userRowSelect)="selectRowGood($event)"
+                [source]="dataGoods">
+              </ng2-smart-table>
             </div>
+            <app-pagination
+              [params]="params"
+              [limit]="limit"
+              [totalItems]="totalItems"></app-pagination>
           </div>
 
           <div class="row mt-4">
