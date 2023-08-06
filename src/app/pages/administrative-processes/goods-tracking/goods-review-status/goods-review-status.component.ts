@@ -698,7 +698,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   // Exporta a excel 'csv'
   async exportar() {
     const filename: string = 'Data';
-    const jsonToCsv = await this.returnJsonToCsv();
+    const jsonToCsv: any = await this.returnJsonToCsv();
     console.log('jsonToCsv', jsonToCsv);
     this.jsonToCsv = jsonToCsv;
     this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
@@ -706,6 +706,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async returnJsonToCsv() {
     return this.data.getAll();
+    this.data.getAll().then(resp => {
+      let arr: any = [];
+      let result = resp.map((item: any) => {
+        arr.push(item);
+      });
+      return arr;
+    });
   }
 
   selectRow(row: any) {
