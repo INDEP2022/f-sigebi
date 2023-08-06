@@ -191,7 +191,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           status:
             this.goodStatus.value === null
               ? this.good.status
-              : this.goodStatus.value.status,
+              : this.goodStatus.value,
           extDomProcess:
             this.extDomProcess.value === null
               ? this.good.extDomProcess
@@ -225,7 +225,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   postHistoryGood() {
     const historyGood: IHistoryGood = {
       propertyNum: this.numberGood.value,
-      status: this.goodStatus.value.status,
+      status: this.goodStatus.value,
       changeDate: this.correctDate(new Date().toISOString()),
       userChange: this.token.decodeToken().preferred_username,
       statusChangeProgram: 'CAMMUEESTATUS',
