@@ -66,9 +66,9 @@ export class RecordAccountStatementsModalComponent
 
   showCreateAlert() {
     this.alertQuestion(
-      'warning',
-      'Transferir',
-      '¿Desea transferir este movimiento?'
+      'question',
+      '¿Desea Transferir éste Movimiento?',
+      ''
     ).then(question => {
       if (question.isConfirmed) {
         this.create();
@@ -96,12 +96,12 @@ export class RecordAccountStatementsModalComponent
           this.modalRef.hide();
         },
         error: error => {
-          this.alert('warning', 'No se puede transferir el movimiento', '');
+          this.alert('error', 'No se puede Transferir el Movimiento', '');
           this.modalRef.hide();
         },
       });
     } else {
-      this.alert('warning', 'Este movimiento ya ha sido trasnferido', '');
+      this.alert('warning', 'Éste Movimiento ya ha sido Transferido', '');
       this.modalRef.hide();
     }
   }
