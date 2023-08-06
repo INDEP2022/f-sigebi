@@ -30,26 +30,25 @@
         </div>
 
         <div class="col-md-4">
-          <!--<form-field [control]="form.get('id')">
+          <form-field [control]="form.get('id')">
             <ngx-select
-              (fetchItems)="getEvent($event)"
-              [data]="selectEvent"
+              (fetchItems)="getPenalty($event)"
+              [data]="selectPenalty"
               [form]="form"
-              value="eventTpId"
-              bindLabel="processKey"
+              value="id"
+              bindLabel="descPenalty"
               label="Penalización"
-              control="id"
-              (change)="changeEvent($event)">
+              control="id">
             </ngx-select>
-          </form-field>-->
+          </form-field>
 
-          <form-field label="Id. Penalización" [control]="form.get('id')">
+          <!--<form-field label="Id. Penalización" [control]="form.get('id')">
             <input
               type="text"
               class="form-control"
               formControlName="id"
               oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);" />
-          </form-field>
+          </form-field>-->
         </div>
 
         <div class="col-md-4">
@@ -73,6 +72,7 @@
               (fetchItems)="getEvent($event)"
               [data]="selectEvent"
               [form]="form"
+              [clearable]="false"
               value="eventTpId"
               bindLabel="processKey"
               label="Evento"
@@ -89,7 +89,7 @@
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="form.get('publicLot')">
+          <form-field [control]="form.get('lotId')">
             <ngx-select
               (fetchItems)="getLot($event)"
               [data]="selectLot"
@@ -97,7 +97,7 @@
               value="idLot"
               bindLabel="description"
               label="Lote"
-              control="publicLot"
+              control="lotId"
               (change)="changeLot($event)">
             </ngx-select>
             <!--<input
@@ -176,7 +176,19 @@
 
       <div class="row mt-3">
         <div class="col-md-4">
-          <form-field
+          <form-field [control]="form.get('userPenalty')">
+            <ngx-select
+              (fetchItems)="getUser($event)"
+              [data]="selectUser"
+              [form]="form"
+              value="user"
+              bindLabel="name"
+              label="Usuario Penaliza"
+              control="userPenalty">
+            </ngx-select>
+          </form-field>
+
+          <!--<form-field
             label="Usuario Penaliza"
             [control]="form.get('userPenalty')">
             <input
@@ -184,7 +196,7 @@
               class="form-control"
               formControlName="userPenalty"
               maxlength="30" />
-          </form-field>
+          </form-field>-->
         </div>
 
         <div class="col-md-4">
@@ -214,7 +226,7 @@
           </form-field>
         </div>
 
-        <!--<div class="col-md-4">
+        <div class="col-md-4">
           <form-field label="Lote Público" [control]="form.get('publicLot')">
             <input
               type="number"
@@ -223,7 +235,7 @@
               min="1"
               oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);" />
           </form-field>
-        </div>-->
+        </div>
       </div>
 
       <div class="row mt-3">
