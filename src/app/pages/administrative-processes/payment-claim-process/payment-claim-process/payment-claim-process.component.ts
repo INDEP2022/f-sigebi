@@ -313,7 +313,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             console.log('BINARY EXCEL', response);
 
             if (filter == 'si') {
-              this.alert('success', 'Archivo subido correctamente', '');
+              this.alert('success', 'Archivo Subido Correctamente', '');
             }
 
             this.loading = false;
@@ -327,7 +327,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           if (filter != 'no') {
             this.alert(
               'error',
-              'No hay registros para la reclamación de pago en el archivo cargado.',
+              'No hay Registros para la Reclamación de pago en el Archivo Cargado.',
               // 'No existen registros disponibles para el proceso de reclamación de pago en el archivo cargado',
               ''
             );
@@ -340,7 +340,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     } catch (error) {
       this.data.load([]);
       this.loading = false;
-      this.alert('error', 'Ocurrió un error al leer el archivo', '');
+      this.alert('error', 'Ocurrió un Error al leer el Archivo', '');
     }
   }
 
@@ -361,7 +361,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   changeStatusGood() {
     if (this.goods.length === 0) {
-      this.alert('warning', 'Debe cargar la lista de bienes', '');
+      this.alert('warning', 'Debe Cargar la Lista de Bienes', '');
       return;
     } else if (this.goods.length > 0) {
       let a = false;
@@ -372,7 +372,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       }
 
       if (a == false) {
-        this.alert('warning', 'No hay ningún bien válido cargado', '');
+        this.alert('warning', 'No hay Ningún Bien Válido Cargado', '');
         return;
       } else {
         this.validStatusXScreen(this.good);
@@ -558,8 +558,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   question() {
     this.alertQuestion(
       'question',
-      '¿Quiere continuar con el proceso?',
-      'No realizó la actualización de estatus, el folio de escaneo generado se eliminará'
+      '¿Quiere Continuar con el Proceso?',
+      'No Realizó la Actualización de Estatus, el Folio de Escaneo Generado se Eliminará'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -595,7 +595,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.document = null;
         this.alert(
           'success',
-          'Motivo de cambio actualizado y folio anterior eliminado.',
+          'Motivo de Cambio Actualizado y Folio Anterior Eliminado.',
           ''
         );
       },
@@ -605,11 +605,11 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.cambiarValor();
           this.document = null;
           this.valDocument = false;
-          this.alert('success', 'Se ha eliminado correctamente el folio', '');
+          this.alert('success', 'Se ha Eliminado Correctamente el Folio', '');
         } else {
           this.alert(
             'error',
-            'Se ha generado un error al eliminar el Folio',
+            'Se ha Generado un Error al Eliminar el Folio',
             ''
           );
         }

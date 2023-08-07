@@ -19,3 +19,13 @@ export interface TransferProceeding {
   numFile: any;
   typeProceedings: string;
 }
+
+export interface IProceedingsValidation {
+  actaNumber: string;
+  typeActa: string;
+  valSec: string;
+  valResult: string;
+  valStatus: string;
+  valDescription: string;
+  valScript: string;
+}

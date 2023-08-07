@@ -164,7 +164,7 @@ export class DocumentPartOfficeModalComponent
 
   update() {
     this.alertQuestion(
-      'info',
+      'question',
       'Actualizar',
       '¿Desea actualizar este registro?'
     ).then(question => {
