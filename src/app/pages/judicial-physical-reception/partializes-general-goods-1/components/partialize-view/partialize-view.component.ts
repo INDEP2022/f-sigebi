@@ -170,7 +170,7 @@ export class PartializeViewComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.alert('success', 'Parcialización', 'Eliminada correctamente');
+        this.alert('success', 'Parcialización', 'Eliminada Correctamente');
         if (row.index === 0) {
           this.bienesPar.shift();
         } else {

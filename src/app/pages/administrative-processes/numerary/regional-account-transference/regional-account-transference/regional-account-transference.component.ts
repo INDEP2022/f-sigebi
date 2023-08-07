@@ -730,9 +730,9 @@ export class RegionalAccountTransferenceComponent
       error: err => {
         if (err.status == 400) {
           this.alert(
-            'error',
-            'Error',
-            'Este bien no se encuentra en una solicitud de numerario'
+            'warning',
+            'Este bien no se encuentra en una solicitud de numerario',
+            ''
           );
         } else {
           this.alert('error', 'Error', err.error.message);

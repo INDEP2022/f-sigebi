@@ -25,6 +25,13 @@ export class BankMovementType extends HttpService {
     );
   }
 
+  getAllTPenalty(params?: ListParams): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      ParameterComerEndpoints.TPenalty,
+      params
+    );
+  }
+
   getAllFilter(
     bankCode: string | number,
     params?: ListParams

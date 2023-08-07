@@ -54,7 +54,7 @@ export class MassiveDeleteButtonComponent
                 this.alert(
                   'success',
                   'Eliminación',
-                  `Bienes eliminados correctamente`
+                  `Bienes Eliminados Correctamente`
                 );
                 // console.log(response);
                 // const removeds: string[] = [];

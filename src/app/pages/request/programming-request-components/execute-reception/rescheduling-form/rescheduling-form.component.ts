@@ -72,7 +72,6 @@ export class ReschedulingFormComponent extends BasePage implements OnInit {
 
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
-            console.log('response', response);
             const formData: Object = {
               programmingId: this.programming.id,
               goodId: item.id,
@@ -82,21 +81,18 @@ export class ReschedulingFormComponent extends BasePage implements OnInit {
               .updateGoodProgramming(formData)
               .subscribe({
                 next: response => {
-                  console.log('updeado', response);
                   this.modalRef.content.callback(true);
                   this.modalRef.hide();
                 },
                 error: error => {},
               });
           },
-          error: error => {
-            console.log('update good error', error);
-          },
+          error: error => {},
         });
       });
     } else {
       this.alertInfo(
-        'error',
+        'warning',
         'Acción Inválida',
         'Se necesita un motivo de reprogramación'
       ).then();

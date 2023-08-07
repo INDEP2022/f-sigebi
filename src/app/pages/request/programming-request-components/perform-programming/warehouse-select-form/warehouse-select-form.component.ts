@@ -62,8 +62,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.alert(
-            'error',
-            'Error de Información',
+            'warning',
+            'Advertencia',
             'La Transferente no cuenta con Almacenes'
           );
         },
@@ -80,8 +80,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.alert(
-            'error',
-            'Error de Información',
+            'warning',
+            'Advertencia',
             'La Transferente no cuenta con Almacenes'
           );
         },
@@ -101,8 +101,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   confirm() {
     if (this.typeTransportable == 'guard') {
       this.alertQuestion(
-        'warning',
-        'Advertencia',
+        'question',
+        'Confirmación',
         '¿Desea asignar los Bienes al Almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
@@ -115,8 +115,8 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       });
     } else if (this.typeTransportable == 'warehouse') {
       this.alertQuestion(
-        'warning',
-        'Advertencia',
+        'question',
+        'Confirmación',
         '¿Desea asignar los Bienes al Almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {

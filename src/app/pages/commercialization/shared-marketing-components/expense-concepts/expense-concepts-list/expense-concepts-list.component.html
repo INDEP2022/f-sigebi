@@ -55,6 +55,7 @@
                 [settings]="settings"
                 [source]="data"
                 (rowSelect)="selectConcept($event.data)"
+                (delete)="onDeleteConfirm($event)"
                 (edit)="edit($event.data)">
               </ng2-smart-table>
             </div>
