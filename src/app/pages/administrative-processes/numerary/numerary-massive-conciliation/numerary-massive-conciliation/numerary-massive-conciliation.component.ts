@@ -94,7 +94,7 @@ export class NumeraryMassiveConciliationComponent
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
     hideSubHeader: false,
     actions: false,
-    noDataMessage: 'No se Encontrarón Registros',
+    noDataMessage: 'No se Encontraron Registros',
     pager:{
       display: false,
     }
@@ -102,7 +102,7 @@ export class NumeraryMassiveConciliationComponent
 
   settings2: any = {
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
-    noDataMessage: 'No se Encontrarón Registros',
+    noDataMessage: 'No se Encontraron Registros',
     hideSubHeader: false,
     actions: false,
     pager:{
