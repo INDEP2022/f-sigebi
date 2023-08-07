@@ -195,12 +195,43 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       }
     } else {
       if (this.responsable == 'REGIONALES' && this.delegationNumber == 0) {
-        params['filter.attended'] = `$eq:0`;
-        params['filter.manager'] = `$eq:REGIONALES`;
+        // params['filter.attended'] = `$eq:0`;
+        // params['filter.manager'] = `$eq:REGIONALES`;
+        if (this.selectedGender == 'all') {
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'immovables') {
+          params['filter.goodType'] = `$eq:I`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'movables') {
+          params['filter.goodType'] = `$eq:M`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        }
       } else {
-        params['filter.attended'] = `$eq:0`;
-        params['filter.manager'] = `$eq:REGIONALES`;
-        params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        // params['filter.attended'] = `$eq:0`;
+        // params['filter.manager'] = `$eq:REGIONALES`;
+        // params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+
+        if (this.selectedGender == 'all') {
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'immovables') {
+          params['filter.goodType'] = `$eq:I`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'movables') {
+          params['filter.goodType'] = `$eq:M`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        }
       }
     }
 
@@ -432,7 +463,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
                 let objUpdateGood: any = {
                   id: excelImport[i].goodNumber,
-                  goodId: excelImport[i].goodNumber,
+                  goodId: excelImport[i].goodDetails.goodId,
                   status: ESTATUSF,
                 };
                 const updateGood: any = await this.updateGoodStatus(
@@ -845,7 +876,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
           let objUpdateGood: any = {
             id: this.selectedRow.goodNumber,
-            goodId: this.selectedRow.goodNumber,
+            goodId: this.selectedRow.goodDetails.goodId,
             status: ESTATUSF,
           };
           const updateGood: any = await this.updateGoodStatus(objUpdateGood);
