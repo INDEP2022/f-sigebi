@@ -148,12 +148,12 @@ export class AddMovementComponent extends BasePage implements OnInit {
         console.log('response', response);
         this.modalRef.content.callback(true);
         this.close();
-        this.alert('success', 'Movimiento creado correctamente', '');
+        this.alert('success', 'Movimiento Creado Correctamente', '');
       },
       error: err => {
         this.alert(
           'error',
-          'Error al crear un nuevo movimiento',
+          'Error al Crear un Nuevo Movimiento',
           err.error.message
         );
       },

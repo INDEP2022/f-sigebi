@@ -101,24 +101,28 @@ export class CustomersExportHistoryCustomersPenaltiesListComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.clientPenaltyService
-      .getByIdComerPenaltyHis(this.clientId, params)
-      .subscribe({
-        next: response => {
-          this.customersPenalties = response.data;
-          this.data.load(response.data);
-          this.data.refresh();
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => (this.loading = false),
-      });
+    //this.clientId,
+    this.clientPenaltyService.getAllHist(params).subscribe({
+      next: response => {
+        this.customersPenalties = response.data;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
 
   //Exportar todos los clientes con penalizaciones
   exportAll(): void {
     this.loading = true;
-    this.clientPenaltyService.getByIdComerPenaltyHis2(this.clientId).subscribe({
+    this.clientPenaltyService.getByIdComerPenaltyHis3().subscribe({
       next: response => {
         this.downloadDocument(
           'HISTORICO_DE_PENALIZACIONES_DEL_CLIENTE',

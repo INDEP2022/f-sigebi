@@ -78,4 +78,19 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.GetProcedding}/${report}`;
     return this.get(route);
   }
+
+  getByExpedient(report: number | string) {
+    const route = `${ProceedingsEndpoints.GetCustom}?filter.fileNumber.filesId=$eq:${report}`;
+    return this.get(route);
+  }
+
+  getbyfile(params: any) {
+    const route = `${ProceedingsEndpoints.getAct}`;
+    return this.post(route, params);
+  }
+
+  getProcedingbyId(id: number | string) {
+    const route = `${ProceedingsEndpoints.ProeedingsDevolution}/${id}`;
+    return this.get(route);
+  }
 }

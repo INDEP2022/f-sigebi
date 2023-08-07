@@ -621,7 +621,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         },
         error: error => {
           this.loader.load = false;
-          this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
+          this.message('error', 'Eliminar', `No se puede eliminar los Bienes`);
         },
       });
     });

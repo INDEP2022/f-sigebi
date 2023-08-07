@@ -88,7 +88,7 @@ export class CancelationGoodFormComponent extends BasePage implements OnInit {
       });
     } else {
       this.alertInfo(
-        'error',
+        'warning',
         'Acción Inválida',
         'Se necesita un motivo de reprogramación'
       ).then();

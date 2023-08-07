@@ -564,10 +564,10 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    if (this.data.count() == 0) {
-      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
-      return;
-    }
+    // if (this.data.count() == 0) {
+    //   this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+    //   return;
+    // }
 
     // await this.validaPagos()
 
