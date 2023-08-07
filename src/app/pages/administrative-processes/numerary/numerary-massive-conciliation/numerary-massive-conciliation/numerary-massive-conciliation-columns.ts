@@ -2,6 +2,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { formatDate } from '@angular/common';
 import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
+import { format } from 'date-fns';
 
 export let goodCheck: any[] = [];
 export let goodCheck2: any[] = [];
@@ -126,22 +127,22 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val5) {
-        const formatDate = correctDate(row.RSPTAQUERY.val5)
+        const formatDate = row.RSPTAQUERY.val5
         return formatDate
       } else {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
-      return true;
-    },
+
   },
   BFEC_TESOFE: {
     title: 'Fec. Tesofe',
     type: 'string',
     sort: false,
+    filter: false
   },
 };
 
@@ -209,28 +210,23 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (date: any) => {
       // Formatear la fecha utilizando la función formatDate
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
       return formattedDate;
     },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },
+    
   },
   interestCalculationDate: {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    filter:false,
     valuePrepareFunction: (date: any) => {
       // Formatear la fecha utilizando la función formatDate
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
       return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
     },
   },
 };
