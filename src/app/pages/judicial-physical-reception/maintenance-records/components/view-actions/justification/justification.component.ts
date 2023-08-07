@@ -101,7 +101,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
                 this.alert(
                   'success',
                   'Acta ' + this.id + '',
-                  'Registro actualizado correctamente y correo enviado.'
+                  'Registro Actualizado Correctamente y Correo Enviado.'
                 );
                 this.form.reset();
               },
@@ -109,7 +109,7 @@ export class JustificationComponent extends AlertButton implements OnInit {
                 this.alert(
                   'warning',
                   'Acta ' + this.id + '',
-                  'Registro actualizado correctamente pero correo no enviado.'
+                  'Registro Actualizado Correctamente pero Correo no Enviado.'
                 );
               },
               complete: () => {

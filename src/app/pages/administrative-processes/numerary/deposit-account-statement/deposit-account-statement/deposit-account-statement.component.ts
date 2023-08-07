@@ -136,6 +136,11 @@ export class DepositAccountStatementComponent
       type: 'string',
       sort: false,
     },
+    accountnumberorigindeposit: {
+      title: 'Cuenta Origen Depósito',
+      type: 'string',
+      sort: false,
+    },
     devolutionnumber: {
       title: 'Devolución',
       type: 'string',
@@ -724,9 +729,9 @@ export class DepositAccountStatementComponent
         'dd/MM/yyyy',
         'UTC'
       );
-      this.scheduledFecReturn = new Date(
-        this.userChecks.scheduleddatebyconfiscationreturn
-      );
+      this.scheduledFecReturn = formatForIsoDate(
+        this.userChecks.scheduleddatebyconfiscationreturn + ''
+      ) as Date;
       this.form.controls['cutoffDate'].setValue(formatDateReturn);
       this.form.controls['expeditionDate'].setValue(formatDateReturn);
     }
@@ -1007,6 +1012,7 @@ export class DepositAccountStatementComponent
   async updateTransferDate(date: any) {
     if (!this.updatePupReturnsByDates) return;
     if (date) {
+      this.loader.load = true;
       if (date instanceof Date) {
         this.transferDate = date;
       } else {
@@ -1026,6 +1032,7 @@ export class DepositAccountStatementComponent
           depositDate = firstFormatDateToDate(depositDate);
         }
         if (this.transferDate < depositDate) {
+          this.loader.load = false;
           this.alert(
             'error',
             'La fecha de Inicio no puede ser menor a la fecha del depósito',
@@ -1041,6 +1048,7 @@ export class DepositAccountStatementComponent
           cutoffDate = firstFormatDateToDate(cutoffDate);
         }
         if (this.transferDate > cutoffDate) {
+          this.loader.load = false;
           this.alert(
             'error',
             'La fecha de inicio NO puede ser mayor a la fecha de corte',
@@ -1050,6 +1058,7 @@ export class DepositAccountStatementComponent
         }
         await this.calculateReturn();
         await this.detailReturn();
+        this.loader.load = false;
       }
 
       /*var fechaString = data;
@@ -1062,7 +1071,7 @@ export class DepositAccountStatementComponent
   private async updateCutoffDate(date: Date) {
     if (!this.updatePupReturnsByDates) return;
     if (date) {
-      console.log(date);
+      this.loader.load = true;
       // debugger;
       this.form.controls['expeditionDate'].setValue(date);
       // this.form
@@ -1085,6 +1094,7 @@ export class DepositAccountStatementComponent
         }
 
         if (newDate < transferDate) {
+          this.loader.load = false;
           this.alert(
             'error',
             'La fecha de corte no puede ser menor a la fecha de inicio',
@@ -1092,18 +1102,16 @@ export class DepositAccountStatementComponent
           );
           return;
         }
-        console.log(this.scheduledFecReturn);
-        if (this.scheduledFecReturn && date != this.scheduledFecReturn) {
-          const datePipeReturn = new DatePipe('en-US');
-          const formatDateReturn = datePipeReturn.transform(
-            new Date(this.userChecks.scheduleddatebyconfiscationreturn),
-            'dd/MM/yyyy',
-            'UTC'
-          );
+        console.log(date, this.scheduledFecReturn);
+        if (
+          this.scheduledFecReturn &&
+          firstFormatDate(date) !== firstFormatDate(this.scheduledFecReturn)
+        ) {
+          this.loader.load = false;
           this.alert(
             'error',
             'Especifico una fecha de corte diferente a la que se tiene programada (' +
-              formatDateReturn +
+              firstFormatDate(this.scheduledFecReturn) +
               ') por lo que esto será solo una simulación',
             ''
           );
@@ -1111,6 +1119,7 @@ export class DepositAccountStatementComponent
         }
         await this.calculateReturn();
         await this.detailReturn();
+        this.loader.load = false;
       }
     }
   }
@@ -1264,9 +1273,10 @@ export class DepositAccountStatementComponent
       return;
     }
     if (fecCorteDevolucion instanceof Date) {
-      fecCorteDevolucion = firstFormatDate(fecCorteDevolucion);
+      fecCorteDevolucion = secondFormatDate(fecCorteDevolucion);
     } else {
-      fecCorteDevolucion = formatForIsoDate(fecCorteDevolucion);
+      fecCorteDevolucion =
+        firstFormatDateToSecondFormatDate(fecCorteDevolucion);
     }
     let tiFecInicioInteres: any = this.form.controls['transfDate'].value;
     if (!tiFecInicioInteres) {
@@ -1517,10 +1527,21 @@ export class DepositAccountStatementComponent
     if (!this.updatePupReturnsByDates) {
       return null;
     }
+    let no_devolucion: any = this.userChecks.devolutionnumber;
+    if (no_devolucion) {
+      no_devolucion = +(this.userChecks.devolutionnumber + '');
+    } else {
+      this.alert(
+        'error',
+        'Detalle de Devolución',
+        'Falta a Número de Devolución'
+      );
+      return null;
+    }
     console.log('DETAIL RETURN');
     let fec_corte_devolucion: any = this.form.controls['cutoffDate'].value;
     if (!fec_corte_devolucion) {
-      // this.alert('error', 'Detalle de devolución', 'Falta fecha de corte');
+      this.alert('error', 'Detalle de Devolución', 'Falta Fecha de Corte');
       return null;
     }
 
@@ -1533,6 +1554,11 @@ export class DepositAccountStatementComponent
 
     let ti_fec_inicio_interes: any = this.form.controls['transfDate'].value;
     if (!ti_fec_inicio_interes) {
+      this.alert(
+        'error',
+        'Detalle de Devolución',
+        'Falta Fecha de Transferencia'
+      );
       return null;
     }
 
@@ -1546,10 +1572,12 @@ export class DepositAccountStatementComponent
 
     let importe_sin_interes = this.form.controls['toReturn'].value;
     if (!importe_sin_interes) {
+      this.alert('error', 'Detalle de Devolución', 'Falta a Devolver');
       return null;
     }
     let di_moneda_deposito = this.form.controls['currency'].value;
     if (!di_moneda_deposito) {
+      this.alert('error', 'Detalle de Devolución', 'Falta Moneda');
       return null;
     }
     let di_instrumento = this.form.controls['instrument'].value;
@@ -1558,18 +1586,20 @@ export class DepositAccountStatementComponent
     // }
     let tipo_cheque = this.form.controls['checkType'].value;
     // if (!tipo_cheque) {
-    //   this.alert('error','Detalle de devolución')
+    //   this.alert('error','Detalle de Devolución')
     //   return null;
     // }
     let no_movimiento_origen_deposito =
       this.userChecks.accountnumberorigindeposit;
-    if (!no_movimiento_origen_deposito) {
-      return null;
-    }
-    let no_devolucion: any = this.userChecks.devolutionnumber;
-    if (!no_devolucion) {
-      no_devolucion = +(this.userChecks.devolutionnumber + '');
-    }
+    // if (!no_movimiento_origen_deposito) {
+    //   this.alert(
+    //     'error',
+    //     'Detalle de Devolución',
+    //     'Falta Número de Cuenta Depósito'
+    //   );
+    //   return null;
+    // }
+
     let body = {
       fec_corte_devolucion,
       no_devolucion,
@@ -1578,7 +1608,9 @@ export class DepositAccountStatementComponent
       importe_sin_interes,
       di_moneda_deposito,
       di_instrumento,
-      no_movimiento_origen_deposito: +no_movimiento_origen_deposito,
+      no_movimiento_origen_deposito: no_movimiento_origen_deposito
+        ? +no_movimiento_origen_deposito
+        : null,
     };
     console.log(body);
     // return null
@@ -1809,6 +1841,15 @@ export class DepositAccountStatementComponent
 
   async interestCheck() {
     this.loader.load = true;
+    // if (!this.userChecks.accountnumberorigindeposit) {
+    //   this.alert(
+    //     'error',
+    //     'Detalle de devolución',
+    //     'Falta Número de Cuenta Depósito'
+    //   );
+    //   this.loader.load = false;
+    //   return;
+    // }
     let priorInterest: number;
     const valid = await this.validComplementary();
     if (!valid) {
@@ -1844,7 +1885,11 @@ export class DepositAccountStatementComponent
         this.userChecks.devolutionnumber = seqNextVal.nextval;
       }
       this.form.controls['checkType'].setValue('INTERES');
-      await this.detailReturn();
+      const results = await this.detailReturn();
+      if (!results) {
+        this.loader.load = false;
+        return;
+      }
       const resp = await firstValueFrom(
         this.detailInterestReturnService
           .getById(this.userChecks.devolutionnumber)
