@@ -102,7 +102,6 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('acta', this.id_acta);
     switch (this.id_acta) {
       case 106: {
         let linkDoc: string = `${this.urlBaseReport}ActaAseguradosBook.jasper&ID_ACTA=${this.id_acta}&ID_PROGRAMACION=${this.id_programacion}`;
