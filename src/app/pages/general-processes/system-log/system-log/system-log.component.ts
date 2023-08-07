@@ -98,32 +98,51 @@ export class SystemLogComponent extends BasePage implements OnInit {
     //     )
     //   )
     //   .subscribe();
+    // this.tableLogs
+    //   .onChanged()
+    //   .pipe(takeUntil(this['$unSubscribe']))
+    //   .subscribe(change => {
+    //     if (change.action === 'filter') {
+    //       let filters = change.filter.filters;
+    //       filters.map((filter: any) => {
+    //         let field = '';
+    //         let searchFilter = SearchFilter.ILIKE;
+    //         switch (filter.field) {
+    //           case 'destable':
+    //             searchFilter = SearchFilter.ILIKE;
+    //             break;
+    //           default:
+    //             searchFilter = SearchFilter.ILIKE;
+    //             break;
+    //         }
+    //         if (filter.search !== '') {
+    //           console.log(
+    //             (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+    //           );
+    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+    //         } else {
+    //           delete this.columnFilters[field];
+    //         }
+    //         console.log(this.columnFilters);
+    //       });
     this.tableLogs
       .onChanged()
-      .pipe(takeUntil(this['$unSubscribe']))
+      .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = '';
-            let searchFilter = SearchFilter.ILIKE;
-            switch (filter.field) {
-              case 'destable':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            filter.field == 'destable'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
-            console.log(this.columnFilters);
           });
           this.params = this.pageFilter(this.params);
           this.getTableLogs();
