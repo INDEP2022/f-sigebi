@@ -254,11 +254,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
-        this.alert(
-          'error',
-          'Error',
-          'Error al Registrar en Histórico'
-        );
+        this.alert('error', 'Error', 'Error al Registrar en Histórico');
       },
     });
   }
