@@ -154,7 +154,6 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
     this.programmingService
       .getProgrammingId(this.idProgramming)
       .subscribe(data => {
-        console.log('programming', data);
         this.programming = data;
         this.getDelegationRegional(this.programming.regionalDelegationNumber);
         this.getTransferent(this.programming.tranferId);
@@ -254,7 +253,6 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
       .getUsersProgramming(this.params.getValue())
       .subscribe({
         next: response => {
-          console.log('users', response);
           const userData = response.data.map(items => {
             items.userCharge = items.charge?.description;
             return items;
@@ -277,8 +275,6 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
       .getGoodsProgramming(this.params.getValue())
       .subscribe({
         next: async data => {
-          console.log('goodPrgo', data);
-
           this.paramsTransportableGoods
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe(() => this.showTransportable(data.data));
@@ -316,7 +312,7 @@ export class ScheduleNotifyFormComponent extends BasePage implements OnInit {
               if (item.physicalStatus == 1) item['physicalStatus'] = 'BUENO';
               if (item.physicalStatus == 2) item['physicalStatus'] = 'MALO';
               showTransportable.push(item);
-              console.log('showTransportable', showTransportable);
+
               this.goodsTranportables.load(showTransportable);
               this.totalItemsTransportableGoods =
                 this.goodsTranportables.count();

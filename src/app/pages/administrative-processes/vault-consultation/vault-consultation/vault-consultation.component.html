@@ -19,13 +19,15 @@
               <app-columns-select [(settings)]="settings"></app-columns-select>
             </div>
           </div>
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              (userRowSelect)="select($event)"
-              [source]="dataFactGen">
-            </ng2-smart-table>
+          <div class="row pt-3">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                (userRowSelect)="select($event)"
+                [source]="dataFactGen">
+              </ng2-smart-table>
+            </div>
           </div>
         </div>
       </div>

@@ -113,8 +113,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val2) {
-        const formattedDate = correctDate(row.RSPTAQUERY.val2);
-        return formattedDate;
+        return row.RSPTAQUERY.val2;
       } else {
         return null;
       }
@@ -129,8 +128,8 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val5) {
-
-        return row.RSPTAQUERY.val5;
+        const formatDate = correctDate(row.RSPTAQUERY.val5)
+        return formatDate
       } else {
         return null;
       }
