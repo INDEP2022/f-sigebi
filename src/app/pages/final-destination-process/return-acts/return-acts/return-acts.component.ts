@@ -140,7 +140,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   actaopen: boolean = false;
   labela: boolean = false;
   expForm: FormGroup;
-
+  closea: boolean;
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
@@ -660,18 +660,31 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   }*/
 
   onRowSelect(event: any) {
-    if (event.data.record != null) {
-      this.selectedRow = event.data;
-      console.log(this.selectedRow);
-      this.pass = true;
-      this.nopass = true;
+    if (
+      this.formadd.get('estado').value == 'ABIERTA' ||
+      this.formadd.get('estado').value == 'ABIERTO'
+    ) {
+      if (event.data.record != null) {
+        this.selectedRow = event.data;
+        console.log(this.selectedRow);
+        this.pass = true;
+        this.nopass = true;
+      } else {
+        this.alertInfo(
+          'warning',
+          'El Bien seleccionado no cuenta con una Acta.',
+          ''
+        );
+        this.clearSelection();
+      }
     } else {
       this.alertInfo(
         'warning',
-        'El Bien seleccionado no cuenta con una Acta.',
+        'Para Agregar Bienes el Acta Debe Estar Abierta',
         ''
       );
       this.clearSelection();
+      this.selectedRow.load([]);
     }
   }
   deleteRowSelect(event: any) {
@@ -908,116 +921,113 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   }
   //PUP_MOVIMIENTO_ACTA
   openactas() {
+    //debugger;
     let statusacta = this.formadd.get('estado').value;
-    if ((statusacta = 'CERRADA')) {
-      this.alertQuestion(
-        'info',
-        'Está Seguro de Abrir el Acta?',
-        '',
-        'Aceptar',
-        'Cancelar'
-      ).then(res => {
-        console.log(res);
-        if (res.isConfirmed) {
-          let acta = 'S';
-          let cve_acta = this.formadd.get('oficea').value;
+    this.alertQuestion(
+      'info',
+      'Está Seguro de Abrir el Acta?',
+      '',
+      'Aceptar',
+      'Cancelar'
+    ).then(res => {
+      console.log(res);
+      if (res.isConfirmed) {
+        let acta = 'S';
+        let cve_acta = this.formadd.get('oficea').value;
+        this.tipoActa = 'DEVOLU';
+        //PUP BUSCA ACTA
+        if (cve_acta.substr(0, 5) === 'RESAR') {
+          this.tipoActa = 'RESAR';
+        } else {
           this.tipoActa = 'DEVOLU';
-          //PUP BUSCA ACTA
-          if (cve_acta.substr(0, 5) === 'RESAR') {
-            this.tipoActa = 'RESAR';
-          } else {
-            this.tipoActa = 'DEVOLU';
-          }
-          const lv_TIP_ACTA = `RF,${this.tipoActa}`;
-          //OPEN PROCEEDING
-          const modelPaOpen: IPAAbrirActasPrograma = {
-            P_NOACTA: this.formadd.get('record').value,
-            P_AREATRA: lv_TIP_ACTA,
-            P_PANTALLA: 'FACTREFACTADEVOLU',
-            P_TIPOMOV: 2,
-            USUARIO:
-              localStorage.getItem('username') == 'sigebiadmon'
-                ? localStorage.getItem('username')
-                : localStorage.getItem('username').toLocaleUpperCase(),
-          };
-          console.log(modelPaOpen);
-          this.serviceProgrammingGood
-            .paOpenProceedingProgam(modelPaOpen)
-            .subscribe(
-              resp => {
-                const paramsF = new FilterParams();
-                let VAL_MOVIMIENTO = 0;
-                paramsF.addFilter(
-                  'valUser',
-                  localStorage.getItem('username') == 'sigebiadmon'
-                    ? localStorage.getItem('username')
-                    : localStorage.getItem('username').toLocaleUpperCase()
-                );
-                this.serviceProgrammingGood
-                  .getTmpProgValidation(paramsF.getParams())
-                  .subscribe(
-                    res => {
-                      console.log(res);
-                      VAL_MOVIMIENTO = res.data[0]['valmovement'];
-                      if (VAL_MOVIMIENTO == 1) {
-                        this.serviceProgrammingGood
-                          .paRegresaEstAnterior(modelPaOpen)
-                          .subscribe(
-                            res => {
-                              this.labelActa = 'Cerrar acta';
-                              this.btnCSSAct = 'btn-primary';
-                              this.formadd.get('estado').setValue('ABIERTA');
-                              this.reopening = true;
-                              this.saveDataAct = [];
-                              this.alert(
-                                'success',
-                                'Acta Abierta',
-                                `El Acta ${
-                                  this.formadd.get('acta').value
-                                } Fue Abierta`
-                              );
-                              this.loading = false;
-                            },
-                            err => {
-                              this.loading = false;
-                              console.log(err);
-                              this.alert(
-                                'error',
-                                'No se pudo abrir el acta',
-                                'Ocurrió un error que no permite abrir el acta'
-                              );
-                            }
-                          );
-                      }
-                    },
-                    err => {
-                      this.loading = false;
-                      console.log(err);
-                      VAL_MOVIMIENTO = 0;
-                      this.alert(
-                        'error',
-                        'No se Pudo Abrir el Acta',
-                        'Ocurrió un Error que no Permite Abrir el Acta'
-                      );
-                    }
-                  );
-              },
-              err => {
-                console.log(err);
-                this.alert(
-                  'error',
-                  'No se Pudo Abrir el Acta',
-                  err.error.message
-                );
-                this.loading = false;
-              }
-            );
         }
-      });
-    } else {
-      let acta = 'N';
-      //
-    }
+        const lv_TIP_ACTA = `${this.tipoActa}`;
+        //OPEN PROCEEDING
+        const modelPaOpen: IPAAbrirActasPrograma = {
+          P_NOACTA: this.formadd.get('record').value,
+          P_AREATRA: lv_TIP_ACTA,
+          P_PANTALLA: 'FACTREFACTADEVOLU',
+          P_TIPOMOV: 2,
+          USUARIO:
+            localStorage.getItem('username') == 'sigebiadmon'
+              ? localStorage.getItem('username')
+              : localStorage.getItem('username').toLocaleUpperCase(),
+        };
+        console.log(modelPaOpen);
+        this.serviceProgrammingGood
+          .paOpenProceedingProgam(modelPaOpen)
+          .subscribe(
+            resp => {
+              const paramsF = new FilterParams();
+              let VAL_MOVIMIENTO = 0;
+              paramsF.addFilter(
+                'valUser',
+                localStorage.getItem('username') == 'sigebiadmon'
+                  ? localStorage.getItem('username')
+                  : localStorage.getItem('username').toLocaleUpperCase()
+              );
+              this.serviceProgrammingGood
+                .getTmpProgValidation(paramsF.getParams())
+                .subscribe(
+                  res => {
+                    console.log(res);
+                    VAL_MOVIMIENTO = res.data[0]['valmovement'];
+                    if (VAL_MOVIMIENTO == 1) {
+                      this.serviceProgrammingGood
+                        .paRegresaEstAnterior(modelPaOpen)
+                        .subscribe(
+                          res => {
+                            this.labelActa = 'Cerrar acta';
+                            this.btnCSSAct = 'btn-primary';
+                            this.formadd.get('estado').setValue('ABIERTA');
+                            this.reopening = true;
+                            this.saveDataAct = [];
+                            this.closea = true;
+                            this.alert(
+                              'success',
+                              'Acta Abierta',
+                              `El Acta ${
+                                this.formadd.get('record').value
+                              } Fue Abierta`
+                            );
+                            this.loading = false;
+                          },
+                          err => {
+                            this.loading = false;
+                            console.log(err);
+                            this.alert(
+                              'error',
+                              'No se pudo abrir el acta',
+                              'Ocurrió un error que no permite abrir el acta'
+                            );
+                          }
+                        );
+                    }
+                  },
+                  err => {
+                    this.loading = false;
+                    console.log(err);
+                    VAL_MOVIMIENTO = 0;
+                    this.alert(
+                      'error',
+                      'No se Pudo Abrir el Acta',
+                      'Ocurrió un Error que no Permite Abrir el Acta'
+                    );
+                  }
+                );
+            },
+            err => {
+              console.log(err);
+              this.alert(
+                'error',
+                'No se Pudo Abrir el Acta',
+                err.error.message
+              );
+              this.loading = false;
+            }
+          );
+      }
+    });
   }
 
   formatDate(date: Date): string {
@@ -1093,26 +1103,27 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
                             .getProcedingbyId(id)
                             .subscribe({
                               next: respon => {
-                                const Capture = respon.data[0].elaborationDate
-                                  ? new Date(respon.data[0].elaborationDate)
+                                console.log('respuesta al cerrar: ', respon);
+                                const Capture = respon.data.elaborationDate
+                                  ? new Date(respon.data.elaborationDate)
                                   : null;
                                 const formattedfecCapture =
                                   this.formatDate2(Capture);
                                 let formParams = {
-                                  record: respon.data[0].id,
-                                  status: respon.data[0].proceedingsType,
-                                  entity: respon.data[0].transferNumber.key,
-                                  admin: respon.data[0].id,
-                                  folio: respon.data[0].universalFolio,
+                                  record: respon.data.id,
+                                  status: respon.data.proceedingsType,
+                                  entity: respon.data.transferNumber.key,
+                                  admin: respon.data.id,
+                                  folio: respon.data.universalFolio,
                                   dateElab: formattedfecCapture,
-                                  propben: respon.data[0].beneficiaryOwner,
-                                  audit: respon.data[0].auditor,
-                                  observations: respon.data[0].observations,
-                                  estado: respon.data[0].proceedingStatus,
-                                  oficea: respon.data[0].proceedingsCve,
-                                  autority: respon.data[0].authorityOrder,
-                                  nameEnt: respon.data[0].witnessOne,
-                                  witness: respon.data[0].witnessTwo,
+                                  propben: respon.data.beneficiaryOwner,
+                                  audit: respon.data.auditor,
+                                  observations: respon.data.observations,
+                                  estado: respon.data.proceedingStatus,
+                                  oficea: respon.data.proceedingsCve,
+                                  autority: respon.data.authorityOrder,
+                                  nameEnt: respon.data.witnessOne,
+                                  witness: respon.data.witnessTwo,
                                 };
                                 this.formadd.patchValue(formParams);
                                 let estado = this.formadd.get('estado').value;
@@ -1169,6 +1180,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
         ) {
           this.labelActa = 'Abrir Acta';
           this.labela = true;
+          this.closea = true;
+          this.open = true;
         }
         if (
           resp.data[0].proceedingStatus == 'ABIERTA' ||
@@ -1176,6 +1189,7 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
         ) {
           this.labelActa = 'Cerrar Acta';
           this.labela = true;
+          this.closea = false;
         }
         let formParams = {
           record: resp.data[0].id,
