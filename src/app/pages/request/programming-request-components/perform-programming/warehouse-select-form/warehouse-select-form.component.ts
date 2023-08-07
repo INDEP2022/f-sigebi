@@ -63,7 +63,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         error: () => {
           this.alert(
             'warning',
-            'Error de Información',
+            'Advertencia',
             'La Transferente no cuenta con Almacenes'
           );
         },
@@ -81,7 +81,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         error: () => {
           this.alert(
             'warning',
-            'Error de Información',
+            'Advertencia',
             'La Transferente no cuenta con Almacenes'
           );
         },
