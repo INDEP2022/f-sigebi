@@ -5,7 +5,7 @@
     </div>
   </div>
   <div body>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end" *ngIf="origin != null">
       <div class="d-inline mr-2">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
@@ -45,7 +45,7 @@
                     <div class="col-md-12 col-sm-12 col-xs-12">
                       <form-field
                         [control]="form.get('statusGoods')"
-                        label="Estátus del bien">
+                        label="Estatus del Bien">
                         <input
                           type="text"
                           class="form-control"
