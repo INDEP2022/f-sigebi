@@ -67,7 +67,7 @@ export class RecordAccountStatementsModalComponent
   showCreateAlert() {
     this.alertQuestion(
       'question',
-      '¿Desea Transferir éste Movimiento?',
+      '¿Desea Transferir este Movimiento?',
       ''
     ).then(question => {
       if (question.isConfirmed) {

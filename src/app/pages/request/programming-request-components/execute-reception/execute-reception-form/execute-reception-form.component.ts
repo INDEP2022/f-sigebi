@@ -1616,8 +1616,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       stateConservationSae: this.executeForm.get('stateConservationSae').value,¨*/
     };
     this.alertQuestion(
-      'warning',
-      '¿Desea actualizar el bien?',
+      'question',
+      '¿Desea actualizar el Bien?',
       '',
       'Actualizar'
     ).then(question => {

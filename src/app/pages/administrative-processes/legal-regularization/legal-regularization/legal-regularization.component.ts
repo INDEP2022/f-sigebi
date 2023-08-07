@@ -126,7 +126,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             if (!this.redicrectScan) {
               this.alert(
                 'success',
-                'Regularización jurídica',
+                'Regularización Jurídica',
                 'Bien cargado correctamente'
               );
             }
@@ -140,15 +140,15 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'warning',
-              'Regularización jurídica',
-              `El expediente ${response.data[0].fileNumber} que esta asociado a este bien no existe.`
+              'Regularización Jurídica',
+              `El expediente ${response.data[0].fileNumber} que esta asociado a este Bien no existe.`
             );
           }
         } else {
           if (!this.redicrectScan) {
             this.alert(
               'warning',
-              'Regularización jurídica',
+              'Regularización Jurídica',
               `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.`
             );
           }
@@ -177,8 +177,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     ) {
       this.alert(
         'warning',
-        'Regularización jurídica',
-        `No puede cambiar el estatus al bien ${this.good.id} porque aun no se ha generado un folio`
+        'Regularización Jurídica',
+        `No puede cambiar el estatus al Bien ${this.good.id} por que aún no se ha generado un folio`
       );
       return;
     }
@@ -223,8 +223,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             res(valid);
             this.alert(
               'warning',
-              'Regularización jurídica',
-              `No puede cambiar el estatus al bien ${this.good.id} porque aun no tiene documentos escaneados`
+              'Regularización Jurídica',
+              `No puede cambiar el estatus al Bien ${this.good.id} por que aún no tiene documentos escaneados`
             );
           },
         });
@@ -247,8 +247,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Regularización jurídica',
-          `Justificación de la Regularización jurídica del bien ${this.good.id} actualizada correctamente.`
+          'Regularización Jurídica',
+          `Justificación de la Regularización Jurídica del Bien ${this.good.id} actualizada correctamente.`
         );
         //this.clean();
         this.loadGood();
