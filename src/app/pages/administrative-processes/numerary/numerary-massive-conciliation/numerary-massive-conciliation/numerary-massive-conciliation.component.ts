@@ -95,6 +95,9 @@ export class NumeraryMassiveConciliationComponent
     hideSubHeader: false,
     actions: false,
     noDataMessage: 'No se Encontrarón Registros',
+    pager:{
+      display: false,
+    }
   };
 
   settings2: any = {
@@ -102,6 +105,9 @@ export class NumeraryMassiveConciliationComponent
     noDataMessage: 'No se Encontrarón Registros',
     hideSubHeader: false,
     actions: false,
+    pager:{
+      display:false
+    }
   };
 
   constructor(
@@ -164,11 +170,11 @@ export class NumeraryMassiveConciliationComponent
     this.filterByColumn();
 
     //Navegación
-    /* this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
       this.limit = new FormControl(params.limit);
       this.searchFilterGoodPag();
-    }); */
+    });
 
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       console.log(params);
@@ -443,7 +449,7 @@ export class NumeraryMassiveConciliationComponent
 
   //Paginador datos de cuentas bancarias
   searchGoodBankAccountPag() {
-    this.loading = true
+    this.loading2 = true
     const bank = this.bank2.value;
     const bankAccount = this.bankAccount2.value;
     const currency = this.current2.value;
