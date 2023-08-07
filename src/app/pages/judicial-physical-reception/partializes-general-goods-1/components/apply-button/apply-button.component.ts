@@ -649,7 +649,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       this.alert(
         'success',
         'Parcialización',
-        'La parcialización de bienes se realizo correctamente'
+        'La Parcialización de Bienes se Realizó Correctamente'
       );
       this.service.haveAply = false;
     } catch (x) {

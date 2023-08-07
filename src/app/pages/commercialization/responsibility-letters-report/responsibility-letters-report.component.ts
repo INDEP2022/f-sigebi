@@ -12,6 +12,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -26,6 +27,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLetterService } from 'src/app/core/services/ms-parametercomer/comer-letter.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { RespLetterService } from 'src/app/core/services/ms-parametercomer/resp-letter';
@@ -96,6 +98,7 @@ export class ResponsibilityLettersReportComponent
   // params = new BehaviorSubject<ListParams>(new ListParams());
   dataUserLoggedTokenData: any;
   selectDataEvent = new DefaultSelect();
+  selectDataLote = new DefaultSelect();
 
   get oficio() {
     return this.comerLibsForm.get('oficio');
@@ -176,6 +179,7 @@ export class ResponsibilityLettersReportComponent
     private respLetterService: RespLetterService,
     private authService: AuthService,
     private comerEventService: ComerEventService,
+    private msLotService: LotService,
     private router: Router
   ) {
     super();
@@ -192,8 +196,6 @@ export class ResponsibilityLettersReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.bienlotForm();
-    this.comerClientForm();
     this.dateFinal = this.datePipe.transform(this.maxDate, 'dd/MM/yyyy');
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
@@ -229,9 +231,9 @@ export class ResponsibilityLettersReportComponent
       puestoCcp1: [null],
       nombreCcp2: [null],
       puestoCcp2: [null],
+      lote: [null],
+      evento: [null],
     });
-  }
-  bienlotForm() {
     this.bienesLotesForm = this.fb.group({
       lote: [null],
       evento: [null],
@@ -239,8 +241,6 @@ export class ResponsibilityLettersReportComponent
       description: [null],
       cveProceso: [null],
     });
-  }
-  comerClientForm() {
     this.clientForm = this.fb.group({
       rfc: [null],
       calle: [null],
@@ -250,8 +250,6 @@ export class ResponsibilityLettersReportComponent
       estado: [null],
       cp: [null],
     });
-  }
-  comerRespForm() {
     this.respForm = this.fb.group({
       id: [null],
       paragraph1: [null],
@@ -392,6 +390,8 @@ export class ResponsibilityLettersReportComponent
     modalRef.content.onSave.subscribe((next: any) => {
       this.letterDefault = next;
       console.log(next.id);
+      this.idLot = next.lotsId;
+      this.idEvent = next.idEvent;
       this.getComerLetterById(next.id);
     });
   }
@@ -636,31 +636,72 @@ export class ResponsibilityLettersReportComponent
   }
   searchEvent() {}
 
-  getDepositaryType(paramsData: ListParams, getByValue: boolean = false) {
+  changeEvent(event: any) {
+    this.getLoteData(new ListParams());
+  }
+
+  getEventData(paramsData: ListParams, getByValue: boolean = false) {
     if (paramsData['search'] == undefined || paramsData['search'] == null) {
       paramsData['search'] = '';
     }
     if (getByValue) {
       paramsData['filter.eventTpId'] =
-        '$eq:' + this.bienesLotesForm.get('evento').value;
+        '$eq:' + this.comerLibsForm.get('evento').value;
     }
-    // paramsData['sortBy'] = 'townshipKey:DESC';
+    paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
+    paramsData['sortBy'] = 'observations:ASC';
+    delete paramsData['search'];
+    delete paramsData['text'];
     console.log('DATA SELECT ', paramsData);
-
+    '$eq:' + this.comerLibsForm.get('evento').value;
     this.comerEventService.getAllEvent(paramsData).subscribe({
       next: data => {
         console.log('DATA SELECT ', data.data);
-        this.selectDataEvent = new DefaultSelect(
-          data.data.map((i: any) => {
-            i['nameDesc'] = i.otkey + ' -- ' + i.otvalor;
-            return i;
-          }),
-          data.count
-        );
+        this.selectDataEvent = new DefaultSelect(data.data, data.count);
         console.log(data, this.selectDataEvent);
       },
       error: error => {
         this.selectDataEvent = new DefaultSelect();
+      },
+    });
+  }
+
+  getLoteData(paramsData: ListParams, getByValue: boolean = false) {
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    // if (getByValue) {
+    //   paramsData['filter.idEvent'] =
+    //     '$eq:' + this.comerLibsForm.get('evento').value;
+    // }
+    // paramsData['filter.description'] = '$ilike:' + paramsData['search'];
+    // paramsData['sortBy'] = 'description:ASC';
+    if (!this.comerLibsForm.get('evento').value) {
+      if (paramsData['search'] != '') {
+        this.alert(
+          'warning',
+          'Seleccionar un Evento Primero para Búscar un Lote',
+          ''
+        );
+      }
+      this.selectDataLote = new DefaultSelect();
+      return;
+    }
+    const params = new FilterParams();
+    params.addFilter('idEvent', this.comerLibsForm.get('evento').value);
+    params.addFilter('description', paramsData['search'], SearchFilter.ILIKE);
+    params['sortBy'] = 'description:ASC';
+    delete paramsData['search'];
+    delete paramsData['text'];
+    console.log('DATA SELECT ', paramsData, params);
+    this.msLotService.getAllComerLotsFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log('DATA SELECT ', data.data);
+        this.selectDataLote = new DefaultSelect(data.data, data.count);
+        console.log(data, this.selectDataLote);
+      },
+      error: error => {
+        this.selectDataLote = new DefaultSelect();
       },
     });
   }

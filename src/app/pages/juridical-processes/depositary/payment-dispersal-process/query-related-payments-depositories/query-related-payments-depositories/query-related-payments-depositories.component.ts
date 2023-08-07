@@ -261,7 +261,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.alert(
               'warning',
               'Número de Bien',
-              NOT_FOUND_GOOD(err.error.message)
+              NOT_FOUND_GOOD(
+                err.error.message ? err.error.message : 'Error en el Servidor'
+              )
             );
           },
         });
@@ -398,7 +400,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
             this.alert(
               'warning',
               'Número de Bien',
-              NOT_FOUND_GOOD_APPOINTMENT(err.error.message)
+              NOT_FOUND_GOOD_APPOINTMENT(
+                err.error.message ? err.error.message : 'Error en el Servidor'
+              )
             );
           },
         });
@@ -430,7 +434,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.alert(
             'warning',
             'Número de Bien',
-            NOT_FOUND_GOOD(err.error.message)
+            NOT_FOUND_GOOD(
+              err.error.message ? err.error.message : 'Error en el Servidor'
+            )
           );
         },
       });
@@ -455,7 +461,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.onLoadToast(
             'warning',
             'Descripción del Bien',
-            NOT_FOUND_GOOD_DESCRIPTION(err.error.message)
+            NOT_FOUND_GOOD_DESCRIPTION(
+              err.error.message ? err.error.message : 'Error en el Servidor'
+            )
           );
         },
       });
@@ -526,7 +534,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.alert(
             'warning',
             'Pagos Recibidos en el Banco',
-            NOT_FOUND_PAYMENTS_BANK(err.error.message)
+            NOT_FOUND_PAYMENTS_BANK(
+              err.error.message ? err.error.message : 'Error en el Servidor'
+            )
           );
         },
       });
@@ -547,7 +557,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.onLoadToast(
             'warning',
             'Suma del Depósito de los Pagos Recibidos en el Banco',
-            NOT_FOUND_PAYMENTS_BANK_TOTALS(err.error.message)
+            NOT_FOUND_PAYMENTS_BANK_TOTALS(
+              err.error.message ? err.error.message : 'Error en el Servidor'
+            )
           );
         },
       });
@@ -603,7 +615,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.alert(
             'warning',
             'Composición de Pagos Recibidos',
-            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(err.error.message)
+            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS(
+              err.error.message ? err.error.message : 'Error en el Servidor'
+            )
           );
         },
       });
@@ -626,7 +640,9 @@ export class QueryRelatedPaymentsDepositoriesComponent
           this.onLoadToast(
             'warning',
             'Sumas del Monto SIN Iva, Monto CON Iva y el Pago Actual de la Composición de Pagos Recibidos',
-            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS(err.error.message)
+            NOT_FOUND_PAYMENTS_PAYMENTS_DISPERSIONS_TOTALS(
+              err.error.message ? err.error.message : 'Error en el Servidor'
+            )
           );
         },
       });
@@ -747,8 +763,12 @@ export class QueryRelatedPaymentsDepositoriesComponent
           obj['errores'] = 'Error al procesar este registro';
           obj['lstLot'] = 'Realice el proceso nuevamente de envio SIRSAE';
         } else {
-          obj['errores'] = err.error.message;
-          obj['lstLot'] = err.error.message;
+          obj['errores'] = err.error.message
+            ? err.error.message
+            : 'Error en el Servidor';
+          obj['lstLot'] = err.error.message
+            ? err.error.message
+            : 'Error en el Servidor';
         }
         this.errorsSirsae.push(obj);
         if (dataLength == count + 1) {
