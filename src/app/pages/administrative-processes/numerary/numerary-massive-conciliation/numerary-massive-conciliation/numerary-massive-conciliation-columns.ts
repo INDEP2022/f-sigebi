@@ -6,6 +6,11 @@ import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/f
 export let goodCheck: any[] = [];
 export let goodCheck2: any[] = [];
 
+function correctDate(date: string) {
+  const dateUtc = new Date(date);
+  return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+}
+
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   select: {
     title: '',
@@ -38,6 +43,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.no_expediente': {
     title: 'Expediente',
@@ -49,6 +57,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       } else {
         return null;
       }
+    },
+     filterFunction: (cell?: any, search?: any) => {
+      return true;
     },
   },
   'RSPTAQUERY.val4': {
@@ -62,6 +73,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+     filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.val6': {
     title: 'Cuenta Bancaria',
@@ -73,6 +87,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       } else {
         return null;
       }
+    },
+     filterFunction: (cell?: any, search?: any) => {
+      return true;
     },
   },
   'RSPTAQUERY.val1': {
@@ -86,6 +103,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+     filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.val2': {
     title: 'Depósito',
@@ -98,6 +118,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+     filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.val5': {
     title: 'Fec. Depósito',
@@ -105,10 +128,14 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     sort: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val5) {
-        return row.RSPTAQUERY.val5;
+        const formatDate = correctDate(row.RSPTAQUERY.val5)
+        return formatDate
       } else {
         return null;
       }
+    },
+     filterFunction: (cell?: any, search?: any) => {
+      return true;
     },
   },
   BFEC_TESOFE: {

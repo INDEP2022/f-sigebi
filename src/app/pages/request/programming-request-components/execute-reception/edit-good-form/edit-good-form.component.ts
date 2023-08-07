@@ -103,7 +103,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'question',
         'Confirmación',
-        '¿Desea actualizar la información del bien?'
+        '¿Desea actualizar la información del Bien?'
       ).then(question => {
         if (question.isConfirmed) {
           this.goodService.updateByBody(formData).subscribe({

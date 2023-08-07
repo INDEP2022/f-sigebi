@@ -809,6 +809,85 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       },
       err => {
         console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
+      }
+    );
+  }
+
+  exportPaymentDetail() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+    };
+
+    this.comerEventosService.pupExpExcel(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('DETALLE DE LOS PAGOS', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
+      }
+    );
+  }
+
+  exportPaymentWithoutStatus() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+    };
+
+    this.comerEventosService.pupExpPayModest(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('DETALLE DE LOS PAGOS', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
+      }
+    );
+  }
+
+  exportPaymentAndLots() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+      pType: 1,
+    };
+
+    this.comerEventosService.pupExportDetpayments(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('PAGOS VS LOTES', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
       }
     );
   }

@@ -161,22 +161,22 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   question() {
     console.log('this.folioEscaneoNg', this.folioEscaneoNg);
     if (this.folioEscaneoNg != '') {
-      this.alert('warning', 'El folio de escaneo ya ha sido generado.', '');
+      this.alert('warning', 'El Folio de Escaneo ya ha sido Generado.', '');
       return;
     }
     if (this.goods.length === 0) {
-      this.alert('warning', 'Debe cargar al menos un Bien', '');
+      this.alert('warning', 'Debe Cargar al Menos un Bien', '');
       return;
     }
 
     if (this.good == null) {
-      this.alert('warning', 'Debe cargar al menos un bien válido', '');
+      this.alert('warning', 'Debe Cargar al Menos un Bien Válido', '');
       return;
     }
     this.alertQuestion(
       'question',
-      'Se generará un folio de escaneo para los bienes',
-      '¿Desea continuar?'
+      'Se Generará un Folio de Escaneo para los Bienes',
+      '¿Desea Continuar?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -215,7 +215,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.document = response;
         this.alert(
           'success',
-          `Folio de escaneo generado correctamente`,
+          `Folio de Escaneo Generado Correctamente`,
           `No. ${response.id}`
         );
         this.generateFo = false;
@@ -243,7 +243,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   imprimirFolioEscaneo() {
     // if (this.dictamen) {
     if (this.folioEscaneoNg.folioUniversal == '') {
-      this.alert('warning', 'No tiene folio de escaneo para imprimir.', '');
+      this.alert('warning', 'No Tiene Folio de Escaneo para Imprimir.', '');
       return;
     } else {
       let params = {
@@ -266,7 +266,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.alert('success', 'Reporte generado correctamente', '');
+            this.alert('success', 'Reporte Generado Correctamente', '');
             this.modalService.show(PreviewDocumentsComponent, config);
           }
         });
@@ -275,7 +275,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   visualizacionFolioEscaneo() {
     if (this.folioEscaneoNg == '') {
-      this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
+      this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar.', '');
       return;
     } else {
       this.goNextForm();

@@ -27,6 +27,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   @Input() labelStatus: string = 'Estatus Bienes';
   @Input() showGoodStatus: boolean = true;
   @Input() multiple: boolean = false;
+  @Input() approb: boolean = false;
 
   status = new DefaultSelect<IGoodStatus>();
 
@@ -39,23 +40,26 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form
-      .get(this.goodStatusField)
-      .valueChanges.pipe(
-        debounceTime(300) // Retraso de 300 ms antes de realizar la búsqueda
-      )
-      .subscribe(value => {
-        console.log(value, ' Linea 53 goods-status-shared.component.ts');
-
-        this.getSelectedGoodStatus(value);
-      });
+    if (this.approb) {
+      this.getSelectedGoodStatus(this.form.get(this.goodStatusField).value);
+    } else {
+      this.form
+        .get(this.goodStatusField)
+        .valueChanges.pipe(
+          debounceTime(300) // Retraso de 300 ms antes de realizar la búsqueda
+        )
+        .subscribe(value => {
+          console.log(value, ' Linea 53 goods-status-shared.component.ts');
+          this.getSelectedGoodStatus(value);
+        });
+    }
   }
 
   getSelectedGoodStatus(id: string): void {
     const newParams = new ListParams();
-
-    newParams['filter.status'] = id;
-
+    if (id) {
+      newParams['filter.status'] = id;
+    }
     this.service.getStatusAll(newParams).subscribe(
       data => {
         this.status = new DefaultSelect(data.data, data.count);

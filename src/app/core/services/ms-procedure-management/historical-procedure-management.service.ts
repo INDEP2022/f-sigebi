@@ -46,4 +46,9 @@ export class HistoricalProcedureManagementService extends HttpService {
       params
     );
   }
+
+  updateStatus(params: any) {
+    const route = `${ProcedureManagementEndPoints.updateStatus}`;
+    return this.post(route, params);
+  }
 }
