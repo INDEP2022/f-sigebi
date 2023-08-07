@@ -906,6 +906,9 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
+        this.totalItems = 0;
       },
     });
   }

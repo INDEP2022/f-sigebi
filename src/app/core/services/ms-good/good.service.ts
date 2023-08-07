@@ -473,4 +473,12 @@ export class GoodService extends HttpService {
   chargeGoodsExcel(body: IGoodCharge) {
     return this.post<any>('good/charge-goods-excel', body);
   }
+
+  getByExpedientV2(
+    expedient: number | string,
+    params?: string
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.SearchByExpedient}/${expedient}`;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
 }

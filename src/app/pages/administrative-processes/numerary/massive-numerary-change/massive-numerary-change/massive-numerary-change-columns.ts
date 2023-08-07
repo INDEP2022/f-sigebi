@@ -168,6 +168,6 @@ export const HELP_ARR = [
   'x',
   'y',
   'z',
-  'aA',
-  'aB',
+  'AA',
+  'AB',
 ];

@@ -59,4 +59,18 @@ export class EventRelatedService extends HttpService {
   remove(id: number | string): Observable<any> {
     return this.delete(`${EventRelatedEndpoints.Delete}/${id}`);
   }
+
+  getLastWeek(date: string) {
+    return this.get(`${EventRelatedEndpoints.UltimaSem}/${date}`);
+  }
+
+  postCentral(params: any) {
+    return this.post(EventRelatedEndpoints.Central, params);
+  }
+
+  postSegBien() {}
+
+  postBienesEvento(id: any) {
+    return this.post(EventRelatedEndpoints.BienesEvento, id);
+  }
 }
