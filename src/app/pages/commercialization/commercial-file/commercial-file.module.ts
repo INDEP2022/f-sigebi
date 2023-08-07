@@ -5,9 +5,15 @@ import { GoodsTableSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CommercialFileRoutingModule } from './commercial-file-routing.module';
 import { CommercialFileComponent } from './commercial-file/commercial-file.component';
+import { PhotosListCommercialComponent } from './photos-list/app-photos-list-commercial.component';
+import { PhotoCommercialComponent } from './photos-list/photo/photo-commercial.component';
 
 @NgModule({
-  declarations: [CommercialFileComponent],
+  declarations: [
+    CommercialFileComponent,
+    PhotosListCommercialComponent,
+    PhotoCommercialComponent,
+  ],
   imports: [
     CommonModule,
     CommercialFileRoutingModule,
