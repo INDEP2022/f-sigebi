@@ -10,14 +10,20 @@ import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilePhotoEditService } from 'src/app/core/services/ms-ldocuments/file-photo-edit.service';
 import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
-import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
+import {
+  NO_IMAGE_FOUND,
+  PhotoClassComponent,
+} from 'src/app/pages/general-processes/good-photos/models/photo-class';
 
 @Component({
-  selector: 'app-photo',
-  templateUrl: './photo.component.html',
-  styleUrls: ['./photo.component.scss'],
+  selector: 'app-photo-commercial',
+  templateUrl: './photo-commercial.component.html',
+  styleUrls: ['./photo-commercial.component.scss'],
 })
-export class PhotoComponent extends PhotoClassComponent implements OnInit {
+export class PhotoCommercialComponent
+  extends PhotoClassComponent
+  implements OnInit
+{
   @Output() refreshFiles = new EventEmitter<boolean>();
   // subscription: any;
   constructor(
@@ -75,7 +81,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
         multiple: false,
         info: `Haz clic para seleccionar la imágen o arrástrala
       aquí`,
-        titleFinishUpload: 'Imagen Cargada Correctamente',
+        titleFinishUpload: 'Imagen cargada correctamente',
         questionFinishUpload: '¿Desea seguir editando?',
         identificator: this.goodNumber + '',
         callback: (refresh: boolean) => {

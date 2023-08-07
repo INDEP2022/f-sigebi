@@ -100,7 +100,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
           this.alert(
             'success',
             'Actualización de Delegación',
-            'Realizada correctamente'
+            'Realizada Correctamente'
           );
           this.updateTable++;
           // this.clear();
