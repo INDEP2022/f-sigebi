@@ -1388,7 +1388,7 @@ export class PerformProgrammingFormComponent
         } else {
           this.alert(
             'warning',
-            'Advertencía',
+            'Advertencia',
             'No hay Bienes disponibles para programar'
           );
           this.estatesList.load([]);
@@ -1444,7 +1444,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Error',
+          'Acción Invalida',
           'Se necesita tener un bien seleccionado'
         );
       }
@@ -1773,7 +1773,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Error',
+          'Acción Invalida',
           'Se necesita tener un bien seleccionado'
         );
       }
@@ -2091,7 +2091,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Error',
+          'Acción Invalida',
           'Se necesita tener un bien seleccionado'
         );
       }
@@ -2876,6 +2876,7 @@ export class PerformProgrammingFormComponent
         },
         error: error => {
           this.usersToProgramming.load([]);
+          this.totalItemsUsers = 0;
         },
       });
   }
@@ -2895,7 +2896,7 @@ export class PerformProgrammingFormComponent
         },
         error: error => {
           this.loadingReport = false;
-          this.alert('error', 'Error', 'Error al generar reporte');
+          this.alert('warning', 'Error', 'Error al generar reporte');
         },
       });
   }
