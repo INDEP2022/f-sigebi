@@ -38,7 +38,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.min(1),
-          //alidators.max(parseInt(String(this.good.quantity))),
+          Validators.max(parseInt(String(this.good.quantity))),
         ],
       ],
     });
@@ -111,6 +111,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     /*this.onLoadToast('success','Se agrego el bien');
     this.onReserve.emit(goodResDev);
     this.modalRef.hide();*/
+    console.log(goodResDev);
     this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
       next: resp => {
         this.onLoadToast('success', 'Se agrego el bien');
