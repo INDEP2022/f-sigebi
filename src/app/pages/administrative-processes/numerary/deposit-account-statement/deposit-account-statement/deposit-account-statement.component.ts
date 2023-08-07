@@ -371,6 +371,7 @@ export class DepositAccountStatementComponent
       amount: [null, Validators.nullValidator],
       depositDate: [null, Validators.nullValidator],
       transfDate: [null, Validators.nullValidator],
+      devolutionnumber: [null, Validators.nullValidator],
       expedient: [null, Validators.nullValidator],
       goodFilter: [null, Validators.nullValidator],
       goodDescription: [null],
@@ -423,6 +424,10 @@ export class DepositAccountStatementComponent
 
   get expedient() {
     return this.form.get('expedient');
+  }
+
+  get devolutionnumber() {
+    return this.form.get('devolutionnumber');
   }
 
   get expedientFilter() {
@@ -746,6 +751,7 @@ export class DepositAccountStatementComponent
     this.goodDescription.setValue(this.userChecks.description);
     this.status.setValue(this.userChecks.status);
     this.expedient.setValue(this.userChecks.expedientnumber);
+    this.devolutionnumber.setValue(this.userChecks.devolutionnumber);
     this.form.controls['amount'].setValue(this.userChecks.deposit);
     if (this.userChecks.returnamount) {
       this.form.controls['toReturn'].setValue(
@@ -892,16 +898,16 @@ export class DepositAccountStatementComponent
     } else {
       this.alert(
         'warning',
-        'No tiene definido un bien estatus',
-        'El cual es necesario para registrar la devolución'
+        'No tiene definido un Bien Estatus',
+        'El cual es necesario para registrar la Devolución'
       );
       // INTERRUMPIR EL FLUJO
     }
     if (this.vb_valid == false) {
       this.alert(
         'warning',
-        'El bien se encuentra en un estatus',
-        'En el cual no se permite registrar la devolucion'
+        'El Bien se encuentra en un Estatus',
+        'En el cual no se permite registrar la Devolución'
       );
       // INTERRUMPIR EL FLUJO
     }
@@ -1500,15 +1506,15 @@ export class DepositAccountStatementComponent
 
   async interestCheck() {
     this.loader.load = true;
-    // if (!this.userChecks.accountnumberorigindeposit) {
-    //   this.alert(
-    //     'error',
-    //     'Detalle de devolución',
-    //     'Falta Número de Cuenta Depósito'
-    //   );
-    //   this.loader.load = false;
-    //   return;
-    // }
+    if (!this.userChecks.devolutionnumber) {
+      this.alert(
+        'error',
+        'Detalle de Devolución',
+        'Falta Número de Devolución'
+      );
+      this.loader.load = false;
+      return;
+    }
     let priorInterest: number;
     const valid = await this.validComplementary();
     if (!valid) {
