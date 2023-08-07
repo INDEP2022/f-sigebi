@@ -114,7 +114,7 @@ export class ComplementArticleComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getStatusView();
     this.form.get('solicitud').valueChanges.subscribe(res => {
-      console.log('solicitud', res);
+      //console.log('solicitud', res);
     });
     //if (this.form.get('expediente').value != null) {
 

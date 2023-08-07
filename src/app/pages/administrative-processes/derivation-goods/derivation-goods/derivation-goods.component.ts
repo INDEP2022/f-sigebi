@@ -359,7 +359,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características del bien ' + this.goodForTableChar.id,
+          'Características del Bien ' + this.goodForTableChar.id,
           'Complete el atributo ' + row.attribute
         );
         tableValid = false;
@@ -375,7 +375,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.alert('success', 'Valores Actualizados correctamente', '');
+          this.alert('success', 'Valores Actualizados Correctamente', '');
           this.getAllGoodChild(this.goodFatherNumber$.getValue());
         },
       });

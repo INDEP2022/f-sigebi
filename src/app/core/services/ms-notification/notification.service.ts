@@ -317,4 +317,9 @@ export class NotificationService extends HttpService {
       params
     );
   }
+
+  getByFileNumber(fileNumber: string | number) {
+    const route = this.route.byFileNumber;
+    return this.get(`notification/maxCFlyer/${fileNumber}`);
+  }
 }
