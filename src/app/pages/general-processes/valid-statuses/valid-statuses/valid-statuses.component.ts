@@ -18,6 +18,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+
 import { IScreenHelpTwo } from 'src/app/core/models/ms-business-rule/screen-help.model';
 import { IStatusXScreen } from 'src/app/core/models/ms-screen-status/status.model';
 import { ScreenHelpService } from 'src/app/core/services/ms-business-rule/screen-help.service';
@@ -50,7 +51,7 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
   totalItems = 0;
   params2 = new BehaviorSubject(new ListParams());
   totalItems2 = 0;
-
+  settings2: any;
   constructor(
     private fb: FormBuilder,
     private segAppScreenService: SegAppScreenService,
@@ -62,10 +63,14 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     this.settings.actions = false;
     this.settings.columns = VALID_STATUSES_COLUMNS;
     this.settings.hideSubHeader = false;
-    settings2 = { ...TABLE_SETTINGS };
-    this.settings2.actions = false;
-    this.settings2.columns = HELP_COLUMNS;
-    this.settings2.hideSubHeader = false;
+    this.settings2 = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      // selectMode: 'multi',
+      columns: { ...HELP_COLUMNS },
+    };
+
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
