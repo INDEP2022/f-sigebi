@@ -136,23 +136,24 @@ export class DepositAccountStatementComponent
       type: 'string',
       sort: false,
     },
-    accountnumberorigindeposit: {
-      title: 'Cuenta Origen Depósito',
-      type: 'string',
-      sort: false,
-    },
+
     devolutionnumber: {
       title: 'Devolución',
       type: 'string',
       sort: false,
     },
     accounttras: {
-      title: 'Cuenta con traspaso',
+      title: 'Cuenta con Traspaso',
       type: 'string',
       sort: false,
     },
     checkfolio: {
-      title: 'Cuenta con cheque',
+      title: 'Cuenta con Cheque',
+      type: 'string',
+      sort: false,
+    },
+    accountnumberorigindeposit: {
+      title: 'Cuenta Origen Depósito',
       type: 'string',
       sort: false,
     },
@@ -1531,12 +1532,7 @@ export class DepositAccountStatementComponent
     if (no_devolucion) {
       no_devolucion = +(this.userChecks.devolutionnumber + '');
     } else {
-      this.alert(
-        'error',
-        'Detalle de Devolución',
-        'Falta a Número de Devolución'
-      );
-      return null;
+      no_devolucion = null;
     }
     console.log('DETAIL RETURN');
     let fec_corte_devolucion: any = this.form.controls['cutoffDate'].value;
