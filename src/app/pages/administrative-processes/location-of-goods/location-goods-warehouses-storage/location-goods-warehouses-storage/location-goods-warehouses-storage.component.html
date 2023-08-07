@@ -5,7 +5,7 @@
     </div>
   </div>
   <div body>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end" *ngIf="origin != null">
       <div class="d-inline mr-2">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar

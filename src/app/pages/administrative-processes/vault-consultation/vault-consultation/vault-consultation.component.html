@@ -11,12 +11,11 @@
             <div class="d-inline mr-2">
               <button
                 class="btn btn-primary active btn-sm m-2"
-                (click)="goBack()">
+                (click)="goBack()"
+                *ngIf="origin != null">
                 Regresar
                 <i class="fas fa-arrow-circle-left"></i>
               </button>
-            </div>
-            <div class="d-inline mr-2">
               <app-columns-select [(settings)]="settings"></app-columns-select>
             </div>
           </div>
