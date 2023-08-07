@@ -133,7 +133,7 @@ export class ParamsConcepsListComponent
             .create({
               ...body,
               conceptId: this.conceptId,
-              address: this.getAddressCode(body.address),
+              address: body.address,
               creationDate: secondFormatDate(new Date()),
               creationUser: localStorage.getItem('username').toUpperCase(),
             })

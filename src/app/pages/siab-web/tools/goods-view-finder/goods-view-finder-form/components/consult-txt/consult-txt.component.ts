@@ -39,7 +39,7 @@ export class ConsultTxtComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.modalRef.content.callback(this.form.get('file').value);
-        this.onLoadToast('success', 'Archivo txt cargado correctamente', '');
+        this.onLoadToast('success', 'Archivo txt Cargado Correctamente', '');
         this.close();
       }
     });
