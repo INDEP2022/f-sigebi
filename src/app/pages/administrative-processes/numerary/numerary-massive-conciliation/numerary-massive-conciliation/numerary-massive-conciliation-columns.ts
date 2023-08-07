@@ -1,8 +1,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { formatDate } from '@angular/common';
-import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
-import { format } from 'date-fns';
 
 export let goodCheck: any[] = [];
 export let goodCheck2: any[] = [];
@@ -59,7 +57,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -74,7 +72,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -89,7 +87,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -104,7 +102,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -119,7 +117,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -130,19 +128,18 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     filter: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val5) {
-        const formatDate = row.RSPTAQUERY.val5
-        return formatDate
+        const formatDate = row.RSPTAQUERY.val5;
+        return formatDate;
       } else {
         return null;
       }
     },
-
   },
   BFEC_TESOFE: {
     title: 'Fec. Tesofe',
     type: 'string',
     sort: false,
-    filter: false
+    filter: false,
   },
 };
 
@@ -216,13 +213,12 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
       return formattedDate;
     },
-    
   },
   interestCalculationDate: {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
-    filter:false,
+    filter: false,
     valuePrepareFunction: (date: any) => {
       // Formatear la fecha utilizando la función formatDate
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');

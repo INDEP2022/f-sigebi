@@ -470,7 +470,12 @@ export class NumeraryMassiveConciliationComponent
 
     for (let item of this.completeFilters2) {
       if (!['', null, undefined].includes(item.search)) {
-        paramsF.addFilter(item.field, item.field == 'motionDate' ? this.correctDate(item.search) : item.search);
+        paramsF.addFilter(
+          item.field,
+          item.field == 'motionDate'
+            ? this.correctDate(item.search)
+            : item.search
+        );
       }
     }
 
@@ -1093,7 +1098,7 @@ export class NumeraryMassiveConciliationComponent
         );
       }
     } else {
-      this.alert('warning','Faltan seleccionar datos','')
+      this.alert('warning', 'Faltan seleccionar datos', '');
       this.form2.get('proposal').markAsTouched();
       this.form2.get('currencyDeposit').markAsTouched();
     }
@@ -1104,8 +1109,8 @@ export class NumeraryMassiveConciliationComponent
     this.dataGoods = null;
     this.loading = false;
     this.totalItems = 0;
-    this.params.value.page=1
-    this.params.value.limit=10
+    this.params.value.page = 1;
+    this.params.value.limit = 10;
   }
 
   cleandInfo2() {
