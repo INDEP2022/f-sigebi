@@ -521,7 +521,7 @@ export class AddressTransferorTabComponent
           this.message(
             'error',
             'Error al guardar',
-            'no se puedo guardar el domicilio'
+            'no se puede guardar el domicilio'
           );
           return;
         }
@@ -551,7 +551,7 @@ export class AddressTransferorTabComponent
           this.message(
             'error',
             'Error al actualizár',
-            'no se puedo actualizár el domicilio'
+            'no se puede actualizár el domicilio'
           );
           return;
         }
