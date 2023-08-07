@@ -391,7 +391,7 @@ export class MassiveNumeraryChangeModalComponent
         const response = await this.alertQuestion(
           'question',
           'Confirmación',
-          '¿Desea Actualizar los Importes de los Numerarios en ADM Sin Conciliar?'
+          '¿Desea Actualizar los importes de los numerarios en ADM sin conciliar?'
         );
         this.vCHECA = response.isConfirmed;
         if (response.isConfirmed && this.vCHECA) {
@@ -442,14 +442,14 @@ export class MassiveNumeraryChangeModalComponent
         this.alert(
           'warning',
           'Advertencia',
-          'Con estos Datos no se Puede Generar Numerarios.'
+          'Con estos datos no se puede generar numerarios.'
         );
       }
     } else {
       this.alert(
         'warning',
         'Advertencia',
-        'Con estos Datos no se Puede Generar Numerarios.'
+        'Con estos datos no se puede generar numerarios.'
       );
     }
   }
