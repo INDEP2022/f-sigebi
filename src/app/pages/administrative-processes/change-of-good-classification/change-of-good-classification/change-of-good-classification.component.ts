@@ -382,7 +382,7 @@ export class ChangeOfGoodClassificationComponent
             this.alert(
               'error',
               'Error',
-              'No se puedo cargar la descripción del clasificador'
+              'No se puede cargar la descripción del clasificador'
             );
           }
           this.loading = false;
@@ -391,7 +391,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'Error',
-            'No se puedo cargar la descripción del clasificador'
+            'No se puede cargar la descripción del clasificador'
           );
           this.loading = false;
         },
