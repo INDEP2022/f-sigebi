@@ -136,7 +136,6 @@ export class DepositAccountStatementComponent
       type: 'string',
       sort: false,
     },
-
     devolutionnumber: {
       title: 'Devolución',
       type: 'string',
