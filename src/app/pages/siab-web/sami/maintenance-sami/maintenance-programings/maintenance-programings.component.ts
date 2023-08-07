@@ -116,7 +116,7 @@ export class MaintenanceProgramingsComponent
       this.alert(
         'success',
         'Actualización de fechas de la Programación',
-        'Realizada correctamente'
+        'Realizada Correctamente'
       );
       this.clear();
     } else {

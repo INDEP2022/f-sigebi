@@ -483,17 +483,11 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       expediente: [null, [Validators.required]],
     });
     this.actForm = this.fb.group({
-      previewFind: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      penaltyCause: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      typeexpe: [null, [Validators.required]],
-      delito: [null, [Validators.required]],
-      noExp: [null, [Validators.required]],
+      previewFind: [null, [Validators.pattern(STRING_PATTERN)]],
+      penaltyCause: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeexpe: [null],
+      delito: [null],
+      noExp: [null],
       //DELITO     FALTA
     });
 
@@ -505,20 +499,20 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
       detail: [null, []],
     });
     this.formadd = this.fb.group({
-      preva: [null, [Validators.required]],
-      record: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      entity: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      preva: [null],
+      record: [null],
+      status: [null],
+      entity: [null],
+      admin: [null],
+      folio: [null],
       year: [null],
       mes: [null],
-      oficea: [null, [Validators.required]],
-      autority: [null, [Validators.required]],
+      oficea: [null],
+      autority: [null],
       nameEnt: [null],
       witness: [null],
-      dateElab: [null, [Validators.required]],
-      propben: [null, [Validators.required]],
+      dateElab: [null],
+      propben: [null],
       audit: [null],
       observations: [null],
       returnFoli: [null],
