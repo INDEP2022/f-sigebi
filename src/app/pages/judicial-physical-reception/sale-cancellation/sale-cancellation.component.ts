@@ -1126,7 +1126,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
                 this.alert(
                   'error',
                   'Se presentó un error inesperado',
-                  'No se puedo guardar el acta'
+                  'No se puede guardar el acta'
                 );
               }
             );
@@ -1201,7 +1201,7 @@ export class SaleCancellationComponent extends BasePage implements OnInit {
               this.alert(
                 'error',
                 'Se presentó un error inesperado',
-                'No se puedo guardar el acta'
+                'No se puede guardar el acta'
               );
             }
           );

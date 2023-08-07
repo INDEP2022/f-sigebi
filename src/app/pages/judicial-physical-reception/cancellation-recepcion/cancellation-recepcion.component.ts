@@ -2300,8 +2300,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
               err => {
                 this.alert(
                   'error',
-                  'Se presento un error inesperado',
-                  'No se puedo guardar el acta'
+                  'Se presentó un error inesperado',
+                  'No se puede guardar el acta'
                 );
               }
             );
@@ -2378,8 +2378,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
             err => {
               this.alert(
                 'error',
-                'Se presento un error inesperado',
-                'No se puedo guardar el acta'
+                'Se presentó un error inesperado',
+                'No se pudo guardar el acta'
               );
             }
           );

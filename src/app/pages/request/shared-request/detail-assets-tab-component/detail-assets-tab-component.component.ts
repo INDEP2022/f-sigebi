@@ -1485,7 +1485,7 @@ export class DetailAssetsTabComponentComponent
                 `El registro de domicilio del bien no se pudo actualizar\n. ${data.message}`
               );
               reject(
-                'No se puedo actualizar el registro del domicilio del bien'
+                'No se puede actualizar el registro del domicilio del bien'
               );
             }
 
