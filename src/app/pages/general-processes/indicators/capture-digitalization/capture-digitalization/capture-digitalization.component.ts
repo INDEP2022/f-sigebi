@@ -146,6 +146,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
+      hideSubHeader: false,
       columns: {
         ...GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
       },

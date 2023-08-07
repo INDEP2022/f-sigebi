@@ -265,7 +265,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Eliminación de Fotos',
-          'Se eliminaron las fotos correctamente'
+          'Se Eliminaron las Fotos Correctamente'
         );
       }
     }
@@ -334,7 +334,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
-        titleFinishUpload: 'Imagenes cargadas correctamente',
+        titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
           console.log(refresh);
@@ -354,7 +354,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         service: this.filePhotoSaveZipService,
         identificator: this.goodNumber + '',
         multiple: false,
-        titleFinishUpload: 'Imagenes cargadas correctamente',
+        titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
           console.log(refresh);

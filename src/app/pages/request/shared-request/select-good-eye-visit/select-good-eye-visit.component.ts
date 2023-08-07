@@ -141,7 +141,7 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
       };
     }
     //id de prueba borrar
-    this.idRequest = 56817;
+    //this.idRequest = 56817;
     //
     this.selectedGoodParams
       .pipe(takeUntil(this.$unSubscribe))
@@ -185,9 +185,9 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
               item.endVisitDate = item.endVisitDate
                 ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
                 : null;
-              item['unitExtentDescrip'] = await this.getDescripUnit(
+              /* item['unitExtentDescrip'] = await this.getDescripUnit(
                 item.unitExtent
-              );
+              ); */
               item['delegationDescrip'] = await this.getDelegation(
                 item.delegationRegionalId,
                 item.cveState
@@ -344,10 +344,10 @@ export class SelectGoodEyeVisitComponent extends BasePage implements OnInit {
     });
   }
 
-  getFraction(id: number) {
+  getFraction(code: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.id'] = `$eq:${id}`;
+      params['filter.code'] = `$eq:${code}`;
       //params['filter.stateKey'] = `$eq:${stateKey}`
       this.fractionService.getAll(params).subscribe({
         next: (resp: any) => {

@@ -68,7 +68,7 @@ export class RegisterModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = 'Guardado';
-    this.alert('success', 'Registro de Inventario', `${message} correctamente`);
+    this.alert('success', 'Registro de Inventario', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
