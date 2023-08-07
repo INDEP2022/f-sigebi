@@ -191,7 +191,7 @@ export class ProposalInventoriesDonationComponent
             if (count == advanceProp.length) {
               this.onLoadToast(
                 'success',
-                'Ha sido actualizado correctamente el inventario',
+                'Ha sido Actualizado Correctamente el Inventario',
                 ''
               );
             }
