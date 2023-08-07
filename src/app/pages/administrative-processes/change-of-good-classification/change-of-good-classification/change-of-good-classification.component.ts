@@ -382,7 +382,7 @@ export class ChangeOfGoodClassificationComponent
             this.alert(
               'error',
               'Error',
-              'No se puedo cargar la Descripción del Clasificador'
+              'No se puedo cargar la descripción del clasificador'
             );
           }
           this.loading = false;
@@ -391,7 +391,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'Error',
-            'No se puedo cargar la Descripción del Clasificador'
+            'No se puedo cargar la descripción del clasificador'
           );
           this.loading = false;
         },
@@ -494,8 +494,8 @@ export class ChangeOfGoodClassificationComponent
     if (this.classificationOfGoods.value === '') {
       this.onLoadToast(
         'info',
-        'INformación',
-        'Debe seleccionar un No de clasificación de Bien'
+        'Información',
+        'Debe seleccionar un No. De clasificación de Bien'
       );
       return;
     }
@@ -507,9 +507,9 @@ export class ChangeOfGoodClassificationComponent
 
   showAlert() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Actualizar',
-      '¿Desea actualizar el clasificador del bien?'
+      '¿Desea actualizar el clasificador del Bien?'
     ).then(question => {
       if (question.isConfirmed) {
         this.addAtribut();
