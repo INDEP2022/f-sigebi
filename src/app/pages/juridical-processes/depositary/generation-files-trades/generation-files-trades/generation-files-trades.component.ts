@@ -72,7 +72,7 @@ export class GenerationFilesTradesComponent
         this.selectWheel = new DefaultSelect(data.data, data.count);
       },
       error: error => {
-        this.onLoadToast('warning', 'No se encuetra el Volante', '');
+        this.onLoadToast('warning', 'No se Encuentra el Volante', '');
         this.cleanForm();
         this.selectWheel = new DefaultSelect();
       },
@@ -100,7 +100,7 @@ export class GenerationFilesTradesComponent
         this.cleanForm();
       }
     } else {
-      this.onLoadToast('warning', 'No se ha especificado el Dictamen', '');
+      this.onLoadToast('warning', 'No se ha Especificado el Dictamen', '');
     }
   }
 
@@ -186,7 +186,7 @@ export class GenerationFilesTradesComponent
               class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
               ignoreBackdropClick: true, //ignora el click fuera del modal
             };
-            this.onLoadToast('success', '', 'Reporte generado');
+            this.onLoadToast('success', '', 'Reporte Generado');
             this.cleanForm();
             this.modalService.show(PreviewDocumentsComponent, config);
           }

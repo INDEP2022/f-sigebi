@@ -24,9 +24,8 @@ export class CustomersPenalitiesFormComponent
     private fb: FormBuilder,
     private clientPenaltyService: ClientPenaltyService,
     private modalRef: BsModalRef,
-    private authService: AuthService
-  ) //private clientPenaltyService: ClientPenaltyService,
-  {
+    private authService: AuthService //private clientPenaltyService: ClientPenaltyService,
+  ) {
     super();
   }
 
