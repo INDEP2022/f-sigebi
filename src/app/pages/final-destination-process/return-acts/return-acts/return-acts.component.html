@@ -264,7 +264,7 @@
               <button
                 class="btn btn-primary active btn-sm"
                 (click)="validarStatusActa()"
-                [disabled]="!open || !labela"
+                [disabled]="!open || !labela || !closea"
                 *ngIf="labela">
                 {{ labelActa }} <i class="bx bx-file bx-sm float-icon"></i>
               </button>
