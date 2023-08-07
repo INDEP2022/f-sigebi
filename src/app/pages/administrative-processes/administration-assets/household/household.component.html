@@ -1,6 +1,19 @@
 <div class="container">
   <br />
   <div class="row">
+    <div class="ch-content">
+      <h5 class="title">Emisoras</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="searchGoodMenage(goodId)">
+            Recargar <i class="fas fa-sync-alt"> </i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-12">
       <div [class]="loading ? 'table-loading' : ''">
         <ng2-smart-table

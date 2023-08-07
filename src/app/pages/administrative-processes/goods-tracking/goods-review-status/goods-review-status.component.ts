@@ -746,6 +746,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   async returnJsonToCsv() {
     return this.data.getAll();
+    this.data.getAll().then(resp => {
+      let arr: any = [];
+      let result = resp.map((item: any) => {
+        arr.push(item);
+      });
+      return arr;
+    });
   }
 
   selectRow(row: any) {
