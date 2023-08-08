@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -523,10 +523,29 @@ export class EventGoodsLotsListActionsComponent
   }
 
   /**CARGA_DATOS_FACTURACION */
-  loadInvoiceData(publicLot: string | number) {
+  loadInvoiceData(publicLot: string | number, file: File) {
     console.log(publicLot ? `Para el lote ${publicLot}` : 'Para todo el vento');
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.warn('CARGA_DATOS_FACTURACION');
+    const { id } = this.controls;
+    this.loader.load = true;
+    return this.lotService
+      .loadInvoiceData({
+        eventId: id.value,
+        lot: publicLot,
+        file: file,
+        pDirection: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          // this.refre
+        })
+      );
   }
 
   loadInvoiceDataChange(event: Event) {
@@ -535,7 +554,10 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
-    this.loadInvoiceData(this.lotSelected?.publicLot ?? null);
+    this.loadInvoiceData(
+      this.lotSelected?.publicLot ?? null,
+      this.getFileFromEvent(event)
+    ).subscribe();
   }
 
   // ? Clientes desde Tabla Tercero
@@ -594,9 +616,20 @@ export class EventGoodsLotsListActionsComponent
     const ESTATUS = this.reverseType();
     const ID_EVENTO = eventTpId.value;
     const P_DIRECCION = this.parameters.pDirection;
-    this.modalService.show(GroundsStatusModalComponent, {
-      ...MODAL_CONFIG,
-    });
+    // this.modalService.show(GroundsStatusModalComponent, {
+    //   ...MODAL_CONFIG,
+    // });
+    let config: ModalOptions = {
+      initialState: {
+        ESTATUS,
+        ID_EVENTO,
+        P_DIRECCION,
+        callback: (next: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GroundsStatusModalComponent, config);
   }
 
   /**TIPO_REVERSA */

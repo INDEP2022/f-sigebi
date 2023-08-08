@@ -148,6 +148,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
         },
         err => {
           console.log(err);
+          this.detailData.load([]);
+          this.totalItems2 = 0;
         }
       );
     }
@@ -182,7 +184,7 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
 
   newProposalFn() {
     this.loading = true;
-
+    console.log(this.id);
     const model: IRequesNum = {
       deposit: this.form.get('deposit').value,
       relayTesofDate: null,
@@ -214,10 +216,13 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
   }
 
   newDetailFn() {
+    console.log('Sí entra');
+    console.log(this.id);
+
     const model: IRequesNumMov = {
       applicationId: parseInt(this.id),
       motionNumber: this.form2.get('movement').value,
-      amountAssign: this.form.get('deposit').value,
+      amountAssign: this.form2.get('deposit').value,
     };
 
     this.numeraryService.createRequestNumMov(model).subscribe(
@@ -230,6 +235,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
             this.loading = false;
             this.detailData.load(res.data);
             this.totalItems2 = res.count;
+            this.form2.get('movement').reset();
+            this.form2.get('deposit').reset();
             this.newDetail = false;
             this.alert('success', 'Detalle creado', '');
           },

@@ -115,6 +115,7 @@
                 class="form-control"
                 bsDatepicker
                 formControlName="balanceOf"
+                [maxDate]="maxDate"
                 [(ngModel)]="variableOf" />
             </form-field>
           </div>
@@ -125,8 +126,16 @@
                 type="text"
                 class="form-control"
                 bsDatepicker
+                [maxDate]="maxDate"
                 formControlName="balanceAt"
-                [(ngModel)]="variableAt" />
+                [(ngModel)]="variableAt"
+                [min]="form.get('balanceOf').value"
+                [minDate]="form.get('balanceOf').value"
+                [ngModel]="
+                  form.get('balanceAt').value < form.get('balanceOf').value
+                    ? form.get('balanceOf').value
+                    : form.get('balanceAt').value
+                " />
             </form-field>
           </div>
 

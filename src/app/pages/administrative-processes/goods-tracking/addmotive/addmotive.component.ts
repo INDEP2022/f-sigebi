@@ -105,7 +105,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
     if (areaCorresp != null) {
       this.responsable = areaCorresp;
     } else {
-      this.alert('info', 'Falta asignar área Responsable o Delegación.', '');
+      this.alert('info', 'Falta Asignar Área Responsable o Delegación.', '');
     }
   }
 
@@ -216,7 +216,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
       V_RESPONSABLE = null;
       this.alert(
         'warning',
-        `${this.motiveSelect.description} no es un motivo válido`,
+        `${this.motiveSelect.description} no es un Motivo Válido`,
         ''
       );
       return;
@@ -277,8 +277,8 @@ export class AddmotiveComponent extends BasePage implements OnInit {
     if (this.responsable == 'REGIONALES') {
       this.alertQuestion(
         'question',
-        `El bien es administrado por: ${LV_DESC} , y ${LV_DESC1} como responsable.`,
-        '¿Desea atender el bien?'
+        `El Bien es Administrado por: ${LV_DESC} , y ${LV_DESC1} como Responsable.`,
+        '¿Desea Atender el Bien?'
       ).then(async question => {
         if (question.isConfirmed) {
           if (this.delegationNumber == 0 || this.responsable == 'REGIONALES') {
@@ -293,7 +293,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se encontró la pantalla', '');
+              this.alert('warning', 'No se Encontró la Pantalla', '');
             }
           } else if (
             this.delegationNumber == LV_RESPONSABLE ||
@@ -310,7 +310,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se encontró la pantalla', '');
+              this.alert('warning', 'No se Encontró la Pantalla', '');
             }
           }
         }
@@ -327,12 +327,12 @@ export class AddmotiveComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.alert('warning', 'No se encontró la pantalla', '');
+        this.alert('warning', 'No se Encontró la Pantalla', '');
       }
     } else {
       this.alert(
         'warning',
-        `No puede atender este bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
+        `No Puede Atender este Bien, ya que Usted no Corresponde al Área Responsable: ${V_RESPONSABLE}`,
         ''
       );
     }
@@ -451,7 +451,7 @@ export class AddmotiveComponent extends BasePage implements OnInit {
         }
       );
     } else {
-      this.alert('warning', 'No se localizó la URL de la forma', '');
+      this.alert('warning', 'No se Localizó la URL de la Forma', '');
     }
   }
 

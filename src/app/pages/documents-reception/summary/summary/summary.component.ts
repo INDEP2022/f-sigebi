@@ -142,9 +142,9 @@ export class SummaryComponent extends BasePage implements OnInit {
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
-      return stard <= end
-        ? null
-        : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+      // return stard <= end
+      //   ? null
+      //   : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
     }
     return '';
   }

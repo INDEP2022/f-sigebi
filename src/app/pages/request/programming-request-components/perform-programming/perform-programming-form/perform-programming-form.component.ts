@@ -1106,16 +1106,21 @@ export class PerformProgrammingFormComponent
 
   getStateSelect(params?: ListParams) {
     params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
-    this.stateService.getAll(params).subscribe(data => {
-      const filterStates = data.data.filter(_states => {
-        return _states.stateCode;
-      });
+    this.stateService.getAll(params).subscribe({
+      next: data => {
+        const filterStates = data.data.filter(_states => {
+          return _states.stateCode;
+        });
 
-      const states = filterStates.map(items => {
-        return items.stateCode;
-      });
+        const states = filterStates.map(items => {
+          return items.stateCode;
+        });
 
-      this.states = new DefaultSelect(states, data.count);
+        this.states = new DefaultSelect(states, data.count);
+      },
+      error: error => {
+        this.states = new DefaultSelect();
+      },
     });
   }
 
@@ -1136,7 +1141,9 @@ export class PerformProgrammingFormComponent
         });
         this.transferences = new DefaultSelect(data.data, data.count);
       },
-      error: error => {},
+      error: error => {
+        this.transferences = new DefaultSelect();
+      },
     });
   }
 
@@ -1148,24 +1155,47 @@ export class PerformProgrammingFormComponent
   }
 
   getStations(params?: ListParams) {
-    this.showSelectStation = true;
-    params['filter.idTransferent'] = this.transferentId;
-    //params['filter.keyState'] = this.idState;
-    params['filter.stationName'] = `$ilike:${params.text}`;
-    params['sortBy'] = 'stationName:ASC';
+    if (this.transferentId == 1) {
+      this.showSelectStation = true;
+      params['filter.idTransferent'] = this.transferentId;
+      //params['filter.idTransferer'] = `$eq:${this.delegationId}`;
+      params['filter.keyState'] = this.idState;
+      params['filter.stationName'] = `$ilike:${params.text}`;
+      params['sortBy'] = 'stationName:ASC';
 
-    this.stationService.getAll(params).subscribe({
-      next: data => {
-        data.data.map(data => {
-          data.nameAndId = `${data.id} - ${data.stationName}`;
-          return data;
-        });
-        this.stations = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.stations = new DefaultSelect();
-      },
-    });
+      this.stationService.getAll(params).subscribe({
+        next: data => {
+          data.data.map(data => {
+            data.nameAndId = `${data.id} - ${data.stationName}`;
+            return data;
+          });
+          this.stations = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.stations = new DefaultSelect();
+        },
+      });
+    } else {
+      this.showSelectStation = true;
+      params['filter.idTransferent'] = this.transferentId;
+      //params['filter.idTransferer'] = `$eq:${this.delegationId}`;
+      //params['filter.keyState'] = this.idState;
+      params['filter.stationName'] = `$ilike:${params.text}`;
+      params['sortBy'] = 'stationName:ASC';
+
+      this.stationService.getAll(params).subscribe({
+        next: data => {
+          data.data.map(data => {
+            data.nameAndId = `${data.id} - ${data.stationName}`;
+            return data;
+          });
+          this.stations = new DefaultSelect(data.data, data.count);
+        },
+        error: () => {
+          this.stations = new DefaultSelect();
+        },
+      });
+    }
   }
 
   stationSelect(item: IStation) {
@@ -1248,7 +1278,9 @@ export class PerformProgrammingFormComponent
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => {
+        this.localities = new DefaultSelect();
+      },
     });
   }
 
@@ -1259,9 +1291,14 @@ export class PerformProgrammingFormComponent
 
   getTypeRelevantSelect(params: ListParams) {
     params['sortBy'] = 'description:ASC';
-    this.typeRelevantService.getAll(params).subscribe(data => {
-      this.typeRelevant = new DefaultSelect(data.data, data.count);
-      this.formLoading = false;
+    this.typeRelevantService.getAll(params).subscribe({
+      next: data => {
+        this.typeRelevant = new DefaultSelect(data.data, data.count);
+        this.formLoading = false;
+      },
+      error: error => {
+        this.typeRelevant = new DefaultSelect();
+      },
     });
   }
 
@@ -1270,8 +1307,13 @@ export class PerformProgrammingFormComponent
     this.showWarehouseInfo = true;
     params.limit = 300;
     params['filter.responsibleDelegation'] = this.delegationId;
-    this.warehouseService.getAll(params).subscribe(data => {
-      this.warehouse = new DefaultSelect(data.data, data.count);
+    this.warehouseService.getAll(params).subscribe({
+      next: data => {
+        this.warehouse = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.warehouse = new DefaultSelect();
+      },
     });
   }
 
@@ -1388,8 +1430,8 @@ export class PerformProgrammingFormComponent
         } else {
           this.alert(
             'warning',
-            'Advertencía',
-            'No hay Bienes disponibles para programar'
+            'Advertencia',
+            'No hay bienes disponibles para programar'
           );
           this.estatesList.load([]);
           this.loadingGoods = false;
@@ -1444,7 +1486,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Error',
+          'Acción Invalida',
           'Se necesita tener un bien seleccionado'
         );
       }
@@ -1452,7 +1494,7 @@ export class PerformProgrammingFormComponent
       this.alertQuestion(
         'warning',
         'Acción',
-        'Todos los Bienes serán enviados a transportable'
+        'Todos los bienes serán enviados a transportable'
       ).then(question => {
         if (question.isConfirmed) {
           let tranferent: number = 0;
@@ -1497,9 +1539,7 @@ export class PerformProgrammingFormComponent
                 'Bienes agregados a transportable correctamente'
               );
             },
-            error: error => {
-              console.log('error', error);
-            },
+            error: error => {},
           });
         }
       });
@@ -1701,9 +1741,7 @@ export class PerformProgrammingFormComponent
                         'Bienes agregados a almacén correctamente'
                       );
                     },
-                    error: error => {
-                      console.log('error', error);
-                    },
+                    error: error => {},
                   });
               }
             },
@@ -1777,7 +1815,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Error',
+          'Acción Invalida',
           'Se necesita tener un bien seleccionado'
         );
       }
@@ -1971,9 +2009,7 @@ export class PerformProgrammingFormComponent
                         'Bienes agregados a almacén correctamente'
                       );
                     },
-                    error: error => {
-                      console.log('error', error);
-                    },
+                    error: error => {},
                   });
               }
             },
@@ -2097,7 +2133,7 @@ export class PerformProgrammingFormComponent
       } else {
         this.alert(
           'warning',
-          'Error',
+          'Acción Invalida',
           'Se necesita tener un bien seleccionado'
         );
       }
@@ -2142,7 +2178,6 @@ export class PerformProgrammingFormComponent
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
-            console.log('response', response);
             resolve(true);
           },
           error: error => {
@@ -2232,7 +2267,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'El Bien se Elimino de la sección de transportable'
+                'El Bien se elimino de la sección de transportable'
               );
               const deleteGood = this.goodsTranportables.count();
               this.headingTransportable = `Transportable(${deleteGood})`;
@@ -2284,7 +2319,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'El Bien se elimino de la sección de resguardo'
+                'El bien se elimino de la sección de resguardo'
               );
               const deleteGood = this.goodsGuards.count();
               this.headingGuard = `Resguardo(${deleteGood})`;
@@ -2318,7 +2353,7 @@ export class PerformProgrammingFormComponent
               this.alert(
                 'success',
                 'Correcto',
-                'El Bien se Elimino de la sección de almacén'
+                'El bien se elimino de la sección de almacén'
               );
               const deleteGood = this.goodsWarehouse.count();
               this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
@@ -2417,7 +2452,6 @@ export class PerformProgrammingFormComponent
         }
       });
     } else {
-      console.log('data', this.performForm.value);
       if (this.transferentId)
         this.performForm.get('tranferId').setValue(this.transferentId);
       if (this.stationId)
@@ -2857,7 +2891,7 @@ export class PerformProgrammingFormComponent
           .deleteUserProgramming(userObject)
           .subscribe(data => {
             // this.onLoadToast('success', 'Correcto', 'Usuario eliminado');
-            this.alert('success', 'Operación exitosa', 'Usuario eliminado');
+            this.alert('success', 'Correcto', 'Usuario eliminado');
             this.reloadData();
           });
       }
@@ -2884,6 +2918,7 @@ export class PerformProgrammingFormComponent
         },
         error: error => {
           this.usersToProgramming.load([]);
+          this.totalItemsUsers = 0;
         },
       });
   }
@@ -2903,7 +2938,7 @@ export class PerformProgrammingFormComponent
         },
         error: error => {
           this.loadingReport = false;
-          this.alert('error', 'Error', 'Error al generar reporte');
+          this.alert('warning', 'Advertencia', 'Error al generar reporte');
         },
       });
   }
@@ -3277,7 +3312,44 @@ export class PerformProgrammingFormComponent
   }
 
   checkInfoDate(startDate: Date) {
-    const _startDateFormat = moment(startDate).format('DD/MM/YYYY');
+    const _startDate = moment(this.performForm.get('startDate').value).format(
+      'DD/MM/YYYY'
+    );
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'DD/MM/YYYY'
+    );
+    const date = moment(new Date()).format('YYYY/MM/DD');
+    const formData = {
+      days: 5,
+      hours: 0,
+      minutes: 0,
+      date: date,
+    };
+
+    this.programmingService.getDateProgramming(formData).subscribe({
+      next: (response: any) => {
+        const correctDate = moment(response).format('DD/MM/YYYY');
+        if (correctDate > _startDate || correctDate > _endDateFormat) {
+          this.performForm
+            .get('startDate')
+            .addValidators([minDate(new Date(response))]);
+          this.performForm
+            .get('startDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+
+          this.performForm
+            .get('endDate')
+            .addValidators([minDate(new Date(response))]);
+          this.performForm
+            .get('endDate')
+            .setErrors({ minDate: { min: new Date(response) } });
+          this.performForm.markAllAsTouched();
+        }
+      },
+      error: error => {},
+    });
+    /*
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
       'DD/MM/YYYY'
     );
@@ -3314,7 +3386,7 @@ export class PerformProgrammingFormComponent
           this.performForm.markAllAsTouched();
         }
       },
-    });
+    }); */
     /*
 
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
@@ -3372,6 +3444,28 @@ export class PerformProgrammingFormComponent
     }); */
   }
 
+  checkInfoEndDate(endDate: Date) {
+    const _endDateFormat = moment(this.performForm.get('endDate').value).format(
+      'DD/MM/YYYY'
+    );
+    const _startDateFormat = moment(
+      this.performForm.get('startDate').value
+    ).format('DD/MM/YYYY');
+
+    if (_startDateFormat > _endDateFormat) {
+      const correctDate = moment(
+        this.performForm.get('startDate').value
+      ).format('DD/MM/YYYY HH:mm:ss');
+      this.performForm
+        .get('endDate')
+        .addValidators([minDate(new Date(correctDate))]);
+      this.performForm
+        .get('endDate')
+        .setErrors({ minDate: { min: new Date(correctDate) } });
+      this.performForm.markAllAsTouched();
+    }
+  }
+
   selectAllGoods() {
     this.selectMasiveGood = true;
   }
@@ -3411,9 +3505,7 @@ export class PerformProgrammingFormComponent
             this.headingTransportable = `Transportable(${deleteGood})`;
             this.totalItemsTransportableGoods = deleteGood;
           },
-          error: error => {
-            console.log('error date', error);
-          },
+          error: error => {},
         });
       }
     });
@@ -3449,9 +3541,7 @@ export class PerformProgrammingFormComponent
             this.headingGuard = `Resguardo(${deleteGood})`;
             this.totalItemsTransportableGuard = deleteGood;
           },
-          error: error => {
-            console.log('error date', error);
-          },
+          error: error => {},
         });
       }
     });
@@ -3489,9 +3579,7 @@ export class PerformProgrammingFormComponent
             this.headingWarehouse = `Almacén INDEP(${deleteGood})`;
             this.totalItemsTransportableWarehouse = deleteGood;
           },
-          error: error => {
-            console.log('error date', error);
-          },
+          error: error => {},
         });
       }
     });

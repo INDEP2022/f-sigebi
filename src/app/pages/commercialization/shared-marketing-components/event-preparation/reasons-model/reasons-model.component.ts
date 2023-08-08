@@ -32,31 +32,6 @@ export class ReasonsModelComponent implements OnInit {
         Validators.required,
         Validators.pattern(STRING_PATTERN),
       ],
-      reasons11: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
-      reasons12: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
-      reasons13: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
-      reasons14: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
-      reasons15: [
-        null,
-        Validators.required,
-        Validators.pattern(STRING_PATTERN),
-      ],
     });
   }
   close() {

@@ -8,11 +8,15 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ICustomersPenalties } from 'src/app/core/models/catalogs/customer.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ClientPenaltyService } from 'src/app/core/services/ms-clientpenalty/client-penalty.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CustomersPenaltiesExportAllComponent } from '../customer-penalties-export-all/customer-penalties-export-all.component';
 import { CustomerPenaltiesModalComponent } from '../customer-penalties-modal/customer-penalties-modal.component';
-import { COLUMNS } from './columns';
+import { COLUMNS, COLUMNS2 } from './columns';
+import { CustomersPenalitiesFormComponent } from './customers-penalities-form/customers-penalities-form.component';
+import { CustomersExportHistoryCustomersPenaltiesListComponent } from './history-customers-penalties/customers-export-HistoryCustomersPenalties-list/cus-exp-HisCusPen.component';
 
 @Component({
   selector: 'app-customers-penalties',
@@ -22,14 +26,28 @@ import { COLUMNS } from './columns';
 export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   customersPenalties: ICustomersPenalties[] = [];
   totalItems: number = 0;
+  totalItems2: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  columnFilters2: any = [];
   penalties: ICustomersPenalties;
+  user: any;
+  eventPenalities: any;
+
+  permission: boolean = false;
+  selectRow: boolean = false;
+
+  settings2 = { ...this.settings };
 
   constructor(
     private modalService: BsModalService,
-    private clientPenaltyService: ClientPenaltyService
+    private clientPenaltyService: ClientPenaltyService,
+    private authService: AuthService,
+    private securityService: SecurityService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -39,6 +57,10 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.settings.actions.delete = false;
     this.settings.actions.position = 'right';*/
     this.settings.actions = false;
+
+    this.settings2.columns = COLUMNS2;
+    this.settings2.actions = false;
+    this.settings2.hideSubHeader = false;
   }
 
   ngOnInit(): void {
@@ -123,9 +145,176 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
           this.getDeductives();
         }
       });
+
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'processType':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'event':
+                field = `filter.${filter.field}.id`;
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'batchPublic':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              /*case 'initialDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;*/
+              case 'initialDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              /*case 'finalDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;*/
+              case 'finalDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'referenceJobOther':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'causefree':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'usrPenalize':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'usrfree':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              /*case 'penalizesDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;*/
+              case 'penalizesDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              /*case 'releasesDate':
+                if (filter.search != null) {
+                  filter.search = this.formatDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;*/
+              case 'releasesDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getData();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDeductives());
+
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
+
+    const user: any = this.authService.decodeToken() as any;
+    this.user = user.username;
+    console.log(this.user);
+    this.validateUser();
+  }
+
+  getData(id?: string | number) {
+    if (id) {
+      this.params2.getValue()['filter.customerId'] = `$eq:${id}`;
+    }
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
+    };
+    this.clientPenaltyService.getAllHist(params).subscribe({
+      next: response => {
+        this.customersPenalties = response.data;
+        this.data2.load(response.data);
+        this.data2.refresh();
+        this.totalItems2 = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        this.data2.load([]);
+        this.data2.refresh();
+        this.totalItems2 = 0;
+      },
+    });
+  }
+
+  exportAllHistoryCustomersPenalties(event?: any) {
+    console.log(event);
+    /*if (!this.penalties) {
+      this.alert(
+        'warning',
+        'Selecciona Primero un Cliente Para Exportar su Histórico de Penalizaciones',
+        ''
+      );
+    } else {
+      //Modal de exportación pendiente de crear
+      const clientId = this.penalties.clientId.id;
+      const modalConfig = MODAL_CONFIG;
+      modalConfig.initialState = {
+        clientId,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      };
+      this.modalService.show(
+        CustomersExportHistoryCustomersPenaltiesListComponent,
+        modalConfig
+      );
+    }*/
+    //const clientId = this.penalties.clientId.id;
+    //clientId,
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      callback: (next: boolean) => {
+        if (next) this.getData();
+      },
+    };
+    this.modalService.show(
+      CustomersExportHistoryCustomersPenaltiesListComponent,
+      modalConfig
+    );
   }
 
   formatDate(dateString: string): string {
@@ -141,8 +330,14 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-    this.penalties = event.data;
-    console.log(this.penalties);
+    if (event) {
+      this.selectRow = true;
+      this.eventPenalities = event.data;
+      this.penalties = event.data;
+      console.log(this.penalties);
+    } else {
+      this.eventPenalities = null;
+    }
   }
 
   getDeductives() {
@@ -152,7 +347,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
     console.log(params);
-    this.clientPenaltyService.getAll(params).subscribe({
+    this.clientPenaltyService.getAllV2(params).subscribe({
       next: response => {
         if (response.count > 0) {
           this.customersPenalties = response.data;
@@ -162,11 +357,6 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
           this.data.refresh();
           this.loading = false;
         } else {
-          /*this.alert(
-          'warning',
-            'No se Encontraron Registros',
-            ''
-          );*/
           this.loading = false;
           this.data.load([]);
           this.data.refresh();
@@ -195,15 +385,81 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
   }*/
 
-  openForm(customersPenalties?: ICustomersPenalties) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      customersPenalties,
-      callback: (next: boolean) => {
-        if (next) this.getDeductives();
-      },
+  validateUser() {
+    this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
+    let params = {
+      ...this.params1.getValue(),
     };
-    this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
+    this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
+      next: resp => {
+        this.permission = true;
+      },
+      error: err => {
+        this.alert('warning', 'Usuario no Autorizado', 'No tiene los permisos');
+      },
+    });
+  }
+
+  openForm(customersPenalties?: any) {
+    this.alertQuestion(
+      'warning',
+      'Penalizar',
+      '¿Desea Penalizar un Cliente?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const modalConfig = MODAL_CONFIG;
+        modalConfig.initialState = {
+          customersPenalties,
+          callback: (next: boolean) => {
+            if (next) this.getDeductives();
+          },
+        };
+        this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
+      }
+    });
+  }
+
+  openFormUpdate(customersPenalties?: any) {
+    this.alertQuestion('warning', 'Liberar', '¿Desea Liberar al Cliente?').then(
+      question => {
+        if (question.isConfirmed) {
+          if (this.user) {
+            this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
+            let params = {
+              ...this.params1.getValue(),
+            };
+            this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
+              next: resp => {
+                const modalConfig = MODAL_CONFIG;
+                const userLog = this.user;
+                modalConfig.initialState = {
+                  customersPenalties,
+                  userLog,
+                  callback: (next: boolean) => {
+                    if (next) {
+                      this.getDeductives();
+                      this.getData();
+                      //this.penalties;
+                    }
+                  },
+                };
+                this.modalService.show(
+                  CustomersPenalitiesFormComponent,
+                  modalConfig
+                );
+              },
+              error: err => {
+                this.alert(
+                  'warning',
+                  'Usuario no Autorizado',
+                  'No tiene los permisos'
+                );
+              },
+            });
+          }
+        }
+      }
+    );
   }
 
   //Abrir modal de todos los penalizados
@@ -233,7 +489,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.clientPenaltyService.remove(id).subscribe({
       next: () => {
         this.getDeductives();
-        this.alert('success', 'Borrado Correctamente', '');
+        this.alert('success', 'Penalizacion', 'Borrado Correctamente');
       },
     });
   }

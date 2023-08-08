@@ -13,7 +13,20 @@ import { GROUNDSSTATUSMODAL_COLUMNS } from './grounds-status-modal-columns';
 @Component({
   selector: 'app-grounds-status-modal',
   templateUrl: './grounds-status-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      input[type='file']::file-selector-button {
+        margin-right: 20px;
+        border: none;
+        background: #9d2449;
+        padding: 10px 20px;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        /* transition: background.2s ease-in-out; */
+      }
+    `,
+  ],
 })
 export class GroundsStatusModalComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -21,6 +34,11 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
   valuesList: ICatMotiveRev[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  ESTATUS: string;
+  ID_EVENTO: string;
+  P_DIRECCION: string;
+  fileName: string;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -37,19 +55,26 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getMinPubAll());
+    if (this.ESTATUS != null) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getMinPubAll(this.ESTATUS, this.P_DIRECCION));
+    } else {
+      this.alert('warning', 'El estatus es nulo', '');
+    }
   }
   prepareForm() {
     this.form = this.fb.group({
       file: [null, Validators.required],
+      fileCSV: [null, Validators.required],
       whereMot: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       reasons: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
     });
   }
-  getMinPubAll() {
+  getMinPubAll(initialStatus: string, goodType: string) {
     this.loading = true;
+    this.params.getValue()['filter.initialStatus'] = initialStatus;
+    this.params.getValue()['filter.goodType'] = goodType;
     this.catMotiveRevService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.valuesList = response.data;
@@ -64,6 +89,14 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+  chargeFile(event: any) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.fileName = files[0].name;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
   }
   close() {
     this.modalRef.hide();

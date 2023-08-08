@@ -16,6 +16,7 @@ import { AuthorityService } from 'src/app/core/services/catalogs/authority.servi
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { LocalListParamsTest } from 'src/app/core/services/goodsquery/goods-query.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
@@ -32,6 +33,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
   @Input() isReceptionStrategies: boolean = false;
   @Input() isConsolidated: boolean = false;
   @Output() consultEmmit = new EventEmitter<any>();
+  @Output() dateFinicia = new EventEmitter<string>();
   delegations = new DefaultSelect();
   affairName = new DefaultSelect();
   station = new DefaultSelect();
@@ -48,7 +50,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
   capturasDig: ICaptureDigFilter[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T  '];
+  flyerTypes = ['A', 'AP', 'AS', 'AT', 'OF', 'P', 'PJ', 'T'];
   eventTypes = [
     'Entrega-Comercialización',
     'Entrega-Donación',
@@ -227,7 +229,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
   }
 
   find() {
-    const params = new ListParams();
+    const params = new LocalListParamsTest();
 
     const controlParamMap: any = {
       finicia: 'filter.finicia',
@@ -251,6 +253,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
       }
     }
     this.consultEmmit.emit(params);
+    this.dateFinicia.emit(this.formCapture.controls['finicia'].value);
   }
 
   valid(value: any) {
@@ -262,7 +265,7 @@ export class CaptureFilterHistoryIndicatorsComponent implements OnInit {
 
   convertDate(value: string) {
     let date: string;
-    date = this.datePipe.transform(value, 'dd/MM/yyyy');
+    date = this.datePipe.transform(value, 'yyyy-MM-dd');
     return date;
   }
 }

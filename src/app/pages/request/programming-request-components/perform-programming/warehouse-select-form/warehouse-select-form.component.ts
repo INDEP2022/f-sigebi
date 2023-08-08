@@ -62,16 +62,16 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.alert(
-            'error',
-            'Error de Información',
-            'La Transferente no cuenta con Almacenes'
+            'warning',
+            'Advertencia',
+            'La transferente no cuenta con almacenes'
           );
         },
       });
     } else {
       params['filter.name'] = `$ilike:${params.text}`;
       params['filter.regionalDelegation'] = this.data[0].idDelegation;
-      //params['filter.administratorName'] = this.data[0].idTransferent;
+      params['filter.administratorName'] = this.data[0].idTransferent;
 
       this.goodsQueryService.getCatStoresView(params).subscribe({
         next: data => {
@@ -80,9 +80,9 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.alert(
-            'error',
-            'Error de Información',
-            'La Transferente no cuenta con Almacenes'
+            'warning',
+            'Advertencia',
+            'La transferente no cuenta con almacenes'
           );
         },
       });
@@ -101,9 +101,9 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   confirm() {
     if (this.typeTransportable == 'guard') {
       this.alertQuestion(
-        'warning',
-        'Advertencia',
-        '¿Desea asignar los Bienes al Almacén seleccionado?'
+        'question',
+        'Confirmación',
+        '¿Desea asignar los bienes al almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;
@@ -115,9 +115,9 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       });
     } else if (this.typeTransportable == 'warehouse') {
       this.alertQuestion(
-        'warning',
-        'Advertencia',
-        '¿Desea asignar los Bienes al Almacén seleccionado?'
+        'question',
+        'Confirmación',
+        '¿Desea asignar los bienes al almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;

@@ -49,6 +49,7 @@
               id="electronicSignatureWorker1"
               value="false"
               type="checkbox"
+              (change)="SignatureWorker1Select()"
               formControlName="electronicSignatureWorker1" />
           </form-check>
 
@@ -143,6 +144,7 @@
             <input
               id="electronicSignatureWorker2"
               type="checkbox"
+              (change)="SignatureWorker2Select()"
               formControlName="electronicSignatureWorker2" />
           </form-check>
 
@@ -230,6 +232,7 @@
               id="electronicSignatureWitness1"
               value="false"
               type="checkbox"
+              (change)="SignatureWitness1Select()"
               formControlName="electronicSignatureWitness1" />
           </form-check>
 
@@ -291,6 +294,7 @@
               id="electronicSignatureWitness2"
               value="false"
               type="checkbox"
+              (change)="SignatureWitness2Select()"
               formControlName="electronicSignatureWitness2" />
           </form-check>
 
@@ -365,6 +369,7 @@
               id="electronicSignatureOic"
               value="false"
               type="checkbox"
+              (change)="SignatureOICSelect()"
               formControlName="electronicSignatureOic" />
           </form-check>
 
@@ -561,16 +566,15 @@
       <div class="row">
         <div class="col-md-6">
           <h5 style="font-size: 15px">Apartado 1</h5>
+          <h5 style="font-size: 12px">Otros Hechos</h5>
           <div class="pt-3">
-            <form-field
-              [control]="infoForm.get('otherFacts')"
-              label="Otros hechos">
-              <input
-                maxlength="4000"
-                type="text-area"
-                class="form-control"
-                formControlName="otherFacts" />
-            </form-field>
+            <textarea
+              class="form-control"
+              formControlName="otherFacts"
+              rows="4"
+              maxlength="4000"
+              cols="50">
+            </textarea>
           </div>
         </div>
       </div>

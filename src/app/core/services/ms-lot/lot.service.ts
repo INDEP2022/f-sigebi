@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 
+interface IValidateStatus {
+  val: string | number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -14,6 +18,10 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLot(params?: ListParams) {
     return this.get('eat-lots', params);
   }
 
@@ -158,7 +166,89 @@ export class LotService extends HttpService {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 
-  getSumLotComerPayRef(body: { dateComer: string }, params?: string) {
-    return this.post('apps/get-lot-comer-pay-ref-count', body, params);
+  getSumLotComerPayRef(body: {
+    dateComer: string;
+    clientId: string;
+    eventId: string;
+  }) {
+    return this.post('apps/get-lot-comer-pay-ref-count', body);
+  }
+
+  getSumAllComerPayRef(body: { clientId: string; eventId: string }) {
+    return this.post('apps/get-lot-comer-pay-ref-countAll', body);
+  }
+
+  applyBaseCost(body: {
+    cotobase: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post('apps/blk-ctr-main-l-pb-apply-when-button-pressed', body);
+  }
+
+  validateStatusCPV(eventId: string | number) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query1',
+      { eventId }
+    );
+  }
+
+  afterRemoveGoods(body: {
+    goodId: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query2',
+      body
+    );
+  }
+
+  loadInvoiceData(body: {
+    eventId: string | number;
+    lot: string | number;
+    file: File;
+    pDirection: 'M' | 'I';
+  }) {
+    const { file, lot, eventId, pDirection } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('pLot', lot ? `${lot}` : null);
+    formData.append('pEvent', eventId ? `${eventId}` : null);
+    formData.append('lot', lot ? `${lot}` : null);
+    formData.append('pDirection', pDirection);
+    return this.post('apps/load-data-billing', formData);
+  }
+  // ------------------------
+  PUP_ENTRA(body: any) {
+    // PUP_ENTRA
+    return this.post(LotEndpoints.PupEntra, body);
+  }
+
+  CARGA_PAGOSREFGENS(evento: any) {
+    return this.get(`${LotEndpoints.CargaPagosRefGens}/${evento}`);
+  }
+
+  CARGA_COMER_DETALLES(evento: any) {
+    return this.get(`${LotEndpoints.CargaComerDetalles}/${evento}`);
+  }
+
+  VALIDA_MANDATO(evento: any) {
+    return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
+  }
+
+  VALIDA_ESTATUS(evento: any) {
+    return this.get(`${LotEndpoints.ValidateStatus}/${evento}`);
+  }
+  VALIDA_LISTANEGRA(evento: any) {
+    return this.get(`${LotEndpoints.ValidaListaNegra}/${evento}`);
+  }
+
+  getReferenceList(reference: any, params: _Params) {
+    return this.get(
+      `${LotEndpoints.GetBankReference}?reference=${reference}`,
+      params
+    );
   }
 }
