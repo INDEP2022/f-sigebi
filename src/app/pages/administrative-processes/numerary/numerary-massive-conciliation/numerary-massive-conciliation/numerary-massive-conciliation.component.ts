@@ -70,6 +70,8 @@ export class NumeraryMassiveConciliationComponent
   totalItems: number = 0;
   limit = new FormControl(10);
   columnFilters: any = [];
+  completeFilters: any[] = [];
+  completeFilters2: any[] = [];
   accountDate: number;
 
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -84,29 +86,27 @@ export class NumeraryMassiveConciliationComponent
 
   minDate: Date;
 
-  public override settings: any = {
+  override settings: any = {
     rowClassFunction: (row: { data: { VISUAL_ATTRIBUTE: any } }) =>
       row.data.VISUAL_ATTRIBUTE == 'VA_VERDE'
         ? 'bg-success text-white'
         : 'bg-dark text-white',
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS,
     hideSubHeader: false,
-    noDataMessage: 'No se Encontrarón Registros',
-    actions: {
-      add: false,
-      delete: false,
-      edit: false,
+    actions: false,
+    noDataMessage: 'No se Encontraron Registros',
+    pager: {
+      display: false,
     },
   };
 
-  public settings2: any = {
+  settings2: any = {
     columns: NUMERARY_MASSIVE_CONCILIATION_COLUMNS2,
-    noDataMessage: 'No se Encontrarón Registros',
+    noDataMessage: 'No se Encontraron Registros',
     hideSubHeader: false,
-    actions: {
-      add: false,
-      delete: false,
-      edit: false,
+    actions: false,
+    pager: {
+      display: false,
     },
   };
 
@@ -151,8 +151,8 @@ export class NumeraryMassiveConciliationComponent
       totalWithoutTesofe: [null],
       deposit: [null, Validators.nullValidator],
       current: [null, Validators.nullValidator],
-      proposal: [null],
-      currencyDeposit: [null],
+      proposal: [null, [Validators.required]],
+      currencyDeposit: [null, [Validators.required]],
     });
   }
 
@@ -167,6 +167,7 @@ export class NumeraryMassiveConciliationComponent
     this.getCveCurrency(); //Trae la lista de monedas para la forma2
     this.getBanks2(); //Se suscribe al valor de moneda en la forma2 y trae los bancos
     this.getAccountsBank2(); //
+    this.filterByColumn();
 
     //Navegación
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
@@ -180,7 +181,7 @@ export class NumeraryMassiveConciliationComponent
       this.limit2 = new FormControl(params.limit);
 
       if (this.dataGoods2['data'].length > 0) {
-        this.searchGoodBankAccount();
+        this.searchGoodBankAccountPag();
       }
     });
 
@@ -190,6 +191,39 @@ export class NumeraryMassiveConciliationComponent
         this.minDate = new Date(this.form.get('dateOf').value);
       }
     });
+  }
+
+  //FILTRO POR COLUMNA
+  filterByColumn() {
+    this.dataGoods
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          this.completeFilters = filters;
+          console.log(this.completeFilters);
+          filters.map((filter: any) => {
+            this.searchFilterGoodPag();
+          });
+          this.params = this.pageFilter(this.params);
+        }
+      });
+
+    this.dataGoods2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          this.completeFilters2 = filters;
+          console.log(this.completeFilters2);
+          filters.map((filter: any) => {
+            this.searchGoodBankAccountPag();
+          });
+          this.params = this.pageFilter(this.params);
+        }
+      });
   }
 
   //Gets form 1
@@ -413,6 +447,60 @@ export class NumeraryMassiveConciliationComponent
     );
   }
 
+  //Paginador datos de cuentas bancarias
+  searchGoodBankAccountPag() {
+    this.loading2 = true;
+    const bank = this.bank2.value;
+    const bankAccount = this.bankAccount2.value;
+    const currency = this.current2.value;
+
+    console.log(bank);
+    const body: IProReconcilesGood = {
+      bankKey: bank != null ? bank.cveBank : null,
+      accountKey: bankAccount != null ? bankAccount.cveAccount : null,
+      currencyKey: currency != null ? currency.cve_moneda : null,
+      deposit: this.deposit2.value,
+      startDate: this.form.get('dateOf').value,
+      endDate: this.form.get('dateAt').value,
+    };
+
+    const paramsF = new FilterParams();
+    paramsF.page = this.params2.value.page;
+    paramsF.limit = this.params2.value.limit;
+
+    for (let item of this.completeFilters2) {
+      if (!['', null, undefined].includes(item.search)) {
+        paramsF.addFilter(
+          item.field,
+          item.field == 'motionDate'
+            ? this.correctDate(item.search)
+            : item.search
+        );
+      }
+    }
+
+    console.log(body);
+
+    this.accountBankService
+      .searchByFilterNumeraryMassive(body, paramsF.getParams())
+      .subscribe(
+        res => {
+          console.log(res);
+          this.form2.get('total').setValue(res.total);
+          this.form2.get('totalDateTesofe').setValue(res.tDateTesof);
+          this.form2.get('totalWithoutTesofe').setValue(res.tSinTesof);
+          this.totalItems2 = res.total;
+          this.dataGoods2.load(res.result);
+          console.log(this.dataGoods2['data']);
+          this.loading2 = false;
+        },
+        err => {
+          console.log(err);
+          this.loading2 = true;
+        }
+      );
+  }
+
   //Buscador de datos de cuentas bancarias
   searchGoodBankAccount() {
     // let body: IProReconcilesGood;
@@ -433,8 +521,10 @@ export class NumeraryMassiveConciliationComponent
     };
 
     const paramsF = new FilterParams();
-    paramsF.page = this.params2.value.page;
-    paramsF.limit = this.params2.value.limit;
+    paramsF.page = 1;
+    paramsF.limit = 10;
+    this.params.value.page = 1;
+    this.params.value.limit = 10;
 
     console.log(body);
 
@@ -480,9 +570,55 @@ export class NumeraryMassiveConciliationComponent
       val6 != null ? paramsF.addFilter('val6', val6.cveAccount) : '';
       val2 != null ? paramsF.addFilter('val2', val2) : '';
 
+      for (let item of this.completeFilters) {
+        if (!['', null, undefined].includes(item.search)) {
+          let field: string;
+
+          switch (item.field) {
+            case 'RSPTAQUERY.no_bien':
+              field = 'goodId';
+              break;
+
+            case 'RSPTAQUERY.no_expediente':
+              field = 'fileNumber';
+              break;
+
+            case 'RSPTAQUERY.val4':
+              field = 'val4';
+              break;
+
+            case 'RSPTAQUERY.val6':
+              field = 'val6';
+              break;
+
+            case 'RSPTAQUERY.val1':
+              field = 'val1';
+              break;
+
+            case 'RSPTAQUERY.val2':
+              field = 'val2';
+              break;
+
+            case 'RSPTAQUERY.val5':
+              field = 'val5';
+              break;
+
+            default:
+              break;
+          }
+
+          paramsF.addFilter(
+            field,
+            item.search,
+            ['RSPTAQUERY.val4', 'RSPTAQUERY.val1'].includes(item.field)
+              ? SearchFilter.ILIKE
+              : SearchFilter.EQ
+          );
+        }
+      }
+
       this.goodService.getAllFilter(paramsF.getParams()).subscribe(
         res => {
-          console.log(res);
           // this.dataGoods.load(res.data);
           this.totalItems = res.count;
 
@@ -502,17 +638,18 @@ export class NumeraryMassiveConciliationComponent
             dateMasiv: fec == null ? '' : format(fec, 'dd-MM-yyyy'),
           };
 
-          this.goodProcessService.pupReconcilied(model).subscribe(
-            res => {
-              console.log(res);
-              this.dataGoods.load(res.data);
-              this.loading = false;
-            },
-            err => {
-              console.log(err);
-              this.loading = false;
-            }
-          );
+          setTimeout(() => {
+            this.goodProcessService.pupReconcilied(model).subscribe(
+              res => {
+                this.dataGoods.load(res.data);
+                this.loading = false;
+              },
+              err => {
+                console.log(err);
+                this.loading = false;
+              }
+            );
+          }, 3000);
         },
         err => {
           console.log(err);
@@ -535,8 +672,8 @@ export class NumeraryMassiveConciliationComponent
         const val2 = this.deposit.value;
 
         const paramsF = new FilterParams();
-        paramsF.page = this.params.value.page;
-        paramsF.limit = this.params.value.limit;
+        paramsF.page = 1;
+        paramsF.limit = 10;
 
         noClass != null
           ? paramsF.addFilter('goodClassNumber', noClass.numClasifGoods)
@@ -609,6 +746,7 @@ export class NumeraryMassiveConciliationComponent
           },
           err => {
             console.log(err);
+            this.dataGoods.load([]);
             this.alert('warning', 'No se Encontraron Bienes', '');
             this.loading = false;
           }
@@ -916,40 +1054,53 @@ export class NumeraryMassiveConciliationComponent
 
   //Ultimo boton de asociar
   finalAsociate() {
-    if (goodCheck2.length > 0) {
-      const noMovementArray = goodCheck2.map((e: any) => {
-        return e.motionNumber;
-      });
+    if (
+      this.form2.get('proposal').valid &&
+      this.form2.get('currencyDeposit').valid
+    ) {
+      if (goodCheck2.length > 0) {
+        const noMovementArray = goodCheck2.map((e: any) => {
+          return e.motionNumber;
+        });
 
-      const depositArray = goodCheck2.map((e: any) => {
-        return e.deposit;
-      });
+        const depositArray = goodCheck2.map((e: any) => {
+          return e.deposit;
+        });
 
-      const currencyArray = goodCheck2.map((e: any) => {
-        return e.currencyKey;
-      });
+        const currencyArray = goodCheck2.map((e: any) => {
+          return e.currencyKey;
+        });
 
-      /* this.numeraryService.pupAssociateGood() */
-      const model: IPupAssociateGood = {
-        movementNo: noMovementArray,
-        requestId: this.form2.get('proposal').value,
-        blkDeposit: this.form2.get('currencyDeposit').value,
-        cbdDeposit: depositArray,
-        cbcveCurrency: currencyArray,
-      };
-      this.numeraryService.pupAssociateGood(model).subscribe(
-        res => {
-          this.alert('success', 'Se Realizó la Asociación', '');
-          clearGoodCheck2();
-          console.log(res);
-        },
-        err => {
-          this.alert('error', 'Se Presentó un Error Inesperado', '');
-          console.log(err);
-        }
-      );
+        /* this.numeraryService.pupAssociateGood() */
+        const model: IPupAssociateGood = {
+          movementNo: noMovementArray,
+          requestId: this.form2.get('proposal').value,
+          blkDeposit: this.form2.get('currencyDeposit').value,
+          cbdDeposit: depositArray,
+          cbcveCurrency: currencyArray,
+        };
+        this.numeraryService.pupAssociateGood(model).subscribe(
+          res => {
+            this.alert('success', 'Se Realizó la Asociación', '');
+            clearGoodCheck2();
+            console.log(res);
+          },
+          err => {
+            this.alert('error', 'Se Presentó un Error Inesperado', '');
+            console.log(err);
+          }
+        );
+      } else {
+        this.alert(
+          'warning',
+          'No se Seleccionó Datos de Cuentas Bancarias',
+          ''
+        );
+      }
     } else {
-      this.alert('warning', 'No se Seleccionó Datos de Cuentas Bancarias', '');
+      this.alert('warning', 'Faltan seleccionar datos', '');
+      this.form2.get('proposal').markAsTouched();
+      this.form2.get('currencyDeposit').markAsTouched();
     }
   }
 
@@ -958,6 +1109,8 @@ export class NumeraryMassiveConciliationComponent
     this.dataGoods = null;
     this.loading = false;
     this.totalItems = 0;
+    this.params.value.page = 1;
+    this.params.value.limit = 10;
   }
 
   cleandInfo2() {

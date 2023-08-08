@@ -8,8 +8,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { AppliGoodResDevViewService } from 'src/app/core/services/ms-commer-concepts/appli-good-res-dev-inv-view.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -61,7 +61,7 @@ const datagood: any = [
 @Component({
   selector: 'app-select-goods',
   templateUrl: './select-goods.component.html',
-  styleUrls: ['/select-goods.component.scss'],
+  styleUrls: ['./select-goods.component.scss'],
 })
 export class SelectGoodsComponent extends BasePage implements OnInit {
   @ViewChild('table', { static: false }) table: any;
@@ -98,7 +98,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private rejectedGoodService: RejectedGoodService,
     private affairService: AffairService,
-    private goodsInvService: GoodsInvService,
+    //private goodsInvService: GoodsInvService,
+    private goodResDevInvService: AppliGoodResDevViewService,
     private goodService: GoodService
   ) {
     super();
@@ -273,10 +274,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     const filter = params.getValue();*/
     //debugger;
     this.loading = true;
-    this.goodsInvService.getAllGoodResDevInvView(filters).subscribe({
+    this.goodResDevInvService.getAll(filters).subscribe({
       next: (response: any) => {
         this.goodColumns.load(response.data);
-        this.goodTotalItems = response.count;
+        this.goodTotalItems = response.data.length;
         this.loading = false;
         /*const info = response.data.map(item => {
           return item.good;
@@ -320,20 +321,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-    /* let config = {
-      ...MODAL_CONFIG,
-      class: 'modal-lg modal-dialog-centered',
-    };
-
-    config.initialState = {
-      good,
-      callback: (next: boolean) => {
-        if (next) {
-        }
-      },
-    };
-
-    this.modalService.show(ReserveGoodModalComponent, config); */
     const modalRef = this.modalService.show(ReserveGoodModalComponent, {
       initialState: { good: good, requestId: this.requestInfo.id },
       class: 'modal-md modal-dialog-centered',
@@ -445,7 +432,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   assignGoodGrouper() {
     if (this.selectedGoods.length == 0) {
-      this.onLoadToast('info', 'Seleccione almenos un registro');
+      this.onLoadToast('info', 'Seleccione al menos un registro');
       return;
     }
     const modalRef = this.modalService.show(GrouperGoodFieldComponent, {

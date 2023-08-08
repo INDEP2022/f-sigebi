@@ -195,12 +195,43 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       }
     } else {
       if (this.responsable == 'REGIONALES' && this.delegationNumber == 0) {
-        params['filter.attended'] = `$eq:0`;
-        params['filter.manager'] = `$eq:REGIONALES`;
+        // params['filter.attended'] = `$eq:0`;
+        // params['filter.manager'] = `$eq:REGIONALES`;
+        if (this.selectedGender == 'all') {
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'immovables') {
+          params['filter.goodType'] = `$eq:I`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'movables') {
+          params['filter.goodType'] = `$eq:M`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        }
       } else {
-        params['filter.attended'] = `$eq:0`;
-        params['filter.manager'] = `$eq:REGIONALES`;
-        params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        // params['filter.attended'] = `$eq:0`;
+        // params['filter.manager'] = `$eq:REGIONALES`;
+        // params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+
+        if (this.selectedGender == 'all') {
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'immovables') {
+          params['filter.goodType'] = `$eq:I`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        } else if (this.selectedGender == 'movables') {
+          params['filter.goodType'] = `$eq:M`;
+          params['filter.manager'] = `$eq:REGIONALES`;
+          params['filter.attended'] = `$eq:0`;
+          params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+        }
       }
     }
 
@@ -432,7 +463,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
                 let objUpdateGood: any = {
                   id: excelImport[i].goodNumber,
-                  goodId: excelImport[i].goodNumber,
+                  goodId: excelImport[i].goodDetails.goodId,
                   status: ESTATUSF,
                 };
                 const updateGood: any = await this.updateGoodStatus(
@@ -697,15 +728,62 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // Exporta a excel 'csv'
   async exportar() {
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Bienes en la Tabla', '');
+      return;
+    }
     const filename: string = 'Data';
-    const jsonToCsv = await this.returnJsonToCsv();
-    console.log('jsonToCsv', jsonToCsv);
-    this.jsonToCsv = jsonToCsv;
-    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    const jsonToCsv: any = await this.returnJsonToCsv();
+    let arr: any = [];
+    let result = jsonToCsv.map((item: any) => {
+      let obj = {
+        NO_BIEN: item.goodNumber,
+        EVENTO: item.eventId,
+        TIPO_BIEN: item.goodType,
+        ESTATUS: item.status,
+        RESPONSABLE: item.manager,
+        DELEGACION: item.delegation,
+        MOTIVO_1: item.motive1,
+        MOTIVO_2: item.motive2,
+        MOTIVO_3: item.motive3,
+        MOTIVO_4: item.motive4,
+        MOTIVO_5: item.motive5,
+        MOTIVO_6: item.motive6,
+        MOTIVO_7: item.motive7,
+        MOTIVO_8: item.motive8,
+        MOTIVO_9: item.motive9,
+        MOTIVO_10: item.motive10,
+        MOTIVO_11: item.motive11,
+        MOTIVO_12: item.motive12,
+        MOTIVO_13: item.motive13,
+        MOTIVO_14: item.motive14,
+        MOTIVO_15: item.motive15,
+        MOTIVO_16: item.motive16,
+        MOTIVO_17: item.motive17,
+        MOTIVO_18: item.motive18,
+        MOTIVO_19: item.motive19,
+        MOTIVO_20: item.motive20,
+        FECHA_ESTATUS: item.statusDate,
+        DESCRIPCION_BIEN: item.descriptionGood,
+      };
+      arr.push(obj);
+    });
+    Promise.all(result).then(item => {
+      console.log('jsonToCsv', jsonToCsv);
+      this.jsonToCsv = arr;
+      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    });
   }
 
   async returnJsonToCsv() {
     return this.data.getAll();
+    this.data.getAll().then(resp => {
+      let arr: any = [];
+      let result = resp.map((item: any) => {
+        arr.push(item);
+      });
+      return arr;
+    });
   }
 
   selectRow(row: any) {
@@ -798,7 +876,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
           let objUpdateGood: any = {
             id: this.selectedRow.goodNumber,
-            goodId: this.selectedRow.goodNumber,
+            goodId: this.selectedRow.goodDetails.goodId,
             status: ESTATUSF,
           };
           const updateGood: any = await this.updateGoodStatus(objUpdateGood);

@@ -100,8 +100,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.idTypeDoc', this.idTypeDoc);
-    console.log('this.typeFirm', this.typeFirm);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -159,7 +157,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.formLoading = false;
       } else {
         let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}`;
-        console.log('linkDoc', linkDoc);
+
         this.src = linkDoc;
         this.formLoading = false;
       }
@@ -567,8 +565,6 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
       ''
     ).then(question => {
       if (question.isConfirmed) {
-        console.log('this.idTypeDoc', this.idTypeDoc);
-        console.log('this.typeFirm', this.typeFirm);
         if (
           (this.idTypeDoc == 107 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
@@ -723,7 +719,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
         const idProg = this.programming.id;
-        console.log('proceedingInfo', this.proceedingInfo);
+
         //const idReceipt = this.
         const formData = {
           keyDoc:
@@ -779,7 +775,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
         const idProg = this.programming.id;
-        console.log('proceedingInfo', this.proceedingInfo);
+
         //const idReceipt = this.
         const formData = {
           keyDoc:
@@ -835,7 +831,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
         const idProg = this.programming.id;
-        console.log('proceedingInfo', this.proceedingInfo);
+
         //const idReceipt = this.
         const formData = {
           keyDoc:

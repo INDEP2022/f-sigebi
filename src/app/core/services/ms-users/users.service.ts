@@ -172,4 +172,10 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);
   }
 */
+
+  getOtValueFromUserName(name: string) {
+    return this.get<IListResponse<any>>(
+      UserEndpoints.SegUsers + '/getOtValueFromUser/' + name
+    );
+  }
 }

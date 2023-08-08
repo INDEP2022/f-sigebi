@@ -135,12 +135,12 @@ export class EventPreparationComponent
     params.addFilter('parameter', BANK_PARAMETER);
     params.addFilter('address', this.parameters.pDirection);
     console.warn('TIPO DE EVENTO', eventTpId.value);
-
+    const defaultBank = this.parameters.pDirection == 'M' ? 'BANAMEX' : 'HSBC';
     params.addFilter('tpEventId', eventTpId.value);
     return await firstValueFrom(
       this.parametersModService.getAllFilter(params.getParams()).pipe(
-        catchError(() => of({ data: [{ value: 'BANAMEX' }] })),
-        map(response => response.data[0]?.value ?? 'BANAMEX')
+        catchError(() => of({ data: [{ value: defaultBank }] })),
+        map(response => response.data[0]?.value ?? defaultBank)
       )
     );
   }
@@ -308,17 +308,32 @@ export class EventPreparationComponent
     let tab = TABS.LOTES_TAB;
     const { eventTpId, id } = this.eventControls;
     if (eventTpId.value == 11) {
-      this.eventFormVisual.eventDate = false;
-      this.eventFormVisual.failureDate = false;
-      this.eventFormVisual.thirdId = false;
+      if (this.parameters.pDirection == 'M') {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+        this.eventFormVisual.thirdId = false;
+      } else {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+      }
       tab = TABS.BASE_TAB;
       // this.onlyBase = true;
     } else if (eventTpId.value == 6) {
-      this.eventFormVisual.eventDate = false;
-      this.eventFormVisual.failureDate = false;
+      if (this.parameters.pDirection == 'M') {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+      } else {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+      }
     } else {
-      this.eventFormVisual.eventDate = true;
-      this.eventFormVisual.failureDate = true;
+      if (this.parameters.pDirection == 'M') {
+        this.eventFormVisual.eventDate = true;
+        this.eventFormVisual.failureDate = true;
+      } else {
+        this.eventFormVisual.eventDate = true;
+        this.eventFormVisual.failureDate = true;
+      }
     }
     this.resetTableFilters();
     this.selectTab(tab);
@@ -508,7 +523,7 @@ export class EventPreparationComponent
     return firstValueFrom(
       this.lotService
         .updateMandate({
-          pGood: 0,
+          pGood: this.parameters.pDirection == 'M' ? 0 : 1,
           pLot: 1,
           lotId: this.lotSelected.id,
         })
