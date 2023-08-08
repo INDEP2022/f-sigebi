@@ -438,7 +438,7 @@ export class ScheduledMaintenanceDetailComponent
                 this.alert(
                   'success',
                   'Fechas',
-                  'Se actualizaron las fechas correctamente'
+                  'Se actualizaron las Fechas Correctamente'
                 );
               },
               error: err => {

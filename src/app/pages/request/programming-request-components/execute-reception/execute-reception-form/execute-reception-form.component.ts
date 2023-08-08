@@ -157,6 +157,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showWarehouse: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
+  receiptClose: boolean = true;
+  receiptGuardClose: boolean = true;
+  receiptWarehouseClose: boolean = true;
   formLoadingTransportable: boolean = false;
   //receiptGuardGood: IRecepitGuard;
   receiptGuardGood: IRecepitGuard;
@@ -3079,6 +3082,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           programming: this.programming,
           receiptGuards: receiptGuards,
           guardReception: this.goodsReception,
+          typeFirm: 'autografa',
           callback: (next: boolean) => {
             if (next) {
               this.uploadData(receiptGuards, idTypeDoc);
@@ -3957,11 +3961,34 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   aprobateReception() {
     let message: string = '';
     let banError: boolean = false;
+
+    let receiptWarehouseClose: boolean = true;
     this.receipts.getElements().then(data => {
       data.map((receipt: IReceipt) => {
         if (receipt?.statusReceipt == 'ABIERTO' && !banError) {
-          message += 'Es necesario tener todos los recibos cerrados';
+          message += 'Es necesario tener todos los recibos entrega cerrados';
           banError = true;
+          this.receiptClose = false;
+        }
+      });
+    });
+
+    this.receiptGuards.getElements().then(data => {
+      data.map((receiptGuard: IRecepitGuard) => {
+        if (receiptGuard?.statusReceiptGuard == 'ABIERTO' && !banError) {
+          message += 'Es necesario tener todos los recibos resguardo cerrados';
+          banError = true;
+          this.receiptGuardClose = false;
+        }
+      });
+    });
+
+    this.receiptWarehouse.getElements().then(data => {
+      data.map((receiptWarehouse: IRecepitGuard) => {
+        if (receiptWarehouse?.statusReceiptGuard == 'ABIERTO' && !banError) {
+          message += 'Es necesario tener todos los recibos almacén cerrados';
+          banError = true;
+          this.receiptWarehouseClose = false;
         }
       });
     });

@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const INDICATORS_HISTORY_DETAIL_COLUMNS = {
   num: {
     title: 'No.',
@@ -14,6 +16,11 @@ export const INDICATORS_HISTORY_DETAIL_COLUMNS = {
   admissionDate: {
     title: 'Fecha Ingreso',
     sort: false,
+    valuePrepareFunction: (date: any) => {
+      var raw = new Date(date);
+      var formatted = new DatePipe('en-US').transform(raw, 'dd/MM/yyyy');
+      return formatted;
+    },
   },
   workDate: {
     title: 'Fecha Trabajo',

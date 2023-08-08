@@ -49,6 +49,7 @@
               id="electronicSignatureWorker1"
               value="false"
               type="checkbox"
+              (change)="SignatureWorker1Select()"
               formControlName="electronicSignatureWorker1" />
           </form-check>
 
@@ -143,6 +144,7 @@
             <input
               id="electronicSignatureWorker2"
               type="checkbox"
+              (change)="SignatureWorker2Select()"
               formControlName="electronicSignatureWorker2" />
           </form-check>
 
@@ -230,6 +232,7 @@
               id="electronicSignatureWitness1"
               value="false"
               type="checkbox"
+              (change)="SignatureWitness1Select()"
               formControlName="electronicSignatureWitness1" />
           </form-check>
 
@@ -291,6 +294,7 @@
               id="electronicSignatureWitness2"
               value="false"
               type="checkbox"
+              (change)="SignatureWitness2Select()"
               formControlName="electronicSignatureWitness2" />
           </form-check>
 
@@ -365,6 +369,7 @@
               id="electronicSignatureOic"
               value="false"
               type="checkbox"
+              (change)="SignatureOICSelect()"
               formControlName="electronicSignatureOic" />
           </form-check>
 

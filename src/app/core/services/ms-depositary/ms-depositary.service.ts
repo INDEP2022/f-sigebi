@@ -225,10 +225,6 @@ export class MsDepositaryService extends HttpService {
     return this.post(`${DepositaryEndPoints.ValidateStatus}`, body);
   }
 
-  VALIDA_LISTANEGRA(no: any) {
-    return this.get(`${DepositaryEndPoints.ValidBlacklist}/${no}`);
-  }
-
   VALIDA_PAGOSREF_VALIDA_COMER(body: any) {
     return this.post(`${DepositaryEndPoints.PaymentRefValidComer}`, body);
   }
