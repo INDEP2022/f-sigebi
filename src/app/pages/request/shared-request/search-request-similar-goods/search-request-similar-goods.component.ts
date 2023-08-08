@@ -252,7 +252,7 @@ export class SearchRequestSimilarGoodsComponent
           this.onLoadToast(
             'error',
             'Error',
-            'No se puedo obtener la solicitud'
+            'No se puede obtener la solicitud'
           );
         },
       });

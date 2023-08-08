@@ -252,11 +252,8 @@ export class FormalizeProgrammingFormComponent
     this.formLoading = true;
     this.getProgrammingData();
     this.prepareFormProceeding();
-    this.paramsReceipts
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getReceipts());
 
-    this.getReceiptsGuard();
+    //this.getReceiptsGuard();
     /*this.paramsReceipts
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => ); */
@@ -265,7 +262,6 @@ export class FormalizeProgrammingFormComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getProccedings());
 
-    this.getInfoGoodsProgramming();
     /*
     this.router.navigate(
       [
@@ -293,6 +289,7 @@ export class FormalizeProgrammingFormComponent
   getReceipts() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.actId'] = this.actId;
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
         this.receiptData = response.data[0];
@@ -362,7 +359,10 @@ export class FormalizeProgrammingFormComponent
           this.proceeding.push(form);
         });
         //this.proceedings.load(response.data);
-
+        this.getInfoGoodsProgramming();
+        this.paramsReceipts
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getReceipts());
         this.totalItemsProceedings = response.count;
       },
       error: error => {},
@@ -547,6 +547,8 @@ export class FormalizeProgrammingFormComponent
 
     this.params.getValue()['filter.programmingId'] = this.programmingId;
     this.params.getValue()['filter.status'] = 'EN_RECEPCION';
+    this.params.getValue()['filter.actaId'] = this.actId;
+
     this.programmingService
       .getGoodsProgramming(this.params.getValue())
       .subscribe(data => {
@@ -598,6 +600,7 @@ export class FormalizeProgrammingFormComponent
     const goodsInfoGuard: any[] = [];
     this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
     this.paramsGuard.getValue()['filter.status'] = 'EN_RESGUARDO';
+    this.paramsGuard.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsGuard.getValue())
       .subscribe({
@@ -637,6 +640,7 @@ export class FormalizeProgrammingFormComponent
     this.paramsGoodsWarehouse.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsGoodsWarehouse.getValue()['filter.status'] = 'EN_ALMACEN';
+    this.paramsGoodsWarehouse.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsGoodsWarehouse.getValue())
       .subscribe({
@@ -666,6 +670,7 @@ export class FormalizeProgrammingFormComponent
     const goodsInfoReprog: any[] = [];
     this.paramsReprog.getValue()['filter.programmingId'] = this.programmingId;
     this.paramsReprog.getValue()['filter.status'] = 'EN_PROGRAMACION';
+    this.paramsReprog.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsReprog.getValue())
       .subscribe({
@@ -695,6 +700,7 @@ export class FormalizeProgrammingFormComponent
     const goodsInfoCancel: any[] = [];
     this.paramsCanc.getValue()['filter.programmingId'] = this.programmingId;
     this.paramsCanc.getValue()['filter.status'] = 'CANCELADO';
+    this.paramsCanc.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsCanc.getValue())
       .subscribe({
@@ -1203,6 +1209,7 @@ export class FormalizeProgrammingFormComponent
           this.proceeding.clear();
           this.totalItemsProceedings = 0;
           this.sendEmail();
+          this.formLoading = false;
         }
       },
     };
@@ -1234,9 +1241,7 @@ export class FormalizeProgrammingFormComponent
             wcontent: response.data[0].id_content,
           };
           this.emailService.createEmailNotify(data).subscribe({
-            next: response => {
-              console.log('correo enviado', response);
-            },
+            next: response => {},
           });
         }
       },

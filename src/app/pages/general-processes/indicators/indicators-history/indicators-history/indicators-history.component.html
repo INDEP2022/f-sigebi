@@ -6,8 +6,9 @@
     <div class="row">
       <div>
         <app-capture-filter-history-indicators
-          (consultEmmit)="
-            getData($event)
+          (consultEmmit)="getData($event)"
+          (dateFinicia)="
+            getDate($event)
           "></app-capture-filter-history-indicators>
       </div>
       <div class="d-flex justify-content-end" style="margin-bottom: -55px">
@@ -35,9 +36,7 @@
       <div [class.table-loading]="loading">
         <ng2-smart-table
           [settings]="settings"
-          [source]="data"
-          (userRowSelect)="onUserRowSelect($event)">
-        </ng2-smart-table>
+          [source]="data"></ng2-smart-table>
       </div>
       <app-pagination
         [params]="params"
@@ -49,16 +48,15 @@
         <i class="bx bx-download float-icon"></i>
       </button>
     </div>
-    <div class="mt-5">
-      <app-indicators-history-detail
-        [noVolante]="noVolante"
+    <!-- <div class="mt-5">
+      <app-indicators-history-detail [noVolante]="noVolante"
         [noExpediente]="noExpediente"></app-indicators-history-detail>
-    </div>
+    </div> -->
     <div class="mt-5">
       <app-indicators-history-service-orders></app-indicators-history-service-orders>
     </div>
-    <div class="mt-5">
+    <!-- <div class="mt-5">
       <app-indicators-history-technical-datasheet></app-indicators-history-technical-datasheet>
-    </div>
+    </div> -->
   </div>
 </app-card>

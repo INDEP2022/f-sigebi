@@ -621,7 +621,7 @@ export class DocumentsPartOfficeComponent extends BasePage implements OnInit {
     try {
       this.getReport('RGERGENSOLICDIGIT', { pn_folio: 1 });
     } catch (error) {
-      Swal.fire('No se puedo generar el reporte', '', 'error');
+      Swal.fire('No se puede generar el reporte', '', 'error');
     }
 
     //this.userDel, this.newFolio_rep

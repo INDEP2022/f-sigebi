@@ -8,8 +8,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { AppliGoodResDevViewService } from 'src/app/core/services/ms-commer-concepts/appli-good-res-dev-inv-view.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -61,7 +61,7 @@ const datagood: any = [
 @Component({
   selector: 'app-select-goods',
   templateUrl: './select-goods.component.html',
-  styleUrls: ['/select-goods.component.scss'],
+  styleUrls: ['./select-goods.component.scss'],
 })
 export class SelectGoodsComponent extends BasePage implements OnInit {
   @ViewChild('table', { static: false }) table: any;
@@ -98,7 +98,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private requestService: RequestService,
     private rejectedGoodService: RejectedGoodService,
     private affairService: AffairService,
-    private goodsInvService: GoodsInvService,
+    //private goodsInvService: GoodsInvService,
+    private goodResDevInvService: AppliGoodResDevViewService,
     private goodService: GoodService
   ) {
     super();
@@ -165,7 +166,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       },*/
       ...this.selectedGoodSettings.columns,
     };
-    this.selectedGoodColumns = datagood;
+    //this.selectedGoodColumns = datagood;
   }
 
   getInfoRequest() {
@@ -273,10 +274,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     const filter = params.getValue();*/
     //debugger;
     this.loading = true;
-    this.goodsInvService.getAllGoodResDevInvView(filters).subscribe({
+    this.goodResDevInvService.getAll(filters).subscribe({
       next: (response: any) => {
         this.goodColumns.load(response.data);
-        this.goodTotalItems = response.count;
+        this.goodTotalItems = response.data.length;
         this.loading = false;
         /*const info = response.data.map(item => {
           return item.good;
@@ -287,52 +288,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         console.log(error);
       },
     });
-    /*this.goodProcessService
-      .getGoodPostQuery(this.params.getValue(), filters)
-      .subscribe({
-        next: response => {
-          console.log('response', response);
-          this.goodColumns = response.data;
-          this.goodTotalItems = response.count;
-          const filterData = response.data.map(async (item: any) => {
-          const destinyName: any = await this.destinyInfo(item.destiny);
-          item.destinyName = destinyName;
-          return item;
-        });
-
-        Promise.all(filterData).then(data => {
-          console.log('bienes', data);
-          
-        }); 
-        },
-      }); */
-    /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.delegationNumber'] = filters.regionalDelegationId;
-    params.getValue()['filter.origin'] = '$not:$null';
-
-    this.goodService.getAll(params.getValue()).subscribe({
-      next: response => {
-        const filterData = response.data.map(async item => {
-          const destinyName: any = await this.destinyInfo(item.destiny);
-          item.destinyName = destinyName;
-          return item;
-        });
-
-        Promise.all(filterData).then(data => {
-          console.log('bienes', data);
-          this.goodColumns = data;
-          this.goodTotalItems = response.count;
-        });
-      },
-      error: error => {},
-    }); */
-    //params.getValue()['filter.delegationNumber'] = this.regio;
-    //Llamar servicio para obtener bienes
-    /* let columns = this.goodTestData;
-    columns.forEach(c => {
-      c = Object.assign({ addGood: '' }, { viewFile: '' }, c);
-    }); */
-    //
   }
 
   destinyInfo(idDestiny: number) {
@@ -366,22 +321,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-    /* let config = {
-      ...MODAL_CONFIG,
-      class: 'modal-lg modal-dialog-centered',
-    };
-
-    config.initialState = {
-      good,
-      callback: (next: boolean) => {
-        if (next) {
-        }
-      },
-    };
-
-    this.modalService.show(ReserveGoodModalComponent, config); */
     const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-      initialState: { good },
+      initialState: { good: good, requestId: this.requestInfo.id },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -432,7 +373,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.processDet == 'DEVOLUCION'
           ) {
             //elimina inventario
-
             this.deleteGoodDated(item);
           } else {
             // this.deleteGoodResDev(item);
@@ -463,6 +403,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   openSiabSearch() {
     const modalRef = this.modalService.show(RequestSiabFormComponent, {
+      initialState: {
+        request: this.requestInfo,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -489,7 +432,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   assignGoodGrouper() {
     if (this.selectedGoods.length == 0) {
-      this.onLoadToast('info', 'Seleccione almenos un registro');
+      this.onLoadToast('info', 'Seleccione al menos un registro');
       return;
     }
     const modalRef = this.modalService.show(GrouperGoodFieldComponent, {
@@ -498,7 +441,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.event.subscribe(next => {
-      debugger;
       if (next != undefined) {
         next.map((item: any) => {
           const index = this.selectedGoodColumns.indexOf(item);
@@ -526,11 +468,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   async deleteGoodDated(goodDevRes: any) {
     if (goodDevRes.inventoryNumber != null) {
       if (goodDevRes.reservationId != null) {
-        //mandar a llamar el endpoint de presosXxsaeFacade (eliminarReservaBIen)
+        //mandar a llamar el endpoint de ProcesosXxsaeFacade (eliminarReservaBIen)
         /* metodo */
-        //const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+        //si la respuesta del endpoint ProcesosXxsaeFacade fue exitosa
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
       } else {
-        //const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
       }
     } else {
       const good: any = await this.findGoodById(goodDevRes.goodId);
@@ -541,9 +484,9 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           goodResdevId: null,
           compensation: null,
         };
-        //await this.updateGood(body);
+        await this.updateGood(body);
       }
-      //const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+      const goodDeleted = await this.deleteGoodResDev(goodDevRes);
     }
   }
 

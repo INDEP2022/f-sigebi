@@ -454,7 +454,7 @@ export class GoodsCaptureComponent
     ) {
       this.onLoadToast(
         'success',
-        'Se agregó el bien al expediente correctamente',
+        'Se agregó el Bien al expediente correctamente',
         ''
       );
       const _global = { ...this.globalNgrx, gCommit: 'S', gOFFCommit: 'N' };
@@ -464,7 +464,7 @@ export class GoodsCaptureComponent
     }
     const response = await this.alertQuestion(
       'success',
-      'Se agregó el bien al expediente',
+      'Se agregó el Bien al expediente',
       '¿Desea agregar mas bienes?',
       'Si',
       'No'
@@ -526,7 +526,7 @@ export class GoodsCaptureComponent
     this.menageService.create(menage).subscribe({
       next: res => this.askMoreGoods(),
       error: error => {
-        this.showError('Error al crear el menaje del bien');
+        this.showError('Error al crear el menaje del Bien');
       },
     });
   }
@@ -715,7 +715,7 @@ export class GoodsCaptureComponent
       },
       error: error => {
         this.loading = false;
-        this.showError('Ocurrio un error al guardar la información del bien');
+        this.showError('Ocurrió un error al guardar la información del Bien');
       },
     });
   }
@@ -728,13 +728,13 @@ export class GoodsCaptureComponent
         this.onLoadToast(
           'success',
           '',
-          'Datos del bien guardados correctamente'
+          'Datos del Bien guardados correctamente'
         );
         this.loading = false;
       },
       error: error => {
         this.loading = false;
-        this.showError('Ocurrio un error al guardar la información del bien');
+        this.showError('Ocurrió un error al guardar la información del Bien');
       },
     });
   }

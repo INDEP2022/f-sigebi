@@ -70,7 +70,7 @@ export const SELECT_GOODS_EYE_VISIT_COLUMNS = {
     sort: false,
   },
   //unitExtent
-  unitExtentDescrip: {
+  unitExtent: {
     title: 'Unidad de Medida',
     type: 'string',
     sort: false,

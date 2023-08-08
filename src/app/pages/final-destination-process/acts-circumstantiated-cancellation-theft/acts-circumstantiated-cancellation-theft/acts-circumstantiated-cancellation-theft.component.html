@@ -320,8 +320,7 @@
         </div>
       </div>
     </form>
-
-    <app-divider></app-divider>
+    <hr />
     <div class="row"></div>
     <div class="row p-3">
       <div class="col-md-3"></div>
@@ -535,24 +534,49 @@
       </div>
     </div> -->
   </div>
+  <div class="row" *ngIf="showScanForm">
+    <div class="col-12 col-sm-12 col-md-9">
+      <div class="card">
+        <div class="card-body">
+          <app-scanning-foil
+            [formScan]="formScan"
+            [screenKey]="screenKey"
+            [dataRecepcion]="dataRecepcion"
+            [screenKey2]="origin"
+            [screenKey3]="origin3"
+            [paramsScreen]="paramsScreen"
+            [fileNumber]="fileNumber"
+            [wheelNumber]="wheelNumber"
+            [dataUserLogged]="dataUserLogged"></app-scanning-foil>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-3">
+      <button
+        name="imp"
+        data-toggle="tooltip"
+        tooltip="Imprimir"
+        containerClass="tooltip-style"
+        (click)="btnDetail()"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        <i class="bx bxs-printer"></i>
+      </button>
+
+      <button
+        name="env"
+        data-toggle="tooltip"
+        containerClass="tooltip-style"
+        tooltip="Enviar"
+        (click)="sendOffice()"
+        class="btn btn-danger btn-sm active ml-2 mr-2">
+        <i class="bx bx-send"></i>
+      </button>
+    </div>
+  </div>
   <div footer>
     <div
       class="d-flex flex-row justify-content-center align-items-center"></div>
     <div class="d-flex flex-row justify-content-center align-items-center">
-      <!-- <div class="m-3">
-                    <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
-                      Detalle de Acta
-                      <i class="fas fa-edit bx-sm float-icon"></i>
-                    </button>
-                  </div> -->
-      <!-- <div class="m-3">
-                    <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
-                      (click)="savActa()">
-                      Guardar
-                      <i aria-hidden="true" class="fa fa-save"></i>
-                    </button>
-                  </div> -->
-
       <div class="m-3">
         <button class="btn btn-info active btn-sm" (click)="Scanner()">
           Escanear
@@ -588,7 +612,7 @@
         <button
           class="btn btn-sm btn-success active"
           type="button"
-          (click)="cargueMasive()">
+          (click)="exportToExcel()">
           Exportar Datos
           <i class="bx bx-download float-icon"></i>
         </button>

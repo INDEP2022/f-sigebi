@@ -34,3 +34,33 @@ export const VALID_STATUSES_COLUMNS = {
     sort: false,
   },
 };
+export const HELP_COLUMNS = {
+  screenKey: {
+    title: 'Pantalla',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  isFoundInMenu: {
+    title: 'Url',
+    sort: false,
+  },
+  menuName: {
+    title: 'nombre Menú',
+    sort: false,
+  },
+  recordNumber: {
+    title: 'Número de Registro',
+    sort: false,
+  },
+  assignAttributes: {
+    title: 'Tributos Asignados',
+    sort: false,
+  },
+  assignAll: {
+    title: 'Asignar Todos',
+    sort: false,
+  },
+};

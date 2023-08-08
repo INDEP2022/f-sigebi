@@ -21,6 +21,10 @@ export class LotService extends HttpService {
     return this.get('eat-lots', params);
   }
 
+  getAllComerLot(params?: ListParams) {
+    return this.get('eat-lots', params);
+  }
+
   getLotbyEvent(id: string | number, params?: ListParams) {
     const route = `${LotEndpoints.ComerLot}?filter.idEvent=${id}`;
     return this.get(route, params);
@@ -162,8 +166,16 @@ export class LotService extends HttpService {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
   }
 
-  getSumLotComerPayRef(body: { dateComer: string }, params?: string) {
-    return this.post('apps/get-lot-comer-pay-ref-count', body, params);
+  getSumLotComerPayRef(body: {
+    dateComer: string;
+    clientId: string;
+    eventId: string;
+  }) {
+    return this.post('apps/get-lot-comer-pay-ref-count', body);
+  }
+
+  getSumAllComerPayRef(body: { clientId: string; eventId: string }) {
+    return this.post('apps/get-lot-comer-pay-ref-countAll', body);
   }
 
   applyBaseCost(body: {
@@ -207,5 +219,36 @@ export class LotService extends HttpService {
     formData.append('lot', lot ? `${lot}` : null);
     formData.append('pDirection', pDirection);
     return this.post('apps/load-data-billing', formData);
+  }
+  // ------------------------
+  PUP_ENTRA(body: any) {
+    // PUP_ENTRA
+    return this.post(LotEndpoints.PupEntra, body);
+  }
+
+  CARGA_PAGOSREFGENS(evento: any) {
+    return this.get(`${LotEndpoints.CargaPagosRefGens}/${evento}`);
+  }
+
+  CARGA_COMER_DETALLES(evento: any) {
+    return this.get(`${LotEndpoints.CargaComerDetalles}/${evento}`);
+  }
+
+  VALIDA_MANDATO(evento: any) {
+    return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
+  }
+
+  VALIDA_ESTATUS(evento: any) {
+    return this.get(`${LotEndpoints.ValidateStatus}/${evento}`);
+  }
+  VALIDA_LISTANEGRA(evento: any) {
+    return this.get(`${LotEndpoints.ValidaListaNegra}/${evento}`);
+  }
+
+  getReferenceList(reference: any, params: _Params) {
+    return this.get(
+      `${LotEndpoints.GetBankReference}?reference=${reference}`,
+      params
+    );
   }
 }

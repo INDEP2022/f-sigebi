@@ -56,4 +56,12 @@ export class DonationService
   getEventComDonation(params?: ListParams): Observable<IListResponse<any>> {
     return this.donationRepository.getAll(donationEvent, params);
   }
+
+  createAdmonDonation(model: any) {
+    return this.post('admon-donation', model);
+  }
+
+  deleteAdmonDonation(id: number) {
+    return this.delete(`admon-donation/${id}`);
+  }
 }

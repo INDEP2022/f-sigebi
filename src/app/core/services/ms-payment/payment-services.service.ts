@@ -63,4 +63,26 @@ export class PaymentService extends HttpService {
   getComerPaymentRefgetAllV2Total(params: _Params) {
     return this.get(PaymentEndPoints.getAllV2Total, params);
   }
+
+  getFcomerC1(amount: any, params: _Params) {
+    return this.get(`${PaymentEndPoints.getFcomerC1}?amount=${amount}`, params);
+  }
+
+  getFcomerC2(reference: any, params: _Params) {
+    return this.get(
+      `${PaymentEndPoints.getFcomerC2}?reference=${reference}`,
+      params
+    );
+  }
+
+  getFcomerC3(params: any) {
+    return this.get(`${PaymentEndPoints.getFcomerC3}?reference=${params}`);
+  }
+
+  getFcomerC4(params: _Params) {
+    return this.get(
+      `${PaymentEndPoints.getFcomerC4}?reference=${params}`,
+      params
+    );
+  }
 }

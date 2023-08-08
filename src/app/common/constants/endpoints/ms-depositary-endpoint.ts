@@ -19,4 +19,10 @@ export enum DepositaryEndPoints {
   ApplicationVCheca = 'application/vCheca',
   ApplicationVChecaPost = 'application/vChecaPost',
   ApplicationVChecaPostReport = 'application/vChecaPostReport',
+  PaymentRefPrepOiBaseCa = 'payment-ref/prep-oi-base-ca', // VALIDA_PAGOSREF.PREP_OI_BASES_CA
+  ValidateStatus = 'fcondepoconcilpag/validate-status', // VALIDA_ESTATUS
+  ValidBlacklist = 'application/validBlacklist', // VALIDA_LISTANEGRA
+  PaymentRefValidComer = 'payment-ref/valid-comer', // VALIDA_PAGOSREF.VALIDA_COMER
+  PrepOiBaseCa = 'payment-ref/prep-oi', // VALIDA_PAGOSREF.PREP_OI
+  PaymentRefVentaSbm = 'payment-ref/venta-sbm', // VALIDA_PAGOSREF.VENTA_SBM
 }

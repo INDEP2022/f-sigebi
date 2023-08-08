@@ -225,6 +225,18 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       this.selectTypeDoc = new DefaultSelect(response.data, response.count);
     });
   }
+  // onTipoDocumentoInputChange(event: any) {
+  //   const inputValue = event.target.value.toUpperCase();
+  //   const param = `filter.id=${inputValue}`;
+  //   try {
+  //     this.documentService.getDocumentsType(param).subscribe(documents => {
+  //       this.selectTypeDoc = new DefaultSelect(documents.data, documents.count);;
+  //     });
+  //   } catch (error) {
+  //     this.selectTypeDoc = new DefaultSelect([]);
+  //     this.alert('info', 'El Tipo de Documento no Existe', '');
+  //   }
+  // }
 
   loadDocumentsType(params: ListParams) {
     this.documentService
@@ -260,7 +272,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
       },
       error: (err: any) => {
         this.loading = false;
-        this.alert('warning', 'No existen separadores', ``);
+        this.alert('warning', 'No Existen Separadores', ``);
       },
     });
   }
@@ -339,47 +351,47 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
             let errorMessage = '';
             switch (controlName) {
               case 'numberProceedings':
-                errorMessage = 'No. de expediente no encontrado';
+                errorMessage = 'No. de Expediente no Encontrado';
                 this.form.get('numberProceedings').reset();
                 this.onSubmit();
                 break;
               case 'flyerNumber':
-                errorMessage = 'No. de volante no encontrado';
+                errorMessage = 'No. de Volante no Encontrado';
                 this.form.get('flyerNumber').reset();
                 this.onSubmit();
                 break;
               case 'separador':
-                errorMessage = 'Separador no encontrado';
+                errorMessage = 'Separador no Encontrado';
                 this.form.get('separador').reset();
                 this.onSubmit();
                 break;
               case 'significantDate':
-                errorMessage = 'Fecha significativa no encontrada';
+                errorMessage = 'Fecha Significativa no Encontrada';
                 this.form.get('significantDate').reset();
                 this.onSubmit();
                 break;
               case 'keyTypeDocument':
-                errorMessage = 'Tipo de documento no existe';
+                errorMessage = 'Tipo de Documento no Existe';
                 this.form.get('keyTypeDocument').reset();
                 this.onSubmit();
                 break;
               case 'descriptionDocument':
-                errorMessage = 'Descripción no encontrada';
+                errorMessage = 'Descripción no Encontrada';
                 this.form.get('descriptionDocument').reset();
                 this.onSubmit();
                 break;
               case 'preliminaryInquiry':
-                errorMessage = 'Averiguación previa no encontrada';
+                errorMessage = 'Averiguación Previa no Encontrada';
                 this.form.get('preliminaryInquiry').reset();
                 this.onSubmit();
                 break;
               case 'criminalCase':
-                errorMessage = 'Causa penal no encontrada';
+                errorMessage = 'Causa Penal no Encontrada';
                 this.form.get('criminalCase').reset();
                 this.onSubmit();
                 break;
               case 'scanStatus':
-                errorMessage = 'Estatus de digitalización no encontrado';
+                errorMessage = 'Estatus de Digitalización no Encontrado';
                 this.form.get('scanStatus').reset();
                 this.onSubmit();
                 break;
@@ -397,7 +409,7 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
         });
 
         if (contador === 0) {
-          this.alert('warning', 'No se encontraron registros', '');
+          this.alert('warning', 'No se Encontraron Registros', '');
           this.cleandInfo();
         } else {
           Object.keys(errors).forEach(controlName => {

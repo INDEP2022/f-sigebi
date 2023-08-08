@@ -111,7 +111,7 @@ export class GoodsViewFinderFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'success',
         'Exportación de bienes',
-        'Bienes exportados correctamente'
+        'Bienes Exportados Correctamente'
       );
     } else {
       this.alert(
