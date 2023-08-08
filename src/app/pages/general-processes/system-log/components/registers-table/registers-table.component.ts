@@ -39,7 +39,7 @@ export class RegistersTableComponent
       if (this.columns) {
         const columns = {
           no_registro: {
-            title: 'No. Regsitro',
+            title: 'No. Registro',
             sort: false,
           },
           ...this.columns,
@@ -55,7 +55,7 @@ export class RegistersTableComponent
     const { no_registro } = row;
     if (!no_registro) {
       this.registerNum = null;
-      this.alert('warning', 'El dato no tiene el número de registro', ``);
+      this.alert('warning', 'El Dato no tiene el Número de Registro', ``);
       return;
     }
     this.registerNum = Number(no_registro);

@@ -162,3 +162,17 @@ export class IDetailProceedingsDeliveryReceptionNew {
   numberGood: number | string;
   amount: number;
 }
+export const RELATED_FOLIO_COLUMNS = {
+  id: {
+    title: 'Folio',
+    sort: false,
+  },
+  sheets: {
+    title: 'Documentos',
+    sort: false,
+  },
+  descriptionDocument: {
+    title: 'Descripción del Documento',
+    sort: false,
+  },
+};

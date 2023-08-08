@@ -9,6 +9,7 @@
           <form-field [control]="form.get('businessName')" label="Razón Social">
             <input
               maxlength="50"
+              (keypress)="notSpaceInitial($event)"
               type="text"
               class="form-control"
               formControlName="businessName" />
@@ -18,6 +19,7 @@
           <form-field [control]="form.get('name')" label="Nombre">
             <input
               maxlength="50"
+              (keypress)="notSpaceInitial($event)"
               type="text"
               class="form-control"
               formControlName="name" />
@@ -30,6 +32,7 @@
           <form-field [control]="form.get('lastName')" label="Apellido Paterno">
             <input
               maxlength="50"
+              (keypress)="notSpaceInitial($event)"
               type="text"
               class="form-control"
               formControlName="lastName" />
@@ -41,6 +44,7 @@
             label="Apellido Materno">
             <input
               maxlength="50"
+              (keypress)="notSpaceInitial($event)"
               type="text"
               class="form-control"
               formControlName="motherLastName" />
@@ -52,6 +56,7 @@
           <form-field [control]="form.get('physicalRfc')" label="RFC. Física">
             <input
               maxlength="13"
+              (keypress)="notSpaceInitial($event)"
               type="text"
               class="form-control"
               formControlName="physicalRfc" />
@@ -61,6 +66,7 @@
           <form-field [control]="form.get('moralRdc')" label="RFC. Moral">
             <input
               maxlength="13"
+              (keypress)="notSpaceInitial($event)"
               type="text"
               class="form-control"
               formControlName="moralRdc" />

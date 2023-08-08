@@ -75,7 +75,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
         multiple: false,
         info: `Haz clic para seleccionar la imágen o arrástrala
       aquí`,
-        titleFinishUpload: 'Imagen cargada correctamente',
+        titleFinishUpload: 'Imagen Cargada Correctamente',
         questionFinishUpload: '¿Desea seguir editando?',
         identificator: this.goodNumber + '',
         callback: (refresh: boolean) => {

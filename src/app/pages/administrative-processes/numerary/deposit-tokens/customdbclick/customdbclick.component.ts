@@ -85,7 +85,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       // Lógica a ejecutar en caso de doble clic en una celda con valor
       this.alert(
         'warning',
-        'No puede Realizar una Conciliacion Debido a que ya tiene Especificado un Bien',
+        'No puede Realizar una Conciliación Debido a que ya tiene Especificado un Bien',
         ''
       );
       console.log('Celda seleccionada:', this.value);
@@ -177,7 +177,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       if (!vb_encontrado) {
         this.alert(
           'warning',
-          'No se encontró algún Bien que cumpla con el criterio de conciliación',
+          'No se Encontró Algún Bien que Cumpla con el Criterio de Conciliación',
           ''
         );
       }
@@ -186,7 +186,7 @@ export class CustomdbclickComponent extends BasePage implements OnInit {
       this.ejecutarloadingConciliar();
       this.alert(
         'warning',
-        'No se encontró algún Bien que cumpla con el criterio de conciliación',
+        'No se Encontró Algún Bien que Cumpla con el Criterio de Conciliación',
         ''
       );
     }
