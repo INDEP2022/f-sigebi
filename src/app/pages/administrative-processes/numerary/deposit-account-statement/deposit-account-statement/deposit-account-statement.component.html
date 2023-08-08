@@ -167,6 +167,7 @@
           <div class="col-md-3">
             <app-select-modal-table-shared
               [form]="form"
+              [maxlengthInput]="12"
               [disabled]="false"
               [widthDescription]="false"
               [haveSelectColumns]="true"
@@ -494,11 +495,14 @@
             <form-field
               [control]="form.get('checkType')"
               label="Tipo de Cheque">
-              <input
-                type="text"
+              <ng-select
+                formControlName="userRole"
                 class="form-control"
-                formControlName="checkType"
-                [readonly]="disabled" />
+                [readonly]="disabled"
+                [clearable]="false">
+                <ng-option value="NORMAL">Normal</ng-option>
+                <ng-option value="INTERES">Interés</ng-option>
+              </ng-select>
             </form-field>
           </div>
           <div class="col-md-3">

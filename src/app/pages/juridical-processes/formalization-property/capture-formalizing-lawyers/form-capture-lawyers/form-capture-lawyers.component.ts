@@ -29,7 +29,7 @@ export class FormCaptureLawyersComponent
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   lawyer: any;
-  string_PTRN: `[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
+  //string_PTRN: `^(\\!s)[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]`;
   @Output() refresh = new EventEmitter<true>();
   // loading: boolean;
 
@@ -58,7 +58,7 @@ export class FormCaptureLawyersComponent
       businessName: [
         '',
         [
-          Validators.pattern(this.string_PTRN),
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(50),
         ],
@@ -149,7 +149,6 @@ export class FormCaptureLawyersComponent
         this.loading = false;
       },
       error => {
-        console.log('err');
         if (error.error.message == 'No se encontrarón registros.') {
           this.comerNotariesTercsService.create(this.form.value).subscribe(
             data => this.handleSuccess(),
@@ -217,5 +216,18 @@ export class FormCaptureLawyersComponent
 
   handleRfcPhisycal() {
     this.onLoadToast('warning', 'RFC Físico ya existente', ``);
+  }
+
+  public notSpaceInitial(eventPress: any) {
+    let code = eventPress.which ? eventPress.which : eventPress.keyCode;
+
+    if (
+      code == 32 &&
+      eventPress.target.defaultValue == eventPress.target.value
+    ) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }

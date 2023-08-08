@@ -13,4 +13,6 @@ export enum ComerConceptEndpoints {
   ParametersMod = 'parameters-mod',
   ParametersModUpdate = 'parameters-mod/update',
   ParametersModDelete = 'parameters-mod/deleted',
+
+  GoodResDevInvView = 'application/goods-res-dev-inv-view',
 }
