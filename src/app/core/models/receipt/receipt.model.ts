@@ -34,12 +34,14 @@ export interface IReceipt {
   chargeReceipt?: string;
   nameDelivery?: string;
   chargeDelivery?: string;
+  receiptId?: number;
   electronicSignatureEnt?: number;
   electronicSignatureReceipt?: number;
   folioReceipt?: string;
 }
 
 export interface IRecepitGuard {
+  id: number;
   nameWitnessOne?: string;
   nameWitnessTwo?: string;
   typeReceipt?: string;
@@ -54,6 +56,7 @@ export interface IRecepitGuard {
   goodId?: number;
   receiptGuardId?: number;
   version?: number;
+  receiptId?: number;
   statusReceiptGuard?: string;
 }
 
