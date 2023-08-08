@@ -78,14 +78,70 @@
           </div>
         </div>
       </div>-->
-      <div class="row m-3 flex-row justify-content-between">
+      <div class="row m-3">
+        <div class="col-md-2 mt-3">
+          <ngx-select
+            [data]="selectDataEvent"
+            bindLabel="id"
+            label="Evento"
+            value="id"
+            (fetchItems)="getEventData($event)"
+            (change)="changeEvent($event)"
+            [form]="comerLibsForm"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="evento"></ngx-select>
+        </div>
+        <div class="col-md-4 mt-3">
+          <div>
+            <form-field
+              [control]="comerLibsForm.get('evento_descripcion')"
+              label="Descripción del Evento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="evento_descripcion"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-2 mt-3">
+          <ngx-select
+            [data]="selectDataLote"
+            bindLabel="idLot"
+            label="Lote"
+            value="idLot"
+            (fetchItems)="getLoteData($event)"
+            (change)="changeLote($event)"
+            [form]="comerLibsForm"
+            [showTooltip]="true"
+            [searchOnInit]="true"
+            termMaxLength="100"
+            control="lote"></ngx-select>
+        </div>
+        <div class="col-md-4 mt-3">
+          <div>
+            <form-field
+              [control]="comerLibsForm.get('lote_descripcion')"
+              label="Descripción del Lote">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="lote_descripcion"
+                readonly />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row m-3">
         <!-- <div class="col-md-4">
           <div class="d-flex align-items-center">
             <span class="mr-2">Fecha:</span>
             <span class="ml-3 mr-3">{{ carta }}</span>
           </div>
         </div> -->
-        <div class="col-md-12 text-end">
+        <div class="col-md-12 text-center">
           <button
             type="button"
             class="btn btn-primary active btn-sm mr-3"
@@ -108,34 +164,6 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
-                  <div class="col-md-6 mt-3">
-                    <ngx-select
-                      [data]="selectDataEvent"
-                      bindLabel="description_data"
-                      label="Evento"
-                      value="id"
-                      (fetchItems)="getEventData($event)"
-                      (change)="changeEvent($event)"
-                      [form]="comerLibsForm"
-                      [showTooltip]="true"
-                      [searchOnInit]="true"
-                      termMaxLength="100"
-                      control="evento"></ngx-select>
-                  </div>
-                  <div class="col-md-6 mt-3">
-                    <ngx-select
-                      [data]="selectDataLote"
-                      bindLabel="description_data"
-                      label="Lote"
-                      value="idLot"
-                      (fetchItems)="getLoteData($event)"
-                      (change)="changeLote($event)"
-                      [form]="comerLibsForm"
-                      [showTooltip]="true"
-                      [searchOnInit]="true"
-                      termMaxLength="100"
-                      control="lote"></ngx-select>
-                  </div>
                   <div class="col-md-6 mt-3">
                     <div>
                       <form-field
@@ -436,7 +464,7 @@
           <button
             type="button"
             class="btn btn-primary active btn-sm"
-            (click)="confirm()">
+            (click)="Generar()">
             Imprimir
             <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
