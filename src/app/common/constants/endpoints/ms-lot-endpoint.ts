@@ -13,4 +13,6 @@ export enum LotEndpoints {
   ValidaMandato = 'apps/validaMandato', //VALIDA_MANDATO
   PupEntra = 'apps/pup-entra', // PUP_ENTRA
   ValidateStatus = 'apps/valida-estatus',
+  ValidaListaNegra = 'apps/valida-lista-negra',
+  GetBankReference = 'apps/get-bank-reference',
 }

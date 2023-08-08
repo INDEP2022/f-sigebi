@@ -17,9 +17,18 @@
           <div class="p-2">
             <button
               (click)="signDocument()"
-              *ngIf="!showTDR"
+              *ngIf="typeFirm == 'electronica' && !showTDR"
               class="btn btn-primary btn-sm active">
               {{ btnTitle }} <i class="bx bx-edit-alt"></i>
+            </button>
+            <button
+              (click)="signDocument()"
+              *ngIf="
+                (typeFirm == 'autografa' && !showTDR) ||
+                (typeFirm == 'autograf' && !showTDR)
+              "
+              class="btn btn-primary btn-sm active">
+              {{ btnTitle }} <i class="fa fa-file"></i>
             </button>
           </div>
         </div>
