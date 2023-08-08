@@ -127,7 +127,7 @@ export class EditGoodFormComponent extends BasePage implements OnInit {
       });
     } else {
       this.alertInfo(
-        'error',
+        'warning',
         'Acción Inválida',
         'Se necesita llenar el campo observación'
       );

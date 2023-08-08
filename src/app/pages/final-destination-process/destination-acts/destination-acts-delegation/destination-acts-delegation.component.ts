@@ -61,7 +61,7 @@ export class DestinationActsDelegationComponent
         this.alert(
           'success',
           'Actas de Destino de Bienes',
-          'Se ha actualizado el registro correctamente'
+          'Se ha Actualizado el Registro Correctamente'
         );
         this.close();
       },

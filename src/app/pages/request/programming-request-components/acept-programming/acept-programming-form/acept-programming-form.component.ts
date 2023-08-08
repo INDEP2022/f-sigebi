@@ -342,7 +342,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log('data bienes Prog', error);
         this.formLoadingWarehouse = false;
       },
     });
@@ -650,7 +649,6 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         });
       },
       error: error => {
-        console.log('data bienes Prog', error);
         this.formLoadingTransportable = false;
       },
     });
@@ -845,7 +843,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
             goodsWarehouse: this.warehouseGoods,
             emailSend: this.emails,
             nameAtt: this.programming.folio,
-            fileB64: this.programming.contentId,
+            wcontent: this.programming.contentId,
           };
 
           this.emailService.createEmailProgramming(dataEmail).subscribe({
@@ -1151,7 +1149,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.msgGuardado(
         'success',
         'Creación de tarea correcta',
-        `Se creó la tarea Ejecutar Recepción con el folio: ${this.programming.folio}`
+        `Se creó la tarea ejecutar recepción con el folio: ${this.programming.folio}`
       );
     }
   }
