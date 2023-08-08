@@ -562,10 +562,20 @@
       class="d-flex flex-row justify-content-center align-items-center"></div>
     <div class="d-flex flex-row justify-content-center align-items-center">
       <div class="m-3">
+        <button class="btn btn-primary active btn-sm">
+          Solicitud
+          <i class="bx bx-search bx-sm float-icon"></i>
+        </button>
+        <!--(click)="initSolicitud()" -->
+      </div>
+      <div class="m-3">
         <button class="btn btn-info active btn-sm" (click)="Scanner()">
           Escanear
           <i class="bx bx-file bx-sm float-icon"></i>
         </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary active btn-sm">Replicar Folio</button>
       </div>
       <div class="m-3">
         <button
@@ -581,6 +591,8 @@
           Ver
           <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
+        <!--(click)="ViewActa() 
+        (click)="openview()"-->
       </div>
       <div class="m-3">
         <button

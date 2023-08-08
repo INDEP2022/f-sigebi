@@ -47,6 +47,9 @@ import { COPY, RELATED_FOLIO_COLUMNS } from '../acts-cir-columns';
 import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
+//import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
+import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { DocumentsForDictumService } from '../../../../core/services/catalogs/documents-for-dictum.service';
 import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 
 @Component({
@@ -163,7 +166,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   dateElaboration: string = '';
   dataTableGood: LocalDataSource = new LocalDataSource();
   bienes: IGood[] = [];
-  folioScan: number;
+  //folioScan: number;
+  consec: number;
   loadingDoc: boolean = false;
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
@@ -189,7 +193,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private jasperService: SiabService,
     private sanitizer: DomSanitizer,
     private authService: AuthService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private notificationService: NotificationService,
+    private documentsForDictumService: DocumentsForDictumService
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -1192,7 +1198,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (this.formScan.get('scanningFoli').value) {
       this.alertQuestion(
         'info',
-        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+        'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta Abierta ¿Deseas continuar?',
         '',
         'Aceptar',
         'Cancelar'
@@ -1208,11 +1214,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       });
     } else {
-      this.alertInfo(
-        'warning',
-        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
-        ''
-      );
+      this.alertInfo('warning', 'No Existe Folio de Escaneo a Escanear', '');
     }
   }
   agregarActa() {
@@ -1424,6 +1426,58 @@ export class ActsCircumstantiatedCancellationTheftComponent
     throw new Error('Method not implemented.');
   }
 
+  /* initSolicitud() {
+     
+     if (this.actaRecepttionForm.get('oficea').value != null) {
+       if (this.actaRecepttionForm.get('scanningFoli').value == null) {
+           this.alertQuestion(
+             'info',
+             'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?',
+             '',
+             'Aceptar',
+             'Cancelar'
+           ).then(res => {
+             console.log(res);
+             if (res.isConfirmed) {
+               this.notificationService
+                 .getByFileNumber(this.fileNumber)
+                 .subscribe({
+                   next: resp => {
+                     console.log('Respuesta primer: ', resp);
+                     let params = {
+                       fileNumber: this.fileNumber,
+                       actKey: this.actaRecepttionForm.get('oficea').value,
+                       delegationNumber: this.userdelegacion,
+                       subDelegationNumber: this.userSubdelegacion,
+                       departmentNumber: this.userDepartament,
+                       flyerNumber: resp.data[0].max,
+                     };
+                     this.DocumentsForDictumService
+                       .postDocuemntFolio(params)
+                       .subscribe({
+                         next: response => {
+                           this.folioScan = response.data[0].folio_universal;
+                           let formparams = {
+                             scanningFoli: response.data[0].folio_universal,
+                           };
+                           console.log('scanningFoli: ', formparams);
+                           this.folioBoool = true;
+                           this.formadd.patchValue(formparams);
+                           this.getReport();
+                         },
+                       });
+                   },
+                 });
+             }
+           });
+         } else {
+           this.alertInfo('warning', 'El Acta ya Tiene Folio de Escaneo.', '');
+         }
+       }
+     
+   }
+ */
+
   Generar() {
     let params = {
       PN_FOLIO: this.actaRecepttionForm.get('consec').value,
@@ -1464,7 +1518,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alert(
         'error',
         'ERROR',
-        'Debe tener el folio en pantalla para poder imprimir'
+        'Debe Tener el Folio en Pantalla para poder Imprimir'
       );
     }
   }
@@ -1481,8 +1535,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
   exportToExcel() {
     this.loadingExcel = true;
-    if (this.cveActa == 'null' && this.fileNumber == null) {
-      this.alert('info', 'Necesitas un número de expedientes con acta', '');
+    if (
+      this.actaRecepttionForm.get('cveActa').value == 'null' &&
+      this.fileNumber == null
+    ) {
+      this.alert('info', 'Necesitas un Número de Expedientes con Acta', '');
       this.loadingExcel = false;
       return;
     }

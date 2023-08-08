@@ -18,7 +18,7 @@ export const CONSULT_SIRSAE_COLUMNS = {
     sort: false,
   },
   movDate: {
-    title: 'Fecha Mov.',
+    title: 'Fecha Movimiento',
     type: 'number',
     sort: false,
   },
@@ -33,7 +33,7 @@ export const CONSULT_SIRSAE_COLUMNS = {
     sort: false,
   },
   statusMov: {
-    title: 'Estatus Mov.',
+    title: 'Estatus Movimiento',
     type: 'number',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {

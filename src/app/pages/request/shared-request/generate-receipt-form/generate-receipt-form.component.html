@@ -63,6 +63,7 @@
               id="electronicSignatureEnt"
               value="S"
               type="checkbox"
+              (change)="electronicSignatureEntSelect()"
               formControlName="electronicSignatureEnt" />
           </form-check>
         </div>
@@ -128,6 +129,7 @@
             for="electronicSignatureReceipt">
             <input
               id="electronicSignatureReceipt"
+              (change)="electronicSignatureReceiptSelect()"
               type="checkbox"
               formControlName="electronicSignatureReceipt" />
           </form-check>
