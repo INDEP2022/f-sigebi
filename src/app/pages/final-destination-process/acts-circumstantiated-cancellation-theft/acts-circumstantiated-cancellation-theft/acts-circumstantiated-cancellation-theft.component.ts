@@ -545,6 +545,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('testigoOIC')
           .setValue(this.expedient.authorityOrdersDictum); // console.log(this.expedient);
+
         this.getGoodsByStatus(this.fileNumber);
       },
       error: () => {
@@ -727,7 +728,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       });
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
-      // this.getActasByConversion(next.cve_acta_conv);
     });
     modalRef.content.cleanForm.subscribe(async (next: any) => {
       if (next) {
