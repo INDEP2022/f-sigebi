@@ -306,11 +306,12 @@ export class ExpenseConceptsListComponent
               this.getData();
             },
             error: err => {
+              console.log(err);
               // event.confirm.resolve();
               this.alert(
                 'error',
-                'ERROR',
-                'No se pudo eliminar el concepto de pago ' + event.data.id
+                'Eliminación de Concepto de Pago ' + event.data.id,
+                err.error.message
               );
             },
           });

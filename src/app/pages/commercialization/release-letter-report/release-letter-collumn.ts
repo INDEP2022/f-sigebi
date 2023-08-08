@@ -8,6 +8,7 @@ export const RELEASE_REPORT_COLUMNS = {
   lotsId: {
     title: 'Lote',
     sort: false,
+    filter: false,
   },
   // addressedTo: {
   //   title: 'Dirigido a',

@@ -104,7 +104,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
         this.alert(
           'success',
           'Eliminación de Fotos',
-          'Se eliminaron las fotos correctamente'
+          'Se Eliminaron las Fotos Correctamente'
         );
         this.filesToDelete = [];
         this.getData();
