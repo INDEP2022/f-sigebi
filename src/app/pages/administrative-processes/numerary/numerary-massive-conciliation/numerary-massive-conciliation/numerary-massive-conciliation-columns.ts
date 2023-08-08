@@ -128,22 +128,12 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     filter: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val5) {
-<<<<<<< HEAD
         const formatDate = correctDate(row.RSPTAQUERY.val5);
-=======
-        const formatDate = row.RSPTAQUERY.val5;
->>>>>>> 1bb9635269c44798a77c8fbe10b6ba28405bb9f8
         return formatDate;
       } else {
         return null;
       }
     },
-<<<<<<< HEAD
-    filterFunction: (cell?: any, search?: any) => {
-      return true;
-    },
-=======
->>>>>>> 1bb9635269c44798a77c8fbe10b6ba28405bb9f8
   },
   BFEC_TESOFE: {
     title: 'Fec. Tesofe',
