@@ -65,4 +65,8 @@ export class DynamicCatalogService extends HttpService {
   faEtapaind(dateEtapa: string) {
     return this.post('application/faEtapaind', { dateEtapa });
   }
+
+  faEtapaindNumber(dateEtapa: string) {
+    return this.post('application/faEtapaind', { dateEtapa });
+  }
 }

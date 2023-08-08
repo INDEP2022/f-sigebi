@@ -333,6 +333,8 @@ export class ConciliationExecutionMainComponent
         }
 
         let L_VALEST: any = await this.VALIDA_ESTATUS();
+        // "AUX_EXISTE": null,
+        // "AUX_PROCESA": 1
         if (L_VALEST > 0) {
           this.alert(
             'warning',
@@ -384,9 +386,8 @@ export class ConciliationExecutionMainComponent
             this.selectedEvent.cve_proceso
           );
         }
-
-        this.alert('success', 'Proceso Terminado Correctamente', '');
       }
+      this.alert('success', 'Proceso Terminado Correctamente', '');
     } else if (eventProcess.phase == 2) {
       if (!this.selectedBatch) {
         this.GLOBALV_CL = 'B';
@@ -404,6 +405,7 @@ export class ConciliationExecutionMainComponent
         descripcion: this.selectedEvent.cve_proceso,
       };
       const endpointEjecutar: any = await this.PUP_ENTRA(obj); //PUP_ENTRA
+      this.alert('success', 'Proceso Terminado Correctamente', '');
     }
   }
 
@@ -461,26 +463,23 @@ export class ConciliationExecutionMainComponent
         .VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento)
         .subscribe({
           next: data => {
-            resolve(data);
+            resolve(data.result);
           },
           error: err => {
-            resolve(err.message[0]);
+            resolve(null);
           },
         });
     });
   }
 
   async VALIDA_ESTATUS() {
-    let obj = {
-      appointmentNo: 1,
-    };
     return new Promise((resolve, reject) => {
-      this.lotService.VALIDA_ESTATUS(obj).subscribe({
+      this.lotService.VALIDA_ESTATUS(this.selectedEvent.id_evento).subscribe({
         next: data => {
           resolve(data);
         },
         error: err => {
-          resolve(err.message[0]);
+          resolve(null);
         },
       });
     });
@@ -502,14 +501,16 @@ export class ConciliationExecutionMainComponent
   async VALIDA_LISTANEGRA() {
     // no_nombramiento
     return new Promise((resolve, reject) => {
-      this.msDepositaryService.VALIDA_LISTANEGRA(1).subscribe({
-        next: data => {
-          resolve(data);
-        },
-        error: err => {
-          resolve(err.message[0]);
-        },
-      });
+      this.lotService
+        .VALIDA_LISTANEGRA(this.selectedEvent.id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
     });
   }
 
@@ -549,7 +550,7 @@ export class ConciliationExecutionMainComponent
 
   async VALIDA_PAGOSREF_PREP_OI(id_evento: any, cve_proceso: any) {
     let obj = {
-      name: 2,
+      name: id_evento,
       description: cve_proceso,
     };
     return new Promise((resolve, reject) => {
@@ -590,13 +591,36 @@ export class ConciliationExecutionMainComponent
       });
     });
   }
-  modify() {
+
+  async modify() {
     if (!this.selectedEvent)
       return this.alert(
         'warning',
         'Es Necesario Especificar un Evento para Modificar',
         ''
       );
+    let obj = {
+      event: this.selectedEvent.id_evento,
+      publicLot: this.selectedBatch.lotPublic,
+      phase: 1,
+      lifMessage: 'TEST',
+      user: this.token.decodeToken().preferred_username,
+    };
+    await this.modificar(obj);
+  }
+
+  async modificar(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.reverseEverything(body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
   }
 
   async cancel() {
@@ -606,13 +630,17 @@ export class ConciliationExecutionMainComponent
         'Es Necesario Especificar un Evento para Deshacer',
         ''
       );
-    let obj = {};
+    let obj = {
+      event: this.selectedEvent.id_evento,
+      publicLot: this.selectedBatch.lotPublic,
+      lot: this.selectedBatch.lotId,
+    };
     await this.eliminar(obj);
   }
 
   async eliminar(body: any) {
     return new Promise((resolve, reject) => {
-      this.comerDetailsService.getFcomer612Get1(body).subscribe({
+      this.comerDetailsService.reverseEverything(body).subscribe({
         next: response => {
           resolve(true);
         },

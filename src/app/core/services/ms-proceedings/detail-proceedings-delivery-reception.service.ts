@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proceedings-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -19,6 +20,11 @@ export class DetailProceeDelRecService extends HttpService {
 
   getGoodsByProceedings(id: string | number, params?: ListParams) {
     const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}?filter.numberProceedings=${id}`;
+    return this.get(route, params);
+  }
+
+  getGoodsByProceeding(params: HttpParams) {
+    const route = `proceedings-delivery-reception`;
     return this.get(route, params);
   }
 
@@ -59,6 +65,14 @@ export class DetailProceeDelRecService extends HttpService {
       'detail-proceedings-delivery-reception/get-detalle-acta-recepcion',
       model
     );
+  }
+
+  postRegister(body: any) {
+    return this.post('detail-proceedings-delivery-reception', body);
+  }
+
+  deleteRegister(body: any) {
+    return this.delete('detail-proceedings-delivery-reception', body);
   }
 
   remove(numberGood: string | number, numberProceedings: string | number) {

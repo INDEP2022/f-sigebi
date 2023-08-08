@@ -1,15 +1,15 @@
 export const COLUMNS2 = {
-  noBien: {
+  numberGood: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  amount: {
     title: 'Cantidad',
     type: 'number',
     sort: false,
