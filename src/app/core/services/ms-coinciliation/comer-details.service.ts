@@ -56,7 +56,10 @@ export class ComerDetailsService extends HttpService {
   }
 
   reverseEverything(body: any): Observable<IListResponse<any>> {
-    return this.get<IListResponse<any>>(`application/reverse-everything`, body);
+    return this.post<IListResponse<any>>(
+      `application/reverse-everything`,
+      body
+    );
   }
 
   actEstEve(id: any): Observable<IListResponse<any>> {

@@ -211,18 +211,28 @@ export class LotService extends HttpService {
   }
 
   CARGA_PAGOSREFGENS(evento: any) {
-    return this.post(`${LotEndpoints.CargaPagosRefGens}/${evento}`, {});
+    return this.get(`${LotEndpoints.CargaPagosRefGens}/${evento}`);
   }
 
   CARGA_COMER_DETALLES(evento: any) {
-    return this.post(`${LotEndpoints.CargaComerDetalles}/${evento}`, {});
+    return this.get(`${LotEndpoints.CargaComerDetalles}/${evento}`);
   }
 
   VALIDA_MANDATO(evento: any) {
     return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
   }
 
-  VALIDA_ESTATUS(body: any) {
-    return this.post(`${LotEndpoints.ValidateStatus}`, body);
+  VALIDA_ESTATUS(evento: any) {
+    return this.get(`${LotEndpoints.ValidateStatus}/${evento}`);
+  }
+  VALIDA_LISTANEGRA(evento: any) {
+    return this.get(`${LotEndpoints.ValidaListaNegra}/${evento}`);
+  }
+
+  getReferenceList(reference: any, params: _Params) {
+    return this.get(
+      `${LotEndpoints.GetBankReference}?reference=${reference}`,
+      params
+    );
   }
 }
