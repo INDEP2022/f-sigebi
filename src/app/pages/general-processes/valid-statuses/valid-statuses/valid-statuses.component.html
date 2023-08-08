@@ -24,86 +24,19 @@
               </div>
             </tab>
             <tab heading="Ayuda">
-              <div class="row">
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="row">
-                      <div class="col-md-12">
-                        <div class="card">
-                          <div class="card-body">
-                            <div class="col-md-4 mt-3">
-                              <div>
-                                <form-field
-                                  [control]="helpForm.get('screenKey')"
-                                  label="Pantalla">
-                                  <input
-                                    #inputValue
-                                    type="text"
-                                    class="form-control"
-                                    formControlName="screenKey"
-                                    readonly />
-                                </form-field>
-                              </div>
-                            </div>
-                            <div class="card-body">
-                              <form-field
-                                class="col-md-12 col-sm-12 col-12 p-2"
-                                [control]="helpForm.get('description')"
-                                label="Descripción">
-                                <textarea
-                                  maxlength="500"
-                                  class="form-control text-justify"
-                                  formControlName="description"
-                                  rows="5"
-                                  readonly></textarea>
-                              </form-field>
-                            </div>
-                            <div class="col-md-4 mt-3">
-                              <div>
-                                <form-field
-                                  [control]="helpForm.get('recordNumber')"
-                                  label="Número de Registro">
-                                  <input
-                                    #inputValue
-                                    type="text"
-                                    class="form-control"
-                                    formControlName="recordNumber"
-                                    readonly />
-                                </form-field>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-md-12">
-                            <h6>DETALLES DE LA PANTALLA</h6>
-                            <div class="row">
-                              <form-loader *ngIf="loading2"></form-loader>
-                              <div class="col-md-12">
-                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-                                <ng-scrollbar
-                                  [track]="'all'"
-                                  [ngStyle]="{
-                                    height: loading2 ? '0px' : '400px'
-                                  }">
-                                  <ng2-smart-table
-                                    class="table-responsive"
-                                    [attr.class]="
-                                      'table-bordered table-responsive'
-                                    "
-                                    [settings]="settings2"
-                                    [source]="helps"></ng2-smart-table>
-                                </ng-scrollbar>
-                                <!-- </div> -->
-                              </div>
-                              <app-pagination
-                                [params]="params2"
-                                [totalItems]="totalItems2"></app-pagination>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div class="card-body">
+                <form-field
+                  class="col-md-12 col-sm-12 col-12 p-2"
+                  [control]="helpForm.get('description')"
+                  label="Ayuda">
+                  <textarea
+                    maxlength="4000"
+                    class="form-control text-justify"
+                    formControlName="description"
+                    rows="10"
+                    cols="30"
+                    readonly></textarea>
+                </form-field>
               </div>
             </tab>
           </tabset>
@@ -112,40 +45,3 @@
     </form>
   </div>
 </app-card>
-
-<!-- <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Estatus V&aacute;lido por Pantalla</h5>
-  </div>
-
-  <div body>
-    <div class="row">
-      <div class="col-md-12 text-center">
-        <h3>{{ screenCtrl.value }}</h3>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12 md-tabs">
-        <tabset>
-          <tab heading="Estatus" id="tab1">
-            <div class="row" [ngClass]="{ 'table-loading': loading }">
-              <ng2-smart-table
-                [settings]="settings"
-                [source]="statuses"></ng2-smart-table>
-              <app-pagination
-                [filterParams]="params"
-                [totalItems]="totalItems"></app-pagination>
-            </div>
-          </tab>
-          <tab heading="Ayuda">
-            <div class="row">
-              <div class="col-md-12">
-                <p><b [innerText]="helpText"></b></p>
-              </div>
-            </div>
-          </tab>
-        </tabset>
-      </div>
-    </div>
-  </div>
-</app-card> -->
