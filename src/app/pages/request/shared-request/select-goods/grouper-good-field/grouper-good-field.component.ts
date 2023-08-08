@@ -55,8 +55,9 @@ export class GrouperGoodFieldComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'Se agrego el valor agrupador');
       this.close();*/
 
-      const result = await this.updateGoodResDev(item);
-      list.push(result);
+      const result = await this.updateGoodResDev(body);
+      (item['goodGrouper'] = this.grouperForm.get('goodGrouper').value),
+        list.push(item);
       if (this.goodResDevs.length == index) {
         this.event.emit(list);
         this.onLoadToast('success', 'Se agrego el valor agrupador');

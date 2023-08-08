@@ -88,6 +88,7 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
               infoWarehouse[0]?.receiptDate
             ).format('DD/MM/YYYY');
             this.receiptWarehouseGood.load(infoWarehouse);
+            this.totalItemsReceipt = this.receiptWarehouseGood.count();
           }
 
           /*const filterGuard = response.data.map((item: any) => {
@@ -139,6 +140,7 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
               infoWarehouse[0]?.receiptDate
             ).format('DD/MM/YYYY');
             this.receiptWarehouseGood.load(infoWarehouse);
+            this.totalItemsReceipt = this.receiptWarehouseGood.count();
           }
 
           /*const filterGuard = response.data.map((item: any) => {

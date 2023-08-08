@@ -60,4 +60,8 @@ export class DonationService
   createAdmonDonation(model: any) {
     return this.post('admon-donation', model);
   }
+
+  deleteAdmonDonation(id: number) {
+    return this.delete(`admon-donation/${id}`);
+  }
 }

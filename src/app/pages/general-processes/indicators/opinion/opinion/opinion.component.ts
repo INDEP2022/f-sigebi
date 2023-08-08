@@ -137,7 +137,7 @@ export class OpinionComponent extends BasePage implements OnInit {
       next: resp => {
         this.data.load(resp.data);
         this.data.refresh();
-        this.totalItems = resp.count;
+        this.totalItems = 0;
         this.loading = false;
       },
       error: err => {
@@ -160,7 +160,7 @@ export class OpinionComponent extends BasePage implements OnInit {
       next: resp => {
         this.data.load(resp.data);
         this.data.refresh();
-        this.totalItems = resp.count;
+        this.totalItems = 0;
         this.loading = false;
       },
       error: err => {

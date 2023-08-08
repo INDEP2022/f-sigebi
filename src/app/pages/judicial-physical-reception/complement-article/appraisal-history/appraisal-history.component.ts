@@ -89,8 +89,12 @@ export class AppraisalHistoryComponent extends BasePage implements OnInit {
         type: 'string',
         sort: false,
         valuePrepareFunction: (cell: any, row: any) => {
-          if (row.requestXAppraisal && row.requestXAppraisal.cveCurrencyCost) {
-            return row.requestXAppraisal.cveCurrencyCost;
+          console.log(' equestXAppraisal ', row.cveCurrencyAppraisal);
+          if (
+            row.requestXAppraisal &&
+            row.requestXAppraisal.cveCurrencyAppraisal
+          ) {
+            return row.requestXAppraisal.cveCurrencyAppraisal;
           }
           return '';
         },

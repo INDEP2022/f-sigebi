@@ -114,14 +114,14 @@ export class ExpenseConceptsListModalComponent
       this.conceptsService
         .create({
           ...body,
-          address: this.getAddressCode(body.address),
+          address: body.address,
           automatic: body.automatic ? 'S' : 'N',
           numerary: body.numerary ? 'S' : 'N',
         })
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
           next: response => {
-            this.alert('success', 'Concepto de Pago', 'Creado correctamente');
+            this.alert('success', 'Concepto de Pago', 'Creado Correctamente');
             this.modalRef.content.callback(true);
             this.modalRef.hide();
             // this.getData();
