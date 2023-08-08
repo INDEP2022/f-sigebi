@@ -278,12 +278,15 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
               }
             })
           );
+          this.menajes.refresh();
           this.totalItems = 0;
           this.totalItems = response.count;
           this.loading = false;
         } else {
           this.alert('warning', 'Bien sin Menajes Asociados', ``);
           this.loading = false;
+          this.menajes.load([]);
+          this.menajes.refresh();
           this.totalItems = 0;
           this.searchGoods(
             this.paramsSubject.getValue(),
@@ -293,6 +296,8 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
       },
       error: err => {
         this.alert('warning', 'Bien sin Menajes Asociados', ``);
+        this.menajes.load([]);
+        this.menajes.refresh();
         this.loading = false;
         this.totalItems = 0;
         this.searchGoods(this.paramsSubject.getValue(), this.idExpedientSearch);
