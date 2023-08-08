@@ -66,6 +66,11 @@ export class DictationService extends HttpService {
     return this.get<IListResponse<any>>(route, params);
   }
 
+  postHisIndicators(body: any) {
+    const url = `application/get-hist-indicadores1`;
+    return this.post(url, body);
+  }
+
   getById(body: {
     id: string | number;
     typeDict?: string;
