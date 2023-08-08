@@ -383,9 +383,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.goodForm();
     this.actaForm();
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
-    this.goodForm();
-    this.actaForm();
-    this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
   }
 
   initForm() {

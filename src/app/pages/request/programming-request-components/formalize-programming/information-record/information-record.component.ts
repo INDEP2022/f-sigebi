@@ -500,7 +500,99 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       next: response => {
         this.identifications = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => {
+        this.identifications = new DefaultSelect();
+      },
     });
+  }
+
+  SignatureWorker1Select() {
+    const signatureWorker1 = this.infoForm.get(
+      'electronicSignatureWorker1'
+    ).value;
+
+    if (signatureWorker1) {
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureWorker2Select() {
+    const signatureWorker2 = this.infoForm.get(
+      'electronicSignatureWorker2'
+    ).value;
+
+    if (signatureWorker2) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureWitness1Select() {
+    const SignatureWitness1Select = this.infoForm.get(
+      'electronicSignatureWitness1'
+    ).value;
+
+    if (SignatureWitness1Select) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureWitness2Select() {
+    const SignatureWitness1Select = this.infoForm.get(
+      'electronicSignatureWitness2'
+    ).value;
+
+    if (SignatureWitness1Select) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureOICSelect() {
+    const electronicSignatureOic = this.infoForm.get(
+      'electronicSignatureOic'
+    ).value;
+
+    if (electronicSignatureOic) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+    }
   }
 }

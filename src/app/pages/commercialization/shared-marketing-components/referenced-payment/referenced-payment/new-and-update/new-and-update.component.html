@@ -167,7 +167,7 @@
             <input bsDatepicker maxlength="11" type="text" class="form-control" formControlName="recordDate" />
           </form-field>
         </div> -->
-        <div class="col-md-6 mt-2">
+        <div #scrollContainer class="col-md-6 mt-2">
           <form-field [control]="form.get('typeSatId')">
             <ngx-select
               [searchOnInit]="true"

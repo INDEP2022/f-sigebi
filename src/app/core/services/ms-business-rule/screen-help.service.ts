@@ -28,10 +28,7 @@ export class ScreenHelpService extends HttpService {
       params
     );
   }
-  getHelpScreen(screen: string): Observable<IListResponse<IScreenHelpTwo>> {
-    return this.get<IListResponse<IScreenHelpTwo>>(
-      ScreenHelpEndpoint.HelpxScreen,
-      screen
-    );
+  getHelpScreen(screen: string) {
+    return this.get<IScreenHelpTwo>(`${this.endpoint}/${screen}`);
   }
 }

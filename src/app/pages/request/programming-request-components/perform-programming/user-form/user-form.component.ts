@@ -65,8 +65,13 @@ export class UserFormComponent extends BasePage implements OnInit {
   getChargesUsers(params?: ListParams) {
     params['filter.name'] = 'Cargos Usuarios';
     params['sortBy'] = 'description:ASC';
-    return this.genericService.getAll(params).subscribe(data => {
-      this.chargesUsers = new DefaultSelect(data.data, data.count);
+    return this.genericService.getAll(params).subscribe({
+      next: data => {
+        this.chargesUsers = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.chargesUsers = new DefaultSelect();
+      },
     });
   }
 
@@ -81,7 +86,7 @@ export class UserFormComponent extends BasePage implements OnInit {
   create() {
     this.alertQuestion(
       'warning',
-      'Advertencía',
+      'Advertencia',
       '¿Desea crear el usuario a la programación?',
       'Guardar'
     ).then(question => {
