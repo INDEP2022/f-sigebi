@@ -49,7 +49,7 @@
                 </form-field>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 mt-2 mb-2">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('penaltyCause')"
@@ -264,7 +264,7 @@
               <button
                 class="btn btn-primary active btn-sm"
                 (click)="validarStatusActa()"
-                [disabled]="!open || !labela"
+                [disabled]="!open || !labela || !closea"
                 *ngIf="labela">
                 {{ labelActa }} <i class="bx bx-file bx-sm float-icon"></i>
               </button>

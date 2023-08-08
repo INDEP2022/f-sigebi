@@ -68,8 +68,6 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
       .getReceptions(this.paramsReceipts.getValue())
       .subscribe({
         next: response => {
-          console.log('recibos cerrados', response);
-
           const filterWarehouse = response.data.map((item: any) => {
             if (item.typeReceipt == 'ALMACEN') return item;
           });
@@ -83,7 +81,6 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
           //this.receiptWarehouseGood = infoWarehouse[0];
 
           if (infoWarehouse.length > 0) {
-            console.log('infoWarehouse[0]', infoWarehouse[0]);
             infoWarehouse[0].receiptDate = moment(
               infoWarehouse[0]?.receiptDate
             ).format('DD/MM/YYYY');
@@ -121,8 +118,6 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
       .getReceptions(this.paramsReceipts.getValue())
       .subscribe({
         next: response => {
-          console.log('recibos cerrados', response);
-
           const filterWarehouse = response.data.map((item: any) => {
             if (item.typeReceipt == 'RESGUARDO') return item;
           });
@@ -171,7 +166,6 @@ export class ShowReceiptGuardCloseComponent extends BasePage implements OnInit {
   }
 
   showReceipt(receipt: IRecepitGuard) {
-    console.log('receipt', receipt);
     this.wcontentService.obtainFile(receipt.contentId).subscribe({
       next: response => {
         let blob = this.dataURItoBlob(response);

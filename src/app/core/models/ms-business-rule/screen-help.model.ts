@@ -5,3 +5,10 @@ export interface IScreenHelp {
   businessRoleDesc: string;
   recordNumber: number; // TODO: checar a que tabla hace referencia
 }
+
+export interface IScreenHelpTwo {
+  screenKey: string;
+  help: string;
+  recordNumber: number;
+  appScreen: [];
+}

@@ -293,6 +293,8 @@ export class PropertyAdjudicationNotificationReportComponent
   cleanForm(): void {
     this.form.reset();
     this.data.load([]);
+    this.totalItems = 0;
+    this.imprimir = false;
   }
 
   getuser() {

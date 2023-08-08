@@ -1,3 +1,5 @@
+import { Injectable } from '@angular/core';
+
 export const INDICATORS_HISTORY_COLUMNS = {
   coordinacion_regional: {
     title: 'Regional',
@@ -57,4 +59,17 @@ export class Indicators {
   onCustom(event: any) {
     console.log('Seleccionamos la columna vamoooo');
   }
+}
+
+@Injectable()
+export class FunctionCumplioIndicador {
+  //
+
+  date1: string;
+  date2: string;
+  dateEnd: string;
+  pNumCor: number;
+  TpInd: number;
+
+  //
 }

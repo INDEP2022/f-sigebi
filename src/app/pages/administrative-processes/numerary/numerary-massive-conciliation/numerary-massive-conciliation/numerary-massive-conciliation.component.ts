@@ -470,7 +470,12 @@ export class NumeraryMassiveConciliationComponent
 
     for (let item of this.completeFilters2) {
       if (!['', null, undefined].includes(item.search)) {
-        paramsF.addFilter(item.field, item.field == 'motionDate' ? this.correctDate(item.search) : item.search);
+        paramsF.addFilter(
+          item.field,
+          item.field == 'motionDate'
+            ? this.correctDate(item.search)
+            : item.search
+        );
       }
     }
 

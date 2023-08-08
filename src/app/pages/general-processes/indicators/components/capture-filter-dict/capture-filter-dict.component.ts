@@ -184,7 +184,7 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
 
   consult() {
     console.log(this.alMenosUnaPropiedadTieneValor());
-    if (this.isOpinion) {
+    /* if (this.isOpinion) {
       if (!this.alMenosUnaPropiedadTieneValor()) {
         this.alert(
           'warning',
@@ -193,7 +193,7 @@ export class CaptureFilterDictComponent extends BasePage implements OnInit {
         );
         return;
       }
-    }
+    } */
     this.consultEmmit.emit(this.form);
   }
 

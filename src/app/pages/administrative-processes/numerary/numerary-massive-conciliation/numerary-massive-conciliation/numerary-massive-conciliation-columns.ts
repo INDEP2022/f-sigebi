@@ -59,7 +59,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -74,7 +74,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -89,7 +89,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -104,7 +104,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -119,7 +119,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
-     filterFunction: (cell?: any, search?: any) => {
+    filterFunction: (cell?: any, search?: any) => {
       return true;
     },
   },
@@ -216,7 +216,6 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
       return formattedDate;
     },
-    
   },
   interestCalculationDate: {
     title: 'Fec. Depósito',
