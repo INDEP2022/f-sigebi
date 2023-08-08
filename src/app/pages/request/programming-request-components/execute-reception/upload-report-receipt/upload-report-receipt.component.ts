@@ -53,7 +53,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('goodsReception', this.guardReception);
     this.prepareForm();
     if (this.typeDoc == 185 || this.typeDoc == 186) {
       this.getGoodsRelReceipt();
@@ -291,13 +290,12 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
           next: async response => {
             const updateReceipt = await this.updateReceipt(response.dDocName);
 
-            console.log('updateReceipt', updateReceipt);
             if (updateReceipt) {
               const updateProgrammingGood = await this.updateProgrammingGood();
-              console.log('updateProgrammingGood', updateProgrammingGood);
+
               if (updateProgrammingGood) {
                 const updateGood = await this.updateGood();
-                console.log('updateGood', updateGood);
+
                 if (updateGood) {
                   this.alertInfo(
                     'success',
@@ -524,7 +522,6 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
 
-      console.log('goodsReception', goodsReception);
       goodsReception.map((item: IGood) => {
         const formData: Object = {
           programmingId: this.programming.id,
