@@ -36,6 +36,10 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   columnFilters2: any = [];
   penalties: ICustomersPenalties;
   user: any;
+  eventPenalities: any;
+
+  permission: boolean = false;
+  selectRow: boolean = false;
 
   settings2 = { ...this.settings };
 
@@ -48,11 +52,11 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     super();
     this.settings.columns = COLUMNS;
     this.settings.hideSubHeader = false;
-    this.settings.actions.add = false;
+    /*this.settings.actions.add = false;
     this.settings.actions.edit = true;
     this.settings.actions.delete = false;
-    this.settings.actions.position = 'right';
-    //this.settings.actions = false;
+    this.settings.actions.position = 'right';*/
+    this.settings.actions = false;
 
     this.settings2.columns = COLUMNS2;
     this.settings2.actions = false;
@@ -248,6 +252,7 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
     console.log(this.user);
+    this.validateUser();
   }
 
   getData(id?: string | number) {
@@ -325,8 +330,14 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   rowsSelected(event: any) {
-    this.penalties = event.data;
-    console.log(this.penalties);
+    if (event) {
+      this.selectRow = true;
+      this.eventPenalities = event.data;
+      this.penalties = event.data;
+      console.log(this.penalties);
+    } else {
+      this.eventPenalities = null;
+    }
   }
 
   getDeductives() {
@@ -374,6 +385,21 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
     this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
   }*/
 
+  validateUser() {
+    this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
+    let params = {
+      ...this.params1.getValue(),
+    };
+    this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
+      next: resp => {
+        this.permission = true;
+      },
+      error: err => {
+        this.alert('warning', 'Usuario no Autorizado', 'No tiene los permisos');
+      },
+    });
+  }
+
   openForm(customersPenalties?: any) {
     this.alertQuestion(
       'warning',
@@ -381,34 +407,14 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
       '¿Desea Penalizar un Cliente?'
     ).then(question => {
       if (question.isConfirmed) {
-        if (this.user) {
-          this.params1.getValue()['filter.user'] = `$eq:${this.user}`;
-          let params = {
-            ...this.params1.getValue(),
-          };
-          this.securityService.getFilterAllUsersTrackerV2(params).subscribe({
-            next: resp => {
-              const modalConfig = MODAL_CONFIG;
-              modalConfig.initialState = {
-                customersPenalties,
-                callback: (next: boolean) => {
-                  if (next) this.getDeductives();
-                },
-              };
-              this.modalService.show(
-                CustomerPenaltiesModalComponent,
-                modalConfig
-              );
-            },
-            error: err => {
-              this.alert(
-                'warning',
-                'Usuario no Autorizado',
-                'No tiene los permisos'
-              );
-            },
-          });
-        }
+        const modalConfig = MODAL_CONFIG;
+        modalConfig.initialState = {
+          customersPenalties,
+          callback: (next: boolean) => {
+            if (next) this.getDeductives();
+          },
+        };
+        this.modalService.show(CustomerPenaltiesModalComponent, modalConfig);
       }
     });
   }
