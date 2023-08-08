@@ -12,4 +12,5 @@ export enum StrategyEndpoints {
   StrategyAmount = 'strategy-rep-amounts',
   StrategyAdmin = 'strategies-admin',
   getbyStatus = 'aplication/getStrategyStatus',
+  postByFilter = 'strategies-admin/idV2',
 }
