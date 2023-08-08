@@ -92,7 +92,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'El expediente final debe ser mayor al inicial'
+        'El Expediente Final Debe ser Mayor que el Inicial'
       );
       return;
     }
@@ -101,7 +101,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'El acta final debe ser mayor a la inicial'
+        'El Acta Final Debe ser Mayor que la Inicial.'
       );
       return;
     }
@@ -110,7 +110,7 @@ export class DisposalRecordReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'fecha final de elaboración debe ser mayor a la fecha inicial'
+        'La Fecha Final de Elaboración Debe ser Mayor a la Fecha Inicial'
       );
       return;
     }

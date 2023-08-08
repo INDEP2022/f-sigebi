@@ -375,7 +375,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.alert('success', 'Valores Actualizados correctamente', '');
+          this.alert('success', 'Valores Actualizados Correctamente', '');
           this.getAllGoodChild(this.goodFatherNumber$.getValue());
         },
       });

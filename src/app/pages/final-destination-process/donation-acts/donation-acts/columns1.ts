@@ -1,32 +1,17 @@
 export const COLUMNS1 = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  description: {
+  goodDescription: {
     title: 'Descripcion',
     type: 'string',
     sort: false,
   },
-  proceso: {
-    title: 'Proceso',
-    type: 'string',
-    sort: false,
-  },
-  cantidad: {
+  quantity: {
     title: 'Cantidad',
     type: 'number',
-    sort: false,
-  },
-  unidad: {
-    title: 'Unidad',
-    type: 'string',
-    sort: false,
-  },
-  acta: {
-    title: 'Acta',
-    type: 'string',
     sort: false,
   },
 };

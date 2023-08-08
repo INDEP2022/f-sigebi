@@ -33,7 +33,10 @@ const routes: Routes = [
           './generate-sampling-supervision/sampling-assets/sampling-assets.module'
         )
       ).SamplingAssetsModule,
-    data: { title: 'Muestreo Bienes', screen: 'MUESTREOBIENES' },
+    data: {
+      title: 'Muestreo Bienes Generar Consulta',
+      screen: 'MUESTREOBIENES',
+    },
   },
   //Solicitud de transferencia
   {
