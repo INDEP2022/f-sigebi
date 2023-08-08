@@ -24,6 +24,8 @@ import { DesertedBatchComponent } from './dispersion-payment-details/deserted-ba
 import { OrderWOBillingComponent } from './dispersion-payment-details/order-w-o-billing-audience/order-w-o-billing.component';
 import { SirsaePaymentsComponent } from './dispersion-payment-details/sirsae-payments/sirsae-payments.component';
 import { DispersionPaymentComponent } from './dispersion-payment/dispersion-payment.component';
+import { ComerPaymentVirtComponent } from './comer-payment-virt/comer-payment-virt.component'
+import { CanTimesComponent } from './can-times/can-times.component'
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import { DispersionPaymentComponent } from './dispersion-payment/dispersion-paym
     DesertedBatchComponent,
     OrderWOBillingComponent,
     SirsaePaymentsComponent,
+    ComerPaymentVirtComponent,
+    CanTimesComponent
   ],
   imports: [
     CommonModule,

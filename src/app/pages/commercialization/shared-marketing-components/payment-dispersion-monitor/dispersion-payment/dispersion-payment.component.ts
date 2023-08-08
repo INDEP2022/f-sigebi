@@ -7,7 +7,9 @@ import {
 } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -25,6 +27,7 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
+import { ComerPaymentVirtComponent } from '../comer-payment-virt/comer-payment-virt.component';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import {
   COLUMNSCUSTOMER,
@@ -107,6 +110,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   isAvailableByType: boolean = true;
 
+  idBatch: any = null;
+  idClientBatch: any = null;
+  referenceBatch: any = null;
+  amountBatch: any = null;
+  idPaymentBatch: any = null;
+
   private clie_procesar: boolean = false;
   private lot_procesar: boolean = false;
   private clie_solo_pend: boolean = false;
@@ -126,6 +135,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private comerLotsService: LotService,
     private spentService: SpentService,
     private comerEventosService: ComerEventosService,
+    private modalService: BsModalService,
     private customersService: ComerClientsService
   ) {
     super();
@@ -890,5 +900,57 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         );
       }
     );
+  }
+
+  //Seleccionar PAGOREF_CLI
+  selectRowCustomerBanks(e: any) {
+    console.log(e.data);
+    this.idBatch = e.data.batchId;
+    this.idClientBatch = e.data.Customer_ID;
+    this.referenceBatch = e.data.reference
+    this.amountBatch = e.data.amount
+    this.idPaymentBatch = e.data.Payment_ID
+  }
+
+  //Función de pagos
+  unbundlePaymentsFn() {
+    let rfc: any = null;
+    let client: any = null;
+    let reference: any = this.referenceBatch
+    let amount: any = this.amountBatch
+    let idPayment: any = this.idPaymentBatch
+    return new Promise((resolve, reject) => {
+      if (this.event.value != null) {
+        if (this.idBatch != null) {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('id', this.idClientBatch);
+          this.customersService.getAllWithFilters(paramsF.getParams()).subscribe(
+            res => {
+              console.log(res);
+              rfc = res['data'][0].rfc
+              client = res['data'][0].reasonName
+              console.log({rfc, client})
+              resolve({rfc,client,reference,amount,idPayment})
+            },
+            err => {
+              console.log(err);
+            }
+          );               
+        }
+      }
+    })
+    
+  }
+
+  //Abrir modal de Pagos
+  async unbundlePayments() {
+    const dataModel = await this.unbundlePaymentsFn();
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      initialState: {dataModel},
+      class: 'modal-lg modal-dialog-centered',
+    };
+
+    this.modalService.show(ComerPaymentVirtComponent, modalConfig);
   }
 }
