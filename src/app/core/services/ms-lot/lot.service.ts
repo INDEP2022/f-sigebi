@@ -204,6 +204,22 @@ export class LotService extends HttpService {
     );
   }
 
+  loadInvoiceData(body: {
+    eventId: string | number;
+    lot: string | number;
+    file: File;
+    pDirection: 'M' | 'I';
+  }) {
+    const { file, lot, eventId, pDirection } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('pLot', lot ? `${lot}` : null);
+    formData.append('pEvent', eventId ? `${eventId}` : null);
+    formData.append('lot', lot ? `${lot}` : null);
+    formData.append('pDirection', pDirection);
+    return this.post('apps/load-data-billing', formData);
+  }
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA
