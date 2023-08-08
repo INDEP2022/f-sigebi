@@ -16,7 +16,7 @@
               class="form-control"
               formControlName="no_expediente"
               [(ngModel)]="noExpe"
-              (input)="getAllBLKByFilters()" />
+              (blur)="getAllBLKByFilters()" />
           </form-field>
 
           <form-field
@@ -66,7 +66,15 @@
       </form>
     </div>
 
-    <!-- <div *ngIf="response"> -->
+    <div class="d-flex">
+      <div class="ml-auto">
+        <button class="btn btn-primary btn-sm active" (click)="closeExp()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+
+    <br />
 
     <div>
       <form [formGroup]="actForm" class="form-material">
@@ -260,7 +268,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="datas">
+            [source]="datas"
+            (userRowSelect)="rowSelectedOne($event)">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
@@ -269,16 +278,16 @@
 
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-          type="button">
-          <!-- Mover uno -->
-          <i class="bx bx-chevron-down bx-md"></i>
+          class="btn btn-primary btn-sm active m-3"
+          type="button"
+          (click)="createTableTwo()">
+          Agregar <i class="fa fa-check" aria-hidden="true"></i>
         </button>
         <button
-          class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-          type="button">
-          <!-- Quitar uno -->
-          <i class="bx bx-chevron-up bx-md"></i>
+          class="btn btn-red btn-sm active m-3"
+          type="button"
+          (click)="deleteTableTwo()">
+          Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
       </div>
 
@@ -298,7 +307,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data2"></ng2-smart-table>
+            [source]="data2"
+            (userRowSelect)="rowSelectedTwo($event)"></ng2-smart-table>
         </div>
       </ng-scrollbar>
       <app-pagination [params]="params2" [totalItems]="totalItems2">
@@ -334,9 +344,7 @@
                   </div> -->
         </div>
       </div>
-      <div>
-        <input type="text" class="form-control" />
-      </div>
+      <div></div>
     </div>
   </div>
 </app-card>

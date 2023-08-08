@@ -67,6 +67,14 @@ export class DetailProceeDelRecService extends HttpService {
     );
   }
 
+  postRegister(body: any) {
+    return this.post('detail-proceedings-delivery-reception', body);
+  }
+
+  deleteRegister(body: any) {
+    return this.delete('detail-proceedings-delivery-reception', body);
+  }
+
   remove(numberGood: string | number, numberProceedings: string | number) {
     return this.delete('detail-proceedings-delivery-reception', {
       numberGood,
