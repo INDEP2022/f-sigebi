@@ -48,7 +48,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
   fileEvents: FileUploadEvent[];
   info = `Haz clic para seleccionar las imágenes o arrástralas
       aquí`;
-  titleFinishUpload = 'Archivos cargados correctamente';
+  titleFinishUpload = 'Archivos Cargados Correctamente';
   questionFinishUpload = '¿Desea subir más archivos?';
   service: IServiceUpload = inject(FileBrowserService);
   constructor(
@@ -66,7 +66,7 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
     this.loading = false;
     const result = await this.alertQuestion(
       'question',
-      'Archivos cargados correctamente',
+      'Archivos Cargados Correctamente',
       '¿Desea subir más archivos?'
     );
     this.uploadFiles = false;

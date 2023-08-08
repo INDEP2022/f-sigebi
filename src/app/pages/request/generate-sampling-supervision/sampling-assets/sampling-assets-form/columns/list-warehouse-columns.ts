@@ -1,5 +1,5 @@
 export const LIST_WAREHOUSE_COLUMN = {
-  noWarehouse: {
+  id: {
     title: 'No. Almacén',
     type: 'string',
     sort: false,

@@ -1,14 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import {
-  catchError,
-  debounceTime,
-  firstValueFrom,
-  map,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -18,15 +11,14 @@ import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
-import { PhotosHistoricComponent } from '../photos-historic/photos-historic.component';
-import { GoodPhotosService } from '../services/good-photos.service';
+import { GoodPhotosService } from 'src/app/pages/general-processes/good-photos/services/good-photos.service';
 
 @Component({
-  selector: 'app-photos-list',
-  templateUrl: './photos-list.component.html',
-  styleUrls: ['./photos-list.component.scss'],
+  selector: 'app-photos-list-commercial',
+  templateUrl: './app-photos-list-commercial.component.html',
+  styleUrls: ['./app-photos-list-commercial.component.scss'],
 })
-export class PhotosListComponent extends BasePage implements OnInit {
+export class PhotosListCommercialComponent extends BasePage implements OnInit {
   @Input() disabled: boolean = true;
   @Input() origin: number;
   @Input()
@@ -77,13 +69,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
           if (response && response.length > 0) {
             console.log('Entro');
             this.errorMessage = null;
-          } else {
-            this.validRastrer();
           }
         },
-        error: err => {
-          this.validRastrer();
-        },
+        error: err => {},
       });
     }
   }
@@ -123,21 +111,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
   }
 
   showHistoric() {
-    const modalConfig = {
+    /* const modalConfig = {
       ...MODAL_CONFIG,
       initialState: {
         goodNumber: this.goodNumber + '',
       },
     };
-    this.modalService.show(PhotosHistoricComponent, modalConfig);
-  }
-
-  private validRastrer() {
-    if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
-      // this.userPermisions = false;
-      this.errorMessage =
-        'Solo el usuario SERA tiene permisos de escritura desde el rastreador';
-    }
+    this.modalService.show(PhotosHistoricComponent, modalConfig); */
   }
 
   private getSegPantalla() {
@@ -156,14 +136,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
       );
   }
 
-  disabledDeletePhotos() {
-    return this.disabledDeleteAllPhotos() || this.filesToDelete.length === 0;
-  }
-
-  disabledDeleteAllPhotos() {
-    return this.files.length < 1 || this.errorMessage;
-  }
-
   selectFile(image: string, event: Event) {
     const target = event.target as HTMLInputElement;
     const checked = target.checked;
@@ -174,159 +146,21 @@ export class PhotosListComponent extends BasePage implements OnInit {
     }
   }
 
-  private async getData() {
+  private getData() {
     this.files = [];
-    // debugger;
-    // this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
-        next: async response => {
+        next: response => {
           if (response) {
-            console.log(response);
-            // debugger;
-            if (response) {
-              this.files = [...response];
-              // const index = last.indexOf('F');
-              // this.lastConsecutive += +last.substring(index + 1, index + 5);
-              const pufValidaUsuario = await this.pufValidaUsuario();
-              if (pufValidaUsuario === 1) {
-                this.errorMessage = null;
-              } else {
-                const noActa = await this.pufValidaProcesoBien();
-                if (noActa) {
-                  this.errorMessage =
-                    'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
-                    noActa +
-                    ' y esta se encuentra cerrada';
-                  console.log(this.errorMessage);
-                } else {
-                  this.errorMessage = null;
-                }
-              }
-            }
+            this.files = [...response];
           }
         },
       });
   }
 
-  async confirmDelete(all = false) {
-    // if (this.disabledDeletePhotos()) return;
-    if (all) {
-      this.filesToDelete = [...this.files];
-    }
-    if (this.filesToDelete.length < 1) {
-      this.alert(
-        'warning',
-        'Advertencia',
-        'Debes seleccionar mínimo un archivo'
-      );
-      return;
-    }
-
-    const result = await this.alertQuestion(
-      'warning',
-      'Advertencia',
-      all
-        ? '¿Estás seguro que desea eliminar todas las fotos?'
-        : '¿Estás seguro que desea eliminar las fotos seleccionadas?'
-    );
-    if (result.isConfirmed) {
-      this.deleteSelectedFiles();
-    }
-  }
-
-  private async deleteSelectedFiles() {
-    this.errorImages = [];
-    const results = await Promise.all(
-      this.filesToDelete.map(async filename => {
-        const index = filename.indexOf('F');
-        const finish = filename.indexOf('.');
-        return await firstValueFrom(
-          this.deleteFile(
-            +filename.substring(index + 1, finish),
-            filename
-          ).pipe(debounceTime(500))
-        );
-      })
-    );
-    if (this.errorImages.length === this.filesToDelete.length) {
-      this.alert('error', 'ERROR', 'No se pudieron eliminar las fotos');
-    } else {
-      if (this.errorImages.length > 0) {
-        this.alert(
-          'warning',
-          'Fotos Eliminadas',
-          'pero no se puediero eliminar las siguientes fotos ' +
-            this.errorImages.toString()
-        );
-      } else {
-        this.alert(
-          'success',
-          'Eliminación de Fotos',
-          'Se Eliminaron las Fotos Correctamente'
-        );
-      }
-    }
-    this.filesToDelete = [];
-    this.service.deleteEvent.next(true);
-    this.getData();
-    // const obs = this.filesToDelete.map(filename => {
-    //   const index = filename.indexOf('F');
-    //   const finish = filename.indexOf('.');
-    //   return this.deleteFile(
-    //     +filename.substring(index + 1, finish),
-    //     filename
-    //   ).pipe(debounceTime(500));
-    // });
-    // concat(...obs)
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe({
-    //     complete: () => {
-    //       // this.files = [];
-    //       this.alert(
-    //         'success',
-    //         'Eliminación de Fotos',
-    //         'Se eliminaron las fotos correctamente'
-    //       );
-    //       this.filesToDelete = [];
-    //       this.service.deleteEvent.next(true);
-    //       this.getData();
-    //     },
-    //     error: err => {
-    //       this.alert(
-    //         'error',
-    //         'Imagenes sin eliminar',
-    //         this.errorImages.toString()
-    //       );
-    //       if (this.errorImages.length < this.filesToDelete.length) {
-    //         this.filesToDelete = [];
-    //         this.service.deleteEvent.next(true);
-    //         this.getData();
-    //       }
-    //     },
-    //   });
-  }
-
-  private deleteFile(consecNumber: number, filename: string) {
-    return this.filePhotoService
-      .deletePhoto(this.goodNumber + '', consecNumber)
-      .pipe(
-        catchError(error => {
-          // this.alert(
-          //   'error',
-          //   'Error',
-          //   'Ocurrió un error al eliminar la imagen'
-          // );
-          this.errorImages.push(filename);
-          return of(null);
-        })
-      );
-  }
-
   openFileUploader() {
-    // this.filePhotoService.consecNumber = this.lastConsecutive;
     const config = {
       ...MODAL_CONFIG,
       initialState: {
@@ -334,7 +168,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
-        titleFinishUpload: 'Imagenes Cargadas Correctamente',
+        titleFinishUpload: 'Imagenes cargadas correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
           console.log(refresh);
@@ -354,7 +188,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         service: this.filePhotoSaveZipService,
         identificator: this.goodNumber + '',
         multiple: false,
-        titleFinishUpload: 'Imagenes Cargadas Correctamente',
+        titleFinishUpload: 'Imagenes cargadas correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
           console.log(refresh);

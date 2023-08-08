@@ -220,12 +220,14 @@ export class GoodProcessService extends HttpService {
     return this.post(GoodProcessPoints.ProcedureStatusGood, data);
   }
 
-  pupReconcilied(body: {
-    goodNumber: number[];
-    arrayStatus: string[];
-    dateMasiv: Date | string;
-  },
-  params?: _Params) {
+  pupReconcilied(
+    body: {
+      goodNumber: number[];
+      arrayStatus: string[];
+      dateMasiv: Date | string;
+    },
+    params?: _Params
+  ) {
     return this.post('application/pup-reconcilied', body);
   }
 
