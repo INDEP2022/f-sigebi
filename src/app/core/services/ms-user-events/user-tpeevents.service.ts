@@ -23,4 +23,11 @@ export class UserTpeeventsService extends HttpService {
   remove(body: Partial<any>) {
     return this.delete(this.route.UserEvents, body);
   }
+
+  getByEventTypeAndUser(body: {
+    idTpevent: string | number;
+    username: string;
+  }) {
+    return this.post(`${this.route.UserEvents}/findById`, body);
+  }
 }
