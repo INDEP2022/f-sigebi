@@ -234,8 +234,8 @@
                     [searchable]="false"
                     class="form-control"
                     [clearable]="false">
-                    <ng-option value="MUE">MUEBLE</ng-option>
-                    <ng-option value="INM">INMUEBLE</ng-option>
+                    <ng-option value="MUE">CERRADA</ng-option>
+                    <ng-option value="INM">ABIERTA</ng-option>
                   </ng-select>
                 </form-field>
                 <!--<form-field [control]="actForm.get('status')" label="Estado">
@@ -441,14 +441,30 @@
             </div>
           </div>
         </form>
-        <button
-          class="btn btn-primary active btn-sm m-2"
-          (click)="openModalApplicant('nuevo')">
-          Guardar Folio
-        </button>
-        <button class="btn btn-info active btn-sm" (click)="openScannerPage()">
-          Escanear <i class="bx bx-file bx-sm float-icon"></i>
-        </button>
+        <div class="row mt-5">
+          <div class="ch-content">
+            <button
+              class="btn btn-primary active btn-sm m-2"
+              (click)="openModalApplicant('nuevo')">
+              Guardar Folio
+            </button>
+            <button
+              class="btn btn-info active btn-sm"
+              (click)="openScannerPage()">
+              Escanear <i class="bx bx-file bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-info active btn-sm"
+              (click)="validationAct()">
+              Validacion <i class="bx bx-file bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-info active btn-sm"
+              (click)="viewPictures($event)">
+              Folio <i class="bx bx-file bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
         <div class="row mt-5">
           <app-divider class=""></app-divider>
         </div>
