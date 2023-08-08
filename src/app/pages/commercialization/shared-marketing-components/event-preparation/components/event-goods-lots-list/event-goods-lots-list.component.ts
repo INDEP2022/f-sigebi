@@ -273,6 +273,7 @@ export class EventGoodsLotsListComponent
       }),
       tap(res => {
         this.loading = false;
+        this.alert('success', 'Error', 'El Bien ha sido Eliminado');
         this.updateMand().subscribe();
         this.afterRemoveGoods(good).subscribe();
       })
@@ -281,10 +282,9 @@ export class EventGoodsLotsListComponent
 
   /**ACTU_MANDATO */
   updateMand() {
-    this.loading = true;
     return this.lotService
       .updateMandate({
-        pGood: 0,
+        pGood: this.parameters.pDirection == 'M' ? 0 : 1,
         pLot: 1,
         lotId: this.lot.id,
       })
