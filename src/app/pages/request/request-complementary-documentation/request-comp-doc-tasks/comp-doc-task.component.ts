@@ -19,6 +19,7 @@ export abstract class CompDocTasksComponent extends BasePage {
   protected abstract resultVisits: boolean;
   protected abstract viewSelectedGoods: boolean;
   protected abstract resultEyeVisitReport: boolean;
+  protected abstract makeResultPaperReport: boolean;
   protected abstract dictumValidate: boolean;
   protected abstract notifyReport: boolean;
   protected abstract saveRequest: boolean;
@@ -222,6 +223,7 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.saveRequest = true;
         this.resultVisits = true;
         this.turnReq = true;
+        this.makeResultPaperReport = true;
         break;
       case 'RERegistroDocComplementaria':
         this.regDocForm = true;
@@ -317,5 +319,6 @@ export abstract class CompDocTasksComponent extends BasePage {
     this.turnReq = false;
     this.createReport = false;
     this.rejectReq = false;
+    this.makeResultPaperReport = false;
   }
 }
