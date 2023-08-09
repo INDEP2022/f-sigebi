@@ -87,11 +87,11 @@ export class PaymentService extends HttpService {
     );
   }
 
-  getComerPagoRefVirt(params?: string){
-    return this.get('comer-payments-ref-virt', params)
+  getComerPagoRefVirt(params?: string) {
+    return this.get('comer-payments-ref-virt', params);
   }
 
-  postComerPagoRefVirt(body: IComerPaymentsRefVir){
-    return this.post('comer-payments-ref-virt', body)
+  postComerPagoRefVirt(body: IComerPaymentsRefVir) {
+    return this.post('comer-payments-ref-virt', body);
   }
 }
