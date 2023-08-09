@@ -24,9 +24,9 @@
               </div>
             </tab>
             <tab heading="Ayuda">
-              <div class="card-body">
+              <div class="card-body" style="height: max-content">
                 <form-field
-                  class="col-md-12 col-sm-12 col-12 p-2"
+                  class="form-control"
                   [control]="helpForm.get('description')"
                   label="Ayuda">
                   <textarea
@@ -35,7 +35,8 @@
                     formControlName="description"
                     rows="10"
                     cols="30"
-                    readonly></textarea>
+                    readonly
+                    resize="none"></textarea>
                 </form-field>
               </div>
             </tab>

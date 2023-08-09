@@ -15,39 +15,7 @@
         </div>
       </div>
     </div> -->
-    <div class="row m-3 flex-row justify-content-center">
-      <div class="col-md-4">
-        <div class="d-flex align-items-center">
-          <label for="" class="col-form-label"
-            >Fecha de Elaboración:&nbsp;&nbsp;</label
-          >
-          <div>{{ time | date: 'hh:mm' }}</div>
-          <div>{{ dateElaboration || '00/00/0000' }}</div>
-        </div>
-      </div>
-      <div class="col-md-8 text-end">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="searchExpedient()">
-          <i class="bx bx-list-plus bx-sm float-icon"></i>
-        </button>
-        <!-- <button
-          type="button"
-          class="btn btn-primary active btn-sm mr-3"
-          (click)="searchExpedient()">
-          Buscar Expediente
-          <i class="bx bx-search bx-sm float-icon"></i>
-        </button>
-        <button
-          (click)="cleanForm()"
-          type="button"
-          class="btn btn-danger active btn-sm mr-3">
-          Limpiar
-          <i class="fa fa-eraser" aria-hidden="true"></i>
-        </button> -->
-      </div>
-    </div>
+
     <div
       class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
       *ngIf="loadingExpedient">
@@ -58,11 +26,22 @@
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-12">
             <div class="card">
+              <div class="row m-3 flex-row justify-content-end">
+                <div class="col-md-8 text-end">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="searchExpedient()">
+                    <i class="bx bx-list-plus bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
               <div class="card-body mt-4 mb-4">
                 <div class="form-group row p-4">
                   <div class="col-md-3">
@@ -79,6 +58,12 @@
                     >
                     <div>{{ aprevia || '' }}</div>
                   </div>
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label"
+                      >Fecha de Elaboración:</label
+                    >
+                    <div>{{ dateElaboration || '00/00/0000' }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -86,7 +71,6 @@
         </div>
       </div>
     </div>
-
     <div class="row m-3">
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
