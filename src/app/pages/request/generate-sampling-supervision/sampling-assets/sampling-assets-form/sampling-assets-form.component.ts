@@ -103,6 +103,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   //private domicilieService = inject(DomicileService);
   private domicilieService = inject(GoodDomiciliesService);
+  //private goodsqueryService = inject(GoodsQueryService)
   private authService = inject(AuthService);
   private goodService = inject(GoodService);
 

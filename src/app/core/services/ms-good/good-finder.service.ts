@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import { GoodFinderEndpoint } from './../../../common/constants/endpoints/ms-good-endpoints';
@@ -20,7 +21,7 @@ export class GoodFinderService extends HttpService {
   }
 
   goodFinder2(name: string, params?: _Params) {
-    const route = `${GoodFinderEndpoint.GoodQuery}?filter.description=$ilike:${name}`;
+    const route = `${GoodFinderEndpoint.GoodQuery}?filter.goodDescription=$ilike:${name}`;
     return this.get(route, params);
   }
 
@@ -55,5 +56,8 @@ export class GoodFinderService extends HttpService {
 
   getAll2(params?: string) {
     return this.get<IListResponse<IGood>>(`good-query?${params}`);
+  }
+  getAll3(params?: ListParams) {
+    return this.get<IListResponse<IGood>>(`good-query`, params);
   }
 }

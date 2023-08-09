@@ -30,7 +30,6 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.changePagin();
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -64,7 +63,6 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
       next: response => {
         this.loading = false;
         this.data = response.data;
-        this.data2.load(this.data);
         this.totalItems = response.count;
       },
       error: error => {

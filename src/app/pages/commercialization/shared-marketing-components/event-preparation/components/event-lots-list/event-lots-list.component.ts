@@ -227,7 +227,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     this.loader.load = true;
     return this.lotService
       .updateMandate({
-        pGood: 0,
+        pGood: this.parameters.pDirection == 'M' ? 0 : 1,
         pLot: 1,
         lotId: this.lotSelected.id,
       })

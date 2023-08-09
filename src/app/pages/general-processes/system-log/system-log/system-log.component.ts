@@ -16,6 +16,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IBinnacle } from 'src/app/core/models/ms-audit/binnacle.model';
 import { Registers } from 'src/app/core/models/ms-audit/registers.model';
 import { ITableField } from 'src/app/core/models/ms-audit/table-field.model';
 import { ITableLog } from 'src/app/core/models/ms-audit/table-log.model';
@@ -45,6 +46,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
   dynamicRegisters: any[] = [];
   totalLogs: number = 0;
   totalDynamic: number = 0;
+  iBinnacles: IBinnacle[];
   filterFields: ITableField[] = [];
   registerNum: number = null;
   columnFilters: any = [];
@@ -98,32 +100,51 @@ export class SystemLogComponent extends BasePage implements OnInit {
     //     )
     //   )
     //   .subscribe();
+    // this.tableLogs
+    //   .onChanged()
+    //   .pipe(takeUntil(this['$unSubscribe']))
+    //   .subscribe(change => {
+    //     if (change.action === 'filter') {
+    //       let filters = change.filter.filters;
+    //       filters.map((filter: any) => {
+    //         let field = '';
+    //         let searchFilter = SearchFilter.ILIKE;
+    //         switch (filter.field) {
+    //           case 'destable':
+    //             searchFilter = SearchFilter.ILIKE;
+    //             break;
+    //           default:
+    //             searchFilter = SearchFilter.ILIKE;
+    //             break;
+    //         }
+    //         if (filter.search !== '') {
+    //           console.log(
+    //             (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
+    //           );
+    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+    //         } else {
+    //           delete this.columnFilters[field];
+    //         }
+    //         console.log(this.columnFilters);
+    //       });
     this.tableLogs
       .onChanged()
-      .pipe(takeUntil(this['$unSubscribe']))
+      .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = '';
-            let searchFilter = SearchFilter.ILIKE;
-            switch (filter.field) {
-              case 'destable':
-                searchFilter = SearchFilter.ILIKE;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            filter.field == 'destable'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
-            console.log(this.columnFilters);
           });
           this.params = this.pageFilter(this.params);
           this.getTableLogs();

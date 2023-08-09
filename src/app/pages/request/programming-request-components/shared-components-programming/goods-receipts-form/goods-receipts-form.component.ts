@@ -74,7 +74,7 @@ export class GoodsReceiptsFormComponent extends BasePage implements OnInit {
                       response.data[0].stateConservationName = 'MALO';
                     }
                     goodsGuard.push(response.data[0]);
-                    console.log('goodsGuard', goodsGuard);
+
                     this.goodsReceiptGuards.load(goodsGuard);
                     this.totalItems = goodsGuard.length;
                     this.loading = false;
