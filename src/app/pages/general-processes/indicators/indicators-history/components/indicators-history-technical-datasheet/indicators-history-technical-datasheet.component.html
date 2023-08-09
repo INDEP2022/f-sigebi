@@ -1,11 +1,21 @@
-<app-card [header]="true">
+<app-modal>
   <div class="ch-content" header>
-    <h5 class="title">Ordenes de Servicio</h5>
+    <h5 class="modal-title">Ordenes de Servicio</h5>
   </div>
   <div body>
+    <div class="d-flex justify-content-end">
+      <div class="mb-3">
+        <button class="btn btn-primary btn-sm active mr-3" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
     <div>
       <div>
-        <app-card-history-technical></app-card-history-technical>
+        <app-card-history-technical
+          [statusEadmi]="
+            indicatorsHistoryDataSheet
+          "></app-card-history-technical>
       </div>
       <div class="d-inline-block mb-3">
         <app-columns-select [(settings)]="settings"></app-columns-select>
@@ -21,4 +31,4 @@
       </div>
     </div>
   </div>
-</app-card>
+</app-modal>

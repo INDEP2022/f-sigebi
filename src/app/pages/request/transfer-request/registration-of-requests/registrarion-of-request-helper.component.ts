@@ -407,6 +407,20 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
               );
               break;
+            } else if (realEstate.pffDate) {
+              if (
+                idTrandference == 120 ||
+                idTrandference == 752 ||
+                idTrandference == 942
+              ) {
+                tipoRelInmueble = true;
+                this.message(
+                  'warning',
+                  `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                  'El campo "Fecha de Paso al Fisco" en el Bien Inmueble esta vacio.'
+                );
+                break;
+              }
             }
             // }
           } else if (Number(good.goodTypeId) === 2) {
@@ -439,7 +453,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Modelo" en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.axesNumber === null) {
+            } /*else if (good.axesNumber === null) {
               //numero de ejes
               tipoRelVehiculo = true;
               this.message(
@@ -457,7 +471,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Número de Motor" en Información del Vehículo esta vacio.'
               );
               break;
-            } /* else if (good.origin === null) {
+            } */
+            /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',

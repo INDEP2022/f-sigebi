@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { BsModalRef } from 'ngx-bootstrap/modal';
@@ -47,7 +47,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
   disabledSend: boolean = true;
   valInitClient: boolean = false;
   idPayment: string = '';
-
+  valScroll: boolean;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -61,11 +62,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
+  async ngOnInit() {
+    await this.prepareForm();
   }
 
-  private prepareForm() {
+  async prepareForm() {
     this.form = this.fb.group({
       paymentId: [null],
       reference: [
@@ -93,7 +94,8 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       reconciled: [null, Validators.pattern(STRING_PATTERN)],
       appliedTo: [null],
       clientId: [null],
-      typeSatId: [null],
+      typeSatId: [null, this.getValidators()],
+      affectationDate: [null],
     });
 
     if (this.data != null) {
@@ -126,6 +128,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         // clientId: this.data.idAndName,
         lotId: this.data.lotId,
         typeSatId: this.data.typeSatId,
+        affectationDate: this.data.affectationDate,
       });
 
       this.form.get('clientId').setValue(this.data.idAndName);
@@ -140,6 +143,37 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
       // }
     } else {
       this.valInitClient = true;
+    }
+
+    // const control = this.form.get('typeSatId');
+
+    // control.valueChanges.subscribe((edad: number) => {
+    //   if (this.valScroll) {
+    //     control.setValidators([Validators.required]);
+    //   } else {
+    //     control.setValidators([]);
+    //   }
+
+    //   control.updateValueAndValidity();
+    // });
+
+    if (this.valScroll) {
+      this.form.get('typeSatId').markAsTouched();
+      setTimeout(() => {
+        this.performScroll();
+      }, 500);
+    }
+  }
+
+  // Función para obtener los Validators condicionales
+  getValidators() {
+    const validators: any = [];
+
+    if (this.valScroll) {
+      validators.push(Validators.required);
+      return validators;
+    } else {
+      return validators;
     }
   }
 
@@ -457,5 +491,13 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         this.clients = new DefaultSelect();
       },
     });
+  }
+  performScroll() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
   }
 }

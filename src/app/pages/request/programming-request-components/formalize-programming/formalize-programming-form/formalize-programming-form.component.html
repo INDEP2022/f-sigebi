@@ -75,7 +75,7 @@
           <div class="form-group">
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
@@ -83,7 +83,7 @@
           <div class="form-group">
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
             <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -312,7 +312,9 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsReceipt"
-                [source]="receipts">
+                (userRowSelect)="receiptResGood($event.data)"
+                [source]="receipts"
+                (edit)="showReceipt($event.data)">
               </ng2-smart-table>
             </div>
 
@@ -340,11 +342,21 @@
           <!-- RESGUARDO -->
           <tab [heading]="headingGuard">
             <div class="row pt-4">
-              <div class="d-flex justify-content-end">
+              <ng2-smart-table
+                [attr.class]="'table-bordered pt-3'"
+                [settings]="settingsReceiptClose"
+                [source]="receiptGuardGood"
+                (userRowSelect)="receiptGuardSelect($event.data)"
+                (edit)="showReceipt($event.data)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsReceipts"
+                [totalItems]="totalItemsReceipt"></app-pagination>
+
+              <div class="d-flex justify-content-end pt-5">
                 <app-columns-select
                   [(settings)]="settingsGuardGoods"></app-columns-select>
               </div>
-
               <div class="row pt-4 table-container">
                 <div class="col-md-12 table-responsive">
                   <div [class]="loading ? 'table-loading' : ''">
@@ -375,7 +387,18 @@
           <!-- ALMACEN -->
           <tab [heading]="headingWarehouse">
             <div class="row pt-4">
-              <div class="d-flex justify-content-end">
+              <ng2-smart-table
+                [attr.class]="'table-bordered pt-3'"
+                [settings]="settingsReceiptWarehouseClose"
+                [source]="receiptWarehouseGood"
+                (userRowSelect)="receiptWarehouseSelect($event.data)"
+                (edit)="showReceipt($event.data)">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="paramsReceiptsWarehouse"
+                [totalItems]="totalItemsReceiptWarehouse"></app-pagination>
+
+              <div class="d-flex justify-content-end pt-5">
                 <app-columns-select
                   [(settings)]="settingsWarehouseGoods"></app-columns-select>
               </div>
