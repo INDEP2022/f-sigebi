@@ -18,6 +18,7 @@
           <div class="col-6">
             <button
               (click)="openModalCreate()"
+              [disabled]="!haveParams"
               type="button"
               tooltip="Nuevo"
               containerClass="tooltip-style"
@@ -33,7 +34,9 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-12" [class]="selectedConcept ? '' : 'notAdd'">
+          <div
+            class="col-md-12"
+            [class]="conceptId && !readonly ? '' : 'notAdd'">
             <div [class]="loading ? 'table-loading' : ''">
               <ng2-smart-table
                 [attr.class]="'table-bordered table-responsive'"

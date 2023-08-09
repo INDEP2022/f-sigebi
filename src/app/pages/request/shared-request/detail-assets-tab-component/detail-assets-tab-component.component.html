@@ -251,20 +251,20 @@
               </form-field>
             </div>
             <div class="col-md-5">
-              <form-check label="Aval&uacute;o" for="appraisal">
+              <form-field
+                [control]="detailAssets?.get('uniqueKey')"
+                label="Clave Única">
                 <input
-                  id="appraisal"
-                  type="checkbox"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="appraisal"
-                  (change)="handleAppraisalEvent($event)"
-                  [disabled]="disableDuplicity" />
-              </form-check>
+                  type="text"
+                  class="form-control"
+                  formControlName="uniqueKey"
+                  [readOnly]="true" />
+              </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div
-              class="col-md-3"
+              class="col-md-5"
               *ngIf="otherAssets === true || manejeAssets === true">
               <form-check label="Cumple Norma" for="compliesNorm">
                 <input
@@ -274,6 +274,17 @@
                   [(ngModel)]="complyNorm"
                   (change)="handleCumpliesNormEvent($event)"
                   [disabled]="isGoodInfReadOnly" />
+              </form-check>
+            </div>
+            <div class="col-md-5">
+              <form-check label="Aval&uacute;o" for="appraisal">
+                <input
+                  id="appraisal"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="appraisal"
+                  (change)="handleAppraisalEvent($event)"
+                  [disabled]="disableDuplicity" />
               </form-check>
             </div>
           </div>
