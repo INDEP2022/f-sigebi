@@ -20,7 +20,7 @@ export class FlyerSubjectCatalogModelComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Tipo de volantes';
+  title: string = 'Tipo de Volante';
   edit: boolean = false;
 
   affairTypeForm: ModelForm<IAffairType>;

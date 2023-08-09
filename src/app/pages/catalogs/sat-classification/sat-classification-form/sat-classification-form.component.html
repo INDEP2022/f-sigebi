@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="satClassificationForm">
@@ -8,12 +8,11 @@
         <div class="col-md-12">
           <form-field
             [control]="satClassificationForm.get('nombre_clasificacion')"
-            label="Nombre clasificaci&oacute;n">
+            label="Nombre Clasificaci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="nombre_clasificacion"
-              oninput="if(this.value.length > 30) this.value = this.value.slice(0, 30);" />
+              formControlName="nombre_clasificacion" />
           </form-field>
         </div>
       </div>
@@ -22,11 +21,7 @@
           <form-field
             [control]="satClassificationForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="version"
-              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>

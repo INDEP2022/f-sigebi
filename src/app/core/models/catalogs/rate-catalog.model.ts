@@ -1,6 +1,6 @@
 export interface IRateCatalog {
   keyRate: string;
-  year: string;
+  year: number;
   month: string;
   coinType: string;
   rate: string;

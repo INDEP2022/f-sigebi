@@ -139,7 +139,7 @@ export class DocCompensationSatListComponent
       error: err => {
         this.alert(
           'warning',
-          'Documento resarcimiento SAT',
+          'Documento Resarcimiento SAT',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

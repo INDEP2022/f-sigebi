@@ -19,7 +19,10 @@ import { DatePipe } from '@angular/common';
 import { LocalDataSource } from 'ng2-smart-table';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IAuthority2 } from 'src/app/core/models/catalogs/authority.model';
-import { IStation2 } from 'src/app/core/models/catalogs/station.model';
+import {
+  IStation2,
+  IStation3,
+} from 'src/app/core/models/catalogs/station.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -34,6 +37,8 @@ import { CatStationModalComponent } from '../cat-station-modal/cat-station-modal
 export class CatTransferentComponent extends BasePage implements OnInit {
   columns: ITransferente[] = [];
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
 
   transferentList: ITransferente[] = [];
@@ -53,7 +58,8 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
-
+  columnFilters1: any = [];
+  columnFilters2: any = [];
   settings2;
   settings3;
 
@@ -213,25 +219,91 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.stationList = [];
     this.transferents = event.data;
+
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'stationName':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                console.log(field);
+                break;
+              case 'keyState':
+                searchFilter = SearchFilter.EQ;
+                console.log(field);
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters1[field]);
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getStationByTransferent1(this.transferents);
+        }
+      });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getStationByTransferent(idTrans.id));
+      .subscribe(() => this.getStationByTransferent1(idTrans.id));
   }
 
   //trae las emisoras de un transferente seleccionado
-  getStationByTransferent(id?: number) {
+  getStationByTransferent1(id?: any) {
     this.loading2 = true;
     const idTrans = { ...this.transferents };
-    this.stationService
-      .getStationByTransferent(idTrans.id, this.params2.getValue())
-      .subscribe({
-        next: response => {
-          this.stationList = response.data;
-          this.totalItems2 = response.count;
-          this.loading2 = false;
-        },
-        error: error => (this.showNullRegister1(), (this.loading2 = false)),
-      });
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
+
+    this.stationService.getStationByTransferent(idTrans.id, params2).subscribe({
+      next: response => {
+        this.stationList = response.data;
+        this.totalItems2 = response.count;
+        this.data1.load(response.data);
+        this.data1.refresh();
+        this.loading2 = false;
+      },
+      error: error => (this.loading2 = false),
+    });
+  }
+
+  getStationByTransferent(id?: any) {
+    this.loading2 = true;
+    const idTrans = { ...this.transferents };
+    let params2 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
+
+    this.stationService.getStationByTransferent(idTrans.id, params2).subscribe({
+      next: response => {
+        this.stationList = response.data;
+        this.totalItems2 = response.count;
+        this.data1.load(response.data);
+        this.data1.refresh();
+        this.loading2 = false;
+      },
+      error: error => (this.showNullRegister1(), (this.loading2 = false)),
+    });
   }
 
   //Modal para editar las emisoras
@@ -253,30 +325,34 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   }
 
   //msj de alerta al borrar emisora
-  showDeleteAlert2(station?: IStation2) {
+  showDeleteAlert2(station?: IStation3) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete2(station.id);
+        const idTrans = { ...this.transferents };
+        console.log(station.id);
+        this.delete2(station);
       }
     });
   }
 
   //método para borrar emisora
-  delete2(id: number) {
-    this.stationService.remove(id).subscribe({
+  delete2(id: IStation3) {
+    this.stationService.remove3(id).subscribe({
       next: () => {
-        this.getStationByTransferent();
-        this.alert('success', 'Borrado', '');
+        this.getStationByTransferent1();
+        this.data1.load([]);
+        this.loading2 = false;
+        this.alert('success', 'Emisora', 'Borrada Correctamente');
       },
       error: err => {
         this.alert(
           'warning',
           'Emisoras',
-          'No se puede eliminar debe eliminar sus AUTORIDADES'
+          'No se puede eliminar debe eliminar sus Autoridades'
         );
       },
     });
@@ -284,13 +360,69 @@ export class CatTransferentComponent extends BasePage implements OnInit {
 
   //Selecciona fila de tabla de emisoras
   rowsSelected2(event: any) {
-    const idEmi = { ...this.stations };
+    const idEmi = { ...this.authoritys };
     this.totalItems3 = 0;
     this.authorityList = [];
     this.stations = event.data;
+    this.authoritys = event.data;
+
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'idAuthority':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'cveUnique':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'idCity':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'authorityName':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'idStation':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'idTransferer':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'codeStatus':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters2[field]);
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.params3 = this.pageFilter(this.params3);
+          this.getAuthorityByTransferent1(this.stations);
+        }
+      });
     this.params3
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAuthorityByTransferent(idEmi.id));
+      .subscribe(() => this.getAuthorityByTransferent(idEmi.idAuthority));
   }
 
   //Muestra información de la fila seleccionada de Emisoras
@@ -300,22 +432,48 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   }
 
   //Trae lista de autoridades por transferente
-  getAuthorityByTransferent(id?: number) {
+  getAuthorityByTransferent(id?: any) {
     this.loading3 = true;
     const idEmi = { ...this.stations };
     const idTrans = { ...this.transferents };
+    let params3 = {
+      ...this.params3.getValue(),
+      ...this.columnFilters2,
+    };
     this.authorityService
-      .getAuthorityByTransferent(idEmi.id, idTrans.id, this.params3.getValue())
+      .getAuthorityByTransferent(idEmi.id, idTrans.id, params3)
       .subscribe({
         next: response => {
           this.authorityList = response.data;
           this.totalItems3 = response.count;
+          this.data2.load(response.data);
           this.loading3 = false;
         },
         error: error => (this.showNullRegister2(), (this.loading3 = false)),
       });
   }
 
+  getAuthorityByTransferent1(id?: any) {
+    this.loading3 = true;
+    const idEmi = { ...this.stations };
+    const idTrans = { ...this.transferents };
+    let params3 = {
+      ...this.params3.getValue(),
+      ...this.columnFilters2,
+    };
+    this.authorityService
+      .getAuthorityByTransferent(idEmi.id, idTrans.id, params3)
+      .subscribe({
+        next: response => {
+          this.authorityList = response.data;
+          this.totalItems3 = response.count;
+          this.data2.load(response.data);
+          this.data2.refresh();
+          this.loading3 = false;
+        },
+        error: error => (this.loading3 = false),
+      });
+  }
   // modal para editar autoridades
   openForm3(authority?: IAuthority2) {
     const idAuth = { ...this.stations };
@@ -342,16 +500,21 @@ export class CatTransferentComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete3(authority.idAuthority, authority);
-        this.alert('success', 'Autoridad', `Borrado`);
+        this.getAuthorityByTransferent1();
         //Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   //Método para borrar las autoridades
-  delete3(id?: number, authority?: IAuthority2) {
-    this.authorityService.remove2(id, authority).subscribe({
-      next: () => this.getAuthorityByTransferent(),
+  delete3(idAuthority?: number, authority?: IAuthority2) {
+    this.authorityService.remove2(idAuthority, authority).subscribe({
+      next: () => {
+        this.alert('success', 'Autoridad', `Borrado Correctamente`);
+        this.getAuthorityByTransferent1();
+        this.data2.load([]);
+        this.loading3 = false;
+      },
     });
   }
 
@@ -359,7 +522,7 @@ export class CatTransferentComponent extends BasePage implements OnInit {
   showNullRegister1() {
     this.alertQuestion(
       'warning',
-      'Transferente sin emisoras',
+      'Transferente sin Emisoras',
       '¿Desea agregarlas ahora?'
     ).then(question => {
       if (question.isConfirmed) {

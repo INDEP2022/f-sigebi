@@ -48,12 +48,27 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'noType' ||
-            filter.field == 'noSubType'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'noType':
+                field = `filter.${filter.field}.nameGoodType`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'noSubType':
+                field = `filter.${filter.field}.nameSubtypeGood`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -75,7 +90,7 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.goodSsubtypeService.getAll(params).subscribe({
+    this.goodSsubtypeService.getAll1(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count || 0;
@@ -83,7 +98,12 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -122,12 +142,12 @@ export class GoodSsubtypesListComponent extends BasePage implements OnInit {
     this.goodSsubtypeService.removeByIds(ids).subscribe({
       next: () => {
         this.getGoodSsubtypes(),
-          this.alert('success', 'Subsubtipo bien', 'Borrado Correctamente');
+          this.alert('success', 'Subsubtipo Bien', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(
           'warning',
-          'Subtipo Tipo',
+          'Subsubtipo Bien',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

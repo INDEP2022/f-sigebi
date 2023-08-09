@@ -16,7 +16,7 @@ export class CatOfSeparatorsDocumentsModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'SEPARADORES A DOCUMENTOS';
+  title: string = 'Separador a Documento';
   edit: boolean = false;
   separatorsDocuments: SeparatorsDocuments;
   separatorsDocumentsModalForm: ModelForm<SeparatorsDocuments>;
@@ -79,7 +79,10 @@ export class CatOfSeparatorsDocumentsModalComponent
       .create(this.separatorsDocumentsModalForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.alert('error', 'El valor CVE.Separador, ya fue registrado', '');
+          this.loading = false;
+        },
       });
   }
   update() {

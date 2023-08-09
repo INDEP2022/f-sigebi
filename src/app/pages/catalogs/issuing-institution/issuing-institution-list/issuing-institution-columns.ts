@@ -1,11 +1,11 @@
 import { ICitys } from 'src/app/core/models/catalogs/issuing-institution.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 export const ISSUING_INSTITUTION_COLUMNS = {
-  id: {
+  /*id: {
     title: 'No.',
     type: 'number',
     sort: false,
-  },
+  },*/
   numClasif: {
     title: 'No. Clasificación',
     type: 'number',

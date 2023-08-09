@@ -21,7 +21,7 @@ export class ModalNumeraryParameterizationComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Parametrización de numerario';
+  title: string = 'Parametrización de Numerario';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
   categories = new DefaultSelect<INumeraryCategories>();
@@ -73,6 +73,10 @@ export class ModalNumeraryParameterizationComponent
     this.edit ? this.update() : this.create();
   }
   create() {
+    if (this.form.controls['typeProceeding'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.numeraryParameterizationAutomService
       .create(this.form.value)

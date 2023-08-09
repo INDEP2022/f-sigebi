@@ -74,8 +74,14 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noRegister: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
+      version: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
+      ],
     });
     if (this.goodType != null) {
       this.edit = true;
