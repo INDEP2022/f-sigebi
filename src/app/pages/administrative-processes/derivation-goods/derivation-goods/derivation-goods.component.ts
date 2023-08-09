@@ -762,7 +762,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           err => {
             this.alert(
               'error',
-              'No Bien Hijo',
+              'No. Bien Hijo',
               'Error Inesperado, Por Favor Intentelo Nuevamente'
             );
           }
