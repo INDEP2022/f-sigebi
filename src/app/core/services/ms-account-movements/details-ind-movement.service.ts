@@ -12,21 +12,16 @@ export class DetailsIndMovementService extends HttpService {
     super();
     this.microservice = AccountmvmntEndpoint.BasePath;
   }
-  getAll(
-    params: _Params,
-    body: { goodNumber: string; expedientNumber: number }
-  ) {
-    return this.post<IListResponse<IAccountDetailInd>>(
+  getAll(params: _Params) {
+    return this.get<IListResponse<IAccountDetailInd>>(
       AccountmvmntEndpoint.getDetailsInd,
-      body,
       params
     );
   }
 
   getAllFilterSelf(self?: DetailsIndMovementService, params?: _Params) {
-    return self.post<IListResponse<IAccountDetailInd>>(
+    return self.get<IListResponse<IAccountDetailInd>>(
       AccountmvmntEndpoint.getDetailsInd,
-      {},
       params
     );
   }
