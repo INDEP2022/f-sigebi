@@ -86,6 +86,7 @@ export class SelectListFilteredModalComponent
   placeholder: string = 'Buscar...'; //Input opcional para establecer el mensaje del input de busqueda
 
   columnFilters: any = [];
+  sortFilter: any = [];
   // equalFilters: string[] = ['id'];
   ilikeFilters: string[] = ['description'];
   dateFilters: string[] = [];
@@ -106,6 +107,7 @@ export class SelectListFilteredModalComponent
         takeUntil(this.$unSubscribe)
       )
       .subscribe(change => {
+        console.log(change);
         if (change.action === 'filter') {
           let haveFilter = false;
           let filters = change.filter.filters;
@@ -142,6 +144,12 @@ export class SelectListFilteredModalComponent
           if (haveFilter) {
             this.params.value.page = 1;
           }
+          this.getData();
+        }
+        if (change.action === 'sort' && change.sort) {
+          let sort = change.sort[0];
+          this.sortFilter['sortBy'] =
+            sort.field + ':' + (sort.direction + '').toUpperCase();
           this.getData();
         }
       });
@@ -232,6 +240,7 @@ export class SelectListFilteredModalComponent
     return {
       ...this.params.getValue(),
       ...this.columnFilters,
+      ...this.sortFilter,
     };
   }
 
