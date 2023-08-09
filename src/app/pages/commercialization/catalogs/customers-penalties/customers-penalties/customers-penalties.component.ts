@@ -160,8 +160,8 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
               case 'processType':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'event':
-                field = `filter.${filter.field}.id`;
+              case 'eventId':
+                //field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'batchPublic':
@@ -232,9 +232,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilters2[field];
             }
           });
           this.params = this.pageFilter(this.params);
@@ -256,9 +256,9 @@ export class CustomersPenaltiesComponent extends BasePage implements OnInit {
   }
 
   getData(id?: string | number) {
-    if (id) {
+    /*if (id) {
       this.params2.getValue()['filter.customerId'] = `$eq:${id}`;
-    }
+    }*/
     let params = {
       ...this.params2.getValue(),
       ...this.columnFilters2,
