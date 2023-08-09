@@ -13,12 +13,18 @@
         bindLabel="id_concepto"
         paramSearch="filter.id_concepto"
         prefixSearch="$eq"
+        [labelTemplate]="conceptLabel"
+        [optionTemplate]="conceptOption"
         (valueChange)="changeValue($event)">
       </ng-custom-select-loading>
-
-      <!-- <form-field [control]="form.get('concept')" label="Hacia">
-        <input class="form-control" formControlName="concept" readonly />
-      </form-field> -->
+      <ng-template #conceptLabel let-item="item">
+        {{ item.id_concepto }} - {{ item.descripcion }}
+      </ng-template>
+      <ng-template #conceptOption let-item="item">
+        <div [title]="item.id_concepto + '-' + item.descripcion">
+          {{ item.id_concepto }} - {{ item.descripcion }}
+        </div>
+      </ng-template>
     </form>
   </div>
   <div footer>

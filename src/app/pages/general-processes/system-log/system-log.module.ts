@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { LogTableComponent } from './components/log-table/log-table.component';
 import { RegistersTableComponent } from './components/registers-table/registers-table.component';
@@ -17,6 +17,11 @@ import { SystemLogComponent } from './system-log/system-log.component';
     RegistersTableComponent,
     LogTableComponent,
   ],
-  imports: [CommonModule, SystemLogRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    SystemLogRoutingModule,
+    SharedModule,
+    FormLoaderComponent,
+  ],
 })
 export class SystemLogModule {}

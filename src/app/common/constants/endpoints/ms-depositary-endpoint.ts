@@ -25,4 +25,6 @@ export enum DepositaryEndPoints {
   PaymentRefValidComer = 'payment-ref/valid-comer', // VALIDA_PAGOSREF.VALIDA_COMER
   PrepOiBaseCa = 'payment-ref/prep-oi', // VALIDA_PAGOSREF.PREP_OI
   PaymentRefVentaSbm = 'payment-ref/venta-sbm', // VALIDA_PAGOSREF.VENTA_SBM
+  UpdateStatusBase = 'validate-payments-ref/updateStatusBase', // MODIFICA_ESTATUS_BASES_ANT
+  UpdateGeneralStatus = 'validate-payments-ref/updateGeneralStatus',
 }
