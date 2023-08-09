@@ -445,21 +445,23 @@ export class ReadInfoGoodComponent
   }
 
   unidMediIndep(event: any) {
-    this.dataToSend.saeMeasureUnit = event.uomCode;
+    this.dataToSend.saeMeasureUnit = event != undefined ? event.uomCode : null;
   }
 
   destinySae(event: any) {
-    this.dataToSend.saeDestiny = event.keyId;
+    this.dataToSend.saeDestiny = event != undefined ? event.keyId : null;
   }
 
   physicalState(event: any) {
-    this.dataToSend.physicalStatus = event.keyId;
-    this.dataToSend.physicstateName = event.description;
+    this.dataToSend.physicalStatus = event != undefined ? event.keyId : null;
+    this.dataToSend.physicstateName =
+      event != undefined ? event.description : null;
   }
 
   concervationState(event: any) {
-    this.dataToSend.stateConservation = event.keyId;
-    this.dataToSend.stateConservationName = event.description;
+    this.dataToSend.stateConservation = event != undefined ? event.keyId : null;
+    this.dataToSend.stateConservationName =
+      event != undefined ? event.description : null;
   }
 
   save() {
@@ -485,10 +487,16 @@ export class ReadInfoGoodComponent
           next: resp => {
             const body: any = {};
             body.id = resp.id;
-            body.saeDestiny = resp.saeDestiny;
-            body.physicalStatus = resp.physicalStatus;
-            body.stateConservation = resp.stateConservation;
-            body.saeMeasureUnit = resp.saeMeasureUnit;
+            body.saeDestiny = resp.saeDestiny ? resp.saeDestiny : null;
+            body.physicalStatus = resp.physicalStatus
+              ? resp.physicalStatus
+              : null;
+            body.stateConservation = resp.stateConservation
+              ? resp.stateConservation
+              : null;
+            body.saeMeasureUnit = resp.saeMeasureUnit
+              ? resp.saeMeasureUnit
+              : null;
 
             this.dataToSend.id = resp.id;
             this.saveDetailInfo.emit(this.dataToSend);
