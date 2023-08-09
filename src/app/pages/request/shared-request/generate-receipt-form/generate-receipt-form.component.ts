@@ -468,5 +468,29 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     });
   }
 
-  electricOption(event: any) {}
+  electronicSignatureEntSelect() {
+    const electronicSignatureEnt = this.generateReceiptForm.get(
+      'electronicSignatureEnt'
+    ).value;
+
+    if (electronicSignatureEnt) {
+      this.generateReceiptForm.get('electronicSignatureReceipt').setValue(true);
+    } else if (!electronicSignatureEnt) {
+      this.generateReceiptForm
+        .get('electronicSignatureReceipt')
+        .setValue(false);
+    }
+  }
+
+  electronicSignatureReceiptSelect() {
+    const electronicSignatureReceipt = this.generateReceiptForm.get(
+      'electronicSignatureReceipt'
+    ).value;
+
+    if (electronicSignatureReceipt) {
+      this.generateReceiptForm.get('electronicSignatureEnt').setValue(true);
+    } else if (!electronicSignatureReceipt) {
+      this.generateReceiptForm.get('electronicSignatureEnt').setValue(false);
+    }
+  }
 }

@@ -20,6 +20,8 @@ import { ComerEventosService } from 'src/app/core/services/ms-event/comer-evento
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AuxListComponent } from './aux-list/aux-list.component';
+import { AuxList2Component } from './aux-list2/aux-list2.component';
 import { COLUMNS } from './columns';
 import { ListReferenceComponent } from './list-reference/list-reference.component';
 import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
@@ -152,17 +154,18 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     } else {
       this.valAcc = event;
     }
-    this.openForm(event, true);
+    this.openForm(event, true, false);
   }
   add() {
-    this.openForm(null, false);
+    this.openForm(null, false, false);
   }
 
-  openForm(data: any, editVal: boolean) {
+  openForm(data: any, editVal: boolean, valScroll: boolean) {
     let config: ModalOptions = {
       initialState: {
         data,
         edit: editVal,
+        valScroll,
         callback: (next: boolean) => {
           if (next) {
             this.getPayments('no');
@@ -199,7 +202,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       this.valAcc = event.data;
     }
   }
-  getPayments(filter: any) {
+  async getPayments(filter: any) {
     this.loading = true;
     this.totalItems = 0;
     let params = {
@@ -218,6 +221,19 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada = año + '-' + mes + '-' + día;
       params['filter.date'] = `$eq:${fechaFormateada}`;
+      // delete params['filter.date'];
+    }
+    if (params['filter.affectationDate']) {
+      var fecha = new Date(params['filter.affectationDate']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['filter.affectationDate'] = `$eq:${fechaFormateada}`;
       // delete params['filter.date'];
     }
 
@@ -259,7 +275,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
     // params['filter.entryOrderId'] = `$null`;
     // params['sortBy'] = `movementNumber:DESC`;
-    params['sortBy'] = `date:DESC`;
+    params['sortBy'] = `paymentId:DESC`;
     this.paymentService.getComerPaymentRefGetAllV2(params).subscribe({
       next: response => {
         console.log(response);
@@ -295,6 +311,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             this.data.refresh();
             this.totalItems = response.count;
             this.loading = false;
+            this.valAcc = null;
           });
         }
       },
@@ -306,6 +323,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
           this.alert('warning', 'No se Encontraron Resultados', '');
         }
         this.loading = false;
+        this.valAcc = null;
         console.log(error);
       },
     });
@@ -479,13 +497,15 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             validSistem: 'R',
             result: 'Referencia Invalida',
           };
-          await this.updatePago(this.valAcc.idPayment, requestBody);
-          this.alert('warning', 'El Movimiento Sigue por Ratificarse', '');
+          await this.updatePago(this.valAcc.paymentId, requestBody);
+          this.alert('warning', 'El Movimiento sigue por Ratificarse', '');
         } else {
           // if (comerLotes.length > 1) {
           this.alert(
             'warning',
-            'Referencia Repetida en otro Evento ' + this.valAcc.reference,
+            'Referencia: ' +
+              this.valAcc.reference +
+              ', Repetida en otro Evento ',
             ''
           );
 
@@ -503,7 +523,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             validSistem: 'A',
             result: 'Referencia Valida',
           };
-          await this.updatePago(this.valAcc.idPayment, requestBody);
+          await this.updatePago(this.valAcc.paymentId, requestBody);
         } else if (L_LOTE > 0 && L_PUBLICO == 0) {
           const requestBody: any = {
             paymentId: this.valAcc.paymentId,
@@ -512,11 +532,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             result: 'Referencia Pago Bases',
           };
 
-          await this.updatePago(this.valAcc.idPayment, requestBody);
+          await this.updatePago(this.valAcc.paymentId, requestBody);
         }
       } else if (LLL.reject == 'S') {
+        // GO_BLOCK('BLK_DEVO');
         L_IMPORTE = this.valAcc.amount;
         this.openFormList(this.valAcc, L_IMPORTE);
+
         // L_IMPORTE:= : COMER_PAGOREF.MONTO;
         // : PARAMETER.PAR_RECORD := : SYSTEM.CURSOR_RECORD;
         //   GO_BLOCK('BLK_DEVO');
@@ -533,8 +555,15 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         // CLOSE C1;
         //   PREVIOUS_RECORD;
       } else {
-        this.alert('warning', 'No se Encontraron', '');
-        return;
+        // GO_BLOCK('BLK_AUXREF');
+        this.openFormList2(this.valAcc, this.valAcc.reference, false);
+
+        // OPEN C2;
+        //   LOOP
+        //   FETCH C2 INTO LOC_REFE, LOC_PUB, LOC_EVENTO, LOC_LOTE;
+        //   EXIT WHEN C2 % NOTFOUND;
+        // END LOOP;
+        // CLOSE C2;
       }
       console.log('LLL', LLL);
     } else {
@@ -549,7 +578,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
   async updatePago(paymentId: any, requestBody: any) {
     this.paymentService.update(paymentId, requestBody).subscribe({
-      next: response => {},
+      next: async response => {
+        await this.getPayments('no');
+      },
       error: error => {
         // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
       },
@@ -596,6 +627,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     });
   }
 
+  // GO_BLOCK('BLK_DEVO');
   openFormList(dataParams: any, L_IMPORTE: any) {
     let config: ModalOptions = {
       initialState: {
@@ -613,11 +645,52 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.modalService.show(ListReferenceComponent, config);
   }
 
-  referencia() {
-    console.log(this.valAcc);
+  // GO_BLOCK('BLK_AUXREF');
+  openFormList2(dataParams: any, REFERENCIA: any, valRef: boolean) {
+    let config: ModalOptions = {
+      initialState: {
+        dataParams,
+        REFERENCIA,
+        valRef,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments('no');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AuxListComponent, config);
   }
 
-  pago() {}
+  referencia() {
+    console.log(this.valAcc);
+    this.openFormList3(this.valAcc, this.valAcc.reference, true);
+  }
+
+  // GO_BLOCK('BLK_AUXREF');
+  openFormList3(dataParams: any, REFERENCIA: any, valRef: boolean) {
+    let config: ModalOptions = {
+      initialState: {
+        dataParams,
+        REFERENCIA,
+        valRef,
+        callback: (next: boolean) => {
+          if (next) {
+            this.getPayments('no');
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(AuxList2Component, config);
+  }
+
+  pago() {
+    this.openForm(this.valAcc, true, true);
+  }
 
   eventSelected: any = null;
   setValuesFormEvent(event?: any) {

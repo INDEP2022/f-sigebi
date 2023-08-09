@@ -12,7 +12,6 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -29,6 +28,7 @@ import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-l
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -165,7 +165,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     private router: Router,
     private msIndUserService: IndUserService,
     private msLotService: LotService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private msUsersService: UsersService
   ) {
     super();
     this.validPermisos = !this.validPermisos;
@@ -234,6 +235,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       puestoCcp2: [null],
       lote: [null],
       evento: [null],
+      evento_descripcion: [null],
+      lote_descripcion: [null],
     });
   }
   bienlotForm() {
@@ -276,8 +279,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
     console.log(params);
     this.siabService
-      // .fetchReport('RCOMERCARTALIB', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RCOMERCARTALIB', params)
+      // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -477,6 +480,10 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
 
   Generar() {
+    if (this.letterDefault == null) {
+      this.alert('warning', 'Realiza una Consulta para Continuar', '');
+      return;
+    }
     this.loading = true;
     const start = this.comerLibsForm.get('fechaFactura').value;
     const carta = this.comerLibsForm.get('fechaCarta').value;
@@ -503,7 +510,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      .fetchReport('FCOMERCARTALIB', params)
+      // .fetchReport('FCOMERCARTALIB', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           this.loading = false;
@@ -639,17 +647,34 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
 
   getAllNameOtval(option: number = 0) {
-    const params: any = new FilterParams();
     if (option == 0) {
-      params.addFilter('name', this.puestoUser);
-    } else {
-      params['filter.name'] =
-        '$eq:' + (option == 1 ? this.letter.ccp1 : this.letter.ccp2);
+      this.comerLibsForm.get('puestoFirma').reset();
+    } else if (option == 1) {
+      this.comerLibsForm.get('puestoCcp1').reset();
+    } else if (option == 2) {
+      this.comerLibsForm.get('puestoCcp2').reset();
     }
-    params['sortBy'] = 'name:ASC';
-    this.msIndUserService.getAllNameOtval(params).subscribe({
+    // const params: any = new FilterParams();
+    let nameSearch: string = '';
+    if (option == 0) {
+      // params.addFilter('name', this.puestoUser);
+      nameSearch = encodeURI(this.puestoUser);
+    } else {
+      // params['filter.name'] =
+      //   '$eq:' + (option == 1 ? this.letter.ccp1 : this.letter.ccp2);
+      nameSearch = encodeURI(option == 1 ? this.letter.ccp1 : this.letter.ccp2);
+    }
+    // params['sortBy'] = 'name:ASC';
+    this.msUsersService.getOtValueFromUserName(nameSearch).subscribe({
       next: data => {
         console.log(data);
+        if (option == 0) {
+          this.comerLibsForm.get('puestoFirma').setValue(data.data[0].otvalor);
+        } else if (option == 1) {
+          this.comerLibsForm.get('puestoCcp1').setValue(data.data[0].otvalor);
+        } else if (option == 2) {
+          this.comerLibsForm.get('puestoCcp2').setValue(data.data[0].otvalor);
+        }
       },
       error: err => {
         console.error(err);
@@ -660,6 +685,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   changeEvent(event: any) {
     console.log(event);
     this.comerLibsForm.get('lote').reset();
+    this.comerLibsForm.get('evento_descripcion').reset();
+    // .setValue(event ? event.observations : null);
     this.getLoteData(new ListParams());
   }
 
@@ -670,7 +697,8 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     if (getByValue) {
       paramsData['filter.id'] = '$eq:' + this.comerLibsForm.get('evento').value;
     }
-    paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
+    // paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
+    paramsData['filter.id'] = '$eq:' + paramsData['search'];
     if (this.P_DIRECCION) {
       paramsData['filter.address'] = `$eq:${this.P_DIRECCION}`;
     }
@@ -683,10 +711,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       next: data => {
         console.log('DATA SELECT ', data.data);
         this.selectDataEvent = new DefaultSelect(
-          data.data.map((i: any) => {
-            i['description_data'] = i.id + ' --- ' + i.observations;
-            return i;
-          }),
+          // data.data.map((i: any) => {
+          //   i['description_data'] = i.id + ' --- ' + i.observations;
+          //   return i;
+          // }),
+          data.data,
           data.count
         );
         console.log(data, this.selectDataEvent);
@@ -699,6 +728,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   changeLote(event: any) {
     console.log(event);
+    this.comerLibsForm
+      .get('lote_descripcion')
+      .setValue(event ? event.description : null);
     if (event) {
       // this.idLot = this.comerLibsForm.get('lote').value;
       // this.idEvent = this.comerLibsForm.get('evento').value;
@@ -735,7 +767,10 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
     }
     const params = new FilterParams();
     params.addFilter('idEvent', this.comerLibsForm.get('evento').value);
-    params.addFilter('description', paramsData['search'], SearchFilter.ILIKE);
+    // params.addFilter('description', paramsData['search'], SearchFilter.ILIKE);
+    if (paramsData['search']) {
+      params.addFilter('idLot', paramsData['search']);
+    }
     params['sortBy'] = 'description:ASC';
     delete paramsData['search'];
     delete paramsData['text'];
@@ -744,10 +779,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       next: data => {
         console.log('DATA SELECT ', data.data);
         this.selectDataLote = new DefaultSelect(
-          data.data.map((i: any) => {
-            i['description_data'] = i.idLot + ' --- ' + i.description;
-            return i;
-          }),
+          // data.data.map((i: any) => {
+          //   i['description_data'] = i.idLot + ' --- ' + i.description;
+          //   return i;
+          // }),
+          data.data,
           data.count
         );
         console.log(data, this.selectDataLote);

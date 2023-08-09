@@ -5,16 +5,25 @@
     </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="col-12">
+        <i class="fa fa-square" style="color: #686868"></i
+        ><span style="font-weight: 500">
+          Para Asociar un Movimiento con la Devolución Seleccione el Registro
+        </span>
+      </div>
+    </div>
     <div class="row pt-4">
       <form-loader *ngIf="loading"></form-loader>
       <div class="col-md-12">
         <!-- <div [class]="loading ? 'table-loading' : ''"> -->
         <ng-scrollbar
           [track]="'all'"
-          [ngStyle]="{ height: loading ? '0px' : '500px' }">
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"
             class="table-responsive"
+            (userRowSelect)="rowsSelected($event)"
             [settings]="settings"
             [source]="data">
           </ng2-smart-table>
@@ -29,9 +38,10 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
+          [disabled]="!dataSelected"
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="close()">
+          (click)="seleccionar()">
           Seleccionar
         </button>
       </div>

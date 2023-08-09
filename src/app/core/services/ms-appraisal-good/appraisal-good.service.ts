@@ -34,7 +34,21 @@ export class AppraisalGoodService extends HttpService {
     );
   }
 
-  getExpedientGood(id?: string): Observable<IListResponse<IAppraisersGood>> {
-    return this.get<IListResponse>(`good/expedient/search/${id}`);
+  /*postAppraisalGood(data: IAppraisersGood, params?: string) {
+    let partials = ENDPOINT_LINKS.Appraisers.split('/');
+    this.microservice = partials[0];
+    return this.post<IListResponse<IAppraisersGood>>(
+      partials[1],
+      data,
+      params
+    ).pipe(tap(() => (this.microservice = '')));
+  }
+*/
+  getAppraisalGoodV2(data: any, params?: string) {
+    let partials = ENDPOINT_LINKS.Appraisers.split('/');
+    this.microservice = partials[0];
+    return this.get(`appraisal-x-good` + data).pipe(
+      tap(() => (this.microservice = ''))
+    );
   }
 }

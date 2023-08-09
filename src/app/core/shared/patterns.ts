@@ -19,7 +19,7 @@ export const PERCENTAGE_NUMBERS_PATTERN =
 export const DOUBLE_PATTERN = '[+-]?([0-9]*[.])?[0-9]+';
 export const DOUBLE_POSITIVE_PATTERN = '[+]?([0-9]*[.])?[0-9]+';
 export const STRING_PATTERN =
-  '[a-zA-Z0-9áèéíóúÁÈÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()$°\\Üü“”"";:%]*';
+  '(?![\\s])[a-zA-Z0-9áèéíóúÁÈÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()$°\\Üü“”"";:%]*';
 // '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]
 // export const RFCCURP_PATTERN = '[a-zA-Z]{3}[a-zA-Z0-9]*';
 export const RFC_PATTERN = '^[A-Za-z]{3,4}[0-9]{6}[a-zA-Z0-9]{3}$';

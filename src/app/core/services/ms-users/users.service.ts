@@ -115,6 +115,10 @@ export class UsersService extends HttpService {
     return this.post(`factadboficiogestrel/delete-when-button-pressed`, body);
   }
 
+  getAllIndicator(body: any) {
+    return this.post<IListResponse<any>>(UserEndpoints.IndUserNoInd, body);
+  }
+
   deleteAccessUsers(id: any) {
     return this.delete<IListResponse<IUserAccess>>(
       `${UserEndpoints.VigSupervisionAccess}/${id}`
@@ -168,4 +172,10 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<ISegUsers>>(UserEndpoints.SegUsers);
   }
 */
+
+  getOtValueFromUserName(name: string) {
+    return this.get<IListResponse<any>>(
+      UserEndpoints.SegUsers + '/getOtValueFromUser/' + name
+    );
+  }
 }

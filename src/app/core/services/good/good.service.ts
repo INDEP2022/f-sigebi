@@ -30,6 +30,10 @@ export class GoodService extends HttpService implements ICrudMethods<IGood> {
     return this.goodRepository.getAllPaginated('good/good', params);
   }
 
+  getByFilter(params?: HttpParams): Observable<IListResponse<IGood>> {
+    return this.get('good', params);
+  }
+
   getById(id: string | number): Observable<any> {
     return this.goodRepository.getById('good/good', id);
   }
