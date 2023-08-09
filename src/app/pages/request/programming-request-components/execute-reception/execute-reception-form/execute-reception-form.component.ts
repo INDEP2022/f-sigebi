@@ -5588,6 +5588,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
+            this.getReceipts();
+            this.getOpenProceeding();
+            this.paramsReception
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoReception());
+
+            this.selectGood = [];
           }
         },
       },
