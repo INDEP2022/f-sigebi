@@ -29,15 +29,29 @@ export class ClientPenaltyService extends HttpService {
     return this.get<IListResponse<any>>(`${this.route}`, params);
   }
 
-  getAllV2(params?: string) {
+  getAllV2(params?: ListParams) {
     return this.get<IListResponse<any>>(
       ClientPenaltyEndpoints.ComerPenaltyV2,
       params
     );
   }
 
+  getAllV2Post(body: any) {
+    return this.post<IListResponse<any>>(
+      ClientPenaltyEndpoints.GetLvLibpenact,
+      body
+    );
+  }
+
   getAllHist(params?: ListParams) {
     return this.get<IListResponse<any>>(`${this.route2}`, params);
+  }
+
+  getAllHistPost(body: any) {
+    return this.post<IListResponse<any>>(
+      ClientPenaltyEndpoints.GetLvLibpenhis,
+      body
+    );
   }
 
   getAll2() {
