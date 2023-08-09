@@ -177,6 +177,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     };
     this.modalService.show(NewAndUpdateComponent, config);
   }
+
   questionDelete(data: any) {
     console.log(data);
     this.alertQuestion(
@@ -202,6 +203,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       this.valAcc = event.data;
     }
   }
+
   async getPayments(filter: any) {
     this.loading = true;
     this.totalItems = 0;

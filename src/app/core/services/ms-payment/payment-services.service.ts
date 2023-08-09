@@ -94,4 +94,8 @@ export class PaymentService extends HttpService {
   postComerPagoRefVirt(body: IComerPaymentsRefVir) {
     return this.post('comer-payments-ref-virt', body);
   }
+
+  // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
+  //   return this.post('comer-payments-ref-virt', body);
+  // }
 }
