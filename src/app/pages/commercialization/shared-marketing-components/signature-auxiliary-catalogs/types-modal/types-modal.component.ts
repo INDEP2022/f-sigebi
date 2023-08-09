@@ -31,6 +31,8 @@ export class TypesModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.formGroup = this.fb.group({
       signatoryType: [null],
+      recordNumber: [null],
+      nbOrigin: [null],
       orderId: [
         { value: null, disabled: false },
         [
