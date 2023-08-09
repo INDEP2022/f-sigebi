@@ -4,14 +4,19 @@
   </div>
   <div body>
     <div class="row">
-      <div class="d-flex justify-content-end">
+      <div class="justify-content-end btn-toolbar">
         <app-columns-select
           [(settings)]="settingsReceiptClose"></app-columns-select>
+
+        <button (click)="openReceipt()" class="btn btn-primary btn-sm active">
+          Abrir recibo <i class="fas fa-arrow-circle-left"></i>
+        </button>
       </div>
       <ng2-smart-table
         [attr.class]="'table-bordered pt-3'"
         [settings]="settingsReceiptClose"
         [source]="receiptsClose"
+        (userRowSelect)="receiptSelect($event.data)"
         (edit)="showReceipt($event.data)">
       </ng2-smart-table>
       <app-pagination

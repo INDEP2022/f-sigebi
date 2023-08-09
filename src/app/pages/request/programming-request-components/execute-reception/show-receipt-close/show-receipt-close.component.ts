@@ -7,6 +7,9 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Iprogramming } from 'src/app/core/models/good-programming/programming';
 import { IReceipt } from 'src/app/core/models/receipt/receipt.model';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { ReceptionGoodService } from 'src/app/core/services/reception/reception-good.service';
 import { BasePage } from 'src/app/core/shared';
@@ -23,7 +26,10 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
     private wcontentService: WContentService,
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
-    private receptionGoodService: ReceptionGoodService
+    private receptionGoodService: ReceptionGoodService,
+    private goodService: GoodService,
+    private programmingGoodService: ProgrammingGoodService,
+    private proceedingService: ProceedingsService
   ) {
     super();
   }
@@ -47,6 +53,7 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
   formLoadingReceipt: boolean = false;
   programming: Iprogramming;
   receiptData: IReceipt;
+  infoReceiptOpen: IReceipt;
   ngOnInit(): void {
     this.getReceipts();
   }
@@ -116,5 +123,148 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
 
   close() {
     this.modalRef.hide();
+  }
+
+  receiptSelect(receipt: IReceipt) {
+    this.infoReceiptOpen = receipt;
+  }
+
+  openReceipt() {
+    if (this.infoReceiptOpen) {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] =
+        this.infoReceiptOpen.programmingId;
+      params.getValue()['filter.statusReceipt'] = 'ABIERTO';
+      this.receptionGoodService.getReceipt(params.getValue()).subscribe({
+        next: response => {
+          this.alert(
+            'warning',
+            'Acción Invalida',
+            'Se requiere tener todos los recibos cerrados para abrir un recibo'
+          );
+        },
+        error: error => {
+          const paramsProceeding = new BehaviorSubject<ListParams>(
+            new ListParams()
+          );
+          paramsProceeding.getValue()['filter.id'] = this.infoReceiptOpen.actId;
+          paramsProceeding.getValue()['filter.idPrograming'] =
+            this.infoReceiptOpen.programmingId;
+          this.proceedingService
+            .getProceedings(paramsProceeding.getValue())
+            .subscribe({
+              next: response => {
+                const statusProceeding = response.data[0].statusProceeedings;
+
+                if (statusProceeding == 'ABIERTO') {
+                  const params = new BehaviorSubject<ListParams>(
+                    new ListParams()
+                  );
+                  params.getValue()['filter.receiptId'] =
+                    this.infoReceiptOpen.id;
+                  params.getValue()['filter.programmationId'] =
+                    this.infoReceiptOpen.programmingId;
+
+                  params.getValue()['filter.actId'] =
+                    this.infoReceiptOpen.actId;
+                  this.receptionGoodService
+                    .getReceiptGood(params.getValue())
+                    .subscribe({
+                      next: async response => {
+                        console.log('bienes', response);
+                        const updateProgGood = await this.updateProgGood(
+                          response.data
+                        );
+                        if (updateProgGood) {
+                          const updateReceipt = await this.updateReceipt();
+                          if (updateReceipt) {
+                            this.getReceipts();
+                            this.receiptsClose = new LocalDataSource();
+                            this.totalItemsReceipt = 0;
+                            this.alert(
+                              'success',
+                              'Acción Correcta',
+                              'Recibo abierto correctamente'
+                            );
+                            this.modalRef.hide();
+                            this.modalRef.content.callback(true);
+                          }
+                        }
+                      },
+                    });
+                } else {
+                  this.alert(
+                    'warning',
+                    'Acción Invalida',
+                    'El acta relacionada a el recibo ya se encuentra cerrada'
+                  );
+                }
+              },
+              error: error => {},
+            });
+        },
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere seleccionar un recibo'
+      );
+    }
+  }
+
+  updateProgGood(goods: any[]) {
+    return new Promise((resolve, reject) => {
+      goods.map(good => {
+        console.log('good', good);
+        const formData: Object = {
+          id: good.goodId,
+          goodId: good.goodId,
+          goodStatus: 'EN_RECEPCION_TMP',
+          programmationStatus: 'EN_RECEPCION_TMP',
+          executionStatus: 'EN_RECEPCION_TMP',
+        };
+
+        this.goodService.updateByBody(formData).subscribe({
+          next: response => {
+            const formData: Object = {
+              programmingId: this.programming.id,
+              goodId: good.goodId,
+              status: 'EN_RECEPCION_TMP',
+              actaId: this.infoReceiptOpen.actId,
+            };
+            this.programmingGoodService
+              .updateGoodProgramming(formData)
+              .subscribe({
+                next: response => {
+                  resolve(true);
+                },
+                error: error => {},
+              });
+          },
+          error: error => {},
+        });
+      });
+    });
+  }
+
+  updateReceipt() {
+    return new Promise((resolve, reject) => {
+      const formData: any = {
+        id: this.infoReceiptOpen.id,
+        actId: this.infoReceiptOpen.actId,
+        programmingId: this.programming.id,
+        statusReceipt: 'ABIERTO',
+      };
+
+      this.receptionGoodService.updateReceipt(formData).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(true);
+        },
+      });
+    });
   }
 }
