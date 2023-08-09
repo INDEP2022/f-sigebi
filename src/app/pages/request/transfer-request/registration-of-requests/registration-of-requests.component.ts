@@ -365,7 +365,7 @@ export class RegistrationOfRequestsComponent
         },
         error: error => {
           this.formLoading = false;
-          this.onLoadToast('error', 'Error', 'No se encontro la solicitud');
+          this.onLoadToast('error', 'Error', 'No se encontró la solicitud');
           console.log(error.error.message);
         },
       });
@@ -379,8 +379,8 @@ export class RegistrationOfRequestsComponent
       !data.authorityId
     ) {
       Swal.fire({
-        title: 'Error',
-        text: 'Sin los campos de transferente, emisora y autoridad no se podran realizar las documentaciones requeridas! ',
+        title: 'warning',
+        text: 'Sin los campos de transferente, emisora y autoridad, no se podrán realizar las operaciones requeridas',
         icon: 'error',
         width: 450,
         showCancelButton: false,
@@ -642,7 +642,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Solicitud Finalizada',
-          `Se finalizo la solicitud con el folio: ${this.requestData.id}`
+          `Se finalizó la solicitud con el folio: ${this.requestData.id}`
         );
       }
       // }
@@ -671,7 +671,7 @@ export class RegistrationOfRequestsComponent
           console.log('Hay bienes por aclarar');
           this.alertQuestion(
             'warning',
-            'Existe bienes sin aclarar',
+            'Existe Bienes sin aclarar',
             'Se creará una nueva tarea de Notificación'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -976,7 +976,7 @@ export class RegistrationOfRequestsComponent
           this.onLoadToast(
             'error',
             'Error',
-            'No se pudo crear la tarea de Aprovación de Solicitud'
+            'No se pudo crear la tarea de Aprobación de Solicitud'
           );
         },
       });
@@ -1031,14 +1031,14 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aún no se aclararon'
+        'Algunos Bienes aún no se aclararon'
       );
       return;
     }
 
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === true) {
-      this.onLoadToast('info', '', 'Ya se generó un dictamen');
+      this.onLoadToast('warning', '', 'Ya se generó un dictamen');
       return;
     }
 
@@ -1069,11 +1069,7 @@ export class RegistrationOfRequestsComponent
   /** Proceso de aprobacion */
   async approveRequest() {
     if (this.requestApproved == true) {
-      this.onLoadToast(
-        'error',
-        'Solicitud aprobada',
-        'No es posible rechazar la solicitud, ya fue firmada'
-      );
+      this.onLoadToast('warning', 'Atención', 'Esta solicitud ya fue aprobada');
       return;
     }
 
@@ -1082,7 +1078,7 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aún no se aclararon'
+        'Algunos Bienes aún no se aclararon'
       );
       return;
     }
@@ -1146,8 +1142,8 @@ export class RegistrationOfRequestsComponent
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',
-        'Solicitud aprovado',
-        'La solicitud ya fue aprovada'
+        'Solicitud Aprobada',
+        'La solicitud ya fue aprobada'
       );
       return;
     }
@@ -1194,7 +1190,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Solicitud Rechazada',
-        `Se Rechazo la Solicitud con el Folio: ${this.requestData.id}`
+        `Se Rechazó la Solicitud con el Folio: ${this.requestData.id}`
       );
     }
   }
@@ -1552,7 +1548,7 @@ export class RegistrationOfRequestsComponent
           console.log('Error al actualizar los estados ', error);
           this.onLoadToast(
             'error',
-            'Error al actualizar los estados de los bienes',
+            'Error al actualizar el estado de los Bienes',
             ''
           );
         },
@@ -1575,11 +1571,7 @@ export class RegistrationOfRequestsComponent
           this.loader.load = false;
           reject('error');
           console.log(error);
-          this.onLoadToast(
-            'error',
-            'Error en los bienes',
-            'Error al obtener los bienes'
-          );
+          this.onLoadToast('error', 'Error', 'No se pueden obtener los Bienes');
         },
       });
     });
@@ -1600,7 +1592,7 @@ export class RegistrationOfRequestsComponent
           this.onLoadToast(
             'error',
             'Error en la solicitud',
-            'Error al verificar si la solicitud ya fue aprobada'
+            'No se puede verificar si la solicitud ya fue aprobada'
           );
         }
       },

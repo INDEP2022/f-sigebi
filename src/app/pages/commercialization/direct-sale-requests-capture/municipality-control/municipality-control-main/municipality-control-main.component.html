@@ -12,10 +12,6 @@
       </div>
       <div class="col-sm-12 col-md-6 col-lg-6">
         <div class="d-flex flex-row-reverse">
-          <div class="">
-            <app-columns-select
-              [(settings)]="applicantSettings"></app-columns-select>
-          </div>
           <div class="me-2">
             <button
               type="button"
@@ -25,6 +21,10 @@
               (click)="openFormApplicant('Nuevo')">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
+          </div>
+          <div class="">
+            <app-columns-select
+              [(settings)]="applicantSettings"></app-columns-select>
           </div>
         </div>
       </div>

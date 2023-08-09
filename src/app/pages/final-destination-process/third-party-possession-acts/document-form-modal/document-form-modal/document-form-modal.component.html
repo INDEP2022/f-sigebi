@@ -1,0 +1,359 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Informacion Documento</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="documentForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('goodNumber')"
+            label="Folio Universal">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="goodNumber" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('natureDocument')"
+            label="Naturaleza Documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="natureDocument" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('descriptionDocument')"
+            label="Descripcion Documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionDocument" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('significantDate')"
+            label="Fecha Significativa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="significantDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('scanStatus')"
+            label="Estatus Escaneo">
+            <input
+              type="text"
+              formControlName="scanStatus"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('areaSends')"
+            label="No. de Bien">
+            <input
+              type="text"
+              formControlName="areaSends"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('fileStatus')"
+            label="Estatus Archivo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fileStatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('userRequestsScan')"
+            label="Usuario Solicita Escaneo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userRequestsScan" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('scanRequestDate')"
+            label="Fecha Solicita Escaneo">
+            <input
+              type="text"
+              formControlName="scanRequestDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('userRegistersScan')"
+            label="Usuario Registra Escaneo">
+            <input
+              type="text"
+              formControlName="userRegistersScan"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('dateRegistrationScan')"
+            label="Fecha Registro Escane">
+            <input
+              type="text"
+              formControlName="dateRegistrationScan"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('userReceivesFile')"
+            label="Usuario Recibe Archivo">
+            <input
+              type="text"
+              formControlName="userReceivesFile"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('dateReceivesFile')"
+            label="Fecha Recibe Archivo">
+            <input
+              type="text"
+              formControlName="dateReceivesFile"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('keyTypeDocument')"
+            label="Clave Tipo Documento">
+            <input
+              type="text"
+              formControlName="keyTypeDocument"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('keySeparator')"
+            label="Clave Separador">
+            <input
+              type="text"
+              formControlName="keySeparator"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('numberProceedings')"
+            label="No.Expediente">
+            <input
+              type="text"
+              formControlName="numberProceedings"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="documentForm.get('sheets')" label="Hojas">
+            <input
+              type="number"
+              formControlName="sheets"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('numberDelegationRequested')"
+            label="No. DelegacionSolicita">
+            <input
+              type="number"
+              formControlName="numberDelegationRequested"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('numberSubdelegationRequests')"
+            label="No. Subdelegacion Solicita">
+            <input
+              type="number"
+              formControlName="numberSubdelegationRequests"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('numberDepartmentRequest')"
+            label="No. Departamento Solicita">
+            <input
+              type="number"
+              formControlName="numberDepartmentRequest"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('registrationNumber')"
+            label="No. Registro">
+            <input
+              type="number"
+              formControlName="registrationNumber"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('flyerNumber')"
+            label="No. Volante">
+            <input
+              type="number"
+              formControlName="flyerNumber"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('userSend')"
+            label="Usuario Envia">
+            <input
+              type="text"
+              formControlName="userSend"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('sendDate')"
+            label="Fecha Envio">
+            <input
+              type="text"
+              formControlName="sendDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('sendFilekey')"
+            label="Clave Archivo Envia">
+            <input
+              type="text"
+              formControlName="sendFilekey"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('userResponsibleFile')"
+            label="Usuario Responsable del Archivo">
+            <input
+              type="text"
+              formControlName="userResponsibleFile"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="documentForm.get('mediumId')" label="Id Medio">
+            <input
+              type="numerico"
+              formControlName="mediumId"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('associateUniversalFolio')"
+            label="Folio Universal Asoc">
+            <input
+              type="numerico"
+              formControlName="associateUniversalFolio"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('dateRegistrationScanningHc')"
+            label="Fecha Registro Escaneo hc">
+            <input
+              type="text"
+              formControlName="dateRegistrationScanningHc"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="documentForm.get('dateRequestScanningHc')"
+            label="Fecha Solicita Escaneo hc">
+            <input
+              type="numerico"
+              formControlName="dateRequestScanningHc"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!documentForm.valid"
+          [loading]="loading"
+          (confirm)="saveDocument()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
