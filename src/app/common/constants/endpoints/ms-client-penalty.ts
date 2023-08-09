@@ -7,4 +7,6 @@ export enum ClientPenaltyEndpoints {
   PayRef = 'comer-payref',
   Historic = 'ssf3_cat_penaliza_tiempo',
   CreatePenalty = 'comer-penalty/create-penalty',
+  GetLvLibpenhis = 'application/get-lv-libpenhis',
+  GetLvLibpenact = 'application/get-lv-libpenact',
 }

@@ -5,6 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 import { MassBillBaseSalesModule } from '../mass-bill-base-sales/mass-bill-base-sales.module';
 
+import { FormLoaderComponent } from 'src/app/@standalone/form-loader/form-loader.component';
 import { MassBilingBaseSalesTabRoutingModule } from './mass-biling-base-sales-tab-routing.module';
 import { MassBilingBaseSalesTabComponent } from './mass-biling-base-sales-tab/mass-biling-base-sales-tab.component';
 
@@ -16,6 +17,7 @@ import { MassBilingBaseSalesTabComponent } from './mass-biling-base-sales-tab/ma
     TabsModule,
     SharedModule,
     MassBillBaseSalesModule,
+    FormLoaderComponent,
   ],
 })
 export class MassBilingBaseSalesTabModule {}
