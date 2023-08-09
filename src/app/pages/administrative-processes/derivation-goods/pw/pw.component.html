@@ -19,11 +19,20 @@
         </div>
         <div class="row mt-3">
           <form-field [control]="form.get('password')" label="Password">
-            <input
+            <!-- <input
               type="password"
               class="form-control"
               formControlName="password"
+               /> -->
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-control"
+              formControlName="password"
               autocomplete="new-password" />
+            <i
+              (click)="showPassword = !showPassword"
+              [class]="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"
+              id="togglePassword"></i>
           </form-field>
         </div>
       </div>

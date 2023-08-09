@@ -196,6 +196,7 @@ export class MassiveReclassificationGoodsComponent
   }
 
   onChage(event: string) {
+    console.log(event);
     this.changeDescription = event;
   }
   onChageAlterning(event: string) {

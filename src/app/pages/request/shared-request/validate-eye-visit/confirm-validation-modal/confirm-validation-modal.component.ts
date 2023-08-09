@@ -82,6 +82,7 @@ export class ConfirmValidationModalComponent
   async confirm() {
     const form = this.confirmForm.value;
     let updateItem: any = {};
+    debugger;
     if (form.resultTaxpayer == 'ACEPTADO') {
       const resultadoFinal = 'Y';
       const agrupador = this.goods.goodGrouper;
@@ -96,8 +97,8 @@ export class ConfirmValidationModalComponent
 
           if (
             resFinalRow != 'Y' ||
-            form.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE' ||
-            form.resultTaxpayer == 'REPROGRAMAR'
+            item.resultTaxpayer == 'ACEPTADO PROVISIONALMENTE' ||
+            item.resultTaxpayer == 'REPROGRAMAR'
           ) {
             item.resultTaxpayer = 'RECHAZADO';
             item.resultFinal = 'Y';
@@ -157,6 +158,7 @@ export class ConfirmValidationModalComponent
       });
     } else if (form.resultTaxpayer == 'REPROGRAMAR') {
       const resultadoFinal = 'Y';
+      //las fechas se establecen en null
       this.goods.map(async (item: any, _i: any) => {
         updateItem = {
           goodresdevId: item.goodresdevId,
@@ -166,7 +168,6 @@ export class ConfirmValidationModalComponent
           startVisitDate: null,
           endVisitDate: null,
         };
-        await this.deleteGoodDated(item);
 
         this.updateGoodResDev(updateItem);
       });
@@ -183,20 +184,40 @@ export class ConfirmValidationModalComponent
   async deleteGoodDated(goodDevRes: any) {
     if (goodDevRes.inventoryNumber != null) {
       if (goodDevRes.reservationId != null) {
-        //mandar a llamar el endpoint de presosXxsaeFacade (eliminarReservaBIen)
+        //mandar a llamar el endpoint de ProcesosXxsaeFacade (eliminarReservaBIen)
+        /* metodo */
+        //si la respuesta del endpoint ProcesosXxsaeFacade fue exitosa
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
       } else {
-        const good: any = await this.findGoodById(goodDevRes.goodId);
-        if (good) {
-          const body: any = {
-            id: good.id,
-            goodId: good.goodId,
-            goodResdevId: null,
-            compensation: null,
-          };
-          await this.updateGood(body);
-        }
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
       }
+    } else {
+      const good: any = await this.findGoodById(goodDevRes.goodId);
+      if (good) {
+        const body: any = {
+          id: good.id,
+          goodId: good.goodId,
+          goodResdevId: null,
+          compensation: null,
+        };
+        await this.updateGood(body);
+      }
+      const goodDeleted = await this.deleteGoodResDev(goodDevRes);
     }
+  }
+
+  deleteGoodResDev(good: any) {
+    return new Promise((resolve, reject) => {
+      this.rejectedGoodService.deleteGoodsResDev(good.goodresdevId).subscribe({
+        next: res => {
+          resolve(res);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo eliminar los bienes');
+        },
+      });
+    });
   }
 
   findGoodById(id: number) {

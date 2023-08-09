@@ -116,32 +116,49 @@
           <div class="row mt-2">
             <div class="col-12">
               <button
-                [disabled]="!selectedEvent"
+                [ngClass]="{ loading: loadingBtn }"
+                [disabled]="
+                  !selectedEvent || loadingBtn || loadingBtn2 || loadingBtn3
+                "
                 class="btn btn-sm btn-block btn-primary active font-size-14"
                 (click)="execute()"
                 tooltip="Ejecutar para Conciliar Pagos"
                 containerClass="tooltip-style">
-                Ejecutar <i class="fa fa-check" aria-hidden="true"></i>
+                Ejecutar
+                <i
+                  *ngIf="!loadingBtn"
+                  class="fa fa-check"
+                  aria-hidden="true"></i>
               </button>
             </div>
             <div class="col-12 mt-2">
               <button
-                [disabled]="!selectedEvent"
+                [ngClass]="{ loading: loadingBtn2 }"
+                [disabled]="
+                  !selectedEvent || loadingBtn || loadingBtn2 || loadingBtn3
+                "
                 class="btn btn-sm btn-block btn-info active font-size-14"
                 (click)="modify()"
                 tooltip="Modificar Estatus de Bienes"
                 containerClass="tooltip-style">
-                Modificar <i class="fa fa-pencil-alt"></i>
+                Modificar <i *ngIf="!loadingBtn2" class="fa fa-pencil-alt"></i>
               </button>
             </div>
             <div class="col-12 mt-2">
               <button
-                [disabled]="!selectedEvent"
+                [ngClass]="{ loading: loadingBtn3 }"
+                [disabled]="
+                  !selectedEvent || loadingBtn || loadingBtn2 || loadingBtn3
+                "
                 class="btn btn-sm btn-block btn-danger active font-size-14"
                 (click)="cancel()"
                 tooltip="Eliminar toda la Dispersión"
                 containerClass="tooltip-style">
-                Deshacer <i class="fa fa-trash" aria-hidden="true"></i>
+                Deshacer
+                <i
+                  *ngIf="!loadingBtn3"
+                  class="fa fa-trash"
+                  aria-hidden="true"></i>
               </button>
             </div>
           </div>

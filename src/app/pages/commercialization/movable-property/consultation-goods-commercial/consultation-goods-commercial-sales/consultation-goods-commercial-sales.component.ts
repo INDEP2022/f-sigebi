@@ -73,17 +73,14 @@ export class ConsultationGoodsCommercialSalesComponent
     };
   }
 
-  ngOnInit():void {
-
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        console.log(params)
-        console.log(this.dataGoods['data'].length);
-        if (this.dataGoods['data'].length > 0) {
-          this.executeConsult('pag');
-        }
-      });
+  ngOnInit(): void {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
+      console.log(params);
+      console.log(this.dataGoods['data'].length);
+      if (this.dataGoods['data'].length > 0) {
+        this.executeConsult('pag');
+      }
+    });
   }
 
   getData() {
@@ -422,10 +419,10 @@ export class ConsultationGoodsCommercialSalesComponent
       this.loading = false;
     } else {
       const paramsF = new FilterParams();
-      if(procedence != 'pag'){
-        this.params.value.page = 1
-        this.params.value.limit = 10
-      } 
+      if (procedence != 'pag') {
+        this.params.value.page = 1;
+        this.params.value.limit = 10;
+      }
       paramsF.page = this.params.value.page;
       paramsF.limit = this.params.value.limit;
 

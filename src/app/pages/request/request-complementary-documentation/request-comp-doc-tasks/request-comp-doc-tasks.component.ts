@@ -51,6 +51,7 @@ export class RequestCompDocTasksComponent
   selectGoodForEyeVisit: boolean = false;
   validateGoodForEyeVisit: boolean = false;
   resultEyeVisitReport: boolean = false;
+  makeResultPaperReport: boolean = false;
   resultVisits: boolean = false;
   listGoodSelectedTitle: string = 'Listado de Bienes';
   /**

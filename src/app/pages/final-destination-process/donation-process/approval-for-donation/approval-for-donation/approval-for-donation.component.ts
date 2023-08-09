@@ -14,9 +14,12 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { IUser } from 'src/app/core/models/catalogs/user.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DonationService } from 'src/app/core/services/ms-donationgood/donation.service';
 import { EventProgrammingService } from 'src/app/core/services/ms-event-programming/event-programing.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -36,8 +39,10 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilter: any = [];
-  users = new DefaultSelect<IUser>();
+  users = new DefaultSelect();
   user = localStorage.getItem('username');
+
+  area: string;
 
   constructor(
     private fb: FormBuilder,
@@ -45,7 +50,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private serviceUser: UsersService,
     private segAccessXAreas: SegAcessXAreasService,
-    private eventProgrammingService: EventProgrammingService
+    private eventProgrammingService: EventProgrammingService,
+
+    private indUserService: IndUserService,
+    private delegationService: DelegationService,
+    private securityService: SecurityService,
+    private authService: AuthService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -88,12 +98,17 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.search();
+          //this.search();
         }
       });
-    this.params
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.search());
+      .subscribe(() => this.search());*/
+    this.getUsers(new ListParams());
+    const user: any = this.authService.decodeToken() as any;
+    this.user = user.username;
+
+    console.log(this.user, user);
   }
 
   initForm() {
@@ -109,7 +124,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   filterButton() {
     this.params.value.page = 1;
-    this.search(false);
+    //this.search(false);
   }
 
   getUserDelegation() {
@@ -121,7 +136,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     );
   }
 
-  search(filter: boolean = true) {
+  /*search(filter: boolean = true) {
     this.eventProgrammingService
       .faValUserInd({ user: this.user, indicator: '12' })
       .subscribe({
@@ -194,7 +209,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
           );
         },
       });
-  }
+  }*/
 
   export() {
     this.data.getAll().then(data => {
@@ -203,11 +218,53 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   getUsers(params: ListParams) {
-    const routeUser = `?filter.name=$ilike:${params.text}`;
+    this.securityService.getAllUsersTracker().subscribe({
+      next: resp => {
+        this.users = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.users = new DefaultSelect();
+      },
+    });
+    /*const routeUser = `?filter.name=$ilike:${params.text}`;
     this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
       this.users = new DefaultSelect(res.data, res.count);
+    });*/
+  }
+
+  inicialice() {}
+
+  getIndicator() {
+    let body = {
+      user: '',
+      indicatorNumber: 12,
+    };
+    this.serviceUser.getAllIndicator(body).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
     });
   }
 
-  onUsersChange(type: any) {}
+  getFaVal() {
+    let body = {
+      pUser: '',
+      pIndicatorNumber: 12,
+    };
+    this.serviceUser.getAllIndicator(body).subscribe({
+      next: resp => {
+        console.log(resp);
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  onUsersChange(type: any) {
+    console.log(type);
+  }
 }

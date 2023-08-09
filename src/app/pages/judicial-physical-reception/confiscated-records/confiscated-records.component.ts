@@ -86,7 +86,7 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
       row.data.avalaible ? 'bg-success text-white' : 'bg-dark text-white',
     actions: false,
     columns: columnsGood,
-    noDataMessage: 'No se encontrarón registros',
+    noDataMessage: 'No se encontraron registros',
   };
 
   settings2 = {
