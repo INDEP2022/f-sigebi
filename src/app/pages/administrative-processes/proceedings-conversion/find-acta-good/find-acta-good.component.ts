@@ -62,7 +62,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
       ...this.settings,
       hideSubHeader: false,
       actions: {
-        title: 'Acciones',
+        columnTitle: 'Acciones',
         delete: true,
         edit: false,
         add: false,

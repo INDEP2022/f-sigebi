@@ -206,6 +206,7 @@
           </div>
         </div>
         <app-pagination
+          *ngIf="form.get('solnumId').value"
           [filterParams]="filterParams2"
           [totalItems]="totalItems2">
         </app-pagination>

@@ -117,46 +117,9 @@ export class FormalGoodsEstateComponent
 
   ngOnInit(): void {
     this.settingColumns();
+    this.filterFor();
+    this.filter2();
 
-    this._dataTableProcedeFormalizacion
-      .onChanged()
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(change => {
-        if (change.action === 'filter') {
-          let filters = change.filter.filters;
-          filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            filter.field == 'eventId'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
-          });
-          this.getFormalizeProccess();
-        }
-      });
-
-    this.params
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        tap(() => {
-          this.getFormalizeProccess();
-        })
-      )
-      .subscribe();
-    this.params2
-      .pipe(
-        takeUntil(this.$unSubscribe),
-        tap(() => {
-          this.getStage2();
-        })
-      )
-      .subscribe();
     this.params3
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -175,15 +138,143 @@ export class FormalGoodsEstateComponent
       .subscribe();
   }
 
+  // ----------FILTER PROCEDE FORMALIZACIÓN ----------//
+
+  filterFor() {
+    this._dataTableProcedeFormalizacion
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        console.log('change - ', change);
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            console.log('filtr- ', filter.field);
+            switch (filter.field) {
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'goodNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'idClient':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'dateIncorporado':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'jobNumber':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getFormalizeProccess();
+        }
+      });
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getFormalizeProccess();
+    });
+  }
+
+  // ----------FILTER ASIGNAR NOTARIOS ----------//
+  filter2() {
+    this._dataTableAsignaNotario
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change2 => {
+        console.log('change222 - ', change2);
+        if (change2.action === 'filter') {
+          let filters = change2.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            console.log('filtr- ', filter.field);
+            switch (filter.field) {
+              case 'goodNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'processKey':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dateIncorporado':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'notaryCli':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'numNotaryCli':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'cityNotary':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'notaryIdterc':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'formalizador':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'dateAssignmentnotDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getStage2();
+        }
+      });
+
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.getStage2();
+    });
+  }
+
   // ---------- PROCEDE FORMALIZACIÓN ----------//
+
   private getFormalizeProccess() {
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    params['filter.stage'] = `$eq:${1}`;
-
+    //params['filter.stage'] = `$eq:${1}`;
+    console.log('PAR -> ', params);
     this.formalizeProcessService.getAll(params).subscribe(
       (response: any) => {
         console.log('AQUIIIII', response);

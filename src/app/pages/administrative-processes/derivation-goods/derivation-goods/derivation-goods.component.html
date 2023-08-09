@@ -227,7 +227,7 @@
     <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
       <app-card [header]="true">
         <div class="ch-content" header>
-          <h5 class="title">No. Bien Hijo</h5>
+          <h5>No. Bien Hijo</h5>
         </div>
         <div body>
           <div class="row text-center mb-3">
@@ -239,7 +239,7 @@
                 [disabled]="flagGoodNew"
                 class="btn btn-info btn-sm active ml-2 mr-2"
                 (click)="applyGood(selectedRow)">
-                <i class="bx bx-plus bx-sm float-icon"></i>
+                Agregar <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
               &nbsp;
               <button
@@ -249,7 +249,7 @@
                 [disabled]="flagGoodDelete"
                 class="btn btn-danger btn-sm active ml-2 mr-2"
                 (click)="deletGood($event)">
-                <i class="bx bx-minus bx-sm float-icon"></i>
+                Quitar <i class="bx bx-minus bx-sm float-icon"></i>
               </button>
             </div>
           </div>

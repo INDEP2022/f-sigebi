@@ -59,34 +59,94 @@
           <app-pagination [params]="params" [totalItems]="totalItems">
           </app-pagination>
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3 mt-4">
+              <div class="cantidad">
+                <label for="">Monto</label>
+                <div>{{ amount }}</div>
+              </div>
+            </div>
+            <div class="col-md-3 mt-4">
+              <div class="cantidad">
+                <label for="">IVA</label>
+                <div>{{ vat }}</div>
+              </div>
+            </div>
+
+            <div class="col-md-3 mt-4">
+              <div class="cantidad">
+                <label for="">Retención ISR</label>
+                <div>{{ isrWithholding }}</div>
+              </div>
+            </div>
+            <div class="col-md-3 mt-4">
+              <div class="cantidad">
+                <label for="">Retención IVA</label>
+                <div>{{ vatWithholding }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3 mt-4">
+              <div class="cantidad">
+                <label for="">Total</label>
+                <div>{{ total }}</div>
+              </div>
+            </div>
+          </div>
+
+          <tr>
+            <td colspan="5" align="center">
               <button
                 type="button"
-                class="btn btn-sm btn-primary active"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="!showFilters"
                 (click)="disperGasto()">
                 Dispersa Gasto/Mandato
               </button>
-            </div>
-            <div class="col-md-4">
               <button
                 type="button"
-                class="btn btn-sm btn-primary active"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="!showFilters"
                 (click)="loadExcel()">
                 Cargar Bienes Excel
               </button>
-            </div>
-            <div class="coll-md-4">
               <button
                 type="button"
-                class="btn btn-sm btn-primary active"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
                 [disabled]="!showFilters"
                 (click)="modifyEstatus()">
                 Modificar Estatus
               </button>
-            </div>
-          </div>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!showFilters"
+                (click)="applyTC()">
+                Aplicar TC
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!showFilters"
+                (click)="contabilityMand()">
+                Contabilidad Mandatorio
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!showFilters"
+                (click)="reload()">
+                Recargar
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="!showFilters"
+                (click)="validates()">
+                Validados
+              </button>
+            </td>
+          </tr>
         </div>
       </div>
     </app-card>
