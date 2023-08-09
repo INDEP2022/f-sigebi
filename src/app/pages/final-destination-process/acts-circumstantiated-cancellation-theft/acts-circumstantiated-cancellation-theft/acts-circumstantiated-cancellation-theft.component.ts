@@ -551,6 +551,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('testigoOIC')
           .setValue(this.expedient.authorityOrdersDictum); // console.log(this.expedient);
+
         this.getGoodsByStatus(this.fileNumber);
       },
       error: () => {
@@ -733,7 +734,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       });
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
-      // this.getActasByConversion(next.cve_acta_conv);
     });
     modalRef.content.cleanForm.subscribe(async (next: any) => {
       if (next) {
@@ -1173,7 +1173,32 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.selectedGooodsValid = event.selected;
   }
 
-  actualizarActa() {}
+  actualizarActa() {
+    if (!this.actasDefault) {
+      this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
+      return;
+    }
+    if (this.actasDefault.statusProceedings == 'CERRADA') {
+      this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
+      return;
+    }
+    this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
+    delete this.actasDefault.numDelegation1Description;
+    delete this.actasDefault.numDelegation2Description;
+    delete this.actasDefault.numTransfer_;
+    this.proceedingsDeliveryReceptionService
+      .editProceeding(this.actasDefault.id, this.actasDefault)
+      .subscribe({
+        next: async data => {
+          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          // this.loading = false
+        },
+      });
+  }
+
   cleanActa() {}
 
   cargueMasive() {

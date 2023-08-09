@@ -234,6 +234,14 @@ export class MsDepositaryService extends HttpService {
   }
 
   VALIDA_PAGOSREF_VENTA_SBM(body: any) {
-    return this.get(`${DepositaryEndPoints.PaymentRefVentaSbm}`, body);
+    return this.post(`${DepositaryEndPoints.PaymentRefVentaSbm}`, body);
+  }
+
+  MODIFICA_ESTATUS_BASES_ANT(body: any) {
+    return this.put(`${DepositaryEndPoints.UpdateStatusBase}/${body}`);
+  }
+
+  MODIFICA_ESTATUS_ANT(body: any) {
+    return this.put(`${DepositaryEndPoints.UpdateGeneralStatus}`, body);
   }
 }

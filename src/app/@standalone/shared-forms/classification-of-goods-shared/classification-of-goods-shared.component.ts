@@ -68,7 +68,9 @@ export class ClassificationOfGoodsSharedComponent
   }
 
   onPackagesChange(type: any) {
-    this.descriptionClasification.emit(type.description);
+    if (type) {
+      this.descriptionClasification.emit(type.description);
+    }
     this.form.updateValueAndValidity();
   }
 

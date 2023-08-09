@@ -71,4 +71,14 @@ export class ComerDetailsService extends HttpService {
       `application/pFmcomr612getAuxCount/${id}`
     );
   }
+
+  MODIFICA_ESTATUS(body: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(`application/change-status`, body);
+  }
+
+  CAMBIAR_ESTATUS_ANT(body: any): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `application/change-status-ant/${body}`
+    );
+  }
 }

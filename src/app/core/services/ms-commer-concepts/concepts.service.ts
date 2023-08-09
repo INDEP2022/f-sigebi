@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Params } from '@angular/router';
 import { map } from 'rxjs';
 import { ComerConceptEndpoints } from 'src/app/common/constants/endpoints/ms-comerconcept';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
@@ -71,10 +72,14 @@ export class ConceptsService extends HttpService {
         return null;
     }
   }
-  copyParameters(body: { id: string; address: string; concept: string }) {
+  copyParameters(
+    body: { id: string; address: string; concept: string },
+    params: Params
+  ) {
     return this.post<IListResponseMessage<IConceptCopy>>(
       ComerConceptEndpoints.ConceptsParametersCopy,
-      body
+      body,
+      params
     );
   }
 }

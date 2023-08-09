@@ -309,7 +309,7 @@ export class SirsaeMovementSendingMainComponent
 
     if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
 
-    params.addFilter('address', `M`, SearchFilter.EQ);
+    params.addFilter('address', this.layout, SearchFilter.EQ);
     params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
     params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
 
