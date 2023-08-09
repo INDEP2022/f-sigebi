@@ -213,7 +213,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             if (this.conversionData) {
               this.no_bien_blk_tipo_bien = data.goodFatherNumber;
               this.idConversion.setValue(data.id);
-              this.numberDossier.setValue(data.fileNumber.id);
+              this.numberDossier.setValue(data.fileNumber);
               this.numberGoodFather.setValue(data.goodFatherNumber);
               this.goodFatherNumber$.next(data.goodFatherNumber);
               this.wrongModal = false;
