@@ -1,0 +1,45 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nuevo</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formNew" class="form-material">
+      <div class="row mb-3 mt-3">
+        <form-field [control]="formNew.get('batch')" class="col-md-6">
+          <ngx-select
+            (fetchItems)="searchBatch($event)"
+            control="batch"
+            [form]="formNew"
+            [data]="data"
+            label="Lote"></ngx-select>
+        </form-field>
+        <form-field
+          [control]="formNew.get('idBatch')"
+          class="col-md-6"
+          label="Id Lote">
+          <input type="text" formControlName="idBatch" class="form-control" />
+        </form-field>
+      </div>
+      <div class="row mb-3 mt-3">
+        <form-field
+          [control]="formNew.get('description')"
+          class="col"
+          label="description">
+          <input
+            type="text"
+            formControlName="description"
+            class="form-control" />
+        </form-field>
+      </div>
+    </form>
+    <div class="row text-center">
+      <div class="col">
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</app-modal>
