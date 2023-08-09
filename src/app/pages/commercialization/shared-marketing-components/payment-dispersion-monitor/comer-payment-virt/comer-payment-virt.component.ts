@@ -7,7 +7,11 @@ import { FilterParams, ListParams } from 'src/app/common/repository/interfaces/l
 import { BasePage } from 'src/app/core/shared';
 import { COLUMN_COMER } from './columns-comer';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { CanTimesComponent } from '../can-times/can-times.component';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import { NewComerPaymentVirt } from '../new-comer-payment-virt/new-comer-payment-virt.component';
 
 @Component({
   selector: 'app-comer-payment-virt',
@@ -24,16 +28,21 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
+  actionsBool: boolean
+
   settings1 = {
     ...TABLE_SETTINGS,
     columns: COLUMN_COMER,
+    actions: false,
     noDataMessage: 'No se Encontraron Registros',
   };
 
   constructor(
     private fb: FormBuilder,
     private comerPaymentService: PaymentService,
-    private bsModel: BsModalRef
+    private bsModel: BsModalRef,
+    private comerLotsService: LotService,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -42,6 +51,26 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     this.prepareForm();
     console.log(this.dataModel);
     this.fillAndGetData()
+
+    if(this.dataModel.incomeOrderId != null || this.dataModel.date > this.dataModel.dateMaxPay){
+      console.log(false)
+      this.actionsBool = false
+      this.settings1 = {
+        ...TABLE_SETTINGS,
+        columns: COLUMN_COMER,
+        actions: false,
+        noDataMessage: 'No se Encontraron Registros',
+      }
+    }else{
+      console.log(true)
+      this.actionsBool = true
+      this.settings1 = {
+        ...TABLE_SETTINGS,
+        columns: COLUMN_COMER,
+        actions: true,
+        noDataMessage: 'No se Encontraron Registros',
+      }
+    }
   }
 
   fillAndGetData(){
@@ -53,9 +82,22 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     const paramsF = new FilterParams()
     paramsF.addFilter('payId', this.dataModel.idPayment)
     this.comerPaymentService.getComerPagoRefVirt(paramsF.getParams()).subscribe(
-        res => {
+        async res => {
             console.log(res)
-            this.data = res.Data
+            const newData = await Promise.all(
+              res.data.map(async (e:any) => {
+                const resp = await this.fillExtraData(e.batchId)
+                const respJson = JSON.parse(JSON.stringify(resp))
+                return{
+                  ...e,
+                  publicBatch: respJson.publicBatch,
+                  description: respJson.description
+                }
+                
+              })
+            ) 
+            console.log(newData)
+            this.data.load(newData)
             this.totalItems = res.count
         },
         err => {
@@ -78,15 +120,52 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     });
   }
 
+  //Agregar valores
+  fillExtraData(idLote: any){
+    return new Promise((resolve, reject) => {
+      const paramsF = new FilterParams()
+      paramsF.addFilter('idLot', idLote)
+      this.comerLotsService.getAllComerLotsFilter(paramsF.getParams()).subscribe(
+        res => {
+          console.log(res)
+          console.log(res.data[0])
+          const data = res.data[0]
+          resolve({description: data.description, publicBatch: data.lotPublic})
+        },
+        err => {
+          resolve({description: 'NO ENCONTRADO', publicBatch: null})
+        }
+      )
+    })
+    
+  }
+
   //Cerrar modal
   close() {
     this.bsModel.hide();
   }
 
+  //Open Modal Dividir
   timesToDivide(){
-    
+    let modalConfig = MODAL_CONFIG
+    modalConfig = {
+      initialState: {},
+      class: 'modal-dialog-centered'
+    }
+
+    this.modalService.show(CanTimesComponent, modalConfig)
   }
 
+  //Open Modal New
+  newPayment(){
+    let modalConfig = MODAL_CONFIG
+    modalConfig = {
+      initialState: {},
+      class: 'modal-lg modal-dialog-centered'
+    }
+
+    this.modalService.show(NewComerPaymentVirt, modalConfig)
+  }
 
   //gets
   get rfc() {

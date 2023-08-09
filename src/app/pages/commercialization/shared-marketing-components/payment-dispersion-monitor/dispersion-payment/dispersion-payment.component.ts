@@ -115,6 +115,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   referenceBatch: any = null;
   amountBatch: any = null;
   idPaymentBatch: any = null;
+  idOrderBatch: any = null;
+
+  dataBatch: any = null;
 
   private clie_procesar: boolean = false;
   private lot_procesar: boolean = false;
@@ -905,41 +908,59 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   //Seleccionar PAGOREF_CLI
   selectRowCustomerBanks(e: any) {
     console.log(e.data);
+    this.dataBatch = e.data;
     this.idBatch = e.data.batchId;
-    this.idClientBatch = e.data.Customer_ID;
-    this.referenceBatch = e.data.reference
-    this.amountBatch = e.data.amount
-    this.idPaymentBatch = e.data.Payment_ID
+  }
+
+  //Correct Date
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
   }
 
   //Función de pagos
   unbundlePaymentsFn() {
     let rfc: any = null;
     let client: any = null;
-    let reference: any = this.referenceBatch
-    let amount: any = this.amountBatch
-    let idPayment: any = this.idPaymentBatch
+    let reference: any = this.dataBatch.reference;
+    let amount: any = this.dataBatch.amount;
+    let idPayment: any = this.dataBatch.Payment_ID;
+    let idBatch: any = this.dataBatch.batchId;
+    let incomeOrderId: any = this.dataBatch.Income_Order_ID;
+    let date: any = this.correctDate(this.dataBatch.date);
+    let dateMaxPay: any = this.dateMaxPayment.value
     return new Promise((resolve, reject) => {
       if (this.event.value != null) {
         if (this.idBatch != null) {
           const paramsF = new FilterParams();
-          paramsF.addFilter('id', this.idClientBatch);
-          this.customersService.getAllWithFilters(paramsF.getParams()).subscribe(
-            res => {
-              console.log(res);
-              rfc = res['data'][0].rfc
-              client = res['data'][0].reasonName
-              console.log({rfc, client})
-              resolve({rfc,client,reference,amount,idPayment})
-            },
-            err => {
-              console.log(err);
-            }
-          );               
+          paramsF.addFilter('id', this.dataBatch.Customer_ID);
+          this.customersService
+            .getAllWithFilters(paramsF.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                rfc = res['data'][0].rfc;
+                client = res['data'][0].reasonName;
+                console.log({ rfc, client });
+                resolve({
+                  rfc,
+                  client,
+                  reference,
+                  amount,
+                  idPayment,
+                  idBatch,
+                  incomeOrderId,
+                  date,
+                  dateMaxPay
+                });
+              },
+              err => {
+                console.log(err);
+              }
+            );
         }
       }
-    })
-    
+    });
   }
 
   //Abrir modal de Pagos
@@ -947,7 +968,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     const dataModel = await this.unbundlePaymentsFn();
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState: {dataModel},
+      initialState: { dataModel },
       class: 'modal-lg modal-dialog-centered',
     };
 

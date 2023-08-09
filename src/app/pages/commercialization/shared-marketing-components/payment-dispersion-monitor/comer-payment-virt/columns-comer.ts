@@ -1,13 +1,13 @@
 export const COLUMN_COMER = {
-    lote:{
+    publicBatch:{
         title:'Lote',
         sort: false
     },
-    descriptiom:{
+    description:{
         title:'Descripción',
         sort: false
     },
-    type: {
+    typereference: {
         title: 'Tipo',
         sort: false
     },
