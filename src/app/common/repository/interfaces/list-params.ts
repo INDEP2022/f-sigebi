@@ -53,6 +53,7 @@ export class FilterParams {
   getParams() {
     const paginationParams = this.getPaginationParams();
     const allParams = [...this.filters, ...paginationParams];
+    console.log(allParams);
     return allParams.join('&');
   }
 
