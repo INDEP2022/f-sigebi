@@ -76,10 +76,11 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
         this.origin3 = params['origin4'] ?? null;
         this.origin4 = params['origin5'] ?? null;
         this.PAR_MASIVO = params['PAR_MASIVO'] ?? null;
+        console.log(this.paramsScreen.PAR_MASIVO);
+
         if (this.origin && this.paramsScreen.PAR_MASIVO != null) {
           // this.btnSearchAppointment();
         }
-        console.log(params, this.paramsScreen);
       });
     if (this.paramsScreen) {
       if (this.paramsScreen.PAR_MASIVO) {
@@ -159,6 +160,7 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
         this.loading = false;
         this.totalItems = data.count;
         this.vaults = data.data;
+        console.log(this.vaults);
         this.dataFactGen.load(data.data);
         this.dataFactGen.refresh();
       },
