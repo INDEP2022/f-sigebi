@@ -31,5 +31,6 @@ import { ParamsConceptsModalComponent } from './params-conceps-list/params-conce
     AccordionModule,
     TextAreaRenderComponent,
   ],
+  exports: [ParamsConcepsListComponent],
 })
 export class ExpenseConceptsModule {}
