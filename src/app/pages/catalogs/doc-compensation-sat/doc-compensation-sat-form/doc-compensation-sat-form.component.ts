@@ -21,7 +21,7 @@ export class DocCompensationSatFormComponent
   implements OnInit
 {
   docCompesationSatForm: ModelForm<IDocCompesationSat>;
-  title: string = 'Documento resarcimiento SAT';
+  title: string = 'Documento Resarcimiento SAT';
   edit: boolean = false;
   docCompesationSat: IDocCompesationSat;
   constructor(
@@ -49,11 +49,19 @@ export class DocCompensationSatFormComponent
       ],
       typeDocSat: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(250),
+          Validators.required,
+        ],
       ],
       addressee: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(150),
+          Validators.required,
+        ],
       ],
       subjectCode: [
         null,
@@ -78,6 +86,13 @@ export class DocCompensationSatFormComponent
   }
 
   create() {
+    if (
+      this.docCompesationSatForm.controls['addressee'].value.trim() === '' ||
+      this.docCompesationSatForm.controls['typeDocSat'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.docCompesationSatService
       .create(this.docCompesationSatForm.value)

@@ -56,7 +56,7 @@ export const NOTARY_COLUMNS = {
     sort: false,
   },
   registryNumber: {
-    title: 'Número de registro',
+    title: 'Número de Registro',
     type: 'number',
     sort: false,
   },

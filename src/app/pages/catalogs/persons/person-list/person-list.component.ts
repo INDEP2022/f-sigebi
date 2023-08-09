@@ -94,6 +94,7 @@ export class PersonListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getPersons();
         }
       });
@@ -124,8 +125,8 @@ export class PersonListComponent extends BasePage implements OnInit {
           //     this.totalItems = response.count;
           //   });
           this.person = response.data;
-          this.data.load(this.person);
-          console.log(this.data);
+          this.data.load(response.data);
+          //console.log(this.data);
           this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;

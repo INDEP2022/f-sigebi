@@ -58,8 +58,8 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.maxLength(5),
-          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(25),
+          Validators.pattern(STRING_PATTERN),
         ],
       ],
       description: [
@@ -74,7 +74,7 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.maxLength(2),
+          Validators.maxLength(5),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
@@ -86,7 +86,10 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      version: [null, [Validators.maxLength(5)]],
+      version: [
+        null,
+        [Validators.maxLength(5), Validators.pattern(NUMBERS_PATTERN)],
+      ],
       userCreation: [null],
       createDate: [null],
       userModification: [null],
@@ -126,6 +129,10 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.form.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     console.log('id', this.form.value.id_fraccion);
 
