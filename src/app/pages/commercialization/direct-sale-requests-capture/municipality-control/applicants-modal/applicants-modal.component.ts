@@ -83,7 +83,7 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      phone: [null /*, Validators.pattern(PHONE_PATTERN)*/],
+      phone: [null, [Validators.pattern(PHONE_PATTERN)]],
       award: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       webmail: [null, Validators.pattern(EMAIL_PATTERN)],
     });
@@ -135,15 +135,19 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
         .updateSolicitante(this.bodySolicitante)
         .subscribe({
           next: data => {
-            this.onLoadToast('success', 'Datos actualizados correctamente', '');
-            location.reload();
+            this.onLoadToast(
+              'success',
+              'Solicitante',
+              'Actualizado Correctamente'
+            );
             this.close();
+            location.reload();
           },
           error: err => {
             this.onLoadToast(
               'warning',
               'advertencia',
-              'Lo sentimos ha ocurrido un error'
+              'El Solicitante No Se Ha Actualizado Correctamente'
             );
             this.close();
           },
@@ -160,15 +164,15 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
         .addSolicitante(this.bodySolicitante)
         .subscribe({
           next: data => {
-            this.onLoadToast('success', 'Datos agregados correctamente', '');
-            location.reload();
+            this.onLoadToast('success', 'Bien', 'Agregado Correctamente');
             this.close();
+            location.reload();
           },
           error: err => {
             this.onLoadToast(
               'warning',
               'advertencia',
-              'Lo sentimos ha ocurrido un error'
+              'El Bien No Se Ha Agragado Correctamente'
             );
             this.close();
           },
@@ -183,6 +187,7 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
         this.departments,
         this.departments.length
       );
+      console.log(this.municipalityItems);
     });
   }
 
