@@ -20,9 +20,6 @@ export class RequestHelperService {
   private turnarVerifiCumpli = new BehaviorSubject<any>(undefined);
   currentTurnarVerificacion = this.turnarVerifiCumpli.asObservable();
 
-  /*private expedientTab = new BehaviorSubject<any>(undefined);
-  currentExpedientTab = this.expedientTab.asObservable();*/
-
   constructor() {}
 
   isComponentSaving(menaje: boolean) {
@@ -44,8 +41,4 @@ export class RequestHelperService {
   consultarSiCumple(consultar: boolean) {
     this.turnarVerifiCumpli.next(consultar);
   }
-
-  /*hideExpedienteTab(hide: boolean){
-    this.expedientTab.next(hide);
-  }*/
 }
