@@ -235,8 +235,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
             this.loading = false;
             this.detailData.load(res.data);
             this.totalItems2 = res.count;
-            this.form2.get('movement').reset();
-            this.form2.get('deposit').reset();
+            this.form2.get('movement').reset()
+            this.form2.get('deposit').reset()
             this.newDetail = false;
             this.alert('success', 'Detalle creado', '');
           },
