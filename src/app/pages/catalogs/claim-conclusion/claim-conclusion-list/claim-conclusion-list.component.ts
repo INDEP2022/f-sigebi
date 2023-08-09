@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IClaimConclusion } from 'src/app/core/models/catalogs/claim-conclusion.model';
 import { ClaimConclusionService } from 'src/app/core/services/catalogs/claim-conclusion.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -18,6 +22,8 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
   paragraphs: IClaimConclusion[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
 
   constructor(
     private claimConclusionService: ClaimConclusionService,
@@ -31,6 +37,31 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.totalItems = 0;
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log(filter);
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            filter.field == 'id' || filter.field == 'flag'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getExample();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getExample());
@@ -38,9 +69,14 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.claimConclusionService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.claimConclusionService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
+        this.data.load(response.data);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -80,7 +116,7 @@ export class ClaimConclusionListComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Conclusión de registro',
+          'Conclusión de Siniestro',
           'Borrado Correctamente'
         ),
           this.getExample();

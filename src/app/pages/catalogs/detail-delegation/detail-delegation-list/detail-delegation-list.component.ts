@@ -62,7 +62,7 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'name':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'numberDelegation':
                 searchFilter = SearchFilter.EQ;
@@ -139,7 +139,7 @@ export class DetailDelegationListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.detailDelegationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Detalle delegación', 'Borrado Correctamente');
+        this.alert('success', 'Detalle Delegación', 'Borrado Correctamente');
         this.getDetailDelegation();
       },
       error: error => {

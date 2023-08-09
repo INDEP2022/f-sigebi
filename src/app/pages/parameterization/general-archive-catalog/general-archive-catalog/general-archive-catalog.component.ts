@@ -25,7 +25,6 @@ import { ILocker } from 'src/app/core/models/catalogs/locker.model';
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Component modal
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
-import Swal from 'sweetalert2';
 import { BatteryModalComponent } from '../battery-modal/battery-modal.component';
 import { LockersModalComponent } from '../lockers-modal/lockers-modal.component';
 import { SaveValuesModalComponent } from '../save-values-modal/save-values-modal.component';
@@ -219,7 +218,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de guardavalor
   delete(saveValues?: ISaveValue) {
     this.saveValueService.remove2(saveValues).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      next: () => {
+        this.getSaveValues(),
+          this.alert('success', 'Guardavalor', 'Borrado Correctamente');
+      },
       error: err => {
         this.alertQuestion(
           'error',
@@ -301,7 +303,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //método para borrar registro de Batteria
   delete2(battery?: IBattery) {
     this.batterysService.remove(battery.idBattery).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      next: () => {
+        this.getSaveValues(),
+          this.alert('success', 'Bateria', 'Borrado Correctamente');
+      },
       error: err => {
         this.alertQuestion(
           'error',
@@ -401,7 +406,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     };
     console.log('key', formData);
     this.shelvessService.remove(formData).subscribe({
-      next: () => (Swal.fire('Borrado', '', 'success'), this.getSaveValues()),
+      next: () => {
+        this.getSaveValues(),
+          this.alert('success', 'Estante', 'Borrado Correctamente');
+      },
       error: err => {
         this.alertQuestion(
           'error',
@@ -504,8 +512,8 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.lockersService.remove(locker.id).subscribe({
       next: () => {
         this.loading4 = false;
-        Swal.fire('Borrado', '', 'success');
         this.getLocker(this.saveValueKey, this.numBattery, this.numShelf);
+        this.alert('success', 'Casillero', 'Borrado Correctamente');
       },
     });
   }

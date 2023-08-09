@@ -51,7 +51,6 @@ export class ValuesComponent extends BasePage implements OnInit {
     this.settings2.columns = TVALTABLA1_COLUMNS;
     this.settings2.actions.add = false;
     this.settings2.actions.delet = false;
-
     this.settings2 = {
       ...this.settings2,
       hideSubHeader: false,
@@ -69,21 +68,28 @@ export class ValuesComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'cdtabla':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
-          this.resetTable2();
+          this.params = this.pageFilter(this.params);
+          //this.resetTable2();
           this.getValuesAll();
         }
       });
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
-      this.resetTable2();
+      //this.resetTable2();
       this.getValuesAll();
     });
   }
@@ -94,8 +100,6 @@ export class ValuesComponent extends BasePage implements OnInit {
     this.tvalTableList = [];
     this.data1.load(this.tvalTableList);
     this.data1.refresh();
-    this.data1.refresh();
-    this.totalItems2 = 0;
   }
 
   getValuesAll() {
@@ -110,7 +114,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.valuesList = response.data;
-        this.data.load(this.valuesList);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
@@ -126,7 +130,6 @@ export class ValuesComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.tvalTableList = [];
     this.values = event.data;
-    this.params2 = new BehaviorSubject<ListParams>(new ListParams());
     this.resetTable2();
 
     this.data1
@@ -136,18 +139,34 @@ export class ValuesComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'otKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'value':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                console.log(field);
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters1[field]);
             } else {
               delete this.columnFilters1[field];
             }
           });
+          this.params2 = this.pageFilter(this.params2);
           this.gettvalTable(this.values);
         }
       });
-
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettvalTable(this.values));
@@ -158,7 +177,7 @@ export class ValuesComponent extends BasePage implements OnInit {
     // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
     let params2 = {
       ...this.params2.getValue(),
-      ...this.columnFilters,
+      ...this.columnFilters1,
     };
     console.log('params:', params2);
     console.log('params2:', this.params2);
@@ -167,8 +186,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.tvalTableList = response.data;
-        this.data1.load(this.tvalTableList);
-        this.data1.refresh();
+        this.data1.load(response.data);
         this.data1.refresh();
         this.totalItems2 = response.count;
         this.loading2 = false;
@@ -199,11 +217,7 @@ export class ValuesComponent extends BasePage implements OnInit {
       };
       this.modalService.show(ValuesModalComponent, config);
     } else {
-      this.onLoadToast(
-        'warning',
-        'advertencia',
-        'Se debe seleccionar una Tabla logica'
-      );
+      this.onLoadToast('warning', 'Se debe seleccionar una Tabla logica', '');
     }
   }
 }

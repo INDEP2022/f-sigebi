@@ -17,7 +17,6 @@ import { StrategyServiceTypeService } from 'src/app/core/services/ms-strategy/st
 import { UnitCostDetService } from 'src/app/core/services/unit-cost/unit-cost-det.service';
 import { UnitCostService } from 'src/app/core/services/unit-cost/unit-cost.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { UnitCostDetFormComponent } from '../unit-cost-det-form/unit-cost-det-form.component';
 import { UnitCostFormComponent } from '../unit-cost-form/unit-cost-form.component';
 import { COSTKEY_COLUMNS, VALIDITYCOST_COLUMNS } from './unit-cost-columns';
@@ -89,7 +88,7 @@ export class UnitCostComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         add: false,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...VALIDITYCOST_COLUMNS },
@@ -419,7 +418,6 @@ export class UnitCostComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(unitCost.costId);
-        Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -431,8 +429,8 @@ export class UnitCostComponent extends BasePage implements OnInit {
       '¿Desea borrar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete2(unitCostDet.costId);
-        Swal.fire('Borrado', '', 'success');
+        this.delete2(unitCostDet);
+        //Swal.fire('Borrado', '', 'success');
       }
     });
   }
@@ -443,13 +441,26 @@ export class UnitCostComponent extends BasePage implements OnInit {
     });
   }
 
-  delete2(id: number) {
-    this.unitCostDetService.remove(id).subscribe({
-      next: () => this.getUnitCostDetAll(),
+  delete2(event: any) {
+    console.log(event);
+    let body = {
+      costId: event.costId,
+      cveZoneContract: event.cveZoneContract,
+      startDate: event.startDate,
+      costUnitarian: event.costUnitarian,
+      validity: event.validity,
+    };
+
+    this.unitCostDetService.remove(body).subscribe({
+      next: () => {
+        this.getUnitCostDetAll();
+        this.alert('success', 'Vigencia y Costo', 'Borrado Correctamente');
+      },
     });
   }
 
   report() {
+    //FESTCOTPRE_0001
     let params = {
       //PN_DEVOLUCION: this.data,
     };

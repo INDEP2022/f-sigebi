@@ -67,15 +67,16 @@ export const COLUMNSLIST = {
     sort: false,
   },
   zipCode: {
-    title: 'Codigo postal',
+    title: 'Codigo Postal',
     sort: false,
+    width: '100%',
   },
   numPhone: {
     title: 'Teléfono',
     sort: false,
   },
   circuitCVE: {
-    title: 'Cv circuito',
+    title: 'Cv Circuito',
     sort: false,
   },
 };
