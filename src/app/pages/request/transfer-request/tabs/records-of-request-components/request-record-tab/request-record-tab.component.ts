@@ -365,8 +365,8 @@ export class RequestRecordTabComponent
         this.requestForm.get('circumstantialRecord').value === ''
       ) {
         this.message(
-          'info',
-          'Campos requeridos',
+          'warning',
+          'Campos Requeridos',
           'Recuerde llenar los campos obligatorios'
         );
         this.requestForm.markAllAsTouched();
@@ -378,8 +378,8 @@ export class RequestRecordTabComponent
         this.requestForm.get('paperDate').value === ''
       ) {
         this.message(
-          'info',
-          'Campos requeridos',
+          'warning',
+          'Campos Requeridos',
           'Recuerde llenar los campos obligatorios'
         );
         this.requestForm.markAllAsTouched();

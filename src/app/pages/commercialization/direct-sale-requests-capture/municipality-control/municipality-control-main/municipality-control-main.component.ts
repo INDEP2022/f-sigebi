@@ -68,14 +68,15 @@ export class MunicipalityControlMainComponent
     this.assignedGoodTotalItems = 0;
     this.municipalityControlMainService.getSolicitantes().subscribe(data => {
       this.applicantColumns = data.data;
+      console.log(this.applicantColumns);
       this.applicantTotalItems = this.applicantColumns.length;
       console.log(this.applicantTotalItems);
     });
-    this.municipalityControlMainService.getBienesAsignados().subscribe(data => {
+    /* this.municipalityControlMainService.getBienesAsignados().subscribe(data => {
       this.assignedGoodColumns = data.data;
       this.assignedGoodTotalItems = this.assignedGoodColumns.length;
       console.log(this.assignedGoodTotalItems);
-    });
+    });*/
   }
   refreshGoods() {
     this.assignedGoodColumns = [...this.assignedGoodColumns];
@@ -85,7 +86,7 @@ export class MunicipalityControlMainComponent
     console.log(row, type);
     this.alertQuestion(
       'question',
-      '¿Desea eliminar este registro?',
+      '¿Desea Eliminar Este Registro?',
       '',
       'Eliminar'
     ).then(question => {
@@ -110,7 +111,7 @@ export class MunicipalityControlMainComponent
     };
     this.municipalityControlMainService.deleteSolicitante(body).subscribe({
       next: data => {
-        this.onLoadToast('success', 'Datos eliminados correctamente', '');
+        this.onLoadToast('success', 'Solicitante', 'Eliminado Correctamente');
         this.getData();
         // location.reload();
       },
@@ -118,7 +119,7 @@ export class MunicipalityControlMainComponent
         this.onLoadToast(
           'warning',
           'advertencia',
-          'Lo sentimos ha ocurrido un error'
+          'El Solicitante No Se Ha Eliminado Correctamente'
         );
       },
     });
@@ -130,7 +131,7 @@ export class MunicipalityControlMainComponent
       .deleteBienesAsignados(row.repvendcId)
       .subscribe({
         next: data => {
-          this.onLoadToast('success', 'Datos eliminados correctamente', '');
+          this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
           // location.reload();
           this.getData();
         },
@@ -138,7 +139,7 @@ export class MunicipalityControlMainComponent
           this.onLoadToast(
             'warning',
             'advertencia',
-            'Lo sentimos ha ocurrido un error'
+            'El Bien No Se Ha Eliminado Correctamente'
           );
         },
       });

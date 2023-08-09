@@ -22,6 +22,8 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
+    console.log(params);
+    console.log(params);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
