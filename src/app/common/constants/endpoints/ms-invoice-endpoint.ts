@@ -12,4 +12,10 @@ export enum ENDPOINT_INVOICE {
   ComerRectInvoice = 'comer-rectinvoices',
   ComerDetInvoice = 'comer-direct-fac',
   ApplicationSQL = 'application/execute-sql',
+  ComerLote = 'ctrl-invoice/reg-lot',
+  FactBases = 'procedure-sera/base-invoice-data',
+  ComerCoord = 'ctrl-invoice/data-cor-reg',
+  ApplicationFolioDispo = 'application/valida-folios-dispo',
+  ValidateUser = 'procedure-sera/validate-user',
+  ControlProcedure = 'procedure-sera/ctrl-generate-preinvoices',
 }

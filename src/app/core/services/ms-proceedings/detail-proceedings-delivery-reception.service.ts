@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ProceedingsEndpoints } from 'src/app/common/constants/endpoints/ms-proceedings-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -5,7 +6,6 @@ import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDeleteDetailProceeding,
-  IDetailProceedings,
   IDetailProceedingsDeliveryReception,
   IDetailWithIndEdo,
 } from '../../models/ms-proceedings/detail-proceedings-delivery-reception.model';
@@ -23,9 +23,9 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
-  updateGoodsByProceedings(model: IDetailProceedings) {
-    const route = `${ProceedingsEndpoints.DetailProceedingsDeliveryReception}`;
-    return this.put(route, model);
+  getGoodsByProceeding(params: HttpParams) {
+    const route = `proceedings-delivery-reception`;
+    return this.get(route, params);
   }
 
   PADelActaEntrega(actNumber: string | number) {
@@ -65,6 +65,14 @@ export class DetailProceeDelRecService extends HttpService {
       'detail-proceedings-delivery-reception/get-detalle-acta-recepcion',
       model
     );
+  }
+
+  postRegister(body: any) {
+    return this.post('detail-proceedings-delivery-reception', body);
+  }
+
+  deleteRegister(body: any) {
+    return this.delete('detail-proceedings-delivery-reception', body);
   }
 
   remove(numberGood: string | number, numberProceedings: string | number) {

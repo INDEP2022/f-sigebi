@@ -4,10 +4,7 @@
   </div>
 
   <div body>
-    <form
-      class="form-material form-horizontal"
-      [formGroup]="form"
-      (ngSubmit)="search(false)">
+    <form class="form-material form-horizontal" [formGroup]="form">
       <div class="row mt-5">
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
@@ -52,6 +49,7 @@
                 [data]="users"
                 [form]="form"
                 bindLabel="name"
+                value="user"
                 label="Usuarios"
                 control="elaborated"
                 (change)="onUsersChange($event)">

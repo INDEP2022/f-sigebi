@@ -22,6 +22,7 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
   params = new BehaviorSubject(new FilterParams());
   binnacles: IBinnacle[] = [];
   totalItems = 0;
+  loadingLog: boolean = false;
   constructor(private seraLogService: SeraLogService) {
     super();
     (this.settings.columns = LOG_TABLE_COLUMNS),
@@ -51,24 +52,19 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
 
   getBinnacleData(params: FilterParams) {
     this.hideError();
-    this.loading = true;
+    this.loadingLog = true;
     return this.seraLogService
       .getAllByRegisterNum(this.registerNum, params.getParams())
       .pipe(
         catchError(error => {
-          this.loading = false;
+          this.loadingLog = false;
           if (error.status >= 500 || error.status >= 400) {
-            this.alert(
-              'error',
-              'Ocurrio un error al obtener la información',
-              ``
-            );
             this.binnacles = [];
           }
           return throwError(() => error);
         }),
         tap(response => {
-          this.loading = false;
+          this.loadingLog = false;
           this.binnacles = response.data;
           this.totalItems = response.count;
           console.log(this.binnacles);
@@ -187,12 +183,12 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
 
   getBinnacleData(params: FilterParams) {
     this.hideError();
-    this.loading = true;
+    this.loadingLog = true;
     return this.seraLogService
       .getAllByRegisterNum(this.registerNum, params.getParams())
       .pipe(
         catchError(error => {
-          this.loading = false;
+          this.loadingLog = false;
           if (error.status >= 500 || error.status >= 400) {
             this.onLoadToast('error', 'Warn', error.error.message);
             // this.binnacles = [];
@@ -200,7 +196,7 @@ export class LogTableComponent extends BasePage implements OnInit, OnChanges {
           return throwError(() => error);
         }),
         tap(response => {
-          this.loading = false;
+          this.loadingLog = false;
           const data = response.data
           this.binnacles.load(data);
           console.log(this.binnacles)

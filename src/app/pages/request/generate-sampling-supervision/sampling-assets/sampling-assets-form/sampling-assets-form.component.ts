@@ -103,6 +103,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   //private domicilieService = inject(DomicileService);
   private domicilieService = inject(GoodDomiciliesService);
+  //private goodsqueryService = inject(GoodsQueryService)
   private authService = inject(AuthService);
   private goodService = inject(GoodService);
 
@@ -146,6 +147,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   selectWarehouse(event: any): any {
     this.displaySearchAssetsBtn = event.isSelected ? true : false;
+    console.log(event);
 
     this.params2.getValue().addFilter('requestId', event.data.requestId.id);
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
@@ -259,7 +261,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.goodService.getAll(filter).subscribe({
       next: resp => {
         console.log(resp.data);
-        //this.paragraphs2.load()
+        this.paragraphs2.load(resp.data);
       },
       error: error => {
         console.log(error);

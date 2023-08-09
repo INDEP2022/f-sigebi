@@ -509,7 +509,7 @@ export class AddressTransferorTabComponent
           this.domicileForm.controls['id'].setValue(data.id);
           this.message(
             'success',
-            'Guadado',
+            'Guardado',
             'El domicilio se guardó correctamente'
           );
 
@@ -521,7 +521,7 @@ export class AddressTransferorTabComponent
           this.message(
             'error',
             'Error al guardar',
-            'no se puedo guardar el domicilio'
+            'No se puede guardar el domicilio'
           );
           return;
         }
@@ -539,7 +539,7 @@ export class AddressTransferorTabComponent
         if (data.id != null) {
           this.message(
             'success',
-            'Guadado',
+            'Guardado',
             'El domicilio se actualizó correctamente'
           );
 
@@ -550,8 +550,8 @@ export class AddressTransferorTabComponent
         } else {
           this.message(
             'error',
-            'Error al actualizár',
-            'no se puedo actualizár el domicilio'
+            'Error al actualizar',
+            'No se puede actualizar el domicilio'
           );
           return;
         }

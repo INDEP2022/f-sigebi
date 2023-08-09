@@ -52,6 +52,7 @@ export class SummaryComponent extends BasePage implements OnInit {
   select = new DefaultSelect<IDepartment>();
   selectedDelegation = new DefaultSelect<IDelegation>();
   selectedSubDelegation = new DefaultSelect<ISubdelegation>();
+  selectDepartament = new DefaultSelect();
   start: string;
   end: string;
   datePickerConfig: Partial<BsDatepickerConfig> = {
@@ -107,21 +108,32 @@ export class SummaryComponent extends BasePage implements OnInit {
       delegdestino: [null],
       subddestino: [null],
     });
+    const params = new ListParams();
+    this.getDelegation(params);
+    this.getSubDelegations(params);
+    this.getDepartament(params);
   }
   getDelegation(params?: ListParams) {
+    console.log(params);
     this.delegationService.getAll(params).subscribe({
       next: data => {
-        data.data.map(data => {
-          this.idDelegation = data.id;
-          data.description = `${data.id}- ${data.description}`;
-          return data;
-        });
-
+        console.log(data);
         this.selectedDelegation = new DefaultSelect(data.data, data.count);
+        console.log(this.selectedDelegation);
       },
-      error: () => {
+      error: err => {
+        console.log(err);
         this.selectedDelegation = new DefaultSelect();
       },
+    });
+  }
+  getDepartament(params: ListParams) {
+    this.departamentService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.selectDepartament = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {},
     });
   }
   save() {}
@@ -130,9 +142,9 @@ export class SummaryComponent extends BasePage implements OnInit {
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
-      return stard <= end
-        ? null
-        : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
+      // return stard <= end
+      //   ? null
+      //   : 'La fecha de finalización debe ser mayor que la fecha de inicio.';
     }
     return '';
   }
@@ -204,7 +216,7 @@ export class SummaryComponent extends BasePage implements OnInit {
           const fileURL = URL.createObjectURL(blob);
           window.open(fileURL);
           setTimeout(() => {
-            this.onLoadToast('success', 'Reporte generado', '');
+            this.onLoadToast('success', 'Reporte ', 'Generado Correctamente');
           }, 2000);
 
           this.loading = false;
@@ -233,9 +245,10 @@ export class SummaryComponent extends BasePage implements OnInit {
       this.flyersForm.get(this.delegationField).value
     );
 
-    this.printFlyersService.getSubdelegations(paramsF.getParams()).subscribe({
+    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
       next: data => {
         this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
+        console.log(this.selectedSubDelegation);
       },
       error: err => {
         let error = '';
@@ -250,14 +263,14 @@ export class SummaryComponent extends BasePage implements OnInit {
     });
   }
 
-  onDelegationsChange(type: any) {
-    this.resetFields([this.subdelegation]);
+  onDelegationsChange(delegation: any) {
+    this.resetFields([this.delegation]);
     this.selectedDelegation = new DefaultSelect();
-    this.emitDelegation.emit(type);
+    this.emitDelegation.emit(delegation);
   }
 
   onSubDelegationsChange(subdelegation: any) {
-    this.resetFields([this.delegation]);
+    this.resetFields([this.subdelegation]);
     this.selectedDelegation = new DefaultSelect();
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);

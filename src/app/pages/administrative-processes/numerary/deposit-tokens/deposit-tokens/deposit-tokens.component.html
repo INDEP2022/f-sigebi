@@ -257,7 +257,7 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('balanceOf')" label="Saldo De">
+                <form-field [control]="form.get('balanceOf')" label="Saldo de">
                   <input
                     [(ngModel)]="dateMovemInicio"
                     (ngModelChange)="dateMovementInicio($event)"
@@ -285,7 +285,7 @@
               <div class="col-md-12 mt-3">
                 <form-field
                   [control]="form.get('accountType')"
-                  label="Tipo De Cuenta">
+                  label="Tipo de Cuenta">
                   <input
                     readonly
                     type="text"
@@ -294,7 +294,7 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('balanceAt')" label="Saldo Al">
+                <form-field [control]="form.get('balanceAt')" label="Saldo al">
                   <input
                     [(ngModel)]="dateMovemFin"
                     [minDate]="dateMovemInicio"

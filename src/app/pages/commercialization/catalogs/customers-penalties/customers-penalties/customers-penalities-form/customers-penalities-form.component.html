@@ -1,0 +1,116 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Libera {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <!--<form-field [control]="form.get('clientId')">
+            <ngx-select
+              (fetchItems)="getClient($event)"
+              [data]="selectClient"
+              [form]="form"
+              value="id"
+              bindLabel="reasonName"
+              label="Cliente"
+              control="clientId"
+              (change)="changeClient($event)">
+            </ngx-select>
+          </form-field>-->
+          <form-field label="Id. Cliente" [control]="form.get('clientId')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="clientId"
+              min="0"
+              oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field label="Fecha" [control]="form.get('releaseDate')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="releaseDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD/MM/YYYY'
+              }" />
+            <!--<i
+                *ngIf="form.get('endDate').value"
+                class="fa fa-times"
+                (click)="clearFreeDate('endDate')"
+                style="
+                  position: absolute;
+                  top: 50%;
+                  right: 5px;
+                  transform: translate(0, -50%);
+                  cursor: pointer;
+                "></i>-->
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Usuario Liberación"
+            [control]="form.get('userRelease')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userRelease"
+              min="0"
+              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-3">
+        <div class="col-md-12">
+          <form-field
+            label="Causa Liberación"
+            [control]="form.get('releaseCause')">
+            <!--<ngx-select
+              (fetchItems)="getEvent($event)"
+              [data]="selectEvent"
+              [form]="form"
+              [clearable]="false"
+              value="eventTpId"
+              bindLabel="processKey"
+              label="Evento"
+              control="eventId"
+              (change)="changeEvent($event)">
+            </ngx-select>-->
+            <input
+              type="text"
+              class="form-control"
+              formControlName="releaseCause" />
+            <!--<textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="releaseCause"></textarea>-->
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -83,7 +83,7 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       //borrar
-      this.idRequest = 56817;
+      //this.idRequest = 56817;
       //fin
       if (this.idRequest) {
         this.getData(data);
@@ -125,9 +125,9 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
             item.endVisitDate = item.endVisitDate
               ? moment(item.endVisitDate).format('DD-MM-YYYY, h:mm:ss a')
               : null;
-            item['unitExtentDescrip'] = await this.getDescripUnit(
+            /* item['unitExtentDescrip'] = await this.getDescripUnit(
               item.unitExtent
-            );
+            );*/
             item['delegationDescrip'] = await this.getDelegation(
               item.delegationRegionalId,
               item.cveState
@@ -180,10 +180,10 @@ export class ValidateEyeVisitComponent extends BasePage implements OnInit {
     });
   }
 
-  getFraction(id: number) {
+  getFraction(code: number) {
     return new Promise((resolve, reject) => {
       const params = new ListParams();
-      params['filter.id'] = `$eq:${id}`;
+      params['filter.code'] = `$eq:${code}`;
       //params['filter.stateKey'] = `$eq:${stateKey}`
       this.fractionService.getAll(params).subscribe({
         next: (resp: any) => {

@@ -48,6 +48,7 @@
         </button> -->
       </div>
     </div>
+
     <div
       class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
       *ngIf="loadingExpedient">
@@ -58,11 +59,22 @@
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col-md-12">
         <div class="row">
           <div class="col-md-12">
             <div class="card">
+              <div class="row m-3 flex-row justify-content-end">
+                <div class="col-md-8 text-end">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="searchExpedient()">
+                    <i class="bx bx-list-plus bx-sm float-icon"></i>
+                  </button>
+                </div>
+              </div>
               <div class="card-body mt-4 mb-4">
                 <div class="form-group row p-4">
                   <div class="col-md-3">
@@ -79,6 +91,12 @@
                     >
                     <div>{{ aprevia || '' }}</div>
                   </div>
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label"
+                      >Fecha de Elaboración:</label
+                    >
+                    <div>{{ dateElaboration || '00/00/0000' }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -86,7 +104,6 @@
         </div>
       </div>
     </div>
-
     <div class="row m-3">
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
@@ -320,8 +337,7 @@
         </div>
       </div>
     </form>
-
-    <app-divider></app-divider>
+    <hr />
     <div class="row"></div>
     <div class="row p-3">
       <div class="col-md-3"></div>
@@ -535,29 +551,64 @@
       </div>
     </div> -->
   </div>
+  <div class="row" *ngIf="showScanForm">
+    <div class="col-12 col-sm-12 col-md-9">
+      <div class="card">
+        <div class="card-body">
+          <app-scanning-foil
+            [formScan]="formScan"
+            [screenKey]="screenKey"
+            [dataRecepcion]="dataRecepcion"
+            [screenKey2]="origin"
+            [screenKey3]="origin3"
+            [paramsScreen]="paramsScreen"
+            [fileNumber]="fileNumber"
+            [wheelNumber]="wheelNumber"
+            [dataUserLogged]="dataUserLogged"></app-scanning-foil>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-3">
+      <button
+        name="imp"
+        data-toggle="tooltip"
+        tooltip="Imprimir"
+        containerClass="tooltip-style"
+        (click)="btnDetail()"
+        class="btn btn-secondary btn-sm active ml-2 mr-2">
+        <i class="bx bxs-printer"></i>
+      </button>
+
+      <button
+        name="env"
+        data-toggle="tooltip"
+        containerClass="tooltip-style"
+        tooltip="Enviar"
+        (click)="sendOffice()"
+        class="btn btn-danger btn-sm active ml-2 mr-2">
+        <i class="bx bx-send"></i>
+      </button>
+    </div>
+  </div>
   <div footer>
     <div
       class="d-flex flex-row justify-content-center align-items-center"></div>
     <div class="d-flex flex-row justify-content-center align-items-center">
-      <!-- <div class="m-3">
-                    <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
-                      Detalle de Acta
-                      <i class="fas fa-edit bx-sm float-icon"></i>
-                    </button>
-                  </div> -->
-      <!-- <div class="m-3">
-                    <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
-                      (click)="savActa()">
-                      Guardar
-                      <i aria-hidden="true" class="fa fa-save"></i>
-                    </button>
-                  </div> -->
-
+      <div class="m-3">
+        <button class="btn btn-primary active btn-sm">
+          Solicitud
+          <i class="bx bx-search bx-sm float-icon"></i>
+        </button>
+        <!--(click)="initSolicitud()" -->
+      </div>
       <div class="m-3">
         <button class="btn btn-info active btn-sm" (click)="Scanner()">
           Escanear
           <i class="bx bx-file bx-sm float-icon"></i>
         </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary active btn-sm">Replicar Folio</button>
       </div>
       <div class="m-3">
         <button
@@ -573,6 +624,8 @@
           Ver
           <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
+        <!--(click)="ViewActa() 
+        (click)="openview()"-->
       </div>
       <div class="m-3">
         <button

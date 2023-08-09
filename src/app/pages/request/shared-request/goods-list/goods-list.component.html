@@ -3,6 +3,7 @@
   <div [class]="loading ? 'table-loading' : ''">
     <ng2-smart-table
       id="selectedGoodsTable"
+      [attr.class]="'table-bordered table-responsive'"
       [settings]="selectedGoodSettings"
       [source]="selectedGoodColumns">
     </ng2-smart-table>

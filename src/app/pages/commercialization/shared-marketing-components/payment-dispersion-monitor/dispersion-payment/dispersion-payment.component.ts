@@ -7,7 +7,9 @@ import {
 } from '@angular/forms';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -25,6 +27,7 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
+import { ComerPaymentVirtComponent } from '../comer-payment-virt/comer-payment-virt.component';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import {
   COLUMNSCUSTOMER,
@@ -107,6 +110,15 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   isAvailableByType: boolean = true;
 
+  idBatch: any = null;
+  idClientBatch: any = null;
+  referenceBatch: any = null;
+  amountBatch: any = null;
+  idPaymentBatch: any = null;
+  idOrderBatch: any = null;
+
+  dataBatch: any = null;
+
   private clie_procesar: boolean = false;
   private lot_procesar: boolean = false;
   private clie_solo_pend: boolean = false;
@@ -126,6 +138,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private comerLotsService: LotService,
     private spentService: SpentService,
     private comerEventosService: ComerEventosService,
+    private modalService: BsModalService,
     private customersService: ComerClientsService
   ) {
     super();
@@ -809,7 +822,156 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       },
       err => {
         console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
       }
     );
+  }
+
+  exportPaymentDetail() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+    };
+
+    this.comerEventosService.pupExpExcel(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('DETALLE DE LOS PAGOS', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
+      }
+    );
+  }
+
+  exportPaymentWithoutStatus() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+    };
+
+    this.comerEventosService.pupExpPayModest(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('DETALLE DE LOS PAGOS', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
+      }
+    );
+  }
+
+  exportPaymentAndLots() {
+    this.loadingExcel = true;
+
+    const body = {
+      pEventKey: this.event.value,
+      pType: 1,
+    };
+
+    this.comerEventosService.pupExportDetpayments(body).subscribe(
+      res => {
+        console.log(res);
+        this.downloadDocument('PAGOS VS LOTES', 'excel', res.base64File);
+      },
+      err => {
+        console.log(err);
+        this.loadingExcel = false;
+        this.alert(
+          'error',
+          'Se Presentó un Error Inesperado al Generar Excel',
+          'Por favor inténtelo nuevamente'
+        );
+      }
+    );
+  }
+
+  //Seleccionar PAGOREF_CLI
+  selectRowCustomerBanks(e: any) {
+    console.log(e.data);
+    this.dataBatch = e.data;
+    this.idBatch = e.data.batchId;
+  }
+
+  //Correct Date
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
+  //Función de pagos
+  unbundlePaymentsFn() {
+    let rfc: any = null;
+    let client: any = null;
+    let reference: any = this.dataBatch.reference;
+    let amount: any = this.dataBatch.amount;
+    let idPayment: any = this.dataBatch.Payment_ID;
+    let idBatch: any = this.dataBatch.batchId;
+    let incomeOrderId: any = this.dataBatch.Income_Order_ID;
+    let date: any = this.correctDate(this.dataBatch.date);
+    let dateMaxPay: any = this.dateMaxPayment.value;
+    return new Promise((resolve, reject) => {
+      if (this.event.value != null) {
+        if (this.idBatch != null) {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('id', this.dataBatch.Customer_ID);
+          this.customersService
+            .getAllWithFilters(paramsF.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                rfc = res['data'][0].rfc;
+                client = res['data'][0].reasonName;
+                console.log({ rfc, client });
+                resolve({
+                  rfc,
+                  client,
+                  reference,
+                  amount,
+                  idPayment,
+                  idBatch,
+                  incomeOrderId,
+                  date,
+                  dateMaxPay,
+                });
+              },
+              err => {
+                console.log(err);
+              }
+            );
+        }
+      }
+    });
+  }
+
+  //Abrir modal de Pagos
+  async unbundlePayments() {
+    const dataModel = await this.unbundlePaymentsFn();
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      initialState: { dataModel },
+      class: 'modal-lg modal-dialog-centered',
+    };
+
+    this.modalService.show(ComerPaymentVirtComponent, modalConfig);
   }
 }

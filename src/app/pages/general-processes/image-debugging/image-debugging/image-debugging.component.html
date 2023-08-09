@@ -2,15 +2,12 @@
   <div class="ch-content" header>
     <div class="row w-100">
       <div class="col-12 col-sm-12 col-md-8">
-        <h5
-          class="title"
-          [class]="actualGoodNumber ? 'pointer' : ''"
-          (click)="goToHistoric()">
+        <h5 class="title">
           DEPURACIÓN DE FOTOGRAFÍAS
-          <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container>
+          <!-- <ng-container *ngIf="numberGood">{{ actualGoodNumber }}</ng-container> -->
         </h5>
       </div>
-      <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin">
+      <div class="col-12 col-sm-12 col-md-4 text-end" *ngIf="origin != null">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
@@ -23,14 +20,6 @@
     <div class="row">
       <div class="col-md-12 md-tabs" *ngIf="form">
         <form [formGroup]="form" class="form-material">
-          <div class="paginator" *ngIf="totalItems > 1">
-            <app-pagination
-              [params]="params"
-              [totalItems]="totalItems"
-              [limit]="newLimit"
-              [maxSize]="1"></app-pagination>
-          </div>
-
           <tabset #staticTabs>
             <tab heading="Parámetros de B&uacute;squeda">
               <div class="row">
@@ -144,6 +133,10 @@
                     subtypeField="subtype" ssubtypeField="ssubtype" sssubtypeField="sssubtype" (goodSssubtypeChange)="
                       getGoods($event)
                     "></app-goods-types-shared>
+                </div> -->
+                <!-- <div class="paginator" *ngIf="totalItems > 1">
+                  <app-pagination [params]="params" [totalItems]="totalItems" [limit]="newLimit"
+                    [maxSize]="1"></app-pagination>
                 </div> -->
               </div>
 

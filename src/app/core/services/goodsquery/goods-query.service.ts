@@ -6,16 +6,28 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AttribClassifGoodMethodsRepository } from 'src/app/common/repository/repositories/attrib-classif-good-repository';
 import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { FunctionCumplioIndicador } from 'src/app/pages/general-processes/indicators/indicators-history/indicators-history/indicators-history-columns';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUnits } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
-import { ICaptureDig } from '../../models/ms-documents/documents';
+import { ICaptureDigViewHistoryIndicators } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
   IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+
+export class LocalListParamsTest {
+  text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
+  pageSize?: number = 10;
+  take?: number = 10;
+  // filter?: string = '';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +36,8 @@ import {
  * @deprecated Cambiar a la nueva forma
  */
 export class GoodsQueryService extends HttpService {
+  //
+
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
@@ -31,16 +45,19 @@ export class GoodsQueryService extends HttpService {
   private routeindicators = GoodsQueryEndpoints.indicatorsEntRecep;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private catMeasureUnitsView: GoodsQueryEndpoints.MeasureUnitsView;
-
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
   );
 
+  //
+
   constructor() {
     super();
     this.microservice = 'goodsquery';
   }
+
+  //
 
   getFractions(body: any) {
     return this.httpClient.post(
@@ -74,6 +91,11 @@ export class GoodsQueryService extends HttpService {
       body,
       { params }
     );
+  }
+
+  postFunctionCumplioIndicador(body: FunctionCumplioIndicador) {
+    let url = `${environment.API_URL}parametergood/api/v1/application/f-cumplio-indicador`;
+    return this.httpClient.post<any>(url, body);
   }
 
   postGoodsProgramming(
@@ -237,8 +259,9 @@ export class GoodsQueryService extends HttpService {
     return this.delete(`${GoodsQueryEndpoints.getUnits}/${numero}`);
   }
 
-  getViewIncRecDoc(params: ListParams) {
-    return this.get<IListResponse<ICaptureDig>>(
+  getViewIncRecDoc(params: LocalListParamsTest) {
+    console.log('El objeto: ', params);
+    return this.get<IListResponse<ICaptureDigViewHistoryIndicators>>(
       GoodsQueryEndpoints.getViewIndRecDoc,
       params
     );
@@ -251,4 +274,6 @@ export class GoodsQueryService extends HttpService {
   getVIndProceedingsEntReception(params: ListParams) {
     return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
   }
+
+  //
 }

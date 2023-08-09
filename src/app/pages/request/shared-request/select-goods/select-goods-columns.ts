@@ -103,7 +103,7 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -115,29 +115,14 @@ export const SELECT_GOODS_COLUMNS = {
     sort: false,
   },
 
-  goodId: {
-    title: 'No. Gestión',
-    type: 'number',
+  amount: {
+    title: 'Cantidad Disponible',
+    type: 'string',
     sort: false,
   },
 
-  transferQuantity: {
-    title: 'Cantidad de la Transferencia',
-    type: 'number',
-    sort: false,
-  },
-  /* transferQuantity: {
-    title: 'Cantidad de Transacción',
-    type: 'number',
-    sort: false,
-  }, */
-  reservedQuantity: {
+  amountToReserve: {
     title: 'Cantidad Reservada',
-    type: 'number',
-    sort: false,
-  },
-  quantity: {
-    title: 'Cantidad Disponible',
     type: 'number',
     sort: false,
   },
@@ -147,6 +132,23 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  goodId: {
+    title: 'No. Gestión',
+    type: 'number',
+    sort: false,
+  },
+
+  /* transferQuantity: {
+    title: 'Cantidad de la Transferencia',
+    type: 'number',
+    sort: false,
+  }, */
+  /* transferQuantity: {
+    title: 'Cantidad de Transacción',
+    type: 'number',
+    sort: false,
+  }, */
+
   //fileId --idExpediente
   fileNum: {
     title: 'No. Expediente',
@@ -154,7 +156,7 @@ export const SELECT_GOODS_COLUMNS = {
     sort: false,
   },
 
-  solicitudId: {
+  applicationId: {
     title: 'No. Solicitud de la Transferencia',
     type: 'string',
     sort: false,
@@ -169,7 +171,7 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  typeRelevantId: {
+  relevantTypeId: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,

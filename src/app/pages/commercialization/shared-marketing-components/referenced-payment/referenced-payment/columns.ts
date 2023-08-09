@@ -27,7 +27,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  account: {
+  bill: {
     title: 'Cuenta',
     // width: '15%',
     type: 'string',
@@ -230,7 +230,7 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  account: {
+  bill: {
     title: 'Cuenta',
     width: '15%',
     type: 'string',

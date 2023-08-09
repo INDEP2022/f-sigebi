@@ -22,6 +22,8 @@ export class ParamsConcepsListComponent
   implements OnInit
 {
   @Input() address: string;
+  @Input() readonly = false;
+  @Input() conceptId: string;
   toggleInformation = true;
   // concepto = '';
   pageSizeOptions = [5, 10, 20, 25];
@@ -40,8 +42,11 @@ export class ParamsConcepsListComponent
     this.settings = {
       ...this.settings,
       actions: {
-        ...this.settings.actions,
+        columnTitle: 'Acciones',
+        position: 'right',
         add: false,
+        edit: true,
+        delete: false,
       },
       columns: { ...COLUMNS },
     };
@@ -83,6 +88,35 @@ export class ParamsConcepsListComponent
         },
       };
     }
+    if (changes['readonly']) {
+      if (changes['readonly'].currentValue === true) {
+        this.settings = {
+          ...this.settings,
+          actions: null,
+          columns: { ...COLUMNS },
+        };
+      } else {
+        this.settings = {
+          ...this.settings,
+          actions: {
+            columnTitle: 'Acciones',
+            position: 'right',
+            add: false,
+            edit: true,
+            delete: false,
+          },
+          columns: { ...COLUMNS },
+        };
+      }
+    }
+  }
+
+  get haveParams() {
+    return this.expenseConceptsService.haveParams ?? false;
+  }
+
+  set haveParams(value) {
+    this.expenseConceptsService.haveParams = value;
   }
 
   protected override dataNotFound() {
@@ -90,31 +124,36 @@ export class ParamsConcepsListComponent
     this.data.load([]);
     this.data.refresh();
     this.loading = false;
-    this.expenseConceptsService.haveParams = false;
+    this.haveParams = false;
   }
 
   override async extraOperationsGetData() {
     const dataTemp = await this.data.getAll();
     console.log(dataTemp);
     if (!dataTemp) {
-      this.expenseConceptsService.haveParams = false;
+      this.haveParams = false;
       return;
     }
     if (dataTemp.length > 0) {
-      this.expenseConceptsService.haveParams = true;
+      this.haveParams = true;
     } else {
-      this.expenseConceptsService.haveParams = false;
+      this.haveParams = false;
     }
   }
 
-  get selectedConcept() {
-    return this.expenseConceptsService
-      ? this.expenseConceptsService.concept
-      : null;
-  }
-
-  get conceptId() {
-    return this.selectedConcept ? this.selectedConcept.id : '';
+  private createParam(body: {
+    parameter: string;
+    value: string;
+    address: string;
+  }) {
+    return this.parameterService
+      .create({
+        ...body,
+        conceptId: this.conceptId,
+        creationDate: secondFormatDate(new Date()),
+        creationUser: localStorage.getItem('username').toUpperCase(),
+      })
+      .pipe(takeUntil(this.$unSubscribe));
   }
 
   openModalCreate() {
@@ -129,33 +168,24 @@ export class ParamsConcepsListComponent
       }) => {
         if (body) {
           console.log(body);
-          this.parameterService
-            .create({
-              ...body,
-              conceptId: this.conceptId,
-              address: this.getAddressCode(body.address),
-              creationDate: secondFormatDate(new Date()),
-              creationUser: localStorage.getItem('username').toUpperCase(),
-            })
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe({
-              next: response => {
-                this.alert(
-                  'success',
-                  'Parámetro por Concepto de Pago ' + this.conceptId,
-                  'Creado Correctamente'
-                );
-                this.getData();
-              },
-              error: err => {
-                this.alert(
-                  'error',
-                  'ERROR',
-                  'No se pudo crear el parámetro por concepto de pago ' +
-                    this.conceptId
-                );
-              },
-            });
+          this.createParam(body).subscribe({
+            next: response => {
+              this.alert(
+                'success',
+                'Parámetro por Concepto de Pago ' + this.conceptId,
+                'Creado Correctamente'
+              );
+              this.getData();
+            },
+            error: err => {
+              this.alert(
+                'error',
+                'ERROR',
+                'No se pudo crear el parámetro por concepto de pago ' +
+                  this.conceptId
+              );
+            },
+          });
         }
       },
     };
@@ -177,35 +207,55 @@ export class ParamsConcepsListComponent
       }) => {
         if (body) {
           console.log(body);
-          this.parameterService
-            .update({
-              ...body,
-              conceptId: this.conceptId,
-              address: this.getAddressCode(body.address),
-            })
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe({
-              next: response => {
-                this.alert(
-                  'success',
-                  'Parámetro por Concepto de Pago ' + this.conceptId,
-                  'Actualizado Correctamente'
-                );
-                this.getData();
-              },
-              error: err => {
-                this.alert(
-                  'error',
-                  'ERROR',
-                  'No se pudo actualizar el parámetro por concepto de pago ' +
-                    this.conceptId
-                );
-              },
-            });
+          this.deleteParam(row).subscribe({
+            next: response => {
+              this.createParam(body).subscribe({
+                next: response => {
+                  this.alert(
+                    'success',
+                    'Parámetro con Concepto de Pago ' + this.conceptId,
+                    'Actualizado Correctamente'
+                  );
+                  this.getData();
+                },
+                error: err => {
+                  this.alert(
+                    'error',
+                    'Actualizar Parámetro',
+                    'No se pudo Actualizar el Parámetro ' +
+                      row.parameter +
+                      ' con Concepto de Pago ' +
+                      this.conceptId
+                  );
+                },
+              });
+            },
+            error: err => {
+              this.alert(
+                'error',
+                'Actualizar Parámetro',
+                'No se pudo Actualizar el Parámetro ' +
+                  row.parameter +
+                  ' con Concepto de Pago ' +
+                  this.conceptId
+              );
+            },
+          });
         }
       },
     };
     this.modalService.show(ParamsConceptsModalComponent, modalConfig);
+  }
+
+  private deleteParam(row: IParameterConcept) {
+    return this.parameterService
+      .remove({
+        conceptId: row.conceptId,
+        parameter: row.parameter,
+        value: row.value,
+        address: this.getAddressCode(row.address),
+      })
+      .pipe(takeUntil(this.$unSubscribe));
   }
 
   async deleteConfirm(row: IParameterConcept) {
@@ -215,31 +265,23 @@ export class ParamsConcepsListComponent
       '¿Desea Eliminar este Registro?'
     );
     if (response.isConfirmed) {
-      this.parameterService
-        .remove({
-          conceptId: row.conceptId,
-          parameter: row.parameter,
-          value: row.value,
-          address: this.getAddressCode(row.address),
-        })
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: response => {
-            this.alert(
-              'success',
-              'Parámetro por Concepto de Pago',
-              'Eliminado Correctamente'
-            );
-            this.getData();
-          },
-          error: err => {
-            this.alert(
-              'error',
-              'Error',
-              'No se pudo eliminar el parámetro por concepto de pago'
-            );
-          },
-        });
+      this.deleteParam(row).subscribe({
+        next: response => {
+          this.alert(
+            'success',
+            'Parámetro ' + row.parameter,
+            'Eliminado Correctamente'
+          );
+          this.getData();
+        },
+        error: err => {
+          this.alert(
+            'error',
+            'Error',
+            'No se pudo eliminar el parámetro por concepto de pago'
+          );
+        },
+      });
     }
   }
 
@@ -250,8 +292,8 @@ export class ParamsConcepsListComponent
   override getParams() {
     // debugger;
     let newColumnFilters = this.columnFilters;
-    if (this.selectedConcept) {
-      newColumnFilters['filter.conceptId'] = '$eq:' + this.selectedConcept.id;
+    if (this.conceptId) {
+      newColumnFilters['filter.conceptId'] = '$eq:' + this.conceptId;
     }
     if (newColumnFilters['filter.description']) {
       let description = newColumnFilters['filter.description'];

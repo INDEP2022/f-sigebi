@@ -89,7 +89,7 @@ export class MaintenanceGoodsComponent extends BasePage implements OnInit {
                 this.alert(
                   'success',
                   'Actualización de descripción del Bien',
-                  'Realizada correctamente'
+                  'Realizada Correctamente'
                 );
                 this.clear();
               } else {

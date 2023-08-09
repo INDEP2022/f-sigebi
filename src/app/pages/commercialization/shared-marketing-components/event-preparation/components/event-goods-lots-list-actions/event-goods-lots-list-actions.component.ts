@@ -523,10 +523,29 @@ export class EventGoodsLotsListActionsComponent
   }
 
   /**CARGA_DATOS_FACTURACION */
-  loadInvoiceData(publicLot: string | number) {
+  loadInvoiceData(publicLot: string | number, file: File) {
     console.log(publicLot ? `Para el lote ${publicLot}` : 'Para todo el vento');
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.warn('CARGA_DATOS_FACTURACION');
+    const { id } = this.controls;
+    this.loader.load = true;
+    return this.lotService
+      .loadInvoiceData({
+        eventId: id.value,
+        lot: publicLot,
+        file: file,
+        pDirection: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          // this.refre
+        })
+      );
   }
 
   loadInvoiceDataChange(event: Event) {
@@ -535,7 +554,10 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
-    this.loadInvoiceData(this.lotSelected?.publicLot ?? null);
+    this.loadInvoiceData(
+      this.lotSelected?.publicLot ?? null,
+      this.getFileFromEvent(event)
+    ).subscribe();
   }
 
   // ? Clientes desde Tabla Tercero

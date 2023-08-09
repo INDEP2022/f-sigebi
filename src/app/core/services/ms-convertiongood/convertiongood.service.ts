@@ -111,6 +111,9 @@ export class ConvertiongoodService extends HttpService {
   }
 
   createMinuteConversion(conversionActa: any) {
+    return this.post(ConvertiongoodEndpoints.LisActas, conversionActa);
+  }
+  putMinuteConversion(conversionActa: any) {
     return this.put(ConvertiongoodEndpoints.LisActas, conversionActa);
   }
 

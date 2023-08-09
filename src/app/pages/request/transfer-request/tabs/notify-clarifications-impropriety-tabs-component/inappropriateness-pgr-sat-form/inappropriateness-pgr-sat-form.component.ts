@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -66,16 +66,10 @@ export class InappropriatenessPgrSatFormComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      managedTo: [
-        this.request?.nameOfOwner || null,
-        [Validators.maxLength(50)],
-      ], //NOMBRE DESTINATARIO
-      positionAddressee: [
-        this.request?.holderCharge || null,
-        [Validators.maxLength(50)],
-      ], // CARGO DESTINATARIO
-      paragraphInitial: [null, [Validators.maxLength(4000)]],
-      foundation: [null, [Validators.maxLength(4000)]],
+      managedTo: [this.request?.nameOfOwner || null], //NOMBRE DESTINATARIO
+      positionAddressee: [this.request?.holderCharge || null], // CARGO DESTINATARIO
+      paragraphInitial: [null],
+      foundation: [null],
     });
   }
 
@@ -94,7 +88,7 @@ export class InappropriatenessPgrSatFormComponent
       foundation: this.form.controls['foundation'].value,
       id: null,
       version: 1,
-      paragraphInitial: this.form.controls['paragraphInitial'].value,
+      paragraphInitial: this.form.controls['paragraphInitial'].value, //no tiene limite en BD
       applicationId: this.request.id,
       //positionSender: this.request?.holderCharge, //cARGA remitente - Titular de la solicitud
       invoiceLearned: this.folioReporte,

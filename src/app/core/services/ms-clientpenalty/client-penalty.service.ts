@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ClientPenaltyEndpoints } from 'src/app/common/constants/endpoints/ms-client-penalty';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
   ICustomerPenaltiesModal,
@@ -28,15 +29,29 @@ export class ClientPenaltyService extends HttpService {
     return this.get<IListResponse<any>>(`${this.route}`, params);
   }
 
-  getAllV2(params?: string) {
+  getAllV2(params?: ListParams) {
     return this.get<IListResponse<any>>(
       ClientPenaltyEndpoints.ComerPenaltyV2,
       params
     );
   }
 
-  getAllHist(params?: string) {
+  getAllV2Post(body: any) {
+    return this.post<IListResponse<any>>(
+      ClientPenaltyEndpoints.GetLvLibpenact,
+      body
+    );
+  }
+
+  getAllHist(params?: ListParams) {
     return this.get<IListResponse<any>>(`${this.route2}`, params);
+  }
+
+  getAllHistPost(body: any) {
+    return this.post<IListResponse<any>>(
+      ClientPenaltyEndpoints.GetLvLibpenhis,
+      body
+    );
   }
 
   getAll2() {
@@ -65,6 +80,11 @@ export class ClientPenaltyService extends HttpService {
     return this.get(`comer-penalty-his/export?filter.customerId=$eq:${id}`);
   }
 
+  getByIdComerPenaltyHis3(id?: string | number) {
+    console.log(id);
+    return this.get(`comer-penalty-his/export`);
+  }
+
   create(model: ICustomersPenalties): Observable<ICustomersPenalties> {
     return this.post(ClientPenaltyEndpoints.CreatePenalty, model);
     /*return this.clientPenaltyRepository.create(
@@ -77,6 +97,10 @@ export class ClientPenaltyService extends HttpService {
   updateCustomers(customersPenalties: IHistoryCustomersPenalties) {
     console.log(customersPenalties);
     return this.put(`${this.route}/update-penalty`, customersPenalties);
+  }
+
+  update(body: any) {
+    return this.put(`${this.route}`, body);
   }
 
   updateCustomers2(customersPenalties: IHistoryCustomersPenalties) {

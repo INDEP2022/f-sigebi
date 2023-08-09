@@ -96,7 +96,7 @@ export class BankAccountService
     );
   }
 
-  searchByFilterNumeraryMassive(body: IProReconcilesGood, params?: string) {
+  searchByFilterNumeraryMassive(body: IProReconcilesGood, params?: _Params) {
     return this.post(`aplication/proReconcilesGood`, body, params);
   }
 

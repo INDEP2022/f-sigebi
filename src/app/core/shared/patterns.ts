@@ -9,6 +9,7 @@ export const EMAIL_PATTERN2 = '^[a-z0-9._%+-]+@[a-z0-9-]+(\\.[a-z]{2,4})+$';
 
 export const NUMBERS_PATTERN = '^-?[0-9]+$';
 export const NUMBERS_POINT_PATTERN = '^[0-9.]+';
+export const NUMBERS_DASH_PATTERN = '^[0-9-]+';
 export const POSITVE_NUMBERS_PATTERN = '^[0-9]+';
 export const ZONE_NUMBER_PATTERM = /^-?(0[0-9]|1[0-2]):00$/;
 // export const PERCENTAGE_NUMBERS_PATTERN = /^[0-9]+(\.[0-9]+)?$/;
@@ -18,7 +19,7 @@ export const PERCENTAGE_NUMBERS_PATTERN =
 export const DOUBLE_PATTERN = '[+-]?([0-9]*[.])?[0-9]+';
 export const DOUBLE_POSITIVE_PATTERN = '[+]?([0-9]*[.])?[0-9]+';
 export const STRING_PATTERN =
-  '[a-zA-Z0-9áèéíóúÁÈÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()$°\\Üü“”"";:%]*';
+  '(?![\\s])[a-zA-Z0-9áèéíóúÁÈÉÍÓÚñÑ\\/\\s\\.,_\\-\\\\()$°\\Üü“”"";:%]*';
 // '[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]*'; [a-zA-Z0-9áéíóúÁÉÍÓÚñÑ@\\s\\.,_\\-¿?\\\\/()%$#¡!|]
 // export const RFCCURP_PATTERN = '[a-zA-Z]{3}[a-zA-Z0-9]*';
 export const RFC_PATTERN = '^[A-Za-z]{3,4}[0-9]{6}[a-zA-Z0-9]{3}$';

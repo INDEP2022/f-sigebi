@@ -4,6 +4,7 @@ import { firstValueFrom, takeUntil } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IConcept } from 'src/app/core/models/ms-comer-concepts/concepts';
 import { ConceptsService } from 'src/app/core/services/ms-commer-concepts/concepts.service';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
@@ -171,12 +172,17 @@ export class ExpenseConceptsListComponent
       conceptId: this.conceptId,
       callback: (body: { id: string }) => {
         if (body) {
+          let listParams = new ListParams();
+          listParams.limit = 10000;
           this.conceptsService
-            .copyParameters({
-              ...body,
-              concept: this.conceptId,
-              address: this.getAddressCode(this.selectedConcept.address),
-            })
+            .copyParameters(
+              {
+                ...body,
+                concept: this.conceptId,
+                address: this.getAddressCode(this.selectedConcept.address),
+              },
+              listParams
+            )
             .pipe(takeUntil(this.$unSubscribe))
             .subscribe({
               next: response => {
@@ -297,7 +303,7 @@ export class ExpenseConceptsListComponent
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe({
             next: response => {
-              event.confirm.resolve();
+              // event.confirm.resolve();
               this.alert(
                 'success',
                 'Eliminación de Concepto de Pago ' + event.data.id,
@@ -306,11 +312,12 @@ export class ExpenseConceptsListComponent
               this.getData();
             },
             error: err => {
+              console.log(err);
               // event.confirm.resolve();
               this.alert(
                 'error',
-                'ERROR',
-                'No se pudo eliminar el concepto de pago ' + event.data.id
+                'Eliminación de Concepto de Pago ' + event.data.id,
+                err.error.message
               );
             },
           });
