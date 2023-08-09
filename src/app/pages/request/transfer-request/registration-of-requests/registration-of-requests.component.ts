@@ -310,6 +310,7 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
+      sender: [null],
     });
     this.registRequestForm.get('receptionDate').disable();
     this.registRequestForm.updateValueAndValidity();
