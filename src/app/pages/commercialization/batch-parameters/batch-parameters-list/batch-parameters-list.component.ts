@@ -2,7 +2,6 @@ import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -70,7 +69,6 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
 
   constructor(
     private lotparamsService: LotParamsService,
-    private modalService: BsModalService,
     private fb: FormBuilder,
     private serviceLot: LotService
   ) {
@@ -144,8 +142,6 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     });
   }
 
-  addNew() {}
-
   getLotByFilters() {
     let params: HttpParams = new HttpParams();
 
@@ -164,11 +160,18 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
 
     this.serviceLot.getAllComerLotsByFilter(params).subscribe({
       next: response => {
-        console.log('Si hay una respuesta y es esta: ', response.data);
         this.lotServiceArray = response.data;
+        this.preValidatedSaveAll();
+        setTimeout(() => {
+          this.getLotParams();
+        }, 1000);
       },
       error: error => {
-        console.log('Hay respuesta pero esta mal.');
+        if (error.status == 400) {
+          this.alert('warning', 'Advertencia', 'No existen registros');
+        } else {
+          this.alert('error', 'Error', 'Ha ocurrido un error');
+        }
       },
     });
   }
@@ -196,186 +199,65 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     });
   }
 
+  putLotParams(body: any) {
+    let responseLocal: any;
+    this.lotparamsService.update(body.idLot, body).subscribe({
+      next: response => {
+        return (responseLocal = response.data);
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Ha ocurrido un error');
+        return responseLocal;
+      },
+    });
+    responseLocal;
+  }
+
+  postLorParams(body: any) {
+    let responseLocal: any = null;
+    this.lotparamsService.createLotParameter(body).subscribe({
+      next: response => {
+        return (responseLocal = response.data);
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Ha ocurrido un error');
+        return responseLocal;
+      },
+    });
+    responseLocal;
+  }
+
   preValidatedSaveAll() {
-    this.lotServiceArray;
-    this.lotData;
-    for (const i of this.lotServiceArray) {
-      for (const x of this.lotServiceArrayTwo) {
-        if (i.idLot == x.idLot) {
-        }
+    let object: any;
+    if (this.lotServiceArray != null) {
+      for (const i of this.lotServiceArray) {
+        let params: HttpParams = new HttpParams();
+        params = params.append('filter.idLot', i.idLot);
+
+        this.lotparamsService.getAll_(params).subscribe({
+          next: response => {
+            object = response.data[0];
+            if (object != null) {
+              object.idEvent = i?.idEvent;
+              object.idLot = i.idLot;
+              object.publicLot = i.lotPublic;
+              object.specialGuarantee = i.priceGuarantee;
+              object.nbOrigin = '';
+              this.putLotParams(object);
+            }
+          },
+          error: error => {
+            object = {
+              idEvent: i.idEvent,
+              idLot: i.idLot,
+              publicLot: i.lotPublic,
+              specialGuarantee: i.priceGuarantee,
+              nbOrigin: '',
+            };
+            this.postLorParams(object);
+          },
+        });
       }
     }
   }
-
-  // hideFilters() {
-  //   setTimeout(() => {
-  //     let filterArray = document.getElementsByClassName('ng2-smart-filters');
-  //     this.filterRow = filterArray.item(0);
-  //     this.filterRow.classList.add('d-none');
-  //     this.addOption = document
-  //       .getElementsByClassName('ng2-smart-action-add-add')
-  //       .item(0);
-  //   }, 200);
-  // }
-
-  // addRow() {
-  //   this.adding = true;
-  //   this.addOption.click();
-  //   setTimeout(() => {
-  //     this.addRowElement = document
-  //       .querySelectorAll('tr[ng2-st-thead-form-row]')
-  //       .item(0);
-  //     this.addRowElement.classList.add('row-no-pad');
-  //     this.addRowElement.classList.add('add-row-height');
-  //     this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-  //     this.cancelEvent = this.handleCancel.bind(this);
-  //     this.cancelBtn.addEventListener('click', this.cancelEvent);
-  //   }, 300);
-  // }
-
-  handleCancel() {
-    this.adding = false;
-    this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-    this.cancelBtn.removeEventListener('click', this.cancelEvent);
-  }
-
-  alertTable() {
-    this.onLoadToast(
-      'error',
-      'Campos incompletos',
-      'Complete todos los campos para agregar un registro'
-    );
-  }
-
-  // async addEntry(event: any) {
-  //   let { newData, confirm } = event;
-
-  //   if (
-  //     !newData.idEvent ||
-  //     newData.idLot == '' ||
-  //     newData.specialGuarantee == ''
-  //   ) {
-  //     this.alertTable();
-  //     return;
-  //   }
-  //   const requestBody = {
-  //     idLot: '',
-  //     idEvent: event.newData.idEvent,
-  //     publicLot: event.newData.publicLot,
-  //     specialGuarantee: event.newData.specialGuarantee,
-  //     nbOrigin: '',
-  //   };
-
-  //   // Llamar servicio para agregar registro
-  //   this.lotparamsService.createLotParameter(requestBody).subscribe({
-  //     next: resp => {
-  //       this.msgModal(
-  //         'Guardado con exito '.concat(`<strong>${requestBody.idLot}</strong>`),
-  //         'Parametro Guardado',
-  //         'success'
-  //       );
-  //       confirm.resolve(newData);
-  //       this.adding = false;
-  //       this.totalItems += 1;
-  //     },
-  //     error: err => {
-  //       console.log('Hubo un error: ', err);
-  //       this.msgModal(
-  //         'Error: '.concat(`<strong>${err.error.message}</strong>`),
-  //         'Error al guardar',
-  //         'error'
-  //       );
-  //     },
-  //   });
-  // }
-
-  // editEntry(event: any) {
-  //   let { newData, confirm } = event;
-  //   if (
-  //     !newData.idEvent ||
-  //     newData.idLot == '' ||
-  //     newData.specialGuarantee == ''
-  //   ) {
-  //     this.alertTable();
-  //     return;
-  //   }
-
-  //   const requestBody = {
-  //     idLot: event.newData.idLot,
-  //     idEvent: event.newData.idEvent,
-  //     publicLot: event.newData.publicLot,
-  //     specialGuarantee: event.newData.specialGuarantee,
-  //     nbOrigin: '',
-  //   };
-  //   // Llamar servicio para eliminar
-  //   this.lotparamsService.update(event.newData.idLot, requestBody).subscribe({
-  //     next: resp => {
-  //       this.msgModal(
-  //         'Actualizaci&oacute;n exitosa '.concat(
-  //           `<strong>${requestBody.idLot}</strong>`
-  //         ),
-  //         'Par&aacute;metro guardado',
-  //         'success'
-  //       );
-  //     },
-  //   });
-  //   confirm.resolve(newData);
-  // }
-
-  // deleteEntry(event: any) {
-  //   let { confirm } = event;
-  //   const idLot = event.data.idLot;
-
-  //   this.alertQuestion('question', '¿Desea Eliminar el Registro?', '').then(
-  //     question => {
-  //       if (question.isConfirmed) {
-  //         // Llamar servicio para eliminar
-  //         this.lotparamsService.remove(idLot).subscribe({
-  //           next: resp => {
-  //             this.alert('error', 'Registro Eliminado Correctamente', '');
-  //           },
-  //           error: err => {
-  //             this.alert('error', 'Error al Eliminar el Registro', '');
-  //           },
-  //         });
-  //       }
-  //     }
-  //   );
-  // }
-
-  // msgModal(message: string, title: string, typeMsg: any) {
-  //   Swal.fire({
-  //     title: title,
-  //     html: message,
-  //     icon: typeMsg,
-  //     showCancelButton: false,
-  //     confirmButtonColor: '#9D2449',
-  //     cancelButtonColor: '#d33',
-  //     confirmButtonText: 'Aceptar',
-  //   }).then(result => { });
-  // }
-
-  // edit(event: any) {
-  //   this.openForm(event.data, true);
-  // }
-  // add() {
-  //   this.openForm(null, false);
-  // }
-
-  // openForm(data: any, editVal: boolean) {
-  //   let config: ModalOptions = {
-  //     initialState: {
-  //       data,
-  //       edit: editVal,
-  //       callback: (next: boolean) => {
-  //         if (next) {
-  //           this.getLotParams();
-  //         }
-  //       },
-  //     },
-  //     class: 'modal-lg modal-dialog-centered',
-  //     ignoreBackdropClick: true,
-  //   };
-  //   this.modalService.show(NewAndUpdateComponent, config);
-  // }
 }
