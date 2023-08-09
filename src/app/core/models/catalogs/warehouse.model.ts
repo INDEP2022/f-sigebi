@@ -4,7 +4,7 @@ import { IMunicipality } from './municipality.model';
 import { IStateOfRepublic } from './state-of-republic.model';
 
 export interface IWarehouse {
-  idWarehouse: number | null;
+  idWarehouse: number | any;
   description: string;
   ubication: string;
   manager: string;

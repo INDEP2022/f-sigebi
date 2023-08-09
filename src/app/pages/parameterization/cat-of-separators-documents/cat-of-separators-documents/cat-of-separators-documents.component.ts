@@ -31,19 +31,14 @@ export class CatOfSeparatorsDocumentsComponent
     private modalService: BsModalService
   ) {
     super();
+    this.settings.columns = SEPARATORS_DOCUMENTS_COLUMNS;
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: 'Acciones',
-        edit: true,
+        ...this.settings.actions,
         delete: false,
-        position: 'right',
+        add: false,
       },
-      columns: SEPARATORS_DOCUMENTS_COLUMNS,
-    };
-    this.settings.actions.add = false;
-    this.settings = {
-      ...this.settings,
       hideSubHeader: false,
     };
   }
@@ -58,15 +53,27 @@ export class CatOfSeparatorsDocumentsComponent
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'key':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
+          console.info(this.params);
           this.getDateDocumentsSeparators();
         }
       });
@@ -83,9 +90,9 @@ export class CatOfSeparatorsDocumentsComponent
     this.documentsSeparatorsService.getAll(params).subscribe({
       next: response => {
         this.separatorsDocuments = response.data;
-        this.data.load(this.separatorsDocuments);
+        this.data.load(response.data);
+        this.totalItems = response.count || 0;
         this.data.refresh();
-        this.totalItems = response.count != undefined ? response.count : 0;
         this.loading = false;
       },
       error: error => (this.loading = false),

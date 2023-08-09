@@ -58,17 +58,16 @@ export class CanTimesComponent extends BasePage implements OnInit {
         let n_tipo_ref;
 
         for (let i = 0; i < this.times.value; i++) {
-            const data = this.comerPagoRefVirt
-            let model: IComerPaymentsRefVir = {
-                payId: data.paymentId,
-                payvirtueId: '',
-                batchId: '',
-                amount: '',
-                typereference: '',
-                amountGrief: '',
-                numberRecord: ''
-            }
-
+          const data = this.comerPagoRefVirt;
+          let model: IComerPaymentsRefVir = {
+            payId: data.paymentId,
+            payvirtueId: '',
+            batchId: '',
+            amount: '',
+            typereference: '',
+            amountGrief: '',
+            numberRecord: '',
+          };
         }
       }
     }

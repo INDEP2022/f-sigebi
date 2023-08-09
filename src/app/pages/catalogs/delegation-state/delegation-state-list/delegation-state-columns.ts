@@ -7,7 +7,7 @@ export const DELEGATION_STATE_COLUMNS = {
     sort: false,
   },
   regionalDelegationDetails: {
-    title: 'Delegación regional',
+    title: 'Delegación Regional',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
@@ -23,7 +23,7 @@ export const DELEGATION_STATE_COLUMNS = {
     },
   },
   keyState: {
-    title: 'Clave de estado',
+    title: 'Clave de Estado',
     type: 'number',
     sort: false,
   },
@@ -43,14 +43,13 @@ export const DELEGATION_STATE_COLUMNS = {
       }
     },
   },
-  // version: {
-  //   title: 'Versión',
-  //   type: 'number',
-  //   sort: false,
-  // },
-
   status: {
-    title: 'Número de contrato',
+    title: 'Número de Contrato',
+    type: 'number',
+    sort: false,
+  },
+  version: {
+    title: 'Versión',
     type: 'number',
     sort: false,
   },

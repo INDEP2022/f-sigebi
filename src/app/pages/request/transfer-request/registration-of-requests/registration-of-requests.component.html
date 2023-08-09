@@ -294,7 +294,9 @@
               </tab>
               <tab
                 heading="{{ tab5 }}"
-                *ngIf="requestRegistration || approvalProcess">
+                *ngIf="
+                  requestRegistration || (approvalProcess && !hideExpedient)
+                ">
                 <app-expedients-tabs
                   *ngIf="
                     requestRegistration || approvalProcess

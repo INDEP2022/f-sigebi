@@ -928,7 +928,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     let idBatch: any = this.dataBatch.batchId;
     let incomeOrderId: any = this.dataBatch.Income_Order_ID;
     let date: any = this.correctDate(this.dataBatch.date);
-    let dateMaxPay: any = this.dateMaxPayment.value
+    let dateMaxPay: any = this.dateMaxPayment.value;
     return new Promise((resolve, reject) => {
       if (this.event.value != null) {
         if (this.idBatch != null) {
@@ -951,7 +951,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                   idBatch,
                   incomeOrderId,
                   date,
-                  dateMaxPay
+                  dateMaxPay,
                 });
               },
               err => {

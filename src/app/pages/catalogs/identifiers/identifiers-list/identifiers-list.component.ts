@@ -54,6 +54,7 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             filter.field == 'id'
               ? (searchFilter = SearchFilter.EQ)
@@ -64,6 +65,7 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getIdentifiers();
         }
       });
@@ -82,7 +84,7 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
     this.identifierService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
-        this.data.load(this.paragraphs);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;

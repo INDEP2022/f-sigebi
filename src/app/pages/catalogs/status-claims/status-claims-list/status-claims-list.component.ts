@@ -50,13 +50,13 @@ export class StatusClaimsListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'flag':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -68,6 +68,7 @@ export class StatusClaimsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getStatus();
         }
       });
@@ -120,7 +121,7 @@ export class StatusClaimsListComponent extends BasePage implements OnInit {
     this.statusClaimsService.remove(id).subscribe({
       next: () => {
         this.getStatus(),
-          this.alert('success', 'Estado siniestro', 'Borrado Correctamente');
+          this.alert('success', 'Estado Siniestro', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(
