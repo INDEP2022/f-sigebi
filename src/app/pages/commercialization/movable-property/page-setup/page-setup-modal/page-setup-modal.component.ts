@@ -31,9 +31,9 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     if (this.pageSetup) {
       this.edit = true;
+      this.form.patchValue(this.pageSetup);
       this.controls.idTable.disable();
       this.controls.idColumn.disable();
-      this.form.patchValue(this.pageSetup);
     } else {
       this.controls.visualiza.setValue('1');
     }
@@ -61,13 +61,21 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
       catchError(error => {
         this.loading = false;
         if (error.status <= 404 && error.status > 0) {
-          this.onLoadToast('error', 'Error', 'Ocurrio un error al guardar');
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio Un Error Al Guardar La Configuracion De Columnas'
+          );
         }
         return throwError(() => error);
       }),
       tap(() => {
         this.loading = false;
-        this.onLoadToast('success', 'Registro guardado', '');
+        this.onLoadToast(
+          'success',
+          'Configuracion De Columnas',
+          'Guardada Correctamente'
+        );
         this.refresh.emit(true);
         this.modalRef.hide();
       })
@@ -76,17 +84,30 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
+    this.controls.idTable.enable();
+    this.controls.idColumn.enable();
     return this.configvService.update(this.form.value).pipe(
       catchError(error => {
         this.loading = false;
         if (error.status <= 404 && error.status > 0) {
-          this.onLoadToast('error', 'Error', 'Ocurrio un error al actualizar');
+          this.controls.idTable.disable();
+          this.controls.idColumn.disable();
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Ocurrio Un Error Al Actualizar La Configuracion De Columnas'
+          );
+          // this.modalRef.hide();
         }
         return throwError(() => error);
       }),
       tap(() => {
         this.loading = false;
-        this.onLoadToast('success', 'Registro actualizado', '');
+        this.onLoadToast(
+          'success',
+          'Configuracion De Columnas',
+          'Actualizada Correctamente'
+        );
         this.refresh.emit(true);
         this.modalRef.hide();
       })

@@ -536,6 +536,7 @@ export class ImplementationReportsInvoicesComponent
       },
     });
   }
+
   openScannerPage() {
     this.boolScan = false;
     if (this.invoiceDetailsForm.get('scanFolio').value) {

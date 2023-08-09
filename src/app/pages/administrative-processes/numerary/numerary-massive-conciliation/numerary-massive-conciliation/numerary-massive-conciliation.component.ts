@@ -1098,7 +1098,7 @@ export class NumeraryMassiveConciliationComponent
         );
       }
     } else {
-      this.alert('warning', 'Faltan seleccionar datos', '');
+      this.alert('warning','Faltan seleccionar datos','')
       this.form2.get('proposal').markAsTouched();
       this.form2.get('currencyDeposit').markAsTouched();
     }
@@ -1109,8 +1109,8 @@ export class NumeraryMassiveConciliationComponent
     this.dataGoods = null;
     this.loading = false;
     this.totalItems = 0;
-    this.params.value.page = 1;
-    this.params.value.limit = 10;
+    this.params.value.page=1
+    this.params.value.limit=10
   }
 
   cleandInfo2() {

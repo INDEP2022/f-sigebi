@@ -8,7 +8,7 @@ export const PAGE_SETUP_COLUMNS = {
     sort: false,
   },
   aliastab: {
-    title: 'Alias',
+    title: 'Alias Tabla',
     sort: false,
   },
   ordencol: {
@@ -16,7 +16,7 @@ export const PAGE_SETUP_COLUMNS = {
     sort: false,
   },
   aliascol: {
-    title: 'Alias',
+    title: 'Alias Columna',
     sort: false,
   },
 };
