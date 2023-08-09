@@ -604,7 +604,7 @@ export class CustomerPenaltiesModalComponent
                     //this.modalRef.hide();
                   },
                   error: error => {
-                    this.alert('warning', `${error.message}`, '');
+                    this.alert('warning', `${error.error.message}`, '');
                     this.loading = false;
                     console.log(error);
                   },
