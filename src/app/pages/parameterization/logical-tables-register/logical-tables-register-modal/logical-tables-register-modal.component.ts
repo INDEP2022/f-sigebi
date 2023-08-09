@@ -20,7 +20,7 @@ export class LogicalTablesRegisterModalComponent
 {
   tablesForm: ModelForm<ITables>;
   dinamicTables: ITables;
-  title: string = 'Catálogo de tablas lógicas';
+  title: string = 'Tabla Lógica';
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
@@ -97,7 +97,7 @@ export class LogicalTablesRegisterModalComponent
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

@@ -67,8 +67,24 @@
     </div> -->
 
     <div class="row" *ngIf="form.get('tableType').value == 1">
-      <div class="row pt-5">
-        <div class="ch-content">
+      <div class="ch-content">
+        <h5 class="title">Descripción de Claves</h5>
+      </div>
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm2()"
+            *ngIf="form.get('tableType').value == 1 && countTable == 0">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+      <!--<div class="ch-content">
           <h5 class="title">Descripción de Claves</h5>
           <div class="col-md-5 buttons">
             <app-columns-select [(settings)]="settings1"></app-columns-select>
@@ -79,88 +95,105 @@
               Nuevo
             </button>
           </div>
-        </div>
-        <div class="table-responsive pt-3">
-          <div [class]="loading2 ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings1"
-              [source]="tdescCve"
-              (delete)="showDeleteAlert1($event.data)"
-              (edit)="openForm2($event.data)"></ng2-smart-table>
-          </div>
+        </div>-->
+      <div class="table-responsive">
+        <div [class]="loading2 ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings1"
+            [source]="tdescCve"
+            (delete)="showDeleteAlert1($event.data)"
+            (edit)="openForm2($event.data)"></ng2-smart-table>
         </div>
       </div>
     </div>
 
-    <div>
-      <div *ngIf="form.get('tableType').value == 5">
-        <div class="row pt-5">
-          <div class="ch-content">
-            <h5 class="title">Descripción de Claves</h5>
-            <div class="col-md-5 buttons">
-              <app-columns-select [(settings)]="settings1"></app-columns-select>
-              <button
-                (click)="openForm()"
-                class="btn btn-primary active btn-sm ml-3"
-                *ngIf="form.get('tableType').value == 5 && countTable == 0">
-                Nuevo
-              </button>
-            </div>
-          </div>
-          <div class="table-responsive pt-3">
-            <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings1"
-                [source]="tdescCve"
-                (delete)="showDeleteAlert1($event.data)"
-                (edit)="openForm($event.data)"></ng2-smart-table>
-            </div>
+    <div *ngIf="form.get('tableType').value == 5">
+      <div class="ch-content">
+        <h5 class="title">Descripción de Claves</h5>
+      </div>
+      <div class="row">
+        <div class="d-flex justify-content-end mb-3">
+          <div>
+            <button
+              type="button"
+              tooltip="Nuevo"
+              containerclass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2"
+              (click)="openForm()"
+              *ngIf="form.get('tableType').value == 5 && countTable == 0">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
           </div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="table-responsive pt-3">
-            <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings2"
-                [source]="tdescCve"></ng2-smart-table>
-            </div>
+      <!--<div class="ch-content">
+        <h5 class="title">Descripción de Claves</h5>
+        </div>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings1" [leftList]="true"></app-columns-select>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            *ngIf="form.get('tableType').value == 5 && countTable == 0"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>-->
+      <div class="table-responsive">
+        <div [class]="loading2 ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings1"
+            [source]="tdescCve"
+            (delete)="showDeleteAlert1($event.data)"
+            (edit)="openForm($event.data)"></ng2-smart-table>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="table-responsive pt-3">
+          <div [class]="loading2 ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="tdescCve"></ng2-smart-table>
           </div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="table-responsive pt-3">
-            <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings3"
-                [source]="tdescCve"></ng2-smart-table>
-            </div>
+      <div class="row">
+        <div class="table-responsive pt-3">
+          <div [class]="loading2 ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings3"
+              [source]="tdescCve"></ng2-smart-table>
           </div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="table-responsive pt-3">
-            <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings4"
-                [source]="tdescCve"></ng2-smart-table>
-            </div>
+      <div class="row">
+        <div class="table-responsive pt-3">
+          <div [class]="loading2 ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings4"
+              [source]="tdescCve"></ng2-smart-table>
           </div>
         </div>
+      </div>
 
-        <div class="row">
-          <div class="table-responsive pt-3">
-            <div [class]="loading2 ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings5"
-                [source]="tdescCve"></ng2-smart-table>
-            </div>
+      <div class="row">
+        <div class="table-responsive pt-3">
+          <div [class]="loading2 ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings5"
+              [source]="tdescCve"></ng2-smart-table>
           </div>
         </div>
       </div>

@@ -19,7 +19,7 @@ export class IndicatorDeadlinesFormComponent
   implements OnInit
 {
   indicatorsDeadlines: IIndicatorDeadline;
-  title: string = 'Plazos indicadores';
+  title: string = 'Plazo Indicador';
   edit: boolean = false;
   event: IParametersIndicators = null;
   indicatorDeadlinesModalForm: ModelForm<IIndicatorDeadline>;

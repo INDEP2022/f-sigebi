@@ -145,7 +145,7 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
       next: () => {
         this.alert(
           'success',
-          'Estado por coordinación',
+          'Estado por Coordinación',
           'Borrado Correctamente'
         );
         this.getExample();
@@ -153,7 +153,7 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
       error: error => {
         this.alert(
           'warning',
-          'Edos x coor',
+          'Estado por Coordinación',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },
