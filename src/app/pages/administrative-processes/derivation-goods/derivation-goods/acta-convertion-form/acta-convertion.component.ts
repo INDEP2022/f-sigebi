@@ -466,6 +466,15 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
       paragraph2: this.parrafo2,
       paragraph3: this.parrafo3,
     };
+    // this.router.navigate(
+    //   ['/pages/administrative-processes/derivation-goods'],
+    //   {
+    //     queryParams: {
+    //       newActConvertion: this.selectItem2,
+    //       // expedientNumber: this.form.value.numberDossier,
+    //     },
+    //   }
+    // );
     console.log('minute-conversions -> ', payload);
     this.convertiongoodService.createMinuteConversion(payload).subscribe({
       next: (res: IListResponse<any>) => {
@@ -483,7 +492,34 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         this.modalRef.hide();
       },
       error: error => {
-        this.alert('error', 'error', error.message);
+        console.log(error.error.message);
+        if (error.error.message == 'Datos duplicados') {
+          this.putMinuteConversion(payload);
+        }
+        // this.alert('error', 'error', error.message);
+      },
+    });
+  }
+  putMinuteConversion(payload: any) {
+    // putMinuteConversion
+    this.convertiongoodService.putMinuteConversion(payload).subscribe({
+      next: (res: IListResponse<any>) => {
+        this.alert('success', `Acta Actualizada Correctamente`, '');
+        console.log('minute-conversions res -> ', res);
+        this.router.navigate(
+          ['/pages/administrative-processes/derivation-goods'],
+          {
+            queryParams: {
+              newActConvertion: this.selectItem2,
+              // expedientNumber: this.form.value.numberDossier,
+            },
+          }
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        console.log(error.error.message);
+        // this.alert('error', 'error', error.message);
       },
     });
   }

@@ -1,7 +1,7 @@
 export const CONSULTATION_GOODS_BILLS_COLUMNS = {
   no_bien: {
     sort: false,
-    title: 'No. SIAB',
+    title: 'No. Bien',
   },
   bien_descripcion: {
     sort: false,
