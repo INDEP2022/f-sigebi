@@ -68,6 +68,7 @@ export class RegistrationOfRequestsComponent
   infoRequest: IRequest;
   typeDocument: string = '';
   process: string = '';
+  hideExpedient: boolean = false;
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -153,6 +154,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
+    this.hideExpedientTab(id);
     //this.dinamyCallFrom();
   }
 
@@ -310,6 +312,7 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
+      sender: [null],
     });
     this.registRequestForm.get('receptionDate').disable();
     this.registRequestForm.updateValueAndValidity();
@@ -370,6 +373,18 @@ export class RegistrationOfRequestsComponent
       });
   }
 
+  hideExpedientTab(id: number | string) {
+    const params = new ListParams();
+    params['filter.processStatus'] = `$eq:SOLICITAR_ACLARACION`;
+    params['filter.requestId'] = `$eq:${id}`;
+    this.goodService.getAll(params).subscribe({
+      next: resp => {
+        if (resp.count > 0) {
+          this.hideExpedient = true;
+        }
+      },
+    });
+  }
   verifyTransDelegaStatiAuthoExist(data: any) {
     if (
       !data.transferenceId ||
