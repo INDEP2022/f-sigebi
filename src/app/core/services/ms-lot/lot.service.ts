@@ -214,11 +214,30 @@ export class LotService extends HttpService {
     const formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('eventId', eventId ? `${eventId}` : null);
-    formData.append('pLot', lot ? `${lot}` : null);
+    if (lot) {
+      formData.append('pLot', lot ? `${lot}` : null);
+      formData.append('lot', lot ? `${lot}` : null);
+    }
+
     formData.append('pEvent', eventId ? `${eventId}` : null);
-    formData.append('lot', lot ? `${lot}` : null);
+
     formData.append('pDirection', pDirection);
     return this.post('apps/load-data-billing', formData);
+  }
+
+  validBaseColumns(body: {
+    file: File;
+    function: 'CLIENTES' | 'LOTES';
+    address: 'M' | 'I';
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file, body.file.name);
+    formData.append('function', body.function);
+    formData.append('address', body.address);
+    return this.post<IListResponse<{ ERROR?: string }>>(
+      'apps/valid-column-base',
+      formData
+    );
   }
   // ------------------------
   PUP_ENTRA(body: any) {

@@ -544,6 +544,8 @@ export class EventGoodsLotsListActionsComponent
           this.loader.load = false;
           this.alert('success', 'Proceso Terminado', '');
           // this.refre
+          const params = new FilterParams();
+          this.params.next(params);
         })
       );
   }

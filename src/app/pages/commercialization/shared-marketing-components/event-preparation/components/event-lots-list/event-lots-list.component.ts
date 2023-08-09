@@ -261,7 +261,9 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       'No'
     );
     if (this.onlyBase) {
-      this.validateBaseColumns(askIsLotifying);
+      console.warn('VALIDA COLUMNAS BASE');
+
+      this.onValidateBaseColumns(askIsLotifying, event);
       return;
     }
     if (askIsLotifying.isConfirmed) {
@@ -310,20 +312,60 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   /** VALIDA_COLUMNASBASE */
-  validateBaseColumns(askIsLotifying: SweetAlertResult) {
+  onValidateBaseColumns(askIsLotifying: SweetAlertResult, event: Event) {
     let type: 'CLIENTES' | 'LOTES' = null;
     if (askIsLotifying.isConfirmed) {
       type = 'LOTES';
-      return;
     }
 
     if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
       type = 'CLIENTES';
-      return;
     }
     if (type) {
-      console.warn('VALIDA_COLUMNASBASE');
+      const file = this.getFileFromEvent(event);
+      this.validateBaseColumns(type, file).subscribe();
     }
+  }
+
+  private getFileFromEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const filename = file.name;
+    return file;
+  }
+
+  validateBaseColumns(type: 'CLIENTES' | 'LOTES', file: File) {
+    return this.lotService
+      .validBaseColumns({
+        file,
+        function: type,
+        address: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(async response => {
+          const errors = response.data
+            .filter(column => column?.ERROR)
+            .map(column => column.ERROR);
+          console.log({ errors });
+          if (!errors.length) {
+            this.alert(
+              'success',
+              'No se encontraron errores en su archivo',
+              ''
+            );
+            return;
+          }
+          // const message = errors.join(`
+          //   `);
+          // this.alert('error', 'Error', message);
+          for (let index = 0; index < errors.length; index++) {
+            await this.alertInfo('error', 'Error', errors[index]);
+          }
+        })
+      );
   }
 
   async onDeleteLot(lot: IComerLot) {
