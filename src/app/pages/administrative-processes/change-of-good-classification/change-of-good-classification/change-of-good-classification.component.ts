@@ -90,6 +90,10 @@ export class ChangeOfGoodClassificationComponent
     return this.form.get('descriptionClasification');
   }
 
+  get clasification() {
+    return this.form.get('clasification');
+  }
+
   get numberFile() {
     return this.form.get('numberFile');
   }
@@ -287,6 +291,7 @@ export class ChangeOfGoodClassificationComponent
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
       descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
+      clasification: [null, [Validators.pattern(STRING_PATTERN)]],
       currentClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       numberFile: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -407,6 +412,9 @@ export class ChangeOfGoodClassificationComponent
 
   setGood(good: IGood, clasif: IGoodSssubtype) {
     this.descriptionGood.setValue(good.description);
+    this.clasification.setValue(
+      good.goodClassNumber + ' - ' + clasif.description
+    );
     this.currentClasification.setValue(good.goodClassNumber);
     this.descriptionClasification.setValue(clasif.description);
     this.numberFile.setValue(good.fileNumber);
@@ -585,7 +593,7 @@ export class ChangeOfGoodClassificationComponent
         next: response => {
           this.alert(
             'success',
-            'Bien ' + this.good.id,
+            'No. Bien ' + this.good.id,
             `Se ha actualizado la Clasificación Correctamente`
           );
           this.updateFirsTable();

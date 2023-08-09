@@ -21,7 +21,7 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberGood')" label="Número de Bien">
+          <form-field [control]="form.get('numberGood')" label="No. Bien">
             <input
               type="text"
               class="form-control"
@@ -40,18 +40,18 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-2 col-sm-12 col-xs-12">
+      <div class="row mt-3">
+        <div class="col-md-10 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentClasification')"
-            label="No. Clasif Bien">
+            [control]="form.get('clasification')"
+            label="No. Clasificación Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="currentClasification" />
+              formControlName="clasification" />
           </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionClasification')"
             label="Descripción">
@@ -60,7 +60,7 @@
               class="form-control"
               formControlName="descriptionClasification" />
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberFile')" label="No. Expediente">
             <input
@@ -73,7 +73,7 @@
     </form>
     <hr />
     <h6>Nueva Clasificación</h6>
-    <form [formGroup]="formNew" class="form-material">
+    <form [formGroup]="formNew" class="form-material fixTopInput">
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <app-classification-of-goods-shared
