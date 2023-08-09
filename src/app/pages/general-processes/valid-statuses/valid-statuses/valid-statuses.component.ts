@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   BehaviorSubject,
@@ -25,7 +20,6 @@ import { ScreenHelpService } from 'src/app/core/services/ms-business-rule/screen
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { SegAppScreenService } from 'src/app/core/services/ms-screen-status/seg-app-screen.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { HELP_COLUMNS, VALID_STATUSES_COLUMNS } from './valid-statuses-columns';
 
 @Component({
@@ -45,13 +39,22 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
   params = new BehaviorSubject(new FilterParams());
   showStatus: boolean = true;
   screenStatus: string = '';
-  help: IScreenHelpTwo[];
+  helps: IScreenHelpTwo;
   loading2: boolean = false;
   statuses: IStatusXScreen[] = [];
   totalItems = 0;
   params2 = new BehaviorSubject(new ListParams());
   totalItems2 = 0;
   settings2: any;
+
+  // get description() {
+  //   return this.helpForm.get('description');
+  // }
+
+  // get recordNumber() {
+  //   return this.helpForm.get('recordNumber');
+  // }
+
   constructor(
     private fb: FormBuilder,
     private segAppScreenService: SegAppScreenService,
@@ -87,6 +90,14 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
     this.fillFromParams();
   }
 
+  prepareHelpForm() {
+    this.helpForm = this.fb.group({
+      screenKey: [null],
+      description: [null],
+      recordNumber: [null],
+    });
+  }
+
   fillFromParams() {
     const { screenStatus } = this.global;
     if (screenStatus) {
@@ -97,15 +108,6 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
       params.addFilter('screenKey', screenStatus);
       this.params.next(params);
     }
-  }
-  prepareHelpForm() {
-    this.helpForm = this.fb.group({
-      screenKey: [
-        null,
-        { value: '', disabled: false },
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(11)],
-      ],
-    });
   }
 
   getScreenStatusById(id: string) {
@@ -158,8 +160,14 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
   }
 
   getHelpByScreen(screen: string) {
-    return this.screenHelpService
-      .getHelpScreen(screen)
-      .pipe(tap(screenHelp => (this.help = screenHelp.data)));
+    return this.screenHelpService.getHelpScreen(screen).pipe(
+      tap(screenHelp => {
+        this.helps = screenHelp;
+        this.screenStatus = screenHelp.screenKey;
+        this.helpForm.get('screenKey').setValue(this.screenStatus);
+        this.helpForm.get('description').setValue(screenHelp.help);
+        this.helpForm.get('recordNumber').setValue(screenHelp.recordNumber);
+      })
+    );
   }
 }

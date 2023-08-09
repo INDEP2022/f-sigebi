@@ -65,6 +65,7 @@ export class NormsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+
           this.getExample();
         }
       });

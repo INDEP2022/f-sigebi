@@ -153,10 +153,10 @@
                 [control]="dateOfResolution"
                 label="Fecha de Resolución">
                 <input
-                  type="text"
                   class="form-control"
-                  formControlName="dateOfResolution"
-                  maxlength="12" />
+                  ngModel
+                  bsDatepicker
+                  formControlName="dateOfResolution" />
               </form-field>
             </div>
           </div>
@@ -167,7 +167,7 @@
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
-              formControlName="lotNumber"
+              formControlName="clkpv"
               label="Lote"
               [path]="pathLote"
               value="idLot"
