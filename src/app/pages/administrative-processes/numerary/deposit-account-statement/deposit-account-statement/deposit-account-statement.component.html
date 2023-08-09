@@ -77,7 +77,7 @@
           <!-- </div> -->
         </div>
         <div class="row">
-          <div class="col-md-3 mt-4">
+          <div class="col-md-4 mt-4">
             <app-select-modal-table-shared
               [form]="form"
               [maxlengthInput]="12"
@@ -129,7 +129,31 @@
               </ng-template>
             </form-field> -->
           </div>
-          <div class="col-md-3 mt-4">
+          <div class="col-md-4 mt-4">
+            <form-field
+              [control]="accountnumberorigindeposit"
+              label="Origen Depósito">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="accountnumberorigindeposit"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+          <div class="col-md-4 mt-4">
+            <form-field
+              [control]="accountnumberpayreturn"
+              label="Origen Devolución">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="accountnumberpayreturn"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mt-4">
             <form-field [control]="form.get('bank')" label="Banco">
               <input
                 type="text"
@@ -138,7 +162,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3 mt-4">
+          <div class="col-md-4 mt-4">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
                 type="text"
@@ -147,7 +171,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3 mt-4">
+          <div class="col-md-4 mt-4">
             <form-field [control]="form.get('amount')" label="Importe">
               <input
                 type="text"
@@ -234,17 +258,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12 mt-4">
-            <form-field [control]="form.get('indicated')" label="Indiciado">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="indicated"
-                [readonly]="readonly" />
-            </form-field>
-          </div>
-        </div>
-        <div class="row">
           <div class="col-md-6 mt-4">
             <form-field
               [control]="form.get('avPrevious')"
@@ -268,10 +281,21 @@
             </form-field>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12 mt-4">
+            <form-field [control]="form.get('indicated')" label="Indiciado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="indicated"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+        </div>
       </form>
     </div>
     <h5 class="title">Datos para cálculo</h5>
-    <div class="row pt-4 mt-4">
+    <div class="row">
       <div class="col text-right">
         <button
           class="btn btn-primary btn-sm active mx-1"
@@ -399,8 +423,10 @@
       </form>
     </div>
     <h5 class="title">Datos para el cheque</h5>
-    <div class="row mt-4">
-      <div *ngIf="userChecks && userChecks.accounttras">
+    <div class="d-flex mt-4">
+      <div
+        *ngIf="userChecks && userChecks.accounttras"
+        class="accounttras text-primary">
         {{ userChecks.accounttras }}
       </div>
       <div class="col text-right">

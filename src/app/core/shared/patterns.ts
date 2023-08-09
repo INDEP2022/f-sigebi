@@ -9,6 +9,7 @@ export const EMAIL_PATTERN2 = '^[a-z0-9._%+-]+@[a-z0-9-]+(\\.[a-z]{2,4})+$';
 
 export const NUMBERS_PATTERN = '^-?[0-9]+$';
 export const NUMBERS_POINT_PATTERN = '^[0-9.]+';
+export const NUMBERS_DASH_PATTERN = '^[0-9-]+';
 export const POSITVE_NUMBERS_PATTERN = '^[0-9]+';
 export const ZONE_NUMBER_PATTERM = /^-?(0[0-9]|1[0-2]):00$/;
 // export const PERCENTAGE_NUMBERS_PATTERN = /^[0-9]+(\.[0-9]+)?$/;

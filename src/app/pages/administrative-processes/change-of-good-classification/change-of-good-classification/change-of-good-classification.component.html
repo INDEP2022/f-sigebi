@@ -84,7 +84,7 @@
             "></app-classification-of-goods-shared>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="formNew.get('unitXClassif')" label="Unidad">
+          <form-field [control]="unitXClassif" label="Unidad">
             <ng-select class="form-control" formControlName="unitXClassif">
               <ng-option [value]="null">Seleccione un valor</ng-option>
               <ng-option *ngFor="let unit of units" [value]="unit.unit">
@@ -107,7 +107,7 @@
       </div>
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="formNew.get('destination')" label="Destino">
+          <form-field [control]="destination" label="Destino">
             <ng-select class="form-control" formControlName="destination">
               <ng-option [value]="null">Seleccione un valor</ng-option>
               <ng-option *ngFor="let dest of destinations" [value]="dest.id">

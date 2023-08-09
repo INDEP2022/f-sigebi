@@ -56,6 +56,7 @@ export class ChangeOfGoodClassificationComponent
   noEtiqs: string[] = [];
   endProcess: boolean = false;
   destinations: ILabelOKey[] = [];
+  loadingGood = false;
   // listAtributAct: any[] = [];
   // listAtributNew: IAttribClassifGoods[] = [];
   btnNewAtribut: boolean = true;
@@ -204,11 +205,14 @@ export class ChangeOfGoodClassificationComponent
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         if (param['numberGood']) {
+          console.log(param);
           this.numberGood.setValue(param['numberGood']);
           if (this.previousRouteService.getHistory().length > 1) {
             this.origin = 1;
           }
-          this.loadGood();
+          if (!this.loadingGood) {
+            this.loadGood();
+          }
         } else {
           this.origin = 0;
         }
@@ -333,11 +337,13 @@ export class ChangeOfGoodClassificationComponent
     this.loading = true;
     // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
+    this.loadingGood = true;
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
       queryParams: { numberGood: this.numberGood.value },
       queryParamsHandling: 'merge', // remove to replace all query params by provided
     });
+
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
     const response = await firstValueFrom(
@@ -346,6 +352,7 @@ export class ChangeOfGoodClassificationComponent
         .pipe(catchError(x => of({ data: [] })))
     );
     if (response.data && response.data.length > 0) {
+      this.loadingGood = false;
       this.good = response.data[0];
       const status = await firstValueFrom(this.getStatusXPantalla());
       // console.log(this.usuarVal, this.usuarVal.substring(0, 3));
@@ -421,6 +428,8 @@ export class ChangeOfGoodClassificationComponent
   onChange(event: any) {
     // console.log(event);
     this.newDescription = event;
+    this.unitXClassif.setValue(null);
+    this.destination.setValue(null);
     this.getUnitiXClasif();
     this.getEtiqXClasif();
     this.formNew.enable();
