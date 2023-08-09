@@ -34,8 +34,22 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.photographMediaForm = this.fb.group({
-      route: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      status: [null, [Validators.required, Validators.maxLength(1)]],
+      route: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(40),
+        ],
+      ],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(1),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
     if (this.photographMedia != null) {
       this.edit = true;
@@ -52,6 +66,13 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.photographMediaForm.controls['route'].value.trim() === '' ||
+      this.photographMediaForm.controls['status'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.photographMediaService
       .create(this.photographMediaForm.value)
@@ -121,14 +142,14 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.photographMediaForm = this.fb.group({
       route: [
-        null, 
+        null,
         [
           Validators.maxLength(40),
           Validators.pattern(STRING_PATTERN)
         ]
       ],
       status: [
-        null, 
+        null,
         [
           Validators.maxLength(1)
         ]

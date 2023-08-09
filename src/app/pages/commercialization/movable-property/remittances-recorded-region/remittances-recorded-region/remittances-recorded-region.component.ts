@@ -1,10 +1,12 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -25,27 +27,34 @@ export class RemittancesRecordedRegionComponent
   today: Date;
   maxDate: Date;
   minDate: Date;
+  itemsDelegation = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
+    private delegationService: DelegationService,
+    private siabService: SiabService,
+    private datePipe: DatePipe,
     private sanitizer: DomSanitizer
   ) {
     super();
     this.today = new Date();
-    this.minDate = new Date(this.today.getFullYear(), this.today.getMonth(), 2);
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getCoordinations({ page: 1, text: '' });
+    this.getDelegations(new ListParams());
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: [null, [Validators.required, maxDate(new Date())]],
+      f_ini: [null, [Validators.required]],
+      f_fin: [null, [Validators.required]],
       coordination: [null, [Validators.required]],
     });
+    setTimeout(() => {
+      this.getDelegations(new ListParams());
+    }, 1000);
   }
 
   getCoordinations(params: ListParams) {
@@ -61,27 +70,71 @@ export class RemittancesRecordedRegionComponent
     }
   }
 
+  getDelegations(params: ListParams) {
+    this.delegationService.getAllPaginated(params).subscribe((data: any) => {
+      this.itemsDelegation = new DefaultSelect(data.data, data.count);
+      console.log(this.itemsDelegation);
+    });
+  }
+
   selectCoordination(event: any) {
     this.selectedCoordination = event;
   }
 
   openPrevPdf() {
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
-  }
+    // Obtener las fechas del formulario
+    const fechaInicio = this.form.get('f_ini').value;
+    const fechaFin = this.form.get('f_fin').value;
 
+    // Formatear las fechas al formato "dd-mm-yyyy"
+    const fechaInicioFormateada = this.datePipe.transform(
+      fechaInicio,
+      'dd-MM-yyyy'
+    );
+    const fechaFinFormateada = this.datePipe.transform(fechaFin, 'dd-MM-yyyy');
+    let params = {
+      DELEGACION: this.itemsDelegation.data[0].id,
+      P_FECINI: fechaInicioFormateada,
+      P_FECFIN: fechaFinFormateada,
+    };
+    console.log(params);
+
+    this.siabService
+      .fetchReport('RCOMERENVREMESA', params)
+      .subscribe(response => {
+        if (response !== null) {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        } else {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            }, //pasar datos por aca
+            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+            ignoreBackdropClick: true, //ignora el click fuera del modal
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        }
+      });
+  }
   coordinationsTestData: any[] = [
     {
       no_delegacion: 0,

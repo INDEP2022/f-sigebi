@@ -39,22 +39,51 @@ export class NotaryFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.notaryForm = this.fb.group({
       id: [null],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
       valid: [null, [Validators.required]],
       notaryNumber: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       ubication: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
       domicile: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
-      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
-      email: [null, [Validators.required, Validators.email]],
+      phone: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(PHONE_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      email: [
+        null,
+        [Validators.required, Validators.maxLength(80), Validators.email],
+      ],
       registryNumber: [null],
     });
     if (this.notary != null) {
@@ -73,8 +102,20 @@ export class NotaryFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.notaryForm.controls['name'].value.trim() === '' ||
+      this.notaryForm.controls['notaryNumber'].value.trim() === '' ||
+      this.notaryForm.controls['phone'].value.trim() === '' ||
+      this.notaryForm.controls['domicile'].value.trim() === '' ||
+      this.notaryForm.controls['ubication'].value.trim() === '' ||
+      this.notaryForm.controls['phone'].value.trim() === '' ||
+      this.notaryForm.controls['email'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
-    this.notaryService.create(this.notaryForm.value).subscribe({
+    this.notaryService.create(this.notaryForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });

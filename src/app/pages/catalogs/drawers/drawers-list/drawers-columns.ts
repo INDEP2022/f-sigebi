@@ -18,6 +18,14 @@ export const DRAWERS_COLUMNS = {
     valuePrepareFunction: (value: any): string => {
       return value.description;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
 
   status: {

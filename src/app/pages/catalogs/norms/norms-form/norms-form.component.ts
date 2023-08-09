@@ -75,7 +75,10 @@ export class NormsFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(4000), Validators.pattern(STRING_PATTERN)],
       ],
-      condition: [null],
+      condition: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
       version: [null],
       status: [null],
       name: [null, [Validators.required]],
@@ -112,6 +115,14 @@ export class NormsFormComponent extends BasePage implements OnInit {
       version: this.normForm.controls['version'].value,
       status: this.normForm.controls['status'].value,
     };
+    if (
+      this.normForm.controls['norm'].value.trim() === '' ||
+      this.normForm.controls['destination'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
+    this.loading = true;
     this.normService.create(form).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -154,7 +165,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);

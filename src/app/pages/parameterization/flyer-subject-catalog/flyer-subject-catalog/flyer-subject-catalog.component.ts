@@ -26,6 +26,7 @@ import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-mode
 })
 export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   columns: IAffair[] = [];
 
@@ -76,6 +77,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
         columnTitle: 'Acciones',
         edit: true,
         delete: true,
+        add: false,
         position: 'right',
       },
       columns: { ...AFFAIR_TYPE_COLUMNS },
@@ -94,22 +96,29 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             /*SPECIFIC CASES*/
-            filter.field == 'city'
-              ? (field = `filter.${filter.field}.nameCity`)
-              : (field = `filter.${filter.field}`);
-            filter.field == 'id'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAffairAll();
         }
       });
-
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAffairAll());
@@ -127,7 +136,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading1 = false;
       },
@@ -160,6 +169,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.affairTypeList = response.data;
+          this.data1.load(response.data);
           this.totalItems2 = response.count;
           this.loading2 = false;
         },
@@ -206,7 +216,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(affair.id, affair.nbOrigen);
@@ -219,13 +229,13 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairService.remove2(id, nb).subscribe({
       next: () => {
         this.getAffairAll();
-        this.alert('success', 'Asunto para volante', 'Borrado');
+        this.alert('success', 'Asunto para Volante', 'Borrado Correctamente');
         this.rowSelected = false;
       },
       error: err => {
         this.alert(
           'warning',
-          'Asunto para volante',
+          'Asunto para Volante',
           'Primero elimine sus tipos de volante'
         );
       },
@@ -237,7 +247,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea borrar este registro?'
+      '¿Desea Borrar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete2(affairType);
@@ -251,7 +261,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairTypeService.remove(affairType).subscribe({
       next: () => {
         this.getAffairType(affair);
-        this.alert('success', 'Tipo Volante', 'Borrado');
+        this.alert('success', 'Tipo de Volante', 'Borrado Correctamente');
       },
       error: erro => {
         this.alert(
@@ -267,8 +277,8 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
   showNullRegister() {
     this.alertQuestion(
       'warning',
-      'Asunto sin volantes',
-      '¿Desea agregarlos ahora?'
+      'Asunto sin Volantes',
+      '¿Desea Agregarlos Ahora?'
     ).then(question => {
       if (question.isConfirmed) {
         this.openForm();

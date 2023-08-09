@@ -177,7 +177,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'warning',
         'advertencia',
-        'fecha de evento no puede ser menor a Fecha emisión'
+        'Fecha de Evento no Puede Ser Menor a Fecha Emisión'
       );
       return true;
     }
@@ -296,6 +296,7 @@ export class PaymentReceiptsReportComponent extends BasePage implements OnInit {
       this.form.controls['NoAppIva'].setValue(noAppIva);
     }
   }
+
   getGood() {
     this.loading = true;
     this.reportService.getGood().subscribe({

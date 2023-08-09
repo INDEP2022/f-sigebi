@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import {
-  PERCENTAGE_NUMBERS_PATTERN,
-  POSITVE_NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -19,7 +15,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class PenaltyFormComponent extends BasePage implements OnInit {
   penaltyForm: ModelForm<IPenalty>;
-  title: string = 'PENALIZACIÓN';
+  title: string = 'Penalización';
   edit: boolean = false;
   penalty: IPenalty;
   constructor(
@@ -36,7 +32,6 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.penaltyForm = this.fb.group({
-      id: [null],
       serviceType: [
         null,
         [
@@ -47,21 +42,22 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       equivalentDays: [
         null,
-        Validators.maxLength(5),
+        [Validators.maxLength(5), Validators.required],
         // [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      version: [1],
-      status: [1],
       contractNumber: [
         null,
         [
           Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.minLength(0),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(50),
         ],
       ],
@@ -80,6 +76,10 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.penaltyForm.controls['serviceType'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.penaltyService.create(this.penaltyForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
@@ -98,7 +98,7 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;

@@ -36,7 +36,7 @@ export const INDICATOR_REPORT_COLUMNS = {
   },
   version: {
     title: 'Versión',
-    type: 'Date',
+    type: 'number',
     sort: false,
   },
 };
