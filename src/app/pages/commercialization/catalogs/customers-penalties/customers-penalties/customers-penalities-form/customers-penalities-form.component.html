@@ -83,11 +83,15 @@
               control="eventId"
               (change)="changeEvent($event)">
             </ngx-select>-->
-            <textarea
+            <input
+              type="text"
+              class="form-control"
+              formControlName="releaseCause" />
+            <!--<textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="releaseCause"></textarea>
+              formControlName="releaseCause"></textarea>-->
           </form-field>
         </div>
       </div>

@@ -56,17 +56,21 @@ export class SirsaePaymentConsultationListComponent
       this.tableSource.refresh();
     });
     this.form.reset();
+    this.totalItems = 0;
   }
 
   clearTable(): void {
     if (this.tableSource.count() > 0) {
       this.tableSource.empty().then(() => {
+        this.tableSource.load([]);
         this.tableSource.refresh();
+        this.totalItems = 0;
       });
     }
   }
 
   search(listParams?: ListParams): void {
+    console.log('Lista de Parametros: ', listParams);
     console.log(this.form.value);
     if (!this.formValid()) {
       return;
@@ -104,7 +108,7 @@ export class SirsaePaymentConsultationListComponent
       );
     }
     if (bank) {
-      filters.addFilter('ifdsc', bank);
+      filters.addFilter('ifdsc', bank, SearchFilter.LIKE);
     }
     if (status) {
       filters.addFilter('statusMov', status);
@@ -114,6 +118,7 @@ export class SirsaePaymentConsultationListComponent
       filters.page = listParams.page || 1;
       filters.limit = listParams.limit || 10;
     }
+    console.log('Filtro: ', filters);
     return filters;
   }
 
