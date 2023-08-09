@@ -1,6 +1,8 @@
+import { HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -8,10 +10,9 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { LotParamsService } from 'src/app/core/services/ms-lot-parameters/lot-parameters.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
 import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
-import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
   selector: 'app-batch-parameters-list',
@@ -19,6 +20,10 @@ import { NewAndUpdateComponent } from './new-and-update/new-and-update.component
   styles: [],
 })
 export class BatchParametersListComponent extends BasePage implements OnInit {
+  //
+
+  lotServiceArray: any[] = [];
+  lotServiceArrayTwo: any[] = [];
   adding: boolean = false;
   totalItems: number = 0;
   paramsList = new BehaviorSubject<ListParams>(new ListParams());
@@ -26,6 +31,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
   filterRow: any;
   addOption: any;
   addRowElement: any;
+  form: FormGroup;
   cancelBtn: any;
   cancelEvent: any;
   createButton: string =
@@ -59,9 +65,14 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     },
   };
   columnFilters: any = [];
+
+  //
+
   constructor(
     private lotparamsService: LotParamsService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private serviceLot: LotService
   ) {
     super();
     this.paramSettings.columns = BATCH_PARAMETERS_COLUMNS;
@@ -72,9 +83,9 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         add: false,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...BATCH_PARAMETERS_COLUMNS },
@@ -87,7 +98,6 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
-        console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
@@ -121,6 +131,46 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     this.paramsList
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLotParams());
+    this.prepareForm();
+  }
+
+  //
+
+  private prepareForm() {
+    this.form = this.fb.group({
+      idEvent: [null, Validators.required],
+      lotePublico: [null, Validators.required],
+      garantia: [null, Validators.required],
+    });
+  }
+
+  addNew() {}
+
+  getLotByFilters() {
+    let params: HttpParams = new HttpParams();
+
+    params = params.append(
+      'filter.idEvent',
+      this.form.controls['idEvent'].value
+    );
+    params = params.append(
+      'filter.lotPublic',
+      this.form.controls['lotePublico'].value
+    );
+    params = params.append(
+      'filter.priceGuarantee',
+      this.form.controls['garantia'].value
+    );
+
+    this.serviceLot.getAllComerLotsByFilter(params).subscribe({
+      next: response => {
+        console.log('Si hay una respuesta y es esta: ', response.data);
+        this.lotServiceArray = response.data;
+      },
+      error: error => {
+        console.log('Hay respuesta pero esta mal.');
+      },
+    });
   }
 
   getLotParams() {
@@ -136,6 +186,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
         this.lotData.load(response.data);
         this.lotData.refresh();
         this.totalItems = response.count;
+        this.lotServiceArrayTwo = response.data;
       },
       error: error => {
         this.totalItems = 0;
@@ -145,31 +196,42 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     });
   }
 
-  hideFilters() {
-    setTimeout(() => {
-      let filterArray = document.getElementsByClassName('ng2-smart-filters');
-      this.filterRow = filterArray.item(0);
-      this.filterRow.classList.add('d-none');
-      this.addOption = document
-        .getElementsByClassName('ng2-smart-action-add-add')
-        .item(0);
-    }, 200);
+  preValidatedSaveAll() {
+    this.lotServiceArray;
+    this.lotData;
+    for (const i of this.lotServiceArray) {
+      for (const x of this.lotServiceArrayTwo) {
+        if (i.idLot == x.idLot) {
+        }
+      }
+    }
   }
 
-  addRow() {
-    this.adding = true;
-    this.addOption.click();
-    setTimeout(() => {
-      this.addRowElement = document
-        .querySelectorAll('tr[ng2-st-thead-form-row]')
-        .item(0);
-      this.addRowElement.classList.add('row-no-pad');
-      this.addRowElement.classList.add('add-row-height');
-      this.cancelBtn = document.querySelectorAll('.cancel').item(0);
-      this.cancelEvent = this.handleCancel.bind(this);
-      this.cancelBtn.addEventListener('click', this.cancelEvent);
-    }, 300);
-  }
+  // hideFilters() {
+  //   setTimeout(() => {
+  //     let filterArray = document.getElementsByClassName('ng2-smart-filters');
+  //     this.filterRow = filterArray.item(0);
+  //     this.filterRow.classList.add('d-none');
+  //     this.addOption = document
+  //       .getElementsByClassName('ng2-smart-action-add-add')
+  //       .item(0);
+  //   }, 200);
+  // }
+
+  // addRow() {
+  //   this.adding = true;
+  //   this.addOption.click();
+  //   setTimeout(() => {
+  //     this.addRowElement = document
+  //       .querySelectorAll('tr[ng2-st-thead-form-row]')
+  //       .item(0);
+  //     this.addRowElement.classList.add('row-no-pad');
+  //     this.addRowElement.classList.add('add-row-height');
+  //     this.cancelBtn = document.querySelectorAll('.cancel').item(0);
+  //     this.cancelEvent = this.handleCancel.bind(this);
+  //     this.cancelBtn.addEventListener('click', this.cancelEvent);
+  //   }, 300);
+  // }
 
   handleCancel() {
     this.adding = false;
@@ -185,135 +247,135 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
     );
   }
 
-  async addEntry(event: any) {
-    let { newData, confirm } = event;
+  // async addEntry(event: any) {
+  //   let { newData, confirm } = event;
 
-    if (
-      !newData.idEvent ||
-      newData.idLot == '' ||
-      newData.specialGuarantee == ''
-    ) {
-      this.alertTable();
-      return;
-    }
-    const requestBody = {
-      idLot: '',
-      idEvent: event.newData.idEvent,
-      publicLot: event.newData.publicLot,
-      specialGuarantee: event.newData.specialGuarantee,
-      nbOrigin: '',
-    };
+  //   if (
+  //     !newData.idEvent ||
+  //     newData.idLot == '' ||
+  //     newData.specialGuarantee == ''
+  //   ) {
+  //     this.alertTable();
+  //     return;
+  //   }
+  //   const requestBody = {
+  //     idLot: '',
+  //     idEvent: event.newData.idEvent,
+  //     publicLot: event.newData.publicLot,
+  //     specialGuarantee: event.newData.specialGuarantee,
+  //     nbOrigin: '',
+  //   };
 
-    // Llamar servicio para agregar registro
-    this.lotparamsService.createLotParameter(requestBody).subscribe({
-      next: resp => {
-        this.msgModal(
-          'Guardado con exito '.concat(`<strong>${requestBody.idLot}</strong>`),
-          'Parametro Guardado',
-          'success'
-        );
-        confirm.resolve(newData);
-        this.adding = false;
-        this.totalItems += 1;
-      },
-      error: err => {
-        console.log('Hubo un error: ', err);
-        this.msgModal(
-          'Error: '.concat(`<strong>${err.error.message}</strong>`),
-          'Error al guardar',
-          'error'
-        );
-      },
-    });
-  }
+  //   // Llamar servicio para agregar registro
+  //   this.lotparamsService.createLotParameter(requestBody).subscribe({
+  //     next: resp => {
+  //       this.msgModal(
+  //         'Guardado con exito '.concat(`<strong>${requestBody.idLot}</strong>`),
+  //         'Parametro Guardado',
+  //         'success'
+  //       );
+  //       confirm.resolve(newData);
+  //       this.adding = false;
+  //       this.totalItems += 1;
+  //     },
+  //     error: err => {
+  //       console.log('Hubo un error: ', err);
+  //       this.msgModal(
+  //         'Error: '.concat(`<strong>${err.error.message}</strong>`),
+  //         'Error al guardar',
+  //         'error'
+  //       );
+  //     },
+  //   });
+  // }
 
-  editEntry(event: any) {
-    let { newData, confirm } = event;
-    if (
-      !newData.idEvent ||
-      newData.idLot == '' ||
-      newData.specialGuarantee == ''
-    ) {
-      this.alertTable();
-      return;
-    }
+  // editEntry(event: any) {
+  //   let { newData, confirm } = event;
+  //   if (
+  //     !newData.idEvent ||
+  //     newData.idLot == '' ||
+  //     newData.specialGuarantee == ''
+  //   ) {
+  //     this.alertTable();
+  //     return;
+  //   }
 
-    const requestBody = {
-      idLot: event.newData.idLot,
-      idEvent: event.newData.idEvent,
-      publicLot: event.newData.publicLot,
-      specialGuarantee: event.newData.specialGuarantee,
-      nbOrigin: '',
-    };
-    // Llamar servicio para eliminar
-    this.lotparamsService.update(event.newData.idLot, requestBody).subscribe({
-      next: resp => {
-        this.msgModal(
-          'Actualizaci&oacute;n exitosa '.concat(
-            `<strong>${requestBody.idLot}</strong>`
-          ),
-          'Par&aacute;metro guardado',
-          'success'
-        );
-      },
-    });
-    confirm.resolve(newData);
-  }
+  //   const requestBody = {
+  //     idLot: event.newData.idLot,
+  //     idEvent: event.newData.idEvent,
+  //     publicLot: event.newData.publicLot,
+  //     specialGuarantee: event.newData.specialGuarantee,
+  //     nbOrigin: '',
+  //   };
+  //   // Llamar servicio para eliminar
+  //   this.lotparamsService.update(event.newData.idLot, requestBody).subscribe({
+  //     next: resp => {
+  //       this.msgModal(
+  //         'Actualizaci&oacute;n exitosa '.concat(
+  //           `<strong>${requestBody.idLot}</strong>`
+  //         ),
+  //         'Par&aacute;metro guardado',
+  //         'success'
+  //       );
+  //     },
+  //   });
+  //   confirm.resolve(newData);
+  // }
 
-  deleteEntry(event: any) {
-    let { confirm } = event;
-    const idLot = event.data.idLot;
+  // deleteEntry(event: any) {
+  //   let { confirm } = event;
+  //   const idLot = event.data.idLot;
 
-    this.alertQuestion('question', '¿Desea Eliminar el Registro?', '').then(
-      question => {
-        if (question.isConfirmed) {
-          // Llamar servicio para eliminar
-          this.lotparamsService.remove(idLot).subscribe({
-            next: resp => {
-              this.alert('error', 'Registro Eliminado Correctamente', '');
-            },
-            error: err => {
-              this.alert('error', 'Error al Eliminar el Registro', '');
-            },
-          });
-        }
-      }
-    );
-  }
+  //   this.alertQuestion('question', '¿Desea Eliminar el Registro?', '').then(
+  //     question => {
+  //       if (question.isConfirmed) {
+  //         // Llamar servicio para eliminar
+  //         this.lotparamsService.remove(idLot).subscribe({
+  //           next: resp => {
+  //             this.alert('error', 'Registro Eliminado Correctamente', '');
+  //           },
+  //           error: err => {
+  //             this.alert('error', 'Error al Eliminar el Registro', '');
+  //           },
+  //         });
+  //       }
+  //     }
+  //   );
+  // }
 
-  msgModal(message: string, title: string, typeMsg: any) {
-    Swal.fire({
-      title: title,
-      html: message,
-      icon: typeMsg,
-      showCancelButton: false,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Aceptar',
-    }).then(result => {});
-  }
+  // msgModal(message: string, title: string, typeMsg: any) {
+  //   Swal.fire({
+  //     title: title,
+  //     html: message,
+  //     icon: typeMsg,
+  //     showCancelButton: false,
+  //     confirmButtonColor: '#9D2449',
+  //     cancelButtonColor: '#d33',
+  //     confirmButtonText: 'Aceptar',
+  //   }).then(result => { });
+  // }
 
-  edit(event: any) {
-    this.openForm(event.data, true);
-  }
-  add() {
-    this.openForm(null, false);
-  }
+  // edit(event: any) {
+  //   this.openForm(event.data, true);
+  // }
+  // add() {
+  //   this.openForm(null, false);
+  // }
 
-  openForm(data: any, editVal: boolean) {
-    let config: ModalOptions = {
-      initialState: {
-        data,
-        edit: editVal,
-        callback: (next: boolean) => {
-          if (next) {
-            this.getLotParams();
-          }
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(NewAndUpdateComponent, config);
-  }
+  // openForm(data: any, editVal: boolean) {
+  //   let config: ModalOptions = {
+  //     initialState: {
+  //       data,
+  //       edit: editVal,
+  //       callback: (next: boolean) => {
+  //         if (next) {
+  //           this.getLotParams();
+  //         }
+  //       },
+  //     },
+  //     class: 'modal-lg modal-dialog-centered',
+  //     ignoreBackdropClick: true,
+  //   };
+  //   this.modalService.show(NewAndUpdateComponent, config);
+  // }
 }

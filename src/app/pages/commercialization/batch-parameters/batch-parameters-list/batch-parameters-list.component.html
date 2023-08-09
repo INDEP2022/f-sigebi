@@ -3,20 +3,78 @@
     <h5 class="title">par&aacute;metros por lote</h5>
   </div>
   <div body>
-    <div body>
+    <div>
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-4">
+            <form-field [control]="form.get('idEvent')" label="Id Evento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="idEvent" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('lotePublico')"
+              label="Lote Público">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="lotePublico" />
+            </form-field>
+          </div>
+          <!-- <div class="col-md-6">
+            <form-field [control]="form.get('idLot')" label="Id Lote">
+              <input type="text" class="form-control" formControlName="idLot" />
+            </form-field>
+          </div> -->
+          <div class="col-md-4">
+            <form-field [control]="form.get('garantia')" label="Garantía">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="garantia" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="d-flex">
+        <div class="ml-auto">
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="getLotByFilters()"
+            [disabled]="!form.valid">
+            Agregar
+          </button>
+        </div>
+      </div>
+      <!-- <div footer>
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button [disabled]="form.invalid" type="button" class="btn btn-primary btn-sm active" (click)="confirm()">
+              {{ edit ? 'Actualizar' : 'Guardar' }}
+              <span *ngIf="edit"><i class="fas fa-sync-alt"> </i></span>
+              <span *ngIf="!edit"><i aria-hidden="true" class="fa fa-save"></i></span>
+            </button>
+          </div>
+          <div class="m-3">
+            <button type="button" class="btn btn-danger btn-sm active" (click)="close()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div> -->
+
       <div class="ch-content" header>
         <h5 class="title"></h5>
         <div class="col-md-5 buttons mb-3">
-          <div>
-            <button
-              (click)="add()"
-              type="button"
-              tooltip="Agregar"
-              containerClass="tooltip-style"
+          <!-- <div>
+            <button (click)="add()" type="button" tooltip="Agregar" containerClass="tooltip-style"
               class="btn btn-info btn-sm active ml-2">
               Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="row">
@@ -29,9 +87,7 @@
               [attr.class]="'table-bordered table-responsive'"
               class="table-responsive"
               [settings]="settings"
-              [source]="lotData"
-              (edit)="edit($event)"
-              (delete)="deleteEntry($event)">
+              [source]="lotData">
             </ng2-smart-table>
           </ng-scrollbar>
         </div>

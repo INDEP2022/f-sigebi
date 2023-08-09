@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -18,6 +19,10 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsByFilter(params: HttpParams) {
     return this.get('eat-lots', params);
   }
 
