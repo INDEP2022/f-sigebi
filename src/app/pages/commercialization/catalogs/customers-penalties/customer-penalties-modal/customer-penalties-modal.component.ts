@@ -606,7 +606,7 @@ export class CustomerPenaltiesModalComponent
                   error: error => {
                     this.alert(
                       'warning',
-                      `Ya existe un registro con el penaltyId:${id.value} y customerId:${clientId.value}`,
+                      `Ya existe un registro con el penaltyId:'${id.value}' y customerId:'${clientId.value}'`,
                       ''
                     );
                     this.loading = false;
