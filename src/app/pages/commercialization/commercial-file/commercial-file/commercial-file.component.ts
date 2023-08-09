@@ -66,7 +66,7 @@ export class CommercialFileComponent extends BasePage implements OnInit {
   }
 
   downloadReport(reportName: string, params: any) {
-    this.loadingText = 'Generando reporte ...';
+    this.loadingText = 'Generando Reporte ...';
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
         this.loading = false;
