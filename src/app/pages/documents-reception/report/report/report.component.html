@@ -7,7 +7,28 @@
     <form [formGroup]="reportForm" class="form-material">
       <div class="row justify-content-center">
         <div class="col-md-5">
-          <app-delegation-shared [form]="reportForm"></app-delegation-shared>
+          <form-field [control]="reportForm.get('delegation')">
+            <ngx-select
+              [form]="reportForm"
+              [data]="selectedDelegation"
+              value="description"
+              bindLabel="description"
+              label="Delegación"
+              (fetchItems)="getDelegation($event)"
+              control="delegation">
+            </ngx-select>
+          </form-field>
+          <form-field [control]="reportForm.get('subdelegation')">
+            <ngx-select
+              [form]="reportForm"
+              [data]="selectedSubDelegation"
+              value="description"
+              bindLabel="description"
+              label="Subdelegación"
+              (fetchItems)="getSubDelegations($event)"
+              control="subdelegation">
+            </ngx-select>
+          </form-field>
         </div>
 
         <div class="col-md-5">
