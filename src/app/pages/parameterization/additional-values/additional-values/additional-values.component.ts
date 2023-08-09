@@ -38,6 +38,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   totalItems2: number = 0;
   settings2 = { ...this.settings };
   valorAditional: any;
+  rowSelected: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -48,19 +49,40 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      columns: { ...ADDITIONALVALUES_COLUMNS },
+    };
+
+    /*this.settings = {
+      ...this.settings,
       actions: false,
       columns: ADDITIONALVALUES_COLUMNS,
     };
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
+    };*/
+
+    this.settings2 = {
+      ...this.settings2,
+      hideSubHeader: false,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        add: false,
+        position: 'right',
+      },
+      columns: { ...TVALTABLA5_COLUMNS },
     };
-    this.settings2.columns = TVALTABLA5_COLUMNS;
+
+    /*this.settings2.columns = TVALTABLA5_COLUMNS;
     this.settings2.actions.add = false;
     this.settings2 = {
       ...this.settings2,
       hideSubHeader: false,
-    };
+    };*/
   }
   ngOnInit(): void {
     this.data
@@ -72,16 +94,22 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'cdtabla':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getValuesAll();
         }
       });
@@ -100,7 +128,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       next: response => {
         console.log(response);
         this.valuesList = response.data;
-        this.data.load(this.valuesList);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
@@ -112,8 +140,8 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
     });
   }
   rowsSelected(event: any) {
+    this.rowSelected = true;
     this.valorAditional = event.data;
-
     this.totalItems2 = 0;
     this.tvalTableList = [];
     this.values = event.data;
@@ -126,10 +154,15 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
-            /*SPECIFIC CASES*/
-            // filter.field == 'id'
-            //   ? (searchFilter = SearchFilter.EQ)
-            //   : (searchFilter = SearchFilter.ILIKE);
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'otKey1':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -138,7 +171,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
           });
           console.log('this.params ad:', this.params);
 
-          this.params = this.pageFilter(this.params);
+          //this.params = this.pageFilter(this.params);
           this.params2 = this.pageFilter(this.params2);
 
           this.gettvalTable(this.values);
@@ -146,19 +179,19 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       });
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.gettvalTable2(this.values));
+      .subscribe(() => this.gettvalTable(this.values));
   }
   gettvalTable(values: ITablesType) {
     this.loading = true;
     let params = {
-      ...this.params.getValue(),
-      ...this.columnFilters,
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
     };
     this.tvalTableService.getById4(values.nmtabla, params).subscribe({
       next: response => {
         console.log(response);
         this.tvalTableList = response.data;
-        this.data1.load(this.tvalTableList);
+        this.data1.load(response.data);
         this.data1.refresh();
         this.totalItems2 = response.count;
         this.loading = false;

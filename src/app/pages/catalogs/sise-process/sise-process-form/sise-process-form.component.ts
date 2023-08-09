@@ -16,7 +16,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class SiseProcessFormComponent extends BasePage implements OnInit {
   form: ModelForm<ISiseProcess>;
-  title: string = 'Proceso Sise';
+  title: string = 'Proceso SISE';
   edit: boolean = false;
   sisi: ISiseProcess;
   siseProcess = new DefaultSelect<ISiseProcess>();

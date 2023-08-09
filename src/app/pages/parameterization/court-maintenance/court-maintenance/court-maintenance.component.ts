@@ -185,7 +185,11 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({
           next: () => {
-            this.alert('success', 'Registro de ciudad', 'Borrado');
+            this.alert(
+              'success',
+              'Registro de Ciudad',
+              'Borrado Correctamente'
+            );
             this.getCourtByCity();
           },
           error: err => {
@@ -253,10 +257,17 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
             };
             this.dataCourtCity.data.push(descCity);
             const properties = city.city as ICity;
-            console.log(properties);
-            this.getEntidad(properties.state as any, index);
-            this.getDelegation(properties.noDelegation as any, index);
-            this.getSubDelegation(properties.noSubDelegation as any, index);
+            if (properties !== null) {
+              console.log(properties);
+              this.getEntidad(
+                properties.state !== null ? properties.state : (' ' as any),
+                index
+              );
+              this.getDelegation(properties.noDelegation as any, index);
+              this.getSubDelegation(properties.noSubDelegation as any, index);
+            } else {
+              return;
+            }
           });
           this.dataCourtCity.count = response.count;
           this.loading = false;

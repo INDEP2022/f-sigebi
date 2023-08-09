@@ -139,7 +139,7 @@ export class SatSubclassificationListComponent
       error: err => {
         this.alert(
           'warning',
-          'Sub-tipo',
+          'Subclasificación SAT',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

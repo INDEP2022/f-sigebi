@@ -14,7 +14,7 @@ export const VAULT_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  managerDetail: {
+  manager: {
     title: 'Responsable',
     type: 'string',
     sort: false,
@@ -26,6 +26,14 @@ export const VAULT_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.nameCity : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameCity;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   stateDetail: {
     title: 'Entidad',
@@ -34,7 +42,16 @@ export const VAULT_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.descCondition : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.descCondition;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
+
   municipalityDetail: {
     title: 'Municipio',
     type: 'string',
@@ -42,13 +59,30 @@ export const VAULT_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value != null ? value.nameMunicipality : '';
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameMunicipality;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
+
   localityDetail: {
     title: 'Localidad',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value != null ? value.nameLocation : '';
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.nameLocation;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
     },
   },
 };
