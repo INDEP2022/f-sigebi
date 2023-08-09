@@ -3,13 +3,22 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
+
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -48,6 +57,7 @@ import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 //import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { DocumentsForDictumService } from '../../../../core/services/catalogs/documents-for-dictum.service';
 import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
@@ -1191,6 +1201,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .subscribe({
         next: async data => {
           this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          await this.confirmScanRequest();
         },
         error: error => {
           this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
@@ -1701,6 +1712,121 @@ export class ActsCircumstantiatedCancellationTheftComponent
   loadImages(folio: string | number) {
     this.getFileNamesByFolio(folio);
     this.updateSheets();
+  }
+  createDocument(document: IDocuments) {
+    return this.documentsService.create(document).pipe(
+      tap(_document => {
+        // END PROCESS
+      }),
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al generar el documento'
+        );
+        return throwError(() => error);
+      })
+    );
+  }
+  async confirmScanRequest() {
+    const response = await this.alertQuestion(
+      'question',
+      'Aviso',
+      'Se generará un nuevo folio de Escaneo para el Acta, ¿Desea continuar?'
+    );
+
+    if (!response.isConfirmed) {
+      return;
+    }
+
+    const flyerNumber = this.wheelNumber;
+    if (!flyerNumber) {
+      this.alert(
+        'error',
+        'Error',
+        'Al localizar la información de Volante: ' +
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
+      );
+      return;
+    }
+    // const { numFile, keysProceedings } = this.controls;
+    const document = {
+      numberProceedings: this.fileNumber,
+      keySeparator: '60',
+      keyTypeDocument: 'ENTRE',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `EXPEDIENTE ${this.fileNumber}`, // Clave de Oficio Armada
+      significantDate: format(new Date(), 'MM-yyyy'),
+      scanStatus: 'SOLICITADO',
+      userRequestsScan:
+        this.dataUserLogged.user == 'SIGEBIADMON'
+          ? this.dataUserLogged.user.toLocaleLowerCase()
+          : this.dataUserLogged.user,
+      scanRequestDate: new Date(),
+      numberDelegationRequested: this.dataUserLogged.delegationNumber,
+      numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
+      numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+      flyerNumber: this.wheelNumber,
+    };
+
+    this.createDocument(document)
+      .pipe(
+        tap(_document => {
+          this.formScan.get('scanningFoli').setValue(_document.id);
+        }),
+        switchMap((_document: any) => {
+          this.dataRecepcion.universalFolio =
+            this.formScan.get('scanningFoli').value;
+          return _document;
+        }),
+        switchMap(_document => this.generateScanRequestReport())
+      )
+      .subscribe();
+  }
+  updateActa(data: IProceedingDeliveryReception) {
+    this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
+    delete this.actasDefault.numDelegation1Description;
+    delete this.actasDefault.numDelegation2Description;
+    delete this.actasDefault.numTransfer_;
+    this.proceedingsDeliveryReceptionService
+      .editProceeding(this.actasDefault.id, this.actasDefault)
+      .subscribe({
+        next: async data => {
+          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          // this.loading = false
+        },
+      });
+  }
+  generateScanRequestReport() {
+    const pn_folio = this.formScan.get('scanningFoli').value;
+    return this.jasperService
+      .fetchReport('RGERGENSOLICDIGIT', { pn_folio })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        })
+      );
   }
 }
 
