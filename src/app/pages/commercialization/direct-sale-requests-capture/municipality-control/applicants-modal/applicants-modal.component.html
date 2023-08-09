@@ -12,7 +12,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeentgobId" />
+              formControlName="typeentgobId"
+              maxlength="10" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -22,7 +23,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="applicant" />
+              formControlName="applicant"
+              maxlength="20" />
           </form-field>
         </div>
       </div>
@@ -32,7 +34,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="position" />
+              formControlName="position"
+              maxlength="20" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -71,8 +74,7 @@
               type="text"
               formControlName="applicationDate"
               class="form-control"
-              bsDatepicker
-              placeholder="dd-mm-yyyy" />
+              bsDatepicker />
           </form-field>
         </div>
       </div>
@@ -84,12 +86,17 @@
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="description"
+              maxlength="100" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field [control]="applicantForm.get('phone')" label="Teléfono">
-            <input type="text" class="form-control" formControlName="phone" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="phone"
+              maxlength="15" />
           </form-field>
         </div>
       </div>
@@ -98,14 +105,22 @@
           <form-field
             [control]="applicantForm.get('award')"
             label="Adjudicación">
-            <input type="text" class="form-control" formControlName="award" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="award"
+              maxlength="20" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
             [control]="applicantForm.get('webmail')"
             label="Correo Web">
-            <input type="text" class="form-control" formControlName="webmail" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="webmail"
+              maxlength="20" />
           </form-field>
         </div>
       </div>
@@ -113,9 +128,10 @@
         <div class="col-sm-12 col-md-6">
           <form-field [control]="applicantForm.get('amount')" label="Cantidad">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="amount" />
+              formControlName="amount"
+              maxlength="6" />
           </form-field>
         </div>
         <!---  <div class="col-sm-12 col-md-6">
