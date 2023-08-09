@@ -89,29 +89,38 @@ export class DrawerFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-
-    this.drawerService.create(this.drawerForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.drawerForm.controls['status'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.drawerService.create(this.drawerForm.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    let { id, noDrawer } = this.drawer;
-    const idBoveda = (noDrawer as ISafe).idSafe;
-
-    let body = {
-      id,
-      noDrawer,
-      status: this.drawerForm.value.status,
-      noRegistration: this.drawerForm.value.noRegistration,
-    };
-
-    this.drawerService.updateById(id, body).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.drawerForm.controls['status'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      let { id, noDrawer } = this.drawer;
+      const idBoveda = (noDrawer as ISafe).idSafe;
+      let body = {
+        id,
+        noDrawer,
+        status: this.drawerForm.value.status,
+        noRegistration: this.drawerForm.value.noRegistration,
+      };
+      this.drawerService.updateById(id, body).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   close() {

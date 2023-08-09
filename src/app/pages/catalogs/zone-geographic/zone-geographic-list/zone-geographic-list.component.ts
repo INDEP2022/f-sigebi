@@ -46,19 +46,30 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'contractNumber' ||
-            filter.field == 'vat' ||
-            filter.field == 'status' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'contractNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'vat':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -109,7 +120,7 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.zoneGeographicService.remove(zoneGeographic.id).subscribe({
           next: response => {
-            this.alert('success', 'Zona geográfica', 'Borrada Correctamente'),
+            this.alert('success', 'Zona Geográfica', 'Borrada Correctamente'),
               this.getExample();
           },
           error: err => {
