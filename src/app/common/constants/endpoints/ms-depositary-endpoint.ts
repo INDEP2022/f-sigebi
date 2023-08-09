@@ -23,6 +23,8 @@ export enum DepositaryEndPoints {
   ValidateStatus = 'fcondepoconcilpag/validate-status', // VALIDA_ESTATUS
   ValidBlacklist = 'application/validBlacklist', // VALIDA_LISTANEGRA
   PaymentRefValidComer = 'payment-ref/valid-comer', // VALIDA_PAGOSREF.VALIDA_COMER
-  PrepOiBaseCa = 'payment-ref/prep-oi-base-ca', // VALIDA_PAGOSREF.PREP_OI
+  PrepOiBaseCa = 'payment-ref/prep-oi', // VALIDA_PAGOSREF.PREP_OI
   PaymentRefVentaSbm = 'payment-ref/venta-sbm', // VALIDA_PAGOSREF.VENTA_SBM
+  UpdateStatusBase = 'validate-payments-ref/updateStatusBase', // MODIFICA_ESTATUS_BASES_ANT
+  UpdateGeneralStatus = 'validate-payments-ref/updateGeneralStatus',
 }

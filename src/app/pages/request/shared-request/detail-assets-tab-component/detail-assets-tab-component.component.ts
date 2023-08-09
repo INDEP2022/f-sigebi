@@ -44,6 +44,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   DOUBLE_PATTERN,
+  DOUBLE_POSITIVE_PATTERN,
   NUMBERS_PATTERN,
   NUMBERS_POINT_PATTERN,
   NUM_POSITIVE,
@@ -465,14 +466,14 @@ export class DetailAssetsTabComponentComponent
       ],
       surfaceMts: [
         0,
-        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+        [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)],
       ],
       consSurfaceMts: [
         0,
         [
           Validators.required,
           Validators.maxLength(40),
-          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN),
         ],
       ],
       publicDeed: [
@@ -679,11 +680,19 @@ export class DetailAssetsTabComponentComponent
 
   setDomiciliesFieldRequired() {
     console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
-    if (this.typeOfRequest === 'MANUAL') {
+    const transferent = this.requestObject.transferenceId;
+
+    /*if (this.typeOfRequest === 'MANUAL') {
+      this.goodDomicilieForm.controls['pffDate'].setValidators([
+        Validators.required,
+      ]);
+    }*/
+    if (transferent == 120 || transferent == 752 || transferent == 942) {
       this.goodDomicilieForm.controls['pffDate'].setValidators([
         Validators.required,
       ]);
     }
+
     this.goodDomicilieForm.updateValueAndValidity();
   }
 

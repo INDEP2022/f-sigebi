@@ -289,6 +289,7 @@
               <ng2-smart-table
                 [attr.class]="'table-bordered'"
                 [settings]="settingsCustomerBanks"
+                (userRowSelect)="selectRowCustomerBanks($event)"
                 [source]="dataCustomerBanks">
               </ng2-smart-table>
             </div>
@@ -328,7 +329,10 @@
                   formControlName="total" />
               </form-field>
               <div class="col">
-                <button type="button" class="btn btn-primary btn-sm active">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="unbundlePayments()">
                   Desagregar Pagos
                 </button>
               </div>

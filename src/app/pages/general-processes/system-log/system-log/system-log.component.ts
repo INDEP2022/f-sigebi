@@ -16,6 +16,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IBinnacle } from 'src/app/core/models/ms-audit/binnacle.model';
 import { Registers } from 'src/app/core/models/ms-audit/registers.model';
 import { ITableField } from 'src/app/core/models/ms-audit/table-field.model';
 import { ITableLog } from 'src/app/core/models/ms-audit/table-log.model';
@@ -45,6 +46,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
   dynamicRegisters: any[] = [];
   totalLogs: number = 0;
   totalDynamic: number = 0;
+  iBinnacles: IBinnacle[];
   filterFields: ITableField[] = [];
   registerNum: number = null;
   columnFilters: any = [];

@@ -24,7 +24,7 @@ export enum ENDPOINT_LINKS {
   DeductiveVerification = 'catalog/deductive-verification',
   Deductive = 'catalog/deductive',
   DelegationState = 'catalog/delegation-state',
-  Delegation = 'catalog/delegation',
+  Delegation = 'delegation',
   Departament = 'catalog/departament',
   DetailDelegation = 'catalog/detail-delegation',
   Dictamen = 'catalog/opinion',

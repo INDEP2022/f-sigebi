@@ -225,10 +225,6 @@ export class MsDepositaryService extends HttpService {
     return this.post(`${DepositaryEndPoints.ValidateStatus}`, body);
   }
 
-  VALIDA_LISTANEGRA(no: any) {
-    return this.get(`${DepositaryEndPoints.ValidBlacklist}/${no}`);
-  }
-
   VALIDA_PAGOSREF_VALIDA_COMER(body: any) {
     return this.post(`${DepositaryEndPoints.PaymentRefValidComer}`, body);
   }
@@ -238,6 +234,14 @@ export class MsDepositaryService extends HttpService {
   }
 
   VALIDA_PAGOSREF_VENTA_SBM(body: any) {
-    return this.get(`${DepositaryEndPoints.PaymentRefVentaSbm}`, body);
+    return this.post(`${DepositaryEndPoints.PaymentRefVentaSbm}`, body);
+  }
+
+  MODIFICA_ESTATUS_BASES_ANT(body: any) {
+    return this.put(`${DepositaryEndPoints.UpdateStatusBase}/${body}`);
+  }
+
+  MODIFICA_ESTATUS_ANT(body: any) {
+    return this.put(`${DepositaryEndPoints.UpdateGeneralStatus}`, body);
   }
 }

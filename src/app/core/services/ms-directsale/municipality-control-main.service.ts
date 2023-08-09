@@ -25,7 +25,7 @@ export class MunicipalityControlMainService extends HttpService {
     return this.put(`${this.route.DIRECTSALE_SOLICITANTES}`, body);
   }
   addSolicitante(body: Solicitud) {
-    console.log(body);
+    console.log(JSON.stringify(body));
     return this.post(`${this.route.DIRECTSALE_SOLICITANTES}`, body);
   }
   deleteSolicitante(id: any) {

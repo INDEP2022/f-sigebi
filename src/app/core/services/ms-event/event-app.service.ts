@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -33,5 +34,11 @@ export class EventAppService extends HttpService {
     lotId: string | number;
   }) {
     return this.post(`${this.endpoint}/deleteof-goods`, body);
+  }
+
+  rgEventsI(user: string) {
+    return this.get<
+      IListResponse<{ id_tpevento: string; descripcion: string }>
+    >(`${this.endpoint}/rg-event/user/${user}`);
   }
 }

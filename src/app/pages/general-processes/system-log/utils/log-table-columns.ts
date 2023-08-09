@@ -11,7 +11,7 @@ export const LOG_TABLE_COLUMNS = {
     title: 'Usuario',
     sort: false,
   },
-  cadmodif1: {
+  modify1: {
     title: 'Modificación',
     sort: false,
   },
@@ -19,4 +19,8 @@ export const LOG_TABLE_COLUMNS = {
     title: 'Observaciones',
     sort: false,
   },
+  // table: {
+  //   title: 'Tabla',
+  //   sort: false,
+  // },
 };

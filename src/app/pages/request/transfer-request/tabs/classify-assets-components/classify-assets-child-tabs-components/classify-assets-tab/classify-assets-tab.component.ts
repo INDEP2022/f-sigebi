@@ -264,19 +264,11 @@ export class ClassifyAssetsTabComponent
       ],
       axesNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(5),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       engineNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ], //numero motor
       tuition: [
         null,
@@ -454,6 +446,18 @@ export class ClassifyAssetsTabComponent
         this.classiGoodsForm.controls['fitCircular'].setValue('N');
       }
     }
+
+    this.classiGoodsForm.controls['goodTypeId'].valueChanges.subscribe(data => {
+      if (data != 2) {
+        this.classiGoodsForm.controls['axesNumber'].setValidators([
+          Validators.required,
+        ]);
+        this.classiGoodsForm.controls['engineNumber'].setValidators([
+          Validators.required,
+        ]);
+      }
+      this.classiGoodsForm.updateValueAndValidity();
+    });
   }
 
   loadingForm() {
@@ -909,6 +913,23 @@ export class ClassifyAssetsTabComponent
       goods.processStatus = 'CLASIFICAR_BIEN';
     } else {
       goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    }
+
+    //Verificar que la cantidad transferente para los tipos de bienes
+    //no sean mayor a 1
+    if (
+      goods.goodTypeId == 1 ||
+      goods.goodTypeId == 4 ||
+      goods.goodTypeId == 2 ||
+      goods.goodTypeId == 3
+    ) {
+      if (goods.quantity > 1) {
+        this.onLoadToast(
+          'error',
+          'La cantidad transferente no puede ser mayor a uno'
+        );
+        return;
+      }
     }
 
     let goodResult: any = null;
