@@ -6,6 +6,7 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { ExpenseConceptsModule } from '../expense-concepts/expense-concepts.module';
 import { ExpenseCaptureRoutingModule } from './expense-capture-routing.module';
 import { ExpenseCaptureComponent } from './expense-capture/expense-capture.component';
 import { DataReceiptComponent } from './expense-capture/expense-comercial/data-receipt/data-receipt.component';
@@ -26,6 +27,7 @@ import { ExpenseCompositionComponent } from './expense-capture/expense-compositi
     AccordionModule,
     BsDatepickerModule,
     UsersSharedComponent,
+    ExpenseConceptsModule,
   ],
 })
 export class ExpenseCaptureModule {}
