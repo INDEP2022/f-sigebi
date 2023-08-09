@@ -82,4 +82,8 @@ export class PaymentService extends HttpService {
       params
     );
   }
+
+  getBusquedaPag(params?: string) {
+    return this.get(PaymentEndPoints.BusquedaPagosDet, params);
+  }
 }
