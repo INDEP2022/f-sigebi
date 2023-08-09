@@ -26,7 +26,7 @@ import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-i
 import { ComerRectInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-rectinvoice.service';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NAME_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ComerRediModalComponent } from '../comer-redi-modal/comer-redi-modal.component';
 import { NewImageModalComponent } from '../new-image-modal/new-image-modal.component';
@@ -292,6 +292,10 @@ export class InvoiceRectificationProcessComponent
       } else {
         saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
       }
+      saveData.billDate =
+        typeof saveData.billDate == 'string'
+          ? saveData.billDate.split('/').reverse().join('-')
+          : saveData.billDate;
 
       this.comerRectInoviceService.update(saveData).subscribe({
         next: () => {
@@ -315,8 +319,14 @@ export class InvoiceRectificationProcessComponent
         saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
       }
 
+      saveData.billDate =
+        typeof saveData.billDate == 'string'
+          ? saveData.billDate.split('/').reverse().join('-')
+          : saveData.billDate;
+
       this.comerRectInoviceService.create(saveData).subscribe({
         next: () => {
+          this.isSearch = true;
           this.alert(
             'success',
             'Rectificación de Factura',
@@ -405,9 +415,9 @@ export class InvoiceRectificationProcessComponent
       issues: [null],
       jobNot: [null, Validators.required],
       jobpriceNot: [null],
-      lastnameMat: [null, Validators.pattern(STRING_PATTERN)],
-      lastnamePat: [null, Validators.pattern(STRING_PATTERN)],
-      name: [null],
+      lastnameMat: [null, Validators.pattern(NAME_PATTERN)],
+      lastnamePat: [null, Validators.pattern(NAME_PATTERN)],
+      name: [null, Validators.pattern(NAME_PATTERN)],
       nbOrigin: [null],
       origin: [null],
       paragraph1: [null, Validators.pattern(STRING_PATTERN)],
