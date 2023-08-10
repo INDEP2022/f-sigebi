@@ -50,7 +50,7 @@ export class AccountMovementService extends HttpService {
     return this.get<IListResponse<IUserChecks>>('user-checks', params);
   }
 
-  updateUserChecks(id: number, body: IUserChecks) {
+  updateUserChecks(id: number, body: any) {
     return this.put('user-checks/' + id, body);
   }
 
