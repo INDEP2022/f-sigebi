@@ -1,17 +1,13 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="photographMediaForm">
       <div class="row">
         <div class="col-12 pt-sm-5 pt-md-2">
           <form-field [control]="photographMediaForm.get('route')" label="Ruta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="route"
-              maxlength="40" />
+            <input type="text" class="form-control" formControlName="route" />
           </form-field>
         </div>
       </div>
@@ -20,11 +16,10 @@
           <form-field
             [control]="photographMediaForm.get('status')"
             label="Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              maxlength="1" />
+            <select class="form-control" required formControlName="status">
+              <option value="0">Inactivo</option>
+              <option value="1">Activo</option>
+            </select>
           </form-field>
         </div>
       </div>

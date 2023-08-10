@@ -23,8 +23,9 @@ export class MaintenanceIndividualsAndCompaniesComponent
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
-  title: string = 'MANTENIMIENTO DE PERSONAS FÍSICAS Y MORALES';
+  title: string = 'Mantenimiento de Personas Físicas y Morales';
   dataPerson: any;
+  value: string;
   constructor(
     private readonly fb: FormBuilder,
     private readonly personService: PersonService,
@@ -91,8 +92,16 @@ export class MaintenanceIndividualsAndCompaniesComponent
       this.form.controls['federative'].setValue(
         this.dataPerson.state.descCondition
       );
+
+      this.form.controls['curriculumV'].setValue(
+        this.dataPerson.curriculum == 'N' ? false : true
+      );
+
       if (this.form.controls['typePerson'].value === 'M') {
-        this.form.get('manager').setValidators(Validators.required);
+        this.form
+          .get('manager')
+          .setValidators([Validators.required, Validators.maxLength(50)]);
+        this.form.get('manager').updateValueAndValidity();
         this.form.get('numberDeep').setValidators(Validators.required);
       }
       console.log(this.form.value);
@@ -112,6 +121,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
           this.form.get('manager').patchValue(null);
           this.form.get('numberDeep').patchValue(null);
         }
+        this.value = value;
       },
     });
 
@@ -142,6 +152,31 @@ export class MaintenanceIndividualsAndCompaniesComponent
           },
         });
       } else {
+        if (this.value == 'M') {
+          if (
+            this.form.controls['personName'].value.trim() === '' ||
+            this.form.controls['name'].value.trim() === '' ||
+            this.form.controls['observations'].value.trim() === '' ||
+            this.form.controls['profile'].value.trim() === '' ||
+            this.form.controls['manager'].value.trim() === '' ||
+            this.form.controls['numberDeep'].value.trim() === ''
+          ) {
+            this.alert('warning', 'No se puede guardar campos vacíos', '');
+            return;
+          }
+        }
+        if (this.value == 'F') {
+          if (
+            this.form.controls['personName'].value.trim() === '' ||
+            this.form.controls['name'].value.trim() === '' ||
+            this.form.controls['observations'].value.trim() === '' ||
+            this.form.controls['profile'].value.trim() === ''
+          ) {
+            this.alert('warning', 'No se puede guardar campos vacíos', '');
+            return;
+          }
+        }
+        console.log();
         this.personService.create(this.form.value).subscribe({
           next: () => {
             this.handleSuccess();
@@ -157,15 +192,19 @@ export class MaintenanceIndividualsAndCompaniesComponent
   handleSuccess() {
     this.loading = false;
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `${message} Correctamente`, this.title);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
   typeChange(data: string) {
     if (data === 'M') {
-      this.form.get('manager').setValidators(Validators.required);
-      this.form.get('numberDeep').setValidators(Validators.required);
+      this.form
+        .get('manager')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
+      this.form
+        .get('numberDeep')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
       this.form.get('manager').updateValueAndValidity();
       this.form.get('numberDeep').updateValueAndValidity();
     } else {

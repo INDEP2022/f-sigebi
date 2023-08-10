@@ -18,7 +18,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class GoodSituationFormComponent extends BasePage implements OnInit {
   goodSituationForm: ModelForm<IGoodSituation>;
-  title = 'Tipo de situación bien';
+  title = 'Tipo de Situación Bien';
   edit: boolean = false;
   situation: any;
   id: string;

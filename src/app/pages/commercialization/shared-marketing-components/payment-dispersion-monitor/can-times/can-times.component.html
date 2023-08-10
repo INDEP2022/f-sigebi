@@ -1,0 +1,31 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Veces a Dividir</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formTimes" class="form-material">
+      <div class="row text-center">
+        <form-field
+          [control]="formTimes.get('times')"
+          class="col"
+          label="Número">
+          <input
+            type="number"
+            [min]="0"
+            fomrControlName="times"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="row mb-3 mt-3 text-center">
+        <div class="col">
+          <button class="btn btn-primary btn-sm active mr-3" (click)="apply()">
+            Aceptar <i class="fa fa-check" aria-hidden="true"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

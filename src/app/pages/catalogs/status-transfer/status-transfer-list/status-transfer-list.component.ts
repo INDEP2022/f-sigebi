@@ -52,6 +52,9 @@ export class StatusTransferListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'code':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -119,7 +122,7 @@ export class StatusTransferListComponent extends BasePage implements OnInit {
   ShowDeleteAlert(id: number) {
     this.statusTransferService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Estado transferencia', 'Borrado Correctamente');
+        this.alert('success', 'Estado Transferencia', 'Borrado Correctamente');
         this.getExample();
       },
       error: error => {

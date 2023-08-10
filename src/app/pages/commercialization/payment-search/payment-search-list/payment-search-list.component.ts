@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -23,9 +25,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   editRows: any[] = [];
   selectedRows: any[] = [];
   paymentColumns: any[] = [];
+  dataRows: any[] = [];
   totalItems: number = 0;
   eventItems = new DefaultSelect();
   bankItems = new DefaultSelect();
+  localdata: LocalDataSource = new LocalDataSource();
+  //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
     ...TABLE_SETTINGS,
     selectMode: 'multi',
@@ -135,7 +140,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private paymentService: PaymentService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -143,6 +149,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log('antes servicio');
   }
 
   private prepareForm(): void {
@@ -184,8 +191,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   search() {
-    this.paymentColumns = this.paymentTestData;
-    this.totalItems = this.paymentColumns.length;
+    this.getTableData();
   }
 
   cleanSearch() {
@@ -216,10 +222,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     // }
   }
 
-  addRow(data: any) {
-    this.paymentColumns = [...this.paymentColumns, data];
+  addRow(rows: any[]) {
+    this.paymentColumns = [...this.paymentColumns, ...rows];
     this.totalItems = this.paymentColumns.length;
-    this.addRows.push(data);
+    this.addRows.push(...rows);
     console.log(this.addRows);
   }
 
@@ -298,5 +304,60 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         console.log('Error: No se recibieron argumentos');
         break;
     }
+  }
+
+  getTableData() {
+    //Provisional data
+    //this.params = new BehaviorSubject<FilterParams>(new FilterParams());
+    let data = this.params.value;
+    // if (this.classifGood) {
+    //   data.addFilter('goodClassNumber', this.classifGood);
+    // }
+    // if (params.text != undefined && params.text != '') {
+    //   data.addFilter('description', params.text, SearchFilter.ILIKE);
+    // }
+    console.log('CLASIFICADOR DEL BEINE ES: ', data);
+
+    this.paymentService.getBusquedaPag().subscribe({
+      next: res => {
+        console.log('Res -> ', res);
+        for (let i = 0; i < res.count; i++) {
+          if (res.data[i] != undefined) {
+            let item = {
+              movement: res.data[i].numbermovement,
+              date: res.data[i].date,
+              originalReference: res.data[i].referenceori,
+              reference: res.data[i].reference,
+              amount: res.data[i].amount,
+              cve: res.data[i].cveBank,
+              code: res.data[i].code,
+              publicBatch: res.data[i].batchPublic,
+              event: res.data[i].idEvent,
+              systemValidity: res.data[i].validSystem,
+              result: res.data[i].result,
+              paymentId: res.data[i].payId,
+              batchId: res.data[i].batchId,
+              entryOrderId: res.data[i].numbermovement,
+              //satDescription: res.data[i] 'Descripción Pago SAT'
+              type: res.data[i].guy,
+              inconsistencies: res.data[i].idinconsis,
+            };
+            this.dataRows.push(item);
+            this.localdata.load(this.dataRows);
+            console.log('this dataRows: ', this.dataRows);
+            console.log('this localData: ', this.localdata);
+            this.totalItems = res.count;
+          }
+        }
+        this.addRow(this.dataRows);
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Información',
+          'No hay bienes que mostrar con los filtros seleccionado'
+        );
+      },
+    });
   }
 }

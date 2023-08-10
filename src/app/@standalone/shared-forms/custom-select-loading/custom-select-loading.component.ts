@@ -208,7 +208,6 @@ export class CustomSelectWidthLoading
         params[this.paramExternalSearch] = text;
       }
     }
-
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
     // console.log(params, mParams);

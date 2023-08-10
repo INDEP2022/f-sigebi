@@ -525,6 +525,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         idProg,
         idTypeDoc,
         signatore,
+        typeFirm: 'electronica',
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {

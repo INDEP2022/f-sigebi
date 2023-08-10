@@ -34,7 +34,7 @@ export class OpinionsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = OPINION_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }

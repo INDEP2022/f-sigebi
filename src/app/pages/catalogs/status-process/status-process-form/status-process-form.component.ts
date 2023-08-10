@@ -44,7 +44,11 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
       ],
       process: [
         null,
-        [Validators.maxLength(50), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       description: [
         null,
@@ -53,11 +57,12 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
     });
     const field = document.getElementById('inputstatus');
     if (this.statusProcess != null) {
-      this.render.addClass(field, 'disabled');
+      this.statusProcessForm.controls['status'].disable();
+      //this.render.addClass(field, 'disabled');
       this.edit = true;
       this.statusProcessForm.patchValue(this.statusProcess);
     } else {
-      this.render.removeClass(field, 'disabled');
+      //this.render.removeClass(field, 'disabled');
     }
   }
   close() {
@@ -69,23 +74,52 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.statusProcessService
-      .create(this.statusProcessForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.statusProcessForm.controls['status'].value.trim() == '' ||
+      this.statusProcessForm.controls['process'].value.trim() == '' ||
+      (this.statusProcessForm.controls['status'].value.trim() == '' &&
+        this.statusProcessForm.controls['process'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.statusProcessService
+        .create(this.statusProcessForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.loading = false;
+            this.alert(
+              'warning',
+              'Los identificadores ya fueron registrados',
+              ``
+            );
+          },
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.statusProcessService
-      .newUpdate(this.statusProcessForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.statusProcessForm.controls['status'].value.trim() == '' ||
+      this.statusProcessForm.controls['process'].value.trim() == '' ||
+      (this.statusProcessForm.controls['status'].value.trim() == '' &&
+        this.statusProcessForm.controls['process'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.statusProcessService
+        .newUpdate(this.statusProcessForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

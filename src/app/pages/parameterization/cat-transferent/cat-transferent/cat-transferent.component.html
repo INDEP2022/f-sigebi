@@ -2,28 +2,31 @@
   <div header>
     <div class="ch-content" header>
       <h5 class="title">TRANSFERENTES</h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            (click)="openForm()"
-            class="btn btn-primary active btn-sm ml-3">
-            Nuevo
-          </button>
-        </div>
-        <!-- <div>
+
+      <!-- <div>
           <button class="btn btn-secondary active btn-sm ml-3 disabled">
             Ver documentos
           </button>
         </div> -->
-      </div>
     </div>
   </div>
   <div body>
-    <!-- <div class="row">
-      <div class="form-material col-md-5">
-        <search-bar [params]="params"></search-bar>
+    <div class="row">
+      <div class="col-md-8 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerclass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+        <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>
-    </div> -->
+    </div>
     <div class="row">
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
@@ -42,59 +45,78 @@
       </app-pagination>
     </div>
 
-    <div class="row pt-5" *ngIf="rowSelected">
-      <div class="ch-content">
-        <h5 class="title">Emisoras</h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm2()">
-              Nuevo
-            </button>
+    <div class="row" *ngIf="rowSelected">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Emisoras</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+            <div>
+              <button
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm2()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
           </div>
         </div>
-      </div>
-      <div class="table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings2"
-            [source]="stationList"
-            (edit)="openForm2($event.data)"
-            (delete)="showDeleteAlert2($event.data)"
-            (userRowSelect)="rowsSelected2($event)"
-            (rowSelect)="selectRow2($event.data)">
-          </ng2-smart-table>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings2"
+              [source]="data1"
+              (edit)="openForm2($event.data)"
+              (delete)="showDeleteAlert2($event.data)"
+              (userRowSelect)="rowsSelected2($event)"
+              (rowSelect)="selectRow2($event.data)">
+            </ng2-smart-table>
+          </div>
         </div>
       </div>
       <app-pagination [params]="params2" [totalItems]="totalItems2">
       </app-pagination>
     </div>
-    <div class="row pt-5" *ngIf="rowSelected2">
-      <div class="ch-content">
-        <h5 class="title">Autoridades</h5>
-        <div class="col-md-5 buttons">
-          <div>
-            <button
-              class="btn btn-primary active btn-sm ml-3"
-              (click)="openForm3()">
-              Nuevo
-            </button>
+    <div class="row" *ngIf="rowSelected2">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="ch-content">
+            <h5 class="title">Autoridades</h5>
+          </div>
+          <div class="col-md-8 mb-3"></div>
+          <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+            <div>
+              <button
+                type="button"
+                tooltip="Nuevo"
+                containerclass="tooltip-style"
+                class="btn btn-info btn-sm active ml-2 mr-2"
+                (click)="openForm3()">
+                Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+              </button>
+            </div>
+            <app-columns-select [(settings)]="settings3"></app-columns-select>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings3"
+              [source]="data2"
+              (edit)="openForm3($event.data)"
+              (delete)="showDeleteAlert3($event.data)">
+            </ng2-smart-table>
           </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings3"
-            [source]="authorityList"
-            (edit)="openForm3($event.data)"
-            (delete)="showDeleteAlert3($event.data)">
-          </ng2-smart-table>
-        </div>
-      </div>
+
       <app-pagination [params]="params3" [totalItems]="totalItems3">
       </app-pagination>
     </div>
