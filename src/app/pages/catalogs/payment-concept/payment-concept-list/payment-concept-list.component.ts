@@ -60,7 +60,7 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -72,6 +72,7 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getPaymentConcepts();
         }
       });
@@ -127,8 +128,8 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.paymentService.remove(id).subscribe({
       next: () => {
-        this.getPaymentConcepts(),
-          this.alert('success', 'Concepto de pago', 'Borrado Correctamente');
+        this.alert('success', 'Concepto de Pago', 'Borrado Correctamente');
+        this.getPaymentConcepts();
       },
       error: err => {
         this.alert(

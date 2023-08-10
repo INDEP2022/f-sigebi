@@ -188,11 +188,20 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (params['newActConvertion']) {
         this.actConvertion.setValue(params['newActConvertion']);
       }
-      this.numberFoli = params['folio'] ?? null;
-      this.actConvertion.setValue(params['expedientNumber'] ?? null);
-      this.tipo.setValue(params['tipoConv'] ?? null);
-      this.numberGoodFather.setValue(params['pGoodFatherNumber'] ?? null);
-      this.numberDossier.setValue(params['expedientNumber'] ?? null);
+      if (params['folio']) {
+        this.numberFoli = params['folio'] ?? null;
+      }
+      if (params['tipoConv']) {
+        this.tipo.setValue(params['tipoConv'] ?? null);
+      }
+      // this.actConvertion.setValue(params['expedientNumber'] ?? null);
+      if (params['pGoodFatherNumber']) {
+        this.numberGoodFather.setValue(params['pGoodFatherNumber'] ?? null);
+      }
+      if (params['expedientNumber']) {
+        this.numberDossier.setValue(params['expedientNumber'] ?? null);
+      }
+
       console.log(this.numberFoli);
       // if (this.numberFoli) {
       //   this.showActasConvertion();
@@ -213,7 +222,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             if (this.conversionData) {
               this.no_bien_blk_tipo_bien = data.goodFatherNumber;
               this.idConversion.setValue(data.id);
-              this.numberDossier.setValue(data.fileNumber);
+              this.numberDossier.setValue(
+                data.fileNumber != null ? data.fileNumber.id : ''
+              );
               this.numberGoodFather.setValue(data.goodFatherNumber);
               this.goodFatherNumber$.next(data.goodFatherNumber);
               this.wrongModal = false;

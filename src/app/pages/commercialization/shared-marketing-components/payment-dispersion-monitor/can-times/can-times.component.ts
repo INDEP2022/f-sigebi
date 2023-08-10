@@ -21,7 +21,7 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private bsModel: BsModalRef,
+    private modalRef: BsModalRef,
     private comerPaymentService: PaymentService
   ) {
     super();
@@ -45,11 +45,12 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
   //Cerrar modal
   close() {
-    this.bsModel.hide();
+    this.modalRef.hide();
   }
 
   //Aceptar
   apply() {
+
     console.log(this.times.value);
     if (this.times.value < 1) {
       this.alert('warning', 'El Número Debe ser Mayor a Cero', '');
@@ -104,8 +105,8 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
         console.log(this.newData);
         
-        this.bsModel.content.callback(this.newData);
-        this.bsModel.hide();
+        this.modalRef.content.callback(this.newData);
+        this.modalRef.hide();
       }
     }
   }

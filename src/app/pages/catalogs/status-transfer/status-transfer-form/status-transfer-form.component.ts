@@ -53,7 +53,11 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
       ],
       description: [
         null,
-        [Validators.maxLength(300), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(300),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
     });
     if (this.statusTransfer != null) {
@@ -70,23 +74,50 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.statusTransferService
-      .create(this.statusTransferForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.statusTransferForm.controls['description'].value.trim() == '' ||
+      this.statusTransferForm.controls['bank'].value.trim() == '' ||
+      (this.statusTransferForm.controls['description'].value.trim() == '' &&
+        this.statusTransferForm.controls['bank'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.statusTransferService
+        .create(this.statusTransferForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.statusTransferService
-      .update(this.statusTransfer.id, this.statusTransferForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.statusTransferForm.controls['description'].value.trim() == '' ||
+      this.statusTransferForm.controls['bank'].value.trim() == '' ||
+      (this.statusTransferForm.controls['description'].value.trim() == '' &&
+        this.statusTransferForm.controls['bank'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      /*let body = {
+        bank: this.statusTransferForm.controls['bank'].value,
+        code: this.statusTransferForm.controls['code'].value,
+        description: this.statusTransferForm.controls['description'].value
+      }*/
+      this.statusTransferService
+        .update(this.statusTransfer.id, this.statusTransferForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

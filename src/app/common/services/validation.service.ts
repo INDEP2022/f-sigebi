@@ -102,4 +102,12 @@ export class ValidationService {
       return { minLengthArray: { valid: false } };
     };
   }
+
+  validateSpace(noSpace: any) {
+    return (c: AbstractControl) => {
+      if (c.value.includes(' ')) {
+        return ERROR_MESSAGES.noSpace();
+      }
+    };
+  }
 }

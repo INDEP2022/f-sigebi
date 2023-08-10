@@ -48,26 +48,24 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'typeId' ||
-            filter.field == 'typeDescription' ||
-            filter.field == 'subtypeId' ||
-            filter.field == 'subtypeDescription' ||
-            filter.field == 'ssubtypeId' ||
-            filter.field == 'ssubtypeDescription' ||
-            filter.field == 'sssubtypeId' ||
-            filter.field == 'sssubtypeDescription' ||
-            filter.field == 'creationUser' ||
-            filter.field == 'editionUser' ||
-            filter.field == 'version'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getSiabClasifications();
         }
       });
@@ -85,12 +83,17 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
     this.siabClasificationService.getAll(params).subscribe({
       next: response => {
         this.clasifications = response.data;
-        this.data.load(this.clasifications);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -101,6 +104,8 @@ export class SiabClasificationListComponent extends BasePage implements OnInit {
       callback: (next: boolean) => {
         if (next) this.getSiabClasifications();
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
     this.modalService.show(SiabClasificationDetailComponent, modalConfig);
   }

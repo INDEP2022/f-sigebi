@@ -129,19 +129,19 @@ export class GenerationFilesTradesComponent
     //   EXP: this.form.get('noExpediente').value
     // };
 
-    let params = {
-      P_USR: 'ZLB11_128',
-      P_CUMP: 1,
-      P_T_NO_CUMP: 2,
-      P_T_CUMP: 3,
-    };
-
     // let params = {
-    //   P_USR: this.form.get('noOficio').value,
-    //   P_CUMP: this.form.get('tipoOficio').value,
-    //   P_T_NO_CUMP: this.form.get('noVolante').value,
-    //   P_T_CUMP: this.form.get('noExpediente').value,
+    //   P_USR: 'ZLB11_128',
+    //   P_CUMP: 1,
+    //   P_T_NO_CUMP: 2,
+    //   P_T_CUMP: 3,
     // };
+
+    let params = {
+      P_USR: this.form.get('remitente').value,
+      P_CUMP: this.form.get('tipoOficio').value,
+      P_T_NO_CUMP: this.form.get('noVolante').value,
+      P_T_CUMP: this.form.get('noExpediente').value,
+    };
 
     if (STATUS == 'INTERNO') {
       this.siabService

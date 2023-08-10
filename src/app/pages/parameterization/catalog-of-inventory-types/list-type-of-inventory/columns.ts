@@ -28,6 +28,14 @@ export const DETAIL_INVENTORI_TYPE_COLUMNS = {
     valuePrepareFunction: (value: TypesInventory) => {
       return value.description;
     },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell.description;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     sort: false,
   },
 };

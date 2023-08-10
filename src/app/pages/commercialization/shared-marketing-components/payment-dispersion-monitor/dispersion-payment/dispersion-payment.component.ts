@@ -977,7 +977,12 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     const dataModel = await this.unbundlePaymentsFn();
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState: { dataModel },
+      initialState: {
+        dataModel,
+        callback: (e: any) => {
+          console.log(e);
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };

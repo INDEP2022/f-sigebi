@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="paragraphForm">
       <div class="row">
-        <div class="col-12 pt-5">
+        <div class="col-md-12">
           <form-field
             [control]="paragraphForm.get('paragraph')"
             label="P&aacute;rrafo">
@@ -16,17 +16,17 @@
             </textarea>
           </form-field>
         </div>
-        <div class="col-12 pt-5">
+        <div class="col-md-12 pt-4">
           <form-field
             [control]="paragraphForm.get('reportName')"
-            label="Nombre reporte">
+            label="Nombre Reporte">
             <input
               type="text"
               class="form-control"
               formControlName="reportName" />
           </form-field>
         </div>
-        <div class="col-12 pt-5">
+        <div class="col-md-12 pt-4">
           <form-field
             [control]="paragraphForm.get('version')"
             label="Versi&oacute;n">

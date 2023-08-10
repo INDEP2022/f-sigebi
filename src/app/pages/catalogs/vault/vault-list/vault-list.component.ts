@@ -64,20 +64,37 @@ export class VaultListComponent extends BasePage implements OnInit {
               case 'idSafe':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'managerDetail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cityDetail':
+                field = `filter.${filter.field}.nameCity`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'stateDetail':
+                field = `filter.${filter.field}.descCondition`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipalityDetail':
+                field = `filter.${filter.field}.nameMunicipality`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'localityDetail':
+                field = `filter.${filter.field}.nameLocation`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
 
             if (filter.search !== '') {
-              console.log(
-                (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-              );
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getVaults();
         }
       });
@@ -92,15 +109,25 @@ export class VaultListComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.safeService.getAll2(params).subscribe(
-      response => {
-        this.getManager(response);
+    this.safeService.getAll1(params).subscribe({
+      next: response => {
+        //this.getManager(response);
         this.totalItems = response.count;
+        this.data.load(response.data);
+        //console.log(this.data);
+        this.data.refresh();
+        this.totalItems = response.count;
+        this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: err => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
-  async getManager(response: any): Promise<void> {
+  /*async getManager(response: any): Promise<void> {
     for (let i = 0; i < response.data.length; i++) {
       const params = new ListParams();
       params['filter.user'] = `$eq:${response.data[i].manager}`;
@@ -109,7 +136,7 @@ export class VaultListComponent extends BasePage implements OnInit {
           response.data[i].managerDetail = resp.data[0].name;
           if (i == response.data.length - 1) {
             this.vaults = response.data;
-            this.data.load(this.vaults);
+            this.data.load(response.data);
             this.data.refresh();
             this.loading = false;
           }
@@ -117,7 +144,7 @@ export class VaultListComponent extends BasePage implements OnInit {
         error: erro => {
           if (i == response.data.length - 1) {
             this.vaults = response.data;
-            this.data.load(this.vaults);
+            this.data.load(response.data);
             this.data.refresh();
             this.loading = false;
           }
@@ -125,7 +152,8 @@ export class VaultListComponent extends BasePage implements OnInit {
       });
       await new Promise(resolve => setTimeout(resolve, 300));
     }
-  }
+  }*/
+
   openForm(vault?: ISafe) {
     const modalConfig = MODAL_CONFIG;
     const valueState = { ...this.values };
@@ -149,7 +177,7 @@ export class VaultListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(vaults.idSafe);

@@ -46,7 +46,11 @@ export class SatSubclassificationFormComponent
       id: [null],
       nameSubClasification: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       idClasification: [null, [Validators.required]],
       idClasificationCode: [null],
@@ -72,14 +76,19 @@ export class SatSubclassificationFormComponent
         'this.satSubclassification.nameSubClasification',
         this.satSubclassification.clasificationDetails.typeDescription
       );
+      this.getClassifications1Update(
+        new ListParams(),
+        this.satSubclassification.clasificationDetails.id
+      );
 
       this.classifications = new DefaultSelect(
         [this.satSubclassification.clasificationDetails.typeDescription],
         1
       );
-    } else {
-      this.getClassifications({ page: 1 });
     }
+    setTimeout(() => {
+      this.getClassifications(new ListParams());
+    }, 1000);
   }
 
   getClassifications(params: ListParams) {
@@ -87,6 +96,20 @@ export class SatSubclassificationFormComponent
     var dddd = 'cat';
     //params['filter.text'] = `$ilike:${dddd}`;
     this.satClassificationService.getAll(params).subscribe(data => {
+      console.log(data.data);
+      this.classifications = new DefaultSelect(data.data, data.count);
+    });
+  }
+
+  getClassifications1Update(params: ListParams, id?: string | number) {
+    //console.log('params:', params);
+    var dddd = 'cat';
+    //params['filter.text'] = `$ilike:${dddd}`;
+    if (id) {
+      params['filter.id'] = `$eq:${id}`;
+    }
+    this.satClassificationService.getAll(params).subscribe(data => {
+      console.log(data.data);
       this.classifications = new DefaultSelect(data.data, data.count);
     });
   }
@@ -99,48 +122,70 @@ export class SatSubclassificationFormComponent
   }
 
   create() {
-    this.loading = true;
-    this.satSubclassificationService
-      .create(this.satSubclassificationForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.satSubclassificationForm.controls[
+        'nameSubClasification'
+      ].value.trim() == ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.satSubclassificationService
+        .create(this.satSubclassificationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    console.log(
-      'idClasificationCode:',
-      this.satSubclassificationForm.get('idClasificationCode').value
-    );
+    if (
+      this.satSubclassificationForm.controls[
+        'nameSubClasification'
+      ].value.trim() == ''
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      console.log(
+        'idClasificationCode:',
+        this.satSubclassificationForm.get('idClasificationCode').value
+      );
 
-    console.log(
-      'idClasification:',
-      this.satSubclassificationForm.get('idClasification').value
-    );
+      console.log(
+        'idClasification:',
+        this.satSubclassificationForm.get('idClasification').value
+      );
 
-    let idClasi =
-      this.satSubclassification.clasificationDetails.idClasification !=
-      this.satSubclassificationForm.get('idClasification').value
-        ? this.satSubclassificationForm.get('idClasification').value
-        : this.satSubclassificationForm.get('idClasificationCode').value;
-    console.log('idClasi:', idClasi);
-    this.satSubclassificationForm.controls['idClasification'].setValue(idClasi);
+      let idClasi =
+        this.satSubclassification.clasificationDetails.idClasification !=
+        this.satSubclassificationForm.get('idClasification').value
+          ? this.satSubclassificationForm.get('idClasification').value
+          : this.satSubclassificationForm.get('idClasificationCode').value;
+      console.log('idClasi:', idClasi);
+      this.satSubclassificationForm.controls['idClasification'].setValue(
+        idClasi
+      );
 
-    this.loading = true;
-    this.satSubclassificationService
-      .update(
-        this.satSubclassification.id,
-        this.satSubclassificationForm.getRawValue()
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+      this.loading = true;
+      this.satSubclassificationService
+        .update(
+          this.satSubclassification.id,
+          this.satSubclassificationForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
