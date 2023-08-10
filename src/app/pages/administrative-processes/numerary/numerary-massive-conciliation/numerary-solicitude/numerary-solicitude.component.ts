@@ -251,7 +251,7 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
           console.log(err)
           console.log(err.error.message)
           if(err.error.message == 'duplicate key value violates unique constraint "nume_solicitud_movi_pk"'){
-            this.alert('error','El Movimiento ya ha sido Registrado','')
+            this.alert('error',`El Movimiento ${this.form2.get('movement').value} ya ha sido Registrado`,'')
           }else{
             this.alert('error', 'Se presentó un error inesperado', '');
           }
