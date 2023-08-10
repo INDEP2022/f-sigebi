@@ -19,7 +19,7 @@ jobs:
     - name: Obtener nombre del repositorio
       id: obtener-nombre-repo
       run: |
-        echo "::set-output name=repo_name::$(echo sigebi-appqa)"
+        echo "::set-output name=repo_name::$(echo sigebi-apptest)"
     - uses: actions/checkout@v3
     - name: Call API
       run: |

@@ -1,10 +1,10 @@
 (function (window) {
   window["env"] = window["env"] || {};
   window["env"].EXTERNAL_INTEGRATION_URL = 'http://www.indep.gob.mx/firmaelectronica'; // not actualized, for local testing
-  window["env"].API_BACKEND_URL = 'http://sigebimsqa.indep.gob.mx/';//'http://20.119.126.102:3000/';//'http://localhost:3000/api/v1/'; // not actualized, for local testing
+  window["env"].API_BACKEND_URL = 'http://sigebimstest.indep.gob.mx/';//'http://20.119.126.102:3000/';//'http://localhost:3000/api/v1/'; // not actualized, for local testing
 
-  window["env"].API_BACKEND_URL2 = 'http://sigebimsqa.indep.gob.mx/';
-  window["env"].API_CONTENT = 'http://sigebimsqa.indep.gob.mx/';
+  window["env"].API_BACKEND_URL2 = 'http://sigebimstest.indep.gob.mx/';
+  window["env"].API_CONTENT = 'http://sigebimstest.indep.gob.mx/';
 
   window["env"].URL_PREFIX = 'api/v1/';
 
