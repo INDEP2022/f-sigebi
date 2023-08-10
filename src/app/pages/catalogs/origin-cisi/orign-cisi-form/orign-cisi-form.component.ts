@@ -5,9 +5,19 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ModelForm } from '../../../../core/interfaces/model-form';
+// function noSpaceValidator(control: AbstractControl): ValidationErrors | null {
+//   const value = control.value;
 
+//   if (value && /^\s/.test(value)) {
+//     ERROR_MESSAGES.noSpace();
+//     return { noSpace: true };
+//   }
+
+//   return null;
+// }
 @Component({
   selector: 'app-orign-cisi-form',
   templateUrl: './orign-cisi-form.component.html',
@@ -39,12 +49,13 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.required,
-          Validators.minLength(1),
           Validators.maxLength(40),
+          Validators.pattern(STRING_PATTERN),
+          //noSpaceValidator
+          ,
         ],
       ],
     });
-
     if (this.originCisi != null) {
       this.edit = true;
       this.orignCisiForm.setValue({
@@ -75,7 +86,13 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
+    if (this.orignCisiForm.controls['detail'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
+
+    this.loading = true; // Coloca el loading en true antes de realizar la petición.
+
     this.originCisiService.create(this.orignCisiForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -94,7 +111,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

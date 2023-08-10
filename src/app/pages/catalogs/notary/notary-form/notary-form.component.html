@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar ' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="notaryForm">
@@ -65,7 +65,7 @@
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field [control]="notaryForm.get('email')" label="Correo">
-            <input type="text" class="form-control" formControlName="email" />
+            <input type="email" class="form-control" formControlName="email" />
           </form-field>
         </div>
       </div>

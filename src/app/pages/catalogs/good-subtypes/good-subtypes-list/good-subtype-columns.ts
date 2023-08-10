@@ -33,7 +33,7 @@ export const GOOD_SUBTYPES_COLUMNS = {
     sort: false,
   },
   descriptionPhotography: {
-    title: 'Descripción fotografía',
+    title: 'Descripción Fotografía',
     type: 'string',
     sort: false,
   },

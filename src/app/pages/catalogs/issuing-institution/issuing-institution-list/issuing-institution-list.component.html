@@ -47,7 +47,7 @@
       <div class="col-md-8 mt-3 mb-3"></div>
       <div
         class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3"
-        *ngIf="totalItems2 > 0">
+        *ngIf="rowSelected">
         <div>
           <button
             type="button"
@@ -61,7 +61,7 @@
         <app-columns-select [(settings)]="settings2"></app-columns-select>
       </div>
 
-      <div class="col-md-12" *ngIf="totalItems2 > 0">
+      <div class="col-md-12" *ngIf="rowSelected">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered table-responsive'"

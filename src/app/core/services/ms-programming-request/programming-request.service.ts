@@ -30,6 +30,14 @@ export class ProgrammingRequestService {
     );
   }
 
+  getProgramming(_params: ListParams): Observable<IListResponse<Iprogramming>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programming`;
+    return this.http.get<IListResponse<Iprogramming>>(
+      `${environment.API_URL}/${route}?${params}`
+    );
+  }
+
   getUsersProgramming(_params: ListParams): Observable<IListResponse<IUser>> {
     const params = this.makeParams(_params);
     const route = `programminggood/api/v1/programming-users`;

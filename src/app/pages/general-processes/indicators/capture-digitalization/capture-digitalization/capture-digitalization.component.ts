@@ -485,9 +485,9 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       return;
     }
     const filename: string = this.userName + '-CapturaYdigita';
-    // El type no es necesario ya que por defecto toma 'xlsx'
     this.loading = false;
     this.excelService.export(this.capturasDig, { filename });
+    this.alert('success', 'Datos Exportados', '');
   }
   updateSelectedIds(event: any) {
     if (this.formCapture && this.formCapture.get('cvCoors')) {

@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="issuingInstitutionForm">
       <div class="row">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('name')"
             label="Nombre">
@@ -13,7 +13,7 @@
             </textarea>
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('description')"
             label="Descripción">
@@ -25,15 +25,15 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+      <div class="row pt-4">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('manager')"
             label="Responsable">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('street')"
             label="Calle">
@@ -41,56 +41,71 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+      <div class="row pt-4">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('numInside')"
-            label="N&uacute;mero interior">
+            label="N&uacute;mero Interior">
             <input
               type="number"
               class="form-control"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
               formControlName="numInside" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('numExterior')"
-            label="N&uacute;mero exterior">
+            label="N&uacute;mero Exterior">
             <input
               type="number"
               class="form-control"
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
               formControlName="numExterior" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+      <div class="row pt-4">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('cologne')"
             label="Colonia">
             <input type="text" class="form-control" formControlName="cologne" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('zipCode')"
-            label="C&oacute;digo postal">
-            <input type="text" class="form-control" formControlName="zipCode" />
+            label="C&oacute;digo Postal">
+            <input
+              type="number"
+              class="form-control"
+              maxlength="5"
+              min="0"
+              [defaultValue]="0"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+              formControlName="zipCode" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+      <div class="row pt-4">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('delegMunic')"
-            label="Delegaci&oacute;n municipal">
+            label="Delegaci&oacute;n Municipal">
             <input
               type="text"
               class="form-control"
               formControlName="delegMunic" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('phone')"
             label="Teléfono">
@@ -98,19 +113,22 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-md-5">
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+      <div class="row pt-4">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field
             [control]="issuingInstitutionForm.get('numClasif')"
-            label="N&uacute;mero clasificaci&oacute;n">
+            label="N&uacute;mero Clasificaci&oacute;n">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              formControlName="numClasif"
-              readonly />
+              maxlength="5"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 5) this.value = this.value.slice(0, 5);"
+              formControlName="numClasif" />
           </form-field>
         </div>
-        <div class="col-md-6 pt-sm-5 pt-md-2">
+        <div class="col-md-6 pt-sm-4 pt-md-2">
           <form-field [control]="issuingInstitutionForm.get('numCity')">
             <ngx-select
               [form]="issuingInstitutionForm"
@@ -124,13 +142,13 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-md-5">
-        <div class="col-md-12 pt-sm-5 pt-md-2">
+      <div class="row pt-md-4">
+        <div class="col-md-12 pt-sm-4 pt-md-2">
           <form-field [control]="issuingInstitutionForm.get('numTransference')">
             <ngx-select
               [form]="issuingInstitutionForm"
               [data]="itemsTransfer"
-              label="N&uacute;mero transferencia"
+              label="N&uacute;mero Transferencia"
               bindLabel="nameTransferent"
               value="id"
               (fetchItems)="getFromSelectTransfer($event)"
@@ -145,7 +163,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!issuingInstitutionForm.valid"
+          [disabled]="issuingInstitutionForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
         </confirm-button>

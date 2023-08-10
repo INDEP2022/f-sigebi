@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { catchError, map, of, Subject, take } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
+import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
@@ -17,6 +18,7 @@ import {
 export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
+  dataCompositionExpenses: IComerDetExpense[];
   updateExpenseComposition = new Subject();
   PMONTOXMAND: string;
   PDEVCLIENTE: string;
@@ -387,7 +389,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       lotNumber: [null],
       folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       dateOfResolution: [null],
-      clkpv: [null],
+      clkpv: [null, [Validators.required]],
       descurcoord: [null],
       comment: [null],
       invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],

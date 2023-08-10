@@ -57,10 +57,13 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'nombre_clasificacion':
                 searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -94,7 +97,7 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
       next: response => {
         this.satClasification = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.satClasification);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -118,10 +121,11 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(satclasification.id);
+        this.getSatClasifications();
       }
     });
   }
@@ -129,8 +133,8 @@ export class SatClassificationListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.satClassificationService.remove(id).subscribe({
       next: () => {
-        this.getSatClasifications(),
-          this.alert('success', 'Sat clasificación', 'Borrado Correctamente');
+        this.alert('success', 'SAT Clasificación', 'Borrado Correctamente');
+        this.getSatClasifications();
       },
       error: err => {
         this.alert(

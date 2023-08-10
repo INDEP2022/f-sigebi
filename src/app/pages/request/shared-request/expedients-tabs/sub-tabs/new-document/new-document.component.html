@@ -47,6 +47,7 @@
             <form-field [control]="newDocForm.get('docFile')" label="Documento">
               <input
                 type="file"
+                accept="application/pdf"
                 class="form-control"
                 formControlName="docFile"
                 (change)="selectFile($event)" />

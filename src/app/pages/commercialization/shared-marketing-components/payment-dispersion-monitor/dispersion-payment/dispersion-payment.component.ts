@@ -386,6 +386,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       },
       err => {
         console.log(err);
+        this.loadingCustomer = false;
+        this.loadingLotEvent = false;
+        this.loadingDesertLots = false;
+        this.loadingLotBanks = false;
+        this.loadingPaymentLots = false;
       }
     );
   }
@@ -928,7 +933,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     let idBatch: any = this.dataBatch.batchId;
     let incomeOrderId: any = this.dataBatch.Income_Order_ID;
     let date: any = this.correctDate(this.dataBatch.date);
-    let dateMaxPay: any = this.dateMaxPayment.value
+    let dateMaxPay: any = this.dateMaxPayment.value;
+    let eventId: any = this.dataBatch.Event_ID;
+    let customerBatch: any = this.dataBatch.Customer_ID;
     return new Promise((resolve, reject) => {
       if (this.event.value != null) {
         if (this.idBatch != null) {
@@ -951,7 +958,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
                   idBatch,
                   incomeOrderId,
                   date,
-                  dateMaxPay
+                  dateMaxPay,
+                  eventId,
+                  customerBatch,
                 });
               },
               err => {
@@ -968,8 +977,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     const dataModel = await this.unbundlePaymentsFn();
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState: { dataModel },
+      initialState: {
+        dataModel,
+        callback: (e: any) => {
+          console.log(e);
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
 
     this.modalService.show(ComerPaymentVirtComponent, modalConfig);

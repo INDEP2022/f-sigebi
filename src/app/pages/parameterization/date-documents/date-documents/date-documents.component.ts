@@ -63,10 +63,10 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'expedientNumber':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'stateNumber':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'typeDictum':
                 searchFilter = SearchFilter.ILIKE;
@@ -187,9 +187,9 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
     let key: any = typeService.key;
     const key1 = key.key;
     let body = {
-      expedientNumber: typeService.expedientNumber,
-      stateNumber: typeService.stateNumber,
-      key: key1,
+      expedientNumber: Number(typeService.expedientNumber),
+      stateNumber: Number(typeService.stateNumber),
+      key: String(key1),
       typeDictum: typeService.typeDictum,
     };
     console.log(body);
@@ -207,7 +207,7 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
 
   remove(body: any) {
     console.log(body);
-    this.dateDocumentsService.removeRepuves(body).subscribe({
+    this.dateDocumentsService.removeDateDocuments(body).subscribe({
       next: () => {
         this.alert('success', 'Fecha para Documento', 'Borrado Correctamente'),
           this.getAllDateDocuments();

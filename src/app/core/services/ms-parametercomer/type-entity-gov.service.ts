@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
@@ -36,5 +37,10 @@ export class TypeEntityGovService extends HttpService {
   remove(id: string | number) {
     const route = `${this.endpoint}/${id}`;
     return this.delete(route);
+  }
+  getAllFilterv2(
+    params?: ListParams
+  ): Observable<IListResponse<ITypeEntityGov>> {
+    return this.get<IListResponse<ITypeEntityGov>>(this.endpoint, params);
   }
 }

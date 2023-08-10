@@ -63,6 +63,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   settings2: any;
   flag: boolean = false;
   firsTime: boolean = true;
+  folioScan: any;
   record: IUpdateProceedings;
   dataResp: IProceedings;
   dataTable: any[] = [];
@@ -1641,5 +1642,21 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     console.log('data send -> ', this.selectRow);
     if (this.selectRow) {
     }
+  }
+
+  redirectOrigin() {
+    this.route.navigate(
+      [
+        `/pages/documents-reception/records-validation`,
+        this.fileNumber,
+        this.proceedingsNumb,
+        this.proceedingsKey,
+      ],
+      {
+        queryParams: {
+          origin: 'FACTREFACTADEVOLU',
+        },
+      }
+    );
   }
 }

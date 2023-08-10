@@ -60,19 +60,19 @@ export class FiltersOfGoodsForDonationComponent
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             switch (filter.field) {
-              case 'statusId':
-                searchFilter = SearchFilter.ILIKE;
+              case 'registryNumber':
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'status':
-                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noLabel':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'tag':
-                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -150,7 +150,11 @@ export class FiltersOfGoodsForDonationComponent
         //Ejecutar el servicio
         this.donationServ.remove(event).subscribe({
           next: () => {
-            this.alert('success', 'Filtro de bienes para donación', 'Borrado');
+            this.alert(
+              'success',
+              'Filtro de Bienes para Donación',
+              'Borrado  Correctamente'
+            );
             this.getPagination();
           },
           error: err => {

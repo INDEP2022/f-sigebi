@@ -17,7 +17,7 @@ import {
 })
 export class StatusClaimsFormComponent extends BasePage implements OnInit {
   statusClaimsForm: ModelForm<IStatusClaims>;
-  title: string = 'Estatus Siniestros';
+  title: string = 'Estatus Siniestro';
   edit: boolean = false;
   statusClaims: IStatusClaims;
   constructor(
@@ -66,24 +66,34 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.StatusClaimsService.create(
-      this.statusClaimsForm.getRawValue()
-    ).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.statusClaimsForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.StatusClaimsService.create(
+        this.statusClaimsForm.getRawValue()
+      ).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.StatusClaimsService.update(
-      this.statusClaims.id,
-      this.statusClaimsForm.value
-    ).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.statusClaimsForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.StatusClaimsService.update(
+        this.statusClaims.id,
+        this.statusClaimsForm.value
+      ).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   handleSuccess() {
