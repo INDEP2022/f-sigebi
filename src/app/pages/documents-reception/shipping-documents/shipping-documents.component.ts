@@ -244,45 +244,46 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     }
   }
 
-  printPdf() {
-    /*const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPOFIVOLANTE.pdf?NO_OFICIO=${this.officeNumber}`;
-    window.open(url, `${this.officeKey}.pdf`);*/
+  //NO SE MIGRA EL REPORTE RGEROFPOFIVOLANTE
+  //Actualmente en SIAB no se visualizan, presentan error
 
-    let params = {
-      PARAMFORM: 'NO',
-      PNO_OFICIO: this.officeNumber,
-      PTEXTO_OFICIO: this.officeKey,
-    };
-
-    this.jasperService
-
-      //.fetchReport('RGEROFPOFIVOLANTE', params)
-      .fetchReportBlank('blank')
-      .subscribe(response => {
-        if (response !== null) {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true, //ignora el click fuera del modal
-          };
-          // this.onLoadToast('success', '', 'Reporte generado');
-          this.modalService.show(PreviewDocumentsComponent, config);
-        }
-      });
-  }
+  /*  printPdf() {
+  
+      let params = {
+        PARAMFORM: 'NO',
+        PNO_OFICIO: this.officeNumber,
+        PTEXTO_OFICIO: this.officeKey,
+      };
+  
+      this.jasperService
+  
+        //.fetchReport('RGEROFPOFIVOLANTE', params)
+        .fetchReportBlank('blank')
+        .subscribe(response => {
+          if (response !== null) {
+            const blob = new Blob([response], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            let config = {
+              initialState: {
+                documento: {
+                  urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                  type: 'pdf',
+                },
+                callback: (data: any) => {},
+              }, //pasar datos por aca
+              class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+              ignoreBackdropClick: true, //ignora el click fuera del modal
+            };
+            // this.onLoadToast('success', '', 'Reporte generado');
+            this.modalService.show(PreviewDocumentsComponent, config);
+          }
+        });
+    } */
   save() {
-    if (this.queryMode) {
+    /*if (this.queryMode) {
       this.printPdf();
       return;
-    }
+    }*/
     this.documentsForm.markAllAsTouched();
     if (!this.documentsForm.valid && !this.queryMode) {
       this.onLoadToast('warning', 'Advertencia', 'Valida el formulario');
@@ -361,7 +362,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       next: () => {
         this.incrementLastOffice(department);
         this.queryMode = true;
-        //this.alert('success', 'Oficio Enviado Correctamente', '');
+        this.alert('success', 'Oficio Enviado Correctamente', '');
       },
     });
   }
@@ -404,6 +405,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       ),
       catchError(error => {
         this.loading = false;
+        console.log('error-----', error);
         if (error.status >= 500) {
           this.handleError('Ocurrio un error al generar el oficio');
         }
@@ -412,7 +414,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       tap(response => {
         this.loading = false;
         this.patchOfficeCve(response);
-        this.printPdf();
+        //this.printPdf();
       })
     );
   }

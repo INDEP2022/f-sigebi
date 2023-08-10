@@ -59,11 +59,11 @@ import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 //import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
-import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-import { NotificationService } from 'src/app/core/services/notification/notification.service';
-import { DocumentsForDictumService } from '../../../../core/services/catalogs/documents-for-dictum.service';
-import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 
+import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -102,8 +102,7 @@ import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scannin
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -184,6 +183,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
   files: any;
+  userdelegacion: any;
+  userDepartament: any;
+  folioBoool: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private fileBrowserService: FileBrowserService,
@@ -515,7 +518,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() {}
+  onSubmit() { }
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -1214,7 +1217,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       });
   }
 
-  cleanActa() {}
+  cleanActa() { }
 
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1231,8 +1234,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() {}
-  sendOffice() {}
+  btnDetail() { }
+  sendOffice() { }
 
   Scanner() {
     if (this.formScan.get('scanningFoli').value) {
@@ -1345,8 +1348,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   async cerrarActa() {
     console.log('this.actasDefault', this.actasDefault);
     console.log(
-      'this.circumstantialRecord',
-      this.expedient.circumstantialRecord
+      'this.circumstantialRecord', this.expedient
+      //this.expedient.circumstantialRecord
     );
     if (this.actasDefault != null) {
       if (this.actasDefault.keysProceedings == null) {
@@ -1466,58 +1469,52 @@ export class ActsCircumstantiatedCancellationTheftComponent
     throw new Error('Method not implemented.');
   }
 
-  /* initSolicitud() {
-     
-     if (this.actaRecepttionForm.get('oficea').value != null) {
-       if (this.actaRecepttionForm.get('scanningFoli').value == null) {
-           this.alertQuestion(
-             'info',
-             'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?',
-             '',
-             'Aceptar',
-             'Cancelar'
-           ).then(res => {
-             console.log(res);
-             if (res.isConfirmed) {
-               this.notificationService
-                 .getByFileNumber(this.fileNumber)
-                 .subscribe({
-                   next: resp => {
-                     console.log('Respuesta primer: ', resp);
-                     let params = {
-                       fileNumber: this.fileNumber,
-                       actKey: this.actaRecepttionForm.get('oficea').value,
-                       delegationNumber: this.userdelegacion,
-                       subDelegationNumber: this.userSubdelegacion,
-                       departmentNumber: this.userDepartament,
-                       flyerNumber: resp.data[0].max,
-                     };
-                     this.DocumentsForDictumService
-                       .postDocuemntFolio(params)
-                       .subscribe({
-                         next: response => {
-                           this.folioScan = response.data[0].folio_universal;
-                           let formparams = {
-                             scanningFoli: response.data[0].folio_universal,
-                           };
-                           console.log('scanningFoli: ', formparams);
-                           this.folioBoool = true;
-                           this.formadd.patchValue(formparams);
-                           this.getReport();
-                         },
-                       });
-                   },
-                 });
-             }
-           });
-         } else {
-           this.alertInfo('warning', 'El Acta ya Tiene Folio de Escaneo.', '');
-         }
-       }
-     
-   }
- */
+  initSolicitud() {
+    if (this.actaRecepttionForm.get('consec').value == null) {
+      this.alertQuestion(
+        'info',
+        'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.notificationService
+            .getByFileNumber(this.fileNumber)
+            .subscribe({
+              next: resp => {
+                console.log('Respuesta primer: ', resp);
+                let params = {
+                  fileNumber: this.fileNumber,
+                  actKey: this.actaRecepttionForm.get('type').value,
+                  delegationNumber: this.userdelegacion,
+                  subDelegationNumber: this.userdelegacion,
+                  departmentNumber: this.userDepartament,
+                  flyerNumber: resp.data[0].max,
+                };
+                this.documentsForDictumService
+                  .postDocuemntFolio2(params)
+                  .subscribe({
+                    next: response => {
+                      this.consec = response.data[0].folio_universal;
+                      let formparams = {
+                        consec: response.data[0].folio_universal,
+                      };
+                      this.folioBoool = true;
+                      this.actaRecepttionForm.patchValue(formparams);
+                      this.Scanner();
+                    },
+                  });
+              },
+            });
+        }
+      });
+    } else {
+      this.alertInfo('warning', 'El Acta ya Tiene Folio de Escaneo.', '');
+    }
 
+  }
   Generar() {
     let params = {
       PN_FOLIO: this.actaRecepttionForm.get('consec').value,
@@ -1541,7 +1538,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => {},
+                  callback: (data: any) => { },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
@@ -1749,9 +1746,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        flyerNumber +
+        ' y Expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -1838,7 +1835,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1910,8 +1907,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alertInfo(
         'success',
         'El folio universal generado es: "' +
-          this.formScan.get('scanningFoli').value +
-          '"',
+        this.formScan.get('scanningFoli').value +
+        '"',
         ''
       );
     } else {
