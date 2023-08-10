@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import {
   BehaviorSubject,
   catchError,
+  firstValueFrom,
   lastValueFrom,
   map,
   of,
@@ -355,7 +356,61 @@ export class EventCaptureComponent
     });
   }
 
-  sendSISE() {
+  async getProceedingEvent(proceeding: string) {
+    return await firstValueFrom(
+      this.proceedingsService.getEventByProceeding(proceeding).pipe(
+        catchError(error =>
+          of({ data: [{ eventId: null, programmingId: null }] })
+        ),
+        map(response => response.data[0].eventId)
+      )
+    );
+  }
+
+  async sendSISE() {
+    const eventId = await this.getProceedingEvent(
+      this.proceeding.keysProceedings
+    );
+    if (!eventId) {
+      this.oldSise();
+      return;
+    }
+    this.newSise(eventId);
+  }
+
+  newSise(iIdEvento: string | number) {
+    this.siseLoading = true;
+    this.interfaceSirSaeService
+      .updateEventDomicile({
+        cveActa: this.proceeding.keysProceedings,
+        iIdEvento,
+      })
+      .subscribe({
+        next: async () => {
+          this.siseLoading = false;
+          const params = new FilterParams();
+          params.addFilter('id', this.global.proceedingNum);
+          await this.getProceeding(params);
+          if (this.proceeding.receiveBy == '1') {
+            this.alert('success', 'Enviado al SISE correctamente', '');
+          } else if (this.proceeding.receiveBy == '0') {
+            this.alert(
+              'error',
+              'Error',
+              'No se pudo Enviar el ejecutable del SISE, puedes reenviarlo de nuevo'
+            );
+          } else {
+            this.alert('error', 'Error', 'Renviar de nuevo el SISE');
+          }
+        },
+        error: () => {
+          this.siseLoading = false;
+          this.alert('error', 'Error', 'Ocurrió un error al enviar el SISE');
+        },
+      });
+  }
+
+  oldSise() {
     this.siseLoading = true;
     this.interfaceSirSaeService
       .updateInvitations({
