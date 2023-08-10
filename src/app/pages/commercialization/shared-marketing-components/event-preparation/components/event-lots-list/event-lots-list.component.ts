@@ -27,6 +27,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -50,7 +51,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
-
+  @Input() loggedUser: TokenInfoModel;
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();

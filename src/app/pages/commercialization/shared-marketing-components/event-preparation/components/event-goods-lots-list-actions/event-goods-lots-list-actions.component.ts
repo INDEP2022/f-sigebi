@@ -21,6 +21,7 @@ import {
 } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -49,6 +50,7 @@ export class EventGoodsLotsListActionsComponent
   @Input() lotSelected: IComerLot;
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Input() parameters: IEventPreparationParameters;
+  @Input() loggedUser: TokenInfoModel;
   @ViewChild('goodsLotifyInput', { static: true })
   goodsLotifyInput: ElementRef<HTMLInputElement>;
   @ViewChild('customersImportInput', { static: true })
@@ -574,7 +576,7 @@ export class EventGoodsLotsListActionsComponent
     );
     const { isConfirmed, dismiss } = ask;
     if (isConfirmed) {
-      this.lotifyThirdTable();
+      this.lotifyThirdTable().subscribe();
       return;
     }
 
@@ -586,8 +588,29 @@ export class EventGoodsLotsListActionsComponent
 
   /**LOTIFICA_TABLATC */
   lotifyThirdTable() {
-    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    const { id, eventTpId } = this.controls;
     console.warn('LOTIFICA_TABLATC');
+    const body = {
+      event: id.value,
+      typeEvent: eventTpId.value,
+      address: this.parameters.pDirection,
+      user: this.loggedUser.preferred_username,
+      bank: this.parameters.pBank,
+    };
+    this.loader.load = true;
+    return this.lotService.lotifyThirdTable(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        const params = new FilterParams();
+        this.params.next(params);
+      })
+    );
   }
 
   /**CLIENTES_TC */
@@ -832,14 +855,40 @@ export class EventGoodsLotsListActionsComponent
 
   loadCustomersBase(event: Event) {
     if (!this.isValidFile(event)) {
-      this.saleBasesControl.reset();
+      this.customersBasecontrol.reset();
       return;
     }
-    this.impBaseCustomers();
+    this.impBaseCustomers(event).subscribe();
   }
 
-  impBaseCustomers() {
+  impBaseCustomers(event: Event) {
     console.warn('PUP_IMP_EXCEL_BASES_CLIENTE');
+    this.loader.load = true;
+    const file = this.getFileFromEvent(event);
+    const { id } = this.controls;
+    const body: any = {
+      file,
+      eventId: id.value,
+      lot: null,
+      base: null,
+    };
+    return this.lotService.importCustomersBase(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.customersBasecontrol.reset();
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loader.load = false;
+        this.customersBasecontrol.reset();
+        if (typeof response == 'string') {
+          this.alert('info', response, '');
+          return;
+        }
+        this.alert('success', 'Proceso Terminado', '');
+      })
+    );
   }
 
   // ? --------------- Carga Factura

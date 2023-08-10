@@ -255,7 +255,32 @@ export class LotService extends HttpService {
   validateCustomersCSV(file: File) {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.post('pup-valcsv-clients', formData);
+    return this.post('apps/pup-valcsv-clients', formData);
+  }
+
+  importCustomersBase(body: {
+    file: File;
+    eventId: string | number;
+    lot: string | number;
+    base: string | number;
+  }) {
+    const { file, eventId, lot, base } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('lot', lot ? `${eventId}` : null);
+    formData.append('base', base ? `${eventId}` : null);
+    return this.post('apps/pup-imp-excel-bases-client', formData);
+  }
+
+  lotifyThirdTable(body: {
+    event: string | number;
+    typeEvent: string | number;
+    address: 'M' | 'I';
+    user: string;
+    bank: string;
+  }) {
+    return this.post('apps/lotifica-tabla-tc', body);
   }
 
   // ------------------------
