@@ -2,17 +2,16 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -99,6 +98,8 @@ export class ResponsibilityLettersReportComponent
   dataUserLoggedTokenData: any;
   selectDataEvent = new DefaultSelect();
   selectDataLote = new DefaultSelect();
+  P_DIRECCION: string = 'M';
+  origin: string = '';
 
   get oficio() {
     return this.comerLibsForm.get('oficio');
@@ -180,7 +181,8 @@ export class ResponsibilityLettersReportComponent
     private authService: AuthService,
     private comerEventService: ComerEventService,
     private msLotService: LotService,
-    private router: Router
+    private router: Router,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings = {
@@ -199,6 +201,14 @@ export class ResponsibilityLettersReportComponent
     this.dateFinal = this.datePipe.transform(this.maxDate, 'dd/MM/yyyy');
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        this.origin = params['origin'] ?? null;
+        this.P_DIRECCION = params['P_DIRECCION'] ?? null;
+        console.log(params);
+      });
   }
 
   prepareForm() {
@@ -219,7 +229,11 @@ export class ResponsibilityLettersReportComponent
       adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
       factura: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+          Validators.required,
+        ],
       ],
       fechaFactura: [null, [Validators.required]],
       fechaCarta: [null],
@@ -233,6 +247,8 @@ export class ResponsibilityLettersReportComponent
       puestoCcp2: [null],
       lote: [null],
       evento: [null],
+      evento_descripcion: [null],
+      lote_descripcion: [null],
     });
     this.bienesLotesForm = this.fb.group({
       lote: [null],
@@ -325,8 +341,9 @@ export class ResponsibilityLettersReportComponent
     this.loading = true;
     this.comerLetterService.getById(id).subscribe({
       next: data => {
-        this.loading = false;
+        // this.loading = false;
         this.letter = data;
+        console.log(data, this.letter);
         this.carta = this.datePipe.transform(
           this.letter.invoiceDate,
           'dd/MM/yyyy'
@@ -336,28 +353,45 @@ export class ResponsibilityLettersReportComponent
           'dd/MM/yyyy'
         );
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
-        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
         // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
         this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
-        // this.comerLibsForm.get('fechaFactura').setValue(this.start);
+        this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.getComerLotes(this.letter.lotsId);
         this.getComerRespById(this.letter.id);
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
-        this.comerLibsForm.value.paragraph1 =
-          'Derivado de la ' +
-          this.bienesLotesForm.get('description').value +
-          ' para la enajenación de vehiculos y/o bienes diversos ' +
-          this.bienesLotesForm.get('cveProceso').value +
-          ' celebrada el dia ' +
-          this.carta;
-        '' +
-          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
-        this.comerLibsForm
-          .get('paragraph1')
-          .setValue(this.comerLibsForm.value.paragraph1);
+        // this.comerLibsForm.value.paragraph1 =
+        //   'Derivado de la ' +
+        //   this.bienesLotesForm.get('description').value +
+        //   ' para la enajenación de vehiculos y/o bienes diversos ' +
+        //   this.bienesLotesForm.get('cveProceso').value +
+        //   ' celebrada el dia ' +
+        //   this.carta;
+        // '' +
+        //   '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
+        // this.comerLibsForm
+        //   .get('paragraph1')
+        //   .setValue(this.comerLibsForm.value.paragraph1);
+        this.comerLetterService
+          .getByIdResponsability('1') //this.letter.id)
+          .subscribe({
+            next: data => {
+              console.log('DATA DE RESPONSABILIDAD ', data);
+
+              this.loading = false;
+              this.respForm.get('paragraph1').setValue(data.paragraph1);
+              this.respForm.get('paragraph2').setValue(data.paragraph2);
+              this.respForm.get('paragraph3').setValue(data.paragraph3);
+            },
+            error: () => {
+              this.loading = false;
+              console.log('error');
+            },
+          });
       },
       error: () => {
+        this.loading = false;
         console.log('error');
       },
     });
@@ -381,15 +415,24 @@ export class ResponsibilityLettersReportComponent
   }
 
   searchComer(provider?: IComerLetter) {
+    if (!this.comerLibsForm.get('lote').value) {
+      this.alert('warning', 'Selecciona un Lote para Continuar', '');
+      return;
+    }
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       provider,
+      P_DIRECCION: this.P_DIRECCION,
+      loteId: this.comerLibsForm.get('lote').value,
     };
 
     let modalRef = this.modalService.show(FindRespLetterComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       this.letterDefault = next;
-      console.log(next.id);
+      console.log(next);
+      this.comerLibsForm.controls['adjudicatorio'].setValue(
+        this.letterDefault.signatory
+      );
       this.idLot = next.lotsId;
       this.idEvent = next.idEvent;
       this.getComerLetterById(next.id);
@@ -541,6 +584,7 @@ export class ResponsibilityLettersReportComponent
   getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
+        console.log('DATA PRUEBA COMER', data);
         this.comerLots = data;
         this.bienesLotesForm.get('lote').setValue(data.idLot);
         this.bienesLotesForm.get('description').setValue(data.description);
@@ -557,6 +601,7 @@ export class ResponsibilityLettersReportComponent
   getComerEvent(id: string) {
     this.comerEventService.geEventId(id).subscribe({
       next: data => {
+        console.log('DATA PRUEBA', data);
         this.event = data;
         this.carta = this.datePipe.transform(
           this.event.failedDate,
@@ -564,7 +609,7 @@ export class ResponsibilityLettersReportComponent
         );
         // this.bienesLotesForm.get('descEvento').setValue(this.event.descEvento);
         this.comerLibsForm.get('fechaCarta').setValue(this.carta);
-        this.comerLibsForm.get('adjudicatario').setValue(this.event.signatory);
+        this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
         this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
         // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
         console.log(this.event);
@@ -637,6 +682,11 @@ export class ResponsibilityLettersReportComponent
   searchEvent() {}
 
   changeEvent(event: any) {
+    console.log(event);
+    this.comerLibsForm.get('lote').reset();
+    this.comerLibsForm
+      .get('evento_descripcion') //.reset();
+      .setValue(event ? event.observations : null);
     this.getLoteData(new ListParams());
   }
 
@@ -645,10 +695,13 @@ export class ResponsibilityLettersReportComponent
       paramsData['search'] = '';
     }
     if (getByValue) {
-      paramsData['filter.eventTpId'] =
-        '$eq:' + this.comerLibsForm.get('evento').value;
+      paramsData['filter.id'] = '$eq:' + this.comerLibsForm.get('evento').value;
     }
-    paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
+    // paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
+    paramsData['filter.id'] = '$eq:' + paramsData['search'];
+    if (this.P_DIRECCION) {
+      paramsData['filter.address'] = `$eq:${this.P_DIRECCION}`;
+    }
     paramsData['sortBy'] = 'observations:ASC';
     delete paramsData['search'];
     delete paramsData['text'];
@@ -657,7 +710,14 @@ export class ResponsibilityLettersReportComponent
     this.comerEventService.getAllEvent(paramsData).subscribe({
       next: data => {
         console.log('DATA SELECT ', data.data);
-        this.selectDataEvent = new DefaultSelect(data.data, data.count);
+        this.selectDataEvent = new DefaultSelect(
+          // data.data.map((i: any) => {
+          //   i['description_data'] = i.id + ' --- ' + i.observations;
+          //   return i;
+          // }),
+          data.data,
+          data.count
+        );
         console.log(data, this.selectDataEvent);
       },
       error: error => {
@@ -666,16 +726,17 @@ export class ResponsibilityLettersReportComponent
     });
   }
 
+  changeLote(event: any) {
+    console.log(event);
+    this.comerLibsForm
+      .get('lote_descripcion')
+      .setValue(event ? event.description : null);
+  }
+
   getLoteData(paramsData: ListParams, getByValue: boolean = false) {
     if (paramsData['search'] == undefined || paramsData['search'] == null) {
       paramsData['search'] = '';
     }
-    // if (getByValue) {
-    //   paramsData['filter.idEvent'] =
-    //     '$eq:' + this.comerLibsForm.get('evento').value;
-    // }
-    // paramsData['filter.description'] = '$ilike:' + paramsData['search'];
-    // paramsData['sortBy'] = 'description:ASC';
     if (!this.comerLibsForm.get('evento').value) {
       if (paramsData['search'] != '') {
         this.alert(
@@ -689,7 +750,10 @@ export class ResponsibilityLettersReportComponent
     }
     const params = new FilterParams();
     params.addFilter('idEvent', this.comerLibsForm.get('evento').value);
-    params.addFilter('description', paramsData['search'], SearchFilter.ILIKE);
+    // params.addFilter('description', paramsData['search'], SearchFilter.ILIKE);
+    if (paramsData['search']) {
+      params.addFilter('idLot', paramsData['search']);
+    }
     params['sortBy'] = 'description:ASC';
     delete paramsData['search'];
     delete paramsData['text'];
@@ -697,7 +761,14 @@ export class ResponsibilityLettersReportComponent
     this.msLotService.getAllComerLotsFilter(params.getParams()).subscribe({
       next: data => {
         console.log('DATA SELECT ', data.data);
-        this.selectDataLote = new DefaultSelect(data.data, data.count);
+        this.selectDataLote = new DefaultSelect(
+          // data.data.map((i: any) => {
+          //   i['description_data'] = i.idLot + ' --- ' + i.description;
+          //   return i;
+          // }),
+          data.data,
+          data.count
+        );
         console.log(data, this.selectDataLote);
       },
       error: error => {
