@@ -171,7 +171,6 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
                     .getReceiptGood(params.getValue())
                     .subscribe({
                       next: async response => {
-                        console.log('bienes', response);
                         const updateProgGood = await this.updateProgGood(
                           response.data
                         );
@@ -216,7 +215,6 @@ export class ShowReceiptCloseComponent extends BasePage implements OnInit {
   updateProgGood(goods: any[]) {
     return new Promise((resolve, reject) => {
       goods.map(good => {
-        console.log('good', good);
         const formData: Object = {
           id: good.goodId,
           goodId: good.goodId,

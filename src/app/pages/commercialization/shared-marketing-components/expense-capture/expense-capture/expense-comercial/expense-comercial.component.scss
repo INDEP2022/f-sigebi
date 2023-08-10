@@ -15,6 +15,14 @@
   }
 }
 
+:host ::ng-deep app-select-modal-table-shared {
+  form-field {
+    .float-label {
+      top: -18px !important;
+    }
+  }
+}
+
 ng-custom-select-loading {
   padding-left: 2px;
 }
