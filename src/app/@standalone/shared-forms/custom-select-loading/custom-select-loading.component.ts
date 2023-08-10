@@ -65,6 +65,7 @@ export class CustomSelectWidthLoading
   @Input() value: string = 'id';
   @Input() bindLabel: string = '';
   @Input() paramSearch: string = 'search';
+  @Input() paramExternalSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';
@@ -134,6 +135,7 @@ export class CustomSelectWidthLoading
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
       // this.input$.next(changes['externalSearch'].currentValue);
       this.loadData(changes['externalSearch'].currentValue, false);
@@ -197,18 +199,18 @@ export class CustomSelectWidthLoading
         if (this.prefixSearch) {
           text = `${this.prefixSearch}:${text}`;
         }
+        params[this.paramSearch] = text;
       } else {
         if (this.prefixSearch) {
           text = `$eq:${text}`;
         }
+        params[this.paramPageName] = 1;
+        params[this.paramExternalSearch] = text;
       }
-      params[this.paramSearch] = text;
-    }
-    if (!normalSearch) {
-      params[this.paramPageName] = 1;
     }
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
+    // console.log(params, mParams);
     return this.http
       .get(`${this.url}${this.path}` + mParams, {
         params,
@@ -286,7 +288,6 @@ export class CustomSelectWidthLoading
           this.isLoading = false;
           if (resp) {
             this.items = resp;
-
             if (resp.length === 1) {
               this.getObject.emit(resp[0]);
             }
