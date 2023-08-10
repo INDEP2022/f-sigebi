@@ -26,13 +26,13 @@
         <div [ngClass]="{ 'table-loading': loading }">
           <ng2-smart-table
             [settings]="settings"
-            [source]="data2"
+            [source]="dataFactGen"
             (edit)="edit($event.data)"
             (delete)="confirmDelete($event.data)"></ng2-smart-table>
         </div>
 
         <app-pagination
-          [params]="params"
+          [params]="params2"
           [totalItems]="totalItems"></app-pagination>
       </div>
     </div>

@@ -6,6 +6,49 @@
   </div>
 
   <div body>
+    <!-- <div class="row justify-content-start">
+      <div class="col-12 col-sm-12 col-md-6">
+        <search-bar-simple (eventEmit)="search($event)" id="find" [placeholder]="'N&uacute;mero de Expediente'">
+        </search-bar-simple>
+        <div class="row" *ngIf="!validateEx">
+          <span class="text-center text-danger d-block">El Expediente no existe</span>
+        </div>
+      </div>
+    </div> -->
+    <div class="row m-3 flex-row justify-content-center">
+      <div class="col-md-4">
+        <div class="d-flex align-items-center">
+          <label for="" class="col-form-label"
+            >Fecha de Elaboración:&nbsp;&nbsp;</label
+          >
+          <div>{{ time | date : 'hh:mm' }}</div>
+          <div>{{ dateElaboration || '00/00/0000' }}</div>
+        </div>
+      </div>
+      <div class="col-md-8 text-end">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="searchExpedient()">
+          <i class="bx bx-list-plus bx-sm float-icon"></i>
+        </button>
+        <!-- <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="searchExpedient()">
+          Buscar Expediente
+          <i class="bx bx-search bx-sm float-icon"></i>
+        </button>
+        <button
+          (click)="cleanForm()"
+          type="button"
+          class="btn btn-danger active btn-sm mr-3">
+          Limpiar
+          <i class="fa fa-eraser" aria-hidden="true"></i>
+        </button> -->
+      </div>
+    </div>
+
     <div
       class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
       *ngIf="loadingExpedient">
