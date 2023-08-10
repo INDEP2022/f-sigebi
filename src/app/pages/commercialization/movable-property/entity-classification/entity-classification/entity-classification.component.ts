@@ -123,7 +123,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   getData() {
     this.loading = true;
     let params = {
-      ...this.params.getValue(),
+      ...this.params2.getValue(),
       ...this.columnFilters,
     };
     //const params = this.params.getValue().getParams();
