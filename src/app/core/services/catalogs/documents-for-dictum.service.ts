@@ -66,4 +66,7 @@ export class DocumentsForDictumService
   postDocuemntFolio(params: any) {
     return this.post(ENDPOINT_LINKS.insertDocumentFolio, params);
   }
+  postDocuemntFolio2(params: any) {
+    return this.post(ENDPOINT_LINKS.insertDocumentFol, params);
+  }
 }
