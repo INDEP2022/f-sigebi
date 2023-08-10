@@ -9,6 +9,6 @@ export interface IGoodSssubtype {
   numSubType: number | IGoodSubType;
   numType: number | IGoodType;
   numRegister: number;
-  numClasifAlterna: number;
+  numClasifAlterna?: number;
   numClasifGoods: number;
 }

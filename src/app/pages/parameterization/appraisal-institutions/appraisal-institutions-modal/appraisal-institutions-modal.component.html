@@ -29,7 +29,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="noExterior" />
+              formControlName="noExterior"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -39,13 +40,14 @@
             <input
               type="text"
               class="form-control"
-              formControlName="noInterior" />
+              formControlName="noInterior"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="appraisersForm.get('codepostal')"
-            label="C&oacute;digo postal">
+            label="C&oacute;digo Postal">
             <input
               type="number"
               class="form-control"
@@ -87,12 +89,20 @@
       <div class="row pt-4">
         <div class="col-md-4">
           <form-field [control]="appraisersForm.get('rfc')" label="RFC">
-            <input type="text" class="form-control" formControlName="rfc" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfc"
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="appraisersForm.get('curp')" label="CURP">
-            <input type="text" class="form-control" formControlName="curp" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
           </form-field>
         </div>
         <div class="col-md-4">

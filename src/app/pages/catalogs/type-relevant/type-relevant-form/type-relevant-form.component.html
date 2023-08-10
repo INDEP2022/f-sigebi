@@ -16,7 +16,7 @@
               maxlength="255" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="pt-4 col-md-6">
           <form-field
             [control]="typeRelevantForm.get('version')"
             label="Versi&oacute;n">
@@ -24,21 +24,27 @@
               type="number"
               class="form-control"
               formControlName="version"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="pt-4 col-md-6">
           <form-field
             [control]="typeRelevantForm.get('numberPhotography')"
-            label="N&uacute;mero fotograf&iacute;a">
+            label="N&uacute;mero Fotograf&iacute;a">
             <input
               type="number"
               class="form-control"
               formControlName="numberPhotography"
-              min="0" />
+              maxlength="10"
+              min="1"
+              [defaultValue]="1"
+              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="pt-4 col-md-12">
           <form-field
             [control]="typeRelevantForm.get('detailsPhotography')"
             label="Detalle">

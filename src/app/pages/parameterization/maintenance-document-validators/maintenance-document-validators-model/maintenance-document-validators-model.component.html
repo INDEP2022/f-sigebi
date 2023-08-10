@@ -12,19 +12,14 @@
             <input
               class="form-control"
               formControlName="proceedingsType"
-              type="text"
-              oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" />
+              type="text" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="validatorsProceedingsForm.get('secVal')"
             label="Secuencia">
-            <input
-              class="form-control"
-              formControlName="secVal"
-              type="number"
-              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+            <input class="form-control" formControlName="secVal" type="text" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -47,8 +42,7 @@
             <textarea
               class="form-control pt-2"
               formControlName="scriptVal"
-              rows="10"
-              oninput="if(this.value.length > 4000) this.value = this.value.slice(0, 4000);"></textarea>
+              rows="10"></textarea>
           </form-field>
         </div>
       </div>
@@ -60,7 +54,7 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (confirm)="confirm()"
+          (click)="confirm()"
           [disabled]="!validatorsProceedingsForm.valid">
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>

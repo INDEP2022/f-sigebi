@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { SeparatorsDocuments } from 'src/app/core/models/ms-documents/document-separators';
 import { DocumentsSeparatorsService } from 'src/app/core/services/ms-documents-separators/documents-separators.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-of-separators-documents-modal',
@@ -15,7 +16,7 @@ export class CatOfSeparatorsDocumentsModalComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'SEPARADORES A DOCUMENTOS';
+  title: string = 'Separador a Documento';
   edit: boolean = false;
   separatorsDocuments: SeparatorsDocuments;
   separatorsDocumentsModalForm: ModelForm<SeparatorsDocuments>;
@@ -33,8 +34,22 @@ export class CatOfSeparatorsDocumentsModalComponent
   }
   private prepareForm() {
     this.separatorsDocumentsModalForm = this.fb.group({
-      key: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      key: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
       numRegister: [null],
     });
 
@@ -51,12 +66,23 @@ export class CatOfSeparatorsDocumentsModalComponent
     this.edit ? this.update() : this.create();
   }
   create() {
+    if (
+      this.separatorsDocumentsModalForm.controls['key'].value.trim() === '' ||
+      this.separatorsDocumentsModalForm.controls['description'].value.trim() ===
+        ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.documentsSeparatorsService
       .create(this.separatorsDocumentsModalForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.alert('error', 'El valor CVE.Separador, ya fue registrado', '');
+          this.loading = false;
+        },
       });
   }
   update() {

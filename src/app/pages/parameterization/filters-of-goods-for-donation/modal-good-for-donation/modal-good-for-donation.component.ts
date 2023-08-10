@@ -17,7 +17,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class ModalGoodForDonationComponent extends BasePage implements OnInit {
-  title: string = 'Filtro de bienes para donación';
+  title: string = 'Filtro de Bienes para Donación';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;

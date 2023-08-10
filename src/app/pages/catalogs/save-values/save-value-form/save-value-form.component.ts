@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-save-value-form',
@@ -15,7 +16,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   saveValue: ISaveValue;
   edit: boolean = false;
   saveValueForm: ModelForm<ISaveValue>;
-  title: string = 'Valores guardados';
+  title: string = 'Valor Guardado';
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +33,12 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     this.saveValueForm = this.fb.group({
       id: [
         null,
-        [Validators.required, Validators.minLength(0), Validators.maxLength(5)],
+        [
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(5),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       description: [
         null,
@@ -40,6 +46,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
           Validators.required,
           Validators.minLength(0),
           Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
         ],
       ],
       location: [
@@ -48,9 +55,17 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
           Validators.required,
           Validators.minLength(0),
           Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
         ],
       ],
-      responsible: [null, [Validators.required]],
+      responsible: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       noRegistration: [null],
     });
 
@@ -66,10 +81,21 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.saveValueForm.controls['description'].value.trim() === '' ||
+      this.saveValueForm.controls['responsible'].value.trim() === '' ||
+      this.saveValueForm.controls['location'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.saveValueService.create(this.saveValueForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.alert('error', 'La Calve ya fue registrada', '');
+        this.loading = false;
+      },
     });
   }
 

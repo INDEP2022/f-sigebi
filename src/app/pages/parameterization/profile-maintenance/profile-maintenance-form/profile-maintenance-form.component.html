@@ -1,0 +1,88 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar' : 'Nuevo' }} Perfil por Pantalla
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form1">
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form1.get('profile')" label="Perfil">
+            <input type="text" class="form-control" formControlName="profile" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form1.get('recordNumber')"
+            label="No. Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="recordNumber" />
+          </form-field>
+        </div>
+
+        <div class="pt-4 col-md-6">
+          <form-field [control]="form1.get('screenKey')">
+            <ngx-select
+              [form]="form1"
+              [searchable]="true"
+              control="screenKey"
+              [data]="screen"
+              value="screenKey"
+              bindLabel="screenKey"
+              label="Pantalla"
+              (fetchItems)="getScreenAll($event)"
+              [readonly]="false"></ngx-select>
+          </form-field>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              label="Lectura"
+              [control]="form1.get('permissionReading')">
+              <ng-select
+                formControlName="permissionReading"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="S">Si</ng-option>
+                <ng-option value="N">No</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              label="Escritura"
+              [control]="form1.get('permissionWriting')">
+              <ng-select
+                formControlName="permissionWriting"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="S">Si</ng-option>
+                <ng-option value="N">No</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form1.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

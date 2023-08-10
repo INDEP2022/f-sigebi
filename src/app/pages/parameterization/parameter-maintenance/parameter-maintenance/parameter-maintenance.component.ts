@@ -94,6 +94,7 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getPagination();
         }
       });
@@ -118,7 +119,7 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: err => {
-        this.onLoadToast('error', err.error.message, '');
+        //this.onLoadToast('error', err.error.message, '');
         this.loading = false;
         this.data.load([]);
         this.data.refresh();
@@ -143,14 +144,15 @@ export class ParameterMaintenanceComponent extends BasePage implements OnInit {
     this.modalService.show(ParameterFormComponent, config);
   }
 
-  public deleteParameter(id: string) {
+  deleteParameter(event: any) {
+    console.log(event.id);
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.parameter.remove(id).subscribe({
+        this.parameter.remove(event.id).subscribe({
           next: () => (
             this.onLoadToast(
               'success',

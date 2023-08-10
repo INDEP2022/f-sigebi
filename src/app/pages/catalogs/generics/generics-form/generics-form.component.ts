@@ -8,7 +8,10 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { POSITVE_NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { IGeneric } from '../../../../core/models/catalogs/generic.model';
 import { GenericService } from './../../../../core/services/catalogs/generic.service';
 
@@ -39,18 +42,40 @@ export class GenericsFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.genericsForm = this.fb.group({
-      name: [null, [Validators.required, Validators.maxLength(50)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       keyId: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
-      description: [null, [Validators.maxLength(100)]],
+      description: [
+        null,
+        [
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
+      ],
       version: [
         null,
-        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+        [
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(20),
+          Validators.required,
+        ],
       ],
-      active: [null],
-      editable: [null],
+      active: [null, [Validators.required]],
+      editable: [null, [Validators.required]],
     });
     const fieldName = document.getElementById('inputName');
     const fieldKeyId = document.getElementById('inputKeyId');
@@ -74,11 +99,24 @@ export class GenericsFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.genericsForm.controls['name'].value.trim() === '' ||
+      this.genericsForm.controls['description'].value.trim() === '' ||
+      this.genericsForm.controls['keyId'].value.trim() === '' ||
+      this.genericsForm.controls['version'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
+
     console.log(this.genericsForm.value);
     this.genericsService.create(this.genericsForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.alert('error', 'El Identficador Clave ya fue registrado', '');
+        this.loading = false;
+      },
     });
   }
 

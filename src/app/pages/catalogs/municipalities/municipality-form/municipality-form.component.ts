@@ -55,7 +55,14 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
           Validators.maxLength(100),
         ],
       ],
-      description: [null, [Validators.required, Validators.maxLength(100)]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       codMarginality: [
         null,
         [
@@ -114,6 +121,19 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.municipalityForm.controls['nameMunicipality'].value.trim() == '' ||
+      this.municipalityForm.controls['risk'].value.trim() == '' ||
+      this.municipalityForm.controls['description'].value.trim() == '' ||
+      (this.municipalityForm.controls['nameMunicipality'].value.trim() == '' &&
+        this.municipalityForm.controls['risk'].value.trim() == '' &&
+        this.municipalityForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+    }
     this.loading = true;
     this.municipalityService.create(this.municipalityForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -122,14 +142,27 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   }
 
   update() {
-    this.loading = true;
-    this.municipalityForm.value.idMunicipality =
-      this.municipality.idMunicipality;
-    this.municipalityForm.value.stateKey = this.municipality.stateKey;
-    this.municipalityService.update(this.municipalityForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.municipalityForm.controls['nameMunicipality'].value.trim() == '' ||
+      this.municipalityForm.controls['risk'].value.trim() == '' ||
+      this.municipalityForm.controls['description'].value.trim() == '' ||
+      (this.municipalityForm.controls['nameMunicipality'].value.trim() == '' &&
+        this.municipalityForm.controls['risk'].value.trim() == '' &&
+        this.municipalityForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.municipalityForm.value.idMunicipality =
+        this.municipality.idMunicipality;
+      this.municipalityForm.value.stateKey = this.municipality.stateKey;
+      this.municipalityService.update(this.municipalityForm.value).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   handleSuccess() {

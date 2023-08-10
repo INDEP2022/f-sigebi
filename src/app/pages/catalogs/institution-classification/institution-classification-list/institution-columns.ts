@@ -10,7 +10,7 @@ export const INSTITUTION_CLASIFICATION_COLUMNS = {
     sort: false,
   },
   numRegister: {
-    title: 'Nro Registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
