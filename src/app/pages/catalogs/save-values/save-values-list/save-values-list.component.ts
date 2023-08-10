@@ -125,7 +125,7 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       error: err => {
         this.alert(
           'warning',
-          'Valores Guardado',
+          'Valor Guardado',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

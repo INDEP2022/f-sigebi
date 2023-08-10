@@ -77,6 +77,14 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.catserviceForm.controls['code'].value.trim() === '' ||
+      this.catserviceForm.controls['description'].value.trim() === '' ||
+      this.catserviceForm.controls['subaccount'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.catserviceService.create(this.catserviceForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),

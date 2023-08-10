@@ -45,7 +45,11 @@ export class DeductivesVerificationFormComponent
       ],
       percentagePena: [
         null,
-        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(DOUBLE_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       verificationType: [
         null,
@@ -71,23 +75,45 @@ export class DeductivesVerificationFormComponent
   }
 
   create() {
-    this.loading = true;
-    this.deductiveVerificationService
-      .create(this.deductiveForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.deductiveForm.controls['description'].value.trim() == '' ||
+      this.deductiveForm.controls['verificationType'].value.trim() == '' ||
+      (this.deductiveForm.controls['description'].value.trim() == '' &&
+        this.deductiveForm.controls['verificationType'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.deductiveVerificationService
+        .create(this.deductiveForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.deductiveVerificationService
-      .update(this.deductive.id, this.deductiveForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.deductiveForm.controls['description'].value.trim() == '' ||
+      this.deductiveForm.controls['verificationType'].value.trim() == '' ||
+      (this.deductiveForm.controls['description'].value.trim() == '' &&
+        this.deductiveForm.controls['verificationType'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.deductiveVerificationService
+        .update(this.deductive.id, this.deductiveForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

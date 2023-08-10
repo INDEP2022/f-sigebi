@@ -22,10 +22,10 @@
             [control]="indicatorDeadlinesModalForm.get('deadline')"
             label="Plazo">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="deadline"
-              min="0" />
+              min="1" />
           </form-field>
         </div>
       </div>
@@ -37,7 +37,8 @@
             <textarea
               rows="2"
               class="form-control pt-3"
-              formControlName="formula"></textarea>
+              formControlName="formula"
+              pattern="^[^\s].*"></textarea>
           </form-field>
         </div>
       </div>

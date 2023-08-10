@@ -82,7 +82,7 @@
           </form-field>
         </div>
         <div class="col-md-6 mt-4">
-          <form-field
+          <!--<form-field
             label="Vigente"
             [control]="unitCostDetForm.get('validity')">
             <select
@@ -92,10 +92,22 @@
               <option value="1">SI</option>
               <option value="0">NO</option>
             </select>
-            <!--<input
+            <input
               type="number"
               class="form-control"
-              formControlName="validity" />-->
+              formControlName="validity" />
+            </form-field>-->
+          <form-field
+            label="Vigente"
+            [control]="unitCostDetForm.get('validity')">
+            <ng-select
+              formControlName="validity"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Si</ng-option>
+              <ng-option value="0">No</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>

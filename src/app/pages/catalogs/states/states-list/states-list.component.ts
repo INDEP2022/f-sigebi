@@ -67,6 +67,30 @@ export class StatesListComponent extends BasePage implements OnInit {
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
+
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'codeCondition':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'descCondition':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'zoneHourlyStd':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'zoneHourlyVer':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -74,6 +98,7 @@ export class StatesListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
+          console.info(this.params);
           this.getStates();
         }
       });
@@ -130,7 +155,7 @@ export class StatesListComponent extends BasePage implements OnInit {
     this.stateService.remove(id).subscribe({
       next: () => {
         this.getStates(),
-          this.alert('success', 'Registro de estado', 'Borrado Correctamente');
+          this.alert('success', 'Estado', 'Borrado Correctamente');
       },
       error: error => {
         this.alert(

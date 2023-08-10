@@ -9,6 +9,7 @@ import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 //service
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
 import { BatterysService } from 'src/app/core/services/save-values/battery.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -42,9 +43,16 @@ export class BatteryModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.batteryForm = this.fb.group({
-      storeCode: [null, [, Validators.min(0)]],
-      idBattery: [null, [Validators.min(0)]],
-      description: [null, [Validators.required]],
+      storeCode: [null, [Validators.min(0)]],
+      idBattery: [null],
+      description: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+          Validators.required,
+        ],
+      ],
       status: [
         null,
         [
@@ -77,22 +85,44 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    console.log(this.batteryForm.value);
-    this.batterysService.create(this.batteryForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.batterysService
-      .update2(this.battery.idBattery, this.batteryForm.value)
-      .subscribe({
+    if (
+      this.batteryForm.controls['description'].value.trim() == '' ||
+      this.batteryForm.controls['status'].value.trim() == '' ||
+      (this.batteryForm.controls['description'].value.trim() == '' &&
+        this.batteryForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.batteryForm.value);
+      this.batterysService.create(this.batteryForm.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.batteryForm.controls['description'].value.trim() == '' ||
+      this.batteryForm.controls['status'].value.trim() == '' ||
+      (this.batteryForm.controls['description'].value.trim() == '' &&
+        this.batteryForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.batterysService
+        .update2(this.battery.idBattery, this.batteryForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

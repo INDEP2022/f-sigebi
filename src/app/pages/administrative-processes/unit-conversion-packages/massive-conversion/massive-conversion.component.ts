@@ -1752,7 +1752,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.loading = true;
     let params: any = {};
     params['NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
-
+    params['PCLAVE'] = this.form.get('cvePackage').value.cvePackage;
+    params['PDESTINO'] = this.form.get('packageType').value.packageType;
+    console.log('params....', params);
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport('RGENACTACONVUNIDAD', params).subscribe({
       next: (response: BlobPart) => {

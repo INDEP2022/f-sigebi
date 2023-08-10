@@ -1,17 +1,26 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <div class="d-flex flex-wrap justify-content-between aling-items-center">
-      <h5 class="modal-title">Lista de cuentas de bancos</h5>
-      <div class="buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
-          Nueva
-        </button>
-      </div>
+      <h5 class="title">Lista de cuentas de bancos</h5>
     </div>
   </div>
 
   <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+        <div>
+          <button
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
+            (click)="openForm()">
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="row pt-4">
       <div class="col-md-12">
         <div class="table-responsive">

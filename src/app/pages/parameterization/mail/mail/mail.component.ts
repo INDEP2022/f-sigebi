@@ -36,6 +36,7 @@ export class MailComponent extends BasePage implements OnInit {
   P_GEST_OK: number = null;
   P_VOLANTE: number = null;
   P_EXPEDIENTE: number = null;
+  back: boolean = false;
 
   constructor(
     private modalService: BsModalService,
@@ -110,7 +111,7 @@ export class MailComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'registryNumber':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'curp':
                 searchFilter = SearchFilter.ILIKE;
@@ -122,10 +123,10 @@ export class MailComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'zipCode':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'phone':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'profession':
                 searchFilter = SearchFilter.ILIKE;
@@ -170,14 +171,6 @@ export class MailComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-
-            /*filter.field == 'id' ||
-            filter.field == 'name' ||
-            filter.field == 'usuario' ||
-            filter.field == 'email' ||
-            filter.field == 'registryNumber'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -223,20 +216,20 @@ export class MailComponent extends BasePage implements OnInit {
     this.modalService.show(MailModalComponent, modalConfig);
   }
 
-  goBack() {
-    if (this.origin == 'FADMAPROEXTDOM') {
-      this.router.navigate(
-        ['/pages/juridical/goods-process-validation-extdom'],
-        {
-          queryParams: {
-            origin: this.origin2 ? this.origin2 : null,
-            P_NO_TRAMITE: this.P_NO_TRAMITE,
-            P_GEST_OK: this.P_GEST_OK,
-            P_VOLANTE: this.P_VOLANTE,
-            P_EXPEDIENTE: this.P_EXPEDIENTE,
-          },
-        }
-      );
-    }
-  }
+  // goBack() {
+  //   if (this.origin == 'FADMAPROEXTDOM') {
+  //     this.router.navigate(
+  //       ['/pages/juridical/goods-process-validation-extdom'],
+  //       {
+  //         queryParams: {
+  //           origin: this.origin2 ? this.origin2 : null,
+  //           P_NO_TRAMITE: this.P_NO_TRAMITE,
+  //           P_GEST_OK: this.P_GEST_OK,
+  //           P_VOLANTE: this.P_VOLANTE,
+  //           P_EXPEDIENTE: this.P_EXPEDIENTE,
+  //         },
+  //       }
+  //     );
+  //   }
+  // }
 }
