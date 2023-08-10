@@ -16,7 +16,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
   nonWorkingDaysForm: ModelForm<ICalendar>;
   calendar: ICalendar;
-  title: string = 'Días Inhábiles';
+  title: string = 'Día Inhábil';
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
@@ -36,7 +36,11 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
       idDate: [null, [Validators.required]],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
       ],
     });
     if (this.calendar != null) {

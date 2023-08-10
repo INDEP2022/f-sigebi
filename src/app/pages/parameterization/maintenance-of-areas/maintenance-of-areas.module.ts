@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 
+import { CustomSelectComponent } from 'src/app/@standalone/shared-forms/custom-select/custom-select.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DepartmentFormComponent } from './department-form/department-form.component';
 import { MaintenanceOfAreasRoutingModule } from './maintenance-of-areas-routing.module';
@@ -16,6 +17,7 @@ import { MaintenanceOfAreasComponent } from './maintenance-of-areas/maintenance-
     SharedModule,
     ModalModule.forChild(),
     DelegationSharedComponent,
+    CustomSelectComponent,
   ],
 })
 export class MaintenanceOfAreasModule {}

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
-import { getUser } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -259,7 +258,7 @@ export class NoticeAbandonmentForSecuringComponent
     }
   }
   accept() {
-    console.log(this.selectedGood.status);
+    /*console.log(this.selectedGood.status);
     let validateParams = {
       status: this.selectedGood.status,
       notifyDate: this.selectedRow.notificationDate,
@@ -316,7 +315,7 @@ export class NoticeAbandonmentForSecuringComponent
         'Error',
         'Deben haber 3 notificaciones de aseguramiento para ir a Confirmación de Abandonos.'
       );
-    }
+    }*/
   }
 
   onSelectedGood(event: any) {

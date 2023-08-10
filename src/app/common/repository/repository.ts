@@ -22,6 +22,8 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
+    console.log(params);
+    console.log(params);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
@@ -145,6 +147,13 @@ export class Repository<T> implements IRepository<T> {
 
     return this.httpClient.delete(`${fullRoute}/${id}`);
   }
+
+  remove5(route: string, id: number | string, id2: number | string) {
+    const fullRoute = this.buildRoute(route);
+
+    return this.httpClient.delete(`${fullRoute}`);
+  }
+
   removeRepuves(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, { body: { key: formData } });
@@ -286,6 +295,11 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, obj);
   }
+
+  removeDateDocuments(route: string, body?: {}) {
+    return this.httpClient.delete(`${environment.API_URL}${route}`, { body });
+  }
+
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}`, formData);

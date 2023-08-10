@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeSiniesters } from 'src/app/core/models/catalogs/types-of-claims.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TypesOfClaimsService } from '../../../../core/services/catalogs/types-of-claims.service';
 
 @Component({
@@ -12,7 +13,7 @@ import { TypesOfClaimsService } from '../../../../core/services/catalogs/types-o
   styles: [],
 })
 export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
-  title: string = 'TIPO DE SINIESTROS';
+  title: string = 'Tipo de Siniestro';
   edit: boolean = false;
   form: ModelForm<ITypeSiniesters>;
   claims: ITypeSiniesters;
@@ -32,7 +33,14 @@ export class ModalTypeOfClaimsComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      description: [null, [Validators.maxLength(200)]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       flag: [null, [Validators.max(99)]],
     });
     if (this.claims != null) {

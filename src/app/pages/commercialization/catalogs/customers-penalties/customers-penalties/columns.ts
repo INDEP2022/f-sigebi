@@ -135,24 +135,19 @@ export const COLUMNS2 = {
     title: 'Tipo de Penalización',
     sort: false,
   },
-  event: {
+  /*event: {
     title: 'Clave Evento',
     sort: false,
     valuePrepareFunction: (value: any) => {
       return value != null ? value.id : '';
     },
-    /*filterFunction(cell?: any, search?: string): boolean {
-      console.log(cell.id);
-      let column123 = cell.id;
-      if (column123?.toUpperCase() >= search.toUpperCase() || search === '') {
-        return true;
-      } else {
-        return false;
-      }
-    },*/
     filterFunction(cell?: any, search?: string): boolean {
       return true;
     },
+  },*/
+  eventId: {
+    title: 'Clave Evento',
+    sort: false,
   },
   batchPublic: {
     title: 'Lote',
@@ -171,34 +166,10 @@ export const COLUMNS2 = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
-    /*valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },*/
   },
   finalDate: {
     title: 'Fecha Final',
     sort: false,
-    /*valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },*/
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -229,18 +200,6 @@ export const COLUMNS2 = {
   penalizesDate: {
     title: 'Fecha Penaliza',
     sort: false,
-    /*valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },*/
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
 
@@ -255,21 +214,8 @@ export const COLUMNS2 = {
   releasesDate: {
     title: 'Fecha Libera',
     sort: false,
-    /*valuePrepareFunction: (cell: any, row: any) => {
-      const parts = cell.split('-');
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-      const formattedDate = `${day}/${month}/${year}`;
-      return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
-    },*/
     valuePrepareFunction: (date: Date) => {
       var raw = new Date(date);
-
       var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
       return formatted;
     },

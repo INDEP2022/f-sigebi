@@ -20,12 +20,12 @@ export const SUBDELEGATION_COLUMNS = {
     width: '10%',
   },
   id: {
-    title: 'No. Sub Delegación',
+    title: 'No. Subdelegación',
     sort: false,
     width: '10%',
   },
   description: {
-    title: 'Descripción Sub Delegación',
+    title: 'Descripción Subdelegación',
     sort: false,
   },
   // dailyConNumber: {

@@ -97,7 +97,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
               movementNumber: () => (searchFilter = SearchFilter.EQ),
               date: () => (searchFilter = SearchFilter.EQ),
               move: () => (searchFilter = SearchFilter.ILIKE),
-              account: () => (searchFilter = SearchFilter.EQ),
+              bill: () => (searchFilter = SearchFilter.EQ),
               referenceOri: () => (searchFilter = SearchFilter.ILIKE),
               bankKey: () => (searchFilter = SearchFilter.ILIKE),
               branchOffice: () => (searchFilter = SearchFilter.EQ),
@@ -177,6 +177,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     };
     this.modalService.show(NewAndUpdateComponent, config);
   }
+
   questionDelete(data: any) {
     console.log(data);
     this.alertQuestion(
@@ -202,6 +203,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       this.valAcc = event.data;
     }
   }
+
   async getPayments(filter: any) {
     this.loading = true;
     this.totalItems = 0;

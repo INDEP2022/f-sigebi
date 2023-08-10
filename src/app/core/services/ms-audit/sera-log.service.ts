@@ -24,8 +24,8 @@ export class SeraLogService extends HttpService {
     );
   }
 
-  getAllByRegisterNum(registerNum: string | number, params: _Params) {
-    const route = `${AuditEndpoints.GetAllByRegisterNum} ${registerNum}`;
+  getAllByRegisterNum(registerNum: number, params: _Params) {
+    const route = `${AuditEndpoints.GetAllByRegisterNum}/${registerNum}`;
     return this.get<IListResponse<IBinnacle>>(route, params);
   }
 

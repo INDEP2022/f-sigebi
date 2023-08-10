@@ -143,4 +143,10 @@ export class SecurityService extends HttpService {
       `${SecurityEndpoints.UsersTracking}${this.uName}${uName}`
     );
   }
+
+  getValidScreens(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.TrackingValidScreens}`
+    );
+  }
 }

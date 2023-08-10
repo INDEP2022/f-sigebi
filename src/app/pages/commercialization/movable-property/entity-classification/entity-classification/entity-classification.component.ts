@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITypeEntityGov } from 'src/app/core/models/ms-parametercomer/type-entity-gov.model';
 import { TypeEntityGovService } from 'src/app/core/services/ms-parametercomer/type-entity-gov.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -14,9 +18,12 @@ import { ENTITY_CLASS_COLUMNS } from './entity-classification-columns';
   styles: [],
 })
 export class EntityClassificationComponent extends BasePage implements OnInit {
-  params = new BehaviorSubject(new FilterParams());
+  //params = new BehaviorSubject(new FilterParams());
   data: ITypeEntityGov[] = [];
   totalItems: number = 0;
+  data2 = new LocalDataSource();
+  columnFilters: any = [];
+  params = new BehaviorSubject(new ListParams());
 
   constructor(
     private typeEntityGovService: TypeEntityGovService,
@@ -47,8 +54,12 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
 
   getData() {
     this.loading = true;
-    const params = this.params.getValue().getParams();
-    this.typeEntityGovService.getAllFilter(params).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    //const params = this.params.getValue().getParams();
+    this.typeEntityGovService.getAllFilterv2(params).subscribe({
       next: response => {
         this.loading = false;
         this.data = response.data;
@@ -58,6 +69,44 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  changePagin() {
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getData();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
 
   edit(typeEntity?: ITypeEntityGov) {

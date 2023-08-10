@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { convertFormatDate, showToast } from 'src/app/common/helpers/helpers';
+import { convertFormatDate } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -46,9 +46,9 @@ export class SirsaePaymentConsultationListComponent
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(event => this.search(event));
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(event => this.search(event));
   }
 
   resetFilter() {
@@ -56,17 +56,21 @@ export class SirsaePaymentConsultationListComponent
       this.tableSource.refresh();
     });
     this.form.reset();
+    this.totalItems = 0;
   }
 
   clearTable(): void {
     if (this.tableSource.count() > 0) {
       this.tableSource.empty().then(() => {
+        this.tableSource.load([]);
         this.tableSource.refresh();
+        this.totalItems = 0;
       });
     }
   }
 
   search(listParams?: ListParams): void {
+    console.log('Lista de Parametros: ', listParams);
     console.log(this.form.value);
     if (!this.formValid()) {
       return;
@@ -83,6 +87,7 @@ export class SirsaePaymentConsultationListComponent
       },
       error: () => {
         this.loading = false;
+        this.onLoadToast('error', 'Error', 'No se Encontraron Registros');
       },
     });
   }
@@ -104,7 +109,7 @@ export class SirsaePaymentConsultationListComponent
       );
     }
     if (bank) {
-      filters.addFilter('ifdsc', bank);
+      filters.addFilter('ifdsc', bank, SearchFilter.LIKE);
     }
     if (status) {
       filters.addFilter('statusMov', status);
@@ -114,6 +119,7 @@ export class SirsaePaymentConsultationListComponent
       filters.page = listParams.page || 1;
       filters.limit = listParams.limit || 10;
     }
+    console.log('Filtro: ', filters);
     return filters;
   }
 
@@ -121,11 +127,7 @@ export class SirsaePaymentConsultationListComponent
     const values = this.form.value;
     const isValid = Object.keys(values).some(key => Boolean(values[key]));
     if (!isValid) {
-      showToast({
-        title: 'Atención',
-        text: 'Favor de llenar un campos',
-        icon: 'error',
-      });
+      this.onLoadToast('warning', 'Alerta', 'Llenar un Campo para Continuar');
     }
     return isValid;
   }

@@ -7,16 +7,28 @@
       <h5 class="title">Penalizaciones</h5>
       <div class="buttons">
         <div>
+          <!--<button class="btn btn-primary btn-sm active m-3">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>-->
           <button
-            class="btn btn-info btn-sm active ml-2 mr-4"
-            (click)="openForm()">
+            class="btn btn-primary btn-sm active ml-2 mr-2"
+            (click)="openFormUpdate(eventPenalities)"
+            *ngIf="permission && selectRow">
+            Liberar
+          </button>
+        </div>
+        <div>
+          <button
+            class="btn btn-info btn-sm active ml-2 mr-3"
+            (click)="openForm()"
+            *ngIf="permission">
             Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
         <app-columns-select [(settings)]="settings" [leftList]="true">
         </app-columns-select>
         <div>
-          <div class="btn-group col-md-2" dropdown>
+          <div class="btn-group col-md-2 mr-2" dropdown>
             <button
               id="button-basic"
               dropdownToggle

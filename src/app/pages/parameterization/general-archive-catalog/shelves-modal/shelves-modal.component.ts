@@ -52,12 +52,30 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
           Validators.min(0),
         ],
       ],
-      id: [null, [Validators.pattern(NUMBERS_PATTERN), Validators.min(0)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(5),
+        ],
+      ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
-      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1),
+        ],
+      ],
       registerNumber: [null, []],
     });
     if (this.shelves != null) {
@@ -88,22 +106,47 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    console.log(this.shelvesForm.value);
-    this.shelvessService.create(this.shelvesForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.shelvesForm.controls['description'].value.trim() == '' ||
+      this.shelvesForm.controls['status'].value.trim() == '' ||
+      (this.shelvesForm.controls['description'].value.trim() == '' &&
+        this.shelvesForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      console.log(this.shelvesForm.value);
+      this.shelvessService.create(this.shelvesForm.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.loading = false;
+          this.alert('warning', 'El Numero de Estante ya se Registro', ``);
+        },
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.shelvessService
-      .update(this.shelves.id, this.shelvesForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.shelvesForm.controls['description'].value.trim() == '' ||
+      this.shelvesForm.controls['status'].value.trim() == '' ||
+      (this.shelvesForm.controls['description'].value.trim() == '' &&
+        this.shelvesForm.controls['status'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.shelvessService
+        .update(this.shelves.id, this.shelvesForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

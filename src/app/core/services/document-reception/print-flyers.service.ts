@@ -20,7 +20,19 @@ export class PrintFlyersService extends HttpService {
   ): Observable<IListResponse<ISubdelegation>> {
     let partials = ENDPOINT_LINKS.Subdelegation.split('/');
     this.microservice = partials[0];
+    console.log(params);
+    console.log(partials[1]);
     return this.get<IListResponse<ISubdelegation>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
+  getSubdelegations2(
+    params?: string
+  ): Observable<IListResponse<ISubdelegation>> {
+    let partials = ENDPOINT_LINKS.Subdelegation.split('/');
+    this.microservice = partials[0];
+    return this.get2<IListResponse<ISubdelegation>>(partials[1], params).pipe(
       tap(() => (this.microservice = ''))
     );
   }

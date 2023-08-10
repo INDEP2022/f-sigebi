@@ -22,6 +22,8 @@ import { NONWORKINGDAYS_COLUMNS } from './non-working-days-columns';
 export class NonWorkingDaysComponent extends BasePage implements OnInit {
   calendar: ICalendar[] = [];
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+  totalItems1: number = 0;
   columnFilters: any = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -47,11 +49,12 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = `filter.${filter.field}`;
             let searchFilter = SearchFilter.ILIKE;
+            let field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'id':
-                searchFilter = SearchFilter.ILIKE;
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
@@ -91,12 +94,17 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
     this.calendarService.getAll(params).subscribe({
       next: response => {
         this.calendar = response.data;
-        this.data.load(this.calendar);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count || 0;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
   private getCalendar() {
@@ -106,11 +114,16 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
       next: response => {
         this.calendar = response.data;
         this.totalItems = response.count;
-        this.data.load(this.calendar);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
   openForm(calendar?: ICalendar) {
@@ -142,7 +155,7 @@ export class NonWorkingDaysComponent extends BasePage implements OnInit {
         };
         this.calendarService.remove(data).subscribe({
           next: () => {
-            this.onLoadToast('success', 'Se ha eliminado', '');
+            this.onLoadToast('success', 'Día Inhábil', 'Borrado Correctamente');
             this.getCalendarAll();
           },
           error: err => this.onLoadToast('error', err.error.message, ''),

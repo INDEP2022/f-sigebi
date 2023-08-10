@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 //models
@@ -20,7 +21,7 @@ import { DocumentsForDictumService } from 'src/app/core/services/catalogs/docume
 export class CatDocRequireModalComponent extends BasePage implements OnInit {
   documentsForDictumForm: ModelForm<IDocumentsForDictum>;
   documentsForDictum: IDocumentsForDictum;
-  title: string = 'Catálogo de requisitos documentales';
+  title: string = 'Requisito Documental';
   edit: boolean = false;
 
   constructor(
@@ -37,13 +38,29 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.documentsForDictumForm = this.fb.group({
+      numRegister: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       id: [
         null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+          Validators.maxLength(8),
+        ],
       ],
       description: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       typeDictum: [null, [Validators.required]],
     });
@@ -62,12 +79,22 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.documentsForDictumForm.controls['id'].value.trim() === '' ||
+      this.documentsForDictumForm.controls['description'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.documentsForDictumService
       .create(this.documentsForDictumForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'El Numero de Registro ya registrado', '');
+        },
       });
   }
 
@@ -82,8 +109,8 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

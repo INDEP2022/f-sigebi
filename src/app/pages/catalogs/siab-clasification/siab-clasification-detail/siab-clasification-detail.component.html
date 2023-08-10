@@ -22,7 +22,7 @@
         <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('typeDescription')"
-            label="Descripción tipo">
+            label="Descripción Tipo">
             <textarea
               type="text"
               class="form-control"
@@ -50,7 +50,7 @@
         <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('subtypeDescription')"
-            label="Descripción subtipo">
+            label="Descripción Subtipo">
             <textarea
               type="text"
               class="form-control"
@@ -78,7 +78,7 @@
         <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('ssubtypeDescription')"
-            label="Descripción ssubtipo">
+            label="Descripción Ssubtipo">
             <textarea
               type="text"
               class="form-control"
@@ -105,7 +105,7 @@
         <div class="col-md-6">
           <form-field
             [control]="siabClasificationform.get('sssubtypeDescription')"
-            label="Descripción sssubtipo">
+            label="Descripción Sssubtipo">
             <textarea
               type="text"
               class="form-control"
@@ -120,17 +120,12 @@
           <form-field
             [control]="siabClasificationform.get('version')"
             label="Versión">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="version"
-              min="0" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>
     </form>
   </div>
-
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">

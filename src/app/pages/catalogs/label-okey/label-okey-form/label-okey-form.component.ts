@@ -14,7 +14,7 @@ import { STRING_PATTERN } from '../../../../core/shared/patterns';
 })
 export class LabelOkeyFormComponent extends BasePage implements OnInit {
   labelOKey: ILabelOKey;
-  title: string = 'etiqueta bien';
+  title: string = 'Etiqueta Bien';
   edit: boolean = false;
   labelOkeyForm: ModelForm<ILabelOKey>;
   constructor(
@@ -51,6 +51,10 @@ export class LabelOkeyFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.labelOkeyForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.labelOkeyService.create(this.labelOkeyForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -69,6 +73,8 @@ export class LabelOkeyFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

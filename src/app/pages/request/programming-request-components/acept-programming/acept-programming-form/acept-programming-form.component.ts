@@ -525,6 +525,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
         idProg,
         idTypeDoc,
         signatore,
+        typeFirm: 'electronica',
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
@@ -1149,7 +1150,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
       this.msgGuardado(
         'success',
         'Creación de tarea correcta',
-        `Se creó la tarea Ejecutar Recepción con el folio: ${this.programming.folio}`
+        `Se creó la tarea ejecutar recepción con el folio: ${this.programming.folio}`
       );
     }
   }
