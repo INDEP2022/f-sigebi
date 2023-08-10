@@ -1,0 +1,65 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BÚSQUEDA DE PROGRAMACIONES</h5>
+  </div>
+  <div body>
+    <form [formGroup]="performForm" class="form-material">
+      <div class="row pt-2">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('regionalDelegationNumber')">
+            <ngx-select
+              [form]="performForm"
+              control="regionalDelegationNumber"
+              [data]="regionalsDelegations"
+              value="description"
+              bindLabel="description"
+              label="Delegaci&oacute;n Regional"
+              (change)="regionalDelegationSelect($event)"
+              (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('programmingStatus')"
+            label="Estatus Programación">
+            <ng-select class="form-control" formControlName="programmingStatus">
+              <ng-option value="EN_PROGRAMACION">EN PROGRAMACIÓN</ng-option>
+              <ng-option value="APROBADA">APROBADA</ng-option>
+              <ng-option value="CANCELADA">CANCELADA</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+
+    <div class="row">
+      <div class="justify-content-end btn-toolbar">
+        <button
+          (click)="searchProgramming()"
+          class="btn btn-primary btn-sm active">
+          Buscar <i class="fa fa-search"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="justify-content-start">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive pt-3'"
+          [settings]="settings"
+          [source]="programmings">
+        </ng2-smart-table>
+
+        <app-pagination
+          [params]="paramsProgramming"
+          [totalItems]="totalItemProgramming"></app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>
