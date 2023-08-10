@@ -22,8 +22,6 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
-    console.log(params);
-    console.log(params);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
@@ -45,14 +43,13 @@ export class Repository<T> implements IRepository<T> {
 
   getByIdH(route: string): Observable<T> {
     const fullRoute = this.buildRoute(route);
-    console.log(fullRoute);
+
     return this.httpClient.get<T>(`${fullRoute}`);
   }
 
   getById02(route: string, params: ListParams): Observable<IListResponse<T>> {
     const fullRoute = this.buildRoute(route);
-    console.log(route);
-    console.log(fullRoute);
+
     const httpParams = new HttpParams({ fromObject: params as any });
     return this.httpClient.get<IListResponse<T>>(fullRoute, {
       params: httpParams,
@@ -389,7 +386,7 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRouteFilter(route);
-    console.log(fullRoute);
+
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
