@@ -59,6 +59,10 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.descCondition`;
                 break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

@@ -6,7 +6,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
 import {
-  NUMBERS_PATTERN,
   PERCENTAGE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from '../../../../core/shared/patterns';
@@ -52,7 +51,11 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
       contractualPenalty: [null, [Validators.required]],
       contractNumber: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
       userCreation: [null],
       creationDate: [null],

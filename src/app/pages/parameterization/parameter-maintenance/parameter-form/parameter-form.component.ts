@@ -118,6 +118,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   }
 
   dateTimeTypeDate(date: Date): number {
+    //var formatted = new DatePipe('en-EN').transform(date, 'dd/MM/yyyy', 'UTC');
     let time: string = this.datePipe.transform(date, 'yyyy/MM/dd');
     return new Date(time).getTime();
   }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
 import { ConceptsService } from 'src/app/core/services/ms-commer-concepts/concepts.service';
 
 @Injectable({
@@ -7,7 +6,7 @@ import { ConceptsService } from 'src/app/core/services/ms-commer-concepts/concep
 })
 export class ExpenseConceptsService {
   concept: { id: string; address?: string };
-  refreshParams = new Subject();
+  // refreshParams = new Subject();
   haveParams = false;
   constructor(private conceptsService: ConceptsService) {}
 

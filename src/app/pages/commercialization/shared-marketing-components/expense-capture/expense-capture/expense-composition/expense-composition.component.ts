@@ -176,6 +176,7 @@ export class ExpenseCompositionComponent
                   : null,
               };
             });
+            this.expenseCaptureDataService.dataCompositionExpenses = this.data;
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
