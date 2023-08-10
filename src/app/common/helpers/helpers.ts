@@ -57,7 +57,7 @@ export function showToast(
 
 export function showAlert<T = any>({
   ...data
-}: SwalOptions): Promise<SweetAlertResult<T>> {
+}: SwalOptions): Promise<SweetAlertResult> {
   return Swal.fire({ icon: 'success', position: 'center', ...data });
 }
 
