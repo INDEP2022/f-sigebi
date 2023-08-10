@@ -153,6 +153,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
 
     //this.filterParams.getValue().removeAllFilters();
     //this.filterParams.getValue().page = params.page;
+    this.totalItems = 0;
     this.filterParams.getValue().addFilter('id', params.text, SearchFilter.EQ);
 
     if (this.eventForm.value.txtSearch) {
@@ -457,10 +458,10 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filters.field) {
               case 'eventDadId':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
-              case 'eventRel.id':
-                searchFilter = SearchFilter.ILIKE;
+              case 'eventRelId':
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'eventRel.processKey':
                 searchFilter = SearchFilter.ILIKE;
@@ -469,7 +470,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
             }
             if (filter.search !== '') {
@@ -486,5 +487,13 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettable(this.idtable));
+  }
+
+  clearall() {
+    this.relatedEventsColumns = [];
+    this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+    this.totalItems = 0;
+    this.selectedEvent = null;
+    this.eventForm.reset();
   }
 }
