@@ -34,7 +34,7 @@ export function downloadReport(
 
 export function showToast(
   data: SwalOptions | string
-): Promise<SweetAlertResult<any>> {
+): Promise<any> {
   if (typeof data === 'string') data = { text: data } as SwalOptions;
 
   const toast = Swal.mixin({
@@ -57,7 +57,7 @@ export function showToast(
 
 export function showAlert<T = any>({
   ...data
-}: SwalOptions): Promise<SweetAlertResult> {
+}: SwalOptions): Promise<any> {
   return Swal.fire({ icon: 'success', position: 'center', ...data });
 }
 
@@ -71,7 +71,7 @@ type SwalQuestionType = {
 
 export function showQuestion({
   ...data
-}: SwalOptions): Promise<SweetAlertResult<SwalQuestionType>> {
+}: SwalOptions): Promise<any> {
   return showAlert({
     icon: 'question',
     showCancelButton: true,
