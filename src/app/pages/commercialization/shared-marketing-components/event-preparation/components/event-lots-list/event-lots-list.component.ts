@@ -267,12 +267,12 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       return;
     }
     if (askIsLotifying.isConfirmed) {
-      this.validateCsv();
+      this.validateCsv(event).subscribe();
       return;
     }
 
     if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
-      this.validateCsvCustomers();
+      this.validateCsvCustomers(event).subscribe();
       return;
     }
     this.excelControl.reset();
@@ -302,13 +302,37 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   /** PUP_VALCSV */
-  validateCsv() {
+  validateCsv(event: Event) {
     console.warn('PUP_VALCSV');
+    const { eventTpId } = this.controls;
+    const body = {
+      file: this.getFileFromEvent(event),
+      tpeventId: eventTpId.value,
+    };
+    return this.lotService.validateCSV(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log({ response });
+      })
+    );
   }
 
   /** PUP_VALCSV_CLIENTES */
-  validateCsvCustomers() {
+  validateCsvCustomers(event: Event) {
     console.warn('PUP_VALCSV_CLIENTES');
+    const file = this.getFileFromEvent(event);
+    return this.lotService.validateCustomersCSV(file).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log({ response });
+      })
+    );
   }
 
   /** VALIDA_COLUMNASBASE */

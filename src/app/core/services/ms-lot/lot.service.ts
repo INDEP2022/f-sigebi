@@ -1,5 +1,7 @@
+import { HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -239,6 +241,23 @@ export class LotService extends HttpService {
       formData
     );
   }
+
+  validateCSV(body: { file: File; tpeventId: string | number }) {
+    const { file, tpeventId } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('tpeventId', `${tpeventId}`);
+    const url = this.buildRoute('apps/pup-valcsv');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post(url, formData, { headers });
+  }
+
+  validateCustomersCSV(file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.post('pup-valcsv-clients', formData);
+  }
+
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA

@@ -65,7 +65,7 @@ export class HttpService {
    * @param route endpoint que va despues de ....api/v1
    * @returns regresa la ruta completa: 'http://sigebimsqa.indep.gob.mx/microservice/api/{route}'
    */
-  private buildRoute(route: string): string {
+  protected buildRoute(route: string): string {
     return `${this.url}${this.microservice}/${this.prefix}${route}`;
   }
 
