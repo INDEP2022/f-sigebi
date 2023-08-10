@@ -372,7 +372,7 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
 
         console.log(updateParams);
 
-        this.servideUpdate.updateGoodsByProceedings(updateParams).subscribe({
+        /*this.servideUpdate.updateGoodsByProceedings(updateParams).subscribe({
           next: data => {
             this.handleSuccess();
             console.log('Actualización exitosa:', data);
@@ -407,7 +407,7 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
             console.error('Error al actualizar:', error);
           },
         });
-
+*/
         console.log(this.selectReview.user);
       }
     }

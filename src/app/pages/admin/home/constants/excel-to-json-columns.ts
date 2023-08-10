@@ -20,3 +20,30 @@ export const EXCEL_TO_JSON_COLUMNS = {
     sort: false,
   },
 };
+
+export const EXCEL_TO_JSON = {
+  id: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  f_trnas: {
+    title: 'Fecha Transferencia',
+    sort: false,
+  },
+  f_sent: {
+    title: 'Fecha Sentencia',
+    sort: false,
+  },
+  Inte: {
+    title: 'Intereses',
+    sort: false,
+  },
+  f_teso: {
+    title: 'Fecha de Tesofe',
+    sort: false,
+  },
+  o_teso: {
+    title: 'Oficio Tesofe',
+    sort: false,
+  },
+};

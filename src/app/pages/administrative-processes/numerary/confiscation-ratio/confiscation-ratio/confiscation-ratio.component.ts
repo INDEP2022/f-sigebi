@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -8,6 +9,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
@@ -18,7 +20,19 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { EXCEL_TO_JSON } from 'src/app/pages/admin/home/constants/excel-to-json-columns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import * as XLSX from 'xlsx';
+
+interface IExcelToJson {
+  id: number;
+  f_trnas: string;
+  f_sent: string;
+  Inte: number;
+  f_teso: string;
+  o_teso: string;
+}
 
 @Component({
   selector: 'app-confiscation-ratio',
@@ -28,22 +42,24 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ConfiscationRatioComponent extends BasePage implements OnInit {
   form: FormGroup;
   file: FormGroup;
+  dataExcel: IExcelToJson[] = [];
   data: FormGroup[];
   lock: boolean = false;
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
+  source: LocalDataSource = new LocalDataSource();
   goods: DefaultSelect<IGood>;
   columnFilters: any = [];
   dataTemplate = this.fb.group({
     noGood: [null, Validators.required],
     criminalCase: [
       null,
-      [Validators.pattern(/^[0-9/]+$/), Validators.required],
+      [Validators.pattern(STRING_PATTERN), Validators.required],
     ],
     preliminaryInvestigation: [
       null,
-      [Validators.pattern(/^[0-9/]+$/), Validators.required],
+      [Validators.pattern(STRING_PATTERN), Validators.required],
     ],
     dateTesofe: [null, Validators.required],
     jobTesofe: [null, Validators.required],
@@ -66,13 +82,20 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     private detRelationConfiscationService: DetRelationConfiscationService,
     private goodProcessService: GoodProcessService,
     private authorityService: AuthorityService,
+    private excelService: ExcelService,
     private accountMovementService: AccountMovementService
   ) {
     super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: EXCEL_TO_JSON,
+    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+
     // this.getGood(new ListParams)
     // this.filterParams.getValue().addFilter('description', '', SearchFilter.ILIKE)
     // this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -238,6 +261,26 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     fileReader.readAsText(file);
   }
 
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+    console.log(fileReader);
+    console.log((fileReader.onload = () => this.readExcel(fileReader.result)));
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
+      console.log(this.dataExcel);
+      console.log(this.source);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
   getClasificGood() {}
 
   getGoodFilter(money: number | string, goodNumber: number | string) {
@@ -308,8 +351,16 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       },
     });
   }
-  openFile() {
+  openFile(file: any): void {
     console.log('asd');
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const workbook = XLSX.read(e.target.result, { type: 'binary' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      this.data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    };
+    reader.readAsBinaryString(file);
     document.getElementById('uploadfile').click();
   }
 }
