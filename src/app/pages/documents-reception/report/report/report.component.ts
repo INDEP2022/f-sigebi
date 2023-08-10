@@ -81,6 +81,7 @@ export class ReportComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.selectedDelegation = new DefaultSelect();
+        this.onLoadToast('error', 'Error', err);
       },
     });
   }
@@ -138,7 +139,7 @@ export class ReportComponent extends BasePage implements OnInit {
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
+      this.onLoadToast('success', 'Reporte', 'Generado Correctamente');
     }, 2000);
 
     this.loading = false;
@@ -181,7 +182,7 @@ export class ReportComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'warning',
             'advertencia',
-            'Sin Datos Para Los Rangos De Fechas Suministrados'
+            'Sin Datos Para los Rangos de Fechas Suministrados'
           );
         }
       });
