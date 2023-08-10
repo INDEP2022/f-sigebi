@@ -1,6 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,12 +19,16 @@ import { CostCatalogService } from '../cost-catalog.service';
   styles: [],
 })
 export class ModalCostCatalogComponent extends BasePage implements OnInit {
-  title: string = 'Catálogo de costo';
+  title: string = 'Catálogo de Costo';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
+  data: LocalDataSource = new LocalDataSource();
   allotment: IServiceCat;
   isChecked: boolean = false;
-
+  cost: any[] = [];
+  columnFilters: any = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
@@ -103,15 +110,63 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.form.get('cost').value === 'COSTO' ? 'COSTO' : 'GASTO';
-    this.isChecked === true
-      ? this.form.controls['unaffordabilityCriterion'].setValue('Y')
-      : this.form.controls['unaffordabilityCriterion'].setValue('N');
-    //console.log(this.form.getRawValue());
-    this.serviceCatService.create(this.form.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+    if (
+      this.form.controls['code'].value.trim() === '' ||
+      this.form.controls['description'].value.trim() === '' ||
+      this.form.controls['subaccount'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
+
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.serviceCatService.getAll(params).subscribe({
+      /*next: (resp: any) => {
+        if (resp.data) {
+          // resp.data.forEach((item: any) => {
+          //   this.data1.push({
+          //     keyServices: item.code,
+          //     descriptionServices: item.description,
+          //     typeExpenditure: item.subaccount,
+          //     unaffordable: item.unaffordabilityCriterion,
+          //     cost: item.cost,
+          //   });
+          // });
+
+          this.cost = resp.data;
+          this.data.load(this.cost);
+          console.log(this.data);
+          this.data.refresh();
+          this.totalItems = resp.count;
+        }*/
+      next: resp => {
+        this.cost = resp.data;
+        this.totalItems = resp.count;
+        this.data.load(resp.data);
+        this.data.refresh();
+        this.loading = false;
+
+        if (this.form.get('code').value == resp.data[0].code) {
+          this.alert('error', 'El Codigo ya fue registrado', '');
+          return;
+        }
+        this.loading = true;
+        this.form.get('cost').value === 'COSTO' ? 'COSTO' : 'GASTO';
+        this.isChecked === true
+          ? this.form.controls['unaffordabilityCriterion'].setValue('Y')
+          : this.form.controls['unaffordabilityCriterion'].setValue('N');
+        //console.log(this.form.getRawValue());
+        this.serviceCatService.create(this.form.getRawValue()).subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+      },
+      error: error => {
+        this.loading = false;
+      },
     });
   }
 
@@ -124,5 +179,43 @@ export class ModalCostCatalogComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  getCostCatalog() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.serviceCatService.getAll(params).subscribe({
+      /*next: (resp: any) => {
+        if (resp.data) {
+          // resp.data.forEach((item: any) => {
+          //   this.data1.push({
+          //     keyServices: item.code,
+          //     descriptionServices: item.description,
+          //     typeExpenditure: item.subaccount,
+          //     unaffordable: item.unaffordabilityCriterion,
+          //     cost: item.cost,
+          //   });
+          // });
+
+          this.cost = resp.data;
+          this.data.load(this.cost);
+          console.log(this.data);
+          this.data.refresh();
+          this.totalItems = resp.count;
+        }*/
+      next: resp => {
+        //this.cost = this.data1;
+        this.totalItems = resp.count;
+        this.data.load(resp.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }

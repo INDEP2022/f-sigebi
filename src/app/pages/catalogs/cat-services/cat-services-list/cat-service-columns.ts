@@ -31,12 +31,12 @@ export const SERVICES_COLUMS = {
     },
   },
   subaccount: {
-    title: 'Subcuenta del servicio',
+    title: 'Subcuenta del Servicio',
     type: 'number',
     sort: false,
   },
   cost: {
-    title: 'Costo o gasto',
+    title: 'Costo o Gasto',
     type: 'number',
     sort: false,
     filter: {

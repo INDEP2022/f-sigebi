@@ -111,7 +111,7 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
         this.labelOkeyService.remove2(labelOKey.id).subscribe({
           next: () => {
             this.getLabelsOkey(),
-              this.alert('success', 'Etiqueta bien', 'Borrado Correctamente');
+              this.alert('success', 'Etiqueta Bien', 'Borrado Correctamente');
           },
           error: error => {
             this.alert(

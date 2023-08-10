@@ -149,16 +149,10 @@ export class RegistrationHelper extends BasePage {
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-      this.message(
-        'warning',
-        'Se marcó la solicitud como urgente, se debe tener una fecha de prioridad',
-        ''
-      );
-      validoOk = false;
-    } else if (idTrandference === 1) {
+      this.message('error', '', '');
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'warning',
+          'error',
           'Para la transferente FGR/PGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
@@ -175,15 +169,17 @@ export class RegistrationHelper extends BasePage {
     } else if (idTrandference === 3) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
+          'error',
+
           'warning',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
-      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
         this.message(
+          'error',
+
           'warning',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
-          ''
+
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
         );
       } else {
         validoOk = true;
@@ -200,9 +196,10 @@ export class RegistrationHelper extends BasePage {
         paperDate == null
       ) {
         this.message(
+          'error',
           'warning',
-          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos',
-          ''
+
+          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
         );
       } else {
         validoOk = true;
@@ -216,9 +213,9 @@ export class RegistrationHelper extends BasePage {
     ) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
+          'error',
           'warning',
-          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos',
-          ''
+          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
         );
       } else {
         validoOk = true;
@@ -307,7 +304,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
-          } 
+          }
           */
             sinUnidadM = true;
             this.message(

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
@@ -29,14 +29,22 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   columnFilters: any = [];
+  origin: string = null;
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
 
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
-    private proceedingsValidationsService: ProceedingsValidationsService
+    private proceedingsValidationsService: ProceedingsValidationsService,
+    private router: Router
   ) {
     super();
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'] ?? null;
+      });
+    console.log('origin: ', this.origin);
     this.settings = {
       ...this.settings,
       hideSubHeader: false,
@@ -194,5 +202,14 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
 
   OnDestroy() {
     console.log('Saliendo');
+  }
+
+  goBack() {
+    if (this.origin == 'FACTREFACTADEVOLU') {
+      console.log('entra a goback');
+      this.router.navigate([
+        '/pages/documents-reception/closing-of-confiscation-and-return-records',
+      ]);
+    }
   }
 }

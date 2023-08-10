@@ -32,7 +32,7 @@ export const COLUMNSLIST = {
     sort: false,
   },
   accountNumberTransfer: {
-    title: 'Cuenta a traspasar',
+    title: 'Cuenta a Traspasar',
     sort: false,
   },
 };

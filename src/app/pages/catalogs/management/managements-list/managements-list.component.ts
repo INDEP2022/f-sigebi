@@ -3,7 +3,11 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { LocalDataSource } from 'ng2-smart-table';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IManagement } from 'src/app/core/models/catalogs/management.model';
 import { ManagementService } from 'src/app/core/services/catalogs/management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,6 +23,8 @@ export class ManagementsListComponent extends BasePage implements OnInit {
   paragraphs: IManagement[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
   constructor(
     private managementService: ManagementService,
     private modalService: BsModalService
@@ -31,6 +37,34 @@ export class ManagementsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.LIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getManagements();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getManagements());
@@ -38,9 +72,14 @@ export class ManagementsListComponent extends BasePage implements OnInit {
 
   getManagements() {
     this.loading = true;
-    this.managementService.getAll(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.managementService.getAll(params).subscribe({
       next: response => {
         this.paragraphs = response.data;
+        this.data.load(response.data);
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -77,7 +116,7 @@ export class ManagementsListComponent extends BasePage implements OnInit {
   remove(id: number) {
     this.managementService.remove(id).subscribe(
       res => {
-        this.alert('success', 'Gestión', 'Borrado Correctamente');
+        this.alert('success', 'Gestión', 'Borrada Correctamente');
         this.getManagements();
       },
       err => {

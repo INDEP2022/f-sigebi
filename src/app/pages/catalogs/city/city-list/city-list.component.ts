@@ -9,7 +9,9 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ICity } from '../../../../core/models/catalogs/city.model';
 import { CityService } from '../../../../core/services/catalogs/city.service';
@@ -29,12 +31,14 @@ export class CityListComponent extends BasePage implements OnInit {
 
   city: ICity[] = [];
   delegation: IDelegation[] = [];
+  state: IStateOfRepublic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private cityService: CityService,
     private delegationService: DelegationService,
+    private stateService: StateOfRepublicService,
     private modalService: BsModalService
   ) {
     super();
@@ -110,6 +114,25 @@ export class CityListComponent extends BasePage implements OnInit {
     });
   }
 
+  getStates() {
+    this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+
+    this.stateService.getAll(params).subscribe({
+      next: response => {
+        this.state = response.data;
+        this.totalItems = response.count || 0;
+        this.data.load(response.data);
+        this.data.refresh();
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
   getCities() {
     this.loading = true;
     let params = {
@@ -122,7 +145,7 @@ export class CityListComponent extends BasePage implements OnInit {
         this.columns = response.data;
         console.log(this.columns);
         this.totalItems = response.count || 0;
-        this.data.load(this.columns);
+        this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
       },
@@ -179,7 +202,7 @@ export class CityListComponent extends BasePage implements OnInit {
     this.cityService.remove2(id).subscribe({
       next: () => {
         this.getCities();
-        this.alert('success', 'Ciudad', 'Borrada Correctamente');
+        this.alert('success', 'Ciudad', 'Borrado Correctamente');
       },
     });
   }

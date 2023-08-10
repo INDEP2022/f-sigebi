@@ -35,10 +35,21 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
   }
   prepareForm() {
     this.typeGoodsForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(4),
+        ],
+      ],
       description: [
         '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
       ],
       //numClasifGoods: [null],
       numSsubType: [null],
@@ -122,7 +133,7 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
           error: error => {
             this.alert(
               'warning',
-              'Ya existe un registro con los mismo identificador',
+              'Ya existe un registro con el mismo identificador',
               ``
             );
             this.loading = false;
@@ -135,7 +146,7 @@ export class CatTypesOfGoodsSubSubSubTypeComponent
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast(
       'success',
-      'Sub Sub Sub Tipo de bien',
+      'Sub Sub Sub Tipo de Bien',
       `${message} Correctamente`
     );
     this.loading = false;
