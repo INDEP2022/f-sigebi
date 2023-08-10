@@ -59,13 +59,13 @@ export class EntityClasificationFormComponent
       catchError(error => {
         this.loading = false;
         if (error.status <= 404 && error.status > 0) {
-          this.onLoadToast('error', 'Error', 'Ocurrio un error al guardar');
+          this.onLoadToast('error', 'Error', 'No Se Ha Guardado Correctamente');
         }
         return throwError(() => error);
       }),
       tap(() => {
         this.loading = false;
-        this.onLoadToast('success', 'Registro guardado', '');
+        this.onLoadToast('success', 'Entidad', 'Guardada Correctamente');
         this.refresh.emit(true);
         this.modalRef.hide();
       })
@@ -90,7 +90,7 @@ export class EntityClasificationFormComponent
         }),
         tap(() => {
           this.loading = false;
-          this.onLoadToast('success', 'Registro actualizado', '');
+          this.onLoadToast('success', 'Entidad', 'Actualizada Correctamente');
           this.refresh.emit(true);
           this.modalRef.hide();
         })

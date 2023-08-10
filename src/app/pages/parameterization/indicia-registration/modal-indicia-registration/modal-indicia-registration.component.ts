@@ -37,7 +37,14 @@ export class ModalIndiciaRegistrationComponent
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
+      ],
       curp: [
         null,
         [Validators.maxLength(40), Validators.pattern(CURP_PATTERN)],
@@ -59,18 +66,30 @@ export class ModalIndiciaRegistrationComponent
   }
 
   create() {
-    this.loading = true;
-    this.indicatedService.create(this.form.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.form.controls['name'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.indicatedService.create(this.form.value).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    this.indicatedService.update(this.indicated.id, this.form.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.form.controls['name'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.indicatedService
+        .update(this.indicated.id, this.form.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   close() {

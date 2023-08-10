@@ -306,7 +306,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.message(
             'error',
             'Error al cargar el archivo',
-            `No se pudo cargar el archivo excel: ${error.error.message}`
+            `No se pudo cargar el archivo excel: Datos inconsistentes en el archivo`
           );
         },
       });

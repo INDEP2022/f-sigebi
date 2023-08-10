@@ -25,10 +25,7 @@ export class DocumentsForDictumService
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IDocumentsForDictum>> {
-    return this.documentsForDictumRepository.getAllPaginated(
-      this.route,
-      params
-    );
+    return this.documentsForDictumRepository.getAll(this.route, params);
   }
 
   getById(id: string | number): Observable<IDocumentsForDictum> {
@@ -38,6 +35,7 @@ export class DocumentsForDictumService
   getById3(
     id: string | number
   ): Observable<IListResponse<IDocumentsForDictum>> {
+    console.log(this.route1);
     return this.documentsForDictumRepository.getById3(
       `${this.route1}/typeDictum`,
       id

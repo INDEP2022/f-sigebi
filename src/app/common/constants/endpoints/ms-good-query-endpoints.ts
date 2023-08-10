@@ -12,4 +12,5 @@ export enum GoodsQueryEndpoints {
   getUnits = 'ligie-units-measure',
   getViewIndRecDoc = 'views/VIndRecDocView',
   UnitsQuery = 'application/units-query',
+  indicatorsEntRecep = 'views/get-v-indicators-ent-recep',
 }

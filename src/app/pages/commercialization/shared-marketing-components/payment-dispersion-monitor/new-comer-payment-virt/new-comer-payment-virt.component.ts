@@ -15,9 +15,7 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
 
   data = new DefaultSelect();
 
-  constructor(
-    private fb: FormBuilder, 
-    private ComerLotsService: LotService) {
+  constructor(private fb: FormBuilder, private ComerLotsService: LotService) {
     super();
   }
 

@@ -10,6 +10,7 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  NUMBERS_PATTERN,
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
@@ -24,7 +25,7 @@ import { StorehouseService } from '../../../../core/services/catalogs/storehouse
 export class StorehouseDetailComponent extends BasePage implements OnInit {
   storeHouseForm: ModelForm<IStorehouse>;
   storeHouse: any;
-  title: string = 'Catálogo de Bodega';
+  title: string = 'Bodega';
   edit: boolean = false;
   states = new DefaultSelect();
   municipalities = new DefaultSelect();
@@ -54,15 +55,27 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
     this.storeHouseForm = this.fb.group({
       id: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       manager: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(80),
+        ],
       ],
       description: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(80),
+        ],
       ],
       municipalityCodeID: [null],
       municipality: [
@@ -76,9 +89,16 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
       ],
       ubication: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.required],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(80),
+        ],
       ],
-      idEntity: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
+      idEntity: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.storeHouse != null) {
       console.log(this.storeHouse);
@@ -108,21 +128,53 @@ export class StorehouseDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.storehouseService.create(this.storeHouseForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.storeHouseForm.controls['manager'].value.trim() === '' ||
+      this.storeHouseForm.controls['description'].value.trim() === '' ||
+      this.storeHouseForm.controls['ubication'].value.trim() === '' ||
+      (this.storeHouseForm.controls['manager'].value.trim() == '' &&
+        this.storeHouseForm.controls['description'].value.trim() == '' &&
+        this.storeHouseForm.controls['ubication'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    } else {
+      this.loading = true;
+      this.storehouseService
+        .create(this.storeHouseForm.getRawValue())
+        .subscribe({
+          next: data => {
+            this.handleSuccess();
+          },
+          error: error => {
+            this.loading = false;
+            this.alert('warning', 'El No. Bodega ya fue registrado', ``);
+            return;
+          },
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.storehouseService
-      .newUpdate(this.storeHouseForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.storeHouseForm.controls['manager'].value.trim() === '' ||
+      this.storeHouseForm.controls['description'].value.trim() === '' ||
+      this.storeHouseForm.controls['ubication'].value.trim() === '' ||
+      (this.storeHouseForm.controls['manager'].value.trim() == '' &&
+        this.storeHouseForm.controls['description'].value.trim() == '' &&
+        this.storeHouseForm.controls['ubication'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    } else {
+      this.loading = true;
+      this.storehouseService
+        .newUpdate(this.storeHouseForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
