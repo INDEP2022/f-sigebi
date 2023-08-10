@@ -59,8 +59,8 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
       opcion: [null, [Validators.required]],
       goods: [null, [Validators.required]],
       event: ['', [Validators.required]],
-      check1: [null, [Validators.required]],
-      check2: [null, [Validators.required]],
+      check1: [null],
+      check2: [null],
     });
   }
 
@@ -82,6 +82,8 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
   }
 
   exportExcel() {
+    console.log('Universo ', this.form.get('check1').value);
+    console.log('Eventos ', this.form.get('check2').value);
     this.pruebas();
   }
 
@@ -134,32 +136,58 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
         this.FEC3 = 'NADA';
       }
       console.log('fecha 3 ', this.FEC3);
+      //PARA EL UNIVERSO
       if (
-        this.form.get('check1').value != null &&
-        this.form.get('check2').value != null
+        this.form.get('check1').value &&
+        this.form.get('event').value == null &&
+        this.form.get('check2').value == null
       ) {
         this.executeProcess(this.USEM, 1, this.form.get('event').value, 1);
+      } else if (
+        //-- PARA EL TODO
+        this.form.get('check1').value &&
+        this.form.get('check2').value &&
+        this.form.get('event').value == null
+      ) {
+        this.executeProcess(this.USEM, 1, this.form.get('event').value, 2);
+      } else if (
+        //PARA UN EVENTO EN PARTICULAR
+        this.form.get('check2').value &&
+        this.form.get('event').value != null
+      ) {
+        this.executeProcess(this.USEM, 1, this.form.get('event').value, 3);
+      } else if (
+        //PARA TODOS LOS EVENTOS
+        this.form.get('check2').value &&
+        this.form.get('event').value == null &&
+        this.form.get('check1').value == null
+      ) {
+        this.executeProcess(this.USEM, 1, this.form.get('event').value, 4);
       }
     }
   }
 
-  getParametersMod() {
+  getParametersMod(): number {
+    let VALIDO: number = 0;
     let token = this.authService.decodeToken();
     let user = token.name.toUpperCase();
     const params = new FilterParams();
     let cadena = `?filter.parameter=$in:SUPUSUMUE,SUPUSUMUE,SUPUSUCOMER&filter.value=$eq:${user}`;
     this.parameterBrandsService.getSuperUser(cadena).subscribe(
       resp => {
+        console.log('user -> ', resp);
         if (resp.count != null) {
-          this.VALIDO = resp.count;
+          VALIDO = 1;
         } else {
-          this.VALIDO = 0;
+          VALIDO = 0;
         }
       },
       err => {
+        VALIDO = 0;
         console.log('error', err);
       }
     );
+    return VALIDO;
   }
 
   executeProcess(
@@ -193,7 +221,9 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     } else {
       SEMRECAL = PSEMRECAL;
     }
-    this.getParametersMod();
+    this.VALIDO = this.getParametersMod();
+    console.log('valido ', this.VALIDO);
+
     if (this.VALIDO == 1) {
       if (PROCESO == 1) {
         let param = {

@@ -105,22 +105,25 @@
             </form-field>
           </div>
         </div>
-        <div class="row mt-5 d-flex justify-content-center">
-          <div class="col-sm-6 col-md-4">
-            <button
-              class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
-              (click)="search()"
-              [disabled]="!searchForm.valid">
-              Ejecutar
-            </button>
-          </div>
-          <div class="col-sm-6 col-md-4">
-            <button
-              class="btn btn-sm btn-block btn-danger active font-size-14 font-size-lg-16"
-              (click)="cleanSearch()"
-              [disabled]="paymentColumns.length == 0">
-              Eliminar B&uacute;squeda
-            </button>
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-12 col-md-4">
+            <div class="col-md-3">
+              <button
+                class="btn btn-primary active btn-sm m-3"
+                (click)="search()"
+                [disabled]="!searchForm.valid">
+                Ejecutar
+              </button>
+            </div>
+            <div class="col-md-1">
+              <button
+                class="btn btn-red btn-sm active m-3"
+                (click)="cleanSearch()"
+                [disabled]="paymentColumns.length == 0">
+                Eliminar B&uacute;squeda
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
         </div>
       </form>
@@ -285,22 +288,24 @@
       </div>
     </div>
     <div class="row mt-3">
-      <ng-scrollbar
-        [track]="'horizontal'"
-        [autoHeightDisabled]="false"
-        class="table-scrollbar">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            id="consultation-table"
-            [attr.class]="'table-bordered'"
-            [settings]="paymentSettings"
-            [source]="paymentColumns"
-            (edit)="openForm($event.data)"
-            (userRowSelect)="selectRows($event.selected)">
-          </ng2-smart-table>
-        </div>
-        <div class="table-padding"></div>
-      </ng-scrollbar>
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'horizontal'"
+          [autoHeightDisabled]="false"
+          class="table-scrollbar">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              id="consultation-table"
+              [attr.class]="'table-bordered'"
+              [settings]="paymentSettings"
+              [source]="localdata"
+              (edit)="openForm($event.data)"
+              (userRowSelect)="selectRows($event.selected)">
+            </ng2-smart-table>
+          </div>
+          <div class="table-padding"></div>
+        </ng-scrollbar>
+      </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>

@@ -413,10 +413,6 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     }
   }
 
-  handleSuccess() {
-    this.alert('success', 'Actualizado', '');
-  }
-
   clean() {
     this.form.reset();
 
