@@ -937,7 +937,7 @@ export class NotificationAssetsTabComponent
         } else {
           this.onLoadToast(
             'warning',
-            'Acción inválida',
+            'Atención',
             'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
           );
         }
@@ -947,7 +947,7 @@ export class NotificationAssetsTabComponent
         } else {
           this.onLoadToast(
             'warning',
-            'Acción inválida',
+            'Atención',
             'Debe aceptar o rechazar primero la Aclaración/Improcedencia'
           );
         }
