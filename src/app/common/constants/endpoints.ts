@@ -200,4 +200,5 @@ export enum ENDPOINT_LINKS {
   FractionS = 'catalog',
   Departamentuser = 'departament',
   insertDocumentFolio = 'application/insertDocumentFolio',
+  insertDocumentFol = 'application/insertDocumentFolio2',
 }

@@ -342,13 +342,26 @@
           <h5 style="font-size: 15px">OIC</h5>
           <div class="pt-3">
             <form-field
-              [control]="infoForm.get('nameWorker3')"
+              *ngIf="!event"
+              [control]="infoForm.get('evet')"
               label="No. de Evento OIC">
               <input
                 maxlength="100"
                 type="text"
                 class="form-control"
-                formControlName="nameWorker3" />
+                formControlName="evet" />
+            </form-field>
+
+            <form-field
+              *ngIf="event"
+              [control]="infoForm.get('evet')"
+              label="No. de Evento OIC">
+              <input
+                maxlength="100"
+                type="text"
+                class="form-control"
+                [readOnly]="true"
+                formControlName="evet" />
             </form-field>
           </div>
 
@@ -508,12 +521,18 @@
           </div> -->
           <div class="row pt-4">
             <form-field
-              [control]="infoForm.get('creationDate')"
+              [control]="infoForm.get('dateOfficie')"
               label="Fecha Oficio UVFV">
               <input
-                type="date"
                 class="form-control"
-                formControlName="creationDate" />
+                formControlName="dateOfficie"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  rangeInputFormat: 'DD/MM/YYYY',
+                  dateInputFormat: 'DD/MM/YYYY'
+                }"
+                [minDate]="minDateFecElab"
+                bsDatepicker />
             </form-field>
           </div>
         </div>
@@ -524,13 +543,13 @@
           <h5 style="font-size: 15px">Funcionario 3</h5>
           <div class="pt-3">
             <form-field
-              [control]="infoForm.get('evet')"
+              [control]="infoForm.get('nameWorker3')"
               label="Administrador Titular Jurídico y de Recepción">
               <input
                 maxlength="30"
                 type="text-area"
                 class="form-control"
-                formControlName="evet" />
+                formControlName="nameWorker3" />
             </form-field>
           </div>
         </div>
