@@ -85,6 +85,7 @@
           <ng2-smart-table
             [attr.class]="'table-border'"
             [settings]="settings1"
+            (userRowSelect)="selectRow($event)"
             [source]="data">
           </ng2-smart-table>
         </div>
