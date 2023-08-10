@@ -124,6 +124,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.selectedDelegation = new DefaultSelect();
+        console.log(err);
       },
     });
   }
@@ -133,7 +134,9 @@ export class SummaryComponent extends BasePage implements OnInit {
         console.log(data);
         this.selectDepartament = new DefaultSelect(data.data, data.count);
       },
-      error: err => {},
+      error: err => {
+        console.log(err);
+      },
     });
   }
   save() {}
@@ -202,7 +205,7 @@ export class SummaryComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'advertencia',
-          'Sin datos para los rangos de fechas suministrados'
+          'Sin Datos Para los Rangos de Fechas Suministrados'
         );
       }
     });

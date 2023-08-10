@@ -83,7 +83,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Advertencia',
-              'Sin Datos Para Los Rangos De Fechas Suministrados'
+              'Sin Datos Para los Rangos de Fechas Suministrados'
             );
           }
           return;
@@ -100,7 +100,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
     downloadLink.click();
     this.onLoadToast(
       'success',
-      'Archivo De Notificaciones',
+      'Archivo de Notificaciones',
       'Generado Correctamente'
     );
   }

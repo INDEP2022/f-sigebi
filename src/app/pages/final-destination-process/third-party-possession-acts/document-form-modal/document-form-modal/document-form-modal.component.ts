@@ -58,10 +58,10 @@ export class DocumentFormModalComponent implements OnInit {
     });
   }
   saveDocument() {
-    this.documentForm.value.significantDate =
-      this.documentForm.value.significantDate.getFullYear().toString();
+    // this.documentForm.value.significantDate =
+    // this.documentForm.value.significantDate.getFullYear().toString();
     this.document = this.documentForm.value;
-    //this.document = JSON.stringify(this.documentForm.value);
+    this.document = JSON.stringify(this.documentForm.value);
     console.log(this.document);
     this.documentsService.create(this.document).subscribe({
       next: data => {

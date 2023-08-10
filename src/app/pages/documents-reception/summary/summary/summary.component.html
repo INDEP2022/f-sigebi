@@ -7,29 +7,33 @@
     <form [formGroup]="flyersForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="flyersForm.get('delegation')">
-            <ngx-select
-              [form]="flyersForm"
-              [data]="selectedDelegation"
-              value="description"
-              bindLabel="description"
-              label="Delegación"
-              (fetchItems)="getDelegation($event)"
-              control="delegation">
-            </ngx-select>
-          </form-field>
-          <form-field [control]="flyersForm.get('subdelegation')">
-            <ngx-select
-              [form]="flyersForm"
-              [data]="selectedSubDelegation"
-              value="description"
-              bindLabel="description"
-              label="Subdelegación"
-              (fetchItems)="getSubDelegations($event)"
-              control="subdelegation">
-            </ngx-select>
-          </form-field>
-          <form-check label="Filtrar por &aacute;rea" for="make_filter">
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('delegation')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectedDelegation"
+                value="description"
+                bindLabel="description"
+                label="Delegación"
+                (fetchItems)="getDelegation($event)"
+                control="delegation">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('subdelegation')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectedSubDelegation"
+                value="description"
+                bindLabel="description"
+                label="Subdelegación"
+                (fetchItems)="getSubDelegations($event)"
+                control="subdelegation">
+              </ngx-select>
+            </form-field>
+          </div>
+          <form-check label="Filtrar Por Área" for="make_filter">
             <input
               id="make_filter"
               type="checkbox"
