@@ -455,11 +455,23 @@
                   Simular Respuesta
                 </button>
               </div> -->
+
               <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
                   class="btn btn-success btn-sm active"
                   (click)="acceptClarification()">
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
+                </button>
+              </div>
+              <div
+                class="p-2"
+                *ngIf="
+                  transferenceId === 903 && notification?.answered == 'NUEVA'
+                ">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="openRecipients()">
+                  Notificar
                 </button>
               </div>
               <div

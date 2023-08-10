@@ -47,6 +47,7 @@ import { InappropriatenessPgrSatFormComponent } from '../inappropriateness-pgr-s
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { NotifyAssetsImproprietyFormComponent } from '../notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintSatAnswerComponent } from '../print-sat-answer/print-sat-answer.component';
+import { RecipientsEmailComponent } from '../recipients-email/recipients-email.component';
 import { RefuseClarificationModalComponent } from '../refuse-clarification-modal/refuse-clarification-modal.component';
 import { LIST_ASSETS_COLUMN } from './list-assets-columns';
 import { NOTIFY_ASSETS_COLUMNS } from './notify-assets-columns';
@@ -213,6 +214,8 @@ export class NotificationAssetsTabComponent
     });
   }
 
+  transferenceId: number = 0;
+
   dataRequest() {
     this.paramsRequest.getValue()['filter.id'] = this.idRequest;
     this.requestService.getAll(this.paramsRequest.getValue()).subscribe({
@@ -228,6 +231,8 @@ export class NotificationAssetsTabComponent
             data.authorityId
           );
           this.getAffairName(data?.affair);
+          this.transferenceId = Number(data?.transferenceId);
+          console.log('ID de la transferente', this.transferenceId);
         });
         this.requestData = data.data[0];
       },
@@ -1878,6 +1883,22 @@ export class NotificationAssetsTabComponent
         });
       resolve(true);
     });
+  }
+
+  openRecipients() {
+    const notification = this.selectedRow;
+    console.log('Abriendo modal de Destinatarios');
+    let config = {
+      ...MODAL_CONFIG,
+      class: 'modal-lg modal-dialog-centered',
+    };
+    config.initialState = {
+      callback: (next: boolean) => {
+        if (next) {
+        }
+      },
+    };
+    this.modalService.show(RecipientsEmailComponent, config);
   }
 
   msgGuardado(icon: any, title: string, message: string) {
