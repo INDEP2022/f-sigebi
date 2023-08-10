@@ -144,7 +144,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
         console.log('DL', data);
       },
       error: err => {
-        this.alert('error', 'Error', '');
+        //this.alert('error', 'Error', '');
         this.loading = false;
       },
     });
@@ -162,7 +162,7 @@ export class CityDetailComponent extends BasePage implements OnInit {
         console.log('DL', data);
       },
       error: err => {
-        this.alert('error', 'Error', '');
+        //this.alert('error', 'Error', '');
         this.loading = false;
       },
     });

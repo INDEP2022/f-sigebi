@@ -131,7 +131,7 @@ export class DocCompensationSatXmlListComponent
       next: response => {
         this.alert(
           'success',
-          'Documento resarcimiento SAT XML',
+          'Documento Resarcimiento SAT XML',
           'Borrado Correctamente'
         ),
           this.getExample();
