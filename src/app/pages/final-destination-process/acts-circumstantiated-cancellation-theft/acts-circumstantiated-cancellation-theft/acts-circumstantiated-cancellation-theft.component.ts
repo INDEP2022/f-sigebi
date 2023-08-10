@@ -63,10 +63,7 @@ import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedi
 import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
-<<<<<<< HEAD
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
-=======
->>>>>>> ebb958f4e28eb781abde705a21f7f29a58fef00b
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
