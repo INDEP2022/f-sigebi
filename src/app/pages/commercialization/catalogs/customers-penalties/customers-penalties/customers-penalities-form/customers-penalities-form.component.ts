@@ -16,7 +16,7 @@ export class CustomersPenalitiesFormComponent
 {
   form: FormGroup = new FormGroup({});
   customersPenalties: any;
-  title: string = 'Liberar Cliente';
+  title: string = 'Liberar Cliente Penalizado';
   today: Date = new Date();
   userLog: string;
 

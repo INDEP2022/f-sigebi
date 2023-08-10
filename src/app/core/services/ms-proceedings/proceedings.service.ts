@@ -274,4 +274,11 @@ export class ProceedingsService extends HttpService {
       model
     );
   }
+
+  getEventByProceeding(minutes: string) {
+    return this.post<IListResponse<{ programmingId: string; eventId: string }>>(
+      'aplication/getMinutesDeliveryReception',
+      { minutes }
+    );
+  }
 }

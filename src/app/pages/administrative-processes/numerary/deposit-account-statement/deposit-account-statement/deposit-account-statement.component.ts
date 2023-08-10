@@ -1742,13 +1742,19 @@ export class DepositAccountStatementComponent
       .subscribe({
         next: (data: any) => {
           this.userChecks.accounttras = 'TRASPASADO';
-          // this.accountMovementService.updateUserChecks(
-          //   +this.userChecks.devolutionnumber,
-          //   { accounttras: 'TRASPASADO' }
-          // );
-
-          this.alert('success', 'Traspaso', 'Realizado correctamente');
-          this.validTras = false;
+          this.accountMovementService
+            .updateUserChecks(+this.userChecks.devolutionnumber, {
+              accounttras: 'TRASPASADO',
+            })
+            .subscribe({
+              next: response => {
+                this.alert('success', 'Traspaso', 'Realizado correctamente');
+                this.validTras = false;
+              },
+              error: err => {
+                this.userChecks.accounttras = null;
+              },
+            });
         },
         error: (error: any) => {},
       });
