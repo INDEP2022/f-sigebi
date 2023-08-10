@@ -43,7 +43,7 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0] : ''}
       `;
     },
   },
@@ -56,11 +56,11 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0] : ''}
       `;
     },
   },
- 
+
   version: {
     title: 'Versión',
     sort: false,
@@ -74,7 +74,7 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0] : ''}
       `;
     },
   },
@@ -83,7 +83,7 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0] : ''}
       `;
     },
   },
@@ -108,7 +108,7 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0] : ''}
       `;
     },
   },
@@ -125,7 +125,7 @@ export const TRANSFERENT_COLUMNS = {
     sort: false,
     valuePrepareFunction: (text: string) => {
       return `
-        ${text ? text.split('T')[0] : ''}  
+        ${text ? text.split('T')[0] : ''}
       `;
     },
   },
@@ -167,7 +167,6 @@ export const STATION_COLUMNS = {
   id: {
     title: 'No.',
     sort: false,
-    filter: false,
   },
   stationName: {
     title: 'Nombre',
@@ -193,15 +192,15 @@ export const AUTHORITY_COLUMNS = {
     sort: false,
   },
   idCity: {
-    title: 'No. ciudad',
+    title: 'No. Ciudad',
     sort: false,
   },
   authorityName: {
-    title: 'Nombre de autoridad',
+    title: 'Nombre de Autoridad',
     sort: false,
   },
   codeStatus: {
-    title: 'Código de estado',
+    title: 'Código de Estado',
     sort: false,
   },
   idStation: {

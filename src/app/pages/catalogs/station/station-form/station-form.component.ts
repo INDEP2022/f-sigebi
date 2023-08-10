@@ -51,9 +51,20 @@ export class StationFormComponent extends BasePage implements OnInit {
       ],
       version: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
-      status: [null, Validators.required],
+      status: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
     if (this.station != null) {
       this.stationForm.get('idTransferent').disable();
@@ -80,21 +91,43 @@ export class StationFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.stationService.create(this.stationForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.stationService
-      .update(this.station.id, this.stationForm.getRawValue())
-      .subscribe({
+    if (
+      this.stationForm.controls['stationName'].value.trim() == '' ||
+      this.stationForm.controls['keyState'].value.trim() == '' ||
+      (this.stationForm.controls['stationName'].value.trim() == '' &&
+        this.stationForm.controls['keyState'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.stationService.create(this.stationForm.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.stationForm.controls['stationName'].value.trim() == '' ||
+      this.stationForm.controls['keyState'].value.trim() == '' ||
+      (this.stationForm.controls['stationName'].value.trim() == '' &&
+        this.stationForm.controls['keyState'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualzar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.stationService
+        .update(this.station.id, this.stationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

@@ -49,7 +49,7 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field label="C.P." [control]="form.get('zipCode')">
+          <form-field label="Codigo Postal" [control]="form.get('zipCode')">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
@@ -81,8 +81,17 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('firstTimeLoginDate')"
-            label="Fecha inicio">
+            label="Fecha Inicio">
             <input
+              type="text"
+              formControlName="firstTimeLoginDate"
+              class="form-control"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD',
+                displayOneMonthRange: true
+              }"
+              bsDatepicker />
+            <!--<input
               class="form-control"
               ngModel
               bsDatepicker
@@ -90,7 +99,7 @@
                 dateInputFormat: 'YYYY-MM-DD',
                 displayOneMonthRange: true
               }"
-              formControlName="firstTimeLoginDate" />
+              formControlName="firstTimeLoginDate" />-->
           </form-field>
         </div>
       </div>
@@ -111,7 +120,7 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field label="Envio de email" [control]="form.get('sendEmail')">
+          <form-field label="Envio de Email" [control]="form.get('sendEmail')">
             <input
               type="text"
               class="form-control"
@@ -122,7 +131,7 @@
       <div class="row pt-3">
         <div class="col-md-3">
           <form-field
-            label="Asignación de atributos"
+            label="Asignación de Atributos"
             [control]="form.get('attribAsign')">
             <input
               type="text"
@@ -142,7 +151,7 @@
         </div>
         <div class="col-md-6">
           <form-field
-            label="Intercambiar usuario"
+            label="Intercambiar Usuario"
             [control]="form.get('exchangeAlias')">
             <input
               type="text"
@@ -164,7 +173,7 @@
         </div>
         <div class="col-md-3">
           <form-field
-            label="Ciudad de perfil"
+            label="Ciudad de Perfil"
             [control]="form.get('profileMimKey')">
             <input
               type="text"
@@ -183,7 +192,7 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-6">
-          <form-field label="Agregar nombre" [control]="form.get('nameAd')">
+          <form-field label="Agregar Nombre" [control]="form.get('nameAd')">
             <input type="text" class="form-control" formControlName="nameAd" />
           </form-field>
         </div>
@@ -193,14 +202,11 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [type]="'button'"
-          [disabled]="!form.valid"
-          (confirm)="confirm()"></confirm-button>
+        <confirm-button (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cerrar
+          Cancelar
         </button>
       </div>
     </div>

@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -38,7 +38,14 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
   private prepareForm(): void {
     this.goodTypeForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      nameGoodType: [null, [Validators.required, Validators.maxLength(70)]],
+      nameGoodType: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(70),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       maxAsseguranceTime: [
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
@@ -67,8 +74,14 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
         null,
         [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noRegister: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
+      version: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(4)],
+      ],
     });
     if (this.goodType != null) {
       this.edit = true;
@@ -85,28 +98,41 @@ export class ModalCPMtaCMaximumTimesForAbandonmentComponent
   }
 
   create() {
-    this.loading = true;
-    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.goodTypeService
-      .update(this.goodType.id, this.goodTypeForm.value)
-      .subscribe({
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService.create(this.goodTypeForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService
+        .update(this.goodType.id, this.goodTypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
+    //this.refresh.emit(true);
     this.modalRef.hide();
   }
 }

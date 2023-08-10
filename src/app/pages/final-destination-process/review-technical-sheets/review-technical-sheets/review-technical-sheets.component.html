@@ -141,6 +141,9 @@
       <div class="row mt-3 justify-content-md-center">
         <div class="col-12 col-md-3 text-md-center">
           <button class="btn btn-primary btn-sm active">Consultar</button>
+          <button class="btn btn-danger btn-sm active mr-3" style="margin: 1vh">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
 
@@ -158,6 +161,7 @@
           <ng2-smart-table
             class="col-md-12"
             [attr.class]="'table-bordered'"
+            (userRowSelect)="selectData($event)"
             [settings]="settings"
             [source]="data">
           </ng2-smart-table>
@@ -170,12 +174,19 @@
         <div class="col-12 col-md-4">
           <div class="row">
             <div class="col-12 text-center">
-              <button class="btn btn-primary btn-sm active">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="pup_refresca()">
                 Refrescar y Guardar
               </button>
             </div>
             <div class="col-12 text-center mt-3">
-              <button class="btn btn-secondary btn-sm active">Soporte</button>
+              <button
+                type="button"
+                class="btn btn-primary active btn-sm"
+                (click)="report()">
+                Reporte <i class="bx bx-printer bx-sm float-icon"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -187,7 +198,12 @@
                   <h5 class="font-size-14">Total de Registros:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success">{{
+                    totRegistros
+                  }}</span>
+                  <button class="btn btn-sm btn-success active">
+                    <i class="bx bx-download float-icon"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -197,7 +213,12 @@
                   <h5 class="font-size-14">Total de Cumplidos:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success">{{
+                    totCumplidos
+                  }}</span>
+                  <button class="btn btn-sm btn-success active">
+                    <i class="bx bx-download float-icon"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -207,7 +228,12 @@
                   <h5 class="font-size-14">Total de No Cumplidos:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success">{{
+                    totNoCumplidos
+                  }}</span>
+                  <button class="btn btn-sm btn-success active">
+                    <i class="bx bx-download float-icon"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -217,7 +243,9 @@
                   <h5 class="font-size-14">% Cumplimiento:</h5>
                 </div>
                 <div class="ml-2">
-                  <span class="badge rounded-pill badge-soft-success">1</span>
+                  <span class="badge rounded-pill badge-soft-success"
+                    >{{ totCumplimiento }}%</span
+                  >
                 </div>
               </div>
             </div>

@@ -24,7 +24,7 @@ import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/
 export class ConsultTasksComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  filter: any;
   totalItems: number = 0;
   //tasks: IRequestTask[] = [];
   tasks = new LocalDataSource();
@@ -34,6 +34,15 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   consultTasksForm: FormGroup;
   department = '';
   delegation: string = null;
+  excelLoading = this.loading;
+
+  get txtFecAsigDesde() {
+    return this.consultTasksForm.get('txtFecAsigDesde');
+  }
+
+  get txtFechaFinDesde() {
+    return this.consultTasksForm.get('txtFechaFinDesde');
+  }
 
   constructor(
     private taskService: TaskService,
@@ -44,7 +53,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     private regionalDelegacionService: RegionalDelegationService
   ) {
     super();
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: '',
+      hideSubHeader: false,
+    };
     this.settings.columns = REQUEST_LIST_COLUMNS;
   }
 
@@ -76,15 +90,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoProgramacionEntrega: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoProgramacionRecepcion: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNombreActividad: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
-      // txtAsignado: [
-      //   '',
-      //   [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
-      // ],
+      txtAsignado: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAprobador: [
         '',
@@ -123,7 +138,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe();
   }
   searchTasks() {
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -131,17 +146,64 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       )
       .subscribe();
   }
-  exportToExcel() {
+
+  async exportToExcel() {
+    this.excelLoading = true;
     const filename: string = this.userName + '-Tasks';
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(this.tasks['data'], { filename });
+    let filter = this.filter;
+    filter.getValue().limit = 99999999;
+    console.log(filter.getValue());
+    const response: any = await this.getData(filter.getValue());
+    if (response) {
+      const data: any[] = response.data.map((item: any) => {
+        return {
+          'Titulo de la Tarea': item.title,
+          Salida: '',
+          'Nombre de la Actividad': item.activitydescription,
+          'Asignado a': item.assignees,
+          Aprobador: item.approvers,
+          'Nombre de la Aplicación': item.applicationdescription,
+          'Nombre del Proceso': item.processdescription,
+          'Nombre Tarea BPM': '',
+          Estatus: item.State,
+          'Porcentaje Completado': item.percentageComplete,
+          Secuencia: '',
+          'Fecha Asignación': item.assignedDate,
+          'Fecha Finalización': item.endDate,
+          'Duración tiempo (min)': '',
+          'Duración tiempo (Días)': '',
+          'No. Solicitud': item.requestId,
+          'No. Programación': item.programmingId,
+          'No. Programación Entrega': '',
+          'No. Orden Servicio': '',
+          'No. Muestreo': '',
+          'No. Muestreo Orden': '',
+          'No. Orden Ingreso': '',
+          'No. Orden Pago': '',
+          'No. Delegación Regional': item.idDelegationRegional,
+          'No. Transferente': item.idTransferee,
+        };
+      });
+      this.excelService.export(data, { filename });
+      this.excelLoading = false;
+    } else {
+      this.alert('warning', 'No se encontraron datos para exportar', '');
+      this.excelLoading = false;
+    }
   }
 
-  private getTasks() {
+  async getTasks(limitExport?: number) {
     let isfilterUsed = false;
+    this.loading = true;
     const params = this.params.getValue();
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    if (limitExport) {
+      this.filterParams.getValue().limit = limitExport;
+    } else {
+      this.filterParams.getValue().limit = params.limit;
+    }
     const user = this.authService.decodeToken() as any;
 
     this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
@@ -187,6 +249,17 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       }
     }
 
+    if (this.consultTasksForm.value.txtNoSolicitud) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'requestId',
+          this.consultTasksForm.value.txtNoSolicitud,
+          SearchFilter.EQ
+        );
+    }
+
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
       this.filterParams
@@ -227,16 +300,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    // if (this.consultTasksForm.value.txtAsignado || this.userName) {
-    //   // isfilterUsed = true;
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter(
-    //       'assignees',
-    //       this.consultTasksForm.value.txtAsignado || this.userName,
-    //       SearchFilter.ILIKE
-    //     );
-    // }
+
     if (this.consultTasksForm.value.txtNoOrdenPago) {
       isfilterUsed = true;
       this.filterParams
@@ -338,16 +402,6 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     }
-    if (this.consultTasksForm.value.txtNoSolicitud) {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          '-NoSolicitud',
-          this.consultTasksForm.value.txtNoSolicitud,
-          SearchFilter.ILIKE
-        );
-    }
     if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
       isfilterUsed = true;
       this.filterParams
@@ -381,37 +435,40 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
+    this.filter = this.filterParams;
     let filter = this.filterParams
       .getValue()
       .getParams()
       .concat('&sortBy=id:DESC');
 
-    this.taskService.getTasksByUser(filter).subscribe({
-      next: response => {
-        this.loading = false;
+    const response: any = await this.getData(filter);
+    if (response) {
+      this.tasks.load(response.data);
+      this.tasks.refresh();
+      this.totalItems = response.count;
+    } else {
+      this.tasks.load([]);
+      this.tasks.refresh();
+    }
+  }
 
-        /*  if (isfilterUsed) {
-            this.tasks = response.data.filter(
-              (record: { State: string }) => record.State != 'FINALIZADA'
-            );
-            this.totalItems = this.tasks.length;
-          } else {
-            this.tasks = response.data;
-            this.totalItems = response.count;
-          } */
-        response.data.map((item: any) => {
-          item.taskNumber = item.id;
-          item.requestId =
-            item.requestId != null ? item.requestId : item.programmingId;
-        });
-
-        //this.tasks = response.data;
-        this.tasks.load(response.data);
-        this.totalItems = response.count;
-      },
-      error: () => (
-        (this.tasks = new LocalDataSource()), (this.loading = false)
-      ),
+  getData(filter: any) {
+    return new Promise((resolve, _reject) => {
+      this.taskService.getTasksByUser(filter).subscribe({
+        next: response => {
+          this.loading = false;
+          response.data.map((item: any) => {
+            item.taskNumber = item.id;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
+          });
+          resolve(response);
+        },
+        error: () => {
+          resolve(null);
+          this.loading = false;
+        },
+      });
     });
   }
 

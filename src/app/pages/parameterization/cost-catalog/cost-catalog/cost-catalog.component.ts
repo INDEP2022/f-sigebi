@@ -30,7 +30,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions.delete = false;
     this.settings.actions.add = false;
     this.settings = {
       ...this.settings,
@@ -150,7 +150,11 @@ export class CostCatalogComponent extends BasePage implements OnInit {
         this.serviceCatService.delete(drawer.code).subscribe({
           next: (resp: any) => {
             if (resp) {
-              this.alert('success', 'Catálogo de costo', 'Borrado');
+              this.alert(
+                'success',
+                'Catálogo de Costo',
+                'Borrado Correctamente'
+              );
               this.getCostCatalog();
             }
           },

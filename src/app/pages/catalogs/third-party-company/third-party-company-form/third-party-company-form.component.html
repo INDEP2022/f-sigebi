@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="thirdPartyCompanyForm" class="form-material">
@@ -8,12 +8,11 @@
         <div class="col-md-6">
           <form-field
             [control]="thirdPartyCompanyForm.get('keyCompany')"
-            label="Clave empresa">
+            label="Clave Empresa">
             <input
               type="text"
               class="form-control"
-              formControlName="keyCompany"
-              maxlength="10" />
+              formControlName="keyCompany" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -21,7 +20,7 @@
             <ngx-select
               [form]="thirdPartyCompanyForm"
               [data]="itemsZoneContract"
-              label="Clave zona de contrato"
+              label="Clave Zona de Contrato"
               bindLabel="description"
               value="id"
               (fetchItems)="getZoneContract($event)"
@@ -47,8 +46,7 @@
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              maxlength="100">
+              formControlName="description">
             </textarea>
           </form-field>
         </div>

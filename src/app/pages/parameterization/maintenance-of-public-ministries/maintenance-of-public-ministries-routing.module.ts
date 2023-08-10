@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MaintenanceOfPublicMinistriesComponent } from './maintenance-of-public-ministries/maintenance-of-public-ministries.component';
+import { MaintenanceListComponent } from './maintenance-list/maintenance-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: MaintenanceOfPublicMinistriesComponent,
+    //component: MaintenanceOfPublicMinistriesComponent,
+    component: MaintenanceListComponent,
   },
 ];
 

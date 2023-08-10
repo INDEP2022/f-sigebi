@@ -15,7 +15,7 @@ export const THIRDPARTYCOMPANY_COLUMS = {
     sort: false,
   },
   keyZoneContract: {
-    title: 'Clave zona contrato',
+    title: 'Clave Zona Contrato',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {

@@ -35,8 +35,22 @@ export class LegendFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.legendForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      legend: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      version: [1, [Validators.pattern(NUMBERS_PATTERN)]],
+      legend: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      version: [
+        null,
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+          Validators.required,
+        ],
+      ],
       status: [
         '1',
         Validators.compose([
@@ -59,6 +73,10 @@ export class LegendFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.legendForm.controls['legend'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.legendService.create1(this.legendForm.value).subscribe({
       next: data => this.handleSuccess(),

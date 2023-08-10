@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,37 +35,78 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodTypeForm = this.fb.group({
       id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      nameGoodType: [null, [Validators.required, Validators.maxLength(70)]],
+      nameGoodType: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(70),
+        ],
+      ],
       maxAsseguranceTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxFractionTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxExtensionTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxStatementTime: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime1: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime2: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       maxLimitTime3: [
         null,
-        [Validators.maxLength(4), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
-      noRegister: [null, [Validators.pattern(NUMBERS_PATTERN)]],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.goodType != null) {
       this.edit = true;
@@ -82,21 +123,31 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.goodTypeService
-      .update(this.goodType.id, this.goodTypeForm.value)
-      .subscribe({
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService.create(this.goodTypeForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.goodTypeForm.controls['nameGoodType'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.goodTypeService
+        .update(this.goodType.id, this.goodTypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
