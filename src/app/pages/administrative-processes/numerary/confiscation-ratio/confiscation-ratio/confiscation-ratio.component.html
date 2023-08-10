@@ -109,6 +109,12 @@
               class="d-none"
               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               (change)="onFileChange($event)" />
+
+            <button
+              class="btn btn-primary btn-sm active m-3"
+              (click)="aprove()">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
           </div>
 
           <div class="col-md-2">
@@ -119,7 +125,8 @@
                 type="number"
                 class="form-control"
                 formControlName="recordRead"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);"
+                readonly />
             </form-field>
           </div>
           <div class="col-md-2">
@@ -156,137 +163,89 @@
       <div class="row">
         <div class="col-md-12">
           <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive'"
             [settings]="settings"
             [source]="source"></ng2-smart-table>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
         </div>
       </div>
 
-      <div class="row pt-5" *ngFor="let d of data">
+      <!--  <div class="row pt-5" *ngFor="let d of data">
         <form action="" class="form-material" [formGroup]="d">
           <div class="row mt-4 pt-4">
             <div class="col-md-3">
               <form-field [control]="d.get('noGood')" label="No. Bien">
-                <!-- <ngx-select (fetchItems)="getGood($event)" label="No. Bien" [data]="goods" [form]="d" value="goodId"
+                 <ngx-select (fetchItems)="getGood($event)" label="No. Bien" [data]="goods" [form]="d" value="goodId"
                   bindLabel="goodDescription" [control]="'noGood'" (change)="(null)" [searchOnInit]="true"
                   [showTooltip]="true">
-                </ngx-select> -->
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="noGood" />
+                </ngx-select>
+                <input type="number" class="form-control" formControlName="noGood" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="d.get('criminalCase')" label="Causa Penal">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="criminalCase" />
+                <input type="text" class="form-control" formControlName="criminalCase" />
               </form-field>
             </div>
             <div class="col-md-3">
-              <form-field
-                [control]="d.get('preliminaryInvestigation')"
-                label="Averiguación Previa">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="preliminaryInvestigation" />
+              <form-field [control]="d.get('preliminaryInvestigation')" label="Averiguación Previa">
+                <input type="text" class="form-control" formControlName="preliminaryInvestigation" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="d.get('dateTesofe')" label="Fecha Tesofe">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="dateTesofe"
-                  bsDatepicker />
+                <input type="text" class="form-control" formControlName="dateTesofe" bsDatepicker />
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field
-                [control]="d.get('jobTesofe')"
-                label="Oficio a Tesofe">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="jobTesofe" />
+              <form-field [control]="d.get('jobTesofe')" label="Oficio a Tesofe">
+                <input type="text" class="form-control" formControlName="jobTesofe" />
               </form-field>
             </div>
           </div>
           <div class="row mt-4">
             <div class="col-md-2">
               <form-field [control]="d.get('authority')" label="Autoridad">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="authority" />
+                <input type="number" class="form-control" formControlName="authority" />
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field
-                [control]="d.get('dateTreasury')"
-                label="Fecha Tesorería">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="dateTreasury"
-                  bsDatepicker />
+              <form-field [control]="d.get('dateTreasury')" label="Fecha Tesorería">
+                <input type="text" class="form-control" formControlName="dateTreasury" bsDatepicker />
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field
-                [control]="d.get('dateJudgment')"
-                label="Fecha Sentencia">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="dateJudgment"
-                  bsDatepicker />
+              <form-field [control]="d.get('dateJudgment')" label="Fecha Sentencia">
+                <input type="text" class="form-control" formControlName="dateJudgment" bsDatepicker />
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-field
-                [control]="d.get('appraisalValue')"
-                label="Valor Avalúo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="appraisalValue" />
+              <form-field [control]="d.get('appraisalValue')" label="Valor Avalúo">
+                <input type="number" class="form-control" formControlName="appraisalValue" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="d.get('interests')" label="Intereses">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="interests" />
+                <input type="number" class="form-control" formControlName="interests" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-field [control]="d.get('results')" label="Resultado">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="results" />
+                <input type="number" class="form-control" formControlName="results" />
               </form-field>
             </div>
           </div>
           <div class="row pt-5">
             <div class="col-md-8"></div>
             <div class="col-md-4">
-              <form-field
-                [control]="d.get('totalSeizures')"
-                label="Total en Decomisos:">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="totalSeizures" />
+              <form-field [control]="d.get('totalSeizures')" label="Total en Decomisos:">
+                <input type="number" class="form-control" formControlName="totalSeizures" />
               </form-field>
             </div>
           </div>
         </form>
-      </div>
+      </div>-->
     </div>
   </div>
 </app-card>

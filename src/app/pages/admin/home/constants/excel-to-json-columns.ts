@@ -22,6 +22,10 @@ export const EXCEL_TO_JSON_COLUMNS = {
 };
 
 export const EXCEL_TO_JSON = {
+  idD: {
+    title: 'Clave Decomiso',
+    sort: false,
+  },
   id: {
     title: 'No. Bien',
     sort: false,
@@ -46,4 +50,15 @@ export const EXCEL_TO_JSON = {
     title: 'Oficio Tesofe',
     sort: false,
   },
+  curr: {
+    title: 'Moneda',
+    sort: false,
+  },
+  aut: {
+    title: 'Autoridad',
+    sort: false,
+  },
+  screenkey: {},
+  toolbar_user: {},
+  causa_penal: {},
 };
