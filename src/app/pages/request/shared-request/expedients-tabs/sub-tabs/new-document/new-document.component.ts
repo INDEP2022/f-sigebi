@@ -221,9 +221,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     const extension = this.selectedFile?.name.split('.').pop();
     if (extension != 'pdf') {
       this.alertInfo(
-        'info',
+        'warning',
         'Acción Inválida',
-        'Se debe cargar un documentos PDF'
+        'Solo se aceptan documentos tipo PDF'
       ).then(question => {
         if (question.isConfirmed) {
           this.newDocForm.get('docFile').reset;

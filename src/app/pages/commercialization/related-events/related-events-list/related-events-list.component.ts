@@ -1,8 +1,10 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
@@ -11,10 +13,10 @@ import {
 import { IRequestEventRelated } from 'src/app/core/models/requests/request-event-related.model';
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerClientService } from 'src/app/core/services/ms-prepareevent/comer-clients.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
 import { RELATED_EVENTS_COLUMNS } from './related-events-columns';
 
 @Component({
@@ -46,38 +48,32 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   addRowElement: any;
   cancelBtn: any;
   cancelEvent: any;
+  tableSource = new LocalDataSource();
   readOnlyInput: any;
-  createButton: string =
-    '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
-  saveButton: string =
-    '<span class="btn btn-info active font-size-12 me-2 mb-2 py-2 px-2">Actualizar</span>';
-  cancelButton: string =
-    '<span class="btn btn-warning active font-size-12 text-black me-2 mb-2 py-2 px-2 cancel">Cancelar</span>';
-
+  columnFilters: any = [];
+  idtable: string;
+  relatedEventsDataLocal: LocalDataSource = new LocalDataSource();
   relatedEventsSettings = {
     ...TABLE_SETTINGS,
-    mode: 'internal',
     hideSubHeader: false,
-    filter: {
-      inputClass: 'd-none',
-    },
-    attr: {
-      class: 'table-bordered normal-hover',
-    },
-    add: {
-      createButtonContent: this.createButton,
-      cancelButtonContent: this.cancelButton,
-      confirmCreate: true,
-    },
-    edit: {
-      editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
-      saveButtonContent: this.saveButton,
-      cancelButtonContent: this.cancelButton,
-      confirmSave: true,
-    },
+    actions: false,
+    columns: { ...RELATED_EVENTS_COLUMNS },
   };
+  // createButton: string =
+  //   '<span class="btn btn-success active font-size-12 me-2 mb-2 py-2 px-2">Agregar</span>';
+  // saveButton: string =
+  //   '<span class="btn btn-info active font-size-12 me-2 mb-2 py-2 px-2">Actualizar</span>';
+  // cancelButton: string =
+  //   '<span class="btn btn-warning active font-size-12 text-black me-2 mb-2 py-2 px-2 cancel">Cancelar</span>';
+  closeTable: boolean = false;
+  // relatedEventsSettings = {
+  //   ...TABLE_SETTINGS,
+  //   mode: 'internal',
+  //   hideSubHeader: false,
 
-  eventsData = [
+  //};
+
+  /*eventsData = [
     {
       id: 11122,
       process: 'DECBMI0107',
@@ -99,18 +95,23 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       type: 'LICITACIÓN',
       direction: 'INMUEBLES',
     },
-  ];
+  ];*/
 
   relatedEventsData: IRequestEventRelated[] = [];
 
   constructor(
     private fb: FormBuilder,
     private comerEventosService: ComerEventosService,
-    private eventRelatedService: EventRelatedService
+    private eventRelatedService: EventRelatedService,
+    private comerClientService: ComerClientService
   ) {
     super();
-    this.relatedEventsSettings.columns = RELATED_EVENTS_COLUMNS;
-    this.relatedEventsSettings.actions.delete = true;
+
+    //this.relatedEventsSettings.columns = RELATED_EVENTS_COLUMNS;
+    // this.relatedEventsSettings.actions.delete = false;
+    // this.relatedEventsSettings.actions.edit = false;
+    // this.relatedEventsSettings.actions.add = false;
+    // this.relatedEventsSettings.
     // this.relatedEventsSettings.columns = {
     // ...this.relatedEventsSettings.columns
     // ,
@@ -129,108 +130,63 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getEvents({ page: 1, text: '' });
-    this.getRelatedEvents({ page: 1, text: '' });
     this.eventForm = this.fb.group({
       event: [null],
       txtSearch: [''],
+      process: [null],
+      status: [null],
+      typeEvent: [null],
+      direction: [null],
     });
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getSearch());
+    this.filter();
   }
 
   getEvents(params: ListParams) {
     console.log('params: ', params);
+    // if (params.text == '') {
+    //   this.eventItems = new DefaultSelect(this.eventsData, 5);
+    // } else {
+    //   const id = parseInt(params.text);
+    //   const item = [this.eventsData.filter((i: any) => i.id == id)];
+    //   this.eventItems = new DefaultSelect(item[0], 1);
+    // }
 
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventsData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.eventsData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
-
-    this.filterParams.getValue().removeAllFilters();
-    this.filterParams.getValue().page = params.page;
-
-    if (this.eventForm.value.txtSearch) {
-      this.filterParams
-        .getValue()
-        .addFilter('title', this.eventForm.value.txtSearch, SearchFilter.ILIKE);
-    }
-
-    this.comerEventosService.getAllEvents().subscribe({
-      next: response => {
-        console.log('Response DEL SERVICIO: ', response.data);
-        let arrEvents: any[] = [];
-        if (response.data) {
-          response.data.forEach((item: any) => {
-            // console.log("item: ", item);
-
-            let event: any = {
-              id: item.id,
-              process: item.processKey,
-              status: item.statusVtaId,
-              type: item.tpsolavalId,
-              direction: item.addres,
-            };
-            // console.log('event: ', event);
-            arrEvents.push(event);
-          });
-        }
-
-        this.loading = false;
-        this.eventsData = arrEvents; //response.data;
-        this.eventItems = new DefaultSelect(arrEvents, response.count);
-        this.totalItems = response.count;
-      },
-      error: () => (this.loading = false),
-    });
-  }
-
-  getRelatedEvents(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.eventsData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.eventsData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
-    this.filterParams.getValue().removeAllFilters();
-    this.filterParams.getValue().page = params.page;
+    //this.filterParams.getValue().removeAllFilters();
+    //this.filterParams.getValue().page = params.page;
+    this.totalItems = 0;
+    this.filterParams.getValue().addFilter('id', params.text, SearchFilter.EQ);
 
     if (this.eventForm.value.txtSearch) {
       this.filterParams
         .getValue()
         .addFilter('title', this.eventForm.value.txtSearch, SearchFilter.ILIKE);
     }
-
-    this.eventRelatedService
-      .getEventRelsByUser(this.filterParams.getValue().getParams())
+    console.log('params service ', this.filterParams.getValue().getParams());
+    this.comerClientService
+      .getByEvent(this.filterParams.getValue().getParams())
       .subscribe({
         next: response => {
-          // console.log('Response: ', response);
-          let arrEventRel: IRequestEventRelated[] = [];
+          console.log('Response DEL SERVICIO: ', response.data);
+          let arrEvents: any[] = [];
           if (response.data) {
             response.data.forEach((item: any) => {
               // console.log("item: ", item);
-
-              let eventRel: IRequestEventRelated = {
-                eventDadId: item.eventDadId,
-                eventRelId: item.eventRel.id,
-                processKey: item.eventRel.processKey,
-                statusvtaId: item.eventRel.statusvtaId,
-                tpeventoId: item.eventRel.tpeventoId,
-                address: item.eventRel.address,
+              let event: any = {
+                id: item.id,
+                process: item.processKey,
+                status: item.statusVtaId,
+                type: item.tpsolavalId,
+                direction: item.addres,
               };
-              // console.log('eventRel: ', eventRel);
-              arrEventRel.push(eventRel);
+              // console.log('event: ', event);
+              arrEvents.push(event);
             });
           }
 
           this.loading = false;
-          this.relatedEventsData = arrEventRel; //response.data;
-          this.totalItems = response.count;
+          // this.eventsData = arrEvents; //response.data;
+          this.eventItems = new DefaultSelect(arrEvents, response.count);
+          //this.totalItems = response.count;
         },
         error: () => (this.loading = false),
       });
@@ -238,6 +194,16 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
 
   selectEvent(event: any) {
     this.selectedEvent = event;
+    console.log('Evento: ', this.selectedEvent);
+    let dataform = {
+      process: this.selectedEvent.process,
+      status: this.selectedEvent.status,
+      typeEvent: this.selectedEvent.type,
+      direction: this.selectedEvent.direction,
+    };
+    this.eventForm.patchValue(dataform);
+    this.gettable(event.id);
+    this.idtable = event.id;
     this.relatedEventsColumns = this.relatedEventsData;
     this.totalItems = this.relatedEventsColumns.length;
     this.hideFilters();
@@ -255,7 +221,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     setTimeout(() => {
       let filterArray = document.getElementsByClassName('ng2-smart-filters');
       this.filterRow = filterArray.item(0);
-      this.filterRow.classList.add('d-none');
+      //this.filterRow.classList.add('d-none');
       this.addOption = document
         .getElementsByClassName('ng2-smart-action-add-add')
         .item(0);
@@ -446,5 +412,88 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Aceptar',
     }).then(result => {});
+  }
+
+  gettable(id: string | number) {
+    this.relatedEventsColumns = [];
+    this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.eventRelatedService.getByEvent(id, params).subscribe({
+      next: response => {
+        this.totalItems = response.count;
+        for (let i = 0; i < response.data.length; i++) {
+          console.log('DATA: ', response.data);
+          this.closeTable = true;
+          let dataTable = {
+            eventDadId: response.data[i].eventDadId,
+            eventRelId: response.data[i].eventRel.id,
+            processKey: response.data[i].eventRel.processKey,
+            statusvtaId: response.data[i].eventRel.statusvtaId,
+          };
+          this.relatedEventsColumns.push(dataTable);
+          this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+          this.relatedEventsDataLocal.refresh();
+          this.totalItems = response.data.length;
+        }
+      },
+      error: err => {
+        //this.closeTable = false;
+      },
+    });
+  }
+  filter() {
+    this.relatedEventsDataLocal
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'eventDadId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventRelId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'eventRel.processKey':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'eventRel.statusvtaId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          console.log('this.params: ', this.params);
+          this.gettable(this.idtable);
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.gettable(this.idtable));
+  }
+
+  clearall() {
+    this.relatedEventsColumns = [];
+    this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+    this.totalItems = 0;
+    this.selectedEvent = null;
+    this.eventForm.reset();
   }
 }

@@ -401,6 +401,29 @@
             value="keyId">
           </ngx-select>
         </div>
+        <div
+          class="col-md-4"
+          *ngIf="transferenceNumber === 903 && siglasNivel1 === 'DCCR'">
+          <form-field
+            label="Delegación Regional"
+            [control]="requestForm.get('regionalDelegationId')">
+            <ng-select class="form-control">
+              <ng-option value="1">NORTE</ng-option>
+              <ng-option value="2">NORESTE</ng-option>
+              <ng-option value="3">PACÍFICO</ng-option>
+              <ng-option value="4">BAJÍO</ng-option>
+              <ng-option value="5">SURESTE</ng-option>
+              <ng-option value="6">PENINSULAR</ng-option>
+              <ng-option value="7">CENTRO SUR</ng-option>
+              <ng-option value="8">BAJA CALIFORNIA</ng-option>
+              <ng-option value="9">NOROESTE</ng-option>
+              <ng-option value="10">OCCIDENTE</ng-option>
+              <ng-option value="11">GOLFO</ng-option>
+              <ng-option value="12">METROPOLITANA</ng-option>
+              <ng-option value="13">OFICINAS CENTRALES</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
         <div class="col-md-4" *ngIf="typeOfTransfer === 'PGR_SAE'">
           <form-field
             [control]="requestForm.get('protectNumber')"

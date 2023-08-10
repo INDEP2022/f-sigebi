@@ -387,7 +387,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       lotNumber: [null],
       folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       dateOfResolution: [null],
-      clkpv: [null],
+      clkpv: [null, [Validators.required]],
       descurcoord: [null],
       comment: [null],
       invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],
