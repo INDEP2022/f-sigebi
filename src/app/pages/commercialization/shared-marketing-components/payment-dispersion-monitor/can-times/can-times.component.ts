@@ -15,6 +15,10 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
   comerPagoRefVirt: any = null;
 
+  incomeData: any;
+
+  newData: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private bsModel: BsModalRef,
@@ -25,6 +29,7 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.incomeData);
   }
 
   private prepareForm() {
@@ -45,31 +50,62 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
   //Aceptar
   apply() {
+    console.log(this.times.value);
     if (this.times.value < 1) {
       this.alert('warning', 'El Número Debe ser Mayor a Cero', '');
     } else {
-      if (this.comerPagoRefVirt.paymentId != null) {
-        let n_monto;
-        let n_pena;
-        let n_mdiv;
-        let n_pdiv;
+      if (this.incomeData.payId != null) {
+        let n_monto = this.incomeData.amount;
+        let n_pena = 15;
+        let n_mdiv = n_monto / this.times.value;
+        let n_pdiv = n_pena / this.times.value;
         let n_sum = n_mdiv;
         let n_psuma = n_pdiv;
-        let n_tipo_ref;
+        let n_tipo_ref = this.incomeData.typereference;
+        let penalty: number;
 
-        for (let i = 0; i < this.times.value; i++) {
-            const data = this.comerPagoRefVirt
+        for (let i = 1; i <= this.times.value; i++) {
+          const data = this.incomeData;
+          if (this.incomeData.payId != null) {
             let model: IComerPaymentsRefVir = {
-                payId: data.paymentId,
-                payvirtueId: '',
-                batchId: '',
-                amount: '',
-                typereference: '',
-                amountGrief: '',
-                numberRecord: ''
+              payId: data.payId,
+              payvirtueId: '',
+              batchId: '',
+              amount:
+                i == this.times.value
+                  ? (n_monto - n_sum).toFixed(2)
+                  : n_mdiv.toFixed(2),
+              typereference: n_tipo_ref,
+              amountGrief: '',
+              numberRecord: '',
+            };
+
+            if (i == this.times.value) {
+              penalty = n_pena - n_psuma;
+            } else {
+              penalty = n_pdiv;
+              n_sum = n_sum + n_mdiv;
+              n_psuma = n_psuma + n_pdiv;
             }
 
+            this.newData.push({
+              ...this.incomeData,
+              amount:
+                i == this.times.value
+                  ? (n_monto - n_sum).toFixed(2)
+                  : n_mdiv.toFixed(2),
+              publicBatch: this.incomeData.publicBatch,
+              description: this.incomeData.description,
+              typereference: n_tipo_ref,
+              penalty,
+            });
+          }
         }
+
+        console.log(this.newData);
+        
+        this.bsModel.content.callback(this.newData);
+        this.bsModel.hide();
       }
     }
   }

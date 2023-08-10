@@ -12,6 +12,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { CanTimesComponent } from '../can-times/can-times.component';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NewComerPaymentVirt } from '../new-comer-payment-virt/new-comer-payment-virt.component';
+import { dataContracts } from 'src/app/@standalone/shared-forms/contracts-shared/data';
 
 @Component({
   selector: 'app-comer-payment-virt',
@@ -29,6 +30,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   totalItems: number = 0;
 
   actionsBool: boolean
+
+  dataPaymentVirt: any
 
   settings1 = {
     ...TABLE_SETTINGS,
@@ -78,7 +81,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     this.formVirt.get('client').setValue(this.dataModel.client);
     this.formVirt.get('reference').setValue(this.dataModel.reference);
     this.formVirt.get('deposit').setValue(this.dataModel.amount);
-
+    this.loading = true
+    
     const paramsF = new FilterParams()
     paramsF.addFilter('payId', this.dataModel.idPayment)
     this.comerPaymentService.getComerPagoRefVirt(paramsF.getParams()).subscribe(
@@ -99,9 +103,13 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
             console.log(newData)
             this.data.load(newData)
             this.totalItems = res.count
+            this.loading = false
         },
         err => {
+            this.loading = false
             console.log(err)
+            this.data.load([])
+            this.totalItems = 0
             this.alert('warning','No hay Pagos para Desagregar','')
         }
     )
@@ -137,7 +145,12 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         }
       )
     })
-    
+  }
+
+  //SELECCIONAR FILA
+  selectRow(e:any){
+    console.log(e.data)
+    this.dataPaymentVirt = e.data
   }
 
   //Cerrar modal
@@ -147,10 +160,12 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   //Open Modal Dividir
   timesToDivide(){
+    let incomeData = this.dataPaymentVirt
     let modalConfig = MODAL_CONFIG
     modalConfig = {
-      initialState: {},
-      class: 'modal-dialog-centered'
+      initialState: {incomeData},
+      class: 'modal-dialog-centered',
+      ignoreBackdropClick: true,
     }
 
     this.modalService.show(CanTimesComponent, modalConfig)
@@ -158,10 +173,20 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   //Open Modal New
   newPayment(){
+    let incomeData = {
+      eventId: this.dataModel.eventId,
+      clientId: this.dataModel.customerBatch
+    }
     let modalConfig = MODAL_CONFIG
     modalConfig = {
-      initialState: {},
-      class: 'modal-lg modal-dialog-centered'
+      initialState: {
+        incomeData,
+        callback: (data: any) => {
+          console.log(data)
+        }
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     }
 
     this.modalService.show(NewComerPaymentVirt, modalConfig)
