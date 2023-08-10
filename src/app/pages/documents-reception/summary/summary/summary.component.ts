@@ -152,6 +152,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.selectedDelegation = new DefaultSelect();
+        console.log(err);
       },
     });
   }
@@ -163,7 +164,9 @@ export class SummaryComponent extends BasePage implements OnInit {
         this.validateTotal();
         this.selectDepartament = new DefaultSelect(data.data, data.count);
       },
-      error: err => {},
+      error: err => {
+        console.log(err);
+      },
     });
   }
   save() {}
