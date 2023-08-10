@@ -73,4 +73,9 @@ export class EventRelatedService extends HttpService {
   postBienesEvento(id: any) {
     return this.post(EventRelatedEndpoints.BienesEvento, id);
   }
+
+  getByEvent(id: string | number, params: any) {
+    const route = `${EventRelatedEndpoints.FindAll}?filter.eventDadId=$eq:${id}`;
+    return this.get(route, params);
+  }
 }

@@ -105,11 +105,11 @@ export class IndicatorsOfPerformanceComponent
             }
 
             if (filter.search !== '') {
-              console.log(
+              /*console.log(
                 (this.columnFilters1[
                   field
                 ] = `${searchFilter}:${filter.search}`)
-              );
+              );*/
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters1[field];
@@ -132,6 +132,24 @@ export class IndicatorsOfPerformanceComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'indicatorNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'initialDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'hoursLimNumber':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'endDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'daysLimNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'contractZoneKey':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:

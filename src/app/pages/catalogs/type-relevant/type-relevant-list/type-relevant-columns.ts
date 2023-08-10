@@ -15,12 +15,12 @@ export const TYPERELEVANT_COLUMS = {
     sort: false,
   },
   numberPhotography: {
-    title: 'Número de fotografía',
+    title: 'Número de Fotografía',
     type: 'number',
     sort: false,
   },
   detailsPhotography: {
-    title: 'Detalles de fotografía',
+    title: 'Detalles de Fotografía',
     type: 'string',
     sort: false,
   },

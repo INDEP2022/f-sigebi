@@ -40,7 +40,7 @@
             [control]="form.get('contractualPenalty')"
             label="Pena Convencional">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="contractualPenalty"
               maxlength="10"
@@ -54,13 +54,9 @@
             [control]="form.get('contractNumber')"
             label="No. de Contrato">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="contractNumber"
-              maxlength="10"
-              min="1"
-              [defaultValue]="1"
-              oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+              formControlName="contractNumber" />
           </form-field>
         </div>
         <!--

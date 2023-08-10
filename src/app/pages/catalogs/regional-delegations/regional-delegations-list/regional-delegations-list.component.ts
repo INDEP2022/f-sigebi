@@ -73,7 +73,7 @@ export class RegionalDelegationsListComponent
                 break;
               case 'zoneGeographic':
                 searchFilter = SearchFilter.ILIKE;
-                //field = `filter.${filter.field}.description`;
+                field = `filter.${filter.field}.description`;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
