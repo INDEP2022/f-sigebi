@@ -2,7 +2,7 @@ import { formatDate } from '@angular/common';
 import { firstValueFrom, map } from 'rxjs';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { environment } from 'src/environments/environment';
-import Swal, { SweetAlertResult, type SweetAlertOptions } from 'sweetalert2';
+import Swal, { type SweetAlertOptions } from 'sweetalert2';
 
 export const API_VERSION = 'api/v1';
 type SwalOptions = Partial<SweetAlertOptions> & Required<{ text: string }>;
@@ -32,9 +32,7 @@ export function downloadReport(
   });
 }
 
-export function showToast(
-  data: SwalOptions | string
-): Promise<any> {
+export function showToast(data: SwalOptions | string): Promise<any> {
   if (typeof data === 'string') data = { text: data } as SwalOptions;
 
   const toast = Swal.mixin({
@@ -55,9 +53,7 @@ export function showToast(
   return toast.fire();
 }
 
-export function showAlert<T = any>({
-  ...data
-}: SwalOptions): Promise<any> {
+export function showAlert<T = any>({ ...data }: SwalOptions): Promise<any> {
   return Swal.fire({ icon: 'success', position: 'center', ...data });
 }
 
@@ -69,9 +65,7 @@ type SwalQuestionType = {
   dismiss?: string;
 };
 
-export function showQuestion({
-  ...data
-}: SwalOptions): Promise<any> {
+export function showQuestion({ ...data }: SwalOptions): Promise<any> {
   return showAlert({
     icon: 'question',
     showCancelButton: true,

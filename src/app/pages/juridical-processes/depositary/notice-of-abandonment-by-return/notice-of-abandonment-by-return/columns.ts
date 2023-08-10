@@ -14,7 +14,7 @@ export const COLUMNS = {
     sort: false,
   },
   notifiedTo: {
-    title: 'Notificado a',
+    title: 'Notificado',
     sort: false,
   },
   notifiedPlace: {

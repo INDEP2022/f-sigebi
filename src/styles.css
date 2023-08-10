@@ -55,6 +55,10 @@
   border: none !important;
 }
 
+.table-header-text-align {
+  text-align: left;
+}
+
 .modal-content {
   border-radius: 7px !important;
 }
