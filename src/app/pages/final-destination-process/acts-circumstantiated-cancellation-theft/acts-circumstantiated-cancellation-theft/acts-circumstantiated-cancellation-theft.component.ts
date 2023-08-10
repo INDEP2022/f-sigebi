@@ -63,6 +63,7 @@ import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedi
 import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -1745,9 +1746,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        flyerNumber +
+        ' y Expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -1834,7 +1835,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1906,8 +1907,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alertInfo(
         'success',
         'El folio universal generado es: "' +
-          this.formScan.get('scanningFoli').value +
-          '"',
+        this.formScan.get('scanningFoli').value +
+        '"',
         ''
       );
     } else {
