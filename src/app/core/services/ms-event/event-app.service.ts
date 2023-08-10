@@ -41,4 +41,8 @@ export class EventAppService extends HttpService {
       IListResponse<{ id_tpevento: string; descripcion: string }>
     >(`${this.endpoint}/rg-event/user/${user}`);
   }
+
+  postDetResumer(params: any) {
+    return this.post(`EventEndpoints.DetResumen`, params);
+  }
 }
