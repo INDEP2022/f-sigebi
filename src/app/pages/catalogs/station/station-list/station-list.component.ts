@@ -63,6 +63,9 @@ export class StationListComponent extends BasePage implements OnInit {
               case 'status':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
