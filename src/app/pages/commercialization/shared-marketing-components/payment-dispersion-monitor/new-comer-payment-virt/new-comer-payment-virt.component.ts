@@ -117,11 +117,9 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
   close() {
     this.bsModel.hide();
   }
-  
+
   //Generar nuevo
-  saveNew(){
-    const model = {
-      
-    }
+  saveNew() {
+    const model = {};
   }
 }

@@ -32,7 +32,6 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { TmpNotificationService } from 'src/app/core/services/ms-notification/tmp-notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
