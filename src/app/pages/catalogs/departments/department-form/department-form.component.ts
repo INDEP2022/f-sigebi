@@ -234,21 +234,45 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.departmentService.create(this.departmentForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.departmentForm.controls['dsarea'].value.trim() == '' ||
+      this.departmentForm.controls['description'].value.trim() == '' ||
+      (this.departmentForm.controls['dsarea'].value.trim() == '' &&
+        this.departmentForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.departmentService
+        .create(this.departmentForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.departmentService
-      .update4(this.departmentForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.departmentForm.controls['dsarea'].value.trim() == '' ||
+      this.departmentForm.controls['description'].value.trim() == '' ||
+      (this.departmentForm.controls['dsarea'].value.trim() == '' &&
+        this.departmentForm.controls['description'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.departmentService
+        .update4(this.departmentForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

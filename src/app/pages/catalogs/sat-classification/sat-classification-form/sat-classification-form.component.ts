@@ -6,7 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-sat-classification-form',
@@ -37,9 +37,16 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
       id: [null],
       nombre_clasificacion: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
       ],
-      version: [null, [Validators.pattern(STRING_PATTERN)]],
+      version: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
     });
     if (this.satclasification != null) {
       this.edit = true;
@@ -57,6 +64,14 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.satClassificationForm.controls[
+        'nombre_clasificacion'
+      ].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.satClassificationService
       .create(this.satClassificationForm.value)

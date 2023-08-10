@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,7 +23,7 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   title: string = 'Delegación';
   edit: boolean = false;
 
-  idZ = new DefaultSelect();
+  idZ = new DefaultSelect<IZoneGeographic>();
 
   constructor(
     private modalRef: BsModalRef,
@@ -37,6 +38,39 @@ export class DelegationModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
+  private prepareForm() {
+    this.delegationForm = this.fb.group({
+      id: [null],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(80),
+        ],
+      ],
+      etapaEdo: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
+      ],
+      idZoneGeographic: [null, [Validators.required]],
+    });
+    if (this.delegationM != null) {
+      this.edit = true;
+      let dele: any;
+      dele = this.delegationM.idZoneGeographic;
+      this.delegationForm.patchValue(this.delegationM);
+      //this.getSubtypes(new ListParams(), dele.id);
+      this.delegationForm.get('idZoneGeographic').setValue(dele.id);
+      this.delegationForm.get('etapaEdo').disable();
+      console.log(this.delegationM);
+      console.log(dele.id);
+    }
+  }
   getZones(event: ListParams) {
     this.zoneGeographicService.getAll(event).subscribe({
       next: data => {
@@ -45,27 +79,19 @@ export class DelegationModalComponent extends BasePage implements OnInit {
     });
   }
 
-  private prepareForm() {
-    this.delegationForm = this.fb.group({
-      id: [null],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      etapaEdo: [
-        null,
-        [
-          Validators.required,
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.maxLength(1),
-        ],
-      ],
-      idZoneGeographic: [null, [Validators.required, Validators.maxLength(1)]],
-    });
-    if (this.delegationM != null) {
-      this.edit = true;
-      this.delegationForm.patchValue(this.delegationM);
+  getSubtypes(params: ListParams, id?: string | number) {
+    if (id) {
+      params['filter.id'] = id;
     }
+    this.zoneGeographicService.getAll(params).subscribe({
+      next: data => {
+        this.idZ = new DefaultSelect(data.data, data.count);
+        console.log(data);
+      },
+      error: err => {
+        //this.idZ = new DefaultSelect([], 0, true);
+      },
+    });
   }
 
   close() {
@@ -73,37 +99,50 @@ export class DelegationModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    const newDelegation = Object.assign({}, this.delegationForm.value);
+    /*const newDelegation = Object.assign({}, this.delegationForm.value);
 
     Object.defineProperty(newDelegation, 'idZoneGeographic', {
       value: newDelegation.idZoneGeographic.id,
+
     });
+    console.log(newDelegation);
 
-    if (this.edit) newDelegation.id = this.delegationM.id;
+    if (this.edit) newDelegation.idZoneGeographic.id = this.delegationM.id;*/
 
-    this.edit ? this.update() : this.create(newDelegation);
+    this.edit ? this.update() : this.create();
   }
 
-  create(newDelegation: IDelegation) {
-    console.log(newDelegation);
-    this.loading = true;
-    this.delegationService.create2(newDelegation).subscribe({
-      next: data => {
-        this.handleSuccess();
-      },
-      error: error => (this.loading = false),
-    });
+  create() {
+    if (this.delegationForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    } else {
+      this.loading = true;
+      this.delegationService
+        .create2(this.delegationForm.getRawValue())
+        .subscribe({
+          next: data => {
+            this.handleSuccess();
+          },
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    console.log();
-    this.loading = true;
-    this.delegationService
-      .update2(this.delegationForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (this.delegationForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    } else {
+      console.log();
+      this.loading = true;
+      this.delegationService
+        .update2(this.delegationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

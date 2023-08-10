@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { convertFormatDate, showToast } from 'src/app/common/helpers/helpers';
+import { convertFormatDate } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -46,9 +46,9 @@ export class SirsaePaymentConsultationListComponent
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(event => this.search(event));
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(event => this.search(event));
   }
 
   resetFilter() {
@@ -87,6 +87,7 @@ export class SirsaePaymentConsultationListComponent
       },
       error: () => {
         this.loading = false;
+        this.onLoadToast('error', 'Error', 'No se Encontraron Registros');
       },
     });
   }
@@ -126,11 +127,7 @@ export class SirsaePaymentConsultationListComponent
     const values = this.form.value;
     const isValid = Object.keys(values).some(key => Boolean(values[key]));
     if (!isValid) {
-      showToast({
-        title: 'Atención',
-        text: 'Favor de llenar un campos',
-        icon: 'error',
-      });
+      this.onLoadToast('warning', 'Alerta', 'Llenar un Campo para Continuar');
     }
     return isValid;
   }

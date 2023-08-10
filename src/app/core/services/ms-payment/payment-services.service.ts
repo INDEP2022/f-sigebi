@@ -87,10 +87,6 @@ export class PaymentService extends HttpService {
     );
   }
 
-  getBusquedaPag(params?: string) {
-    return this.get(PaymentEndPoints.BusquedaPagosDet, params);
-  }
-
   getComerPagoRefVirt(params?: string) {
     return this.get('comer-payments-ref-virt', params);
   }
@@ -98,4 +94,10 @@ export class PaymentService extends HttpService {
   postComerPagoRefVirt(body: IComerPaymentsRefVir) {
     return this.post('comer-payments-ref-virt', body);
   }
+  getBusquedaPag(params?: string) {
+    return this.get(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+  // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
+  //   return this.post('comer-payments-ref-virt', body);
+  // }
 }

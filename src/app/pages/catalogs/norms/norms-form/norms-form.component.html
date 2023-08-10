@@ -1,28 +1,20 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="normForm">
       <div class="row">
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field [control]="normForm.get('norm')" label="Norma">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="norm"
-              maxlength="30" />
+            <input type="text" class="form-control" formControlName="norm" />
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="normForm.get('article')"
             label="Art&iacute;culo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="article"
-              maxlength="30" />
+            <input type="text" class="form-control" formControlName="article" />
           </form-field>
         </div>
       </div>
@@ -55,8 +47,7 @@
             <textarea
               rows="3"
               class="form-control pt-3"
-              formControlName="characteristics"
-              maxlength="4000">
+              formControlName="characteristics">
             </textarea>
           </form-field>
         </div>
@@ -69,8 +60,7 @@
             <textarea
               rows="3"
               class="form-control pt-3"
-              formControlName="merchandise"
-              maxlength="500">
+              formControlName="merchandise">
             </textarea>
           </form-field>
         </div>
@@ -81,8 +71,7 @@
             <textarea
               rows="3"
               class="form-control pt-3"
-              formControlName="fundament"
-              maxlength="500">
+              formControlName="fundament">
             </textarea>
           </form-field>
         </div>
@@ -93,8 +82,7 @@
             <textarea
               rows="3"
               class="form-control pt-3"
-              formControlName="objective"
-              maxlength="4000">
+              formControlName="objective">
             </textarea>
           </form-field>
         </div>
@@ -105,9 +93,8 @@
             [control]="normForm.get('condition')"
             label="Condici&oacute;n">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              min="1"
               formControlName="condition" />
           </form-field>
         </div>
@@ -117,11 +104,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!normForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
+        <confirm-button (confirm)="confirm()"> </confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
