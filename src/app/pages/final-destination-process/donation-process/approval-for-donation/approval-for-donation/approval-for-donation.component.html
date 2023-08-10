@@ -21,11 +21,21 @@
             <form-field
               [control]="form.get('estatusAct')"
               label="Estatus Evento">
-              <select class="form-control" formControlName="estatusAct">
+              <ng-select
+                formControlName="estatusAct"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false"
+                (change)="getRowSelec($event)">
+                <ng-option value="TODOS">TODOS</ng-option>
+                <ng-option value="ABIERTA">ABIERTA</ng-option>
+                <ng-option value="CERRADA">CERRADA</ng-option>
+              </ng-select>
+              <!--<select class="form-control" formControlName="estatusAct">
                 <option value="todos" selected>Todos</option>
                 <option value="ABIERTA">Abierta</option>
                 <option value="CERRADA">Cerrada</option>
-              </select>
+              </select>-->
             </form-field>
           </div>
         </div>
@@ -43,8 +53,8 @@
         </div>
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
-            <form-field [control]="form.get('elaborated')">
-              <ngx-select
+            <form-field label="Usuario" [control]="form.get('elaborated')">
+              <!--<ngx-select
                 (fetchItems)="getUsers($event)"
                 [data]="users"
                 [form]="form"
@@ -53,7 +63,11 @@
                 label="Usuarios"
                 control="elaborated"
                 (change)="onUsersChange($event)">
-              </ngx-select>
+              </ngx-select>-->
+              <input
+                type="text"
+                class="form-control"
+                formControlName="elaborated" />
             </form-field>
           </div>
         </div>

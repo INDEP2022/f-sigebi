@@ -1,14 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  map,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
@@ -43,6 +36,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   user = localStorage.getItem('username');
 
   area: string;
+  delegation: string;
 
   constructor(
     private fb: FormBuilder,
@@ -107,17 +101,21 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.getUsers(new ListParams());
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
-
+    //this.delegation = user.delegacionreg;
+    this.getIndicator();
     console.log(this.user, user);
+
+    this.onUsersChange();
   }
 
   initForm() {
     this.form = this.fb.group({
       cveAct: [null, []],
-      estatusAct: ['todos', []],
+      estatusAct: ['TODOS', []],
       noDelegation1: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborated: [null, []],
     });
+    //console.log(this.delegation);
   }
 
   onSubmit() {}
@@ -127,14 +125,14 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     //this.search(false);
   }
 
-  getUserDelegation() {
+  /*getUserDelegation() {
     return firstValueFrom(
       this.segAccessXAreas.getDelegationUser(this.user).pipe(
         catchError(() => of('0')),
         map(res => res.no_delegacion)
       )
     );
-  }
+  }*/
 
   /*search(filter: boolean = true) {
     this.eventProgrammingService
@@ -232,16 +230,24 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });*/
   }
 
-  inicialice() {}
-
   getIndicator() {
     let body = {
-      user: '',
+      user: this.user,
       indicatorNumber: 12,
     };
     this.serviceUser.getAllIndicator(body).subscribe({
       next: resp => {
         console.log(resp);
+        if (resp.data) {
+          console.log(resp.data);
+          this.getFaVal();
+        } else {
+          this.alert(
+            'warning',
+            `El Usuario`,
+            'No tiene los privilegios para esta pantalla'
+          );
+        }
       },
       error: err => {
         console.log(err);
@@ -251,12 +257,33 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   getFaVal() {
     let body = {
-      pUser: '',
+      pUser: this.user,
       pIndicatorNumber: 12,
     };
-    this.serviceUser.getAllIndicator(body).subscribe({
+    this.serviceUser.getAllUserInd(body).subscribe({
       next: resp => {
-        console.log(resp);
+        if (resp.data) {
+          console.log(resp.data);
+          const fa_val: any = resp.data;
+          if (fa_val[0].fa_val_usuario_ind == 0) {
+            this.alert(
+              'warning',
+              `El Usuario`,
+              'No tiene los privilegios para esta pantalla'
+            );
+          } else if (fa_val[0].fa_val_usuario_ind == 2) {
+            this.getAccessArea(new ListParams());
+            //this.form.get('noDelegation1').setValue(this.delegation);
+          } else if (fa_val[0].fa_val_usuario_ind == 3) {
+            this.form.get('elaborated').setValue(this.user);
+          }
+        } else {
+          this.alert(
+            'warning',
+            `El Usuario`,
+            'No tiene los privilegios para esta pantalla'
+          );
+        }
       },
       error: err => {
         console.log(err);
@@ -264,7 +291,32 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     });
   }
 
-  onUsersChange(type: any) {
-    console.log(type);
+  async getAccessArea(params: ListParams) {
+    params['filter.user'] = `$eq:${this.user}`;
+    return new Promise((resolve, reject) => {
+      this.segAccessXAreas.getAll(params).subscribe({
+        next: resp => {
+          console.log(resp.data);
+          const delegation: any = resp.data[0];
+          this.delegation = delegation.delegationNumber;
+          // this.setDelegation(this.delegation);
+          resolve(resp.data[0].delegationNumber);
+        },
+        error: err => {},
+      });
+    });
+  }
+  setDelegation(delegation: any) {
+    this.getAccessArea(new ListParams());
+    this.form.get('noDelegation1').setValue(delegation);
+  }
+
+  getRowSelec(event: any) {}
+
+  async onUsersChange(type?: any) {
+    let res = await this.getAccessArea(new ListParams());
+    if (res) {
+    }
+    console.log(res);
   }
 }

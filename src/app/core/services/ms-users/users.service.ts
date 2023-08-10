@@ -119,6 +119,10 @@ export class UsersService extends HttpService {
     return this.post<IListResponse<any>>(UserEndpoints.IndUserNoInd, body);
   }
 
+  getAllUserInd(body: any) {
+    return this.post<IListResponse<any>>(UserEndpoints.FaValUserInd, body);
+  }
+
   deleteAccessUsers(id: any) {
     return this.delete<IListResponse<IUserAccess>>(
       `${UserEndpoints.VigSupervisionAccess}/${id}`
