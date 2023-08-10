@@ -147,12 +147,13 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
         resp.data.sort(function (a: any, b: any) {
           return a.fullName - b.fullName;
         });
-
+        console.log('usuarios', resp);
         this.paragraphs = resp.data;
         this.totalItems = resp.count;
         this.loading = false;
       },
       error: error => {
+        console.log('error', error);
         this.loading = false;
       },
     });
