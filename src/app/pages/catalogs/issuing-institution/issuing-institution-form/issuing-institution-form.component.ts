@@ -91,13 +91,30 @@ export class IssuingInstitutionFormComponent
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      cologne: [null, [Validators.required, Validators.maxLength(60)]],
+      cologne: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(60),
+        ],
+      ],
       zipCode: [
         null,
         [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      delegMunic: [null, [Validators.maxLength(60)]],
-      phone: [null, [Validators.required, Validators.maxLength(20)]],
+      delegMunic: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      phone: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       numClasif: [null, [Validators.required]],
       numCity: [null, [Validators.required]],
       numRegister: [null, []],
@@ -120,6 +137,7 @@ export class IssuingInstitutionFormComponent
       this.issuingInstitutionForm.controls['numClasif'].setValue(
         this.idInstitute.id
       );
+      this.issuingInstitutionForm.controls['numClasif'].disable();
       this.issuingInstitution.numCity
         ? this.getFromSelectCity(
             new ListParams(),
@@ -136,10 +154,14 @@ export class IssuingInstitutionFormComponent
       this.issuingInstitutionForm.controls['numClasif'].setValue(
         this.idInstitute.id
       );
+      this.issuingInstitutionForm.controls['numClasif'].disable();
       console.log(this.idInstitute.id);
     }
-    this.getFromSelectCity(new ListParams());
-    this.getFromSelectTransfer(new ListParams());
+    setTimeout(() => {
+      this.getFromSelectCity(new ListParams());
+      this.getFromSelectTransfer(new ListParams());
+    }, 1000);
+
     // if (this.issuingInstitution != null) {
     //   this.edit = true;
     //   let city: ICity = this.issuingInstitution.numCity as ICity;
@@ -171,23 +193,66 @@ export class IssuingInstitutionFormComponent
   }
 
   create() {
-    this.loading = true;
-    this.issuingInstitutionService
-      .create(this.issuingInstitutionForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.issuingInstitutionForm.controls['name'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['description'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['manager'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['street'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['cologne'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['phone'].value.trim() == '' ||
+      (this.issuingInstitutionForm.controls['name'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['description'].value.trim() ==
+          '' &&
+        this.issuingInstitutionForm.controls['manager'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['street'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['cologne'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['phone'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.issuingInstitutionService
+        .create(this.issuingInstitutionForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.issuingInstitutionService
-      .update2(this.issuingInstitution.id, this.issuingInstitutionForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.issuingInstitutionForm.controls['name'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['description'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['manager'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['street'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['cologne'].value.trim() == '' ||
+      this.issuingInstitutionForm.controls['phone'].value.trim() == '' ||
+      (this.issuingInstitutionForm.controls['name'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['description'].value.trim() ==
+          '' &&
+        this.issuingInstitutionForm.controls['manager'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['street'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['cologne'].value.trim() == '' &&
+        this.issuingInstitutionForm.controls['phone'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.issuingInstitutionService
+        .update2(
+          this.issuingInstitution.id,
+          this.issuingInstitutionForm.getRawValue()
+        )
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

@@ -15,3 +15,8 @@ export interface ICity {
   delegation?: IDelegation;
   subDelegation?: ISubdelegation;
 }
+
+export interface ICityGetAll {
+  idCity?: number;
+  nameCity: string;
+}

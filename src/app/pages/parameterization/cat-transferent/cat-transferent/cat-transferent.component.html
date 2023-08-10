@@ -71,7 +71,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="stationList"
+              [source]="data1"
               (edit)="openForm2($event.data)"
               (delete)="showDeleteAlert2($event.data)"
               (userRowSelect)="rowsSelected2($event)"
@@ -109,7 +109,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings3"
-              [source]="authorityList"
+              [source]="data2"
               (edit)="openForm3($event.data)"
               (delete)="showDeleteAlert3($event.data)">
             </ng2-smart-table>

@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="genericsForm">
@@ -20,7 +20,7 @@
             [control]="genericsForm.get('keyId')"
             label="Identificador clave">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="keyId"
               id="inputKeyId"
@@ -45,11 +45,7 @@
           <form-field
             [control]="genericsForm.get('version')"
             label="Versi&oacute;n">
-            <input
-              type="number"
-              min="1"
-              class="form-control"
-              formControlName="version" />
+            <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>
       </div>

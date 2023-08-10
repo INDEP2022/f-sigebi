@@ -1,4 +1,4 @@
 export interface ILegalSupport {
-  id: string;
+  doctoTypeId: string;
   support: string;
 }

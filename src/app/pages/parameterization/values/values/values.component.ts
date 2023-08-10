@@ -139,12 +139,18 @@ export class ValuesComponent extends BasePage implements OnInit {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
+            console.log(filter);
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             switch (filter.field) {
               case 'otKey':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'value':
+                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}`;
+                console.log(field);
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -152,6 +158,7 @@ export class ValuesComponent extends BasePage implements OnInit {
             }
             if (filter.search !== '') {
               this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+              console.log(this.columnFilters1[field]);
             } else {
               delete this.columnFilters1[field];
             }
@@ -160,7 +167,6 @@ export class ValuesComponent extends BasePage implements OnInit {
           this.gettvalTable(this.values);
         }
       });
-
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettvalTable(this.values));
@@ -171,7 +177,7 @@ export class ValuesComponent extends BasePage implements OnInit {
     // this.params2 = new BehaviorSubject<ListParams>(new ListParams());
     let params2 = {
       ...this.params2.getValue(),
-      ...this.columnFilters,
+      ...this.columnFilters1,
     };
     console.log('params:', params2);
     console.log('params2:', this.params2);

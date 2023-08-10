@@ -4,8 +4,8 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-      <div class="row d-flex justify-content-center">
-        <div class="col-md-3">
+      <div class="row">
+        <div class="col-md-4">
           <form-field [control]="form.get('year')" label="A&ntilde;o">
             <input
               type="text"
@@ -16,7 +16,7 @@
           </form-field>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="form.get('month')" label="Mes">
             <input
               type="text"
@@ -32,14 +32,17 @@
               bsDatepicker />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 pt-4">
-          <form-field [control]="form.get('keyRate')" label="Tasa clave">
-            <input type="text" class="form-control" formControlName="keyRate" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('keyRate')" label="Tasa Clave">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyRate"
+              readonly />
           </form-field>
         </div>
-
+      </div>
+      <div class="row">
         <div class="col-md-6 pt-4">
           <form-field [control]="form.get('coinType')" label="Moneda">
             <input
@@ -50,7 +53,15 @@
         </div>
         <div class="col-md-6 pt-4">
           <form-field [control]="form.get('closed')" label="Cerrado">
-            <input type="text" class="form-control" formControlName="closed" />
+            <ng-select
+              formControlName="closed"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">SI</ng-option>
+              <ng-option value="N">NO</ng-option>
+            </ng-select>
+            <!--<input type="text" class="form-control" formControlName="closed" />-->
           </form-field>
         </div>
 
@@ -60,6 +71,45 @@
         </form-field>
       </div>-->
 
+        <div class="col-md-6 pt-4">
+          <form-field
+            [control]="form.get('rateClosingDate')"
+            label="Tarifa Fecha de Cierre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rateClosingDate"
+              [bsConfig]="{
+                showPreviousMonth: false,
+                minMode: 'year',
+                adaptivePosition: true,
+                dateInputFormat: 'YYYY',
+                displayMonths: 1
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 pt-4">
+          <form-field
+            [control]="form.get('userClosingRate')"
+            label="Tasa de Cierre del Usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userClosingRate" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-4">
+          <form-field
+            [control]="form.get('registerNumber')"
+            label="Numero de Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registerNumber" />
+          </form-field>
+        </div>
         <div class="col-md-6 pt-4">
           <form-field
             [control]="form.get('rateClosingDate')"

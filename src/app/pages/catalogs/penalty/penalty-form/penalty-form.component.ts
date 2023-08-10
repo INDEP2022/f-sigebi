@@ -32,7 +32,6 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.penaltyForm = this.fb.group({
-      id: [null],
       serviceType: [
         null,
         [
@@ -43,15 +42,17 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       penaltyPercentage: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(10),
+        ],
       ],
       equivalentDays: [
         null,
         [Validators.maxLength(5), Validators.required],
         // [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
       ],
-      version: [1],
-      status: [1],
       contractNumber: [
         null,
         [
@@ -97,7 +98,7 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     //this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;

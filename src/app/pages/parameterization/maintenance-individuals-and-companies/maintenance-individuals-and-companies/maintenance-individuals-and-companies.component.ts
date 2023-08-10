@@ -22,7 +22,7 @@ export class MaintenanceIndividualsAndCompaniesComponent
   form!: FormGroup;
   isCreate: boolean = true;
   edit: boolean = false;
-  title: string = 'MANTENIMIENTO DE PERSONAS FÍSICAS Y MORALES';
+  title: string = 'Mantenimiento de Personas Físicas y Morales';
   dataPerson: any;
   value: string;
   constructor(
@@ -91,8 +91,16 @@ export class MaintenanceIndividualsAndCompaniesComponent
       this.form.controls['federative'].setValue(
         this.dataPerson.state.descCondition
       );
+
+      this.form.controls['curriculumV'].setValue(
+        this.dataPerson.curriculum == 'N' ? false : true
+      );
+
       if (this.form.controls['typePerson'].value === 'M') {
-        this.form.get('manager').setValidators(Validators.required);
+        this.form
+          .get('manager')
+          .setValidators([Validators.required, Validators.maxLength(50)]);
+        this.form.get('manager').updateValueAndValidity();
         this.form.get('numberDeep').setValidators(Validators.required);
       }
       console.log(this.form.value);
@@ -190,8 +198,12 @@ export class MaintenanceIndividualsAndCompaniesComponent
   }
   typeChange(data: string) {
     if (data === 'M') {
-      this.form.get('manager').setValidators(Validators.required);
-      this.form.get('numberDeep').setValidators(Validators.required);
+      this.form
+        .get('manager')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
+      this.form
+        .get('numberDeep')
+        .setValidators([Validators.required, Validators.maxLength(50)]);
       this.form.get('manager').updateValueAndValidity();
       this.form.get('numberDeep').updateValueAndValidity();
     } else {

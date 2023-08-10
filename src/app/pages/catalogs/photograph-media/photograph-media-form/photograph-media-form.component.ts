@@ -67,7 +67,7 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
 
   create() {
     if (
-      this.photographMediaForm.controls['route'].value.trim() === '' &&
+      this.photographMediaForm.controls['route'].value.trim() === '' ||
       this.photographMediaForm.controls['status'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);

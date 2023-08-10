@@ -58,6 +58,7 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'certificateType':
@@ -135,7 +136,11 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
           .remove(maximumTimes.data.certificateType)
           .subscribe({
             next: () => {
-              this.alert('success', 'Registro Eliminado Correctamente', '');
+              this.alert(
+                'success',
+                'Tiempo Máximo para Cierre Actas Devolución',
+                'Borrando Correctamente'
+              );
               this.getMaximumTimeAll();
             },
             error: err => this.onLoadToast('error', err.error.message, ''),

@@ -63,16 +63,16 @@ export class FiltersOfGoodsForDonationComponent
               case 'registryNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'zipCode':
+              case 'status':
+                field = `filter.${filter.field}.description`;
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.zipCode`;
                 break;
               case 'noLabel':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'tag':
-                searchFilter = SearchFilter.ILIKE;
                 field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -152,7 +152,7 @@ export class FiltersOfGoodsForDonationComponent
           next: () => {
             this.alert(
               'success',
-              'Filtro de bienes para donación',
+              'Filtro de Bienes para Donación',
               'Borrado  Correctamente'
             );
             this.getPagination();

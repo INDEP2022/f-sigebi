@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { LocalDataSource } from 'ng2-smart-table';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   ListParams,
   SearchFilter,
@@ -53,11 +54,11 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
                 break;
               case 'typeProcedure':
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.typeProcedure`;
+                field = `filter.${filter.field}`;
                 break;
               case 'description':
                 searchFilter = SearchFilter.ILIKE;
-                field = `filter.${filter.field}.description`;
+                field = `filter.${filter.field}`;
                 break;
               case 'status':
                 searchFilter = SearchFilter.EQ;
@@ -103,15 +104,18 @@ export class IfaiSeriesListComponent extends BasePage implements OnInit {
   }
 
   openForm(ifaiSerie?: IIfaiSerie) {
-    let config: ModalOptions = {
-      initialState: {
-        ifaiSerie,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      ifaiSerie,
+      callback: (next: boolean) => {
+        if (next) {
+          this.params
+            .pipe(takeUntil(this.$unSubscribe))
+            .subscribe(() => this.getExample());
+        }
       },
     };
-    this.modalService.show(IfaiSeriesFormComponent, config);
+    this.modalService.show(IfaiSeriesFormComponent, modalConfig);
   }
 
   delete(ifaiSerie: IIfaiSerie) {

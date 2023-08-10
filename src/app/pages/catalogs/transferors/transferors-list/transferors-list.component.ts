@@ -98,6 +98,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getTransferents();
         }
       });
@@ -184,6 +185,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
               delete this.columnFilters1[field];
             }
           });
+          this.params2 = this.pageFilter(this.params2);
           this.getStateByTransferent(id);
         }
       });

@@ -1,8 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">
-      {{ edit ? 'Editar' : 'Nuevo' }} CAT&Aacute;LOGO DE BANCOS
-    </h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} Cuenta de Banco</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -45,11 +43,11 @@
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('currency_I')" label="Moneda">
+          <form-field [control]="form.get('cveCurrency')" label="Moneda">
             <input
               type="text"
               class="form-control"
-              formControlName="currency_I" />
+              formControlName="cveCurrency" />
           </form-field>
         </div>
       </div>
@@ -57,7 +55,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
           <form-field
             [control]="form.get('accountType')"
-            label="Tipo de cuenta">
+            label="Tipo de Cuenta">
             <ng-select
               formControlName="accountType"
               [searchable]="false"
@@ -118,11 +116,11 @@
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('currency_I')" label="Moneda">
+            <form-field [control]="form.get('cveCurrency')" label="Moneda">
               <input
                 type="text"
                 class="form-control"
-                formControlName="currency_I" />
+                formControlName="cveCurrency" />
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12">
@@ -148,7 +146,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
+          [disabled]="form.invalid"
+          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

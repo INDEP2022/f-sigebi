@@ -51,7 +51,7 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'doctoTypeId':
-                field = `filter.${filter.field}.id`;
+                //field = `filter.${filter.field}.id`;
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -124,7 +124,7 @@ export class LegalSupportListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
-        this.remove(legalSupport.id);
+        this.remove(legalSupport.doctoTypeId);
       }
     });
   }

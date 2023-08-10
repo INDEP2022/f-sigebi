@@ -62,6 +62,12 @@ export class ListBanksComponent extends BasePage implements OnInit {
               case 'accountNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'delegationNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'accountNumberTransfer':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -76,6 +82,7 @@ export class ListBanksComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.filterParams = this.pageFilter(this.filterParams);
           this.getCourts();
         }
       });
@@ -97,10 +104,12 @@ export class ListBanksComponent extends BasePage implements OnInit {
         this.totalItems = response.count;
         this.loading = false;
       },
-      error: error => (
-        this.onLoadToast('error', error.error.message, ''),
-        (this.loading = false)
-      ),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -120,16 +129,22 @@ export class ListBanksComponent extends BasePage implements OnInit {
   }
 
   deleteCourt(accountNumber: number) {
+    let body = {
+      accountNumber: accountNumber,
+    };
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea Eliminar este Registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.bankService.remove(accountNumber).subscribe({
+        this.bankService.remove(body).subscribe({
           next: () => {
-            this.alert('success', 'Borrado Correctamente', '');
-            this.getCourts();
+            this.alert('success', 'Cuenda de Banco', 'Borrada Correctamente');
+            this.filterParams
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getCourts());
+            //this.getCourts();
           },
           error: error => {
             this.alert(

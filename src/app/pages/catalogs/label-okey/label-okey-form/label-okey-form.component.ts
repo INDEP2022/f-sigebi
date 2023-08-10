@@ -14,7 +14,7 @@ import { STRING_PATTERN } from '../../../../core/shared/patterns';
 })
 export class LabelOkeyFormComponent extends BasePage implements OnInit {
   labelOKey: ILabelOKey;
-  title: string = 'Etiquetas Bien';
+  title: string = 'Etiqueta Bien';
   edit: boolean = false;
   labelOkeyForm: ModelForm<ILabelOKey>;
   constructor(
@@ -73,7 +73,7 @@ export class LabelOkeyFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

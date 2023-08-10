@@ -1,5 +1,3 @@
-import { INorm } from 'src/app/core/models/catalogs/norm.model';
-
 export const FRACTIONS_COLUMNS = {
   id: {
     title: 'Registro',
@@ -28,8 +26,8 @@ export const FRACTIONS_COLUMNS = {
   norms: {
     title: 'Norma',
     type: 'string',
-    valuePrepareFunction: (nom: INorm) => {
-      return nom?.norm;
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.norm : '';
     },
     sort: false,
     filterFunction(cell?: any, search?: string): boolean {
@@ -43,20 +41,29 @@ export const FRACTIONS_COLUMNS = {
     },
   },
 
-  clasificationName: {
+  /*clasificationName: {
     title: 'Clasificación',
     type: 'string',
-    sort: false,
-  },
-
-  /*clasificationId: {
-    title: 'Clasificación',
-    type: 'string',
-    valuePrepareFunction: (clasification: ISiabClasification) => {
-      return clasification?.sssubtypeDescription;
-    },
     sort: false,
   },*/
+
+  siabClasification: {
+    title: 'Clasificación',
+    type: 'string',
+    valuePrepareFunction: (value: any) => {
+      return value != null ? value.sssubtypeDescription : '';
+    },
+    sort: false,
+    filterFunction(cell?: any, search?: string): boolean {
+      //TODO:Validate FILTER
+      let column = cell.sssubtypeDescription;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
   unit: {
     title: 'Unidad',
     type: 'string',
@@ -87,7 +94,7 @@ export const FRACTIONS_COLUMNS = {
   },
 
   decimalAmount: {
-    title: 'Cantidad en decimal',
+    title: 'Cantidad en Decimal',
     type: 'string',
     sort: false,
   },
@@ -96,11 +103,22 @@ export const FRACTIONS_COLUMNS = {
     title: 'Estado',
     type: 'string',
     sort: false,
+
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Estado',
+        list: [
+          { value: '2', title: 'Activo' },
+          { value: '1', title: 'Inactivo' },
+        ],
+      },
+    },
   },
 
   fractionCode: {
-    title: 'Código de fracción',
-    type: 'string',
+    title: 'Código de Fracción',
+    type: 'number',
     sort: false,
   },
 };

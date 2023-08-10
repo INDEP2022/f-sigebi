@@ -22,7 +22,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
   goodSssubtypeForm: ModelForm<IGoodSssubtype>;
-  title: string = 'SubSubSubTipo Bien';
+  title: string = 'Subsubsubtipo Bien';
   edit: boolean = false;
   goodSssubtype: IGoodSssubtype;
   types = new DefaultSelect<IGoodType>();
@@ -53,7 +53,14 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodSssubtypeForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
+      ],
       description: [
         null,
         [
@@ -276,7 +283,7 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
         this.loading = false;
         this.alert(
           'error',
-          'Ya existe un registro con los mismos identificadores',
+          'El Codigo de Subsubsubtipo de Bien ya fue registrado',
           ''
         );
       },

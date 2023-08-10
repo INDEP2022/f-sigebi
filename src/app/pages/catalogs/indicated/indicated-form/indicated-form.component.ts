@@ -40,7 +40,14 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
           Validators.maxLength(50),
         ],
       ],
-      curp: [null, [Validators.required, Validators.pattern(CURP_PATTERN)]],
+      curp: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(CURP_PATTERN),
+        ],
+      ],
     });
 
     if (this.indicated != null) {

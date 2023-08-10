@@ -15,7 +15,7 @@ export class ModalCatalogOfInventoryTypesComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'INVENTARIO DETALLADO';
+  title: string = 'Inventario Detallado';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -38,7 +38,7 @@ export class ModalCatalogOfInventoryTypesComponent
   private prepareForm() {
     this.form = this.fb.group({
       noTypeInventory: [
-        '',
+        null,
         [
           Validators.required,
           Validators.pattern(NUMBERS_PATTERN),
@@ -46,45 +46,63 @@ export class ModalCatalogOfInventoryTypesComponent
         ],
       ],
       attributeInventory: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(50),
+        ],
       ],
-      typeData: ['', [Validators.required]],
-      cveTypeInventory: [Validators.required],
+      typeData: [null, [Validators.required]],
+      cveTypeInventory: [null, [Validators.required]],
     });
     if (this.allotment != null) {
       console.log(this.allotment);
       this.edit = true;
       this.id = Number(this.allotment.noTypeInventory);
+      console.log(this.id);
+
       this.form.patchValue(this.allotment);
       this.form.controls['noTypeInventory'].disable();
     } else {
       this.form.get('cveTypeInventory').patchValue(this.data.cveTypeInventory);
+      console.log(
+        this.form.get('cveTypeInventory').patchValue(this.data.cveTypeInventory)
+      );
     }
   }
 
   confirm() {
     this.loading = true;
     if (this.edit) {
-      this.inventoryServ.update(this.id, this.form.value).subscribe({
-        next: resp => {
-          this.handleSuccess();
-        },
-        error: err => {
-          this.loading = false;
-          this.alert('error', 'Error', err.error.message);
-        },
-      });
+      console.log(this.form.value);
+      this.inventoryServ
+        .update(this.allotment.noTypeInventory, this.form.getRawValue())
+        .subscribe({
+          next: resp => {
+            this.handleSuccess();
+          },
+          error: err => {
+            this.loading = false;
+          },
+        });
     } else {
-      this.inventoryServ.createInventoryDetail(this.form.value).subscribe({
-        next: resp => {
-          this.handleSuccess();
-        },
-        error: err => {
-          this.loading = false;
-          this.alert('error', 'Error', err.error.message);
-        },
-      });
+      if (this.form.controls['attributeInventory'].value.trim() === '') {
+        this.alert('warning', 'No se puede guardar campos vacíos', '');
+        return;
+      }
+      this.loading = true;
+      this.inventoryServ
+        .createInventoryDetail(this.form.getRawValue())
+        .subscribe({
+          next: resp => {
+            this.handleSuccess();
+          },
+          error: err => {
+            this.loading = false;
+            this.alert('error', 'El Numero ya fue registrado', '');
+          },
+        });
     }
   }
   close() {

@@ -23,9 +23,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
           [loading]="loading"
-          [disabled]="instituteForm.invalid"
+          [disabled]="!instituteForm.valid"
           (confirm)="confirm()">
         </confirm-button>
       </div>

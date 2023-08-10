@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 //models
@@ -20,7 +21,7 @@ import { DocumentsForDictumService } from 'src/app/core/services/catalogs/docume
 export class CatDocRequireModalComponent extends BasePage implements OnInit {
   documentsForDictumForm: ModelForm<IDocumentsForDictum>;
   documentsForDictum: IDocumentsForDictum;
-  title: string = 'Catálogo de requisitos documentales';
+  title: string = 'Requisito Documental';
   edit: boolean = false;
 
   constructor(
@@ -37,7 +38,14 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.documentsForDictumForm = this.fb.group({
-      numRegister: [null, [Validators.required, Validators.maxLength(8)]],
+      numRegister: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       id: [
         null,
         [
@@ -83,7 +91,10 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
       .create(this.documentsForDictumForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          this.alert('error', 'El Numero de Registro ya registrado', '');
+        },
       });
   }
 
@@ -99,7 +110,7 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

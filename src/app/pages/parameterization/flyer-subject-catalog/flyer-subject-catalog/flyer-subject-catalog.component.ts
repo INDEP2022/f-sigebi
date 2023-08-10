@@ -261,7 +261,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     this.affairTypeService.remove(affairType).subscribe({
       next: () => {
         this.getAffairType(affair);
-        this.alert('success', 'Tipo Volante', 'Borrado Correctamente');
+        this.alert('success', 'Tipo de Volante', 'Borrado Correctamente');
       },
       error: erro => {
         this.alert(

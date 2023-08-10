@@ -76,8 +76,11 @@ export class SiabClasificationDetailComponent
       subtypeId: [null, [Validators.required]],
       subtypeDescription: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-        Validators.maxLength(100),
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       ssubtypeId: [null, [Validators.required]],
       ssubtypeDescription: [
@@ -101,7 +104,10 @@ export class SiabClasificationDetailComponent
       creationDate: [null],
       editionUser: [null],
       editionDate: [null],
-      version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      version: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
     });
 
     if (this.clasification != null) {
@@ -131,14 +137,12 @@ export class SiabClasificationDetailComponent
       this.siabClasificationform.controls['subtypeId'].disable();
       this.siabClasificationform.controls['ssubtypeId'].disable();
       this.siabClasificationform.controls['sssubtypeId'].disable();
+
+      this.siabClasificationform.patchValue(this.clasification);
     }
     setTimeout(() => {
       this.getTypes(new ListParams());
     }, 1000);
-
-    //this.getSubtypes(new ListParams());
-    //this.getSsubtypes(new ListParams());
-    //this.getSssubtypes(new ListParams());
   }
 
   getTypes(params: ListParams) {
@@ -158,21 +162,33 @@ export class SiabClasificationDetailComponent
     if (value) {
       console.log(value);
       params['filter.id'] = `$eq:${value}`;
+      this.goodTypeService.getAll(params).subscribe({
+        next: data => {
+          this.types = new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          console.log(error);
+          this.types = new DefaultSelect();
+          this.loading = false;
+        },
+      });
     }
-    this.goodTypeService.getAll(params).subscribe({
-      next: data => {
-        this.types = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
-        this.types = new DefaultSelect();
-        this.loading = false;
-      },
-    });
   }
 
   getChangeSutype(data: any) {
-    if (data === null || data === undefined) {
+    if (data) {
+      this.idType = data.id;
+      console.log(data);
+      if (this.idType != null) {
+        this.siabClasificationform.controls['subtypeId'].enable();
+        this.getSubtypes(new ListParams());
+      }
+    } else {
+      this.siabClasificationform.controls['subtypeId'].setValue(null);
+      this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+      this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+    }
+    /*if (data === null || data === undefined) {
       this.siabClasificationform.controls['subtypeId'].setValue(null);
       this.siabClasificationform.controls['ssubtypeId'].setValue(null);
       this.siabClasificationform.controls['sssubtypeId'].setValue(null);
@@ -190,8 +206,8 @@ export class SiabClasificationDetailComponent
           this.siabClasificationform.controls['ssubtypeId'].setValue(null);
           this.siabClasificationform.controls['sssubtypeId'].setValue(null);
         }
-      }*/
-    }
+      }
+    }*/
     //console.log(data.id);
   }
 
@@ -210,30 +226,44 @@ export class SiabClasificationDetailComponent
       },
     });
   }
+
   getSubtypesUpdate(
     params: ListParams,
-    value: string | number,
-    valueType: string | number
+    value?: string | number,
+    valueType?: string | number
   ) {
     if (value && valueType) {
-      console.log(value);
+      console.log(value, valueType);
       params['filter.id'] = `$eq:${value}`;
       params['filter.idTypeGood'] = `$eq:${valueType}`;
+      this.goodSubtypeService.getAll(params).subscribe({
+        next: data => {
+          console.log(data.data);
+          this.subTypes = new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          console.log(error);
+          this.subTypes = new DefaultSelect();
+          this.loading = false;
+        },
+      });
     }
-    this.goodSubtypeService.getAll(params).subscribe({
-      next: data => {
-        this.subTypes = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
-        this.subTypes = new DefaultSelect();
-        this.loading = false;
-      },
-    });
   }
 
   getChangeSsutype(data: any) {
-    if (data === null || data === undefined) {
+    if (data) {
+      this.idSubType = data.id;
+      console.log(data);
+      if (this.idSubType != null) {
+        this.siabClasificationform.controls['ssubtypeId'].enable();
+        this.getSsubtypes(new ListParams());
+      }
+    } else {
+      this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+      this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+    }
+
+    /*if (data === null || data === undefined) {
       //this.siabClasificationform.controls['subtypeId'].setValue(null);
       this.siabClasificationform.controls['ssubtypeId'].setValue(null);
       this.siabClasificationform.controls['sssubtypeId'].setValue(null);
@@ -244,13 +274,13 @@ export class SiabClasificationDetailComponent
         this.siabClasificationform.controls['ssubtypeId'].enable();
         this.getSsubtypes(new ListParams());
       }
-      /*console.log(this.idSubType, this.clasification.subtypeId);
+      console.log(this.idSubType, this.clasification.subtypeId);
       if (this.idSubType != this.clasification.subtypeId) {
-        
+
         this.siabClasificationform.controls['ssubtypeId'].setValue(null);
         this.siabClasificationform.controls['sssubtypeId'].setValue(null);
-      }*/
-    }
+      }
+    }*/
   }
 
   getSsubtypes(params: ListParams) {
@@ -271,44 +301,51 @@ export class SiabClasificationDetailComponent
 
   getSsubtypesUpdate(
     params: ListParams,
-    value: string | number,
-    valuesubType: string | number
+    value?: string | number,
+    valuesubType?: string | number
   ) {
     if (value && valuesubType) {
-      console.log(value);
+      console.log(value, valuesubType);
       params['filter.id'] = `$eq:${value}`;
       params['filter.noSubType'] = `$eq:${valuesubType}`;
+      this.goodSsubtypeService.getAll(params).subscribe({
+        next: data => {
+          console.log(data.data);
+          this.ssubTypes = new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          console.log(error);
+          this.ssubTypes = new DefaultSelect();
+          this.loading = false;
+        },
+      });
     }
-    this.goodSsubtypeService.getAll(params).subscribe({
-      next: data => {
-        this.ssubTypes = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
-        this.ssubTypes = new DefaultSelect();
-        this.loading = false;
-      },
-    });
   }
 
   getChangeSssutype(data: any) {
-    if (data === null || data === undefined) {
-      //this.siabClasificationform.controls['subtypeId'].setValue(null);
-      //this.siabClasificationform.controls['ssubtypeId'].setValue(null);
-      this.siabClasificationform.controls['sssubtypeId'].setValue(null);
-    } else {
+    if (data) {
       this.idSsubType = data.id;
       console.log(data);
       if (this.idSsubType != null) {
         this.siabClasificationform.controls['sssubtypeId'].enable();
         this.getSssubtypes(new ListParams());
       }
+    } else {
+      this.siabClasificationform.controls['sssubtypeId'].setValue(null);
+    }
+
+    /*if (data === null || data === undefined) {
+      //this.siabClasificationform.controls['subtypeId'].setValue(null);
+      //this.siabClasificationform.controls['ssubtypeId'].setValue(null);
+      
+    } else {
+      
       /*console.log(this.idSsubType, this.clasification.ssubtypeId);
       if (this.idSsubType != this.clasification.ssubtypeId) {
         
         this.siabClasificationform.controls['sssubtypeId'].setValue(null);
-      }*/
-    }
+      }
+    }*/
   }
 
   getSssubtypes(params: ListParams) {
@@ -317,6 +354,7 @@ export class SiabClasificationDetailComponent
     }
     this.goodSssubtypeService.getAll(params).subscribe({
       next: data => {
+        console.log(data.data);
         this.sssubTypes = new DefaultSelect(data.data, data.count);
       },
       error: error => {
@@ -329,24 +367,24 @@ export class SiabClasificationDetailComponent
 
   getSssubtypesUpdate(
     params: ListParams,
-    value: string | number,
-    valuessubType: string | number
+    value?: string | number,
+    valuessubType?: string | number
   ) {
     if (value && valuessubType) {
-      console.log(value);
+      console.log(value, valuessubType);
       params['filter.id'] = `$eq:${value}`;
       params['filter.numSsubType'] = `$eq:${valuessubType}`;
+      this.goodSssubtypeService.getAll(params).subscribe({
+        next: data => {
+          this.sssubTypes = new DefaultSelect(data.data, data.count);
+        },
+        error: error => {
+          console.log(error);
+          this.sssubTypes = new DefaultSelect();
+          this.loading = false;
+        },
+      });
     }
-    this.goodSssubtypeService.getAll(params).subscribe({
-      next: data => {
-        this.sssubTypes = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
-        this.sssubTypes = new DefaultSelect();
-        this.loading = false;
-      },
-    });
   }
 
   confirm() {

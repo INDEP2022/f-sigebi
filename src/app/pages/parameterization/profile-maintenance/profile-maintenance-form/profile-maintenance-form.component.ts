@@ -62,7 +62,11 @@ export class ProfileMaintenanceFormComponent
       permissionWriting: [null],
       recordNumber: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
     });
     if (this.data != null) {
@@ -103,24 +107,48 @@ export class ProfileMaintenanceFormComponent
   }
 
   update() {
-    this.loading = true;
-    this.profileMaintenanceService
-      .newUpdate1(this.form1.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.form1.controls['profile'].value.trim() == '' ||
+      this.form1.controls['screenKey'].value.trim() == '' ||
+      (this.form1.controls['profile'].value.trim() == '' &&
+        this.form1.controls['screenKey'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.profileMaintenanceService
+        .newUpdate1(this.form1.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   create() {
-    this.loading = true;
-    this.profileMaintenanceService.create1(this.form1.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (
+      this.form1.controls['profile'].value.trim() == '' ||
+      this.form1.controls['screenKey'].value.trim() == '' ||
+      (this.form1.controls['profile'].value.trim() == '' &&
+        this.form1.controls['screenKey'].value.trim() == '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.profileMaintenanceService
+        .create1(this.form1.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', 'Tipo de Bien', `${message} Correctamente`);
+    this.alert('success', 'Perfil por Pantalla', `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

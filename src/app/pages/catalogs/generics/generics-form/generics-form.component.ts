@@ -52,18 +52,30 @@ export class GenericsFormComponent extends BasePage implements OnInit {
       ],
       keyId: [
         null,
-        [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
       description: [
         null,
-        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ],
       ],
       version: [
         null,
-        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
+        [
+          Validators.pattern(POSITVE_NUMBERS_PATTERN),
+          Validators.maxLength(20),
+          Validators.required,
+        ],
       ],
-      active: [null],
-      editable: [null],
+      active: [null, [Validators.required]],
+      editable: [null, [Validators.required]],
     });
     const fieldName = document.getElementById('inputName');
     const fieldKeyId = document.getElementById('inputKeyId');
@@ -88,8 +100,10 @@ export class GenericsFormComponent extends BasePage implements OnInit {
 
   create() {
     if (
-      this.genericsForm.controls['name'].value.trim() === '' &&
-      this.genericsForm.controls['description'].value.trim() === ''
+      this.genericsForm.controls['name'].value.trim() === '' ||
+      this.genericsForm.controls['description'].value.trim() === '' ||
+      this.genericsForm.controls['keyId'].value.trim() === '' ||
+      this.genericsForm.controls['version'].value.trim() === ''
     ) {
       this.alert('warning', 'No se puede guardar campos vacíos', ``);
       return; // Retorna temprano si el campo está vacío.
@@ -100,7 +114,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     this.genericsService.create(this.genericsForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => {
-        this.alert('error', 'El Registro ya Existe', '');
+        this.alert('error', 'El Identficador Clave ya fue registrado', '');
         this.loading = false;
       },
     });

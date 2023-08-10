@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="docCompensationForm" class="form-material">
@@ -10,11 +10,9 @@
             [control]="docCompensationForm.get('satTypeJob')"
             label="Tipo Oficio">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="satTypeJob"
-              min="1"
-              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+              formControlName="satTypeJob" />
           </form-field>
         </div>
         <div class="col-md-10">
@@ -32,12 +30,7 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field [control]="docCompensationForm.get('type')" label="Tipo">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="type"
-              min="1"
-              oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" />
+            <input type="text" class="form-control" formControlName="type" />
           </form-field>
         </div>
 
@@ -46,10 +39,9 @@
             [control]="docCompensationForm.get('idTypeDocSat')"
             label="Doc Resarcimiento SAT">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="idTypeDocSat"
-              min="1" />
+              formControlName="idTypeDocSat" />
           </form-field>
         </div>
 
@@ -58,11 +50,9 @@
             [control]="docCompensationForm.get('idTypeDocSatXml')"
             label="Doc Resarcimiento SAT XML">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="idTypeDocSatXml"
-              min="1"
-              oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" />
+              formControlName="idTypeDocSatXml" />
           </form-field>
         </div>
       </div>
@@ -73,8 +63,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [loading]="loading" (confirm)="confirm()">
-        </confirm-button>
+        <confirm-button (confirm)="confirm()"> </confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

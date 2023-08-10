@@ -94,7 +94,11 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
       numRegister: [null],
       officialNumber: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+        ],
       ],
       notificationDate: [null],
       secureKey: [null],

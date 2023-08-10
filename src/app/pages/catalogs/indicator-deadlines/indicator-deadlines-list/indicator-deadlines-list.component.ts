@@ -54,6 +54,9 @@ export class IndicatorDeadlinesListComponent
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'deadline':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

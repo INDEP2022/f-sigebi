@@ -68,6 +68,9 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
               case 'version':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -133,11 +136,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     this.clarificationService.remove(id).subscribe({
       next: () => {
         this.getClarifications(),
-          this.alert(
-            'success',
-            'Registro de lista de aclaración',
-            'Borrado Correctamente'
-          );
+          this.alert('success', 'Aclaración', 'Borrado Correctamente');
       },
       error: error => {},
     });

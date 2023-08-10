@@ -94,6 +94,7 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getValuesAll();
         }
       });
@@ -117,11 +118,12 @@ export class ProfileMaintenanceComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
             } else {
-              delete this.columnFilters[field];
+              delete this.columnFilters1[field];
             }
           });
+          this.params2 = this.pageFilter(this.params2);
           this.getAccessScreen();
         }
       });
