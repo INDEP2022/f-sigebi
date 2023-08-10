@@ -221,7 +221,7 @@ export class SaveModalMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.onLoadToast('success', 'El trámite se envío correctamente', '');
+        this.onLoadToast('success', 'El trámite se envió correctamente', '');
         this.modalRef.content.callback(true);
         this.close();
       })

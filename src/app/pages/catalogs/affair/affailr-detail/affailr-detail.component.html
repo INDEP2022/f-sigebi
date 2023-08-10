@@ -7,17 +7,7 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-            label="Descripción"
-            [control]="affairForm.get('description')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            label="Proceso detona"
+            label="Proceso Detona"
             [control]="affairForm.get('processDetonate')">
             <ng-select
               formControlName="processDetonate"
@@ -33,6 +23,16 @@
               <ng-option value="RES_PAGO_ESPECIE">RES_PAGO_ESPECIE</ng-option>
               <ng-option value="TRANSFERENCIA">TRANSFERENCIA</ng-option>
             </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-12 pt-4">
+          <form-field
+            label="Descripción"
+            [control]="affairForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
           </form-field>
         </div>
       </div>

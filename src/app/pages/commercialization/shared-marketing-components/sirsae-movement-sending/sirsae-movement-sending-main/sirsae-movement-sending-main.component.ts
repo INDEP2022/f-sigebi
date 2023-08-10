@@ -309,7 +309,7 @@ export class SirsaeMovementSendingMainComponent
 
     if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
 
-    params.addFilter('address', `M`, SearchFilter.EQ);
+    params.addFilter('address', this.layout, SearchFilter.EQ);
     params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
     params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
 
@@ -564,10 +564,10 @@ export class SirsaeMovementSendingMainComponent
       return;
     }
 
-    if (this.data.count() == 0) {
-      this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
-      return;
-    }
+    // if (this.data.count() == 0) {
+    //   this.alert('warning', 'No hay Clientes Cargados en la Tabla', '');
+    //   return;
+    // }
 
     // await this.validaPagos()
 

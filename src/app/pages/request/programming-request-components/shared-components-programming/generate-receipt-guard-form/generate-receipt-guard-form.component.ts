@@ -88,14 +88,13 @@ export class GenerateReceiptGuardFormComponent
 
   confirm() {
     const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
-    console.log('now', now);
+
     this.form.get('receiptDate').setValue(now);
-    console.log('this.form', this.form.value);
+
     this.receptionGoodService
       .updateReceiptGuard(this.receiptId, this.form.value)
       .subscribe({
         next: async response => {
-          console.log('creado', response);
           this.modalRef.content.callback(this.receiptGuards);
           this.modalRef.hide();
           //this.openReport(response);
@@ -119,10 +118,8 @@ export class GenerateReceiptGuardFormComponent
           receiptGuards: this.receiptGuards,
           callback: (next: boolean) => {
             if (next) {
-              console.log('Modal cerrado');
               //this.changeStatusAnswered();
             } else {
-              console.log('Modal no cerrado');
             }
           },
         },
@@ -162,7 +159,7 @@ export class GenerateReceiptGuardFormComponent
         });
 
         let token = this.authService.decodeToken();
-        console.log('goodId', this.goodId);
+
         const modelReport: IReceipyGuardDocument = {
           keyDoc: this.receiptGuards.id,
           autografos: true,

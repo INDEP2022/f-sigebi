@@ -10,11 +10,9 @@
             [control]="officeForm.get('numRegister')"
             label="N&uacute;mero de Registro">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="numRegister"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="numRegister" />
           </form-field>
         </div>
 
@@ -26,8 +24,7 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="description"
-                maxlength="100" />
+                formControlName="description" />
             </form-field>
           </div>
         </div>

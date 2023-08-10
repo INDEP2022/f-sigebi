@@ -44,6 +44,7 @@ import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   DOUBLE_PATTERN,
+  DOUBLE_POSITIVE_PATTERN,
   NUMBERS_PATTERN,
   NUMBERS_POINT_PATTERN,
   NUM_POSITIVE,
@@ -465,14 +466,14 @@ export class DetailAssetsTabComponentComponent
       ],
       surfaceMts: [
         0,
-        [Validators.required, Validators.pattern(NUMBERS_POINT_PATTERN)],
+        [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)],
       ],
       consSurfaceMts: [
         0,
         [
           Validators.required,
           Validators.maxLength(40),
-          Validators.pattern(NUMBERS_POINT_PATTERN),
+          Validators.pattern(DOUBLE_POSITIVE_PATTERN),
         ],
       ],
       publicDeed: [
@@ -679,11 +680,19 @@ export class DetailAssetsTabComponentComponent
 
   setDomiciliesFieldRequired() {
     console.log('TIPO DE TRANSFERENCIA ', this.typeOfRequest);
-    if (this.typeOfRequest === 'MANUAL') {
+    const transferent = this.requestObject.transferenceId;
+
+    /*if (this.typeOfRequest === 'MANUAL') {
+      this.goodDomicilieForm.controls['pffDate'].setValidators([
+        Validators.required,
+      ]);
+    }*/
+    if (transferent == 120 || transferent == 752 || transferent == 942) {
       this.goodDomicilieForm.controls['pffDate'].setValidators([
         Validators.required,
       ]);
     }
+
     this.goodDomicilieForm.updateValueAndValidity();
   }
 
@@ -1409,14 +1418,14 @@ export class DetailAssetsTabComponentComponent
     if (this.immovablesAssets === true) {
       if (this.domicileForm.controls['id'].value === null) {
         this.message(
-          'info',
+          'warning',
           'Error',
-          `Se reguiqere ingresar el domicilio del bien`
+          `Se requiere ingresar el domicilio del Bien`
         );
       } else {
         if (this.goodDomicilieForm.invalid == true) {
           setTimeout(() => {
-            this.onLoadToast('info', 'Recuerda llenar los campos faltantes');
+            this.onLoadToast('warning', 'Recuerde llenar los campos faltantes');
           }, 1000);
           return;
         }
@@ -1448,19 +1457,19 @@ export class DetailAssetsTabComponentComponent
                 this.message(
                   'error',
                   'Error',
-                  `¡El menaje no se pudo guardar!\n. ${data.message}`
+                  `El menaje no se pudo guardar\n. ${data.message}`
                 );
-                reject('¡El registro del bien del domicilio no se guardó!');
+                reject('El registro del Bien del domicilio no se guardó');
               }
 
               if (data.id != null) {
                 this.message(
                   'success',
-                  'Menaje guardado',
+                  'Menaje Guardado',
                   `Se guardaron los menajes exitosamente`
                 );
                 this.isSaveMenaje = false;
-                resolve('¡Se guardó correctamente el menaje!');
+                resolve('Se guardó correctamente el menaje');
               }
             },
           });
@@ -1482,10 +1491,10 @@ export class DetailAssetsTabComponentComponent
               this.message(
                 'error',
                 'Error',
-                `El registro de domicilio del bien no se pudo actualizar!\n. ${data.message}`
+                `El registro de domicilio del bien no se pudo actualizar\n. ${data.message}`
               );
               reject(
-                'No se puedo actualizar el registro del domicilio del bien'
+                'No se puede actualizar el registro del domicilio del bien'
               );
             }
 
@@ -1498,7 +1507,7 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `El registro de domicilio del bien no se pudo actualizar!\n. ${error.error.message}`
+              `El registro de domicilio del bien no se pudo actualizar\n. ${error.error.message}`
             );
           },
         });
@@ -1532,7 +1541,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se guardo!\n. ${error.error.message}`
+            `El registro del inmueble no se guardo\n. ${error.error.message}`
           );
         },
       });
@@ -1558,7 +1567,7 @@ export class DetailAssetsTabComponentComponent
           this.message(
             'error',
             'Error',
-            `El registro del inmueble no se actualizo!\n. ${error.error.message}`
+            `El registro del inmueble no se actualizo\n. ${error.error.message}`
           );
         },
       });

@@ -15,6 +15,9 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  firstValueFrom,
+  map,
+  of,
   takeUntil,
   tap,
   throwError,
@@ -24,10 +27,13 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLotService } from 'src/app/core/services/ms-prepareevent/comer-lot.service';
 import { BasePage } from 'src/app/core/shared';
+import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import Swal, { SweetAlertResult } from 'sweetalert2';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
@@ -45,7 +51,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
-
+  @Input() loggedUser: TokenInfoModel;
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();
@@ -64,7 +70,8 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   constructor(
     private comerLotService: ComerLotService,
     private modalService: BsModalService,
-    private lotService: LotService
+    private lotService: LotService,
+    private comerGoodsXLotService: ComerGoodsXLotService
   ) {
     super();
     this.settings = {
@@ -74,7 +81,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         add: false,
         position: 'right',
       },
@@ -221,7 +228,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     this.loader.load = true;
     return this.lotService
       .updateMandate({
-        pGood: 0,
+        pGood: this.parameters.pDirection == 'M' ? 0 : 1,
         pLot: 1,
         lotId: this.lotSelected.id,
       })
@@ -255,16 +262,18 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       'No'
     );
     if (this.onlyBase) {
-      this.validateBaseColumns(askIsLotifying);
+      console.warn('VALIDA COLUMNAS BASE');
+
+      this.onValidateBaseColumns(askIsLotifying, event);
       return;
     }
     if (askIsLotifying.isConfirmed) {
-      this.validateCsv();
+      this.validateCsv(event).subscribe();
       return;
     }
 
     if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
-      this.validateCsvCustomers();
+      this.validateCsvCustomers(event).subscribe();
       return;
     }
     this.excelControl.reset();
@@ -294,29 +303,157 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   /** PUP_VALCSV */
-  validateCsv() {
+  validateCsv(event: Event) {
     console.warn('PUP_VALCSV');
+    const { eventTpId } = this.controls;
+    const body = {
+      file: this.getFileFromEvent(event),
+      tpeventId: eventTpId.value,
+    };
+    return this.lotService.validateCSV(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log({ response });
+      })
+    );
   }
 
   /** PUP_VALCSV_CLIENTES */
-  validateCsvCustomers() {
+  validateCsvCustomers(event: Event) {
     console.warn('PUP_VALCSV_CLIENTES');
+    const file = this.getFileFromEvent(event);
+    return this.lotService.validateCustomersCSV(file).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        console.log({ response });
+      })
+    );
   }
 
   /** VALIDA_COLUMNASBASE */
-  validateBaseColumns(askIsLotifying: SweetAlertResult) {
+  onValidateBaseColumns(askIsLotifying: SweetAlertResult, event: Event) {
     let type: 'CLIENTES' | 'LOTES' = null;
     if (askIsLotifying.isConfirmed) {
       type = 'LOTES';
-      return;
     }
 
     if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
       type = 'CLIENTES';
-      return;
     }
     if (type) {
-      console.warn('VALIDA_COLUMNASBASE');
+      const file = this.getFileFromEvent(event);
+      this.validateBaseColumns(type, file).subscribe();
     }
+  }
+
+  private getFileFromEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const filename = file.name;
+    return file;
+  }
+
+  validateBaseColumns(type: 'CLIENTES' | 'LOTES', file: File) {
+    return this.lotService
+      .validBaseColumns({
+        file,
+        function: type,
+        address: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(async response => {
+          const errors = response.data
+            .filter(column => column?.ERROR)
+            .map(column => column.ERROR);
+          console.log({ errors });
+          if (!errors.length) {
+            this.alert(
+              'success',
+              'No se encontraron errores en su archivo',
+              ''
+            );
+            return;
+          }
+          // const message = errors.join(`
+          //   `);
+          // this.alert('error', 'Error', message);
+          for (let index = 0; index < errors.length; index++) {
+            await this.alertInfo('error', 'Error', errors[index]);
+          }
+        })
+      );
+  }
+
+  async onDeleteLot(lot: IComerLot) {
+    const confirm = await this.alertQuestion(
+      'question',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    );
+    const { isConfirmed } = confirm;
+    if (!isConfirmed) {
+      return;
+    }
+    const goodsInLot = await this.countGoodsInLot(lot);
+    if (goodsInLot > 0) {
+      this.alert(
+        'error',
+        'Error',
+        'Hay información relacionada a este registro, no se puede eliminar'
+      );
+      return;
+    }
+
+    this.deleteLot(lot.id).subscribe();
+  }
+
+  deleteLot(lotId: string | number) {
+    this.loading = true;
+    return this.comerLotService.remove(lotId).pipe(
+      catchError(error => {
+        this.loading = false;
+        if (error.error.message.includes('violates foreign key constraint')) {
+          this.alert(
+            'error',
+            'Error',
+            'Hay información relacionada a este registro, no se puede eliminar'
+          );
+        } else {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+        }
+        return throwError(() => error);
+      }),
+      tap(() => {
+        this.loading = false;
+        this.alert('success', 'El Evento ha sido Eliminado', '');
+        this.refreshTable();
+      })
+    );
+  }
+
+  async countGoodsInLot(lot: IComerLot) {
+    const params = new FilterParams();
+    params.addFilter('idLot', lot.id);
+    this.loading = true;
+    return await firstValueFrom(
+      this.comerGoodsXLotService.getAllFilterPostQuery(params.getParams()).pipe(
+        catchError(error => {
+          this.loading = false;
+
+          return of({ count: 0 });
+        }),
+        tap(() => (this.loading = false)),
+        map(resp => resp.count ?? 0)
+      )
+    );
   }
 }

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -21,6 +21,7 @@ import {
 } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -31,6 +32,7 @@ import { UNEXPECTED_ERROR } from 'src/app/utils/constants/common-errors';
 import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import Swal from 'sweetalert2';
 import { EventPreparationService } from '../../event-preparation.service';
+import { GroundsStatusModalComponent } from '../../grounds-status-modal/grounds-status-modal.component';
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { ComerEventTraspComponent } from '../comer-event-trasp/comer-event-trasp.component';
@@ -48,6 +50,7 @@ export class EventGoodsLotsListActionsComponent
   @Input() lotSelected: IComerLot;
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Input() parameters: IEventPreparationParameters;
+  @Input() loggedUser: TokenInfoModel;
   @ViewChild('goodsLotifyInput', { static: true })
   goodsLotifyInput: ElementRef<HTMLInputElement>;
   @ViewChild('customersImportInput', { static: true })
@@ -522,10 +525,31 @@ export class EventGoodsLotsListActionsComponent
   }
 
   /**CARGA_DATOS_FACTURACION */
-  loadInvoiceData(publicLot: string | number) {
+  loadInvoiceData(publicLot: string | number, file: File) {
     console.log(publicLot ? `Para el lote ${publicLot}` : 'Para todo el vento');
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.warn('CARGA_DATOS_FACTURACION');
+    const { id } = this.controls;
+    this.loader.load = true;
+    return this.lotService
+      .loadInvoiceData({
+        eventId: id.value,
+        lot: publicLot,
+        file: file,
+        pDirection: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          // this.refre
+          const params = new FilterParams();
+          this.params.next(params);
+        })
+      );
   }
 
   loadInvoiceDataChange(event: Event) {
@@ -534,7 +558,10 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
-    this.loadInvoiceData(this.lotSelected?.publicLot ?? null);
+    this.loadInvoiceData(
+      this.lotSelected?.publicLot ?? null,
+      this.getFileFromEvent(event)
+    ).subscribe();
   }
 
   // ? Clientes desde Tabla Tercero
@@ -549,7 +576,7 @@ export class EventGoodsLotsListActionsComponent
     );
     const { isConfirmed, dismiss } = ask;
     if (isConfirmed) {
-      this.lotifyThirdTable();
+      this.lotifyThirdTable().subscribe();
       return;
     }
 
@@ -561,8 +588,29 @@ export class EventGoodsLotsListActionsComponent
 
   /**LOTIFICA_TABLATC */
   lotifyThirdTable() {
-    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    const { id, eventTpId } = this.controls;
     console.warn('LOTIFICA_TABLATC');
+    const body = {
+      event: id.value,
+      typeEvent: eventTpId.value,
+      address: this.parameters.pDirection,
+      user: this.loggedUser.preferred_username,
+      bank: this.parameters.pBank,
+    };
+    this.loader.load = true;
+    return this.lotService.lotifyThirdTable(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        const params = new FilterParams();
+        this.params.next(params);
+      })
+    );
   }
 
   /**CLIENTES_TC */
@@ -593,7 +641,20 @@ export class EventGoodsLotsListActionsComponent
     const ESTATUS = this.reverseType();
     const ID_EVENTO = eventTpId.value;
     const P_DIRECCION = this.parameters.pDirection;
-    // TODO: LLAMAR A LA PANTALLA FMMOTCAMBIOREV
+    // this.modalService.show(GroundsStatusModalComponent, {
+    //   ...MODAL_CONFIG,
+    // });
+    let config: ModalOptions = {
+      initialState: {
+        ESTATUS,
+        ID_EVENTO,
+        P_DIRECCION,
+        callback: (next: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GroundsStatusModalComponent, config);
   }
 
   /**TIPO_REVERSA */
@@ -794,14 +855,40 @@ export class EventGoodsLotsListActionsComponent
 
   loadCustomersBase(event: Event) {
     if (!this.isValidFile(event)) {
-      this.saleBasesControl.reset();
+      this.customersBasecontrol.reset();
       return;
     }
-    this.impBaseCustomers();
+    this.impBaseCustomers(event).subscribe();
   }
 
-  impBaseCustomers() {
+  impBaseCustomers(event: Event) {
     console.warn('PUP_IMP_EXCEL_BASES_CLIENTE');
+    this.loader.load = true;
+    const file = this.getFileFromEvent(event);
+    const { id } = this.controls;
+    const body: any = {
+      file,
+      eventId: id.value,
+      lot: null,
+      base: null,
+    };
+    return this.lotService.importCustomersBase(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.customersBasecontrol.reset();
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loader.load = false;
+        this.customersBasecontrol.reset();
+        if (typeof response == 'string') {
+          this.alert('info', response, '');
+          return;
+        }
+        this.alert('success', 'Proceso Terminado', '');
+      })
+    );
   }
 
   // ? --------------- Carga Factura

@@ -221,9 +221,9 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     const extension = this.selectedFile?.name.split('.').pop();
     if (extension != 'pdf') {
       this.alertInfo(
-        'info',
+        'warning',
         'Acción Inválida',
-        'Se debe cargar un documentos PDF'
+        'Solo se aceptan documentos tipo PDF'
       ).then(question => {
         if (question.isConfirmed) {
           this.newDocForm.get('docFile').reset;
@@ -317,7 +317,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.alertInfo(
               'success',
               'Correcto',
-              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
@@ -401,7 +401,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.alertInfo(
               'success',
               'Correcto',
-              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
@@ -486,7 +486,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.alertInfo(
               'success',
               'Correcto',
-              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);
@@ -568,7 +568,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
             this.alertInfo(
               'success',
               'Correcto',
-              `Documento agregado exitosamente con el id. ${resp.dDocName}`
+              `Documento agregado exitosamente con el ID: ${resp.dDocName}`
             ).then(question => {
               if (question.isConfirmed) {
                 this.modalRef.content.callback(true);

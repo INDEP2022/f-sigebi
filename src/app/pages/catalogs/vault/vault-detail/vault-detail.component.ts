@@ -15,6 +15,7 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 
@@ -32,7 +33,7 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   valueMunicipality: IMunicipality;
   valueLocality: ILocality;
 
-  title: string = 'Catálogo de Bóvedas';
+  title: string = 'Bóveda';
   edit: boolean = false;
   filterCity: string = '';
   idStateFilter: string = '';
@@ -48,6 +49,11 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   public municipalities = new DefaultSelect<IMunicipality>();
   public localities = new DefaultSelect<ILocality>();
   public manger = new DefaultSelect<IUsersTracking>();
+
+  /*states = new DefaultSelect();
+  cities = new DefaultSelect();
+  municipalities = new DefaultSelect();
+  localities = new DefaultSelect();*/
 
   safes1 = new DefaultSelect();
   safes2 = new DefaultSelect();
@@ -83,8 +89,22 @@ export class VaultDetailComponent extends BasePage implements OnInit {
     this.vaultForm = this.fb.group({
       idSafe: [null, []],
       manager: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      ubication: [null, [Validators.required]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(90),
+        ],
+      ],
+      ubication: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(90),
+        ],
+      ],
       municipalityCode: [null, []],
       localityCode: [null, []],
       stateCode: [null, []],
@@ -237,6 +257,13 @@ export class VaultDetailComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.vaultForm.controls['ubication'].value.trim() === '' ||
+      this.vaultForm.controls['description'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.safeService.create2(this.vaultForm.value).subscribe({
       next: data => this.handleSuccess(),
@@ -350,6 +377,75 @@ export class VaultDetailComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  /*getCitiesUpdate(params: ListParams, idCity?: string | number, idState?: string | number ) {
+    if (idState && idCity) {
+      params['filter.idCity'] = `$eq:${idCity}`;
+      params['filter.state'] = `$eq:${idState}`;
+    }
+    this.cityService.getAll(params).subscribe({
+      next: data => {
+      console.log(data);
+      this.cities = new DefaultSelect(data.data, data.count);
+    },
+      error: err => {
+        this.cities = new DefaultSelect([], 0);
+        console.log('error', err);
+      }
+    }
+      
+    );
+}
+
+getStatesUpdate(params: ListParams, id ?: string | number) {
+  if (id) {
+    params['filter.id'] = `$eq:${id}`;
+  }
+  this.stateService.getAll(params).subscribe({
+    next: resp => {
+      console.log(resp.data);
+      this.states = new DefaultSelect(resp.data, resp.count);
+    },
+    error: err =>{
+      this.states = new DefaultSelect([], 0);
+    }
+  });
+}
+
+getLocalitiesUpdate(params: ListParams, id ?: string | number, idMunicipality?: string|number, idState?: string|number ) {
+  if (id && idMunicipality && idState) {
+    params['filter.id'] = `$eq:${id}`;
+    params['filter.municipalityId'] = `$eq:${idMunicipality}`;
+    params['filter.stateKey'] = `$eq:${idState}`;
+  }
+  this.localityService.getAll(params).subscribe({
+    next: data => {
+      console.log(data.data);
+      this.localities = new DefaultSelect(data.data, data.count);
+    },
+    error: err => {
+      this.localities = new DefaultSelect([], 0);
+      console.log('error', err);
+    }
+  });
+}
+
+getUpdateMunicipalities(params: ListParams, id ?: string | number,idState?: string| number) {
+  if (id && idState) {
+    params['filter.idMunicipality'] = `$eq:${id}`;
+    params['filter.stateKey'] = `$eq:${idState}`;
+  }
+  this.municipalityService.getAll(params).subscribe({
+    next: data => {
+    console.log(data);
+    this.municipalities = new DefaultSelect(data.data, data.count);
+  },
+    error: err => {
+      this.municipalities = new DefaultSelect([], 0);
+      console.log('error', err);
+    }
+  });
+}*/
 
   onValuesChange1(safeChange1: ICity) {
     this.validationcity = true;

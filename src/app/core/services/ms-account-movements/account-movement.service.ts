@@ -50,6 +50,10 @@ export class AccountMovementService extends HttpService {
     return this.get<IListResponse<IUserChecks>>('user-checks', params);
   }
 
+  updateUserChecks(id: number, body: any) {
+    return this.put('user-checks/' + id, body);
+  }
+
   update(movement: any) {
     return this.put(`account-movements`, movement);
   }
@@ -183,6 +187,13 @@ export class AccountMovementService extends HttpService {
   getPaymentControl(params?: _Params) {
     return this.get<IListResponse<any>>(
       AccountmvmntEndpoint.PaymentControl,
+      params
+    );
+  }
+
+  getPaymentTypeSat(params?: _Params) {
+    return this.get<IListResponse<any>>(
+      AccountmvmntEndpoint.PaymentTypeSat,
       params
     );
   }

@@ -27,8 +27,12 @@ export class HttpService {
   protected get<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(params, url);
     return this.httpClient.get<T>(`${url}`, { params });
+  }
+  protected get2<T = any>(route: string, _params?: _Params) {
+    const params = this.getParams(_params);
+    const url = this.buildRoute(route);
+    return this.httpClient.get<T>(`${url}`);
   }
 
   protected post<T = any>(route: string, body: {}, _params?: _Params) {
@@ -66,7 +70,7 @@ export class HttpService {
    * @param route endpoint que va despues de ....api/v1
    * @returns regresa la ruta completa: 'http://sigebimsqa.indep.gob.mx/microservice/api/{route}'
    */
-  private buildRoute(route: string): string {
+  protected buildRoute(route: string): string {
     return `${this.url}${this.microservice}/${this.prefix}${route}`;
   }
 

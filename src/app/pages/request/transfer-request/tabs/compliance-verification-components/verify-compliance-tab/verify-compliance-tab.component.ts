@@ -991,12 +991,12 @@ export class VerifyComplianceTabComponent
       if (
         article3.length < 3 ||
         article12Y13.length < 3 ||
-        article40.length < 1
+        article40.length < 2
       ) {
         this.alert(
           'warning',
           'Importante',
-          'Es requerido seleccionar 3 cumplimientos del Articulo 3º y del Articulo 12º y 13º, incluido el Artículo 40º'
+          'Es requerido seleccionar tres cumplimientos del Articulo 3º y del Articulo 12º y 13º, incluidos los dos Artículos 40º'
         );
         return;
       }
@@ -1005,7 +1005,7 @@ export class VerifyComplianceTabComponent
         this.alert(
           'warning',
           'Importante',
-          'Es requerido seleccionar 3 cumplimientos del Articulo 3º y del Articulo 12º'
+          'Es requerido seleccionar tres cumplimientos del Articulo 3º y del Articulo 12º'
         );
         return;
       }

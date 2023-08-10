@@ -28,7 +28,6 @@ export const COLUMNS = {
     title: 'Dirección',
     type: 'string',
     sort: false,
-    filter: false,
     class: 'w-md',
     editor: {
       type: 'list',
@@ -63,6 +62,14 @@ export const COLUMNS = {
       type: 'custom',
       component: CheckboxDisabledElementComponent,
     },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: 'S',
+        false: 'N',
+        resetText: 'x',
+      },
+    },
   },
   routineCalculation: {
     title: 'Rut. Cálculo',
@@ -84,6 +91,14 @@ export const COLUMNS = {
     editor: {
       type: 'custom',
       component: CheckboxDisabledElementComponent,
+    },
+    filter: {
+      type: 'checkbox',
+      config: {
+        true: 'S',
+        false: 'N',
+        resetText: 'x',
+      },
     },
   },
 };

@@ -40,6 +40,7 @@ export interface IProceedings {
   nameWorkerOic?: string;
   nameWorkerUvfv?: string;
   nameWitness1?: string;
+
   idExpWorker2?: string;
   nameWitness2?: string;
   electronicSignatureWorker1?: number;
@@ -49,6 +50,7 @@ export interface IProceedings {
   electronicSignatureWitness1?: number;
   electronicSignatureWitness2?: number;
   elaborationDate?: Date;
+  dateOfficie?: Date;
   proceedingStatus?: string;
   elaborated?: string;
   userDestruction?: string;
@@ -98,4 +100,31 @@ export interface IUpdateActasEntregaRecepcion {
 export interface IUpdateActasEntregaRecepcionDelegation {
   minutesNumber: [];
   delegation2Number: [];
+}
+
+export interface IDetailProceedingsDevollution {
+  numberProceedings: string | number;
+  numberGood: string | number;
+  amount: string | number;
+  received?: string;
+  approvedXAdmon?: string;
+  approvedDateXAdmon?: string;
+  approvedUserXAdmon?: string;
+  dateIndicatesUserApproval?: string;
+  numberRegister?: string;
+  reviewIndft?: string;
+  correctIndft?: string;
+  idftUser?: string;
+  idftDate?: string;
+  numDelegationIndft?: string;
+  yearIndft?: string;
+  monthIndft?: string;
+  idftDateHc?: string;
+  packageNumber?: string;
+  exchangeValue?: string;
+}
+
+export interface IDetailProceedingsDevollutionDelete {
+  numberGood: string | number;
+  numberProceedings: string | number;
 }

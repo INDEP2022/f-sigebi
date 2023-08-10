@@ -18,14 +18,23 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row pt-4">
-      <div class="col-md-2"></div>
-      <div class="col-md-2">
-        <button type="button" class="btn btn-primary btn-sm active ml-3">
-          Cargar Archivo
-        </button>
+      <div class="col-md-7">
+        <label class="title" for="">Cargar Archivo (CSV)</label>
+        <form [formGroup]="form" class="form-material">
+          <form-field [control]="form.get('fileCSV')">
+            <input
+              type="file"
+              accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              formControlName="fileCSV"
+              (change)="chargeFile($event)" />
+          </form-field>
+        </form>
+        <!--         
+        <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="loadGoods()" >
+          
+        </button> -->
       </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-2">
+      <div class="col-md-3" style="padding-top: 3%">
         <button
           type="button"
           class="btn btn-primary btn-sm active ml-3"
@@ -33,15 +42,14 @@
           Cargar Layout
         </button>
       </div>
-      <div class="col-md-1"></div>
-      <div class="col-md-2">
+      <!-- <div class="col-md-2" style="padding-top: 3%">
         <button
           type="button"
           class="btn btn-primary btn-sm active ml-3"
           (click)="close()">
           Cerrar
         </button>
-      </div>
+      </div> -->
     </div>
     <div class="row pt-4">
       <form [formGroup]="form" class="form-material">
@@ -69,6 +77,18 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-primary active">Cargar</button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
   </div>
 </app-modal>

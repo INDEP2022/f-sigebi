@@ -49,13 +49,13 @@ export class TypeSinisterListComponent extends BasePage implements OnInit {
               field = `filter.${filter.field}`;
               switch (filter.field) {
                 case 'id':
-                  searchFilter = SearchFilter.ILIKE;
+                  searchFilter = SearchFilter.EQ;
                   break;
                 case 'description':
                   searchFilter = SearchFilter.ILIKE;
                   break;
                 case 'flag':
-                  searchFilter = SearchFilter.ILIKE;
+                  searchFilter = SearchFilter.EQ;
                   break;
                 default:
                   searchFilter = SearchFilter.ILIKE;
@@ -67,6 +67,7 @@ export class TypeSinisterListComponent extends BasePage implements OnInit {
                 delete this.columnFilters[field];
               }
             });
+            this.params = this.pageFilter(this.params);
             this.getExample();
           }
         });

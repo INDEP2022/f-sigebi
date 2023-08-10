@@ -67,6 +67,7 @@
             [parameters]="parameters"
             [onlyBase]="onlyBase"
             [eventForm]="eventForm"
+            [loggedUser]="loggedUser"
             (fillStadistics)="
               fillStadistics.emit()
             "></event-goods-lots-list-actions>
@@ -84,6 +85,7 @@
         [settings]="settings"
         (edit)="openForm($event.data)"
         (userRowSelect)="userSelectLot($event)"
+        (delete)="onDeleteLot($event.data)"
         [source]="lots">
       </ng2-smart-table>
     </div>

@@ -6,12 +6,21 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { SelectModalTableSharedComponent } from 'src/app/@standalone/shared-forms/select-modal-table-shared/select-modal-table-shared.component';
+import { ExpenseConceptsModule } from '../expense-concepts/expense-concepts.module';
 import { ExpenseCaptureRoutingModule } from './expense-capture-routing.module';
 import { ExpenseCaptureComponent } from './expense-capture/expense-capture.component';
+import { DataReceiptComponent } from './expense-capture/expense-comercial/data-receipt/data-receipt.component';
 import { ExpenseComercialComponent } from './expense-capture/expense-comercial/expense-comercial.component';
+import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
 
 @NgModule({
-  declarations: [ExpenseCaptureComponent, ExpenseComercialComponent],
+  declarations: [
+    ExpenseCaptureComponent,
+    ExpenseComercialComponent,
+    DataReceiptComponent,
+    ExpenseCompositionComponent,
+  ],
   imports: [
     CommonModule,
     ExpenseCaptureRoutingModule,
@@ -19,6 +28,8 @@ import { ExpenseComercialComponent } from './expense-capture/expense-comercial/e
     AccordionModule,
     BsDatepickerModule,
     UsersSharedComponent,
+    ExpenseConceptsModule,
+    SelectModalTableSharedComponent,
   ],
 })
 export class ExpenseCaptureModule {}

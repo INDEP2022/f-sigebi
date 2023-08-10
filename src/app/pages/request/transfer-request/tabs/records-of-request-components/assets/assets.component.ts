@@ -306,7 +306,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.message(
             'error',
             'Error al cargar el archivo',
-            `No se pudo cargar el archivo excel: ${error.error.message}`
+            `No se pudo cargar el archivo excel: Datos inconsistentes en el archivo`
           );
         },
       });
@@ -324,6 +324,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   selectRows(event: any) {
+    //Desactivar check
     if (event.isSelected == false) {
       this.table.isAllSelected = false;
     }
@@ -374,7 +375,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   }
   openSelectAddressModal() {
     if (this.listgoodObjects.length === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
     let config: ModalOptions = {
@@ -411,14 +412,14 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
       this.onLoadToast(
         'success',
         'Proceso Finalizado',
-        'Ya se puede guardar el bien'
+        'Ya se puede guardar el Bien'
       );
     });
   }
   // abrir menaje
   menajeModal() {
     if (this.listgoodObjects.length === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
     let config: ModalOptions = {
@@ -468,8 +469,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (this.goodDomiciliesMasive.length === index) {
           this.message(
             'success',
-            'El domicio se actualizo',
-            `Se guardo el domicilio del bien`
+            'El domicilio se actualizó',
+            `Se guardó el domicilio del Bien`
           );
           this.refreshTable();
           this.isSaveDomicilie = false;
@@ -486,7 +487,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (this.menajeSelected.length === index) {
           this.message(
             'success',
-            'Menaje guardado',
+            'Menaje Guardado',
             `Se guardaron los menajes exitosamente`
           );
           this.refreshTable();
@@ -505,7 +506,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         if (this.listGoodsFractions.length === index) {
           this.message(
             'success',
-            'Fracción guardada',
+            'Fracción Guardada',
             `Se guardó la fracción exitosamente`
           );
           this.refreshTable();
@@ -534,7 +535,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.message(
             'error',
             'Error',
-            `Error al actualizar los bienes ${error.error.message}`
+            `Error al actualizar los Bienes ${error.error.message}`
           );
           console.log(error);
           console.log(error.error.message);
@@ -581,7 +582,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         }
       });
     } else {
-      this.message('info', 'Información', `Seleccione uno o mas bienes`);
+      this.message('warning', 'Información', `Seleccione uno o mas bienes`);
     }
   }
 
@@ -596,7 +597,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.message(
             'success',
             'Bienes Eliminados',
-            `Los bienes se eliminaron correctamente`
+            `Los Bienes se eliminaron correctamente`
           );
           this.loader.load = false;
           this.closeCreateGoodWIndows();
@@ -620,7 +621,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         },
         error: error => {
           this.loader.load = false;
-          this.message('error', 'Eliminar', `No se puedo eliminar los bienes`);
+          this.message('error', 'Eliminar', `No se puede eliminar los Bienes`);
         },
       });
     });
@@ -670,7 +671,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   /* Clasificacion Masiva */
   masiveClasification() {
     if (this.listgoodObjects.length === 0) {
-      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      this.onLoadToast('warning', 'Información', `Seleccione uno o mas Bienes`);
       return;
     }
 
@@ -805,16 +806,16 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
     //console.table(this.listGoodsFractions);
     if (existAddres > 0) {
       this.onLoadToast(
-        'info',
+        'warning',
         'Bienes sin domicilio',
-        'Existen bienes que aun no se les asigno un domicilio!'
+        'Existen Bienes que aun no se les asignó un domicilio'
       );
     }
     setTimeout(() => {
       this.onLoadToast(
         'success',
         'Proceso Finalizado',
-        'Ya se pueden guardar los bien'
+        'Ya se pueden guardar los Bienes'
       );
     }, 600);
   }
@@ -835,9 +836,9 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
               } else {
                 resolve(true);
                 this.message(
-                  'info',
-                  'clasificación de bien nula',
-                  'el bien seleccionado no tiene numero de clasificación de bien'
+                  'warning',
+                  'clasificación de bien vacia',
+                  'El bien seleccionado no tiene número de clasificación'
                 );
               }
             });
@@ -1095,7 +1096,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   assignAllAddress() {
     Swal.fire({
       title: 'Asignación Masiva de Domicilio',
-      html: 'Se asignará a todos los bienes el domicilio que se seleccione',
+      html: 'Se asignará a todos los Bienes el domicilio que se seleccione',
       icon: 'warning',
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
@@ -1140,18 +1141,18 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.onLoadToast(
             'success',
             'Asignación exitosa',
-            `Se asignó un domicilio a todos los bienes`
+            `Se asignó un domicilio a todos los Bienes`
           );
           this.loading = true;
           this.closeCreateGoodWIndows();
         },
         error: error => {
           this.loading = false;
-          console.log('Error al asignar domicilio a los bienes ', error);
+          console.log('Error al asignar domicilio a los Bienes ', error);
           this.onLoadToast(
             'error',
             'Error',
-            `Error al asignar domicilio a los bienes`
+            `Error al asignar domicilio a los Bienes`
           );
         },
       });
@@ -1160,7 +1161,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
   classifyAllGoods() {
     Swal.fire({
       title: 'Clasificación Masiva',
-      html: 'Se asignará a todos los bienes la fracción que se seleccione',
+      html: 'Se asignará a todos los Bienes la fracción que se seleccione',
       icon: 'warning',
       showCancelButton: false,
       confirmButtonColor: '#9D2449',
@@ -1203,8 +1204,8 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
         next: resp => {
           this.onLoadToast(
             'success',
-            'Clasificación exitosa',
-            `Se clasificaron todos los bienes`
+            'Clasificación Exitosa',
+            `Se clasificaron todos los Bienes`
           );
           this.loading = true;
           this.closeCreateGoodWIndows();
@@ -1215,7 +1216,7 @@ export class AssetsComponent extends BasePage implements OnInit, OnChanges {
           this.onLoadToast(
             'error',
             'Error',
-            `No se pudieron clasificar los bienes`
+            `No se pudieron clasificar los Bienes`
           );
         },
       });

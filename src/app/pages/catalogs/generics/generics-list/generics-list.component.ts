@@ -31,13 +31,12 @@ export class GenericsListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = GENERICS_COLUMNS;
-    this.settings.actions.delete = true;
+
     this.settings.actions.add = false;
     this.settings.hideSubHeader = false;
   }
 
   ngOnInit(): void {
-    this.totalItems = 0;
     this.data
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -49,14 +48,9 @@ export class GenericsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'keyId':
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+            filter.field == 'keyId' || filter.field == 'version'
+              ? (searchFilter = SearchFilter.EQ)
+              : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

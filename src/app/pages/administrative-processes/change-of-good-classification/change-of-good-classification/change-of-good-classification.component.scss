@@ -11,6 +11,14 @@
   }
 }
 
+:host ::ng-deep .fixTopInput {
+  form-field {
+    .float-label {
+      top: -18px;
+    }
+  }
+}
+
 form-loader {
   position: absolute;
   width: 100%;

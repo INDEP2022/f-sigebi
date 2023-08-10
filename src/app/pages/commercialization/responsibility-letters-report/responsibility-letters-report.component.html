@@ -7,25 +7,25 @@
 
   <div body>
     <form [formGroup]="comerLibsForm" class="form-material">
-      <div class="row">
+      <!-- <div class="row">
         <div class="d-flex justify-content-end">
           <div class="d-inline mr-2">
             Fecha:
             <span class="ml-3 mr-3" style="display: initial !important">
-              <!-- {{ carta | date:'dd \'de\' MMMM \'del año\' yyyy' }} -->
+              {{ carta | date:'dd \'de\' MMMM \'del año\' yyyy' }}
               {{ carta || '00/00/0000' }}
             </span>
-            <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+            <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
               Regresar
               <i class="fas fa-arrow-circle-left"></i>
-            </button> -->
-            <!-- <button (click)="searchComer()" class="btn btn-primary btn-sm active m-1" tooltip="Cartas de Liberación"
+            </button>
+            <button (click)="searchComer()" class="btn btn-primary btn-sm active m-1" tooltip="Cartas de Liberación"
               containerClass="tooltip-style">
               <i class="bx bx-list-plus bx-sm float-icon"></i>
-            </button> -->
+            </button>
           </div>
         </div>
-        <!-- <div class="col-md-12">
+        <div class="col-md-12">
           <div class="row">
             <div class="col-md-12">
               <div class="card">
@@ -75,15 +75,15 @@
               </div>
             </div>
           </div>
-        </div> -->
-      </div>
+        </div>
+      </div> -->
       <div class="row">
         <div class="col-md-12">
           <div class="row">
             <div class="col-md-12">
               <div class="row m-3">
-                <div class="col-4"></div>
-                <div class="col-md-8 text-end">
+                <!-- <div class="col-4"></div> -->
+                <div class="col-md-12 text-end">
                   <!-- <button [disabled]="!letterDefault" (click)="actualizarLetter()" type="button"
                             class="btn btn-info active btn-sm mr-3">
                             Guardar
@@ -115,21 +115,32 @@
               </div>
               <div class="card">
                 <div class="card-body">
-                  <div class="col-md-4 mt-3">
+                  <div class="col-md-6 mt-3">
                     <div>
-                      <form-field
+                      <!-- <form-field
                         [control]="bienesLotesForm.get('evento')"
                         label="Evento">
                         <input
                           type="text"
                           maxlength="50"
                           class="form-control"
-                          formControlName="evento"
-                          readonly />
-                      </form-field>
+                          formControlName="evento" />
+                      </form-field> -->
+                      <ngx-select
+                        [data]="selectDataEvent"
+                        bindLabel="observations"
+                        label="Evento"
+                        value="eventTpId"
+                        (fetchItems)="getEventData($event)"
+                        (change)="changeEvent($event)"
+                        [form]="comerLibsForm"
+                        [showTooltip]="true"
+                        [searchOnInit]="true"
+                        termMaxLength="100"
+                        control="evento"></ngx-select>
                     </div>
                   </div>
-                  <div class="col-md-4 mt-3">
+                  <!-- <div class="col-md-4 mt-3">
                     <div>
                       <form-field
                         [control]="bienesLotesForm.get('descEvento')"
@@ -142,11 +153,11 @@
                           readonly />
                       </form-field>
                     </div>
-                  </div>
-                  <div class="col-md-4 mt-3">
+                  </div> -->
+                  <div class="col-md-6 mt-3">
                     <div>
-                      <form-field
-                        [control]="bienesLotesForm.get('lote')"
+                      <!-- <form-field
+                        [control]="comerLibsForm.get('lote')"
                         label="Lote">
                         <input
                           type="text"
@@ -154,10 +165,21 @@
                           class="form-control"
                           formControlName="lote"
                           readonly />
-                      </form-field>
+                      </form-field> -->
+                      <ngx-select
+                        [data]="selectDataLote"
+                        bindLabel="description"
+                        label="Lote"
+                        value="idLot"
+                        (fetchItems)="getLoteData($event)"
+                        [form]="comerLibsForm"
+                        [showTooltip]="true"
+                        [searchOnInit]="true"
+                        termMaxLength="100"
+                        control="lote"></ngx-select>
                     </div>
                   </div>
-                  <div class="col-md-4 mt-3">
+                  <!-- <div class="col-md-4 mt-3">
                     <div>
                       <form-field
                         [control]="bienesLotesForm.get('description')"
@@ -170,7 +192,7 @@
                           readonly />
                       </form-field>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="col-md-4 mt-3">
                     <div>
                       <form-field
@@ -460,8 +482,8 @@
       </div>
     </form>
     <div footer>
-      <div
-        class="d-flex flex-row justify-content-center align-items-center"></div>
+      <!-- <div
+        class="d-flex flex-row justify-content-center align-items-center"></div> -->
       <div class="d-flex flex-row justify-content-center align-items-center">
         <div class="m-3">
           <button

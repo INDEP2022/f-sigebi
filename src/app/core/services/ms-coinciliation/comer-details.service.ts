@@ -56,7 +56,10 @@ export class ComerDetailsService extends HttpService {
   }
 
   reverseEverything(body: any): Observable<IListResponse<any>> {
-    return this.get<IListResponse<any>>(`application/reverse-everything`, body);
+    return this.post<IListResponse<any>>(
+      `application/reverse-everything`,
+      body
+    );
   }
 
   actEstEve(id: any): Observable<IListResponse<any>> {
@@ -66,6 +69,16 @@ export class ComerDetailsService extends HttpService {
   pFmcomr612getAuxCount(id: any): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(
       `application/pFmcomr612getAuxCount/${id}`
+    );
+  }
+
+  MODIFICA_ESTATUS(body: any): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(`application/change-status`, body);
+  }
+
+  CAMBIAR_ESTATUS_ANT(body: any): Observable<IListResponse<any>> {
+    return this.get<IListResponse<any>>(
+      `application/change-status-ant/${body}`
     );
   }
 }

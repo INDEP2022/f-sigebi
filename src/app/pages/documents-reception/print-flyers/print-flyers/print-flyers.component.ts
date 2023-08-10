@@ -164,8 +164,8 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      .fetchReport('RCONCOGVOLANTESRE', params)
-      //.fetchReportBlank('blank')
+      //.fetchReport('RCONCOGVOLANTESRE', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

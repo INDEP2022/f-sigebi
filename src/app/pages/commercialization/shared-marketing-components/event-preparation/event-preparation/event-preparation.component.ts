@@ -1,10 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 //XLSX
+import { ActivatedRoute } from '@angular/router';
 import { sub } from 'date-fns';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
   catchError,
+  debounceTime,
   firstValueFrom,
   map,
   of,
@@ -71,11 +73,14 @@ export class EventPreparationComponent
     private eventPreparationService: EventPreparationService,
     private globalVarsService: GlobalVarsService,
     private eventAppService: EventAppService,
-    private parametersModService: ParametersModService
+    private parametersModService: ParametersModService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     // TODO: Recibir los parametros
     this.parameters.pDirection = 'M';
+    const screen = this.activatedRoute.snapshot.data['screen'];
+    this.parameters.pDirection = screen == 'FCOMEREVENTOS' ? 'M' : 'I';
   }
 
   async checkState() {
@@ -100,6 +105,7 @@ export class EventPreparationComponent
 
   newEventSelected() {
     return this.eventControls.id.valueChanges.pipe(
+      debounceTime(500),
       takeUntil(this.$unSubscribe),
       tap(async eventId => {
         if (!eventId) {
@@ -128,11 +134,13 @@ export class EventPreparationComponent
     const params = new FilterParams();
     params.addFilter('parameter', BANK_PARAMETER);
     params.addFilter('address', this.parameters.pDirection);
+    console.warn('TIPO DE EVENTO', eventTpId.value);
+    const defaultBank = this.parameters.pDirection == 'M' ? 'BANAMEX' : 'HSBC';
     params.addFilter('tpEventId', eventTpId.value);
     return await firstValueFrom(
       this.parametersModService.getAllFilter(params.getParams()).pipe(
-        catchError(() => of({ data: [{ value: 'BANAMEX' }] })),
-        map(response => response.data[0]?.value ?? 'BANAMEX')
+        catchError(() => of({ data: [{ value: defaultBank }] })),
+        map(response => response.data[0]?.value ?? defaultBank)
       )
     );
   }
@@ -144,7 +152,8 @@ export class EventPreparationComponent
   /** PUP_INCIALIZA_FORMA */
   initForm() {
     this.defaultMenu();
-    this.blkTasks.tDirection = 'MUEBLES';
+    this.blkTasks.tDirection =
+      this.parameters.pDirection == 'M' ? 'MUEBLES' : 'INMUEBLES';
     // TODO: SET_ITEM_PROPERTY('BLK_BIENES_LOTES.CAMPO1', PROMPT_TEXT, 'Nombre Prod');
     this.blkCtrlMain.chkLocation = true;
     this.blkCtrlMain.chkProc = true;
@@ -299,17 +308,32 @@ export class EventPreparationComponent
     let tab = TABS.LOTES_TAB;
     const { eventTpId, id } = this.eventControls;
     if (eventTpId.value == 11) {
-      this.eventFormVisual.eventDate = false;
-      this.eventFormVisual.failureDate = false;
-      this.eventFormVisual.thirdId = false;
+      if (this.parameters.pDirection == 'M') {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+        this.eventFormVisual.thirdId = false;
+      } else {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+      }
       tab = TABS.BASE_TAB;
       // this.onlyBase = true;
     } else if (eventTpId.value == 6) {
-      this.eventFormVisual.eventDate = false;
-      this.eventFormVisual.failureDate = false;
+      if (this.parameters.pDirection == 'M') {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+      } else {
+        this.eventFormVisual.eventDate = false;
+        this.eventFormVisual.failureDate = false;
+      }
     } else {
-      this.eventFormVisual.eventDate = true;
-      this.eventFormVisual.failureDate = true;
+      if (this.parameters.pDirection == 'M') {
+        this.eventFormVisual.eventDate = true;
+        this.eventFormVisual.failureDate = true;
+      } else {
+        this.eventFormVisual.eventDate = true;
+        this.eventFormVisual.failureDate = true;
+      }
     }
     this.resetTableFilters();
     this.selectTab(tab);
@@ -482,7 +506,8 @@ export class EventPreparationComponent
           return throwError(() => error);
         }),
         tap(response => {
-          if (response.data > 0) {
+          const c: any = response;
+          if (response.data > 0 || c > 0) {
             this.alert(
               'warning',
               'Advertencia',
@@ -498,7 +523,7 @@ export class EventPreparationComponent
     return firstValueFrom(
       this.lotService
         .updateMandate({
-          pGood: 0,
+          pGood: this.parameters.pDirection == 'M' ? 0 : 1,
           pLot: 1,
           lotId: this.lotSelected.id,
         })
@@ -536,5 +561,11 @@ export class EventPreparationComponent
       return;
     }
     this.fillStadistics();
+  }
+
+  onApply() {
+    const params = new FilterParams();
+    this.comerLotsListParams.next(params);
+    this.selectTab(TABS.LOTES_TAB);
   }
 }

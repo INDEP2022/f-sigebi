@@ -789,7 +789,7 @@ export class DepositTokensComponent
       }
       this.clearInput();
     } catch (error) {
-      this.alert('warning', 'Ocurrio un Error al leer el Archivo', '');
+      this.alert('warning', 'Ocurrió un Error al Leer el Archivo', '');
       this.clearInput();
     }
   }
@@ -1001,7 +1001,7 @@ export class DepositTokensComponent
       error: err => {
         this.form
           .get('descriptionGood')
-          .setValue('No se encontró la descripción del bien');
+          .setValue('No se encontró la descripción del Bien');
       },
     });
   }
@@ -1049,7 +1049,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede Eliminar un Movimiento que ya está Asociado a un Expediente-Bien',
+        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
         ''
       );
     } else {
@@ -1060,7 +1060,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se uede Eliminar una Ficha mientras tenga Devoluciones Registradas',
+          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
           ''
         );
       } else {
@@ -1098,7 +1098,7 @@ export class DepositTokensComponent
     if (data.goodnumber != null) {
       this.alert(
         'warning',
-        'No puede eliminar un movimiento que ya está asociado a un expediente-bien',
+        'No Puede Eliminar un Movimiento que ya está Asociado a un Expediente',
         ''
       );
     } else {
@@ -1109,7 +1109,7 @@ export class DepositTokensComponent
       if (vb_hay_hijos) {
         this.alert(
           'warning',
-          'No se puede Eliminar una Ficha Mientras tenga Devoluciones Registradas',
+          'No se Puede Eliminar una Ficha Mientras Tenga Devoluciones Registradas',
           ''
         );
       } else {

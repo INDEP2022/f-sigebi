@@ -188,11 +188,20 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (params['newActConvertion']) {
         this.actConvertion.setValue(params['newActConvertion']);
       }
-      this.numberFoli = params['folio'] ?? null;
-      this.actConvertion.setValue(params['expedientNumber'] ?? null);
-      this.tipo.setValue(params['tipoConv'] ?? null);
-      this.numberGoodFather.setValue(params['pGoodFatherNumber'] ?? null);
-      this.numberDossier.setValue(params['expedientNumber'] ?? null);
+      if (params['folio']) {
+        this.numberFoli = params['folio'] ?? null;
+      }
+      if (params['tipoConv']) {
+        this.tipo.setValue(params['tipoConv'] ?? null);
+      }
+      // this.actConvertion.setValue(params['expedientNumber'] ?? null);
+      if (params['pGoodFatherNumber']) {
+        this.numberGoodFather.setValue(params['pGoodFatherNumber'] ?? null);
+      }
+      if (params['expedientNumber']) {
+        this.numberDossier.setValue(params['expedientNumber'] ?? null);
+      }
+
       console.log(this.numberFoli);
       // if (this.numberFoli) {
       //   this.showActasConvertion();
@@ -213,7 +222,9 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             if (this.conversionData) {
               this.no_bien_blk_tipo_bien = data.goodFatherNumber;
               this.idConversion.setValue(data.id);
-              this.numberDossier.setValue(data.fileNumber.id);
+              this.numberDossier.setValue(
+                data.fileNumber != null ? data.fileNumber.id : ''
+              );
               this.numberGoodFather.setValue(data.goodFatherNumber);
               this.goodFatherNumber$.next(data.goodFatherNumber);
               this.wrongModal = false;
@@ -359,7 +370,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       if (row.required && !row.value) {
         this.alert(
           'error',
-          'Características del bien ' + this.goodForTableChar.id,
+          'Características del Bien ' + this.goodForTableChar.id,
           'Complete el atributo ' + row.attribute
         );
         tableValid = false;
@@ -375,7 +386,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          this.alert('success', 'Valores Actualizados correctamente', '');
+          this.alert('success', 'Valores Actualizados Correctamente', '');
           this.getAllGoodChild(this.goodFatherNumber$.getValue());
         },
       });
@@ -754,6 +765,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
+        good.lotNumber = this.good.lotNumber.id;
         console.log(good);
         this.serviceGood.crateGood(good).subscribe(
           res => {
@@ -762,7 +774,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
           err => {
             this.alert(
               'error',
-              'No Bien Hijo',
+              'No. Bien Hijo',
               'Error Inesperado, Por Favor Intentelo Nuevamente'
             );
           }

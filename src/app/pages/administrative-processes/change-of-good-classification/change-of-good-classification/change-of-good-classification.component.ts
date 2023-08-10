@@ -56,6 +56,7 @@ export class ChangeOfGoodClassificationComponent
   noEtiqs: string[] = [];
   endProcess: boolean = false;
   destinations: ILabelOKey[] = [];
+  loadingGood = false;
   // listAtributAct: any[] = [];
   // listAtributNew: IAttribClassifGoods[] = [];
   btnNewAtribut: boolean = true;
@@ -87,6 +88,10 @@ export class ChangeOfGoodClassificationComponent
   }
   get descriptionClasification() {
     return this.form.get('descriptionClasification');
+  }
+
+  get clasification() {
+    return this.form.get('clasification');
   }
 
   get numberFile() {
@@ -204,11 +209,14 @@ export class ChangeOfGoodClassificationComponent
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         if (param['numberGood']) {
+          console.log(param);
           this.numberGood.setValue(param['numberGood']);
           if (this.previousRouteService.getHistory().length > 1) {
             this.origin = 1;
           }
-          this.loadGood();
+          if (!this.loadingGood) {
+            this.loadGood();
+          }
         } else {
           this.origin = 0;
         }
@@ -283,6 +291,7 @@ export class ChangeOfGoodClassificationComponent
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
       descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
+      clasification: [null, [Validators.pattern(STRING_PATTERN)]],
       currentClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       descriptionClasification: [null, [Validators.pattern(STRING_PATTERN)]],
       numberFile: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -333,11 +342,13 @@ export class ChangeOfGoodClassificationComponent
     this.loading = true;
     // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
+    this.loadingGood = true;
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
       queryParams: { numberGood: this.numberGood.value },
       queryParamsHandling: 'merge', // remove to replace all query params by provided
     });
+
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
     const response = await firstValueFrom(
@@ -346,6 +357,7 @@ export class ChangeOfGoodClassificationComponent
         .pipe(catchError(x => of({ data: [] })))
     );
     if (response.data && response.data.length > 0) {
+      this.loadingGood = false;
       this.good = response.data[0];
       const status = await firstValueFrom(this.getStatusXPantalla());
       // console.log(this.usuarVal, this.usuarVal.substring(0, 3));
@@ -353,7 +365,7 @@ export class ChangeOfGoodClassificationComponent
         this.alertInfo(
           'error',
           'Cambio de Clasificador',
-          'Solo se podrá realizar el cambio de clasificador, de bienes en estatus ROP, STA y VXR'
+          'Solo se podrá realizar el cambio de clasificador, de Bienes en Estatus ROP, STA y VXR'
         );
         this.clear();
         return;
@@ -382,7 +394,7 @@ export class ChangeOfGoodClassificationComponent
             this.alert(
               'error',
               'Error',
-              'No se puedo cargar la descripción del clasificador'
+              'No se puede cargar la descripción del clasificador'
             );
           }
           this.loading = false;
@@ -391,7 +403,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'Error',
-            'No se puedo cargar la descripción del clasificador'
+            'No se puede cargar la descripción del clasificador'
           );
           this.loading = false;
         },
@@ -400,6 +412,9 @@ export class ChangeOfGoodClassificationComponent
 
   setGood(good: IGood, clasif: IGoodSssubtype) {
     this.descriptionGood.setValue(good.description);
+    this.clasification.setValue(
+      good.goodClassNumber + ' - ' + clasif.description
+    );
     this.currentClasification.setValue(good.goodClassNumber);
     this.descriptionClasification.setValue(clasif.description);
     this.numberFile.setValue(good.fileNumber);
@@ -421,6 +436,8 @@ export class ChangeOfGoodClassificationComponent
   onChange(event: any) {
     // console.log(event);
     this.newDescription = event;
+    this.unitXClassif.setValue(null);
+    this.destination.setValue(null);
     this.getUnitiXClasif();
     this.getEtiqXClasif();
     this.formNew.enable();
@@ -494,8 +511,8 @@ export class ChangeOfGoodClassificationComponent
     if (this.classificationOfGoods.value === '') {
       this.onLoadToast(
         'info',
-        'INformación',
-        'Debe seleccionar un No de clasificación de Bien'
+        'Información',
+        'Debe seleccionar un No. De clasificación de Bien'
       );
       return;
     }
@@ -507,9 +524,9 @@ export class ChangeOfGoodClassificationComponent
 
   showAlert() {
     this.alertQuestion(
-      'warning',
+      'question',
       'Actualizar',
-      '¿Desea actualizar el clasificador del bien?'
+      '¿Desea actualizar el clasificador del Bien?'
     ).then(question => {
       if (question.isConfirmed) {
         this.addAtribut();
@@ -576,8 +593,8 @@ export class ChangeOfGoodClassificationComponent
         next: response => {
           this.alert(
             'success',
-            'ÉXITO',
-            `Se ha actualizado la clasificación del bien ${this.good.id}`
+            'No. Bien ' + this.good.id,
+            `Se ha actualizado la Clasificación Correctamente`
           );
           this.updateFirsTable();
           // this.dataAct.load([]);
@@ -589,7 +606,7 @@ export class ChangeOfGoodClassificationComponent
           this.alert(
             'error',
             'ERROR',
-            `Error al cambiar la clasificación del bien ${this.good.id}`
+            `Error al cambiar la clasificación del Bien ${this.good.id}`
           );
         },
       });

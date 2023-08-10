@@ -44,6 +44,7 @@ export class SelectModalTableSharedComponent
 {
   @Input() form: FormGroup;
   @Input() disabled: boolean;
+  @Input() maxlengthInput = 10;
   @Input() override haveSelectColumns: boolean = false;
   @Input() override haveColumnFilters: boolean = false;
   @Input() override ilikeFilters: string[] = ['description'];

@@ -1,74 +1,14 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Estado de cuenta (Depósito)</h5>
-    <!--<div class="mr-2">
-      <div class="d-inline mr-2" *ngIf="!searchMode && !loading">
-        <button
-          type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="enableSearchMode()">
-          <i class="bx bx-search-alt bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="d-inline mx-2" *ngIf="searchMode && !loading">
-        <div class="btn-group">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            (click)="confirmSearch()">
-            <i class="bx bx-check bx-sm float-icon"></i>
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm"
-            (click)="cancelSearch()">
-            <i class="bx bx-x bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
-    </div>-->
   </div>
   <div body>
-    <!--<div class="row">
-      <div class="col-md-12">
-        <h5 class="title">
-          <i class="fa fa-filter" aria-hidden="true"></i> Filtrar por:
-        </h5>
-      </div>
-    </div>-->
     <div class="row mt-2 mb-1">
       <form action="" class="form-material" [formGroup]="form">
-        <!--<div class="row pt-5">
-          <div class="col-md-3">
-            <form-field [control]="form.get('goodId')" label="No. Bien">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="goodId" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('fileNumber')"
-              label="No. Expediente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="fileNumber" />
-            </form-field>
-          </div>
-        </div>-->
         <h5 class="title">Datos del Depósito</h5>
         <div class="row pb-4">
           <div class="col text-right">
             <div class="btn-group">
-              <!-- <button
-                type="button"
-                tooltip="Agregar"
-                containerclass="tooltip-style"
-                class="btn btn-info btn-sm active ml-2 mr-2">
-                <i class="bx bx-plus bx-sm float-icon"></i>
-              </button> -->
               <button
                 class="btn btn-primary btn-sm active mx-1"
                 [disabled]="!validDetail"
@@ -83,7 +23,7 @@
             </div>
           </div>
         </div>
-        <div class="row pt-4">
+        <div class="row">
           <!-- <div class="col-md-3">
             <form-field [control]="form.get('account')">
               <ngx-select
@@ -136,37 +76,11 @@
             </form-field> -->
           <!-- </div> -->
         </div>
-
-        <!--<div class="row pt-4">
-          <div class="col-md-6" [formGroup]="form" *ngIf="form">
-            <form-field
-              [control]="form.get('depositDate')"
-              label="Fecha deposito">
-              <input
-                [maxDate]="maxDate"
-                class="form-control"
-                formControlName="depositDate"
-                (bsValueChange)="onChange($event,form.get('depositDate'), form.get('cutoffDate'))"
-                bsDatepicker />
-            </form-field>
-          </div>
-          <div class="col-md-6" [formGroup]="form" >
-            <form-field [control]="form.get('cutoffDate')" label="Fecha de corte">
-              <input
-                [maxDate]="maxDate"
-                class="form-control"
-                formControlName="formFin"
-                (bsValueChange)="onChangeFin($event, form.get('cutoffDate'))"
-                [minDate]="form.get('cutoffDate').value"
-                bsDatepicker />
-            </form-field>
-          </div>
-        </div>-->
-
-        <div class="row pt-4">
-          <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-4 mt-4">
             <app-select-modal-table-shared
               [form]="form"
+              [maxlengthInput]="12"
               [disabled]="false"
               [widthDescription]="false"
               [haveSelectColumns]="true"
@@ -215,7 +129,31 @@
               </ng-template>
             </form-field> -->
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4 mt-4">
+            <form-field
+              [control]="accountnumberorigindeposit"
+              label="Origen Depósito">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="accountnumberorigindeposit"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+          <div class="col-md-4 mt-4">
+            <form-field
+              [control]="accountnumberpayreturn"
+              label="Origen Devolución">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="accountnumberpayreturn"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mt-4">
             <form-field [control]="form.get('bank')" label="Banco">
               <input
                 type="text"
@@ -224,7 +162,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4 mt-4">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
                 type="text"
@@ -233,7 +171,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4 mt-4">
             <form-field [control]="form.get('amount')" label="Importe">
               <input
                 type="text"
@@ -243,8 +181,8 @@
             </form-field>
           </div>
         </div>
-        <div class="row pt-4">
-          <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-3 mt-4">
             <form-field [control]="goodId" label="Bien">
               <input
                 type="number"
@@ -253,7 +191,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 mt-4">
             <form-field [control]="form.get('status')" label="Estatus">
               <input
                 readonly
@@ -262,7 +200,7 @@
                 formControlName="status" />
             </form-field>
           </div>
-          <div class="col-md-6 fixTextarea">
+          <div class="col-md-6 fixTextarea mt-4">
             <form-field
               [control]="form.get('goodDescription')"
               label="Descripción">
@@ -275,8 +213,17 @@
             </form-field>
           </div>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-3 mt-4">
+            <form-field [control]="devolutionnumber" label="Devolución">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="devolutionnumber"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+          <div class="col-md-3 mt-4">
             <form-field [control]="expedient" label="Expediente">
               <input
                 type="number"
@@ -285,7 +232,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3" [class]="readonly ? 'disabledInput' : ''">
+          <div class="col-md-3 mt-4" [class]="readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('depositDate')"
               label="Fecha Depósito">
@@ -297,7 +244,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3" [class]="readonly ? 'disabledInput' : ''">
+          <div class="col-md-3 mt-4" [class]="readonly ? 'disabledInput' : ''">
             <form-field
               [control]="form.get('transfDate')"
               label="Fecha Transferencia">
@@ -309,18 +256,9 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('indicated')" label="Indiciado">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="indicated"
-                [readonly]="readonly" />
-            </form-field>
-          </div>
         </div>
-        <div class="row mt-4">
-          <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-6 mt-4">
             <form-field
               [control]="form.get('avPrevious')"
               label="Averiguaci&oacute;n Previa">
@@ -331,7 +269,7 @@
                 [readonly]="readonly" />
             </form-field>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-6 mt-4">
             <form-field
               [control]="form.get('criminalCase')"
               label="Causa penal">
@@ -343,10 +281,21 @@
             </form-field>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12 mt-4">
+            <form-field [control]="form.get('indicated')" label="Indiciado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="indicated"
+                [readonly]="readonly" />
+            </form-field>
+          </div>
+        </div>
       </form>
     </div>
     <h5 class="title">Datos para cálculo</h5>
-    <div class="row pt-4 mt-4">
+    <div class="row">
       <div class="col text-right">
         <button
           class="btn btn-primary btn-sm active mx-1"
@@ -474,8 +423,10 @@
       </form>
     </div>
     <h5 class="title">Datos para el cheque</h5>
-    <div class="row mt-4">
-      <div *ngIf="userChecks && userChecks.accounttras">
+    <div class="d-flex mt-4">
+      <div
+        *ngIf="userChecks && userChecks.accounttras"
+        class="accounttras text-primary">
         {{ userChecks.accounttras }}
       </div>
       <div class="col text-right">
@@ -494,11 +445,14 @@
             <form-field
               [control]="form.get('checkType')"
               label="Tipo de Cheque">
-              <input
-                type="text"
+              <ng-select
+                formControlName="userRole"
                 class="form-control"
-                formControlName="checkType"
-                [readonly]="disabled" />
+                [readonly]="disabled"
+                [clearable]="false">
+                <ng-option value="NORMAL">Normal</ng-option>
+                <ng-option value="INTERES">Interés</ng-option>
+              </ng-select>
             </form-field>
           </div>
           <div class="col-md-3">

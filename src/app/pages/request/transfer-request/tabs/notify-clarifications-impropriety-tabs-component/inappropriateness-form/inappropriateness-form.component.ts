@@ -71,20 +71,14 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      addresseeName: [
-        this.request?.nameOfOwner || null,
-        [Validators.maxLength(50)],
-      ],
-      positionAddressee: [
-        this.request?.nameOfOwner || null,
-        [Validators.maxLength(50)],
-      ],
-      senderName: [null, [Validators.maxLength(50)]],
-      senderCharge: [null, [Validators.maxLength(50)]],
-      clarification: [null, [Validators.maxLength(800)]],
-      paragraphInitial: [null, [Validators.maxLength(1000)]],
-      paragraphFinal: [null, [Validators.maxLength(1000)]],
-      observations: [null, [Validators.maxLength(1000)]],
+      addresseeName: [null],
+      positionAddressee: [null],
+      senderName: [this.request?.nameOfOwner || null],
+      senderCharge: [this.request?.holderCharge || null],
+      clarification: [null, [Validators.pattern(STRING_PATTERN)]],
+      paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
+      paragraphFinal: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
       //transmitterId: [null, [Validators.maxLength(15)]],
       //foundation: [null, [Validators.maxLength(4000)]],
       //invoiceLearned: [null, [Validators.maxLength(60)]],
@@ -92,10 +86,7 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(60), Validators.pattern(NUMBERS_PATTERN)],
       ], */
-      consistentIn: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
+      consistentIn: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -112,11 +103,11 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
       //id: 1, //ID primaria
       version: 1,
       //transmitterId: this.form.controls['transmitterId'].value,
-      paragraphInitial: this.form.controls['paragraphInitial'].value,
+      paragraphInitial: this.form.controls['paragraphInitial'].value, //no tiene limite en BD
       applicationId: this.request.id,
       positionSender: this.form.controls['senderCharge'].value,
-      paragraphFinal: this.form.controls['paragraphFinal'].value,
-      consistentIn: this.form.controls['consistentIn'].value,
+      paragraphFinal: this.form.controls['paragraphFinal'].value, //no tiene limite en BD
+      consistentIn: this.form.controls['consistentIn'].value, //no tiene limite en BD
       managedTo: this.form.controls['addresseeName'].value,
       invoiceLearned: this.folioReporte,
       //invoiceNumber: 1,
@@ -137,16 +128,40 @@ export class InappropriatenessFormComponent extends BasePage implements OnInit {
 
     this.loading = true;
     this.documentService.createClarDocImp(modelReport).subscribe({
-      next: response => {
-        this.openReport(response);
-        this.loading = false;
-        this.close();
+      next: data => {
+        const createClarGoodDoc = this.createClarGoodDoc(data);
+
+        console.log('Tabla de bienes en reporte generado');
+
+        setTimeout(() => {
+          if (createClarGoodDoc) {
+            this.openReport(data);
+            this.loading = false;
+            this.close();
+          }
+        }, 250);
       },
       error: error => {
         this.loading = false;
 
         //this.onLoadToast('error', 'No se pudo guardar', '');
       },
+    });
+  }
+
+  createClarGoodDoc(docImpro: IClarificationDocumentsImpro) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        documentId: docImpro.id,
+        version: '1',
+        clarificationRequestId: docImpro.rejectNoticeId,
+      };
+      this.documentService.createClarDocGood(formData).subscribe({
+        next: () => {
+          resolve(true);
+        },
+        error: error => {},
+      });
     });
   }
 

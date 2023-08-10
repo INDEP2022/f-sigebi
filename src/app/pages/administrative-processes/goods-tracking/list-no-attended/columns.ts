@@ -5,7 +5,7 @@ export const COLUMNS = {
     sort: false,
   },
   message: {
-    title: 'Mensaje de error',
+    title: 'Mensaje de Error',
     type: 'string',
     sort: false,
   },

@@ -1525,7 +1525,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   viewPictures() {
     if (!this.selectedRow?.flierNumber) {
-      this.alertInfo('error', 'Error', NO_FLYER_NUMBER);
+      this.alertInfo('warning', 'Atención', NO_FLYER_NUMBER);
       return;
     }
     this.getDocumentsByFlyer(this.selectedRow.flierNumber);
@@ -1713,7 +1713,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async onCancelPaperwork() {
     if (!this.selectedRow) {
-      this.alertInfo('error', 'Error', 'Primero selecciona un trámite');
+      this.alertInfo('warning', 'Atención', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1730,7 +1730,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
   async onSavePaperwork() {
     console.log(this.selectedRow);
     if (!this.selectedRow) {
-      this.alertInfo('error', 'Error', 'Primero selecciona un trámite');
+      this.alertInfo('warning', 'Atención', 'Primero selecciona un trámite');
       return;
     }
     if (this.selectedRow.areaATurn && this.selectedRow.userATurn) {
@@ -1786,7 +1786,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   async onFinishPaperwork() {
     if (!this.selectedRow) {
-      this.alertInfo('error', 'Error', 'Primero selecciona un trámite');
+      this.alertInfo('warning', 'Atención', 'Primero selecciona un trámite');
       return;
     }
     const result = await this.alertQuestion(
@@ -1827,7 +1827,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         return throwError(() => error);
       }),
       tap(() => {
-        this.alertInfo('success', 'El trámite se envío correctamente', '');
+        this.alertInfo('success', 'El trámite se envió correctamente', '');
         this.getData();
       })
     );
@@ -2095,7 +2095,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.alertInfo(
           'error',
           'Error',
-          'Error al Obtener el link para validar el archivo'
+          'Error al obtener el link para validar el archivo'
         );
         return throwError(() => error);
       }),
@@ -2105,7 +2105,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   scanDocuments() {
     if (!this.selectedRow?.flierNumber) {
-      this.alertInfo('error', 'Error', NO_FLYER_NUMBER);
+      this.alertInfo('warning', 'Atención', NO_FLYER_NUMBER);
       return;
     }
     const params = new FilterParams();
@@ -2153,13 +2153,13 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
 
   replicate() {
     if (!this.selectedRow) {
-      this.alertInfo('error', 'Error', 'Primero elige un trámite');
+      this.alertInfo('warning', 'Atención', 'Primero elige un trámite');
       return;
     }
     if (!this.selectedRow.flierNumber) {
       this.alertInfo(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'El trámite no tiene un número de volante'
       );
       return;
@@ -2170,8 +2170,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
         this.getNotificationByFlyer().subscribe(notification => {
           if (!notification) {
             this.alert(
-              'error',
-              'Error',
+              'warning',
+              'Atención',
               'No existe un folio universal escaneado para replicar'
             );
             return;
@@ -2183,16 +2183,16 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
             this.getDocumentsByFlyers(flyers.join(',')).subscribe(documents => {
               if (!documents.data[0]) {
                 this.alert(
-                  'error',
-                  'Error',
+                  'warning',
+                  'Atención',
                   'No existe un folio universal escaneado para replicar'
                 );
                 return;
               }
               if (documents.count > 1) {
                 this.alert(
-                  'error',
-                  'Error',
+                  'warning',
+                  'Atención',
                   'Existe mas de un folio universal escaneado para replicar'
                 );
                 return;
@@ -2337,8 +2337,8 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     // })
     if (!this.selectedRow?.proceedingsNumber) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'No existe un número de expediente asociado al trámite'
       );
       return;

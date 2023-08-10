@@ -62,7 +62,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
   async update() {
     this.alertQuestion(
       'question',
-      'Se actualizará la DELEGACIÓN',
+      'Se actualizará la Delegación',
       '¿Desea continuar?',
       'Continuar'
     ).then(async question => {
@@ -80,7 +80,7 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
         );
         if (!res) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de DELEGACIÓN', 'No realizada');
+          this.alert('error', 'Actualización de Delegación', 'No realizada');
           return;
         }
         const res2 = await firstValueFrom(
@@ -94,13 +94,13 @@ export class MaintenanceDelegationComponent extends BasePage implements OnInit {
         );
         if (!res2) {
           this.loader.load = false;
-          this.alert('error', 'Actualización de DELEGACIÓN', 'No realizada');
+          this.alert('error', 'Actualización de Delegación', 'No realizada');
           return;
         } else {
           this.alert(
             'success',
-            'Actualización de DELEGACIÓN',
-            'Realizada correctamente'
+            'Actualización de Delegación',
+            'Realizada Correctamente'
           );
           this.updateTable++;
           // this.clear();

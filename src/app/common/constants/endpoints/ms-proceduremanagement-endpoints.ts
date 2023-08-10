@@ -11,6 +11,7 @@ export enum ProcedureManagementEndPoints {
   FolioMax = `proceduremanagement/FolioMax`,
   AreaTramite = 'proceduremanagement/getAreaTramite',
   UpdateGestionTramite = 'proceduremanagement/put-gestion-tramite',
+  updateStatus = 'proceduremanagement/update-status-procedure',
 }
 
 export enum MassiveChargeGoods {

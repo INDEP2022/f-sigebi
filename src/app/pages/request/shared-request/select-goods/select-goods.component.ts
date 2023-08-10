@@ -1,28 +1,70 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { AppliGoodResDevViewService } from 'src/app/core/services/ms-commer-concepts/appli-good-res-dev-inv-view.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
+import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
-import { SELECT_GOODS_COLUMNS } from './select-goods-columns';
+import {
+  GOODS_RES_DEV_INV_COLUMNS,
+  SELECT_GOODS_COLUMNS,
+} from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
-
+const datagood: any = [
+  {
+    amount: 1,
+    amountToReserve: 0,
+    applicationId: 1499,
+    authorityId: 44,
+    codeStore: 'T01',
+    cveState: 2,
+    delegationRegionalId: 1,
+    descriptionGood:
+      '01 PIEZA DE FAX MARCA: SAMSUNG, MODELO: FX500, SERIE: 3110918',
+    destination: 'Ventas',
+    fractionId: '8443.39.01.PZ.',
+    goodId: 5011335,
+    goodresdevId: '4550',
+    inventoryItemId: 173813,
+    inventoryNumber: '0000001756',
+    invoiceRecord: 'BAJA CALIFORNIA-SAT-169-A1-18-09',
+    jobNumber: '800-13-00-02-03-2018-10905',
+    locatorId: 109207,
+    naturalness: 'INVENTARIOS',
+    organizationId: 104,
+    origin: 'INVENTARIOS',
+    proceedingsId: 1108,
+    proceedingsType: 'ABANDONO',
+    relevantTypeId: 8,
+    stateConservation: 'MALO',
+    statePhysical: 'MALO',
+    stationId: 114,
+    subinventory: 'Ventas',
+    transfereeId: 120,
+    uniqueKey: '110-99-06-11-000290',
+    unitExtent: 'PZ',
+  },
+];
 @Component({
   selector: 'app-select-goods',
   templateUrl: './select-goods.component.html',
-  styles: [],
+  styleUrls: ['./select-goods.component.scss'],
 })
 export class SelectGoodsComponent extends BasePage implements OnInit {
+  @ViewChild('table', { static: false }) table: any;
   goodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoods: any[] = [];
@@ -30,11 +72,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   selectedGoodTotalItems: number = 0;
   requestInfo: IRequest;
   processDet: string = '';
-  goodColumns: any[] = [];
+  goodColumns = new LocalDataSource();
   selectedGoodColumns: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
+  goodSelected: boolean = false;
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -53,12 +96,14 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     //private goodProcessService: GoodProcessService,
     private requestService: RequestService,
-    //private rejectedGoodService: RejectedGoodService,
+    private rejectedGoodService: RejectedGoodService,
     private affairService: AffairService,
-    private rejectedGoodService: RejectedGoodService
+    //private goodsInvService: GoodsInvService,
+    private goodResDevInvService: AppliGoodResDevViewService,
+    private goodService: GoodService
   ) {
     super();
-    this.goodSettings.columns = SELECT_GOODS_COLUMNS;
+    this.goodSettings.columns = GOODS_RES_DEV_INV_COLUMNS;
     this.selectedGoodSettings.columns = SELECT_GOODS_COLUMNS;
   }
 
@@ -73,11 +118,11 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         renderComponent: AddGoodsButtonComponent,
         onComponentInitFunction(instance: any, component: any = self) {
           instance.action.subscribe(async (row: any) => {
-            const process = await component.checkInfoProcess(row);
-            if (process) {
-              console.log('process', process);
-              component.openReserveModal(row);
-            }
+            /*const process = await component.checkInfoProcess(row);
+            if (process) {*/
+            console.log('process', process);
+            component.openReserveModal(row);
+            /*}*/
           });
         },
       },
@@ -95,6 +140,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       },
       ...this.goodSettings.columns,
     };
+
     this.selectedGoodSettings.columns = {
       viewFile: {
         title: 'Expediente',
@@ -107,8 +153,20 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           });
         },
       },
+      /*goodGrouper: {
+        title: 'Nombre del Bien Agrupador',
+        type: 'custom',
+        sort: false,
+        renderComponent: GrouperGoodFieldComponent,
+        onComponentInitFunction: (instance?: any, component: any = self) => {
+          instance.input.subscribe((data: any) => {
+            this.getGrouperGoodChanges(data);
+          });
+        },
+      },*/
       ...this.selectedGoodSettings.columns,
     };
+    //this.selectedGoodColumns = datagood;
   }
 
   getInfoRequest() {
@@ -170,17 +228,17 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'EXT_DOMINIO'
     ) {
       if (this.requestInfo.regionalDelegationId != 13) {
-        params.getValue()['filter.IdDelegacionReg_VB'] =
+        params.getValue()['filter.regionalDelegationId'] =
           this.requestInfo.regionalDelegationId;
       }
     }
 
     if (this.processDet != 'RES_ESPECIE') {
-      params.getValue()['filter.origen_VB'] = 'INVENTARIOS';
+      params.getValue()['filter.origin'] = 'INVENTARIOS';
     }
 
     if (this.processDet == 'AMPARO') {
-      params.getValue()['filter.origen_VB'] = 'INVENTARIOS';
+      params.getValue()['filter.origin'] = 'INVENTARIOS';
     }
 
     if (
@@ -188,7 +246,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'RES_PAGO_ESPECIE' ||
       this.processDet == 'RES_NUMERARIO'
     ) {
-      params.getValue()['filter.tipoTransferente_vb'] = 'CE';
+      params.getValue()['filter.transfereeType'] = 'CE';
     }
 
     if (
@@ -196,84 +254,40 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'DECOMISO' ||
       this.processDet == 'EXT_DOMINIO'
     ) {
-      params.getValue()['filter.tipoTransferente_vb'] = 'A';
+      params.getValue()['filter.transfereeType'] = 'A';
     }
 
     for (const key in filters) {
-      if (filters[key] != null) {
+      if (filters[key] != null && key != 'regionalDelegation') {
         params.getValue()[key] = filters[key];
       }
     }
-    this.params = params;
-    console.log('params', this.params);
 
+    this.params = params;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      debugger;
-      console.log(data);
-      //this.getGoods(filters)
+      this.getGoods(data);
     });
   }
 
-  getGoods(filters: any) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    const filter = params.getValue();
-    debugger;
-    this.rejectedGoodService.getAll(filter).subscribe({
-      next: response => {
-        this.goodColumns = response.data;
-        this.goodTotalItems = response.count;
+  getGoods(filters: ListParams) {
+    /*const params = new BehaviorSubject<ListParams>(new ListParams());
+    const filter = params.getValue();*/
+    //debugger;
+    this.loading = true;
+    this.goodResDevInvService.getAll(filters).subscribe({
+      next: (response: any) => {
+        this.goodColumns.load(response.data);
+        this.goodTotalItems = response.data.length;
+        this.loading = false;
         /*const info = response.data.map(item => {
           return item.good;
         });*/
       },
-      error: error => {},
-    });
-    /*this.goodProcessService
-      .getGoodPostQuery(this.params.getValue(), filters)
-      .subscribe({
-        next: response => {
-          console.log('response', response);
-          this.goodColumns = response.data;
-          this.goodTotalItems = response.count;
-          const filterData = response.data.map(async (item: any) => {
-          const destinyName: any = await this.destinyInfo(item.destiny);
-          item.destinyName = destinyName;
-          return item;
-        });
-
-        Promise.all(filterData).then(data => {
-          console.log('bienes', data);
-          
-        }); 
-        },
-      }); */
-    /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    params.getValue()['filter.delegationNumber'] = filters.regionalDelegationId;
-    params.getValue()['filter.origin'] = '$not:$null';
-
-    this.goodService.getAll(params.getValue()).subscribe({
-      next: response => {
-        const filterData = response.data.map(async item => {
-          const destinyName: any = await this.destinyInfo(item.destiny);
-          item.destinyName = destinyName;
-          return item;
-        });
-
-        Promise.all(filterData).then(data => {
-          console.log('bienes', data);
-          this.goodColumns = data;
-          this.goodTotalItems = response.count;
-        });
+      error: error => {
+        this.loading = false;
+        console.log(error);
       },
-      error: error => {},
-    }); */
-    //params.getValue()['filter.delegationNumber'] = this.regio;
-    //Llamar servicio para obtener bienes
-    /* let columns = this.goodTestData;
-    columns.forEach(c => {
-      c = Object.assign({ addGood: '' }, { viewFile: '' }, c);
-    }); */
-    //
+    });
   }
 
   destinyInfo(idDestiny: number) {
@@ -307,43 +321,41 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-    let config = {
-      ...MODAL_CONFIG,
-      class: 'modal-lg modal-dialog-centered',
-    };
-
-    config.initialState = {
-      good,
-      callback: (next: boolean) => {
-        if (next) {
-        }
-      },
-    };
-
-    this.modalService.show(ReserveGoodModalComponent, config);
-    /*const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-      initialState: { good },
+    const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+      initialState: { good: good, requestId: this.requestInfo.id },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.onReserve.subscribe((data: boolean) => {
       if (data) this.addGood(data);
-    }); */
+    });
   }
 
   addGood(good: any) {
     console.log(good);
     delete good.addGood;
-    good = Object.assign({ viewFile: '' }, good);
+    // good = Object.assign({ viewFile: '' }, good);
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+
+    if (this.processDet != 'RES_PAGO_ESPECIE') {
+      this.hideResultTaxpayer(true);
+    }
   }
 
-  selectGoods(rows: any[]) {
-    this.selectedGoods = rows;
+  selectGoods(rows: any) {
+    console.log(rows);
+    if (rows.isSelected == false) {
+      this.table.isAllSelected = false;
+    }
+    this.selectedGoods = rows.selected;
   }
 
   removeGoods() {
+    if (this.selectedGoods.length == 0) {
+      this.onLoadToast('info', 'eleccione al menos un registro');
+      return;
+    }
     this.alertQuestion(
       'question',
       '¿Desea eliminar los bienes seleccionados?',
@@ -351,9 +363,32 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       'Eliminar'
     ).then(question => {
       if (question.isConfirmed) {
-        this.selectedGoodColumns.forEach((g: any, i: number) => {
+        const goodSelected = this.selectedGoods.length;
+        this.selectedGoods.map(async (item: any, _i: number) => {
+          const index = this.selectedGoodColumns.indexOf(item);
+          const i = _i + 1;
+          this.selectedGoodColumns.splice(index, 1);
+          if (
+            this.processDet == 'RES_ESPECIE' ||
+            this.processDet == 'DEVOLUCION'
+          ) {
+            //elimina inventario
+            this.deleteGoodDated(item);
+          } else {
+            // this.deleteGoodResDev(item);
+          }
+
+          if (goodSelected == i) {
+            this.selectedGoodColumns = [...this.selectedGoodColumns];
+            this.selectedGoodTotalItems = this.selectedGoodColumns.length;
+            this.selectedGoods = [];
+            this.onLoadToast('success', 'Los bienes se eliminaron');
+          }
+        });
+
+        /*this.selectedGoodColumns.forEach((g: any, i: number) => {
           this.selectedGoods.forEach((d: any, j: number) => {
-            if (g.key == d.key) {
+            if (g.goodId == d.goodId) {
               this.selectedGoodColumns.splice(i, 1);
               this.selectedGoods.splice(j, 1);
             }
@@ -361,15 +396,131 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         });
         this.selectedGoodColumns = [...this.selectedGoodColumns];
         this.selectedGoodTotalItems = this.selectedGoodColumns.length;
-        console.log(this.selectedGoods, this.selectedGoodColumns);
+        console.log(this.selectedGoods, this.selectedGoodColumns);*/
       }
     });
   }
 
   openSiabSearch() {
     const modalRef = this.modalService.show(RequestSiabFormComponent, {
+      initialState: {
+        request: this.requestInfo,
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
+    });
+  }
+
+  getGrouperGoodChanges(data: any) {
+    const index = this.selectedGoodColumns.indexOf(data.data);
+    if (index != -1) {
+      if (data.text != '') {
+        this.selectedGoodColumns[index]['goodGrouper'] = data.text;
+      } else {
+        this.selectedGoodColumns[index].goodGrouper = null;
+      }
+    }
+  }
+
+  hideResultTaxpayer(display: boolean) {
+    const columnas = this.table.grid.getColumns();
+    const columnaSelectRigth = columnas.find(
+      (columna: any) => columna.id === 'resultTaxpayer'
+    );
+    columnaSelectRigth.hide = display;
+  }
+
+  assignGoodGrouper() {
+    if (this.selectedGoods.length == 0) {
+      this.onLoadToast('info', 'Seleccione al menos un registro');
+      return;
+    }
+    const modalRef = this.modalService.show(GrouperGoodFieldComponent, {
+      initialState: { goodResDevs: this.selectedGoods },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.event.subscribe(next => {
+      if (next != undefined) {
+        next.map((item: any) => {
+          const index = this.selectedGoodColumns.indexOf(item);
+          this.selectedGoodColumns[index].goodGrouper = item.goodGrouper;
+        });
+      }
+      this.selectedGoodColumns = [...this.selectedGoodColumns];
+    });
+  }
+
+  deleteGoodResDev(good: any) {
+    return new Promise((resolve, reject) => {
+      this.rejectedGoodService.deleteGoodsResDev(good.goodresdevId).subscribe({
+        next: res => {
+          resolve(res);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast('error', 'No se pudo eliminar los bienes');
+        },
+      });
+    });
+  }
+
+  async deleteGoodDated(goodDevRes: any) {
+    if (goodDevRes.inventoryNumber != null) {
+      if (goodDevRes.reservationId != null) {
+        //mandar a llamar el endpoint de ProcesosXxsaeFacade (eliminarReservaBIen)
+        /* metodo */
+        //si la respuesta del endpoint ProcesosXxsaeFacade fue exitosa
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+      } else {
+        const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+      }
+    } else {
+      const good: any = await this.findGoodById(goodDevRes.goodId);
+      if (good) {
+        const body: any = {
+          id: good.id,
+          goodId: good.goodId,
+          goodResdevId: null,
+          compensation: null,
+        };
+        await this.updateGood(body);
+      }
+      const goodDeleted = await this.deleteGoodResDev(goodDevRes);
+    }
+  }
+
+  findGoodById(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.goodService
+        .getAll(params)
+        .pipe(
+          map(x => {
+            return x.data[0];
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+        });
+    });
+  }
+
+  updateGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.goodService.update(body).subscribe({
+        next: res => {
+          console.log('bien actualizado');
+          resolve(true);
+        },
+        error: error => {
+          reject(false);
+          this.onLoadToast('error', 'No se pudo actualizar los bienes');
+        },
+      });
     });
   }
 }

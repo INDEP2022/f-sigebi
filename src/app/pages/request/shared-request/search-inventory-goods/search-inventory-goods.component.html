@@ -23,11 +23,11 @@
           <div class="row mt-3">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('manageNo')"
+                [control]="searchForm.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
                 <input
                   type="number"
-                  formControlName="manageNo"
+                  formControlName="goodId"
                   class="form-control" />
               </form-field>
             </div>
@@ -50,6 +50,7 @@
                 [control]="searchForm.get('saeNo')"
                 label="No&#46; INDEP">
                 <input
+                  placeholder="no hay data en db"
                   type="number"
                   formControlName="saeNo"
                   class="form-control" />
@@ -59,13 +60,16 @@
           <div class="row mt-5">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('key')"
+                [control]="searchForm.get('uniqueKey')"
                 label="Clave &Uacute;nica">
-                <input type="text" formControlName="key" class="form-control" />
+                <input
+                  type="text"
+                  formControlName="uniqueKey"
+                  class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('state')">
+              <form-field [control]="searchForm.get('stateKey')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="stateItems"
@@ -74,7 +78,7 @@
                   label="Estado"
                   (fetchItems)="getStates($event)"
                   (change)="stateSelect($event)"
-                  control="state">
+                  control="stateKey">
                 </ngx-select>
               </form-field>
             </div>
@@ -92,16 +96,16 @@
           <div class="row mt-5">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('description')"
+                [control]="searchForm.get('goodDescription')"
                 label="Descripci&oacute;n">
                 <input
                   type="text"
-                  formControlName="description"
+                  formControlName="goodDescription"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('station')">
+              <form-field [control]="searchForm.get('stationId')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="stationItems"
@@ -110,13 +114,13 @@
                   label="Emisora"
                   (change)="stationSelect($event)"
                   (fetchItems)="getStation($event)"
-                  control="station">
+                  control="stationId">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('origin')" label="Origen">
-                <ng-select
+              <form-field [control]="searchForm.get('origin')">
+                <!-- <ng-select
                   formControlName="origin"
                   [searchable]="false"
                   class="form-control"
@@ -124,26 +128,35 @@
                   <ng-option *ngFor="let o of origins" value="o.id">{{
                     o.description
                   }}</ng-option>
-                </ng-select>
+                </ng-select> -->
+                <ngx-select
+                  [form]="searchForm"
+                  [data]="origins"
+                  value="id"
+                  bindLabel="description"
+                  label="Origen"
+                  (fetchItems)="getOrigin($event)"
+                  control="origin">
+                </ngx-select>
               </form-field>
             </div>
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('fileNo')"
+                [control]="searchForm.get('fileNum')"
                 label="No&#46; Expediente">
                 <input
                   type="number"
-                  formControlName="fileNo"
+                  formControlName="fileNum"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('authority')">
+              <form-field [control]="searchForm.get('authorityId')">
                 <ngx-select
                   [form]="searchForm"
-                  control="authority"
+                  control="authorityId"
                   [data]="authorityItems"
                   value="idAuthority"
                   bindLabel="nameAndId"
@@ -154,11 +167,11 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('folio')"
+                [control]="searchForm.get('folioAct')"
                 label="Folio Acta">
                 <input
                   type="text"
-                  formControlName="folio"
+                  formControlName="folioAct"
                   class="form-control" />
               </form-field>
             </div>
@@ -166,24 +179,24 @@
           <div class="row mt-5">
             <div class="col-md-4">
               <form-field
-                [control]="searchForm.get('transferee')"
+                [control]="searchForm.get('transferFile')"
                 label="Expediente Transferente &#47; PAMA">
                 <input
                   type="text"
-                  formControlName="transferee"
+                  formControlName="transferFile"
                   class="form-control" />
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('goodType')">
+              <form-field [control]="searchForm.get('typeRelevantId')">
                 <ngx-select
                   [form]="searchForm"
                   [data]="goodsTypes"
                   value="id"
-                  bindLabel="nameGoodType"
+                  bindLabel="description"
                   label="Tipo Bien"
                   (fetchItems)="getGoodType($event)"
-                  control="goodType">
+                  control="typeRelevantId">
                 </ngx-select>
               </form-field>
             </div>

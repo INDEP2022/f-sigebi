@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -484,6 +485,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         idPrograming: this.programming.id,
         statusProceeedings: 'CERRADO',
         id_content: docName,
+        closingDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
       };
 
       this.proceedingService.updateProceeding(formData).subscribe({
@@ -509,6 +511,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: () => {
           resolve(true);
         },
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }
@@ -516,6 +521,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   updateProgrammingGood() {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
+
       goodsReception.map((item: IGood) => {
         const formData: Object = {
           programmingId: this.programming.id,

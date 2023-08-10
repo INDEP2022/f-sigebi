@@ -38,6 +38,7 @@ export class GoodsListComponent
   pageSelecteds: number[] = [];
   subscription: Subscription = new Subscription();
   changeSettings: number = 0;
+  _changeDescription: string;
   @Input() changeDescription: string;
   @Input()
   set changeMode(value: 'I' | 'E') {
@@ -256,6 +257,7 @@ export class GoodsListComponent
           this.selectedGooods = [];
           this.data.load([]);
           this.data.refresh();
+          this.totalItems = 0;
         }
       });
     this.mode.valueChanges
@@ -284,7 +286,7 @@ export class GoodsListComponent
 
   override getData() {
     this.loading = true;
-    console.log(this.classificationOfGoods.value);
+    console.log(this.classificationOfGoods.value, this.goodStatus.value);
     const filterParams = new FilterParams();
     if (
       this.classificationOfGoods.value &&
@@ -299,7 +301,7 @@ export class GoodsListComponent
     if (this.goodStatus.value && (this.goodStatus.value + '').trim() !== '') {
       filterParams.addFilter(
         'status',
-        String(this.goodStatus.value.map((item: any) => item.status)),
+        String(this.goodStatus.value),
         SearchFilter.IN
       );
     }

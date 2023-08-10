@@ -1,0 +1,292 @@
+<ng-container [formGroup]="form">
+  <div class="ch-content">
+    <h5 style="font-size: 14px">Datos de la Factura o Recibo (Documento)</h5>
+  </div>
+  <div class="row pl-0">
+    <div class="col-md-4 mt-4 col-6">
+      <form-field [control]="invoiceRecNumber" label="No. Documento">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="invoiceRecNumber"
+          maxlength="12" />
+      </form-field>
+    </div>
+    <div class="col-md-4 mt-4 col-6">
+      <form-field [control]="numReceipts" label="No. Comprobantes">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="numReceipts"
+          maxlength="4" />
+      </form-field>
+    </div>
+    <div class="col-md-4 mt-4 col-6">
+      <form-field [control]="invoiceRecDate" label="Fecha Doc.">
+        <input
+          class="form-control"
+          ngModel
+          bsDatepicker
+          formControlName="invoiceRecDate" />
+        <!-- <input
+          type="text"
+          class="form-control"
+          formControlName="invoiceRecDate"
+          maxlength="12" /> -->
+      </form-field>
+    </div>
+    <div class="col-md-4 mt-4 col-6">
+      <form-field [control]="payDay" label="Fecha Pago">
+        <input
+          class="form-control"
+          ngModel
+          bsDatepicker
+          formControlName="payDay" />
+        <!-- <input
+          type="text"
+          class="form-control"
+          formControlName="payDay"
+          maxlength="12" /> -->
+      </form-field>
+    </div>
+    <div class="col-md-4 mt-4 col-6">
+      <form-field [control]="captureDate" label="Fecha Captura">
+        <input
+          class="form-control"
+          ngModel
+          bsDatepicker
+          formControlName="captureDate" />
+        <!-- <input
+          type="text"
+          class="form-control"
+          formControlName="captureDate"
+          maxlength="12" /> -->
+      </form-field>
+    </div>
+    <div class="col-md-4 mt-4 col-6">
+      <form-field [control]="fecha_contrarecibo" label="Fecha Contrarecibo">
+        <input
+          class="form-control"
+          ngModel
+          bsDatepicker
+          formControlName="fecha_contrarecibo" />
+        <!-- <input
+          type="text"
+          class="form-control"
+          formControlName="fecha_contrarecibo"
+          maxlength="12" /> -->
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0">
+    <div class="col-12">
+      <form-field [control]="attachedDocumentation" label="Documentación Anexa">
+        <textarea
+          class="form-control"
+          formControlName="attachedDocumentation"
+          rows="3"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0">
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Enero">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Febrero">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense2"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Marzo">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense3"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Abril">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense4"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Mayo">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense5"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Junio">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense6"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Julio">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense7"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Agosto">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense8"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Setiembre">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense9"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Octubre">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense10"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Noviembre">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense11"
+          class="form-control" />
+      </form-check>
+    </div>
+    <div class="col-6 col-md-3 col-sm-4">
+      <form-check for="keep" label="Diciembre">
+        <input
+          type="checkbox"
+          id="keep"
+          formControlName="monthExpense12"
+          class="form-control" />
+      </form-check>
+    </div>
+  </div>
+  <div class="row pl-0">
+    <div class="mt-4 col-6 col-md-4">
+      <form-field [control]="exchangeRate" label="Tipo de Cambio">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="exchangeRate"
+          maxlength="8" />
+      </form-field>
+    </div>
+    <div class="mt-4 col-6 col-md-4">
+      <form-field [control]="formPayment" label="Forma de Pago">
+        <ng-select class="form-control" formControlName="formPayment">
+          <ng-option [value]="null">Seleccione un valor</ng-option>
+          <ng-option *ngFor="let row of listPayments" [value]="row">
+            {{ row }}
+          </ng-option>
+        </ng-select>
+      </form-field>
+    </div>
+    <div class="mt-4 col-6 col-md-4">
+      <form-field [control]="comproafmandsae" label="Comprobantes a Nombre">
+        <ng-select class="form-control" formControlName="comproafmandsae">
+          <ng-option [value]="null">Seleccione un valor</ng-option>
+          <ng-option *ngFor="let row of listComproaf" [value]="row.id">
+            {{ row.value }}
+          </ng-option>
+        </ng-select>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0">
+    <div class="col-md-4">
+      <form-field [control]="capturedUser" label="Captura">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="capturedUser"
+          maxlength="30" />
+      </form-field>
+    </div>
+    <div class="col-md-8">
+      <form-field [control]="nomEmplcapture" label="">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nomEmplcapture"
+          maxlength="120" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0">
+    <div class="col-md-4">
+      <form-field [control]="authorizedUser" label="Autoriza">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="authorizedUser"
+          maxlength="30" />
+      </form-field>
+    </div>
+    <div class="col-md-8">
+      <form-field [control]="nomEmplAuthorizes" label="">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nomEmplAuthorizes"
+          maxlength="120" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4 pl-0">
+    <div class="col-md-4">
+      <form-field [control]="requestedUser" label="Solicita">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="requestedUser"
+          maxlength="30" />
+      </form-field>
+    </div>
+    <div class="col-md-8">
+      <form-field [control]="nomEmplRequest" label="">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nomEmplRequest"
+          maxlength="120" />
+      </form-field>
+    </div>
+  </div>
+</ng-container>

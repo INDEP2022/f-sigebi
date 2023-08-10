@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -44,7 +45,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   proceeding: IProceedings;
   tranType: string = '';
   typeFirm: string = '';
-
+  event: boolean = false;
+  minDateFecElab = new Date();
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   constructor(
     private modalRef: BsModalRef,
@@ -145,6 +147,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       evet: [null],
       startTime: [null],
       celebrates: [null],
+      closingDate: [null],
+      dateOfficie: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -154,7 +158,6 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: response => {
-        console.log('acta', response);
         this.infoForm.get('nameWorker1').setValue(response.data[0].nameWorker1);
 
         if (response.data[0].electronicSignatureWorker1 == 1) {
@@ -280,10 +283,16 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           .setValue(response.data[0].positionWorkerUvfv);
         this.infoForm.get('emailUvfv').setValue(response.data[0].emailUvfv);
         this.infoForm.get('otherFacts').setValue(response.data[0].otherFacts);
-        this.infoForm.get('evet').setValue(response.data[0].evet);
+        if (this.programming?.eventId) {
+          this.event = true;
+          this.infoForm.get('evet').setValue(this.programming.eventId);
+        }
         this.infoForm.get('startTime').setValue(response.data[0].startTime);
         this.infoForm.get('bases').setValue(response.data[0].bases);
         this.infoForm.get('celebrates').setValue(response.data[0].celebrates);
+        this.infoForm
+          .get('dateOfficie')
+          .setValue(moment(response.data[0].dateOfficie).format('DD/MM/YYYY'));
 
         //this.infoForm.patchValue(response.data[0]);
       },
@@ -324,6 +333,10 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     }
 
     this.infoForm.get('startTime').setValue(this.horaActual);
+    this.infoForm
+      .get('closingDate')
+      .setValue(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
+
     this.infoForm.get('idPrograming').setValue(this.programming.id);
 
     if (
@@ -410,9 +423,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           );
           //this.processInfoProceeding();
         },
-        error: error => {
-          console.log('errror update', error);
-        },
+        error: error => {},
       });
     } else if (
       this.infoForm.get('electronicSignatureWorker1').value == 1 &&
@@ -433,9 +444,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           );
           //this.processInfoProceeding();
         },
-        error: error => {
-          console.log('errror update', error);
-        },
+        error: error => {},
       });
     }
 
@@ -467,7 +476,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         });
 
         let token = this.authService.decodeToken();
-        console.log('goodId', this.goodId);
+
         const modelReport: IReceipyGuardDocument = {
           keyDoc: this.receiptGuards.id,
           autografos: true,
@@ -497,10 +506,101 @@ export class InformationRecordComponent extends BasePage implements OnInit {
     params['sortBy'] = 'description:ASC';
     this.genericService.getAll(params).subscribe({
       next: response => {
-        console.log('response', response);
         this.identifications = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => {
+        this.identifications = new DefaultSelect();
+      },
     });
+  }
+
+  SignatureWorker1Select() {
+    const signatureWorker1 = this.infoForm.get(
+      'electronicSignatureWorker1'
+    ).value;
+
+    if (signatureWorker1) {
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureWorker2Select() {
+    const signatureWorker2 = this.infoForm.get(
+      'electronicSignatureWorker2'
+    ).value;
+
+    if (signatureWorker2) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureWitness1Select() {
+    const SignatureWitness1Select = this.infoForm.get(
+      'electronicSignatureWitness1'
+    ).value;
+
+    if (SignatureWitness1Select) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureWitness2Select() {
+    const SignatureWitness1Select = this.infoForm.get(
+      'electronicSignatureWitness2'
+    ).value;
+
+    if (SignatureWitness1Select) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureOic').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureOic').setValue(false);
+    }
+  }
+
+  SignatureOICSelect() {
+    const electronicSignatureOic = this.infoForm.get(
+      'electronicSignatureOic'
+    ).value;
+
+    if (electronicSignatureOic) {
+      this.infoForm.get('electronicSignatureWorker1').setValue(true);
+      this.infoForm.get('electronicSignatureWorker2').setValue(true);
+      this.infoForm.get('electronicSignatureWitness1').setValue(true);
+      this.infoForm.get('electronicSignatureWitness2').setValue(true);
+    } else {
+      this.infoForm.get('electronicSignatureWorker1').setValue(false);
+      this.infoForm.get('electronicSignatureWorker2').setValue(false);
+      this.infoForm.get('electronicSignatureWitness1').setValue(false);
+      this.infoForm.get('electronicSignatureWitness2').setValue(false);
+    }
   }
 }

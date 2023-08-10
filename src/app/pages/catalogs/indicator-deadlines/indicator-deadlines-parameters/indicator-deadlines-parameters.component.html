@@ -1,5 +1,5 @@
 <app-modal>
-  <div header>
+  <div class="ch-content" header>
     <h5 class="modal-title">Indicadores</h5>
   </div>
   <div body>
@@ -8,9 +8,9 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
-            (userRowSelect)="selectRow($event.data)"
             [settings]="settings"
-            [source]="indicatorDeadlinesParameters">
+            [source]="data"
+            (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>
       </div>
@@ -29,8 +29,9 @@
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+        <button type="button" class="btn btn-primary active" (click)="close()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>

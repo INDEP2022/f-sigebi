@@ -160,7 +160,7 @@
             </form-field>
           </div>
           <app-pagination
-            *ngIf="totalItems > 0"
+            *ngIf="totalItems > 0 && form.get('transferenceReport').value"
             [filterParams]="filterParams"
             [totalItems]="totalItems">
           </app-pagination>

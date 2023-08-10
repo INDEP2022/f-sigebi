@@ -140,7 +140,7 @@ export class RegistrationHelper extends BasePage {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 2) {
+    } else if (!lisDocument || lisDocument < 1) {
       this.message(
         'warning',
         'Se debe asociar un documento a la solicitud para continuar',
@@ -149,16 +149,10 @@ export class RegistrationHelper extends BasePage {
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-      this.message(
-        'warning',
-        'Se marcó la solicitud como urgente, se debe tener una fecha de prioridad',
-        ''
-      );
-      validoOk = false;
-    } else if (idTrandference === 1) {
+      this.message('error', '', '');
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'warning',
+          'error',
           'Para la transferente FGR/PGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
@@ -175,15 +169,17 @@ export class RegistrationHelper extends BasePage {
     } else if (idTrandference === 3) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
+          'error',
+
           'warning',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
-      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
         this.message(
+          'error',
+
           'warning',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
-          ''
+
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
         );
       } else {
         validoOk = true;
@@ -200,9 +196,10 @@ export class RegistrationHelper extends BasePage {
         paperDate == null
       ) {
         this.message(
+          'error',
           'warning',
-          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos',
-          ''
+
+          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
         );
       } else {
         validoOk = true;
@@ -216,9 +213,9 @@ export class RegistrationHelper extends BasePage {
     ) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
+          'error',
           'warning',
-          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos',
-          ''
+          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
         );
       } else {
         validoOk = true;
@@ -307,7 +304,7 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
-          } 
+          }
           */
             sinUnidadM = true;
             this.message(
@@ -407,6 +404,20 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
               );
               break;
+            } else if (realEstate.pffDate) {
+              if (
+                idTrandference == 120 ||
+                idTrandference == 752 ||
+                idTrandference == 942
+              ) {
+                tipoRelInmueble = true;
+                this.message(
+                  'warning',
+                  `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                  'El campo "Fecha de Paso al Fisco" en el Bien Inmueble esta vacio.'
+                );
+                break;
+              }
             }
             // }
           } else if (Number(good.goodTypeId) === 2) {
@@ -439,7 +450,7 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Modelo" en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.axesNumber === null) {
+            } /*else if (good.axesNumber === null) {
               //numero de ejes
               tipoRelVehiculo = true;
               this.message(
@@ -457,7 +468,8 @@ export class RegistrationHelper extends BasePage {
                 'El campo "Número de Motor" en Información del Vehículo esta vacio.'
               );
               break;
-            } /* else if (good.origin === null) {
+            } */
+            /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',

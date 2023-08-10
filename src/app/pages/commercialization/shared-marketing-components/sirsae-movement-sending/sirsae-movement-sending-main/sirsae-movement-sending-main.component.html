@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">envío de movimientos a sirsae</h5>
+    <h5 class="title">Envío de movimientos a SIRSAE</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -30,7 +30,7 @@
                   [(ngModel)]="selectedEvent"
                   readonly
                   type="text"
-                  class="form-control"
+                  class="form-control loading"
                   formControlName="description" />
               </form-field>
               <!-- <p class="mt-3" *ngIf="selectedEvent != null">
@@ -53,6 +53,19 @@
               </button>
             </div>
             <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+              <button
+                [ngClass]="{ loading: loadingBtn }"
+                [disabled]="loading || loadingBtn || !eventSelected"
+                *ngIf="layout == 'M'"
+                type="button"
+                class="btn btn-primary btn-sm active mr-3"
+                tooltip="Enviar a SIRSAE"
+                containerClass="tooltip-style"
+                (click)="enviarSIRSAE()">
+                Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+              </button>
+            </div>
+            <div class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
               <button
                 [disabled]="loading || loadingBtn || !eventSelected"
                 (click)="obtenerOI()"
@@ -85,36 +98,37 @@
           </div>
         </div> -->
         <div class="row mt-2">
-          <div class="col-sm-12 col-md-12 col-lg-12 col-xl-9">
+          <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div class="d-flex flex-row-reverse my-3">
-              <div>
-                <!-- <button
-                  [disabled]="loading || loadingBtn"
-                  (click)="add()"
-                  type="button"
-                  class="btn btn-info btn-sm active mb-3">
-                  Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
-                </button> -->
-              </div>
-              <div>
+              <div class="mb-2 col-2">
                 <button
-                  [ngClass]="{ loading: loadingBtn }"
                   [disabled]="loading || loadingBtn"
-                  *ngIf="layout == 'M'"
+                  (click)="allNo()"
                   type="button"
-                  class="btn btn-primary btn-sm active mr-3"
-                  tooltip="Enviar a SIRSAE"
+                  tooltip="Cambiar Enviar Sirsae a NO"
                   containerClass="tooltip-style"
-                  (click)="enviarSIRSAE()">
-                  Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+                  class="w-100 btn btn-block btn-primary btn-sm active">
+                  Todos NO
+                  <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
+                </button>
+              </div>
+              <div class="mb-2 mr-2 col-2">
+                <button
+                  [disabled]="loading || loadingBtn"
+                  (click)="allYes()"
+                  type="button"
+                  tooltip="Cambiar Enviar Sirsae a SI"
+                  containerClass="tooltip-style"
+                  class="w-100 btn btn-block btn-success active btn-sm">
+                  Todos SI
+                  <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
                 </button>
               </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-3"></div>
         </div>
         <div class="row">
-          <div class="col-md-9">
+          <div class="col-md-12">
             <form-loader *ngIf="loading"></form-loader>
             <ng-scrollbar
               [track]="'all'"
@@ -131,7 +145,7 @@
             <app-pagination [params]="params" [totalItems]="totalItems">
             </app-pagination>
           </div>
-          <div class="col-3">
+          <!-- <div class="col-3">
             <div class="row justify-content-center text-center mt-2">
               <div class="col-md-6 mb-4">
                 <button
@@ -142,7 +156,6 @@
                   containerClass="tooltip-style"
                   class="w-100 btn btn-primary btn-sm active mb-3">
                   Todos NO
-                  <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
                 </button>
               </div>
               <div class="col-md-6 mb-4">
@@ -154,11 +167,10 @@
                   containerClass="tooltip-style"
                   class="w-100 btn btn-success active btn-sm mb-3">
                   Todos SI
-                  <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
                 </button>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </accordion-group>
     </accordion>

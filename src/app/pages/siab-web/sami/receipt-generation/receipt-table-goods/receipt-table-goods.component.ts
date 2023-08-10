@@ -27,6 +27,7 @@ export class ReceiptTableGoodsComponent
   @Input() estatus_bien_programacion: string = null;
   @Input() override haveInitialCharge = false;
   @Input() selectEnabled = false;
+  @Input() update = 0;
   pageSelecteds: number[] = [];
   previousSelecteds: IReceiptItem[] = [];
 
@@ -80,7 +81,9 @@ export class ReceiptTableGoodsComponent
       console.log('ngOnChanges Table Goods');
       this.getData();
     }
-
+    if (changes['update'] && changes['update'].currentValue) {
+      if (changes['update'].currentValue > 0) this.getData();
+    }
     if (changes['selectEnabled'] && changes['selectEnabled'].currentValue) {
       this.settings = {
         ...this.settings,
@@ -233,10 +236,24 @@ export class ReceiptTableGoodsComponent
             this.data.refresh();
             this.loading = false;
             this.extraOperationsGetData();
+          } else {
+            this.dataNotFound();
+            if (this.estatus_bien_programacion === 'CANCELADO') {
+              this.dataService.cancelacion = this.totalItems;
+            }
+            if (this.estatus_bien_programacion === 'EN_PROGRAMACION') {
+              this.dataService.programacion = this.totalItems;
+            }
           }
         },
         error: err => {
           this.dataNotFound();
+          if (this.estatus_bien_programacion === 'CANCELADO') {
+            this.dataService.cancelacion = this.totalItems;
+          }
+          if (this.estatus_bien_programacion === 'EN_PROGRAMACION') {
+            this.dataService.programacion = this.totalItems;
+          }
         },
       });
   }

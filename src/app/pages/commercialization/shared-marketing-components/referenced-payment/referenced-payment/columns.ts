@@ -27,7 +27,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  account: {
+  bill: {
     title: 'Cuenta',
     // width: '15%',
     type: 'string',
@@ -68,6 +68,46 @@ export const COLUMNS = {
     // width: '15%',
     type: 'string',
     sort: false,
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Todos',
+        list: [
+          { value: 'S', title: 'Si' },
+          { value: 'R', title: 'Rechazado' },
+          { value: 'N', title: 'No Inválido' },
+          { value: 'A', title: 'Aplicado' },
+          { value: 'B', title: 'Pago de Bases' },
+          { value: 'D', title: 'Devuelto' },
+          { value: 'C', title: 'Contabilizado' },
+          { value: 'P', title: 'Penalizado' },
+          { value: 'Z', title: 'Devuelto al Cliente' },
+        ],
+      },
+    },
+    valuePrepareFunction: (cell: any, row: any) => {
+      if (row.validSistem == 'S') {
+        return 'Si';
+      } else if (row.validSistem == 'R') {
+        return 'Rechazado';
+      } else if (row.validSistem == 'N') {
+        return 'No Inválido';
+      } else if (row.validSistem == 'A') {
+        return 'Aplicado';
+      } else if (row.validSistem == 'B') {
+        return 'Pago de Bases';
+      } else if (row.validSistem == 'D') {
+        return 'Devuelto';
+      } else if (row.validSistem == 'C') {
+        return 'Contabilizado';
+      } else if (row.validSistem == 'P') {
+        return 'Penalizado';
+      } else if (row.validSistem == 'Z') {
+        return 'Devuelto al Cliente';
+      } else {
+        return row.validSistem;
+      }
+    },
   },
   paymentId: {
     title: 'ID Pago',
@@ -99,11 +139,19 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  dateAfect: {
+  affectationDate: {
     title: 'Fecha Afectación',
     // width: '15%',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      console.log('text', text);
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   descriptionSAT: {
     title: 'Descripción Pago SAT',
@@ -182,7 +230,7 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  account: {
+  bill: {
     title: 'Cuenta',
     width: '15%',
     type: 'string',

@@ -26,6 +26,7 @@ import {
   of,
   Subject,
   switchMap,
+  take,
   takeUntil,
   tap,
 } from 'rxjs';
@@ -64,6 +65,7 @@ export class CustomSelectWidthLoading
   @Input() value: string = 'id';
   @Input() bindLabel: string = '';
   @Input() paramSearch: string = 'search';
+  @Input() paramExternalSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
   @Input() paramPageName: string = 'page';
@@ -133,11 +135,17 @@ export class CustomSelectWidthLoading
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
-      this.input$.next(changes['externalSearch'].currentValue);
+      // this.input$.next(changes['externalSearch'].currentValue);
+      this.loadData(changes['externalSearch'].currentValue, false);
     }
     if (changes['load']) {
-      this.input$.next('');
+      console.log('Entro a recargar');
+      this.page = 1;
+      this.isLoading = true;
+      this.loadData('');
+      // this.input$.next('');
     }
   }
 
@@ -181,19 +189,28 @@ export class CustomSelectWidthLoading
     this.input$.next('');
   }
 
-  getItemsObservable(text: string = '') {
-    const params: any = {
+  getItemsObservable(text: string = '', normalSearch = true) {
+    let params: any = {
       [this.paramPageName]: this.page,
       [this.paramLimitName]: this.limit || 10,
     };
     if (text) {
-      if (this.prefixSearch) {
-        text = `${this.prefixSearch}:${text}`;
+      if (normalSearch) {
+        if (this.prefixSearch) {
+          text = `${this.prefixSearch}:${text}`;
+        }
+        params[this.paramSearch] = text;
+      } else {
+        if (this.prefixSearch) {
+          text = `$eq:${text}`;
+        }
+        params[this.paramPageName] = 1;
+        params[this.paramExternalSearch] = text;
       }
-      params[this.paramSearch] = text;
     }
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
+    // console.log(params, mParams);
     return this.http
       .get(`${this.url}${this.path}` + mParams, {
         params,
@@ -252,6 +269,38 @@ export class CustomSelectWidthLoading
     if (this.termMaxLength != null) {
       this.inputAttrs['maxLength'] = this.termMaxLength;
     }
+  }
+
+  private loadData(input: string, normalSearch = true) {
+    this.getItemsObservable(input, normalSearch)
+      .pipe(
+        take(1),
+        map((resp: any) => {
+          if (!resp) {
+            return [];
+          }
+          return this.getDataForPath(resp);
+        })
+      )
+      .subscribe({
+        next: (resp: any[]) => {
+          console.log(resp);
+          this.isLoading = false;
+          if (resp) {
+            this.items = resp;
+            if (resp.length === 1) {
+              this.getObject.emit(resp[0]);
+            }
+          } else {
+            this.isLoading = false;
+            this.items = [];
+          }
+        },
+        error: err => {
+          this.isLoading = false;
+          this.items = [];
+        },
+      });
   }
 
   onSearch() {

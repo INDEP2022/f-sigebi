@@ -18,7 +18,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="255"
               formControlName="addresseeName" />
           </form-field>
         </div>
@@ -29,7 +29,7 @@
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="positionAddressee" />
           </form-field>
         </div>
@@ -39,11 +39,11 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('senderName')"
-            label="Nombre Remitente">
+            label="Nombre Remitente -">
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="senderName" />
           </form-field>
         </div>
@@ -51,11 +51,11 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('senderCharge')"
-            label="Cargo Remitente">
+            label="Cargo Remitente -">
             <input
               type="text"
               class="form-control"
-              maxlength="50"
+              maxlength="200"
               formControlName="senderCharge" />
           </form-field>
         </div>
@@ -100,7 +100,7 @@
             label="P&aacute;rrafo Inicial">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="paragraphInitial"></textarea>
           </form-field>
         </div>
@@ -110,7 +110,7 @@
             label="P&aacute;rrafo Final">
             <textarea
               class="form-control"
-              maxlength="1000"
+              maxlength="4000"
               formControlName="paragraphFinal"></textarea>
           </form-field>
         </div>

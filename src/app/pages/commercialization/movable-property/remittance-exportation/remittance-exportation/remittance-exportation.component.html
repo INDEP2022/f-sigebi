@@ -10,7 +10,7 @@
         <div class="col-md-2">
           <form-field
             [control]="form.get('rangeDate')"
-            label="Seleccione fecha inicial y final">
+            label="Seleccione Fecha Inicial y Final">
             <input
               class="form-control"
               formControlName="rangeDate"
@@ -24,18 +24,16 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('coordination')">
-            <ngx-select
-              [form]="form"
-              [data]="coordinationsItems"
-              label="Coordinación"
-              value="no_delegacion"
-              bindLabel="descripcion"
-              (fetchItems)="getCoordinations($event)"
-              (change)="selectCoordination($event)"
-              control="coordination">
-            </ngx-select>
-          </form-field>
+          <ng-custom-select-loading
+            [form]="form"
+            formControlName="coordination"
+            [multiple]="false"
+            label="Coordinación Regional"
+            value="id"
+            bindLabel="description"
+            paramSearch="search"
+            path="catalog/api/v1/delegation/get-all">
+          </ng-custom-select-loading>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('opcion')" label="Opción">
@@ -45,11 +43,11 @@
               class="form-control"
               [clearable]="false">
               <ng-option value="1">Resumen</ng-option>
-              <ng-option value="2">Bienes del resumen</ng-option>
+              <ng-option value="2">Bienes del Resumen</ng-option>
               <ng-option value="3">Resumen Remesa</ng-option>
               <ng-option value="4">Bienes en Remesa</ng-option>
-              <ng-option value="5">Resumen por tipo de evento</ng-option>
-              <ng-option value="6">Bienes por tipo de avento</ng-option>
+              <ng-option value="5">Resumen por Tipo de Evento</ng-option>
+              <ng-option value="6">Bienes por Tipo de Evento</ng-option>
               <ng-option value="7">Resumen ADM y VXR</ng-option>
             </ng-select>
           </form-field>
@@ -61,27 +59,31 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">Bienes no registrados</ng-option>
-              <ng-option value="2">Bienes en Remesa</ng-option>
-              <ng-option value="3">Ambos</ng-option>
-              <ng-option value="4">Bienes retirados</ng-option>
+              <ng-option value="B">Bienes no Registrados</ng-option>
+              <ng-option value="R">Bienes en Remesa</ng-option>
+              <ng-option value="A">Ambos</ng-option>
+              <ng-option value="T">Bienes Retirados</ng-option>
             </ng-select>
           </form-field>
         </div>
         <div class="col-md-2">
           <app-event-type-shared
             [form]="form"
+            formControlName="event"
             [bindLabel]="'descripcion'"></app-event-type-shared>
         </div>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-check label="Revalidar bienes universo" for="label1">
+
+      <br />
+
+      <div class="row justify-content-center">
+        <div class="col-md-3">
+          <form-check label="Revalidar Bienes Universo" for="label1">
             <input id="label1" type="checkbox" formControlName="check1" />
           </form-check>
         </div>
-        <div class="col-md-2">
-          <form-check label="Revalidar bienes evento" for="label2">
+        <div class="col-md-3">
+          <form-check label="Revalidar Bienes Evento" for="label2">
             <input id="label2" type="checkbox" formControlName="check2" />
           </form-check>
         </div>
@@ -89,6 +91,7 @@
           <button
             type="button"
             class="btn btn-sm btn-success active"
+            (click)="exportExcel()"
             [disabled]="!form.valid">
             Exportar Excel
           </button>
