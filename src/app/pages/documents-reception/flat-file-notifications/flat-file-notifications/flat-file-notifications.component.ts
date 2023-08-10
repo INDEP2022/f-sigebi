@@ -17,6 +17,8 @@ import { FlatFileNotificationsService } from '../flat-file-notifications.service
 export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   notificationsForm: FormGroup;
   invalidDate = false;
+  maxDate: Date = new Date();
+
   get startDate(): AbstractControl {
     return this.notificationsForm.get('startDate');
   }
@@ -48,6 +50,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
     );
   }
   getEndDateErrorMessage(fin: any, ini: any) {
+    console.log(fin, ini);
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
