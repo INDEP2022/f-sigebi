@@ -765,6 +765,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
+        good.lotNumber = this.good.lotNumber.id;
         console.log(good);
         this.serviceGood.crateGood(good).subscribe(
           res => {
