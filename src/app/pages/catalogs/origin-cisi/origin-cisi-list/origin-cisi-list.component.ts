@@ -48,9 +48,17 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' || filter.field == 'description'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'detail':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -75,7 +83,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.originCisiService.getAll(params).subscribe({
       next: response => {
         this.originCisis = response.data;
-        this.totalItems = response.count || 0;
+        this.totalItems = response.count;
         this.data.load(response.data);
         this.data.refresh();
         this.loading = false;
@@ -100,7 +108,7 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(originCisi.id);

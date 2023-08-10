@@ -156,6 +156,7 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -179,6 +180,7 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params1 = this.pageFilter(this.params1);
           this.getSubExample();
         }
       });
@@ -201,6 +203,7 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params2 = this.pageFilter(this.params2);
           this.getGoodSsubtypes();
         }
       });
@@ -223,6 +226,7 @@ export class CatTypesOfGoodsComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params3 = this.pageFilter(this.params3);
           this.getGoodSssubtypes();
         }
       });

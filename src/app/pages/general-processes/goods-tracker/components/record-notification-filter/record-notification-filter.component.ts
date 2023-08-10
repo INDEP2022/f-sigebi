@@ -55,8 +55,14 @@ export class RecordNotificationFilterComponent implements OnInit {
   }
 
   getMinPubs(params: ListParams) {
+    const _params = new FilterParams();
+    _params.page = params.page;
+    _params.limit = params.limit;
+    if (params.text) {
+      _params.addFilter('description', params.text, SearchFilter.ILIKE);
+    }
     this.changeSubloading(true);
-    this.minPubService.getAll(params).subscribe({
+    this.minPubService.getAllWithFilters(_params.getParams()).subscribe({
       next: res => {
         this.changeSubloading(false);
         this.publicMins = new DefaultSelect(res.data, res.count);

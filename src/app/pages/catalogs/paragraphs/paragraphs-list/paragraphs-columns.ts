@@ -10,11 +10,11 @@ export const PARAGRAPHS_COLUMNS = {
     sort: false,
   },
   reportName: {
-    title: 'Nombre reporte',
+    title: 'Nombre Reporte',
     type: 'string',
     sort: false,
   },
-  userCreation: {
+  /*userCreation: {
     title: 'Creado por',
     type: 'string',
     sort: false,
@@ -23,7 +23,7 @@ export const PARAGRAPHS_COLUMNS = {
     title: 'Modificado por',
     type: 'number',
     sort: false,
-  },
+  },*/
   version: {
     title: 'Versión',
     type: 'string',

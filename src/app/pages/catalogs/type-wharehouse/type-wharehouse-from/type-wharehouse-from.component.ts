@@ -37,25 +37,27 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.maxLength(80),
           Validators.pattern(STRING_PATTERN),
-        ]),
+        ],
       ],
       version: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
-        ]),
+          Validators.maxLength(10),
+        ],
       ],
       status: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.pattern(POSITVE_NUMBERS_PATTERN),
-        ]),
+          Validators.maxLength(10),
+        ],
       ],
     });
     if (this.typeWarehouse != null) {
@@ -72,6 +74,13 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.typeWarehouseForm.controls['description'].value.trim() === '' &&
+      this.typeWarehouseForm.controls['status'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.typeWarehouseService
       .create(this.typeWarehouseForm.getRawValue())

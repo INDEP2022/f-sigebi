@@ -1,8 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">
-      {{ edit ? 'Editar' : 'Nuevo' }} CAT&Aacute;LOGO DE BANCOS
-    </h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nueva' }} Cuenta de Banco</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -23,7 +21,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
+      <div class="row mt-3">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('cveAccount')" label="Cuenta">
             <input
@@ -38,26 +36,26 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-2">
+      <div class="row mt-3">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field [control]="form.get('branch')" label="Sucursal">
             <input type="text" class="form-control" formControlName="branch" />
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('currency_I')" label="Moneda">
+          <form-field [control]="form.get('cveCurrency')" label="Moneda">
             <input
               type="text"
               class="form-control"
-              formControlName="currency_I" />
+              formControlName="cveCurrency" />
           </form-field>
         </div>
       </div>
-      <div class="row mt-2">
+      <div class="row mt-3">
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
           <form-field
             [control]="form.get('accountType')"
-            label="Tipo de cuenta">
+            label="Tipo de Cuenta">
             <ng-select
               formControlName="accountType"
               [searchable]="false"
@@ -81,8 +79,8 @@
       <div *ngIf="rowSelecc">
         <div class="row mb-3">
           <strong
-            >Si hay traspasos entre cuentas ind&iacute;quelo
-            aqu&iacute;&#58;</strong
+            >Si Hay Traspasos entre Cuentas, Ind&iacute;quelo
+            Aqu&iacute;&#58;</strong
           >
         </div>
         <div class="row mt-2">
@@ -118,17 +116,17 @@
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('currency_I')" label="Moneda">
+            <form-field [control]="form.get('cveCurrency')" label="Moneda">
               <input
                 type="text"
                 class="form-control"
-                formControlName="currency_I" />
+                formControlName="cveCurrency" />
             </form-field>
           </div>
           <div class="col-md-4 col-sm-12 col-xs-12">
             <form-field
               [control]="form.get('accountType_I')"
-              label="Tipo de cuenta">
+              label="Tipo de Cuenta">
               <ng-select
                 formControlName="accountType_I"
                 [searchable]="false"
@@ -148,7 +146,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
+          [disabled]="form.invalid"
+          [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

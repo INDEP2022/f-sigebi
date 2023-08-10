@@ -40,6 +40,7 @@ import { TransferenteService } from 'src/app/core/services/catalogs/transferente
 import { TransferentesSaeService } from 'src/app/core/services/catalogs/transferentes-sae.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dynamic-catalogs.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -165,6 +166,7 @@ export class PerformProgrammingFormComponent
   formLoadingWarehouse: boolean = false;
   formLoadingTransportable: boolean = false;
   formLoadingGuard: boolean = false;
+  showTypeValor: boolean = false;
   delegationId: number = 0;
   delRegUserLog: string = '';
   delegation: string = '';
@@ -180,6 +182,7 @@ export class PerformProgrammingFormComponent
   goodsProg: IGoodProgramming[] = [];
   stateKey: string = '';
   minDateFecElab = new Date();
+  otValors = new DefaultSelect();
   idMunicipality: string = '';
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingsTransportableGoodsClose = {
@@ -238,7 +241,8 @@ export class PerformProgrammingFormComponent
     private storeAkaService: StoreAliasStockService,
     private goodProcessService: GoodProcessService,
     private statesService: StateOfRepublicService,
-    private massiveGoodService: MassiveGoodService
+    private massiveGoodService: MassiveGoodService,
+    private dynamicCatalogService: DynamicCatalogService
   ) {
     super();
     this.settings = {
@@ -274,6 +278,7 @@ export class PerformProgrammingFormComponent
     this.getStates(new ListParams());
 
     this.getTransferentSelect(new ListParams());
+    this.getValueSelect(new ListParams());
     this.showUsersProgramming();
     this.getProgrammingData();
     this.performSearchForm();
@@ -405,6 +410,7 @@ export class PerformProgrammingFormComponent
       storeId: [null],
       folio: [null],
       concurrentMsg: [null],
+      value: [null],
     });
   }
   checkInfoDate2() {
@@ -1147,10 +1153,24 @@ export class PerformProgrammingFormComponent
     });
   }
 
+  getValueSelect(params?: ListParams) {
+    params['filter.nmtable'] = 445;
+    this.dynamicCatalogService.getTvalTable1(params).subscribe({
+      next: response => {
+        console.log('data', response);
+        this.otValors = new DefaultSelect(response.data, response.count);
+      },
+      error: error => {},
+    });
+  }
+
   transferentSelect(transferent: ITransferente) {
     this.transferentId = transferent?.id;
     this.performForm.get('stationId').setValue(null);
     this.performForm.get('autorityId').setValue(null);
+    if (transferent?.id == 903) {
+      this.showTypeValor = true;
+    }
     this.getStations(new ListParams());
   }
 
@@ -3318,37 +3338,40 @@ export class PerformProgrammingFormComponent
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
       'DD/MM/YYYY'
     );
-    const date = moment(new Date()).format('YYYY/MM/DD');
-    const formData = {
-      days: 5,
-      hours: 0,
-      minutes: 0,
-      date: date,
-    };
 
-    this.programmingService.getDateProgramming(formData).subscribe({
-      next: (response: any) => {
-        const correctDate = moment(response).format('DD/MM/YYYY');
-        if (correctDate > _startDate || correctDate > _endDateFormat) {
-          this.performForm
-            .get('startDate')
-            .addValidators([minDate(new Date(response))]);
-          this.performForm
-            .get('startDate')
-            .setErrors({ minDate: { min: new Date(response) } });
-          this.performForm.markAllAsTouched();
+    if (this.transferentId != 903) {
+      const date = moment(new Date()).format('YYYY/MM/DD');
+      const formData = {
+        days: 5,
+        hours: 0,
+        minutes: 0,
+        date: date,
+      };
+      this.programmingService.getDateProgramming(formData).subscribe({
+        next: (response: any) => {
+          const correctDate = moment(response).format('DD/MM/YYYY');
+          if (correctDate > _startDate || correctDate > _endDateFormat) {
+            this.performForm
+              .get('startDate')
+              .addValidators([minDate(new Date(response))]);
+            this.performForm
+              .get('startDate')
+              .setErrors({ minDate: { min: new Date(response) } });
+            this.performForm.markAllAsTouched();
 
-          this.performForm
-            .get('endDate')
-            .addValidators([minDate(new Date(response))]);
-          this.performForm
-            .get('endDate')
-            .setErrors({ minDate: { min: new Date(response) } });
-          this.performForm.markAllAsTouched();
-        }
-      },
-      error: error => {},
-    });
+            this.performForm
+              .get('endDate')
+              .addValidators([minDate(new Date(response))]);
+            this.performForm
+              .get('endDate')
+              .setErrors({ minDate: { min: new Date(response) } });
+            this.performForm.markAllAsTouched();
+          }
+        },
+        error: error => {},
+      });
+    }
+
     /*
     const _endDateFormat = moment(this.performForm.get('endDate').value).format(
       'DD/MM/YYYY'

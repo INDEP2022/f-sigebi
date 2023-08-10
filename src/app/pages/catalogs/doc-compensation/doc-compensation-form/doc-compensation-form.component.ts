@@ -37,25 +37,27 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.docCompensationForm = this.fb.group({
-      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       satTypeJob: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(4),
         ],
       ],
       idTypeDocSat: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(4),
         ],
       ],
       idTypeDocSatXml: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.maxLength(4),
           Validators.pattern(NUMBERS_PATTERN),
         ],
@@ -63,14 +65,18 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
       typeDocSae: [
         null,
         [
-          // Validators.required,
+          Validators.required,
           Validators.maxLength(250),
           Validators.pattern(STRING_PATTERN),
         ],
       ],
       type: [
         null,
-        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.required,
+        ],
       ],
     });
     if (this.docCompensation != null) {
@@ -118,9 +124,13 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.docCompensationForm.controls['typeDocSae'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.docCompensationService
-      .create(this.docCompensationForm.value)
+      .create(this.docCompensationForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

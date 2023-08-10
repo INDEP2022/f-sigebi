@@ -44,6 +44,8 @@ export class CatRelationshipOpinionComponent
   affairTypeList: IAffairType[] = [];
 
   data2: LocalDataSource = new LocalDataSource();
+  columnFilters2: any = [];
+  columnFilters3: any = [];
 
   rAsuntDicList: IRAsuntDic[] = [];
   affairTypes: IAffairType;
@@ -58,7 +60,7 @@ export class CatRelationshipOpinionComponent
   totalItems3: number = 0;
 
   settings2;
-  settings3;
+  settings3 = { ...this.settings };
 
   loading1 = this.loading;
   loading2 = this.loading;
@@ -90,9 +92,16 @@ export class CatRelationshipOpinionComponent
       actions: false,
       columns: { ...AFFAIR_TYPE_COLUMNS },
     };
-    this.settings3 = {
+
+    this.settings3.columns = DICTA_COLUMNS;
+    this.settings3.actions.delete = true;
+    this.settings3.actions.edit = true;
+    this.settings3.actions.add = false;
+    this.settings3.hideSubHeader = false;
+
+    /*this.settings3 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -100,7 +109,7 @@ export class CatRelationshipOpinionComponent
         position: 'right',
       },
       columns: { ...DICTA_COLUMNS },
-    };
+    };*/
   }
 
   //Caga las columnas de búsqueda de asuntos
@@ -117,7 +126,7 @@ export class CatRelationshipOpinionComponent
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
             switch (filter.field) {
-              case 'idCity':
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'description':
@@ -136,13 +145,50 @@ export class CatRelationshipOpinionComponent
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getAffairAll();
+        }
+      });
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'code':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'dictumData':
+                field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters2[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters2[field];
+            }
+          });
+          this.params3 = this.pageFilter(this.params3);
+          this.getRAsuntDic();
         }
       });
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAffairAll());
+    this.params3
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRAsuntDic());
   }
 
   //Trae todos los asuntos
@@ -174,8 +220,8 @@ export class CatRelationshipOpinionComponent
     this.affairs = event.data;
     this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffairTypes()),
-      this.getRAsuntDic();
+      .subscribe(() => this.getAffairTypes());
+    this.getRAsuntDic();
   }
 
   //Muestra información de la fila seleccionada de asuntos
@@ -204,14 +250,26 @@ export class CatRelationshipOpinionComponent
   getRAsuntDic() {
     this.loading3 = true;
     const idAffair = { ...this.affairs };
-    this.RAsuntDicService.getByCode(idAffair.id).subscribe({
+    this.params3.getValue()['filter.code'] = `$eq:${idAffair.id}`;
+    let params = {
+      ...this.params3.getValue(),
+      ...this.columnFilters2,
+    };
+    this.RAsuntDicService.getAll(params).subscribe({
       next: response => {
         console.log(response);
-        this.rAsuntDicList = response.data;
+        this.data2.load(response.data);
+        this.data2.refresh();
+        //this.rAsuntDicList = response.data;
         this.totalItems3 = response.count;
         this.loading3 = false;
       },
-      error: error => (this.loading3 = false),
+      error: error => {
+        this.loading3 = false;
+        this.data2.load([]);
+        this.data2.refresh();
+        this.totalItems3 = 0;
+      },
     });
   }
 
@@ -300,42 +358,40 @@ export class CatRelationshipOpinionComponent
 
   report() {
     let params = {
-      //PN_DEVOLUCION: this.data,
+      //PN_DEVOLUCION: this.data, FCATADBRELASDIC
     };
-    this.siabService
-      .fetchReport('FCATADBRELASDIC', params)
-      .subscribe(response => {
-        if (response !== null) {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true, //ignora el click fuera del modal
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        } else {
-          const blob = new Blob([response], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          let config = {
-            initialState: {
-              documento: {
-                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                type: 'pdf',
-              },
-              callback: (data: any) => {},
-            }, //pasar datos por aca
-            class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-            ignoreBackdropClick: true, //ignora el click fuera del modal
-          };
-          this.modalService.show(PreviewDocumentsComponent, config);
-        }
-      });
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {},
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true, //ignora el click fuera del modal
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      }
+    });
   }
 }

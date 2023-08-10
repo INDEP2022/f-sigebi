@@ -26,7 +26,9 @@ import { STATE_COLUMS, TRANSFERENT_STATE_COLUMNS } from './columns';
 export class TransferorsListComponent extends BasePage implements OnInit {
   columns: ITransferente[] = [];
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
+  columnFilters1: any = [];
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -59,11 +61,13 @@ export class TransferorsListComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: false,
         delete: true,
+        add: false,
+
         position: 'right',
       },
       columns: { ...STATE_COLUMS },
@@ -94,6 +98,7 @@ export class TransferorsListComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getTransferents();
         }
       });
@@ -144,21 +149,72 @@ export class TransferorsListComponent extends BasePage implements OnInit {
     this.totalItems2 = 0;
     this.stateList = [];
     this.transferents = event.data;
-    this.params2
+    this.filterData(idTrans.id);
+    /*this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getStateByTransferent(idTrans.id));
+      .subscribe(() => this.getStateByTransferent(idTrans.id));*/
   }
 
-  getStateByTransferent(id?: number) {
+  filterData(id: string | number) {
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'transferent':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'state':
+                field = `filter.${filter.field}.descCondition`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getStateByTransferent(id);
+        }
+      });
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getStateByTransferent(id));
+  }
+
+  getStateByTransferent(id?: number | string) {
     this.loading2 = true;
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
     const idTrans = { ...this.transferents };
+
     this.transferenteSaeService
-      .getStateByTransferent(idTrans.id, this.params2.getValue())
+      .getStateByTransferent(idTrans.id, params)
       .subscribe({
         next: response => {
-          this.stateList = response.data;
-          this.totalItems2 = response.count;
+          this.totalItems2 = response.count || 0;
+
+          this.data1.load(response.data);
+          this.data1.refresh();
           this.loading2 = false;
+
+          /*this.stateList = response.data;
+          this.totalItems2 = response.count;
+          this.loading2 = false;*/
         },
         error: error => (this.showNullRegister(), (this.loading = false)),
       });

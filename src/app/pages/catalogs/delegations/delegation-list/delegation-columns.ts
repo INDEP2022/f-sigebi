@@ -25,7 +25,7 @@ export const DELEGATION_COLUMS = {
     sort: false,
   },
   diffHours: {
-    title: 'Dif Hora',
+    title: 'Dif. Hora',
     type: 'number',
     sort: false,
   },

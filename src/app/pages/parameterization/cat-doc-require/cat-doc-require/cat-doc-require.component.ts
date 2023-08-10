@@ -59,8 +59,8 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'description' ||
-            filter.field == 'typeDictum'
+            filter.field == 'typeDictum' ||
+            filter.field == 'numRegister'
               ? (searchFilter = SearchFilter.EQ)
               : (searchFilter = SearchFilter.ILIKE);
             if (filter.search !== '') {
@@ -69,7 +69,12 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
               delete this.columnFilters[field];
             }
           });
+          this.totalItems = change.count || 0;
+          console.log(this.totalItems);
+          console.log(change);
+
           this.params = this.pageFilter(this.params);
+
           this.getDocumentsForDictum();
         }
       });

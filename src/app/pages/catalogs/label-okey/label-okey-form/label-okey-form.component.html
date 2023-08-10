@@ -9,7 +9,10 @@
       <form-field
         [control]="labelOkeyForm.get('description')"
         label="Descripci&oacute;n">
-        <textarea class="form-control" formControlName="description">
+        <textarea
+          class="form-control"
+          formControlName="description"
+          pattern="^\S.*$">
         </textarea>
       </form-field>
     </form>
