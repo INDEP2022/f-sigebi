@@ -172,10 +172,13 @@ export class GoodsManagementSocialCabinetComponent
     let fileReader = new FileReader();
     fileReader.onload = async e => {
       const result = fileReader.result as string;
-      const array = result.replace(',', '').split('\r\n'); // saltos de linea
+      console.log(result);
+
+      const array = result.replace(',', '').split(/\r\n|\n/); // saltos de linea
       const newArray: number[] = [];
       console.log(array);
-      if (array.length === 0) {
+
+      if (!array || array.length < 2) {
         this.alert('error', 'No se han cargado datos en archivo', '');
         return;
       }

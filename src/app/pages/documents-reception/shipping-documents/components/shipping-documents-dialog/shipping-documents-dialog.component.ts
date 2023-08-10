@@ -17,8 +17,7 @@ import { SHIPPING_DOCUMENTS_FORM } from '../../utils/shipping-documents-forms';
 })
 export class ShippingDocumentsDialogComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   params = new FilterParams();
   jobNumber = new FormControl<number | string>(45907);
   queryMode: boolean = null;
@@ -34,10 +33,15 @@ export class ShippingDocumentsDialogComponent
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   close(job?: any) {
     this.modalRef.content.callback(job);
+    this.modalRef.hide();
+  }
+  close2(job?: any) {
+    console.log("job ", job);
+    this.modalRef.content.callback('campo');
     this.modalRef.hide();
   }
 

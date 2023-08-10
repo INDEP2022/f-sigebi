@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import { IProcedureArea } from 'src/app/core/models/catalogs/indicators-parameter.model';
 
 export const INDICATORSOFPERFORMANCE_COLUMNS = {
@@ -42,11 +44,22 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
   initialDate: {
     title: 'Término',
     //width: '10%',
+    type: 'html',
     sort: false,
-    valuePrepareFunction: (text: string) => {
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    /*valuePrepareFunction: (text: string) => {
       return `
         ${text ? text.split('T')[0] : ''}  
       `;
+    },*/
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   daysLimNumber: {
@@ -57,11 +70,22 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
   hoursLimNumber: {
     title: 'Hora Límite',
     //width: '10%',
+    type: 'html',
     sort: false,
-    valuePrepareFunction: (text: string) => {
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    /*valuePrepareFunction: (text: string) => {
       return `
         ${text ? text.split('T')[0] : ''}  
       `;
+    },*/
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
   contractZoneKey: {
@@ -82,11 +106,22 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
   endDate: {
     title: 'Fin',
     //width: '10%',
+    type: 'html',
     sort: false,
-    valuePrepareFunction: (text: string) => {
+    valuePrepareFunction: (date: Date) => {
+      var raw = new Date(date);
+
+      var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy', 'UTC');
+      return formatted;
+    },
+    /*valuePrepareFunction: (text: string) => {
       return `
         ${text ? text.split('T')[0] : ''}  
       `;
+    },*/
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
     },
   },
 };

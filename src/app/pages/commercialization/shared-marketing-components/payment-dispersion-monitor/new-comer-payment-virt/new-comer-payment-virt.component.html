@@ -10,6 +10,7 @@
             (fetchItems)="searchBatch($event)"
             control="batch"
             [form]="formNew"
+            bindLabel="lotPublic"
             [data]="data"
             label="Lote"></ngx-select>
         </form-field>
@@ -17,7 +18,11 @@
           [control]="formNew.get('idBatch')"
           class="col-md-6"
           label="Id Lote">
-          <input type="text" formControlName="idBatch" class="form-control" />
+          <input
+            type="text"
+            formControlName="idBatch"
+            class="form-control"
+            readOnly />
         </form-field>
       </div>
       <div class="row mb-3 mt-3">
@@ -27,6 +32,7 @@
           label="description">
           <input
             type="text"
+            readOnly
             formControlName="description"
             class="form-control" />
         </form-field>
@@ -38,7 +44,9 @@
           Guardar
           <i aria-hidden="true" class="fa fa-save"></i>
         </button>
-        <button class="btn btn-danger btn-sm active">Cancelar</button>
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>

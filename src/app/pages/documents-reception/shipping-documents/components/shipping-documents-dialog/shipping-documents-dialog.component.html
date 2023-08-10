@@ -1,79 +1,57 @@
 <app-modal>
-  <div header>
-    <h5 class="modal-title">ENVIO DE OFICIOS</h5>
-  </div>
-  <div body>
-    <form class="form-material" (submit)="getJob()">
-      <div class="row" *ngIf="queryMode == null">
-        <div class="col-md-12 d-flex justify-content-between">
-          <div class="col-md-1"></div>
-          <div class="col-md-5">
-            <div>
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active"
-                (click)="queryMode = true">
+    <div header>
+        <h5 class="modal-title">ENVIO DE OFICIOS</h5>
+    </div>
+    <div body>
+        <form class="form-material" (submit)="getJob()">
+            <div class="row" *ngIf="queryMode == null">
+                <div class="col-md-12 d-flex justify-content-between">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5">
+                        <div>
+                            <button type="button" class="btn btn-primary btn-sm active" (click)="queryMode = true">
                 Consultar envio
                 <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
-            </div>
-          </div>
-          <div class="col-md-7">
-            <button
-              type="button"
-              class="btn btn-info btn-sm active ml-2 mr-2"
-              (click)="close()">
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <button type="button" class="btn btn-info btn-sm active ml-2 mr-2" (click)="close2()">
               Nuevo envio
               <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-          </div>
-        </div>
-      </div>
+                    </div>
+                </div>
+            </div>
 
-      <ng-container *ngIf="queryMode">
-        <div class="row">
-          <div class="col-md-12">
-            <form-field
-              class="col-md-4"
-              [control]="jobNumber"
-              label="No&#46; Oficio">
-              <input
-                class="form-control"
-                type="number"
-                [formControl]="jobNumber" />
-            </form-field>
+            <ng-container *ngIf="queryMode">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form-field class="col-md-4" [control]="jobNumber" label="No&#46; Oficio">
+                            <input class="form-control" type="number" [formControl]="jobNumber" />
+                        </form-field>
 
-            <div class="col-md-7">
-              <div class="col-md-12"></div>
-              <div class="col-md-4">
-                <confirm-button
-                  [loading]="loading"
-                  loadingText="Buscando..."
-                  text="Buscar"
-                  [btnSmall]="true"
-                  icon="bx bx-search-alt bx-sm float-icon"
-                  height="100px"></confirm-button>
-              </div>
-              <div class="col-md-4"></div>
-              <div class="col-md-1">
-                <button
-                  type="button"
-                  class="btn btn-primary active btn-sm m-2"
-                  (click)="queryMode = null"
-                  style="position: absolute; top: -4px">
+                        <div class="col-md-7">
+                            <div class="col-md-12"></div>
+                            <div class="col-md-4">
+                                <confirm-button [loading]="loading" loadingText="Buscando..." text="Buscar" [btnSmall]="true" icon="bx bx-search-alt bx-sm float-icon" height="100px"></confirm-button>
+                            </div>
+                            <div class="col-md-4"></div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-primary active btn-sm m-2" (click)="queryMode = null" style="position: absolute; top: -4px">
                   Regresar <i class="fas fa-arrow-circle-left"></i>
                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </form>
-  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </form>
+    </div>
 
-  <div footer>
-    <div class="col-md-8">
-      <!--  <div class="m-3 ">
+    <div footer>
+        <div class="col-md-8">
+            <!--  <div class="m-3 ">
                 <confirm-button
           text="Buscar "
           loadingText="Buscando ... "
@@ -81,15 +59,12 @@
           [disabled]="!form.valid "
           (confirm)="confirm() "></confirm-button> 
         </div>-->
-      <div class="m-3">
-        <div class="col-md-8"></div>
-        <button
-          type="button "
-          class="btn btn-sm btn-danger active"
-          (click)="close()">
+            <div class="m-3">
+                <div class="col-md-8"></div>
+                <button type="button " class="btn btn-sm btn-danger active" (click)="close()">
           Cancelar
         </button>
-      </div>
+            </div>
+        </div>
     </div>
-  </div>
 </app-modal>
