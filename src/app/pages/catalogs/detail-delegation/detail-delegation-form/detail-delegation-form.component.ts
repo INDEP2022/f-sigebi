@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -26,10 +26,12 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   detailDelegation: IDetailDelegation;
   delegation = new DefaultSelect();
+  delegations = new DefaultSelect();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private detailDelegationService: DetailDelegationService,
+    private delegationService: DelegationService,
     private affairService: AffairService
   ) {
     super();
@@ -37,6 +39,7 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.detailDelegationForm.patchValue(this.detailDelegation);
   }
 
   private prepareForm() {
@@ -110,10 +113,8 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
     if (this.detailDelegation != null) {
       this.edit = true;
       this.detailDelegationForm.patchValue(this.detailDelegation);
+      console.log(this.detailDelegation.id);
     }
-    setTimeout(() => {
-      this.getDelegation(new ListParams());
-    }, 1000);
   }
   close() {
     this.modalRef.hide();
@@ -160,16 +161,5 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
-  }
-
-  getDelegation(params: ListParams) {
-    this.affairService.getDelegations(params).subscribe({
-      next: data => {
-        this.delegation = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        this.delegation = new DefaultSelect();
-      },
-    });
   }
 }

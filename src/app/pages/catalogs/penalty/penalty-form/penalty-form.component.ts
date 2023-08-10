@@ -50,8 +50,12 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       ],
       equivalentDays: [
         null,
-        [Validators.maxLength(5), Validators.required],
-        // [Validators.required, Validators.pattern(POSITVE_NUMBERS_PATTERN)],
+        [
+          Validators.maxLength(5),
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+        ,
       ],
       contractNumber: [
         null,
