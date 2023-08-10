@@ -40,6 +40,7 @@ export interface IProceedings {
   nameWorkerOic?: string;
   nameWorkerUvfv?: string;
   nameWitness1?: string;
+
   idExpWorker2?: string;
   nameWitness2?: string;
   electronicSignatureWorker1?: number;
@@ -49,6 +50,7 @@ export interface IProceedings {
   electronicSignatureWitness1?: number;
   electronicSignatureWitness2?: number;
   elaborationDate?: Date;
+  dateOfficie?: Date;
   proceedingStatus?: string;
   elaborated?: string;
   userDestruction?: string;

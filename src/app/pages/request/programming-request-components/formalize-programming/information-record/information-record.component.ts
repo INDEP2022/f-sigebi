@@ -45,7 +45,8 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   proceeding: IProceedings;
   tranType: string = '';
   typeFirm: string = '';
-
+  event: boolean = false;
+  minDateFecElab = new Date();
   urlBaseReport = `${environment.API_URL}processgoodreport/report/showReport?nombreReporte=`;
   constructor(
     private modalRef: BsModalRef,
@@ -147,6 +148,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
       startTime: [null],
       celebrates: [null],
       closingDate: [null],
+      dateOfficie: [null],
     });
 
     const params = new BehaviorSubject<ListParams>(new ListParams());
@@ -281,10 +283,16 @@ export class InformationRecordComponent extends BasePage implements OnInit {
           .setValue(response.data[0].positionWorkerUvfv);
         this.infoForm.get('emailUvfv').setValue(response.data[0].emailUvfv);
         this.infoForm.get('otherFacts').setValue(response.data[0].otherFacts);
-        this.infoForm.get('evet').setValue(response.data[0].evet);
+        if (this.programming?.eventId) {
+          this.event = true;
+          this.infoForm.get('evet').setValue(this.programming.eventId);
+        }
         this.infoForm.get('startTime').setValue(response.data[0].startTime);
         this.infoForm.get('bases').setValue(response.data[0].bases);
         this.infoForm.get('celebrates').setValue(response.data[0].celebrates);
+        this.infoForm
+          .get('dateOfficie')
+          .setValue(moment(response.data[0].dateOfficie).format('DD/MM/YYYY'));
 
         //this.infoForm.patchValue(response.data[0]);
       },

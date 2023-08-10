@@ -18,7 +18,7 @@ export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
     sort: false,
   },
   no_tramite: {
-    title: 'No Tramite',
+    title: 'No. Trámite',
     sort: false,
   },
   urecepcion: {
