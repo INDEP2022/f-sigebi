@@ -27,6 +27,7 @@ export class HttpService {
   protected get<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
+    console.log(url, params);
     return this.httpClient.get<T>(`${url}`, { params });
   }
   protected get2<T = any>(route: string, _params?: _Params) {
