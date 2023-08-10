@@ -29,6 +29,10 @@ export class InterfacesirsaeService extends HttpService {
     );
   }
 
+  updateEventDomicile(body: { iIdEvento: string | number; cveActa: string }) {
+    return this.post('update-invitations/update-event-domicile', body);
+  }
+
   updateInvitations(body: { sRunCommand: string; cveCertificate: string }) {
     return this.post('update-invitations/program-cs-main', body);
   }
