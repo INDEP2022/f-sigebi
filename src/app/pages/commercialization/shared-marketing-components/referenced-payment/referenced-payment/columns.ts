@@ -315,3 +315,90 @@ export const COLUMNS2 = {
     sort: false,
   },
 };
+
+export const COLUMNS_DATA_CARGADAS = {
+  COMER_PAGOREF_REFERENCIA: {
+    title: 'Referencia',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_REFERENCIAORI: {
+    title: 'Referencia Ori',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_FECHA: {
+    title: 'Fecha',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_MONTO: {
+    title: 'Monto',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_TIPO: {
+    title: 'Tipo',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_DESCPAGO: {
+    title: 'Movimiento',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_ID_TIPO_SAT: {
+    title: 'ID Tipo SAT',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_NO_MOVIMIENTO: {
+    title: 'No. Movimiento',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_CVE_BANCO: {
+    title: 'Banco',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_CODIGO: {
+    title: 'Código',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_SUCURSAL: {
+    title: 'Sucursal',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_RESULTADO: {
+    title: 'Resultado',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_VAL: {
+    title: 'Válido',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+  COMER_PAGOREF_ID_LOTE: {
+    title: 'Lote',
+    width: '15%',
+    type: 'string',
+    sort: false,
+  },
+};

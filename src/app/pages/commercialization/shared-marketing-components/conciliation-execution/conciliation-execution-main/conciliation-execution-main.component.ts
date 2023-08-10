@@ -722,9 +722,10 @@ export class ConciliationExecutionMainComponent
       const fase = this.conciliationForm.get('phase').value;
       if (!fase) {
         this.alert('warning', 'Es Necesario Indicar la Fase', '');
+        this.loadingBtn2 = false;
         return;
       } else {
-        if (!this.selectedBatch.lotPublic) {
+        if (!this.selectedBatch) {
           this.alertQuestion(
             'question',
             `Se va a Ejecutar el Proceso de Cambio de Estatus del Evento ${this.selectedEvent.id_evento} de Todos los Lotes`,
@@ -732,20 +733,20 @@ export class ConciliationExecutionMainComponent
           ).then(async question => {
             if (question.isConfirmed) {
               //   MODIFICA_ESTATUS;
-              let obj = {
+              let obj: any = {
                 event: this.selectedEvent.id_evento,
-                publicLot: this.selectedBatch.lotPublic,
+                publicLot: null,
                 phase: fase,
                 user: this.token.decodeToken().preferred_username,
               };
-              const MODIFICA_ESTATUS = await this.MODIFICA_ESTATUS(obj);
-              if (!MODIFICA_ESTATUS) {
-                this.alert('error', 'He Ocurrido un Error', '');
+              const MODIFICA_ESTATUS: any = await this.MODIFICA_ESTATUS(obj);
+              if (MODIFICA_ESTATUS.status != 200) {
+                this.alert('error', 'Ha Ocurrido un Error al Modificar', '');
                 this.loadingBtn2 = false;
                 return;
               } else {
                 this.loadingBtn2 = false;
-                this.alert('error', 'Proceso Terminado Correctamente', '');
+                this.alert('success', 'Proceso Terminado Correctamente', '');
               }
             } else {
               this.loadingBtn2 = false;
@@ -771,14 +772,14 @@ export class ConciliationExecutionMainComponent
                 phase: eventProcess.phase,
                 user: this.token.decodeToken().preferred_username,
               };
-              const MODIFICA_ESTATUS = await this.MODIFICA_ESTATUS(obj);
-              if (!MODIFICA_ESTATUS) {
-                this.alert('error', 'He Ocurrido un Error', '');
+              const MODIFICA_ESTATUS: any = await this.MODIFICA_ESTATUS(obj);
+              if (MODIFICA_ESTATUS.status != 200) {
+                this.alert('error', 'Ha Ocurrido un Error al Modificar', '');
                 this.loadingBtn2 = false;
                 return;
               } else {
                 this.loadingBtn2 = false;
-                this.alert('error', 'Proceso Terminado Correctamente', '');
+                this.alert('success', 'Proceso Terminado Correctamente', '');
               }
             } else {
               this.loadingBtn2 = false;
@@ -834,7 +835,7 @@ export class ConciliationExecutionMainComponent
   // CAMBIAR_ESTATUS_ANT
   CAMBIAR_ESTATUS_ANT(body: any) {
     return new Promise((resolve, reject) => {
-      this.comerDetailsService.MODIFICA_ESTATUS(body).subscribe({
+      this.comerDetailsService.CAMBIAR_ESTATUS_ANT(body).subscribe({
         next: response => {
           resolve(response.data);
         },
@@ -845,15 +846,23 @@ export class ConciliationExecutionMainComponent
       });
     });
   }
-  //   MODIFICA_ESTATUS;
+  // MODIFICA_ESTATUS;
   async MODIFICA_ESTATUS(body: any) {
     return new Promise((resolve, reject) => {
       this.comerDetailsService.MODIFICA_ESTATUS(body).subscribe({
         next: response => {
-          resolve(response.data);
+          let obj = {
+            status: 200,
+            data: response.data,
+          };
+          resolve(obj);
         },
         error: err => {
-          resolve(false);
+          let obj: any = {
+            status: err.status,
+            data: null,
+          };
+          resolve(obj);
           console.log('ERR', err);
         },
       });

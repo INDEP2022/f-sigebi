@@ -55,8 +55,15 @@
           <button
             (click)="carga()"
             class="btn btn-sm btn-block btn-success active">
-            Carga <i class="bx bx-download float-icon"></i>
+            Carga Pagos <i class="bx bx-download float-icon"></i>
           </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
         </div>
       </div>
       <div #scrollContainer class="row">
@@ -82,7 +89,9 @@
     <div class="row">
       <div class="col-md-12 text-end">
         <div class="row">
-          <div class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+          <div
+            *ngIf="!cargado"
+            class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
             <app-columns-select
               [(settings)]="settings"
               [leftList]="true"></app-columns-select>
@@ -96,30 +105,20 @@
               </button>
             </div>
           </div>
+          <div
+            *ngIf="cargado"
+            class="col-md-12 text-end d-flex flex-row-reverse mt-3 mb-3">
+            <app-columns-select
+              [(settings)]="settings2"
+              [leftList]="true"></app-columns-select>
+          </div>
         </div>
       </div>
     </div>
-    <div *ngIf="!cargado" class="row mb-3">
-      <form-loader *ngIf="loading"></form-loader>
-      <ng-scrollbar
-        [track]="'all'"
-        [ngStyle]="{ height: loading ? '0px' : '400px' }">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          class="table-responsive"
-          [settings]="settings"
-          [source]="data"
-          (edit)="edit($event.data)"
-          (userRowSelect)="rowsSelected($event)"
-          (delete)="questionDelete($event.data)">
-        </ng2-smart-table>
-      </ng-scrollbar>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
-    </div>
+
     <form-loader *ngIf="loading"></form-loader>
     <ng-scrollbar
+      *ngIf="!cargado"
       [track]="'all'"
       [ngStyle]="{ height: loading ? '0px' : '400px' }">
       <ng2-smart-table
@@ -133,8 +132,48 @@
       </ng2-smart-table>
     </ng-scrollbar>
     <app-pagination
+      *ngIf="!cargado"
       [params]="params"
       [totalItems]="totalItems"></app-pagination>
+    <ng-scrollbar
+      *ngIf="cargado"
+      [track]="'all'"
+      [ngStyle]="{ height: loading ? '0px' : '400px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings2"
+        [source]="dataCargada"
+        (userRowSelect)="rowsSelected($event)">
+      </ng2-smart-table>
+    </ng-scrollbar>
+    <!-- <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
+    <form class="form-material" [formGroup]="form2">
+      <div class="row justify-content-beetwen mt-5">
+        <div class="col-2">
+          <form-field
+            [control]="form2.get('BLK_CTRL_CUANTOS')"
+            label="Registros Cargados">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="BLK_CTRL_CUANTOS" />
+          </form-field>
+        </div>
+        <div class="col-2">
+          <form-field
+            [control]="form2.get('BLK_CTRL_MONTO')"
+            label="Monto Cargado">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="BLK_CTRL_MONTO" />
+          </form-field>
+        </div>
+      </div>
+    </form>
 
     <div class="row justify-content-center mt-5">
       <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
