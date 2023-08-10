@@ -9,10 +9,18 @@
           <form-field
             [control]="granteesForm.get('usrStatus')"
             label="Estatus de Usuario">
-            <input
+            <ng-select
+              formControlName="usrStatus"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="SI">Si</ng-option>
+              <ng-option value="NO">No</ng-option>
+            </ng-select>
+            <!--<input
               type="text"
               class="form-control"
-              formControlName="usrStatus" />
+              formControlName="usrStatus" />-->
           </form-field>
         </div>
 

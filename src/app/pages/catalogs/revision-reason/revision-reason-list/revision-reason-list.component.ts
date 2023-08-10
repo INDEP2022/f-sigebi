@@ -109,7 +109,7 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -122,7 +122,11 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
     this.revisionReasonService.remove(id).subscribe({
       next: () => {
         this.getExample(),
-          this.alert('success', 'Motivo de revisión', 'Borrado Correctamente');
+          this.alert(
+            'success',
+            'Motivo para Estatus REV',
+            'Borrado Correctamente'
+          );
       },
       error: error => {
         this.alert(

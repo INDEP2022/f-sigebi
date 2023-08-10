@@ -18,4 +18,5 @@ export const ERROR_MESSAGES: any = {
   nonExist: (meta: any) => 'El registro no existe',
   TransferenteAndAct: (meta: any) =>
     `El transferente ${meta.transferent} no es valido para el Acta`,
+  //noSpace: (meta: any) => 'El campo no debe contener espacios',
 };

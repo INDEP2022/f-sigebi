@@ -30,6 +30,8 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     PAR_MASIVO: '', // PAQUETE
   };
   @Input() PAR_MASIVO: string;
+  data2 = new LocalDataSource();
+  params = new BehaviorSubject(new ListParams());
 
   constructor(
     private typeEntityGovService: TypeEntityGovService,
@@ -120,12 +122,12 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
 
   getData() {
     this.loading = true;
-    // const params = this.params.getValue().getParams();
     let params = {
-      ...this.params2.getValue(),
+      ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.typeEntityGovService.getAllFilter(params).subscribe({
+    //const params = this.params.getValue().getParams();
+    this.typeEntityGovService.getAllFilterv2(params).subscribe({
       next: response => {
         this.loading = false;
         this.data = response.data;
@@ -138,6 +140,44 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  changePagin() {
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getData();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
 
   edit(typeEntity?: ITypeEntityGov) {

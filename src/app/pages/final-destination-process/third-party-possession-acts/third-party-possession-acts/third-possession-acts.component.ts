@@ -406,6 +406,10 @@ if (id) {
       .getAllProceedingsDevolution(params)
       .subscribe({
         next: response => {
+          console.log('response', response.data[0].id);
+          console.log('response', response.data[0].auditor);
+          console.log('response', response.data[0].authorityOrder);
+          console.log('response', response.data[0].beneficiaryOwner);
           this.proceedingDev = response.data;
           console.log('proceedingDev', this.proceedingDev);
           this.actForm.controls['actSelect'].setValue(
