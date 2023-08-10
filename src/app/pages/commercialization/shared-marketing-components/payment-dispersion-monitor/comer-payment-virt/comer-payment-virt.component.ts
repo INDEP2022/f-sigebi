@@ -33,6 +33,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   actionsBool: boolean;
 
+  dataPaymentVirt: any;
+
   settings1 = {
     ...TABLE_SETTINGS,
     columns: COLUMN_COMER,
@@ -84,6 +86,7 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     this.formVirt.get('client').setValue(this.dataModel.client);
     this.formVirt.get('reference').setValue(this.dataModel.reference);
     this.formVirt.get('deposit').setValue(this.dataModel.amount);
+    this.loading = true;
 
     const paramsF = new FilterParams();
     paramsF.addFilter('payId', this.dataModel.idPayment);
@@ -104,9 +107,13 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         console.log(newData);
         this.data.load(newData);
         this.totalItems = res.count;
+        this.loading = false;
       },
       err => {
+        this.loading = false;
         console.log(err);
+        this.data.load([]);
+        this.totalItems = 0;
         this.alert('warning', 'No hay Pagos para Desagregar', '');
       }
     );
@@ -149,17 +156,33 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
     });
   }
 
+  //SELECCIONAR FILA
+  selectRow(e: any) {
+    console.log(e.data);
+    this.dataPaymentVirt = e.data;
+  }
+
   //Cerrar modal
   close() {
+    this.bsModel.content.callback('Hola');
     this.bsModel.hide();
   }
 
   //Open Modal Dividir
   timesToDivide() {
+    let incomeData = this.dataPaymentVirt;
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState: {},
+      initialState: {
+        incomeData,
+        callback: (data: any) => {
+          console.log(data);
+          const newData = this.data['data'].concat(data)
+          this.data.load(newData)
+        },
+      },
       class: 'modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
 
     this.modalService.show(CanTimesComponent, modalConfig);
@@ -167,13 +190,45 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
 
   //Open Modal New
   newPayment() {
+    let incomeData = {
+      eventId: this.dataModel.eventId,
+      clientId: this.dataModel.customerBatch,
+    };
     let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState: {},
+      initialState: {
+        incomeData,
+        callback: (data: any) => {
+          console.log(data);
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
 
     this.modalService.show(NewComerPaymentVirt, modalConfig);
+  }
+
+  //Delete Payment
+  deletePayment(){
+    if(this.dataPaymentVirt != null){
+      if(this.dataModel.incomeOrderId == null){
+        if(this.dataPaymentVirt.payId != null){
+          
+        }else{
+          this.alert('warning','El Registro tiene un Id de Pago Nulo','')
+        }
+      }else{
+        this.alert('warning','El Registro tiene un Id de Orden de Ingreo','')
+      }
+    }else{
+      this.alert('warning','No se Seleccionaron Pagos','')
+    }
+  }
+
+  //Función de Eliminar
+  deleteFn(){
+    
   }
 
   //gets
