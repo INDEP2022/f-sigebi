@@ -59,7 +59,7 @@ export const COLUMNS = {
     title: 'Teléfono',
     sort: false,
   },
-  zipC: {
+  zipCode: {
     title: 'Código Postal',
     sort: false,
   },
@@ -72,7 +72,7 @@ export const COLUMNS = {
     sort: false,
   },
   keyEntFed: {
-    title: 'Ent.Federativa',
+    title: 'Ent. Federativa',
     sort: false,
   },
   observations: {
@@ -82,6 +82,24 @@ export const COLUMNS = {
   curriculum: {
     title: 'Currículum',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (value: string) => {
+      if (value == 'S')
+        return '<strong><span class="badge badge-pill badge-success">SI</span></strong>';
+      if (value == 'N')
+        return '<strong><span class="badge badge-pill badge-warning">NO</span></strong>';
+      return value;
+    },
+    filter: {
+      type: 'list',
+      config: {
+        selectText: 'Seleccionar',
+        list: [
+          { value: 'S', title: 'SI' },
+          { value: 'N', title: 'NO' },
+        ],
+      },
+    },
   },
   keyOperation: {
     title: 'Giro',

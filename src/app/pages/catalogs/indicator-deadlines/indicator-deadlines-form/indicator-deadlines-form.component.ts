@@ -19,7 +19,7 @@ export class IndicatorDeadlinesFormComponent
   implements OnInit
 {
   indicatorsDeadlines: IIndicatorDeadline;
-  title: string = 'Plazos indicadores';
+  title: string = 'Plazo Indicador';
   edit: boolean = false;
   event: IParametersIndicators = null;
   indicatorDeadlinesModalForm: ModelForm<IIndicatorDeadline>;
@@ -43,10 +43,21 @@ export class IndicatorDeadlinesFormComponent
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      formula: [null, [Validators.required]],
+      formula: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       deadline: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.maxLength(2),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
       ],
       usuario_creacion: [null],
       fecha_creacion: [null],
@@ -85,6 +96,12 @@ export class IndicatorDeadlinesFormComponent
     this.edit ? this.update() : this.create();
   }
   create() {
+    if (
+      this.indicatorDeadlinesModalForm.controls['formula'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.indicatorDeadlineService
       .create(this.indicatorDeadlinesModalForm.value)

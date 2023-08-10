@@ -58,6 +58,13 @@ export class CatStationModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (
+      this.stationForm.controls['keyState'].value.trim() === '' ||
+      this.stationForm.controls['stationName'].value.trim() === ''
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.stationService.create(this.stationForm.value).subscribe({
       next: data => this.handleSuccess(),

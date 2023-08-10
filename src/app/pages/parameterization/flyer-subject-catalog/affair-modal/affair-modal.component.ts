@@ -34,7 +34,14 @@ export class AffairModalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.affairForm = this.fb.group({
       id: [null],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(200),
+        ],
+      ],
       referralNoteType: [null],
       userCreation: [null],
       creationDate: [null],
@@ -64,6 +71,10 @@ export class AffairModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.affairForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.affairForm.controls['nbOrigen'].setValue('SIAB');
     this.affairService.create2(this.affairForm.value).subscribe({

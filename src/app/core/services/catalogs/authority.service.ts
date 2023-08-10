@@ -145,7 +145,7 @@ export class AuthorityService
   }
 
   remove2(id: number | string, model: Object) {
-    const route = `${AuthorityEndpoints.Authority}/${id}`;
+    const route = `${AuthorityEndpoints.Authority}/id/${id}`;
     return this.delete(route, model);
   }
 }

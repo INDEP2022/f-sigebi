@@ -7,15 +7,20 @@ export interface IStation {
   creationDate?: Date;
   editionUser?: string;
   modificationDate?: Date;
-  keyState: number | null;
+  keyState: string;
   version: number | null;
   status: number | null;
   nameAndId?: string;
 }
 
+export interface IStation3 {
+  id: number | null;
+  idTransferent: number;
+}
+
 export interface IStation2 {
   id?: number;
-  idTransferent?: number;
+  idTransferent?: number | null;
   stationName?: string;
   userCreation?: string;
   creationDate?: Date;

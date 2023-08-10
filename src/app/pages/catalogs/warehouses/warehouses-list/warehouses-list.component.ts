@@ -223,12 +223,24 @@ export class WarehousesListComponent extends BasePage implements OnInit {
   delete(id: number) {
     this.warehouseService.remove(id).subscribe({
       next: () => {
-        this.getWarehouses();
+        this.params
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getWarehouses());
+        //this.getWarehouses();
         this.alert(
           'success',
-          'Categoria para almacen',
+          'Categoria para Almacen',
           'Borrada Correctamente'
         );
+      },
+      error: err => {
+        this.alert(
+          'warning',
+          'Categoria para Almacen',
+          'No se puede eliminar el objeto debido a una relación con un lote'
+        );
+        return;
+        //console.log(err);
       },
     });
   }

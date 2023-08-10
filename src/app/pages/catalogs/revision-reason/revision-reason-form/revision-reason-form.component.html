@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="revisionReasonForm">
@@ -97,10 +97,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          [disabled]="!revisionReasonForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
