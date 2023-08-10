@@ -56,13 +56,13 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'noState':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'state':
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'stage':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -107,7 +107,12 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 
@@ -140,7 +145,7 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
       next: () => {
         this.alert(
           'success',
-          'Estado por coordinación',
+          'Estado por Coordinación',
           'Borrado Correctamente'
         );
         this.getExample();
@@ -148,7 +153,7 @@ export class EdosXCoorListComponent extends BasePage implements OnInit {
       error: error => {
         this.alert(
           'warning',
-          'Edos x coor',
+          'Estado por Coordinación',
           'No se puede eliminar el objeto debido a una relación con otra tabla.'
         );
       },

@@ -748,6 +748,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.paramsTransportableGoods.getValue()['filter.status'] =
       'EN_TRANSPORTABLE';
 
+    this.paramsTransportableGoods.getValue()['sortBy'] = 'goodId:ASC';
+
     this.programmingService
       .getGoodsProgramming(this.paramsTransportableGoods.getValue())
       .subscribe({
@@ -952,6 +954,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.paramsGuardGoods.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsGuardGoods.getValue()['filter.status'] = 'EN_RESGUARDO_TMP';
+    this.paramsGuardGoods.getValue()['sortBy'] = 'goodId:ASC';
     this.programmingService
       .getGoodsProgramming(this.paramsGuardGoods.getValue())
       .subscribe({
@@ -1025,7 +1028,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.paramsReception.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsReception.getValue()['filter.status'] = 'EN_RECEPCION_TMP';
-
+    this.paramsReception.getValue()['sortBy'] = 'goodId:ASC';
     this.programmingService
       .getGoodsProgramming(this.paramsReception.getValue())
       .subscribe({
@@ -1169,6 +1172,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.paramsGoodsWarehouse.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsGoodsWarehouse.getValue()['filter.status'] = 'EN_ALMACEN_TMP';
+    this.paramsGoodsWarehouse.getValue()['sortBy'] = 'goodId:ASC';
     this.programmingService
       .getGoodsProgramming(this.paramsGoodsWarehouse.getValue())
       .subscribe({
@@ -1301,6 +1305,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.paramsReprogGoods.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsReprogGoods.getValue()['filter.status'] = 'EN_PROGRAMACION_TMP';
+    this.paramsReprogGoods.getValue()['sortBy'] = 'goodId:ASC';
     this.programmingService
       .getGoodsProgramming(this.paramsReprogGoods.getValue())
       .subscribe({
@@ -1442,6 +1447,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     this.paramsCancelGoods.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsCancelGoods.getValue()['filter.status'] = 'CANCELADO_TMP';
+    this.paramsCancelGoods.getValue()['sortBy'] = 'goodId:ASC';
     this.programmingService
       .getGoodsProgramming(this.paramsCancelGoods.getValue())
       .subscribe({
@@ -5588,6 +5594,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         programming: this.programming,
         callback: (next: boolean) => {
           if (next) {
+            this.getReceipts();
+            this.getOpenProceeding();
+            this.paramsReception
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getInfoReception());
+
+            this.selectGood = [];
           }
         },
       },

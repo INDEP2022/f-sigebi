@@ -1586,13 +1586,32 @@ export class FormalizeProgrammingFormComponent
 
   receiptResGood(receipt: IReceipt) {
     const goodsInfoRecep: any[] = [];
-    console.log('receipt', receipt);
-    const formData = {
-      receiptId: receipt.id,
-      programmationId: receipt.programmingId,
-      actId: receipt.actId,
-    };
+    this.params.getValue()['filter.receiptId'] = receipt.id;
+    this.params.getValue()['filter.actId'] = receipt.actId;
+    this.params.getValue()['filter.programmationId'] = receipt.programmingId;
+    this.receptionGoodService.getReceiptGood(this.params.getValue()).subscribe({
+      next: response => {
+        response.data.map((item: any) => {
+          this.goodService.getGoodByIds(item.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              // queda pendiente mostrar el alías del almacén //
 
+              goodsInfoRecep.push(response);
+              this.goodsRecepcion.load(goodsInfoRecep);
+              this.totalItemsReception = this.goodsRecepcion.count();
+            },
+          });
+        });
+      },
+      error: error => {},
+    });
+    /*
     this.receptionGoodService.getReceiptGoodByIds(formData).subscribe({
       next: data => {
         const info = [data];
@@ -1615,7 +1634,7 @@ export class FormalizeProgrammingFormComponent
         });
       },
       error: error => {},
-    });
+    }); */
   }
 
   receiptGuardSelect(receiptGuard: IRecepitGuard) {

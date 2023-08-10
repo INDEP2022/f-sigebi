@@ -8,7 +8,11 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_POSITIVE_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -56,11 +60,24 @@ export class RegionalDelegationFormComponent
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       version: [1],
-      regionalDelegate: [null, [Validators.required]],
-      officeAddress: [null, [Validators.required, Validators.maxLength(200)]],
+      regionalDelegate: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      officeAddress: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       status: [1],
       keyZone: [null, [Validators.required]],
-      iva: [0.16, [Validators.required]],
+      iva: [
+        0.16,
+        [Validators.required, Validators.pattern(DOUBLE_POSITIVE_PATTERN)],
+      ],
       city: [null, [Validators.required]],
       keyState: [null, [Validators.required]],
     });
@@ -79,26 +96,61 @@ export class RegionalDelegationFormComponent
   }
 
   create() {
-    this.loading = true;
-    this.regionalDelegationForm
-      .get('idGeographicZona')
-      .setValue(this.regionalDelegationForm.get('idGeographicZona').value.id);
-    this.regionalDelegationService
-      .create(this.regionalDelegationForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.regionalDelegationForm.controls['description'].value.trim() == '' ||
+      this.regionalDelegationForm.controls['regionalDelegate'].value.trim() ==
+        '' ||
+      this.regionalDelegationForm.controls['officeAddress'].value.trim() ==
+        '' ||
+      (this.regionalDelegationForm.controls['description'].value.trim() == '' &&
+        this.regionalDelegationForm.controls['regionalDelegate'].value.trim() ==
+          '' &&
+        this.regionalDelegationForm.controls['officeAddress'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      /*this.regionalDelegationForm
+        .get('idGeographicZona')
+        .setValue(this.regionalDelegationForm.get('idGeographicZona').value.id);*/
+      //console.log(this.regionalDelegationForm.getRawValue());
+      this.regionalDelegationService
+        .create(this.regionalDelegationForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.regionalDelegationService
-      .update(this.regionalDelegation.id, this.regionalDelegationForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    if (
+      this.regionalDelegationForm.controls['description'].value.trim() == '' ||
+      this.regionalDelegationForm.controls['regionalDelegate'].value.trim() ==
+        '' ||
+      this.regionalDelegationForm.controls['officeAddress'].value.trim() ==
+        '' ||
+      (this.regionalDelegationForm.controls['description'].value.trim() == '' &&
+        this.regionalDelegationForm.controls['regionalDelegate'].value.trim() ==
+          '' &&
+        this.regionalDelegationForm.controls['officeAddress'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.regionalDelegationService
+        .update(this.regionalDelegation.id, this.regionalDelegationForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {
@@ -113,45 +165,45 @@ export class RegionalDelegationFormComponent
   //Data
 
   getGeoZone(param: ListParams) {
-    this.serviceGeoZone.getAll(param).subscribe(
-      res => {
+    this.serviceGeoZone.getAll(param).subscribe({
+      next: res => {
         this.selectGeoZone = new DefaultSelect(res.data, res.count);
       },
-      error => {
+      error: err => {
         this.selectGeoZone = new DefaultSelect();
-      }
-    );
+      },
+    });
   }
 
-  fillSelectZone() {
-    const zone = this.regionalDelegationForm.get('zone').value;
+  fillSelectZone(event: any) {
+    console.log(event);
+    /*const zone = this.regionalDelegationForm.get('zone').value;
     if (zone != null) {
       this.regionalDelegationForm.controls['idGeographicZona'].setValue(
         this.regionalDelegation.id
       );
-    }
+    }*/
   }
 
   getCity(param: ListParams) {
-    this.serviceCity.getAll(param).subscribe(
-      res => {
+    this.serviceCity.getAll(param).subscribe({
+      next: res => {
         this.selectCity = new DefaultSelect(res.data, res.count);
       },
-      error => {
+      error: err => {
         this.selectCity = new DefaultSelect();
-      }
-    );
+      },
+    });
   }
 
   //Action
 
-  fillSelectCity() {
-    const city = this.regionalDelegationForm.get('city').value;
-    if (city != null) {
-      this.regionalDelegationForm.get('city').setValue(city.nameCity);
-      this.regionalDelegationForm
-        .get('keyState')
-        .setValue(city.state.descCondition);
+  fillSelectCity(event: any) {
+    if (event != null) {
+      let state: any = event.stateDetail;
+      console.log(state.descCondition);
+      this.regionalDelegationForm.get('city').setValue(event.nameCity);
+      this.regionalDelegationForm.get('keyState').setValue(state.descCondition);
     } else {
       this.regionalDelegationForm.get('city').setValue(null);
       this.regionalDelegationForm.get('keyState').setValue(null);

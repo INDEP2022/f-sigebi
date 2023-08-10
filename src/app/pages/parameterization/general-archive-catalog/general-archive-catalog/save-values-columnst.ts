@@ -1,6 +1,6 @@
 export const SAVEVALUES_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Id',
     type: 'string',
     sort: false,
   },

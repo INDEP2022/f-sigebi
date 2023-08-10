@@ -13,7 +13,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class ModalCatAppraisersComponent extends BasePage implements OnInit {
-  title: string = 'PERITO';
+  title: string = 'Perito';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -38,7 +38,7 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(200),
+          Validators.maxLength(80),
         ],
       ],
       position: [
@@ -79,21 +79,43 @@ export class ModalCatAppraisersComponent extends BasePage implements OnInit {
       }
 
       if (this.edit) {
-        this.proficientSer.updateProficient(this.form.value).subscribe({
-          next: () => this.handleSuccess(),
-          error: err => (
-            this.onLoadToast('error', err.error.message, ''),
-            (this.loading = false)
-          ),
-        });
+        if (
+          this.form.controls['name'].value.trim() == '' ||
+          this.form.controls['position'].value.trim() == '' ||
+          (this.form.controls['name'].value.trim() == '' &&
+            this.form.controls['position'].value.trim() == '')
+        ) {
+          this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+          this.loading = false;
+          return;
+        } else {
+          this.proficientSer.updateProficient(this.form.value).subscribe({
+            next: () => this.handleSuccess(),
+            error: err => (
+              this.onLoadToast('error', err.error.message, ''),
+              (this.loading = false)
+            ),
+          });
+        }
       } else {
-        this.proficientSer.create(this.form.value).subscribe({
-          next: () => this.handleSuccess(),
-          error: err => (
-            this.onLoadToast('error', err.error.message, ''),
-            (this.loading = false)
-          ),
-        });
+        if (
+          this.form.controls['name'].value.trim() == '' ||
+          this.form.controls['position'].value.trim() == '' ||
+          (this.form.controls['name'].value.trim() == '' &&
+            this.form.controls['position'].value.trim() == '')
+        ) {
+          this.alert('warning', 'No se puede guardar campos vacíos', ``);
+          this.loading = false;
+          return;
+        } else {
+          this.proficientSer.create(this.form.value).subscribe({
+            next: () => this.handleSuccess(),
+            error: err => (
+              this.onLoadToast('error', err.error.message, ''),
+              (this.loading = false)
+            ),
+          });
+        }
       }
     }
   }

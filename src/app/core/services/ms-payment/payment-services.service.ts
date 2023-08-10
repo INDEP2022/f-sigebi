@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IComerPaymentsRefVir } from './payment-service';
 
 @Injectable({
   providedIn: 'root',
@@ -85,4 +86,18 @@ export class PaymentService extends HttpService {
       params
     );
   }
+
+  getComerPagoRefVirt(params?: string) {
+    return this.get('comer-payments-ref-virt', params);
+  }
+
+  postComerPagoRefVirt(body: IComerPaymentsRefVir) {
+    return this.post('comer-payments-ref-virt', body);
+  }
+  getBusquedaPag(params?: string) {
+    return this.get(PaymentEndPoints.BusquedaPagosDet, params);
+  }
+  // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
+  //   return this.post('comer-payments-ref-virt', body);
+  // }
 }

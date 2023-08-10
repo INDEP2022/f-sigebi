@@ -29,7 +29,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IAccountDetailInd } from 'src/app/core/models/ms-account-movements/account-detail-ind';
 import { IUserChecks } from 'src/app/core/models/ms-account-movements/account-movement.model';
-import { IPupDetalleDevolutionResult } from 'src/app/core/models/ms-deposit/detail-interest-return';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { IPupCalculateDevolutionResult } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
@@ -134,27 +133,32 @@ export class DepositAccountStatementComponent
     accountkey: {
       title: 'Cuenta',
       type: 'string',
-      sort: false,
+      sort: true,
     },
     devolutionnumber: {
       title: 'Devolución',
       type: 'string',
-      sort: false,
+      sort: true,
     },
     accounttras: {
       title: 'Cuenta con Traspaso',
       type: 'string',
-      sort: false,
+      sort: true,
     },
     checkfolio: {
       title: 'Cuenta con Cheque',
       type: 'string',
-      sort: false,
+      sort: true,
     },
     accountnumberorigindeposit: {
       title: 'Cuenta Origen Depósito',
       type: 'string',
-      sort: false,
+      sort: true,
+    },
+    accountnumberpayreturn: {
+      title: 'Cuenta Origen Devolución',
+      type: 'string',
+      sort: true,
     },
     goodnumber: {
       title: 'Bien',
@@ -371,6 +375,9 @@ export class DepositAccountStatementComponent
       amount: [null, Validators.nullValidator],
       depositDate: [null, Validators.nullValidator],
       transfDate: [null, Validators.nullValidator],
+      devolutionnumber: [null, Validators.nullValidator],
+      accountnumberpayreturn: [null, Validators.nullValidator],
+      accountnumberorigindeposit: [null, Validators.nullValidator],
       expedient: [null, Validators.nullValidator],
       goodFilter: [null, Validators.nullValidator],
       goodDescription: [null],
@@ -423,6 +430,18 @@ export class DepositAccountStatementComponent
 
   get expedient() {
     return this.form.get('expedient');
+  }
+
+  get devolutionnumber() {
+    return this.form.get('devolutionnumber');
+  }
+
+  get accountnumberorigindeposit() {
+    return this.form.get('accountnumberorigindeposit');
+  }
+
+  get accountnumberpayreturn() {
+    return this.form.get('accountnumberpayreturn');
   }
 
   get expedientFilter() {
@@ -678,6 +697,8 @@ export class DepositAccountStatementComponent
     if (expeditionDate > cutoffDate) {
     }
     const checkType = this.form.get('checkType').value;
+    console.log(checkType);
+
     if (!checkType) {
       return;
     }
@@ -738,7 +759,7 @@ export class DepositAccountStatementComponent
 
     this.form.controls['bank'].setValue(this.userChecks.bankkey);
     if (this.userChecks.accountnumberpayreturn) {
-      this.form.controls['bankAccount'].setValue(this.userChecks.bankkey);
+      this.form.controls['bankAccount'].setValue(this.userChecks.accountkey);
       this.form.controls['bankCheck'].setValue(this.userChecks.bankkey);
     }
     this.form.controls['currency'].setValue(this.userChecks.coinkey);
@@ -746,6 +767,13 @@ export class DepositAccountStatementComponent
     this.goodDescription.setValue(this.userChecks.description);
     this.status.setValue(this.userChecks.status);
     this.expedient.setValue(this.userChecks.expedientnumber);
+    this.devolutionnumber.setValue(this.userChecks.devolutionnumber);
+    this.accountnumberorigindeposit.setValue(
+      this.userChecks.accountnumberorigindeposit
+    );
+    this.accountnumberpayreturn.setValue(
+      this.userChecks.accountnumberpayreturn
+    );
     this.form.controls['amount'].setValue(this.userChecks.deposit);
     if (this.userChecks.returnamount) {
       this.form.controls['toReturn'].setValue(
@@ -892,16 +920,16 @@ export class DepositAccountStatementComponent
     } else {
       this.alert(
         'warning',
-        'No tiene definido un bien estatus',
-        'El cual es necesario para registrar la devolución'
+        'No tiene definido un Bien Estatus',
+        'El cual es necesario para registrar la Devolución'
       );
       // INTERRUMPIR EL FLUJO
     }
     if (this.vb_valid == false) {
       this.alert(
         'warning',
-        'El bien se encuentra en un estatus',
-        'En el cual no se permite registrar la devolucion'
+        'El Bien se encuentra en un Estatus',
+        'En el cual no se permite registrar la Devolución'
       );
       // INTERRUMPIR EL FLUJO
     }
@@ -1466,10 +1494,10 @@ export class DepositAccountStatementComponent
     const results = await firstValueFrom(
       this.detailInterestReturnService.pupDetailDevolution(body).pipe(
         takeUntil(this.$unSubscribe),
-        catchError(x => of(null as IPupDetalleDevolutionResult))
+        catchError(x => of(x))
       )
     );
-    if (results) {
+    if (results && results.no_devolucion) {
       this.userChecks.devolutionnumber = results.no_devolucion;
     }
     return results;
@@ -1500,15 +1528,15 @@ export class DepositAccountStatementComponent
 
   async interestCheck() {
     this.loader.load = true;
-    // if (!this.userChecks.accountnumberorigindeposit) {
-    //   this.alert(
-    //     'error',
-    //     'Detalle de devolución',
-    //     'Falta Número de Cuenta Depósito'
-    //   );
-    //   this.loader.load = false;
-    //   return;
-    // }
+    if (!this.userChecks.devolutionnumber) {
+      this.alert(
+        'error',
+        'Detalle de Devolución',
+        'Falta Número de Devolución'
+      );
+      this.loader.load = false;
+      return;
+    }
     let priorInterest: number;
     const valid = await this.validComplementary();
     if (!valid) {
@@ -1543,9 +1571,12 @@ export class DepositAccountStatementComponent
       if (seqNextVal) {
         this.userChecks.devolutionnumber = seqNextVal.nextval;
       }
-      this.form.controls['checkType'].setValue('INTERES');
+      this.form.get('checkType').setValue('INTERES');
       const results = await this.detailReturn();
-      if (!results) {
+      console.log(results);
+      // return;
+      if (results.error) {
+        this.alert('error', 'Detalle Devolución', results.error.message);
         this.loader.load = false;
         return;
       }
@@ -1622,32 +1653,44 @@ export class DepositAccountStatementComponent
       this.alert('warning', 'Ya ha sido traspasado', '');
       return;
     }
+    if (!this.userChecks.devolutionnumber) {
+      this.alert('warning', 'No cuenta con Número de Devolución', '');
+      return;
+    }
+    if (!this.userChecks.accountnumberpayreturn) {
+      this.alert(
+        'warning',
+        'No cuenta con Número Cuenta Origen Devolución',
+        ''
+      );
+      return;
+    }
     if ((this.form.controls['checkAmount'].value ?? 0) === 0) {
-      this.alert('warning', 'Debe haber algun importe para el cheque', '');
+      this.alert('warning', 'Debe haber algun importe para el Cheque', '');
       return;
     }
     if (this.form.controls['bankAccount'].value == null) {
       this.alert(
         'warning',
         'Debe especificar la cuenta',
-        'De donde se hace la salida del cheque'
+        'De donde se hace la salida del Cheque'
       );
       return;
     }
     if (this.form.controls['check'].value == null) {
-      this.alert('warning', 'Debe ingresar el folio del cheque a devolver', '');
+      this.alert('warning', 'Debe ingresar el Folio del Cheque a Devolver', '');
       return;
     }
     if (this.form.controls['expeditionDate'].value == null) {
       this.alert(
         'warning',
-        'Debe especificar la fecha de cobro del cheque',
+        'Debe especificar la Fecha de Cobro del Cheque',
         ''
       );
       return;
     }
     if (this.form.controls['beneficiary'].value == null) {
-      this.alert('warning', 'Debe especificar el beneficiario del cheque', '');
+      this.alert('warning', 'Debe especificar el Beneficiario del Cheque', '');
       return;
     }
 
@@ -1658,33 +1701,31 @@ export class DepositAccountStatementComponent
         map(x => (x ? x.initialValue : null))
       )
     );
-    if (concept == null) {
+    console.log(concept);
+
+    if (concept === null) {
       this.alert(
         'warning',
         'No se tiene definido el concepto',
-        'Con el que se hara la afectación en la cuenta bancaria correspondiente'
+        'Con el que se hara la afectación en la Cuenta Bancaria Correspondiente'
       );
       return;
     }
-    //:blk_dev.di_fec_programada_devolucion := reg.fec_programada_x_deco_devo;
-    /*if ( this.form.controls['cutoffDate'].value != this.scheduledFecReturn){
-      this.alert('warning','Especifico una fecha de corte diferente a la que se tiene programada','Por lo que no puede realizar el traspaso');
-      return;
-    }*/
     this.alertQuestion(
       'warning',
       'Traspasar',
-      '¿Seguro que desea traspasar el movimiento?'
+      '¿Seguro que desea traspasar el Movimiento?'
     ).then(question => {
       if (question.isConfirmed) {
         const user = this.authService.decodeToken() as any;
         console.log(user);
         let bodyMov = {
           dateMotion: this.form.controls['collectionDate'].value,
-          userinsert: user,
+          userinsert: user.name,
           numberAccount: this.userChecks.accountnumberpayreturn,
           postDiverse: this.form.controls['checkAmount'].value,
           numberReturnPayCheck: this.userChecks.devolutionnumber,
+          dateInsertion: new Date(),
           cveConcept: concept,
         };
         this.createMovementsAccounts(bodyMov);
@@ -1701,7 +1742,19 @@ export class DepositAccountStatementComponent
       .subscribe({
         next: (data: any) => {
           this.userChecks.accounttras = 'TRASPASADO';
-          this.validTras = false;
+          this.accountMovementService
+            .updateUserChecks(+this.userChecks.devolutionnumber, {
+              accounttras: 'TRASPASADO',
+            })
+            .subscribe({
+              next: response => {
+                this.alert('success', 'Traspaso', 'Realizado correctamente');
+                this.validTras = false;
+              },
+              error: err => {
+                this.userChecks.accounttras = null;
+              },
+            });
         },
         error: (error: any) => {},
       });

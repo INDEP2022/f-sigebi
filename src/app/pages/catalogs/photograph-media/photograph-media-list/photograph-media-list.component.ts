@@ -47,10 +47,15 @@ export class PhotographMediaListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-
             switch (filter.field) {
               case 'id':
                 searchFilter = SearchFilter.EQ;
+                break;
+              case 'route':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
                 break;
               default:
                 searchFilter = SearchFilter.ILIKE;
@@ -63,7 +68,7 @@ export class PhotographMediaListComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          //this.getExample();
+          this.getExample();
         }
       });
     this.params
