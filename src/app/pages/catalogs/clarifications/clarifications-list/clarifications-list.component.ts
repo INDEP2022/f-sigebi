@@ -62,7 +62,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'status':
+              case 'active':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'version':
