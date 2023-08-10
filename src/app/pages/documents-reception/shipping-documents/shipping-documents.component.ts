@@ -169,14 +169,34 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (data: { job: any; copies: any[] }) => {
-          if (data) {
-            this.queryMode = true;
-            this.patchFormValue(data);
-          } else {
+        callback: (data: { job: any; copies: any[]; estado: any; }) => {
+          //console.log("data", data);
+          const cadena = JSON.stringify(data);
+          //console.log("entraaaaa :", cadena);
+          if (cadena == '"campo"') {
+            //console.log("entra a cadena");
             this.queryMode = false;
             this.documentsForm.enable();
+            this.notifications = [];
+            window.scrollTo(0, 0);
+            this.documentsForm.reset();
+            this.jobForm.reset();
+            this.officeNumber = null;
+            this.officeKey = null;
+
+          } else {
+            if (data) {
+              //console.log("entra1");
+              this.queryMode = true;
+              this.patchFormValue(data);
+              window.scrollTo(0, 0);
+            } else {
+              //console.log("entra2")
+              this.queryMode = false;
+              this.documentsForm.enable();
+            }
           }
+
         },
       },
     };
@@ -404,7 +424,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       ),
       catchError(error => {
         this.loading = false;
-        console.log('error-----', error);
         if (error.status >= 500) {
           this.handleError('Ocurrio un error al generar el oficio');
         }
@@ -425,10 +444,9 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   resetScreen() {
-    this.notifications = [];
-    window.scrollTo(0, 0);
-    this.documentsForm.reset();
-    this.jobForm.reset();
+    //this.notifications = [];
+    //this.documentsForm.reset();
+    //this.jobForm.reset();
     this.officeNumber = null;
     this.officeKey = null;
     this.openDialog();
@@ -565,7 +583,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   saveNotification(notificacion: any) {
-    console.log('notifica -> ', notificacion);
+    //console.log('notifica -> ', notificacion);
     notificacion.institutionNumber = notificacion.institutionNumber.id;
     this.notificationService.create(notificacion).subscribe({
       next: data => {
