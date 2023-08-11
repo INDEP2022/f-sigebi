@@ -23,4 +23,8 @@ export class ComerGoodsXLotService extends HttpService {
       params
     );
   }
+
+  udpate(body: any) {
+    return this.put('comer-goods-x-lot', body);
+  }
 }
