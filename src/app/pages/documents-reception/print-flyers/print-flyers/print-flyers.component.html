@@ -66,7 +66,7 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <span> N&uacute;mero de volante </span>
+          <span> N&uacute;mero de Volante </span>
         </div>
         <div class="col-md-6">Fecha</div>
         <!-- <app-delegation-shared [form]="flyersForm"></app-delegation-shared> -->
@@ -125,35 +125,17 @@
             </div>
           </div>
         </div>
-
-        <!-- <app-delegation-shared [form]="flyersForm"></app-delegation-shared> -->
       </div>
-
-      <div class="row">
-        <div class="col-md-4">
-          <div class="row mb-3 mt-3"></div>
-          <!--<div class="row pt-3">
-            <form-field [control]="flyersForm.get('area')">
-              <ngx-select
-                [form]="flyersForm"
-                control="area"
-                label="&Aacute;rea de destino"
-                [data]="select"></ngx-select>
-            </form-field>
-          </div>-->
-          <!-- <app-departments-shared [form]="flyersForm" label="Área Destino">
-          </app-departments-shared> -->
-        </div>
-      </div>
-      <div class="row">
-        <div class="row pt-3">
+      <div class="row pt-4">
+        <div class="col-md-6 pt-3">
           <form-field
             [control]="flyersForm.get('P_IDENTIFICADOR')"
             label="Identificador">
             <input
               class="form-control"
-              type="number"
-              formControlName="P_IDENTIFICADOR" />
+              type="text"
+              formControlName="P_IDENTIFICADOR"
+              (keypress)="onlyNumbers($event)" />
           </form-field>
         </div>
       </div>
