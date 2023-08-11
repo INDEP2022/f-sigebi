@@ -120,13 +120,19 @@ export class DocumentationGoodsDialogComponent
       .create(this.documentsDictumXStateMForm.value)
       .subscribe({
         next: data => {
-          // this.handleSuccess();
+          this.handleSuccess();
           this.alert('success', 'Se ha creado el documento correctamente.', '');
           this.loading = false;
+          this.close();
         },
         error: error => {
           this.loading = false;
-          this.alert('error', 'Error', 'Error creando documento');
+          this.onLoadToast(
+            'error',
+            'Error',
+            `Verifique los datos ingresados en el formulario`
+          );
+          this.close();
         },
       });
   }
