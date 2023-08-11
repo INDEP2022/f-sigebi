@@ -17,7 +17,7 @@ import {
 })
 export class IndicatorReportFormComponent extends BasePage implements OnInit {
   form: ModelForm<IIndicatorReport>;
-  title: string = 'Indicador de Reportes';
+  title: string = 'Indicador de Reporte';
   edit: boolean = false;
   indicatorReport: IIndicatorReport;
   // proficients = new DefaultSelect<IIndicatorReport>();
@@ -49,7 +49,14 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(PERCENTAGE_NUMBERS_PATTERN)],
       ],
       contractualPenalty: [null, [Validators.required]],
-      contractNumber: [null, [Validators.required]],
+      contractNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       userCreation: [null],
       creationDate: [null],
       userModification: [null],
@@ -77,21 +84,31 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.indicatorReportService.create(this.form.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    this.indicatorReportService
-      .update(this.indicatorReport.id, this.form.getRawValue())
-      .subscribe({
+    if (this.form.controls['serviceType'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.indicatorReportService.create(this.form.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (this.form.controls['serviceType'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      return;
+    } else {
+      this.loading = true;
+      this.indicatorReportService
+        .update(this.indicatorReport.id, this.form.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

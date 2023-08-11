@@ -72,7 +72,7 @@
                   type="number"
                   class="form-control"
                   formControlName="quantity"
-                  min="0"
+                  min="1"
                   oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);"
                   [readOnly]="isGoodInfReadOnly" />
               </form-field>
@@ -251,20 +251,20 @@
               </form-field>
             </div>
             <div class="col-md-5">
-              <form-check label="Aval&uacute;o" for="appraisal">
+              <form-field
+                [control]="detailAssets?.get('uniqueKey')"
+                label="Clave Única">
                 <input
-                  id="appraisal"
-                  type="checkbox"
-                  [ngModelOptions]="{ standalone: true }"
-                  [(ngModel)]="appraisal"
-                  (change)="handleAppraisalEvent($event)"
-                  [disabled]="disableDuplicity" />
-              </form-check>
+                  type="text"
+                  class="form-control"
+                  formControlName="uniqueKey"
+                  [readOnly]="true" />
+              </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div
-              class="col-md-3"
+              class="col-md-5"
               *ngIf="otherAssets === true || manejeAssets === true">
               <form-check label="Cumple Norma" for="compliesNorm">
                 <input
@@ -274,6 +274,17 @@
                   [(ngModel)]="complyNorm"
                   (change)="handleCumpliesNormEvent($event)"
                   [disabled]="isGoodInfReadOnly" />
+              </form-check>
+            </div>
+            <div class="col-md-5">
+              <form-check label="Aval&uacute;o" for="appraisal">
+                <input
+                  id="appraisal"
+                  type="checkbox"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="appraisal"
+                  (change)="handleAppraisalEvent($event)"
+                  [disabled]="disableDuplicity" />
               </form-check>
             </div>
           </div>
@@ -478,7 +489,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('exteriorNumber')"
-              label="Num&#46; Ext&#46;">
+              label="No. Ext&#46;">
               <input
                 type="text"
                 maxlength="10"
@@ -490,7 +501,7 @@
           <div class="col-md-4">
             <form-field
               [control]="domicileForm.get('interiorNumber')"
-              label="Num&#46; Int&#46;">
+              label="No. Int&#46;">
               <input
                 type="text"
                 maxlength="10"
@@ -692,7 +703,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('doorsNumber')"
-              label="Num&#46; Puertas">
+              label="No. Puertas">
               <input
                 type="number"
                 class="form-control"
@@ -727,7 +738,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('axesNumber')"
-              label="Num&#46; Ejes">
+              label="No. Ejes">
               <input
                 type="number"
                 class="form-control"
@@ -763,7 +774,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor">
+              label="No. Motor">
               <input
                 type="text"
                 class="form-control"
@@ -866,7 +877,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -877,7 +888,7 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -890,7 +901,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -901,7 +912,7 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"
@@ -1473,7 +1484,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process != 'classify-assets'">
               <input
                 type="text"
@@ -1484,7 +1495,7 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('engineNumber')"
-              label="Num&#46; Motor"
+              label="No. Motor"
               *ngIf="process == 'classify-assets'">
               <input
                 type="text"
@@ -1497,7 +1508,7 @@
           <div class="col-md-4">
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process != 'classify-assets'">
               <input
                 type="number"
@@ -1508,7 +1519,7 @@
             </form-field>
             <form-field
               [control]="detailAssets.get('enginesNumber')"
-              label="Num&#46; Motores"
+              label="No. Motores"
               *ngIf="process == 'classify-assets'">
               <input
                 type="number"

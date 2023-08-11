@@ -173,6 +173,152 @@
 
           <div class="row pt-4">
             <div class="col-md-4">
+              <form-field
+                [control]="performForm.get('tranferId')"
+                *ngIf="newTransferent">
+                <ngx-select
+                  [form]="performForm"
+                  control="tranferId"
+                  [showTooltip]="true"
+                  [data]="transferences"
+                  value="id"
+                  bindLabel="nameAndId"
+                  label="Transferente"
+                  (change)="transferentSelect($event)"
+                  (fetchItems)="getTransferentSelect($event)"></ngx-select>
+              </form-field>
+
+              <form-field
+                [control]="performForm.get('tranferId')"
+                *ngIf="!newTransferent">
+                <ngx-select
+                  [form]="performForm"
+                  control="tranferId"
+                  [showTooltip]="true"
+                  [data]="transferences"
+                  value="nameAndId"
+                  bindLabel="nameAndId"
+                  label="Transferente"
+                  (change)="transferentSelect($event)"
+                  (fetchItems)="getTransferentSelect($event)"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-md-4">
+              <form-field
+                [control]="performForm.get('stationId')"
+                *ngIf="newTransferent">
+                <ngx-select
+                  [form]="performForm"
+                  control="stationId"
+                  [data]="stations"
+                  [showTooltip]="true"
+                  value="id"
+                  bindLabel="nameAndId"
+                  label="Emisora"
+                  (change)="stationSelect($event)"
+                  (fetchItems)="getStations($event)"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="performForm.get('stationId')"
+                *ngIf="!newTransferent">
+                <ngx-select
+                  [form]="performForm"
+                  control="stationId"
+                  [data]="stations"
+                  [showTooltip]="true"
+                  value="nameAndId"
+                  bindLabel="nameAndId"
+                  label="Emisora"
+                  (change)="stationSelect($event)"
+                  (fetchItems)="getStations($event)"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-md-4">
+              <form-field
+                [control]="performForm.get('autorityId')"
+                *ngIf="newTransferent">
+                <ngx-select
+                  [form]="performForm"
+                  control="autorityId"
+                  [data]="authorities"
+                  [showTooltip]="true"
+                  value="idAuthority"
+                  bindLabel="nameAndId"
+                  label="Autoridad"
+                  (change)="authoritySelect($event)"
+                  (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="performForm.get('autorityId')"
+                *ngIf="!newTransferent">
+                <ngx-select
+                  [form]="performForm"
+                  control="autorityId"
+                  [data]="authorities"
+                  [showTooltip]="true"
+                  value="nameAndId"
+                  bindLabel="nameAndId"
+                  label="Autoridad"
+                  (change)="authoritySelect($event)"
+                  (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="col-md-12 pt-3" *ngIf="showTypeValor">
+              <div class="col-md-2">
+                <form-radio label="Apto para circular">
+                  <input
+                    type="radio"
+                    formControlName="aptoCilcular"
+                    value="APTO PARA CIRCULAR"
+                    id="te"
+                    [checked]="checked" />
+                </form-radio>
+              </div>
+              <div class="col-md-2">
+                <form-radio label="No apto para circular">
+                  <input
+                    type="radio"
+                    formControlName="aptoCilcular"
+                    value="NO APTO PARA CIRCULAR"
+                    id="sae" />
+                </form-radio>
+              </div>
+
+              <!--<form-field
+                [control]="performForm.get('value')"
+                *ngIf="showTypeValor">
+                <ngx-select
+                  [form]="performForm"
+                  control="value"
+                  [showTooltip]="true"
+                  [data]="otValors"
+                  value="otkey"
+                  bindLabel="otvalor"
+                  label="Tipo Valor"
+                  (fetchItems)="getValueSelect($event)"></ngx-select>
+              </form-field>
+              <form-field
+                [control]="performForm.get('value')"
+                *ngIf="!showTypeValor">
+                <ngx-select
+                  [form]="performForm"
+                  control="value"
+                  [showTooltip]="true"
+                  [data]="otValors"
+                  value="otkey"
+                  bindLabel="otvalor"
+                  [readonly]="true"
+                  label="Tipo Valor"
+                  (fetchItems)="getValueSelect($event)"></ngx-select>
+              </form-field> -->
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
               <form-field [control]="performForm.get('city')" label="Ciudad">
                 <input
                   type="text"
@@ -224,100 +370,6 @@
           <div class="row pt-4">
             <div class="col-md-4">
               <form-field
-                [control]="performForm.get('tranferId')"
-                *ngIf="newTransferent">
-                <ngx-select
-                  [form]="performForm"
-                  control="tranferId"
-                  [showTooltip]="true"
-                  [data]="transferences"
-                  value="id"
-                  bindLabel="nameAndId"
-                  label="Transferente"
-                  (change)="transferentSelect($event)"
-                  (fetchItems)="getTransferentSelect($event)"></ngx-select>
-              </form-field>
-
-              <form-field
-                [control]="performForm.get('tranferId')"
-                *ngIf="!newTransferent">
-                <ngx-select
-                  [form]="performForm"
-                  control="tranferId"
-                  [showTooltip]="true"
-                  [data]="transferences"
-                  value="nameAndId"
-                  bindLabel="nameAndId"
-                  label="Transferente"
-                  (change)="transferentSelect($event)"
-                  (fetchItems)="getTransferentSelect($event)"></ngx-select>
-              </form-field>
-            </div>
-            <div class="col-md-4">
-              <form-field
-                [control]="performForm.get('stationId')"
-                *ngIf="newTransferent">
-                <ngx-select
-                  [form]="performForm"
-                  control="stationId"
-                  [data]="stations"
-                  [showTooltip]="true"
-                  value="id"
-                  bindLabel="nameAndId"
-                  label="Emisora"
-                  (change)="stationSelect($event)"
-                  (fetchItems)="getStations($event)"></ngx-select>
-              </form-field>
-              <form-field
-                [control]="performForm.get('stationId')"
-                *ngIf="!newTransferent">
-                <ngx-select
-                  [form]="performForm"
-                  control="stationId"
-                  [data]="stations"
-                  [showTooltip]="true"
-                  value="nameAndId"
-                  bindLabel="nameAndId"
-                  label="Emisora"
-                  (change)="stationSelect($event)"
-                  (fetchItems)="getStations($event)"></ngx-select>
-              </form-field>
-            </div>
-            <div class="col-md-4">
-              <form-field
-                [control]="performForm.get('autorityId')"
-                *ngIf="newTransferent">
-                <ngx-select
-                  [form]="performForm"
-                  control="autorityId"
-                  [data]="authorities"
-                  [showTooltip]="true"
-                  value="idAuthority"
-                  bindLabel="nameAndId"
-                  label="Autoridad"
-                  (change)="authoritySelect($event)"
-                  (fetchItems)="getAuthoritySelect($event)"></ngx-select>
-              </form-field>
-              <form-field
-                [control]="performForm.get('autorityId')"
-                *ngIf="!newTransferent">
-                <ngx-select
-                  [form]="performForm"
-                  control="autorityId"
-                  [data]="authorities"
-                  [showTooltip]="true"
-                  value="nameAndId"
-                  bindLabel="nameAndId"
-                  label="Autoridad"
-                  (change)="authoritySelect($event)"
-                  (fetchItems)="getAuthoritySelect($event)"></ngx-select>
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row pt-4">
-            <div class="col-md-4">
-              <form-field
                 [control]="performForm.get('typeRelevantId')"
                 *ngIf="!dataProgramming?.concurrentMsg">
                 <ngx-select
@@ -356,6 +408,7 @@
                   formControlName="emailTransfer" />
               </form-field>
             </div>
+
             <div class="col-md-4">
               <form-field
                 [control]="performForm.get('observation')"

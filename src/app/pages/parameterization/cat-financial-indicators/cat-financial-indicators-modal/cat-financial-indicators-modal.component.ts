@@ -24,7 +24,7 @@ export class CatFinancialIndicatorsModalComponent
   financialIndicatorsForm: ModelForm<IFinancialIndicators>;
   financialIndicators: IFinancialIndicators;
 
-  title: string = 'Catálogo de indicadores financieros';
+  title: string = 'Catálogo de Indicador Financiero';
   edit: boolean = false;
 
   constructor(

@@ -27,6 +27,7 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
 import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
@@ -50,7 +51,7 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   @Input() parameters: IEventPreparationParameters;
   @Input() params = new BehaviorSubject(new FilterParams());
   @Output() onSelectLot = new EventEmitter<IComerLot>();
-
+  @Input() loggedUser: TokenInfoModel;
   @Input() viewRejectedGoods: boolean;
   @Output() viewRejectedGoodsChange = new EventEmitter<boolean>();
   @Output() fillStadistics = new EventEmitter<void>();
@@ -261,16 +262,18 @@ export class EventLotsListComponent extends BasePage implements OnInit {
       'No'
     );
     if (this.onlyBase) {
-      this.validateBaseColumns(askIsLotifying);
+      console.warn('VALIDA COLUMNAS BASE');
+
+      this.onValidateBaseColumns(askIsLotifying, event);
       return;
     }
     if (askIsLotifying.isConfirmed) {
-      this.validateCsv();
+      this.validateCsv(event).subscribe();
       return;
     }
 
     if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
-      this.validateCsvCustomers();
+      this.validateCsvCustomers(event).subscribe();
       return;
     }
     this.excelControl.reset();
@@ -300,30 +303,152 @@ export class EventLotsListComponent extends BasePage implements OnInit {
   }
 
   /** PUP_VALCSV */
-  validateCsv() {
+  validateCsv(event: Event) {
     console.warn('PUP_VALCSV');
+    const { eventTpId } = this.controls;
+    const body = {
+      file: this.getFileFromEvent(event),
+      tpeventId: eventTpId.value,
+    };
+    return this.lotService.validateCSV(body).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.excelControl.reset();
+        return throwError(() => error);
+      }),
+      tap(async response => {
+        if (response.data) {
+          for (let index = 0; index < response.data.length; index++) {
+            await this.alertInfo('error', 'Error', response.data[index]);
+          }
+          this.excelControl.reset();
+          return;
+        }
+        if (!(response.message[0] ?? []).length) {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          this.excelControl.reset();
+          return;
+        }
+        if (response.message[0]) {
+          await this.successValCSV(this.getFileFromEvent(event));
+          return;
+        }
+      })
+    );
+  }
+
+  async successValCSV(file: File) {
+    this.excelControl.reset();
+
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      'No se encontraron errores en el archivo',
+      '¿Desea Lotificar el evento?'
+    );
+    if (isConfirmed) {
+      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES
+    }
   }
 
   /** PUP_VALCSV_CLIENTES */
-  validateCsvCustomers() {
+  validateCsvCustomers(event: Event) {
     console.warn('PUP_VALCSV_CLIENTES');
+    const file = this.getFileFromEvent(event);
+    return this.lotService.validateCustomersCSV(file).pipe(
+      catchError(error => {
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.excelControl.reset();
+        return throwError(() => error);
+      }),
+      tap(async response => {
+        if (response.data) {
+          for (let index = 0; index < response.data.length; index++) {
+            await this.alertInfo('error', 'Error', response.data[index]);
+          }
+          this.excelControl.reset();
+          return;
+        }
+        if (!(response.message[0] ?? []).length) {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          this.excelControl.reset();
+          return;
+        }
+        if (response.message[0]) {
+          await this.successValCsvCustomer(this.getFileFromEvent(event));
+          return;
+        }
+      })
+    );
+  }
+
+  async successValCsvCustomer(file: File) {
+    this.excelControl.reset();
+
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      'No se encontraron errores en el archivo',
+      '¿Desea Realiza la Carga de Clientes en el evento?'
+    );
+    if (isConfirmed) {
+      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES_CLIENTE¿
+    }
   }
 
   /** VALIDA_COLUMNASBASE */
-  validateBaseColumns(askIsLotifying: SweetAlertResult) {
+  onValidateBaseColumns(askIsLotifying: SweetAlertResult, event: Event) {
     let type: 'CLIENTES' | 'LOTES' = null;
     if (askIsLotifying.isConfirmed) {
       type = 'LOTES';
-      return;
     }
 
     if (askIsLotifying.dismiss == Swal.DismissReason.cancel) {
       type = 'CLIENTES';
-      return;
     }
     if (type) {
-      console.warn('VALIDA_COLUMNASBASE');
+      const file = this.getFileFromEvent(event);
+      this.validateBaseColumns(type, file).subscribe();
     }
+  }
+
+  private getFileFromEvent(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
+    const filename = file.name;
+    return file;
+  }
+
+  validateBaseColumns(type: 'CLIENTES' | 'LOTES', file: File) {
+    return this.lotService
+      .validBaseColumns({
+        file,
+        function: type,
+        address: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(async response => {
+          const errors = response.data
+            .filter(column => column?.ERROR)
+            .map(column => column.ERROR);
+          console.log({ errors });
+          if (!errors.length) {
+            this.alert(
+              'success',
+              'No se encontraron errores en su archivo',
+              ''
+            );
+            return;
+          }
+          // const message = errors.join(`
+          //   `);
+          // this.alert('error', 'Error', message);
+          for (let index = 0; index < errors.length; index++) {
+            await this.alertInfo('error', 'Error', errors[index]);
+          }
+        })
+      );
   }
 
   async onDeleteLot(lot: IComerLot) {

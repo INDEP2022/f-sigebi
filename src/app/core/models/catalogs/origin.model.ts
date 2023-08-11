@@ -7,7 +7,8 @@ export interface IOrigin {
   description: string | null;
   type: string;
   address: string;
-  cityCode: ICity;
+  //cityCode: ICity;
+  city: ICity;
   idCity: number | null;
   keyEntityFederative: string;
 }

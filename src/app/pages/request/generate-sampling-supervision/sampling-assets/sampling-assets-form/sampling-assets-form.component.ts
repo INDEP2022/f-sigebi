@@ -103,6 +103,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   //private domicilieService = inject(DomicileService);
   private domicilieService = inject(GoodDomiciliesService);
+  //private goodsqueryService = inject(GoodsQueryService)
   private authService = inject(AuthService);
   private goodService = inject(GoodService);
 
@@ -169,12 +170,15 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   uploadExpedient() {
     //if (this.listAssetsCopiedSelected.length == 0) return;
-    this.openModals(UploadExpedientFormComponent, '');
+    this.openModals(
+      UploadExpedientFormComponent,
+      this.listAssetsCopiedSelected
+    );
   }
 
   uploadImages(): void {
     //if (this.listAssetsCopiedSelected.length == 0) return;
-    this.openModals(UploadImagesFormComponent, '');
+    this.openModals(UploadImagesFormComponent, this.listAssetsCopiedSelected);
   }
 
   exportCsv() {
@@ -287,15 +291,15 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  openModals(component: any, data?: any): void {
+  openModals(component: any, good?: any): void {
     let config: ModalOptions = {
       initialState: {
-        data: 'hola',
+        good: good,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modalSizeXL modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(component, config);
@@ -305,5 +309,36 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.dateForm.reset();
     this.searchForm.reset();
     this.paragraphs = [];
+  }
+
+  removeGood() {
+    if (this.listAssetsCopiedSelected.length == 0) {
+      this.onLoadToast('info', 'Seleccione al menos un bien');
+      return;
+    }
+    this.listAssetsCopiedSelected.map(item => {
+      const index = this.paragraphs3.indexOf(item);
+      this.paragraphs3.splice(index, 1);
+    });
+    this.paragraphs3 = [...this.paragraphs3];
+    this.listAssetsCopiedSelected = [];
+
+    /**
+     * todo: eliminar el bien de la tabla muestreo bien view
+     */
+  }
+
+  meetGood(value: string) {
+    if (this.listAssetsCopiedSelected.length == 0) {
+      this.onLoadToast('info', 'Debe tener selecionado al menos un Bien');
+      return;
+    }
+
+    this.listAssetsCopiedSelected.map(item => {
+      const index = this.paragraphs3.indexOf(item);
+      this.paragraphs3[index].resultTest = value;
+    });
+    this.paragraphs3 = [...this.paragraphs3];
+    this.listAssetsCopiedSelected = [];
   }
 }

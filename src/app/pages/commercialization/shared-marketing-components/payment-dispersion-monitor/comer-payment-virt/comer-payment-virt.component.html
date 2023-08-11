@@ -1,0 +1,155 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Desagregar Pagos</h5>
+  </div>
+  <div body>
+    <app-card>
+      <div body>
+        <form [formGroup]="formVirt" class="form-material">
+          <div class="row">
+            <form-field
+              [control]="formVirt.get('rfc')"
+              class="col-md-4"
+              label="RFC">
+              <input
+                type="text"
+                formControlName="rfc"
+                class="form-control"
+                readOnly />
+            </form-field>
+            <form-field
+              [control]="formVirt.get('client')"
+              class="col-md-8"
+              label="Cliente">
+              <input
+                type="text"
+                formControlName="client"
+                class="form-control"
+                readOnly />
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="formVirt.get('reference')"
+              class="col-md"
+              label="Referencia">
+              <input
+                type="text"
+                formControlName="reference"
+                class="form-control"
+                readOnly />
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="formVirt.get('deposit')"
+              class="col-md-4"
+              label="Depósito">
+              <input
+                type="text"
+                formControlName="deposit"
+                class="form-control"
+                readOnly />
+            </form-field>
+            <div class="col-md-4"></div>
+            <form-field
+              [control]="formVirt.get('penalty')"
+              class="col-md-4"
+              label="Penalización">
+              <input
+                type="text"
+                formControlName="penalty"
+                class="form-control"
+                readOnly />
+            </form-field>
+          </div>
+        </form>
+      </div>
+    </app-card>
+    <app-card>
+      <div body>
+        <div class="row text-end mr-3 mb-3">
+          <div class="col-md-12">
+            <button
+              type="button"
+              tooltip="Nuevo"
+              [disabled]="!actionsBool"
+              (click)="newPayment()"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-border'"
+            [settings]="settings1"
+            (userRowSelect)="selectRow($event)"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+        <div class="row mb-3 mt-3 text-center">
+          <form [formGroup]="formVirt" class="form-material">
+            <form-field
+              [control]="formVirt.get('diferenceDeposit')"
+              class="col-md-4"
+              label="Diferencia Depósito Vs. Desglose">
+              <input
+                type="text"
+                readOnly
+                formControlName="diferenceDeposit"
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="formVirt.get('totalAmount')"
+              class="col-md-4"
+              label="Monto Total">
+              <input
+                type="text"
+                formControlName="totalAmount"
+                readOnly
+                class="form-control" />
+            </form-field>
+            <form-field
+              [control]="formVirt.get('totalPenalty')"
+              class="col-md-4"
+              label="Penalización Total">
+              <input
+                type="text"
+                formControlName="totalPenalty"
+                readOnly
+                class="form-control" />
+            </form-field>
+          </form>
+        </div>
+        <div class="row mb-3 mt-3 text-center">
+          <div class="col">
+            <button
+              type="button"
+              (click)="timesToDivide()"
+              class="btn btn-primary active btn-sm mr-3">
+              Dividir <i class="fa fa-divide"></i>
+            </button>
+            <!-- [disabled]="data['data'].length < 1" -->
+            <button class="btn btn-red btn-sm active mr-3">
+              Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-primary active btn-sm mr-3">
+              Restaurar <i class="fa fa-rotate-left"></i>
+            </button>
+            <button class="btn btn-primary btn-sm active mr-3">
+              Aplicar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-danger btn-sm active" (click)="close()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</app-modal>

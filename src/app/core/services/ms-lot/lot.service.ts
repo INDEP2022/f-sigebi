@@ -1,5 +1,7 @@
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -18,6 +20,10 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsByFilter(params: HttpParams) {
     return this.get('eat-lots', params);
   }
 
@@ -214,12 +220,87 @@ export class LotService extends HttpService {
     const formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('eventId', eventId ? `${eventId}` : null);
-    formData.append('pLot', lot ? `${lot}` : null);
+    if (lot) {
+      formData.append('pLot', lot ? `${lot}` : null);
+      formData.append('lot', lot ? `${lot}` : null);
+    }
+
     formData.append('pEvent', eventId ? `${eventId}` : null);
-    formData.append('lot', lot ? `${lot}` : null);
+
     formData.append('pDirection', pDirection);
     return this.post('apps/load-data-billing', formData);
   }
+
+  validBaseColumns(body: {
+    file: File;
+    function: 'CLIENTES' | 'LOTES';
+    address: 'M' | 'I';
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file, body.file.name);
+    formData.append('function', body.function);
+    formData.append('address', body.address);
+    return this.post<IListResponse<{ ERROR?: string }>>(
+      'apps/valid-column-base',
+      formData
+    );
+  }
+
+  validateCSV(body: { file: File; tpeventId: string | number }) {
+    const { file, tpeventId } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('tpeventId', `${tpeventId}`);
+    const url = this.buildRoute('apps/pup-valcsv');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
+  }
+
+  validateCustomersCSV(file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    const url = this.buildRoute('apps/pup-valcsv-clients');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
+  }
+
+  importCustomersBase(body: {
+    file: File;
+    eventId: string | number;
+    lot: string | number;
+    base: string | number;
+  }) {
+    const { file, eventId, lot, base } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('lot', lot ? `${eventId}` : null);
+    formData.append('base', base ? `${eventId}` : null);
+    return this.post('apps/pup-imp-excel-bases-client', formData);
+  }
+
+  lotifyThirdTable(body: {
+    event: string | number;
+    typeEvent: string | number;
+    address: 'M' | 'I';
+    user: string;
+    bank: string;
+  }) {
+    return this.post('apps/lotifica-tabla-tc', body);
+  }
+
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA

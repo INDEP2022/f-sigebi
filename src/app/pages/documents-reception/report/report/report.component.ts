@@ -1,17 +1,23 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export interface IReport {
   data: File;
 }
@@ -24,9 +30,14 @@ export interface IReport {
 export class ReportComponent extends BasePage implements OnInit {
   @Output() sendSearchForm = new EventEmitter<any>();
   @Output() resetForm = new EventEmitter<boolean>();
+  @Input() delegationField: string = 'delegation';
+  @Input() subdelegationField: string = 'subdelegation';
+  flyersForm: FormGroup;
   params = new BehaviorSubject<ListParams>(new ListParams());
   PN_DELEG = new EventEmitter<IDelegation>();
   PN_SUBDEL = new EventEmitter<ISubdelegation>();
+  selectedSubDelegation = new DefaultSelect<ISubdelegation>();
+  selectedDelegation = new DefaultSelect<IDelegation>();
   showSearchForm: boolean = true;
   searchForm: ModelForm<any>;
   reportForm: FormGroup;
@@ -35,12 +46,19 @@ export class ReportComponent extends BasePage implements OnInit {
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
-
+  get delegation() {
+    return this.reportForm.get(this.delegationField);
+  }
+  get subdelegation() {
+    return this.reportForm.get(this.subdelegationField);
+  }
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,
+    private delegationService: DelegationService,
     private siabService: SiabService,
     private modalService: BsModalService,
+    private printFlyersService: PrintFlyersService,
     private sanitizer: DomSanitizer
   ) {
     super();
@@ -48,6 +66,48 @@ export class ReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    const params = new ListParams();
+    this.getDelegation(params);
+    this.getSubDelegations(params);
+  }
+  getDelegation(params?: ListParams) {
+    console.log(params);
+    this.delegationService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+        this.selectedDelegation = new DefaultSelect(data.data, data.count);
+        console.log(this.selectedDelegation);
+      },
+      error: err => {
+        console.log(err);
+        this.selectedDelegation = new DefaultSelect();
+        this.onLoadToast('error', 'Error', err);
+      },
+    });
+  }
+  getSubDelegations(params?: ListParams) {
+    const paramsF = new FilterParams();
+    paramsF.addFilter(
+      'delegationNumber',
+      this.reportForm.get(this.delegationField).value
+    );
+    console.log(paramsF);
+    this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
+      next: data => {
+        this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
+        console.log(this.selectedSubDelegation);
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+    });
   }
 
   prepareForm() {
@@ -79,7 +139,7 @@ export class ReportComponent extends BasePage implements OnInit {
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
+      this.onLoadToast('success', 'Reporte', 'Generado Correctamente');
     }, 2000);
 
     this.loading = false;
@@ -100,7 +160,7 @@ export class ReportComponent extends BasePage implements OnInit {
 
     this.siabService
       // .fetchReport('RGEROFPRECEPDOCUM', params)
-      .fetchReport('RGEROFPRECEPDOCUM', params)
+      .fetchReport('blank', params)
       .subscribe(response => {
         // response=null;
         if (response !== null) {
@@ -122,7 +182,7 @@ export class ReportComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'warning',
             'advertencia',
-            'Sin datos para los rangos de fechas suministrados'
+            'Sin Datos Para los Rangos de Fechas Suministrados'
           );
         }
       });

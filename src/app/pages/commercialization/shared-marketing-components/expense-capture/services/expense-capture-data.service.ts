@@ -3,10 +3,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { catchError, map, of, Subject, take } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
+import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
-import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_DASH_PATTERN,
+  NUM_POSITIVE,
+} from 'src/app/core/shared/patterns';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +18,7 @@ import { NUM_POSITIVE } from 'src/app/core/shared/patterns';
 export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
+  dataCompositionExpenses: IComerDetExpense[];
   updateExpenseComposition = new Subject();
   PMONTOXMAND: string;
   PDEVCLIENTE: string;
@@ -259,7 +264,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  private async VALIDACIONES_SOLICITUD() {
+  async VALIDACIONES_SOLICITUD() {
     if (!this.capturedUser.value) {
       this.alert('error', 'Debe tener el Usuario que Captura', '');
       return false;
@@ -291,7 +296,11 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return true;
   }
 
-  private VALIDACIONES_SOLICITUD2() {
+  private async VALIDACIONES_SOLICITUD2() {
+    // if (!this.data.expenseNumber) {
+    //   this.alert('error','Validación Solicitu')
+    //   return false;
+    // }
     if (
       !this.form.get('monthExpense').value &&
       !this.form.get('monthExpense2').value &&
@@ -309,16 +318,27 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       this.alert('error', 'Debe capturar un mes de gasto', '');
       return false;
     }
-    const TOT_CABECERA = this.data.totDocument;
+    const TOT_CABECERA = +this.data.totDocument;
     const TOT_DETALLES = this.total;
     const TOT_MANDATOS = this.totalMandatos;
+    if (TOT_DETALLES === TOT_CABECERA) {
+    } else {
+      this.alert(
+        'error',
+        'Validación Solicitud',
+        'Los montos no cuadran Verifique la Contabilidad de Mandatos'
+      );
+      return false;
+    }
+    if (this.PDEVPARCIAL === 'S') {
+    }
     // SearchFilter;
     return true;
   }
 
-  private normalSolicitud() {
+  private async normalSolicitud() {
     let aux = false;
-    aux = this.VALIDACIONES_SOLICITUD2();
+    aux = await this.VALIDACIONES_SOLICITUD2();
     // let AUX_INTERCAMBIO = this.PUF_VALIDA_PAGOXEVENTO(this.data.formPayment);
     // if (aux) {
     //   if (!AUX_INTERCAMBIO) {
@@ -367,9 +387,9 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
       idOrdinginter: [null, [Validators.pattern(NUM_POSITIVE)]],
       eventNumber: [null],
       lotNumber: [null],
-      folioAtnCustomer: [null, [Validators.pattern(NUM_POSITIVE)]],
+      folioAtnCustomer: [null, [Validators.pattern(NUMBERS_DASH_PATTERN)]],
       dateOfResolution: [null],
-      clkpv: [null],
+      clkpv: [null, [Validators.required]],
       descurcoord: [null],
       comment: [null],
       invoiceRecNumber: [null, [Validators.pattern(NUM_POSITIVE)]],

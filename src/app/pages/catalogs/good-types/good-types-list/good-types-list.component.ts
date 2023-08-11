@@ -47,24 +47,42 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'nameGoodType' ||
-            filter.field == 'maxAsseguranceTime' ||
-            filter.field == 'maxFractionTime' ||
-            filter.field == 'maxExtensionTime' ||
-            filter.field == 'maxStatementTime' ||
-            filter.field == 'maxLimitTime1' ||
-            filter.field == 'maxLimitTime2' ||
-            filter.field == 'maxLimitTime3' ||
-            filter.field == 'noRegister'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxAsseguranceTime':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxFractionTime':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxExtensionTime':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxStatementTime':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxLimitTime1':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxLimitTime2':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'maxLimitTime3':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -110,11 +128,12 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.goodTypesService.remove(goodType.id).subscribe(
           res => {
+            this.alert('success', 'Tipo Bien', 'Borrado Correctamente');
             this.getExample();
           },
           err => {

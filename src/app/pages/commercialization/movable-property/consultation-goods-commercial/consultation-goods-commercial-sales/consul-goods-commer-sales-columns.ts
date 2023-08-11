@@ -54,7 +54,7 @@ export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
     sort: false,
   },
   no_bien: {
-    title: 'No. Siab',
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },

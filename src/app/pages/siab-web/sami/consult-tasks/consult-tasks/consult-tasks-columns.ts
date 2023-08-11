@@ -34,4 +34,61 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  activitydescription: {
+    title: 'Nombre de la Actividad',
+    type: 'string',
+    sort: false,
+  },
+  assignees: {
+    //originalAssigneeUser: {
+    title: 'Asignado a',
+    type: 'string',
+    sort: false,
+  },
+  approvers: {
+    title: 'Aprobador',
+    type: 'string',
+    sort: false,
+  },
+  applicationdescription: {
+    title: 'Nombre de la Aplicación',
+    type: 'string',
+    sort: false,
+  },
+  processdescription: {
+    title: 'Nombre del Proceso',
+    type: 'string',
+    sort: false,
+  },
+  percentageComplete: {
+    title: 'Porcentaje Completado',
+    type: 'string',
+    sort: false,
+  },
+  assignedDate: {
+    title: 'Fecha Asignación',
+    type: 'string',
+    sort: false,
+  },
+  endDate: {
+    title: 'Fecha Finalización',
+    type: 'string',
+    sort: false,
+  },
+  programmingId: {
+    title: 'No. Programación',
+    type: 'string',
+    sort: false,
+  },
+  idDelegationRegional: {
+    title: 'No. Delegación Regional',
+    type: 'string',
+    sort: false,
+  },
+  idTransferee: {
+    title: 'No. Transferente',
+    type: 'string',
+    sort: false,
+  },
+  //
 };

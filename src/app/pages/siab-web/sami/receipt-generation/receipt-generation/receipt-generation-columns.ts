@@ -67,6 +67,14 @@ export const RECEIPTGENERATION_COLUMNS = {
     title: 'Destino INDEP',
     sort: false,
   },
+  PARAMETRO_CHATARRA: {
+    title: 'Parámetro de Chatarra',
+    sort: false,
+  },
+  FRACCION_ARANCELARIA: {
+    title: 'Fracción Arancelaria',
+    sort: false,
+  },
   OBSERVACIONES: {
     title: 'Observaciones',
     sort: false,

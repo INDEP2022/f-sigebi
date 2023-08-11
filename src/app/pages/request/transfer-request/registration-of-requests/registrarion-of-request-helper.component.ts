@@ -30,7 +30,7 @@ export class RegistrationHelper extends BasePage {
         error: error => {
           this.onLoadToast(
             'error',
-            'No se pudo actualizar el expediente de los bienes'
+            'No se pudo actualizar el expediente de los Bienes'
           );
           reject('No se pudo actualizar el expediente de los bienes');
         },
@@ -140,25 +140,19 @@ export class RegistrationHelper extends BasePage {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 1) {
+    } else if (!lisDocument || lisDocument < 2) {
       this.message(
         'warning',
-        'Se debe asociar un documento a la solicitud para continuar',
+        'Se debe adjuntar un documento a la solicitud para continuar',
         ''
       );
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-      this.message(
-        'warning',
-        'Se marcó la solicitud como urgente, se debe tener una fecha de prioridad',
-        ''
-      );
-      validoOk = false;
-    } else if (idTrandference === 1) {
+      this.message('warning', 'Atención', 'Debe seleccionar una fecha');
       if (paperNumber === '' || paperDate == null) {
         this.message(
-          'warning',
+          'error',
           'Para la transferente FGR/PGR los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
           ''
         );
@@ -176,15 +170,17 @@ export class RegistrationHelper extends BasePage {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'warning',
-          'Para la transferente PJF los campos de No. Oficio y Fecha de Oficio no deben de ser nulos',
-          ''
+
+          'Atención',
+          'El No. Oficio no puede ser vacío'
         );
-      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
-        this.message(
+        /*this.message(
+          'error',
+
           'warning',
-          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
-          ''
-        );
+
+          'Para la transferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
+        );*/
       } else {
         validoOk = true;
       }
@@ -201,8 +197,9 @@ export class RegistrationHelper extends BasePage {
       ) {
         this.message(
           'warning',
-          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos',
-          ''
+          'Atención',
+
+          'Para la transferente SAT los campos Expediente Transferente, Tipo Expediente, No. Oficio y Fecha Oficio no pueden ser nulos'
         );
       } else {
         validoOk = true;
@@ -217,8 +214,8 @@ export class RegistrationHelper extends BasePage {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'warning',
-          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos',
-          ''
+          'Atención',
+          'Para transferentes no obligadas los campos No. Oficio y Fecha Oficio no deben de ser nulos'
         );
       } else {
         validoOk = true;
@@ -236,8 +233,8 @@ export class RegistrationHelper extends BasePage {
       }
       if (goods.count < 1) {
         this.message(
-          'error',
-          'La solicitud no cuenta con bienes a transferir',
+          'warning',
+          'La solicitud no cuenta con Bienes a transferir',
           ''
         );
       } else {
@@ -267,16 +264,16 @@ export class RegistrationHelper extends BasePage {
             sinDireccion = true;
             this.message(
               'warning',
-              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-              'Todos los bienes deben tener asociada una dirección o deben ser menajes'
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener asociada una dirección o deben ser menajes'
             );
             break;
           } else if (good.goodTypeId == null) {
             sinTipoRelevante = true;
             this.message(
               'warning',
-              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-              'Todos los bienes deben tener asignada una clasificación o tipo de bien'
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener asignada una clasificación o tipo de Bien'
             );
             break;
           } else if (
@@ -286,16 +283,16 @@ export class RegistrationHelper extends BasePage {
             sinCantidad = true;
             this.message(
               'warning',
-              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-              'Todos los bienes deben tener una cantidad'
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener Cantidad de la Transferente igual o mayor a 1'
             );
             break;
           } else if (good.unitMeasure == null) {
             sinUnidTrans = true;
             this.message(
               'warning',
-              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-              'Todos los bienes deben tener una Unidad de Medidad Transferente'
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener una Unidad de Medidad Transferente'
             );
             break;
           } else if (good.ligieUnit == null) {
@@ -307,24 +304,24 @@ export class RegistrationHelper extends BasePage {
               'Todos los bienes deben tener un Destino Transferente'
             );
             break;
-          } 
+          }
           */
             sinUnidadM = true;
             this.message(
               'warning',
-              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-              'Todos los bienes deben tener una unidad de medida'
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener una unidad de medida'
             );
             break;
-          } /* else if (good.goodDescription == null) {
+          } else if (good.goodDescription == null) {
             sinDescripcionT = true;
             this.message(
-              'error',
-              `Error en el No. Gestion ${good.id}`,
-              'Todos los bienes deben tener una descripción de bien transferente'
+              'warning',
+              `No se puede guardar el Bien #${good.id}`,
+              'Todos los Bienes deben tener una descripción de la transferente'
             );
             break;
-          } */
+          }
 
           // Se valida si la clasificacion tenga 8 caracteres
           if (good.fractionId !== null) {
@@ -338,8 +335,8 @@ export class RegistrationHelper extends BasePage {
               faltaClasificacion = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-                'Todos los bienes deben tener un código de fracción de 8 dígitos'
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                'Todos los Bienes deben tener un código de fracción de 8 dígitos'
               );
               break;
             }
@@ -347,8 +344,8 @@ export class RegistrationHelper extends BasePage {
             faltaClasificacion = true;
             this.message(
               'warning',
-              `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
-              'Todos los bienes deben tener un código de fracción de 8 dígitos'
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'Todos los Bienes deben tener un código de fracción de 8 dígitos'
             );
             break;
           }
@@ -360,7 +357,7 @@ export class RegistrationHelper extends BasePage {
             /*if (good.idGoodProperty === null) { //Henry idGoodProperty
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El id del bien inmueble no puede estar nulo.'
               );
               break;
@@ -371,7 +368,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelInmueble = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Escritura Pública" en el Bien Inmueble esta vacio.'
               );
               break;
@@ -379,7 +376,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelInmueble = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Problemáticas" en el Bien Inmueble esta vacio.'
               );
               break;
@@ -387,7 +384,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelInmueble = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Descripción de Problemática" en el Bien Inmueble esta vacio.'
               );
               break;
@@ -395,7 +392,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelInmueble = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Registro Público de Propiedad" en el Bien Inmueble esta vacio.'
               );
               break;
@@ -403,10 +400,24 @@ export class RegistrationHelper extends BasePage {
               tipoRelInmueble = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Tipo de Inmueble" en el Bien Inmueble esta vacio.'
               );
               break;
+            } else if (realEstate.pffDate) {
+              if (
+                idTrandference == 120 ||
+                idTrandference == 752 ||
+                idTrandference == 942
+              ) {
+                tipoRelInmueble = true;
+                this.message(
+                  'warning',
+                  `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+                  'El campo "Fecha de Paso al Fisco" en el Bien Inmueble esta vacio.'
+                );
+                break;
+              }
             }
             // }
           } else if (Number(good.goodTypeId) === 2) {
@@ -416,7 +427,7 @@ export class RegistrationHelper extends BasePage {
             //   tipoRelVehiculo = true;
             //   this.message(
             //     'error',
-            //     `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+            //     `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
             //     'El campo Apto para cirular en Información del Vehículo esta vacio.'
             //   );
             //   break;
@@ -426,7 +437,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelVehiculo = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Marca" en Información del Vehículo esta vacio.'
               );
               break;
@@ -435,16 +446,16 @@ export class RegistrationHelper extends BasePage {
               tipoRelVehiculo = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Modelo" en Información del Vehículo esta vacio.'
               );
               break;
-            } else if (good.axesNumber === null) {
+            } /*else if (good.axesNumber === null) {
               //numero de ejes
               tipoRelVehiculo = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Número de Ejes" en Información del Vehículo esta vacio.'
               );
               break;
@@ -453,15 +464,16 @@ export class RegistrationHelper extends BasePage {
               tipoRelVehiculo = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Número de Motor" en Información del Vehículo esta vacio.'
               );
               break;
-            } /* else if (good.origin === null) {
+            } */
+            /* else if (good.origin === null) {
               tipoRelVehiculo = true;
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo Procedencia en Información del Vehículo esta vacio.'
               );
               break;
@@ -471,7 +483,7 @@ export class RegistrationHelper extends BasePage {
             //   tipoRelVehiculo = true;
             //   this.message(
             //     'error',
-            //     `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+            //     `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
             //     'El campo Reporte de Robo en Información del Vehículo esta vacio.'
             //   );
             //   break;
@@ -481,7 +493,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelVehiculo = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Serie" en Información del Vehículo esta vacio.'
               );
               break;
@@ -490,7 +502,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelVehiculo = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Sub-Marca" en Información del Vehículo esta vacio.'
               );
               break;
@@ -502,7 +514,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Año de Fabricación" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -511,7 +523,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Bandera" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -520,7 +532,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Calado" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -529,7 +541,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo Capacidad en Información de la Embarcación esta vacio.'
               );
               break;
@@ -538,7 +550,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Eslora" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -547,7 +559,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Estado Operativo" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -556,7 +568,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo Matrícula en Información de la Embarcación esta vacio.'
               );
               break;
@@ -565,7 +577,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Nombre" de Embarcacion en Información de la Embarcación esta vacio.'
               );
               break;
@@ -574,7 +586,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "No. Motor" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -583,7 +595,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "No. Motores" en Información de la Embarcación esta vacio.'
               );
               break;
@@ -592,7 +604,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo Procedencia en Información de la Embarcación esta vacio.'
               );
               break;
@@ -601,7 +613,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelEmbarca = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Registro Publico" de la Embarcación en Información de la Embarcación esta vacio.'
               );
               break;
@@ -613,7 +625,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Estado Operativo" en Información de Aereonave esta vacio.'
               );
               break;
@@ -622,7 +634,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo Matrícula en Información de Aereonave esta vacio.'
               );
               break;
@@ -631,7 +643,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Modelo" en Información de Aereonave esta vacio.'
               );
               break;
@@ -640,7 +652,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "No. Motor" en Información de Aereonave esta vacio.'
               );
               break;
@@ -649,7 +661,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "No. Motores" en Información de Aereonave esta vacio.'
               );
               break;
@@ -658,7 +670,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'error',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo Procedencia en Información de Aereonave esta vacio.'
               );
               break;
@@ -667,7 +679,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Registro Direccion Gral..." en Información de Aereonave esta vacio.'
               );
               break;
@@ -675,7 +687,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Serie" en Información de Aereonave esta vacio.'
               );
               break;
@@ -683,7 +695,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelAeronave = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Tipo de Avión" en Información de Aereonave esta vacio.'
               );
               break;
@@ -694,7 +706,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelJoya = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Kilataje" en Información de Joya esta vacio.'
               );
               break;
@@ -702,7 +714,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelJoya = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Material" en Información de Joya esta vacio.'
               );
               break;
@@ -710,7 +722,7 @@ export class RegistrationHelper extends BasePage {
               tipoRelJoya = true;
               this.message(
                 'warning',
-                `No se puede guardar el bien #${good.id}: ${good.goodDescription}`,
+                `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
                 'El campo "Peso" en Información de Joya esta vacio.'
               );
               break;
@@ -730,7 +742,8 @@ export class RegistrationHelper extends BasePage {
           sinCantidad === false &&
           sinDestinoT === false &&
           sinUnidadM === false &&
-          sinUnidTrans === false
+          sinUnidTrans === false &&
+          sinDescripcionT === false
         ) {
           allOk = true;
         }

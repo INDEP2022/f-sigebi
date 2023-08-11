@@ -78,6 +78,10 @@ export class ExpenseCompositionComponent
     return this.expenseCaptureDataService.data;
   }
 
+  get exchangeRate() {
+    return this.form.get('exchangeRate');
+  }
+
   get eventNumber() {
     return this.form.get('eventNumber');
   }
@@ -172,6 +176,7 @@ export class ExpenseCompositionComponent
                   : null,
               };
             });
+            this.expenseCaptureDataService.dataCompositionExpenses = this.data;
             this.totalItems = this.data.length;
             this.dataTemp = [...this.data];
             this.getPaginated(this.params.value);
@@ -194,22 +199,22 @@ export class ExpenseCompositionComponent
         cantidad > this.dataTemp.length ? this.dataTemp.length : cantidad
       ),
     ];
-    newData.push({
-      expenseDetailNumber: '',
-      expenseNumber: '',
-      amount: this.amount + '',
-      vat: this.vat + '',
-      isrWithholding: this.isrWithholding + '',
-      vatWithholding: this.vatWithholding + '',
-      transferorNumber: '',
-      total: this.total + '',
-      goodNumber: '',
-      cvman: '',
-      budgetItem: '',
-      comerExpenses: null,
-      goods: null,
-      goodDescription: '',
-    });
+    // newData.push({
+    //   expenseDetailNumber: '',
+    //   expenseNumber: '',
+    //   amount: this.amount + '',
+    //   vat: this.vat + '',
+    //   isrWithholding: this.isrWithholding + '',
+    //   vatWithholding: this.vatWithholding + '',
+    //   transferorNumber: '',
+    //   total: this.total + '',
+    //   goodNumber: '',
+    //   cvman: '',
+    //   budgetItem: '',
+    //   comerExpenses: null,
+    //   goods: null,
+    //   goodDescription: '',
+    // });
     this.dataPaginated.load(newData);
     this.dataPaginated.refresh();
   }
@@ -369,4 +374,30 @@ export class ExpenseCompositionComponent
   private saveCSV_Validates() {}
 
   private saveCSV() {}
+
+  applyTC() {
+    this.dataTemp.forEach(row => {
+      if (row) {
+        row.amount = (
+          +row.amount * (this.exchangeRate.value ? this.exchangeRate.value : 1)
+        ).toFixed(2);
+        if (row.vat && +row.vat > 0) {
+          row.vat = (+row.amount * 0.15).toFixed(2);
+        }
+        row.total = (+row.amount + (row.vat ? +row.vat : 0)).toFixed(2);
+        this.amount += row.amount ? +row.amount : 0;
+        this.vat += row.vat ? +row.vat : 0;
+        this.isrWithholding += row.isrWithholding ? +row.isrWithholding : 0;
+        this.vatWithholding += row.vatWithholding ? +row.vatWithholding : 0;
+        this.total += row.total ? +row.total : 0;
+      }
+    });
+    this.getPaginated(this.params.value);
+  }
+
+  contabilityMand() {}
+
+  reload() {}
+
+  validates() {}
 }
