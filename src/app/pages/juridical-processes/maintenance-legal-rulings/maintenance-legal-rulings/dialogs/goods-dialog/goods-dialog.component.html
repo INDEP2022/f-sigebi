@@ -85,13 +85,13 @@
 
         <div class="col-md-12 mt-4">
           <form-field
-            label="Descripción"
+            label="Descripción (Max.1250 caracteres)"
             [control]="dictationXGoodForm.get('descriptionDict')">
             <input
               required
               type="text"
               class="form-control"
-              [max-length]="250"
+              [max-length]="1250"
               formControlName="descriptionDict" />
           </form-field>
         </div>
