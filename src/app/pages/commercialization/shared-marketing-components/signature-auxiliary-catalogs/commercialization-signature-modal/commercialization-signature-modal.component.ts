@@ -40,10 +40,10 @@ export class CommercializationSignatureModalComponent
 
   private prepareForm(): void {
     this.formGroup = this.fb.group({
-      signatoryType: [{ value: null, disabled: false }],
-      no_consec: [{ value: null, disabled: false }],
-      id_docums_xml: [{ value: null, disabled: false }],
-      usuario: [
+      // recordNumber: [{ value: null, disabled: false }],
+      // numberconsec: [{ value: null, disabled: false }],
+      idDocumentsxml: [{ value: null, disabled: false }],
+      user: [
         { value: null, disabled: false },
         [
           Validators.required,
@@ -51,9 +51,9 @@ export class CommercializationSignatureModalComponent
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      nombre: [{ value: null, disabled: false }],
-      cargo: [{ value: null, disabled: false }],
-      id_tipo_firmante: [
+      name: [{ value: null, disabled: false }],
+      post: [{ value: null, disabled: false }],
+      idGuySignatory: [
         { value: null, disabled: false },
         [
           Validators.required,
@@ -123,6 +123,11 @@ export class CommercializationSignatureModalComponent
     }
   }
 
+  changeUsers(event: any) {
+    console.log(event);
+    this.formGroup.get('name').setValue(event ? event.nombre : null);
+  }
+
   getUsers(paramsData: ListParams, getByValue: boolean = false) {
     const params: any = new FilterParams();
     if (paramsData['search'] == undefined || paramsData['search'] == null) {
@@ -130,7 +135,7 @@ export class CommercializationSignatureModalComponent
     }
     params.removeAllFilters();
     if (getByValue) {
-      params.addFilter('id', this.formGroup.get('usuario').value);
+      params.addFilter('id', this.formGroup.get('user').value);
     } else {
       params.search = paramsData['search'];
     }
@@ -156,6 +161,11 @@ export class CommercializationSignatureModalComponent
       });
   }
 
+  changeFirm(event: any) {
+    console.log(event);
+    this.formGroup.get('post').setValue(event ? event.denomination : null);
+  }
+
   getFirmType(paramsData: ListParams, getByValue: boolean = false) {
     const params: any = new FilterParams();
     if (paramsData['search'] == undefined || paramsData['search'] == null) {
@@ -165,7 +175,7 @@ export class CommercializationSignatureModalComponent
     if (getByValue) {
       // params.addFilter('id', this.formGroup.get('usuario').value);
       params['filter.signatoryType'] =
-        '$eq:' + this.formGroup.get('id_tipo_firmante').value;
+        '$eq:' + this.formGroup.get('idGuySignatory').value;
     } else {
       params.search = paramsData['search'];
     }

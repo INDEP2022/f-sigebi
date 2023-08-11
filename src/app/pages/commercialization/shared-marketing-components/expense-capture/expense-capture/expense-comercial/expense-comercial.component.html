@@ -223,6 +223,18 @@
               </div>
             </ng-template>
           </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              formControlName="descurcoord"
+              label="Delegación"
+              path="catalog/api/v1/delegation/get-all"
+              value="description"
+              bindLabel="description"
+              paramSearch="filter.description"
+              [limit]="1000">
+            </ng-custom-select-loading>
+          </div>
           <div class="row mt-4">
             <div class="col-12">
               <form-field [control]="comment" label="Servicio">

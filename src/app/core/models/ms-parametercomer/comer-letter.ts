@@ -15,3 +15,10 @@ export interface IComerLetter {
   ccp4: string;
   ccp5: string;
 }
+
+export interface IComerLetterResp {
+  id: number;
+  paragraph1: string;
+  paragraph2: string;
+  paragraph3: string;
+}

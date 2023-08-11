@@ -51,15 +51,15 @@ export class ParamsConcepsListComponent
       columns: { ...COLUMNS },
     };
     this.haveInitialCharge = false;
-    this.expenseConceptsService.refreshParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response) {
-            this.getData();
-          }
-        },
-      });
+    // this.expenseConceptsService.refreshParams
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe({
+    //     next: response => {
+    //       if (response) {
+    //         this.getData();
+    //       }
+    //     },
+    //   });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -108,6 +108,9 @@ export class ParamsConcepsListComponent
           columns: { ...COLUMNS },
         };
       }
+    }
+    if (changes['conceptId'] && changes['conceptId'].currentValue) {
+      this.getData();
     }
   }
 

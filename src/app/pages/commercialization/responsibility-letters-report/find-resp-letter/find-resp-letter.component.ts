@@ -27,6 +27,7 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   selectedRow: any | null = null;
   @Output() onSave = new EventEmitter<any>();
+  loteId: number = null;
 
   constructor(
     private modalRef: BsModalRef,
@@ -87,6 +88,9 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
   }
 
   getAllComerLetter() {
+    if (this.loteId) {
+      this.columnFilters['filter.lotsId'] = `$eq:${this.loteId}`;
+    }
     this.loading = true;
     let params = {
       ...this.params.getValue(),
@@ -114,6 +118,10 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   handleSuccess(): void {
+    if (!this.selectedRow) {
+      this.alert('warning', 'Selecciona un Registro para Continuar', '');
+      return;
+    }
     this.loading = true;
     this.onSave.emit(this.selectedRow);
     this.loading = false;

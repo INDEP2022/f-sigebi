@@ -60,10 +60,10 @@ import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 //import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
 
-import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -102,7 +102,8 @@ import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -518,7 +519,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -1217,7 +1218,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       });
   }
 
-  cleanActa() { }
+  cleanActa() {}
 
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1234,8 +1235,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   /*Scanner() {
     if (this.formScan.get('scanningFoli').value) {
@@ -1348,7 +1349,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   async cerrarActa() {
     console.log('this.actasDefault', this.actasDefault);
     console.log(
-      'this.circumstantialRecord', this.expedient
+      'this.circumstantialRecord',
+      this.expedient
       //this.expedient.circumstantialRecord
     );
     if (this.actasDefault != null) {
@@ -1662,9 +1664,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -1751,7 +1753,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1868,8 +1870,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alertInfo(
         'success',
         'El folio universal generado es: "' +
-        this.formScan.get('scanningFoli').value +
-        '"',
+          this.formScan.get('scanningFoli').value +
+          '"',
         ''
       );
     } else {
