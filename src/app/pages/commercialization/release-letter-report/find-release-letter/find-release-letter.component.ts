@@ -114,6 +114,9 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
       error: () => {
         this.loading = false;
         console.error('error al filtrar cartas');
+        this.totalItems = 0;
+        this.dataFactLetter.load([]);
+        this.dataFactLetter.refresh();
       },
     });
   }

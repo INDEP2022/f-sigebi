@@ -104,6 +104,12 @@ export class FindRespLetterComponent extends BasePage implements OnInit {
         this.dataFactLetter.load(this.letters);
         this.dataFactLetter.refresh();
       },
+      error: () => {
+        this.loading = false;
+        this.totalItems = 0;
+        this.dataFactLetter.load([]);
+        this.dataFactLetter.refresh();
+      },
     });
   }
   onUserRowSelect(row: any): void {
