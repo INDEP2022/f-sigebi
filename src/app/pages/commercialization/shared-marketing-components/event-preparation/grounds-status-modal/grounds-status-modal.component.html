@@ -24,7 +24,7 @@
           <form-field [control]="form.get('fileCSV')">
             <input
               type="file"
-              accept=".xls, .xlsx, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              accept=".xls, .xlsx, .csv"
               formControlName="fileCSV"
               (change)="chargeFile($event)" />
           </form-field>
@@ -34,14 +34,11 @@
           
         </button> -->
       </div>
-      <div class="col-md-3" style="padding-top: 3%">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active ml-3"
-          (click)="openModal2()">
+      <!-- <div class="col-md-3" style="padding-top: 3%">
+        <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal2()">
           Cargar Layout
         </button>
-      </div>
+      </div> -->
       <!-- <div class="col-md-2" style="padding-top: 3%">
         <button
           type="button"
@@ -54,12 +51,14 @@
     <div class="row pt-4">
       <form [formGroup]="form" class="form-material">
         <div class="row mt-4">
-          <div class="col-md-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('file')" label="Archivo">
               <input type="text" formControlName="file" class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('whereMot')" label="Mot">
               <input
                 type="text"
@@ -67,7 +66,9 @@
                 class="form-control" />
             </form-field>
           </div>
-          <div class="col-md-4">
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-12">
             <form-field [control]="form.get('reasons')" label="Motivos">
               <input
                 type="text"
@@ -82,7 +83,12 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-primary active">Cargar</button>
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="loadMotifs()">
+          Cargar
+        </button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
