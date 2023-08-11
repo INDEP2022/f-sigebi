@@ -6,49 +6,6 @@
   </div>
 
   <div body>
-    <!-- <div class="row justify-content-start">
-      <div class="col-12 col-sm-12 col-md-6">
-        <search-bar-simple (eventEmit)="search($event)" id="find" [placeholder]="'N&uacute;mero de Expediente'">
-        </search-bar-simple>
-        <div class="row" *ngIf="!validateEx">
-          <span class="text-center text-danger d-block">El Expediente no existe</span>
-        </div>
-      </div>
-    </div> -->
-    <div class="row m-3 flex-row justify-content-center">
-      <div class="col-md-4">
-        <div class="d-flex align-items-center">
-          <label for="" class="col-form-label"
-            >Fecha de Elaboración:&nbsp;&nbsp;</label
-          >
-          <div>{{ time | date : 'hh:mm' }}</div>
-          <div>{{ dateElaboration || '00/00/0000' }}</div>
-        </div>
-      </div>
-      <div class="col-md-8 text-end">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="searchExpedient()">
-          <i class="bx bx-list-plus bx-sm float-icon"></i>
-        </button>
-        <!-- <button
-          type="button"
-          class="btn btn-primary active btn-sm mr-3"
-          (click)="searchExpedient()">
-          Buscar Expediente
-          <i class="bx bx-search bx-sm float-icon"></i>
-        </button>
-        <button
-          (click)="cleanForm()"
-          type="button"
-          class="btn btn-danger active btn-sm mr-3">
-          Limpiar
-          <i class="fa fa-eraser" aria-hidden="true"></i>
-        </button> -->
-      </div>
-    </div>
-
     <div
       class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
       *ngIf="loadingExpedient">
@@ -503,16 +460,16 @@
                     </div>
                     <div class="col-md-12 col-sm-12 col-12">
                       <div class="d-flex justify-content-center">
-                          <div class="m-3">
+                        <div class="m-3">
                           <button
-                              [disabled]="!disabledBtnCerrar"
-                              type="button"
-                              class="btn btn-primary active btn-sm"
-                              (click)="cerrarActa()">
-                              Cerrar Acta
-                              <i class="fas fa-close bx-sm float-icon"></i>
-                            </button>
-                            </div>
+                            [disabled]="!disabledBtnCerrar"
+                            type="button"
+                            class="btn btn-primary active btn-sm"
+                            (click)="cerrarActa()">
+                            Cerrar Acta
+                            <i class="fas fa-close bx-sm float-icon"></i>
+                          </button>
+                        </div>
 
                         <div class="m-3">
                           <button
@@ -531,11 +488,11 @@
                     tooltip="Imprimir Solicitud de Escaneo"
                     containerClass="tooltip-style">
                     <button
-                    
                       (click)="showMessageDigitalization()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file-find"></i>
-                    </button> <!--  [disabled]="true"-->
+                    </button>
+                    <!--  [disabled]="true"-->
                   </span>
                   <span
                     tooltip="Consulta de Imágenes Escaneadas"
@@ -578,8 +535,7 @@
   </div> -->
 
   <div footer>
-
-          <!-- <div class="m-3">
+    <!-- <div class="m-3">
         <button class="btn btn-info active btn-sm" (click)="Scanner()">
           Escanear
           <i class="bx bx-file bx-sm float-icon"></i>
@@ -602,17 +558,17 @@
         (click)="ViewActa() 
         (click)="openview()"
       </div></div>-->
-    
-      <div class="m-3">
-        <div class="col-md-12 text-end">
-          <button
-            class="btn btn-sm btn-success active"
-            type="button"
-            (click)="exportToExcel()">
-            Exportar Datos
-            <i class="bx bx-download float-icon"></i>
-          </button>
-        </div>
+
+    <div class="m-3">
+      <div class="col-md-12 text-end">
+        <button
+          class="btn btn-sm btn-success active"
+          type="button"
+          (click)="exportToExcel()">
+          Exportar Datos
+          <i class="bx bx-download float-icon"></i>
+        </button>
       </div>
+    </div>
   </div>
 </app-card>

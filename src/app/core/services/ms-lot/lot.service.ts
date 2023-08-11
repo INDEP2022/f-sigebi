@@ -253,13 +253,27 @@ export class LotService extends HttpService {
     formData.append('tpeventId', `${tpeventId}`);
     const url = this.buildRoute('apps/pup-valcsv');
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
-    return this.httpClient.post(url, formData, { headers });
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   validateCustomersCSV(file: File) {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.post('apps/pup-valcsv-clients', formData);
+    const url = this.buildRoute('apps/pup-valcsv-clients');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   importCustomersBase(body: {
