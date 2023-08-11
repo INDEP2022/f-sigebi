@@ -491,7 +491,7 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
     sort: false,
   },
 
-  /* saeMeasureUnit: { */
+  /*  saeMeasureUnit: { */
   /*title: 'Unidad de Medida INDEP',
     ype: 'custom',
     class: 'custom-field',
@@ -500,7 +500,7 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
     onComponentInitFunction(instance?: any) {},
     sort: false,*/
 
-  /*   title: 'Unidad Medida INDEP',
+  /*  title: 'Unidad Medida INDEP',
     type: 'string',
     class: '',
     filter: false,
