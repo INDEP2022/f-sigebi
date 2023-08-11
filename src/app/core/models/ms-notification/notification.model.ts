@@ -88,6 +88,7 @@ export interface INotification {
   numberProperty?: number;
   notificationDate?: any;
   userCorrectsKey?: any;
+  periodEndDate?: any;
 }
 
 export interface IAffair {

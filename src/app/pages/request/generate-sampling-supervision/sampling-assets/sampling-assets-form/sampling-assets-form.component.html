@@ -224,17 +224,23 @@
           <div class="row pt-4">
             <div class="d-flex justify-content-end">
               <div class="m-3">
-                <button class="btn btn-danger btn-sm active">
+                <button
+                  class="btn btn-danger btn-sm active"
+                  (click)="removeGood()">
                   <i class="bx bx-minus-circle"></i> Eliminar
                 </button>
               </div>
               <div class="m-3">
-                <button class="btn btn-success btn-sm active">
+                <button
+                  class="btn btn-success btn-sm active"
+                  (click)="meetGood('CUMPLE')">
                   <i class="bx bx-check-circle"></i> Cumple
                 </button>
               </div>
               <div class="m-3">
-                <button class="btn btn-danger btn-sm active">
+                <button
+                  class="btn btn-danger btn-sm active"
+                  (click)="meetGood('NO CUMPLE')">
                   <i class="bx bx-x-circle"></i> No cumple
                 </button>
               </div>

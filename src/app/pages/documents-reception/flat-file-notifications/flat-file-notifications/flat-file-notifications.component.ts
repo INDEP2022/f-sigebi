@@ -17,6 +17,8 @@ import { FlatFileNotificationsService } from '../flat-file-notifications.service
 export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   notificationsForm: FormGroup;
   invalidDate = false;
+  maxDate: Date = new Date();
+
   get startDate(): AbstractControl {
     return this.notificationsForm.get('startDate');
   }
@@ -48,6 +50,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
     );
   }
   getEndDateErrorMessage(fin: any, ini: any) {
+    console.log(fin, ini);
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
@@ -83,7 +86,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               'Advertencia',
-              'Sin Datos Para Los Rangos De Fechas Suministrados'
+              'Sin Datos Para los Rangos de Fechas Suministrados'
             );
           }
           return;
@@ -100,7 +103,7 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
     downloadLink.click();
     this.onLoadToast(
       'success',
-      'Archivo De Notificaciones',
+      'Archivo de Notificaciones',
       'Generado Correctamente'
     );
   }

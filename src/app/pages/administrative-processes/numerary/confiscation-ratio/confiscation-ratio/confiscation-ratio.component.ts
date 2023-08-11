@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -8,7 +9,10 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -18,7 +22,20 @@ import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.s
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+//import { EXCEL_TO_JSON } from 'src/app/pages/admin/home/constants/excel-to-json-columns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import * as XLSX from 'xlsx';
+
+interface IExcelToJson {
+  idD: number;
+  id: number;
+  f_trnas: string;
+  f_sent: string;
+  Inte: number;
+  f_teso: string;
+  o_teso: string;
+}
 
 @Component({
   selector: 'app-confiscation-ratio',
@@ -28,22 +45,25 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ConfiscationRatioComponent extends BasePage implements OnInit {
   form: FormGroup;
   file: FormGroup;
+  dataExcel: any = [];
   data: FormGroup[];
+  totalItems: number = 0;
   lock: boolean = false;
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
+  source: LocalDataSource = new LocalDataSource();
   goods: DefaultSelect<IGood>;
   columnFilters: any = [];
   dataTemplate = this.fb.group({
     noGood: [null, Validators.required],
     criminalCase: [
       null,
-      [Validators.pattern(/^[0-9/]+$/), Validators.required],
+      [Validators.pattern(STRING_PATTERN), Validators.required],
     ],
     preliminaryInvestigation: [
       null,
-      [Validators.pattern(/^[0-9/]+$/), Validators.required],
+      [Validators.pattern(STRING_PATTERN), Validators.required],
     ],
     dateTesofe: [null, Validators.required],
     jobTesofe: [null, Validators.required],
@@ -66,19 +86,32 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     private detRelationConfiscationService: DetRelationConfiscationService,
     private goodProcessService: GoodProcessService,
     private authorityService: AuthorityService,
-    private accountMovementService: AccountMovementService
+    private excelService: ExcelService,
+    private accountMovementService: AccountMovementService,
+    private authService: AuthService
   ) {
     super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      //columns: EXCEL_TO_JSON,
+    };
   }
-
+  token: TokenInfoModel;
   ngOnInit(): void {
     this.prepareForm();
+    this.token = this.authService.decodeToken();
+
+    console.log('Información del usuario logeado: ', this.token);
+
     // this.getGood(new ListParams)
     // this.filterParams.getValue().addFilter('description', '', SearchFilter.ILIKE)
     // this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe({
     //   next: () => this.getGood()
     // })
   }
+  //const user = this.user.decodeToken();
+  //toolbarUser: user.username.toUpperCase(),
   prepareForm() {
     this.form = this.fb.group({
       forfeitureKey: [null],
@@ -130,7 +163,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   }
 
   public callReport() {
-    const { forfeitureKey } = this.form.value;
+    const { forfeitureKey } = this.form.get('forfeitureKey').value;
 
     if (!forfeitureKey) {
       this.onLoadToast(
@@ -168,77 +201,71 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
 
   brings() {}
 
-  onCsvSelected(event: any) {
-    //cargar csv a campos
-    const file: File = event.target.files[0];
-    const fileReader: FileReader = new FileReader();
-
-    fileReader.onload = e => {
-      const content: string = fileReader.result as string;
-      const lines: string[] = content.split('\n');
-
-      this.data.length = 1;
-      this.data[0].reset();
-
-      let i = 0;
-      let startFlag = true;
-      for (let line of lines) {
-        if (startFlag) {
-          //se salta la primera linea
-          startFlag = false;
-          continue;
-        }
-        // Aquí puedes realizar las acciones que deseas con cada línea del archivo
-        console.log(line);
-        let params = line.replace(/[\r\n]+/g, '').split(',');
-        if (i != 0) {
-          this.data.push(
-            this.fb.group({
-              noGood: [null, Validators.required],
-              criminalCase: [
-                null,
-                [Validators.pattern(/^[0-9/]+$/), Validators.required],
-              ],
-              preliminaryInvestigation: [
-                null,
-                [Validators.pattern(/^[0-9/]+$/), Validators.required],
-              ],
-              dateTesofe: [null, Validators.required],
-              jobTesofe: [null, Validators.required],
-              authority: [null, Validators.required],
-              dateTreasury: [null, Validators.required],
-              dateJudgment: [null, Validators.required],
-              appraisalValue: [null, Validators.required],
-              interests: [null, Validators.required],
-              results: [null, Validators.required],
-              totalSeizures: [null, Validators.required],
-            })
-          );
-        }
-        console.log(params);
-        const rowData = params;
-        if (rowData[0]) {
-          const formValues = {
-            noGood: +rowData[0],
-            dateTransfer: rowData[1],
-            dateSentencia: rowData[2],
-            interests: +rowData[3],
-            dateTesofe: rowData[4],
-            jobTesofe: rowData[5],
-          };
-
-          console.log(formValues);
-
-          this.data[i].patchValue(formValues);
-        }
-        i++;
-      }
-    };
-
-    fileReader.readAsText(file);
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+    console.log(fileReader);
+    console.log((fileReader.onload = () => this.readExcel(fileReader.result)));
   }
 
-  getClasificGood() {}
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.dataExcel = this.excelService.getData(binaryExcel);
+      console.log(this.dataExcel);
+      const mappedData: any = [];
+      for (let i = 0; i < this.dataExcel.length; i++) {
+        const user = this.authService.decodeToken();
+        mappedData.push({
+          idD: this.dataExcel[i].clave_decom,
+          id: this.dataExcel[i].no_bien,
+          f_trnas: this.dataExcel[i].fec_transferencia,
+          f_sent: this.dataExcel[i].fec_sentencia,
+          Inte: this.dataExcel[i].intereses,
+          f_teso: this.dataExcel[i].fec_of_tesofe,
+          o_teso: this.dataExcel[i].oficio_tesofe,
+          curr: this.dataExcel[i].money,
+          aut: this.dataExcel[i].autoridad,
+          screenkey: this.dataExcel[i].screenkey,
+          toolbar_user: this.dataExcel[i].toolbar_user,
+          causa_penal: this.dataExcel[i].causa_penal,
+        });
+      }
+      console.log(mappedData);
+
+      this.source.load(mappedData);
+      this.source.refresh();
+      console.log(this.source);
+      console.log(this.source);
+      this.totalItems = this.dataExcel.length;
+      this.file.get('recordRead').patchValue(this.totalItems);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
+
+  aprove() {
+    /*const user = this.authService.decodeToken();
+    let body = {
+      data: this.dataExcel
+    }
+    console.log(body);
+    this.detRelationConfiscationService.Insert(body).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.file.get('recordsProcessed').patchValue(resp['total']);
+        this.file.get('processed').patchValue(resp['sucess']);
+        this.file.get('wrong').patchValue(resp['error']);
+        console.log(resp['total']);
+
+      },
+      error: err => {
+        console.log(err);
+      },
+    });*/
+  }
 
   getGoodFilter(money: number | string, goodNumber: number | string) {
     let body = {
@@ -308,8 +335,16 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       },
     });
   }
-  openFile() {
+  openFile(file: any): void {
     console.log('asd');
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const workbook = XLSX.read(e.target.result, { type: 'binary' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      this.data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    };
+    reader.readAsBinaryString(file);
     document.getElementById('uploadfile').click();
   }
 }
