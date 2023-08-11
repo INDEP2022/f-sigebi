@@ -8,7 +8,10 @@ import { CatMotiveRevService } from 'src/app/core/services/catalogs/cat-motive-r
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ReasonsModelComponent } from '../reasons-model/reasons-model.component';
-import { GROUNDSSTATUSMODAL_COLUMNS } from './grounds-status-modal-columns';
+import {
+  goodCheck,
+  GROUNDSSTATUSMODAL_COLUMNS,
+} from './grounds-status-modal-columns';
 
 @Component({
   selector: 'app-grounds-status-modal',
@@ -59,16 +62,24 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
       this.params
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getMinPubAll(this.ESTATUS, this.P_DIRECCION));
+      this.pupWhereMotivos();
     } else {
       this.alert('warning', 'El estatus es nulo', '');
     }
   }
+
   prepareForm() {
     this.form = this.fb.group({
-      file: [null, Validators.required],
-      fileCSV: [null, Validators.required],
-      whereMot: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
-      reasons: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      file: [null, [Validators.required]],
+      fileCSV: [null, [Validators.required]],
+      whereMot: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      reasons: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   getMinPubAll(initialStatus: string, goodType: string) {
@@ -94,9 +105,32 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     this.fileName = files[0].name;
+    this.form.controls['file'].setValue(this.fileName);
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     // fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  pupWhereMotivos() {
+    if (this.ESTATUS != null) {
+      this.form.controls['whereMot'].setValue(
+        'Estatus Inicial ' + this.ESTATUS + ' y Tipo Bien ' + this.P_DIRECCION
+      );
+    }
+  }
+  loadMotifs() {
+    if (goodCheck.length > 0) {
+      console.log('Entra');
+      let description: string = '';
+      goodCheck.map((row: any) => {
+        description = description + row.row.descriptionReason;
+
+        console.log(row);
+      });
+      this.form.controls['reasons'].setValue(description);
+      // this.excelService.export(data, { filename });
+    } else {
+      this.alert('warning', 'Por lo menos debe seleccionar un motivo', '');
+    }
   }
   close() {
     this.modalRef.hide();
