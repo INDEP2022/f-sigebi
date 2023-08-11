@@ -450,12 +450,14 @@ export class FormalGoodsEstateComponent
     });
   }
   goEscrituracion(_data: any) {
+    console.log('br -->', _data.lotId);
     if (_data.lotId) {
       this.loading = true;
       let params = {
         ...this.params.getValue(),
       };
       params['filter.idLot'] = `$eq:${_data.lotId}`;
+      console.log('br -->', _data.lotId);
       params['filter.idStatusVta'] = `$eq:PAG`;
 
       this.lotParamsService.getAllWithParams(params).subscribe({
@@ -500,15 +502,16 @@ export class FormalGoodsEstateComponent
             'ERROR',
             'El bien no ha sido liquidado, y no se puede proceder a la escrituración'
           );
-
+          this.ngOnInit();
           console.log('Error', error.error.message);
         },
       });
+      console.log('dataaa ->', _data);
     } else {
       let obj = {
         icon: 'warning',
         title: 'ID DEL LOTE',
-        message: 'ID del Lote es Null',
+        message: 'ID del Lote Vacio',
       };
       this.handleSuccess(obj);
     }
