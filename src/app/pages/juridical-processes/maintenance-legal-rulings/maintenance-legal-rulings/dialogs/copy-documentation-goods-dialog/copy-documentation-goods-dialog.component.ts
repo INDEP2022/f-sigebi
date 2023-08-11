@@ -83,7 +83,16 @@ export class CopyDocumentationGoodsDialogComponent
 
     this.copiesOfficialService.create(this.copiesOfficialForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          `Verifique los datos ingresados en el formulario`
+        );
+        console.log(error);
+        this.close();
+        this.loading = false;
+      },
     });
   }
 
@@ -91,8 +100,19 @@ export class CopyDocumentationGoodsDialogComponent
     this.loading = true;
     console.log(this.copiesOfficialForm.value);
     this.copiesOfficialService.update(this.copiesOfficialForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      next: data => {
+        this.handleSuccess();
+      },
+      error: error => {
+        this.onLoadToast(
+          'error',
+          error,
+          `Error guardando los datos, verifique`
+        );
+        console.log(error);
+        this.close();
+        this.loading = false;
+      },
     });
   }
 
