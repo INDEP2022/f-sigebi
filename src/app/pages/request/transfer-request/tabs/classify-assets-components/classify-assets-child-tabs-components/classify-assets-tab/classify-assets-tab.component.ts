@@ -450,12 +450,8 @@ export class ClassifyAssetsTabComponent
 
     this.classiGoodsForm.controls['goodTypeId'].valueChanges.subscribe(data => {
       if (data != 2) {
-        this.classiGoodsForm.controls['axesNumber'].setValidators([
-          Validators.required,
-        ]);
-        this.classiGoodsForm.controls['engineNumber'].setValidators([
-          Validators.required,
-        ]);
+        this.classiGoodsForm.controls['axesNumber'].setValidators([]);
+        this.classiGoodsForm.controls['engineNumber'].setValidators([]);
       }
       this.classiGoodsForm.updateValueAndValidity();
     });
