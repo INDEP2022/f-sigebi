@@ -70,7 +70,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
           return 'text-success';
         } else {
           return 'text-danger';
-        }
+        } //bg-dark text-white
       },
     };
   }
