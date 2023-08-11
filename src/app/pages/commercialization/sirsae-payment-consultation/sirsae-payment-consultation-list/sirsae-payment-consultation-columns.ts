@@ -1,3 +1,5 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const CONSULT_SIRSAE_COLUMNS = {
   accountbank: {
     title: 'Cuenta Bancaria',
@@ -21,6 +23,13 @@ export const CONSULT_SIRSAE_COLUMNS = {
     title: 'Fecha Movimiento',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (text: string) => {
+      return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''}`;
+    },
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
   },
   importdep: {
     title: 'Importe Depósito',
