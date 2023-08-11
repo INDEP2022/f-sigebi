@@ -21,6 +21,21 @@
             </ngx-select>
           </form-field>
         </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            [disabled]="!eventSelected"
+            (click)="search()"
+            class="btn btn-sm btn-block btn-primary active">
+            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+          <button
+            (click)="clear()"
+            class="btn btn-sm btn-block btn-danger active">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
         <div class="col-sm-3 col-md-3">
           <form-field [control]="form.get('bank')">
             <ngx-select
@@ -38,25 +53,20 @@
         </div>
         <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
           <button
-            [disabled]="!eventSelected"
-            (click)="search()"
-            class="btn btn-sm btn-block btn-primary active">
-            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-          <button
-            (click)="clear()"
-            class="btn btn-sm btn-block btn-danger active">
-            Limpiar <i class="fas fa-eraser"> </i>
-          </button>
-        </div>
-        <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-          <button
+            [disabled]="loading || loadingBtn"
+            [ngClass]="{ loading: loadingBtn }"
             (click)="carga()"
             class="btn btn-sm btn-block btn-success active">
-            Carga <i class="bx bx-download float-icon"></i>
+            Carga Pagos
+            <i *ngIf="!loadingBtn" class="bx bx-download float-icon"></i>
           </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
         </div>
       </div>
       <div #scrollContainer class="row">
@@ -72,12 +82,88 @@
               readonly />
           </form-field>
         </div>
+        <div *ngIf="cargado" class="col-6 mt-3">
+          <form class="form-material" [formGroup]="form2">
+            <div class="row">
+              <div class="col-4"></div>
+              <div class="col-4">
+                <form-field
+                  [control]="form2.get('BLK_CTRL_CUANTOS')"
+                  label="Registros Cargados">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="BLK_CTRL_CUANTOS" />
+                </form-field>
+              </div>
+              <div class="col-4">
+                <form-field
+                  [control]="form2.get('BLK_CTRL_MONTO')"
+                  label="Monto Cargado">
+                  <input
+                    readonly
+                    type="text"
+                    class="form-control"
+                    formControlName="BLK_CTRL_MONTO" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </form>
   </div>
 </app-card>
-
-<app-card>
+<accordion [isAnimated]="true">
+  <accordion-group [isOpen]="cargado" [class.disabled]="!cargado">
+    <div accordion-heading class="d-flex justify-content-between">
+      <h5>PAGOS REFERENCIADOS CARGADOS DESDE EL CSV</h5>
+    </div>
+    <div class="row">
+      <div *ngIf="cargado" class="col-md-8 d-flex mt-3 mb-3">
+        <div style="padding-top: 6px" class="mr-2">
+          <span>
+            <i
+              tooltip=""
+              containerClass="tooltip-style"
+              class="fas fa-info-circle text-warning mr-1">
+            </i>
+          </span>
+          <span>
+            <label
+              for=""
+              style="font-size: 10px; font-weight: 600; color: #74788d"
+              >La Siguiente Tabla es de sólo Visualización.</label
+            >
+          </span>
+        </div>
+      </div>
+      <div
+        *ngIf="cargado"
+        class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
+        <app-columns-select
+          [(settings)]="settings2"
+          [leftList]="true"></app-columns-select>
+      </div>
+    </div>
+    <ng-scrollbar
+      *ngIf="cargado"
+      [track]="'all'"
+      [ngStyle]="{ height: loading2 ? '0px' : '400px' }">
+      <ng2-smart-table
+        [attr.class]="'table-bordered table-responsive'"
+        class="table-responsive"
+        [settings]="settings2"
+        [source]="dataCargada">
+      </ng2-smart-table>
+    </ng-scrollbar>
+  </accordion-group>
+</accordion>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
   <div body>
     <div class="row">
       <div class="col-md-12 text-end">
@@ -88,36 +174,29 @@
               [leftList]="true"></app-columns-select>
             <div>
               <button
-                [disabled]="loading"
+                [disabled]="loading || loadingBtn"
                 (click)="add()"
                 type="button"
                 class="btn btn-info btn-sm active mb-3 mr-3">
                 Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
               </button>
             </div>
+            <div>
+              <button
+                [disabled]="loading || loadingBtn2"
+                (click)="refresh()"
+                type="button"
+                tooltip="Actualizar Tabla"
+                containerClass="tooltip-style"
+                class="btn btn-primary btn-sm active mb-3 mr-3">
+                Actualizar <i class="fas fa-sync-alt"> </i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div *ngIf="!cargado" class="row mb-3">
-      <form-loader *ngIf="loading"></form-loader>
-      <ng-scrollbar
-        [track]="'all'"
-        [ngStyle]="{ height: loading ? '0px' : '400px' }">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive'"
-          class="table-responsive"
-          [settings]="settings"
-          [source]="data"
-          (edit)="edit($event.data)"
-          (userRowSelect)="rowsSelected($event)"
-          (delete)="questionDelete($event.data)">
-        </ng2-smart-table>
-      </ng-scrollbar>
-      <app-pagination
-        [params]="params"
-        [totalItems]="totalItems"></app-pagination>
-    </div>
+
     <form-loader *ngIf="loading"></form-loader>
     <ng-scrollbar
       [track]="'all'"
@@ -135,6 +214,7 @@
     <app-pagination
       [params]="params"
       [totalItems]="totalItems"></app-pagination>
+    <!-- <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination> -->
 
     <div class="row justify-content-center mt-5">
       <div class="col-sm-2 col-md-2 col-xl-2 mt-2">

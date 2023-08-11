@@ -58,11 +58,11 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
       dateModification: this.today,
       version: '2',
       subject: `${this.form.controls['subject'].value}`,
-      nameAtt: '',
+      nameAtt: 'Reporte',
       typeAtt: 'application/pdf;',
       //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
       process: '',
-      wcontent: '',
+      wcontent: 'SAE548665',
     };
     console.log('Objeto que se envia', data);
 
