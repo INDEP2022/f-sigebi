@@ -72,6 +72,7 @@ export class HttpService {
    * @returns regresa la ruta completa: 'http://sigebimsqa.indep.gob.mx/microservice/api/{route}'
    */
   protected buildRoute(route: string): string {
+    console.log(route);
     return `${this.url}${this.microservice}/${this.prefix}${route}`;
   }
 
