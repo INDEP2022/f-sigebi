@@ -133,7 +133,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
       this.form.get('clientId').setValue(this.data.idAndName);
       this.form.get('bankKey').setValue(this.data.bankAndNumber);
-
+      this.form.get('typeSatId').setValue(this.data.descTypeSatId);
       console.log('this.data', this.data);
 
       // if (this.data.clientId) {
@@ -221,8 +221,19 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
         this.handleSuccess();
       },
       error: error => {
-        this.handleError();
-        // this.alert('error','Ocurrió un Error al Eliminar el Registro','');
+        if (
+          error.error.message ==
+          'duplicate key value violates unique constraint "unique_pago"'
+        ) {
+          this.alert(
+            'error',
+            'Se ha Encontrado un Registro con estos Datos',
+            'Verifique y Actualice Nuevamente'
+          );
+        } else {
+          this.handleError();
+        }
+        //
       },
     });
   }

@@ -5,11 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  NUMBERS_PATTERN,
-  PHONE_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ICourt } from '../../../../core/models/catalogs/court.model';
 import { CourtService } from './../../../../core/services/catalogs/court.service';
@@ -48,7 +44,6 @@ export class CourtFormComponent extends BasePage implements OnInit {
       description: [
         null,
         [
-          Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(100),
@@ -68,7 +63,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
       ],
       numPhone: [
         null,
-        [Validators.pattern(PHONE_PATTERN), Validators.maxLength(20)],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
       ],
       cologne: [
         null,
@@ -80,7 +75,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
       ],
       numInside: [
         null,
-        [Validators.maxLength(3), Validators.pattern(NUMBERS_PATTERN)],
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
       ],
       numExterior: [
         null,
@@ -120,19 +115,33 @@ export class CourtFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.courtService.create(this.courtForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.courtForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.courtService.create(this.courtForm.getRawValue()).subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.courtService.update(this.court.id, this.courtForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.courtForm.controls['description'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.courtService
+        .update(this.court.id, this.courtForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

@@ -1,54 +1,107 @@
+import { CustomFilterComponent } from 'src/app/@standalone/shared-forms/input-number/input-number';
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const PRE_INVOICING_COLUMNS = {
-  event: {
+  select: {
+    title: '',
+    sort: false,
+    filter: false,
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      const time = setTimeout(() => {
+        (instance.box.nativeElement as HTMLInputElement).click();
+        clearTimeout(time);
+      }, 300);
+      instance.toggle.subscribe((data: any) => {
+        instance.rowData.select = data.toggle;
+      });
+    },
+  },
+  eventId: {
     title: 'Evento',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  allotment: {
+  batchId: {
     title: 'Lote',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  client: {
+  customer: {
     title: 'Cliente',
     sort: false,
   },
-  regional: {
+  delegationNumber: {
     title: 'Regional',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  type: {
+  Type: {
     title: 'Tipo',
     sort: false,
+    valuePrepareFunction: (val: number) => {
+      return val == 7 ? 'Venta de Bases' : '';
+    },
   },
-  serie: {
+  series: {
     title: 'Serie',
     sort: false,
   },
-  folio: {
+  folioinvoiceId: {
     title: 'Folio',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  status: {
-    title: 'Estado',
+  factstatusId: {
+    title: 'Estatus',
     sort: false,
   },
-  type2: {
+  vouchertype: {
     title: 'Tipo',
     sort: false,
   },
-  date: {
+  impressionDate: {
     title: 'Fecha',
     sort: false,
+    valuePrepareFunction: (val: string) => {
+      return val ? val.split('-').reverse().join('/') : '';
+    },
   },
   price: {
     title: 'Precio',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
-  iva: {
+  vat: {
     title: 'IVA',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
   total: {
     title: 'Total',
     sort: false,
+    filter: {
+      type: 'custom',
+      component: CustomFilterComponent,
+    },
   },
 };

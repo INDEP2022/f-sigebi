@@ -21,6 +21,11 @@ export class MaximunClosingTimeService extends HttpService {
       params
     );
   }
+  getByTypeActa() {
+    return this.get(
+      `${this.endpoint}?filter.type=$ilike:PD3&&filter.active=$ilike:S`
+    );
+  }
 
   // getDetailProceedingsDevolutionByExpedient(
   //   fileNumber: string | number,

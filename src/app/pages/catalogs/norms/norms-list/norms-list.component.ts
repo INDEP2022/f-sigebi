@@ -53,18 +53,32 @@ export class NormsListComponent extends BasePage implements OnInit {
           filters.map((filter: any) => {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            filter.field == 'id'
-              ? ((searchFilter = SearchFilter.EQ),
-                (field = `filter.${filter.field}`))
-              : ((searchFilter = SearchFilter.ILIKE),
-                (field = `filter.${filter.field}`));
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'destination':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'condition':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -160,7 +174,7 @@ export class NormsListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

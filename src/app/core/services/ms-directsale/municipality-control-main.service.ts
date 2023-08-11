@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Directsale } from 'src/app/common/constants/endpoints/ms-directsale';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { BienesAsignados } from '../../models/ms-directsale/BienesAsignados';
 import { Solicitud } from '../../models/ms-directsale/solicitante';
 
@@ -14,9 +14,9 @@ export class MunicipalityControlMainService extends HttpService {
     super();
     this.microservice = this.route.BasePath;
   }
-  getSolicitantes() {
+  getSolicitantes(params?: _Params) {
     console.log(this.route.DIRECTSALE_SOLICITANTES);
-    return this.get(`${this.route.DIRECTSALE_SOLICITANTES}`);
+    return this.get(`${this.route.DIRECTSALE_SOLICITANTES}`, params);
   }
   getSolicitanteById(id: string) {
     return this.get(`${this.route.DIRECTSALE_SOLICITANTES}`, id);
@@ -25,13 +25,14 @@ export class MunicipalityControlMainService extends HttpService {
     return this.put(`${this.route.DIRECTSALE_SOLICITANTES}`, body);
   }
   addSolicitante(body: Solicitud) {
-    console.log(body);
+    console.log(JSON.stringify(body));
     return this.post(`${this.route.DIRECTSALE_SOLICITANTES}`, body);
   }
   deleteSolicitante(id: any) {
     return this.delete(`${this.route.DIRECTSALE_SOLICITANTES}`, id);
   }
   /////////////////////////////////////////////////////////////////////
+
   getBienesAsignados() {
     return this.get(`${this.route.DIRECTSALE_BIENES}`);
   }

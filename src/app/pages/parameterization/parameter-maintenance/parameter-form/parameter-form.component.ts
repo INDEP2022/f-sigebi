@@ -20,6 +20,7 @@ export class ParameterFormComponent extends BasePage implements OnInit {
   parameter: IParameters = {} as IParameters;
   minDate = new Date('1999/01/01');
   invalidDate: boolean = false;
+  minDate1: Date;
 
   constructor(
     private fb: FormBuilder,
@@ -52,19 +53,29 @@ export class ParameterFormComponent extends BasePage implements OnInit {
           Validators.maxLength(60),
         ],
       ],
-      initialValue: [null, [Validators.required, Validators.maxLength(200)]],
-      finalValue: [null, Validators.maxLength(200)],
+      initialValue: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      finalValue: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
       startDate: [null, Validators.required],
       endDate: [null],
     });
 
-    this.form.get('startDate').valueChanges.subscribe({
+    /*this.form.get('startDate').valueChanges.subscribe({
       next: () => this.validateDate(),
     });
 
     this.form.get('endDate').valueChanges.subscribe({
       next: () => this.validateDate(),
-    });
+    });*/
 
     this.form.patchValue(this.parameter);
     if (this.edit) this.form.get('id').disable();
@@ -97,12 +108,17 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     }
   }
 
+  validateDate1(event: Date) {
+    this.minDate1 = event;
+  }
+
   dateTimeTypeString(date: string): number {
     let time: string = date.split('T')[0].split('-').join('/');
     return new Date(time).getTime();
   }
 
   dateTimeTypeDate(date: Date): number {
+    //var formatted = new DatePipe('en-EN').transform(date, 'dd/MM/yyyy', 'UTC');
     let time: string = this.datePipe.transform(date, 'yyyy/MM/dd');
     return new Date(time).getTime();
   }
@@ -111,24 +127,50 @@ export class ParameterFormComponent extends BasePage implements OnInit {
     this.loading = true;
     if (this.form.valid) {
       if (this.edit) {
-        this.form.get('id').enable();
-        this.parameterServ
-          .update(this.form.get('id').value, this.form.value)
-          .subscribe({
+        if (
+          this.form.controls['id'].value.trim() == '' ||
+          this.form.controls['description'].value.trim() == '' ||
+          this.form.controls['initialValue'].value.trim() == '' ||
+          (this.form.controls['id'].value.trim() == '' &&
+            this.form.controls['description'].value.trim() == '' &&
+            this.form.controls['initialValue'].value.trim() == '')
+        ) {
+          this.alert('warning', 'No se puede guardar campos vacíos', ``);
+          this.loading = false;
+          return;
+        } else {
+          this.form.get('id').enable();
+          this.parameterServ
+            .update(this.form.get('id').value, this.form.getRawValue())
+            .subscribe({
+              next: () => this.handleSuccess(),
+              error: err => {
+                this.loading = false;
+                this.onLoadToast('error', err.error.message, '');
+              },
+            });
+        }
+      } else {
+        if (
+          this.form.controls['id'].value.trim() == '' ||
+          this.form.controls['description'].value.trim() == '' ||
+          this.form.controls['initialValue'].value.trim() == '' ||
+          (this.form.controls['id'].value.trim() == '' &&
+            this.form.controls['description'].value.trim() == '' &&
+            this.form.controls['initialValue'].value.trim() == '')
+        ) {
+          this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+          this.loading = false;
+          return;
+        } else {
+          this.parameterServ.create(this.form.getRawValue()).subscribe({
             next: () => this.handleSuccess(),
             error: err => {
               this.loading = false;
               this.onLoadToast('error', err.error.message, '');
             },
           });
-      } else {
-        this.parameterServ.create(this.form.value).subscribe({
-          next: () => this.handleSuccess(),
-          error: err => {
-            this.loading = false;
-            this.onLoadToast('error', err.error.message, '');
-          },
-        });
+        }
       }
     }
   }

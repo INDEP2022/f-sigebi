@@ -14,8 +14,10 @@ import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
 import { ICaptureDigViewHistoryIndicators } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
+  IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+import { IVJuridical } from '../../models/ms-goods-query/v-juridical.model';
 
 export class LocalListParamsTest {
   text?: string = '';
@@ -41,6 +43,7 @@ export class GoodsQueryService extends HttpService {
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private routeGoodsProg = GoodsQueryEndpoints.ProgrammingGood;
+  private routeindicators = GoodsQueryEndpoints.indicatorsEntRecep;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private catMeasureUnitsView: GoodsQueryEndpoints.MeasureUnitsView;
   private goodQueryRepository = inject(MsGoodQueryRepository);
@@ -159,6 +162,12 @@ export class GoodsQueryService extends HttpService {
     return this.get(`${this.attribClassifGoodRoute}?${params}`);
   }
 
+  getIndicatorsEntRecep(
+    params?: ListParams
+  ): Observable<IListResponse<IindicatorsEntRecep>> {
+    return this.get(`${this.routeindicators}?${params}`);
+  }
+
   create(model: IAttribClassifGoods): Observable<IAttribClassifGoods> {
     return this.attribClassifGoodMethodsRepository.create(
       this.attribClassifGoodRoute,
@@ -265,6 +274,13 @@ export class GoodsQueryService extends HttpService {
 
   getVIndProceedingsEntReception(params: ListParams) {
     return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
+  }
+
+  getVCatJur(params: _Params) {
+    return this.get<IListResponse<IVJuridical>>(
+      'application/get-all-v-cat-jur',
+      params
+    );
   }
 
   //

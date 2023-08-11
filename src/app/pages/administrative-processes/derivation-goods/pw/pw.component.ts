@@ -9,7 +9,15 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-pw',
   templateUrl: './pw.component.html',
-  styles: [],
+  styles: [
+    `
+      #togglePassword {
+        margin-left: -30px;
+        cursor: pointer;
+        font-size: 15px;
+      }
+    `,
+  ],
 })
 export class PwComponent extends BasePage implements OnInit {
   //Reactive Forms
@@ -19,6 +27,7 @@ export class PwComponent extends BasePage implements OnInit {
   conversionData: any;
   // Variable para la contraseña
   private _password: string;
+  showPassword: boolean = false;
   conversionId: any;
   cveActaConv: any;
   get idConversion() {

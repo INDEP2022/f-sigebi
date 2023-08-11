@@ -4,7 +4,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITvaltables1 } from 'src/app/core/models/catalogs/tvaltable-model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
@@ -65,6 +68,7 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
   showTable: boolean = false;
   consulto: boolean = false;
   notificationSelect: any;
+  isInstitutionNumber: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -129,6 +133,66 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForms();
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'expedientNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'wheelNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'institutionNumber':
+                this.isInstitutionNumber = true;
+                searchFilter = SearchFilter.LIKE;
+                break;
+              case 'courtNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'receiptDate':
+                if (filter.search != null) {
+                  filter.search = this.returnParseDate(filter.search);
+                  searchFilter = SearchFilter.EQ;
+                } else {
+                  filter.search = '';
+                }
+                break;
+              case 'externalOfficeDate':
+                filter.search = this.returnParseDate(filter.search);
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              if (this.isInstitutionNumber) {
+                this.columnFilters[
+                  `${field}.description`
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
+              this.params.value.page = 1;
+            } else {
+              delete this.columnFilters[field];
+              delete this.columnFilters[`${field}.description`];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getNotificationsTable();
+        }
+      });
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.consulto) this.getNotificationsTable();
     });

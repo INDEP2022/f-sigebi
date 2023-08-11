@@ -6,14 +6,37 @@
   <div body>
     <form [formGroup]="flyersForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
-          <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
-          <app-federative-shared [form]="flyersForm"></app-federative-shared>
+        <div class="col-md-4" style="margin-top: 10px">
+          <form-field [control]="flyersForm.get('delegation')">
+            <ngx-select
+              [form]="flyersForm"
+              [data]="selectedDelegation"
+              value="description"
+              bindLabel="description"
+              label="Delegación"
+              (fetchItems)="getDelegation($event)"
+              control="delegation">
+            </ngx-select>
+          </form-field>
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('subdelegation')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectedSubDelegation"
+                value="description"
+                bindLabel="description"
+                label="Subdelegación"
+                (fetchItems)="getSubDelegations($event)"
+                control="subdelegation">
+              </ngx-select>
+            </form-field>
+          </div>
 
-          <form-check label="Filtrar por &aacute;rea" for="make_filter">
+          <form-check label="Filtrar por &Aacute;rea" for="make_filter">
             <input
               id="make_filter"
               type="checkbox"
+              (click)="activeFlag()"
               formControlName="includeArea" />
           </form-check>
         </div>
@@ -27,7 +50,8 @@
                 (bsValueChange)="onDateChange($event)"
                 formControlName="PF_FECINI"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
 
@@ -37,10 +61,12 @@
               label="Recepción Hasta">
               <input
                 id="toDate"
+                [maxDate]="maxDate"
                 formControlName="PF_FECFIN"
                 class="form-control"
                 [minDate]="minDate"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
           <div
@@ -53,8 +79,18 @@
           <!-- (change)="onDptossChange($event)" -->
 
           <div class="row pt-3" *ngIf="includeArea.value">
-            <app-departments-shared
-              [form]="flyersForm"></app-departments-shared>
+            <form-field [control]="flyersForm.get('department')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectDepartament"
+                value="description"
+                bindLabel="description"
+                label="Departmento"
+                (fetchItems)="getDepartament($event)"
+                (click)="onDepartmentsChange($event)"
+                control="department">
+              </ngx-select>
+            </form-field>
           </div>
         </div>
         <div class="col-md-4" *ngIf="includeArea.value">
@@ -67,8 +103,8 @@
               [data]="selectedDelegation"
               bindLabel="description"
               label="Delegación Destino"
-              value="id"
-              (change)="onDelegationsChange($event)"></ngx-select>
+              (click)="onDepartmentsChange($event)"
+              value="id"></ngx-select>
           </div>
           <div class="row pt-3">
             <ngx-select
@@ -78,7 +114,7 @@
               [showTooltip]="true"
               [data]="selectedSubDelegation"
               bindLabel="description"
-              (change)="onSubDelegationsChange($event)"
+              (click)="onDepartmentsChange($event)"
               label="Subdelegación Destino"
               value="id"></ngx-select>
           </div>
@@ -93,7 +129,7 @@
           text="Imprimir"
           [btnSmall]="true"
           icon="bx bx-printer bx-sm float-icon"
-          [disabled]="flyersForm.invalid"
+          [disabled]="flyersForm.invalid || !flagA"
           [loading]="loading"
           (confirm)="Generar()">
         </confirm-button>

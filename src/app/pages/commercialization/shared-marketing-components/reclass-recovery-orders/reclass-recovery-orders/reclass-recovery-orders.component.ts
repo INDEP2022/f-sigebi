@@ -119,7 +119,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getOI({ page: 1, text: '' });
+    // this.idOI({ page: 1, text: '' });
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(params => {
       if (this.dataComerDetails['data'].length > 0) {
@@ -148,9 +148,6 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
       chain: [null],
     });
   }
-  getOI(params: ListParams) {}
-
-  //Busqueda por el id OI
   searchOI() {
     if (this.idOI.value != null) {
       const paramsF = new FilterParams();
@@ -253,4 +250,8 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
       }
     );
   }
+
+  //Llenar los datos traidos
+
+  //Traer detalles
 }

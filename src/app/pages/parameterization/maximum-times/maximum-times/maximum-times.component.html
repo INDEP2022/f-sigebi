@@ -4,18 +4,24 @@
       <h5 class="title">
         Tiempo M&aacute;ximo Para Cierre Actas Devoluci&oacute;n
       </h5>
-      <div class="col-md-5 buttons">
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end mb-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
         <div>
           <button
-            class="btn btn-primary active btn-sm ml-3"
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2"
             (click)="openForm()">
-            Nuevo
+            Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
           </button>
         </div>
       </div>
     </div>
-  </div>
-  <div body>
     <div class="row pt-4">
       <div class="col-md-12">
         <div class="table-responsive">
@@ -23,7 +29,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings"
-              [source]="maximumTimes"
+              [source]="data"
               (edit)="openForm($event.data)"
               (delete)="opendelete($event)">
             </ng2-smart-table>

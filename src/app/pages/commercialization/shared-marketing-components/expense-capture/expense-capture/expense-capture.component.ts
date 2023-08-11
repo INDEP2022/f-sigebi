@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ActivatedRoute } from '@angular/router';
+import { ExpenseCaptureDataService } from '../services/expense-capture-data.service';
 
 @Component({
   selector: 'app-expense-capture',
@@ -11,7 +12,10 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ExpenseCaptureComponent extends BasePage {
   address: string;
-  constructor(private activateRoute: ActivatedRoute) {
+  constructor(
+    private activateRoute: ActivatedRoute,
+    private dataService: ExpenseCaptureDataService
+  ) {
     super();
     this.activateRoute.params.subscribe({
       next: param => {
@@ -20,5 +24,13 @@ export class ExpenseCaptureComponent extends BasePage {
         }
       },
     });
+  }
+
+  get form() {
+    return this.dataService.form;
+  }
+
+  get conceptNumber() {
+    return this.form ? this.form.get('conceptNumber').value : null;
   }
 }

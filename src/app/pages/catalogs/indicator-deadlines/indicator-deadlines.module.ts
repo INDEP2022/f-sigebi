@@ -7,12 +7,14 @@ import { IndicatorDeadlinesFormComponent } from './indicator-deadlines-form/indi
 import { IndicatorDeadlinesListComponent } from './indicator-deadlines-list/indicator-deadlines-list.component';
 import { IndicatorDeadlinesParametersComponent } from './indicator-deadlines-parameters/indicator-deadlines-parameters.component';
 import { IndicatorDeadlinesRoutingModule } from './indicator-deadlines-routing.module';
+import { IndicatorFormComponent } from './indicator-form/indicator-form.component';
 
 @NgModule({
   declarations: [
     IndicatorDeadlinesListComponent,
     IndicatorDeadlinesFormComponent,
     IndicatorDeadlinesParametersComponent,
+    IndicatorFormComponent,
   ],
   imports: [
     CommonModule,

@@ -1,32 +1,32 @@
 import { BtnRequestComponent } from '../../../../shared-request/expedients-tabs/sub-tabs/btn-request/btn-request.component';
 
 export const LIST_EXPEDIENTS_COLUMN = {
-  noDoc: {
+  dDocName: {
     title: 'No. Documento',
     type: 'string',
     sort: false,
   },
-  noAsset: {
+  xidBien: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
   },
-  titleDocument: {
+  ddocTitle: {
     title: 'Título del Documento',
     type: 'string',
     sort: false,
   },
-  typeDocument: {
+  xtipoDocumento: {
     title: 'Tipo de Documento',
     type: 'string',
     sort: false,
   },
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
-  date: {
+  dInDate: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
-import { getUser } from 'src/app/common/helpers/helpers';
 import {
   FilterParams,
   ListParams,
@@ -113,33 +112,6 @@ export class NoticeAbandonmentForSecuringComponent
         .getValue()
         .addFilter('numberProperty', this.form.value.goodId, SearchFilter.EQ);
     }
-    // if (this.form.value.quantity) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('quantity', this.form.value.quantity, SearchFilter.ILIKE);
-    // }
-    // if (this.form.value.periods) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('period', this.form.value.periods, SearchFilter.ILIKE);
-    // }
-
-    // if (this.form.value.periods) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('period1', this.form.value.periods, SearchFilter.ILIKE);
-    // }
-
-    // if (this.form.value.periods) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('period2', this.form.value.periods, SearchFilter.ILIKE);
-    // }
-
-    // console.log(
-    //   'this.filterParams: ',
-    //   this.filterParams.getValue().getParams()
-    // );
 
     this.loading = true;
     this.loadingText = 'Cargando';
@@ -187,7 +159,7 @@ export class NoticeAbandonmentForSecuringComponent
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', ' Revise los datos ingresados');
       },
     });
   }
@@ -206,7 +178,7 @@ export class NoticeAbandonmentForSecuringComponent
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', 'Revise los datos ingresados');
       },
     });
   }
@@ -235,12 +207,9 @@ export class NoticeAbandonmentForSecuringComponent
     });
   }
   clean() {
-    // this.documentsEstData = [];
     this.form.reset();
     this.searching = false;
     this.data = [];
-    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    // this.requestId = null;
   }
 
   search() {
@@ -259,7 +228,7 @@ export class NoticeAbandonmentForSecuringComponent
     }
   }
   accept() {
-    console.log(this.selectedGood.status);
+    /*console.log(this.selectedGood.status);
     let validateParams = {
       status: this.selectedGood.status,
       notifyDate: this.selectedRow.notificationDate,
@@ -316,7 +285,7 @@ export class NoticeAbandonmentForSecuringComponent
         'Error',
         'Deben haber 3 notificaciones de aseguramiento para ir a Confirmación de Abandonos.'
       );
-    }
+    }*/
   }
 
   onSelectedGood(event: any) {

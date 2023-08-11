@@ -51,6 +51,7 @@ export class DeclarationAbandonmentInsuranceComponent
 
     this.prepareForm();
     this.loading = true;
+    console.log('good ', id);
   }
 
   // PREPARAMOS EL FORMULARIO //
@@ -80,7 +81,11 @@ export class DeclarationAbandonmentInsuranceComponent
         console.log('RESPONSE', response);
         setTimeout(() => {
           this.good = response;
-
+          if (response.notifyDate != null) {
+            this.form
+              .get('fechaNotificacion')
+              .setValue(this.formatDate(response.notifyDate));
+          }
           this.getScreenStatusFinal(response, toast);
           this.loadGood(response);
         }, 100);
@@ -97,12 +102,13 @@ export class DeclarationAbandonmentInsuranceComponent
     params['filter.status'] = `$ilike:${good.status}`;
     await this.statusGoodService.getAll(params).subscribe({
       next: (response: any) => {
+        console.log('response 1', response);
         this.form.get('descripcion').setValue(good.description);
         this.form.get('cantidad').setValue(good.quantity);
         this.form.get('estatus').setValue(response.data[0].description);
         this.form
           .get('declaracionAbandonoSERA')
-          .setValue(good.seraAbnDeclaration);
+          .setValue(response.seraAbnDeclaration);
       },
       error: err => {
         this.form.get('descripcion').setValue(good.description);
@@ -126,7 +132,7 @@ export class DeclarationAbandonmentInsuranceComponent
       estatus: good.status,
       vc_pantalla: 'FACTJURDECLABAND',
     };
-
+    console.log('getScreenStatus -> ', obj);
     let _statusFinal: any = {
       status: null,
     };
@@ -135,7 +141,7 @@ export class DeclarationAbandonmentInsuranceComponent
       (response: any) => {
         const { data } = response;
         _statusFinal.status = data[0].statusFinal.status;
-
+        console.log('Status -> ', _statusFinal);
         this.getDataNotixGood(_statusFinal);
       },
       error => {
@@ -154,18 +160,27 @@ export class DeclarationAbandonmentInsuranceComponent
     let notificationPropertyRequest = {
       numberProperty: this.good.id,
     };
-
+    console.log('OBTENEMOS DATA DE LA TABLA NOTIFICACIONES X BIENES');
     this.notificationService
       .getByNotificationxProperty2(notificationPropertyRequest)
       .subscribe({
         next: response => {
-          // console.log('NOTIFICATION X BIEN', response);
+          console.log('NOTIFICATION X BIEN', response);
+
           const { data } = response;
+          if (data[0].periodEndDate != null) {
+            this.form
+              .get('fechaTerminoPeriodo')
+              .setValue(this.formatDate(data[0].periodEndDate));
+          }
+          console.log('Response -> ', response);
+          console.log('Response data[0] -> ', data[0]);
 
           if (
             data[0].userCorrectsKey == null &&
             this.good.status != _statusFinal.status
           ) {
+            console.log('status final -> ', _statusFinal);
             this.UpdateNotificationXProperty(data[0]);
             this.updateGood(data[0], _statusFinal);
           } else if (
@@ -237,11 +252,13 @@ export class DeclarationAbandonmentInsuranceComponent
           );
         },
         error: err => {
-          this.onLoadToast(
-            'error',
-            'Declaración de Abandono',
-            err.error.message
-          );
+          console.log('error', err);
+          // this.alertQuestion(
+          //   'question',
+          //   'Declaración de Abandono Nulo',
+          //   '¿Deseas continuar?',
+          //   'Continuar'
+          // );
         },
       });
   }
@@ -307,9 +324,13 @@ export class DeclarationAbandonmentInsuranceComponent
         this.onLoadToast(
           'info',
           'Declaración de Abandono',
-          'No se encontró Estatus en la tabla Estatus_X_Pantalla'
+          'No se encontró Estatus en la Tabla Estatus_X_Pantalla'
         );
       }
     );
+  }
+
+  formatDate(fecha: string) {
+    return fecha.split('T')[0].split('-').reverse().join('/');
   }
 }

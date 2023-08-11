@@ -11,6 +11,7 @@ import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
 import { StoreModule } from '@ngrx/store';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { ComerEventTraspComponent } from './components/comer-event-trasp/comer-event-trasp.component';
 import { CommerEventCustomersComponent } from './components/commer-event-customers/commer-event-customers.component';
 import { CommerEventsListComponent } from './components/commer-events-list/commer-events-list.component';
@@ -21,6 +22,7 @@ import { EventGoodsLotsListComponent } from './components/event-goods-lots-list/
 import { EventLotFormComponent } from './components/event-lot-form/event-lot-form.component';
 import { EventLotsListComponent } from './components/event-lots-list/event-lots-list.component';
 import { EventPreparationStadisticsComponent } from './components/event-preparation-stadistics/event-preparation-stadistics.component';
+import { JuridicalCellComponent } from './components/juridical-cell/juridical-cell.component';
 import { RejectedGoodsListComponent } from './components/rejected-goods-list/rejected-goods-list.component';
 import { ReservedGoodsComponent } from './components/reserved-goods/reserved-goods.component';
 import { ConsigmentsContainerComponent } from './consigments/componets/consigments-container/consigments-container.component';
@@ -54,6 +56,7 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     ConsigmentsContainerComponent,
     ReasonsModelComponent,
     EventPreparationComponent,
+    JuridicalCellComponent,
   ],
   imports: [
     CommonModule,
@@ -65,6 +68,7 @@ import { eventPreparationReducer } from './store/event-preparation.reducer';
     TabsModule,
     ModalModule,
     StoreModule.forFeature('eventPreparation', eventPreparationReducer),
+    LinkCellComponent,
   ],
   providers: [ExcelService],
 })

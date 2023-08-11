@@ -36,7 +36,7 @@
           <div class="col-md-4">
             <div>
               <label for="">Fecha de Solicitud&#58;</label>
-              {{ requestData?.applicationDate | date : 'dd/MM/yyyy' }}
+              {{ requestData?.applicationDate | date: 'dd/MM/yyyy' }}
             </div>
           </div>
           <div class="col-md-4">
@@ -104,7 +104,7 @@
         <div class="row pt-2">
           <div class="col-md-6">
             <label for="">Prioridad&#58;</label>
-            <span> {{ requestData?.priorityDate | date : 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.priorityDate | date: 'dd/MM/yyyy' }}</span>
           </div>
 
           <div class="col-md-6">
@@ -115,7 +115,7 @@
         <div class="row pt-4">
           <div class="col-md-6">
             <label for="">Fecha Recepci&oacute;n&#58; </label>
-            <span> {{ requestData?.receptionDate | date : 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.receptionDate | date: 'dd/MM/yyyy' }}</span>
           </div>
           <div class="col-md-6">
             <label for="">Procedencia Informaci&oacute;n&#58; </label>
@@ -129,7 +129,7 @@
           </div>
           <div class="col-md-6">
             <label for="">Fecha de Oficio&#58; </label>
-            <span> {{ requestData?.paperDate | date : 'dd/MM/yyyy' }}</span>
+            <span> {{ requestData?.paperDate | date: 'dd/MM/yyyy' }}</span>
           </div>
         </div>
         <div class="row pt-4">
@@ -455,11 +455,26 @@
                   Simular Respuesta
                 </button>
               </div> -->
+
               <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
                   class="btn btn-success btn-sm active"
                   (click)="acceptClarification()">
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
+                </button>
+              </div>
+              <div
+                class="p-2"
+                *ngIf="
+                  notification?.answered == 'NUEVA' ||
+                  notification?.answered == 'EN ACLARACION' ||
+                  notification?.answered == 'ACLARADA' ||
+                  notification?.answered == 'IMPROCEDENTE'
+                ">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="openRecipients()">
+                  Notificar
                 </button>
               </div>
               <div
