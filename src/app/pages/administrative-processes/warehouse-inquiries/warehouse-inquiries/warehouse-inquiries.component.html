@@ -9,11 +9,13 @@
         <app-columns-select [(settings)]="settings"></app-columns-select>
         <div>
           <button
-            class="btn btn-primary active btn-sm m-2"
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="goBack()"
             *ngIf="origin != null">
-            Regresar
-            <i class="fas fa-arrow-circle-left"></i>
+            Regresar <i class="bx bx-arrow-back bx-sm float-icon"></i>
           </button>
         </div>
       </div>
