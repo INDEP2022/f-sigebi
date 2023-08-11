@@ -24,9 +24,9 @@
             [disabled]="loading"
             (click)="file.click()">
             <div class="upload-button">
-              Cargar Bienes por Archivo TXT
+              Cargar Bienes por Archivo CSV
               <!-- <i class="bi bi-filetype-txt-fill"></i> -->
-              <i class="bx bxs-file-txt"></i>
+              <i class="bx bxs-file-csv"></i>
             </div>
           </button>
           <input
@@ -34,7 +34,7 @@
             name="file"
             #file
             class="d-none"
-            accept=".txt"
+            accept=".csv"
             (change)="onFileChange($event)" />
         </div>
         <div class="clearButton col-md-3 mb-5">

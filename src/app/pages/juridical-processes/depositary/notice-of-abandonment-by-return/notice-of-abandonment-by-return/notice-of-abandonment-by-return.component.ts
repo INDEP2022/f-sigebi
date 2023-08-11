@@ -13,6 +13,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { COLUMNS } from './columns';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import { IGood } from 'src/app/core/models/good/good.model';
 @Component({
   selector: 'app-notice-of-abandonment-by-return',
@@ -33,6 +34,9 @@ export class NoticeOfAbandonmentByReturnComponent
   form: FormGroup;
   period: boolean = false;
   searching: boolean = false;
+
+  dataTable: LocalDataSource = new LocalDataSource();
+  filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
 
   get goodId() {
     return this.form.get('goodId');
@@ -131,19 +135,24 @@ export class NoticeOfAbandonmentByReturnComponent
       })
       .subscribe({
         next: response => {
-          console.log('notificacionxbien Response: ', response);
-          response.data.forEach(data => {
-            data.notificationDate = data.notificationDate
-              .toString()
-              .substring(0, data.notificationDate.toString().length - 9);
-          });
-          this.loading = false;
-          this.data = response.data;
-          this.data.forEach(d => {
-            d['number'] = d['id'];
-          });
+          let dataCreada: any[] = [];
+          for (let ficha of response.data) {
+            let fichaObjeto: any = {};
+            fichaObjeto.periodEndDate = ficha.periodEndDate;
+            fichaObjeto.notificationDate = ficha.notificationDate;
+            fichaObjeto.duct = ficha.duct;
+            fichaObjeto.notifiedTo = ficha.notifiedTo;
+            fichaObjeto.notifiedPlace = ficha.notifiedPlace;
+            fichaObjeto.editPublicationDate = ficha.editPublicationDate;
+            fichaObjeto.newspaperPublication = ficha.newspaperPublication;
+            fichaObjeto.observation = ficha.observation;
+            fichaObjeto.statusNotified = ficha.statusNotified;
+            dataCreada.push(fichaObjeto);
+          }
+          this.dataTable.load(dataCreada);
+          this.totalItems = response.data.length;
 
-          this.totalItems = this.data.length;
+          this.loading = false;
           this.searching = true;
         },
         error: () => (this.loading = false),
@@ -161,8 +170,6 @@ export class NoticeOfAbandonmentByReturnComponent
         ? (paramDinamyc = `filter.goodId=$eq:${lparams.text}`)
         : (paramDinamyc = `filter.description=$ilike:${lparams.text}`);
     }
-    //     this.goodId.value
-    // console.log('entre al filtro ', this.goodId.value , lparams);
 
     this.goodService.getAll(`${params.getParams()}&${paramDinamyc}`).subscribe({
       next: data => {
@@ -185,7 +192,6 @@ export class NoticeOfAbandonmentByReturnComponent
       let param = `filter.goodId=$eq:${goodChange.goodId}`;
       this.goodService.getAll(param).subscribe({
         next: data => {
-          console.log('data filter', data.data[0].quantity);
           this.executeCamps(data.data[0]);
         },
         error: err => {
@@ -204,9 +210,14 @@ export class NoticeOfAbandonmentByReturnComponent
   executeCamps(data: any) {
     this.quantity.setValue(data.quantity);
     const params = new FilterParams();
-    let paramDinamyc = `filter.id=$eq:${data.goodTypeId}`;
+    let paramDinamyc = `filter.id=$eq:${data.id}`;
 
-    this.goodTypesService.getAllS(`${params}&${paramDinamyc}`).subscribe({
+    let params3 = {
+      ...this.params.getValue(),
+      'filter.id': `$eq:${data.id}`,
+    };
+
+    this.goodTypesService.getAllS(params3).subscribe({
       next: value => {
         const { maxAsseguranceTime, maxFractionTime, maxExtensionTime } =
           value.data[0];
@@ -220,18 +231,15 @@ export class NoticeOfAbandonmentByReturnComponent
           this.periods1.setValue(maxFractionTime);
           this.periods2.setValue(maxExtensionTime);
         } else {
-          this.onLoadToast('error', 'No existen Periodos', 'periodos vacios');
+          this.onLoadToast('error', 'No existen Periodos', 'Periodos Vacíos');
         }
       },
     });
   }
   clean() {
-    // this.documentsEstData = [];
     this.form.reset();
     this.searching = false;
     this.data = [];
-    // this.params = new BehaviorSubject<FilterParams>(new FilterParams());
-    // this.requestId = null;
   }
 
   search() {

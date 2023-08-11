@@ -17,6 +17,7 @@ import {
   IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+import { IVJuridical } from '../../models/ms-goods-query/v-juridical.model';
 
 export class LocalListParamsTest {
   text?: string = '';
@@ -273,6 +274,13 @@ export class GoodsQueryService extends HttpService {
 
   getVIndProceedingsEntReception(params: ListParams) {
     return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
+  }
+
+  getVCatJur(params: _Params) {
+    return this.get<IListResponse<IVJuridical>>(
+      'application/get-all-v-cat-jur',
+      params
+    );
   }
 
   //

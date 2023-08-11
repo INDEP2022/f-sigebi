@@ -211,6 +211,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         DESTINO_TRASFERENTE: element.DESTINO_TRASFERENTE,
         DESTINO_SAE: element.DESTINO_SAE,
         ID_PROGRAMACION: element.ID_PROGRAMACION,
+        PARAMETRO_CHATARRA: element.PARAMETRO_CHATARRA,
+        FRACCION_ARANCELARIA: element.FRACCION_ARANCELARIA,
         OBSERVACIONES:
           element.OBSERVACIONES != undefined ? element.OBSERVACIONES : '',
       });
@@ -857,6 +859,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       good.no_expediente = data.NO_EXPEDIENTE;
       good.descripcion_bien = data.DESCRIPCION_BIEN_TASFERENTE;
       good.descripcion_bien_sae = data.DESCRIPCION_BIEN_SAE;
+      good.codigo = data.FRACCION_ARANCELARIA;
+      good.val25 = data.PARAMETRO_CHATARRA;
       if (data.CANTIDAD_TRASFERENTE) {
         try {
           good.cantidad = Number(data.CANTIDAD_TRASFERENTE);
@@ -1099,6 +1103,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         pStateConservationSae: good.estado_conservacion_sae,
         pStatePhysicalSae: good.estado_fisico_sae,
         pInitExtentSae: good.unidad_medida_sae,
+        pTariffFraction: good.codigo,
+        pParameterScrap: good.val25,
         pDescriptionGoodSae: good.descripcion_bien_sae,
         pIdGood: good.id_bien,
       };

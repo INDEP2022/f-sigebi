@@ -20,17 +20,19 @@
             <input
               class="form-control"
               formControlName="startDate"
-              bsDatepicker />
+              bsDatepicker
+              [maxDate]="maxDate" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="notificationsForm.get('endDate')"
-            label="Hasta">
+            label="Fecha Hasta ">
             <input
               class="form-control"
               formControlName="endDate"
-              bsDatepicker />
+              bsDatepicker
+              [maxDate]="maxDate" />
           </form-field>
         </div>
         <div
@@ -44,7 +46,7 @@
         <div class="col-md-6 p-4">
           <form-field
             [control]="notificationsForm.get('name')"
-            label="Nombre Del Archivo">
+            label="Nombre del Archivo">
             <input class="form-control" formControlName="name" />
           </form-field>
         </div>
@@ -52,18 +54,18 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button
-              class="btn btn-danger btn-sm active mr-3"
-              (click)="cleanForm()">
-              Limpiar <i class="fas fa-eraser"> </i>
-            </button>
-          </div>
-          <div class="m-3">
-            <button
               type="submit"
               class="btn btn-primary btn-sm active"
               (click)="Generar()">
               Guardar
               <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              class="btn btn-danger btn-sm active mr-3"
+              (click)="cleanForm()">
+              Limpiar <i class="fas fa-eraser"> </i>
             </button>
           </div>
         </div>
