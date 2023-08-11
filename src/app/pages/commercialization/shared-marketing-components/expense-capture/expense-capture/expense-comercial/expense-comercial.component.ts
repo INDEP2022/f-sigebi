@@ -1,4 +1,8 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
@@ -277,7 +281,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   constructor(
     private dataService: ExpenseCaptureDataService,
     private spentMService: SpentMService,
-    private spentIService: SpentIService
+    private spentIService: SpentIService,
+    private parameterService: ParametersConceptsService,
+    private comerEventService: ComerEventosService
   ) {
     super();
     this.prepareForm();
@@ -373,6 +379,24 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   reloadLoteEvent(event: any) {
     console.log(event);
+    if (event)
+      this.comerEventService
+        .getMANDXEVENTO(event)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: response => {
+            if (response && response.data) {
+              if (response.data.event > 0) {
+                this.eventNumber.setValue(null);
+                this.alert(
+                  'error',
+                  'Evento',
+                  'Contiene bienes de más de un mandato verifique'
+                );
+              }
+            }
+          },
+        });
     setTimeout(() => {
       this.reloadLote = !this.reloadLote;
     }, 500);
@@ -398,6 +422,9 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }
     if (event.lotNumber) {
       this.lotNumber.setValue(event.lotNumber);
+    }
+    if (event.descurcoord) {
+      this.descurcoord.setValue(event.descurcoord);
     }
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
@@ -432,8 +459,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   get pathEvent() {
     // return 'prepareevent/api/v1/comer-event/getProcess';
     return (
-      'event/api/v1/comer-event' +
-      (this.address ? '?filter.address=$in:' + this.address + ',C' : 'C')
+      'event/api/v1/comer-event?filter.eventTpId:$in:1,2,3,4,5,10' +
+      (this.address ? '&filter.address=$eq:' + this.address : '')
     );
   }
 
@@ -450,5 +477,61 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return 'interfaceesirsae/api/v1/supplier?sortBy=clkPv:ASC';
   }
 
-  sendToSIRSAE() {}
+  get dataCompositionExpenses() {
+    return this.dataService.dataCompositionExpenses;
+  }
+
+  private async getLS_ESTATUS() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('conceptId', this.conceptNumber.value);
+    filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
+    return await firstValueFrom(
+      this.parameterService.getAll(filterParams.getParams()).pipe(
+        catchError(x => of(null)),
+        map(x => (x && x.data && x.data.length > 0 ? x.data[0].value : null))
+      )
+    );
+  }
+
+  private async getn_COUNT() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('id', this.eventNumber.value);
+    filterParams.addFilter('eventTpId', 10);
+    filterParams.addFilter('address', this.address);
+    return firstValueFrom(
+      this.comerEventService
+        .getAll(filterParams.getParams())
+        .pipe(catchError(x => of(null)))
+    );
+  }
+
+  private ENVIA_MOTIVOS() {}
+
+  async sendToSIRSAE() {
+    console.log(this.dataCompositionExpenses);
+    return;
+    let LS_ESTATUS = this.getLS_ESTATUS();
+    if (LS_ESTATUS) {
+      this.ENVIA_SOLICITUD();
+    } else {
+      if (!this.dataCompositionExpenses[0].goodNumber) {
+        this.ENVIA_SOLICITUD();
+      } else {
+        if (this.eventNumber.value) {
+          const n_COUN = await this.getn_COUNT();
+          if (n_COUN && n_COUN.data && n_COUN.data) {
+            if (n_COUN.data.length === 0) {
+              this.ENVIA_MOTIVOS();
+            } else {
+            }
+          } else {
+            this.alert('error', 'Evento Equivocado', '');
+            this.eventNumber.setValue(null);
+          }
+        }
+      }
+    }
+  }
+
+  private ENVIA_SOLICITUD() {}
 }

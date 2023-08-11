@@ -55,7 +55,7 @@ export class TypeSinisterListComponent extends BasePage implements OnInit {
                   searchFilter = SearchFilter.ILIKE;
                   break;
                 case 'flag':
-                  searchFilter = SearchFilter.ILIKE;
+                  searchFilter = SearchFilter.EQ;
                   break;
                 default:
                   searchFilter = SearchFilter.ILIKE;

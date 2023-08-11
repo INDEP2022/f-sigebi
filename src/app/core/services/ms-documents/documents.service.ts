@@ -42,6 +42,15 @@ export class DocumentsService extends HttpService {
       params
     );
   }
+  getByFolioUniversal(
+    flyerNumber: number,
+    params?: ListParams | string
+  ): Observable<IListResponse<IDocumentsViewerFlyerNumber>> {
+    return this.get<IListResponse<IDocumentsViewerFlyerNumber>>(
+      `${DocumentsEndpoints.Documents}?filter.id=$eq:${flyerNumber}&&filter.scanStatus=$ilike:ESCANEADO`,
+      params
+    );
+  }
 
   getAllFilter(params?: _Params): Observable<IListResponse<IDocuments>> {
     return this.get<IListResponse<IDocuments>>(

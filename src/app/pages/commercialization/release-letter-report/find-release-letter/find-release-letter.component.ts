@@ -129,6 +129,10 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   handleSuccess(): void {
+    if (!this.selectedRow) {
+      this.alert('warning', 'Selecciona un Registro para Continuar', '');
+      return;
+    }
     this.loading = true;
     this.onSave.emit(this.selectedRow);
     this.loading = false;

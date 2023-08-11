@@ -59,7 +59,8 @@
                 (bsValueChange)="onDateChange($event)"
                 formControlName="PF_FECINI"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
 
@@ -73,7 +74,8 @@
                 formControlName="PF_FECFIN"
                 class="form-control"
                 [minDate]="minDate"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
           <div

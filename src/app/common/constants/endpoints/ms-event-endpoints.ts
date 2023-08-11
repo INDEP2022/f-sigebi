@@ -16,4 +16,5 @@ export enum EventEndpoints {
   Application = 'application',
   AppGetfComer = 'application/get-f-comer',
   DetResumen = 'application/det-resumen',
+  MANDXEVENTO = 'application/valid-mand-x-event',
 }
