@@ -20,7 +20,7 @@ export class ComerEventosService extends HttpService {
     return this.get<IListResponse<IComerEvent>>(EventEndpoints.ComerE, params);
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IComerEvent>> {
+  getAll(params?: _Params): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
   }
   getAllTypeEvent(params?: ListParams): Observable<IListResponse<IComerEvent>> {
@@ -101,5 +101,9 @@ export class ComerEventosService extends HttpService {
 
   getByIdComerTEvents(id: string | number) {
     return this.get<IListResponse<any>>(`${EventEndpoints.ComerTEvents}/${id}`);
+  }
+
+  getMANDXEVENTO(event: string) {
+    return this.get(EventEndpoints.MANDXEVENTO + '/' + event);
   }
 }

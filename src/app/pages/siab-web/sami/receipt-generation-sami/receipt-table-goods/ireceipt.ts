@@ -51,6 +51,8 @@ export interface IReceiptExceltem {
   DESTINO_TRASFERENTE: string;
   DESTINO_SAE: string;
   ID_PROGRAMACION: number;
+  PARAMETRO_CHATARRA: string;
+  FRACCION_ARANCELARIA: string;
   OBSERVACIONES?: string;
 }
 export interface IReceiptGoodItem {
@@ -87,6 +89,8 @@ export interface IReceiptGoodItem {
   destino_sae?: number;
   destino_sae_letra?: string;
   observaciones?: string;
+  codigo?: string;
+  val25?: string;
 }
 export interface IProgramingReception {
   id: number;

@@ -340,6 +340,46 @@ export class InvoiceRectificationProcessComponent
     }
   }
 
+  saveDataSilent() {
+    if (!this.isSearch) this.setYear();
+
+    const saveData = this.form.value;
+
+    saveData.expDate =
+      typeof saveData.expDate == 'string'
+        ? saveData.expDate.split('/').reverse().join('-')
+        : this.datePipe.transform(saveData.expDate, 'yyyy-MM-dd');
+    saveData.attentionDate =
+      typeof saveData.attentionDate == 'string'
+        ? saveData.attentionDate.split('/').reverse().join('-')
+        : this.datePipe.transform(saveData.attentionDate, 'yyyy-MM-dd');
+
+    if (!this.isSearch) {
+      if (typeof saveData.hourAttention == 'string') {
+        const fecha = saveData.hourAttention.split(' ');
+        saveData.hourAttention = `${fecha[0].split('/').reverse().join('-')} ${
+          fecha[1]
+        }`;
+      } else {
+        saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+      }
+
+      saveData.billDate =
+        typeof saveData.billDate == 'string'
+          ? saveData.billDate.split('/').reverse().join('-')
+          : saveData.billDate;
+
+      this.comerRectInoviceService.create(saveData).subscribe({
+        next: () => {
+          this.isSearch = true;
+        },
+        error: err => {
+          this.alert('error', 'Error', err.error.message);
+        },
+      });
+    }
+  }
+
   setYear() {
     const { expDate } = this.form.value;
     let year =
@@ -598,7 +638,7 @@ export class InvoiceRectificationProcessComponent
       typeof hourAttention == 'string'
         ? this.datePipe.transform(
             new Date(
-              `${hourAttention.split(' ')[0].split('/').reverse().join('-')} ${
+              `${hourAttention.split(' ')[0].split('/').reverse().join('/')} ${
                 hourAttention.split(' ')[1]
               }`
             ),
@@ -657,12 +697,19 @@ export class InvoiceRectificationProcessComponent
       return;
     }
 
+    this.saveDataSilent();
+
     let config: ModalOptions = {
       initialState: {
         allotment: context,
         factura: this.form.value,
         callback: (next: boolean) => {
           if (next) {
+            if (!this.isSearch) {
+              this.paramsList.getValue()[
+                'filter.notJob'
+              ] = `${SearchFilter.EQ}:${jobNot}`;
+            }
             this.getComerDirectInvoice();
           }
         },

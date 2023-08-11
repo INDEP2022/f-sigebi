@@ -8,8 +8,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
@@ -37,47 +41,53 @@ export class NewDocumentFormComponent
   regionalDelegationSelected = new DefaultSelect();
 
   //datos pasados por el modal
-  data: string = '';
+  data: any[] = [];
   typeComponent: string = '';
   isDisable: boolean = false;
+  delegationId: number = null;
+  stateId: number = null;
 
-  private readonly wcontentService = inject(WContentService);
+  private wcontentService = inject(WContentService);
+  private regionalDelegationService = inject(RegionalDelegationService);
+  private stateService = inject(DelegationStateService);
+  private transferentService = inject(TransferenteService);
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
-    console.log(this.typeComponent);
     /*if (this.typeComponent === 'verify-noncompliance') {
       this.isDisable = false;
     }*/
     this.initForm();
     this.getTypeDocSelect();
+    this.getRegionalDelegationSelect(new ListParams());
+    this.documentForm.get('xidBien').setValue(this.data[0].goodId);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    //console.log(changes);
   }
 
   initForm(): void {
     this.documentForm = this.fb.group({
-      typeDoc: [null],
+      xtipoDocumentov: [null],
       noDoc: [null],
-      titleDoc: [null, [Validators.pattern(STRING_PATTERN)]],
-      noAsset: [{ value: null, disabled: true }],
-      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
-      noSiab: [null],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      regionalDelegation: [{ value: '', disabled: this.isDisable }],
-      noOfice: [null],
-      state: [null],
-      noProgramming: [null],
-      typeTranfer: [null],
-      programmingFolio: [null],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      comments: [null, [Validators.pattern(STRING_PATTERN)]],
-      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      dDocTitle: [null, [Validators.pattern(STRING_PATTERN)]],
+      xidBien: [{ value: null, disabled: true }],
+      xresponsable: [null, [Validators.pattern(STRING_PATTERN)]],
+      xIdSIAB: [null],
+      xcontribuyente: [null, [Validators.pattern(STRING_PATTERN)]],
+      xDelegacionRegional: [{ value: '', disabled: this.isDisable }],
+      xnoOficio: [null],
+      xestado: [null],
+      xNoProgramacion: [null],
+      xtipoTransferencia: [null],
+      xFolioProgramacion: [null],
+      xremitente: [null, [Validators.pattern(STRING_PATTERN)]],
+      xComments: [null, [Validators.pattern(STRING_PATTERN)]],
+      xcargoRemitente: [null, [Validators.pattern(STRING_PATTERN)]],
       //author: [null],
       //version: [null],
     });
@@ -104,24 +114,98 @@ export class NewDocumentFormComponent
     });
   }
 
-  getStateSelect(event: any) {}
+  getStateSelect(event: ListParams) {
+    const params = new ListParams();
+    params['filter.regionalDelegation'] = this.delegationId;
+    this.stateService.getAll(params).subscribe(data => {
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
+      this.stateSelected = new DefaultSelect(states, data.count);
+    });
+  }
 
-  getTypeTranferSelect(event: any) {}
+  changeState(data: any) {
+    if (data != undefined) {
+      this.stateId = data.id;
+      this.getTypeTranferSelect(new ListParams());
+    } else {
+      this.stateSelected = new DefaultSelect(null);
+      this.documentForm.get('xestado').setValue(null);
+      this.typeTranferSelected = new DefaultSelect(null);
+      this.documentForm.get('xtipoTransferencia').setValue(null);
+    }
+  }
 
-  getRegionalDelegationSelect(event: any) {}
+  getTypeTranferSelect(event: ListParams) {
+    const params = new ListParams();
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    params['filter.typeTransferent'] = `$eq:NO`;
+    this.transferentService.getAll(params).subscribe({
+      next: resp => {
+        this.typeTranferSelected = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
+
+  getRegionalDelegationSelect(event: ListParams) {
+    const params = new ListParams();
+    params.text = event.text;
+    this.regionalDelegationService.getAll(params).subscribe({
+      next: resp => {
+        this.regionalDelegationSelected = new DefaultSelect(
+          resp.data,
+          resp.count
+        );
+      },
+    });
+  }
+
+  changeRegionalDele(event: any) {
+    if (event != undefined) {
+      this.delegationId = event.id;
+      this.getStateSelect(new ListParams());
+    } else {
+      this.stateSelected = new DefaultSelect(null);
+      this.documentForm.get('xestado').setValue(null);
+    }
+  }
 
   close(): void {
     this.modalRef.hide();
   }
 
   save() {
-    this.messageSuccess();
+    const form = this.documentForm.getRawValue();
+    const noDocum = form.dDocTitle;
+    form.dSecurityGroup = 'Public';
+    (form.dInDate = this.setDate()),
+      this.wcontentService
+        .addDocumentToContent(
+          noDocum,
+          '.pdf',
+          JSON.stringify(form),
+          this.fileToUpload,
+          '.pdf'
+        )
+        .subscribe({
+          next: resp => {
+            this.messageSuccess();
+          },
+          error: error => {
+            this.onLoadToast('error', 'No se cargo el archivo');
+          },
+        });
   }
 
   messageSuccess() {
-    const message = 'Documento agregado exitosamente con el id: SEA022455';
+    const message = 'Documento agregado exitosamente';
     Swal.fire({
-      icon: undefined,
+      icon: 'success',
       title: 'Información',
       text: message,
       confirmButtonColor: '#9D2449',
@@ -129,5 +213,10 @@ export class NewDocumentFormComponent
       footer: '',
       allowOutsideClick: false,
     });
+  }
+
+  setDate() {
+    const date = new Date();
+    return moment(date).format('DD-MMM-YYYY');
   }
 }

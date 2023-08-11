@@ -40,6 +40,11 @@ export class ShippingDocumentsDialogComponent
     this.modalRef.content.callback(job);
     this.modalRef.hide();
   }
+  close2(job?: any) {
+    console.log('job ', job);
+    this.modalRef.content.callback('campo');
+    this.modalRef.hide();
+  }
 
   getJob() {
     this.loading = true;
