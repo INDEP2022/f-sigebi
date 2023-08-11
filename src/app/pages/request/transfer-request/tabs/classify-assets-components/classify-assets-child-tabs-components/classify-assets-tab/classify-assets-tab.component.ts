@@ -423,6 +423,7 @@ export class ClassifyAssetsTabComponent
       duplicatedGood: [null],
       admissionDate: [null],
       federalEntity: [null],
+      val25: [null],
     });
 
     if (this.goodObject != null) {
@@ -449,12 +450,8 @@ export class ClassifyAssetsTabComponent
 
     this.classiGoodsForm.controls['goodTypeId'].valueChanges.subscribe(data => {
       if (data != 2) {
-        this.classiGoodsForm.controls['axesNumber'].setValidators([
-          Validators.required,
-        ]);
-        this.classiGoodsForm.controls['engineNumber'].setValidators([
-          Validators.required,
-        ]);
+        this.classiGoodsForm.controls['axesNumber'].setValidators([]);
+        this.classiGoodsForm.controls['engineNumber'].setValidators([]);
       }
       this.classiGoodsForm.updateValueAndValidity();
     });
@@ -930,6 +927,14 @@ export class ClassifyAssetsTabComponent
         );
         return;
       }
+    }
+
+    //Establece el campo val25 si es apto o no
+    if (goods.val25 == null && goods.goodTypeId == 2) {
+      goods.val25 =
+        goods.fitCircular == 'Y'
+          ? 'APTO PARA CIRCULAR'
+          : 'NO APTO PARA CIRCULAR';
     }
 
     let goodResult: any = null;

@@ -1,4 +1,4 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
@@ -20,6 +20,10 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsByFilter(params: HttpParams) {
     return this.get('eat-lots', params);
   }
 
@@ -249,13 +253,27 @@ export class LotService extends HttpService {
     formData.append('tpeventId', `${tpeventId}`);
     const url = this.buildRoute('apps/pup-valcsv');
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
-    return this.httpClient.post(url, formData, { headers });
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   validateCustomersCSV(file: File) {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.post('apps/pup-valcsv-clients', formData);
+    const url = this.buildRoute('apps/pup-valcsv-clients');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   importCustomersBase(body: {

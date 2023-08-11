@@ -832,7 +832,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       return;
     }
     this.openModalCommercializationSignature({
-      data: { id_docums_xml: this.idDocumentsXml },
+      data: { idDocumentsxml: this.idDocumentsXml },
     });
   }
 

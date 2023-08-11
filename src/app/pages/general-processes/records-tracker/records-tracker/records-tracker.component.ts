@@ -68,6 +68,7 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
   showTable: boolean = false;
   consulto: boolean = false;
   notificationSelect: any;
+  isInstitutionNumber: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -147,6 +148,16 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
               case 'expedientNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'wheelNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'institutionNumber':
+                this.isInstitutionNumber = true;
+                searchFilter = SearchFilter.LIKE;
+                break;
+              case 'courtNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'receiptDate':
                 if (filter.search != null) {
                   filter.search = this.returnParseDate(filter.search);
@@ -165,10 +176,17 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              if (this.isInstitutionNumber) {
+                this.columnFilters[
+                  `${field}.description`
+                ] = `${searchFilter}:${filter.search}`;
+              } else {
+                this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              }
               this.params.value.page = 1;
             } else {
               delete this.columnFilters[field];
+              delete this.columnFilters[`${field}.description`];
             }
           });
           this.params = this.pageFilter(this.params);
