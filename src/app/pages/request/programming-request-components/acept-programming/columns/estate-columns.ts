@@ -1,4 +1,3 @@
-import { MeasureUnitSaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/measure-unit-sae-input/measure-unit-sae-input.component';
 import { QuantitySaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/quantity-sae-input/quantity-sae-input.component';
 import { SaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 
@@ -492,15 +491,23 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
     sort: false,
   },
 
-  saeMeasureUnit: {
-    title: 'Unidad de Medida INDEP',
+  /*  saeMeasureUnit: { */
+  /*title: 'Unidad de Medida INDEP',
     ype: 'custom',
     class: 'custom-field',
     filter: false,
     renderComponent: MeasureUnitSaeInputComponent,
     onComponentInitFunction(instance?: any) {},
+    sort: false,*/
+
+  /*  title: 'Unidad Medida INDEP',
+    type: 'string',
+    class: '',
+    filter: false,
+    renderComponent: SelectInputComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
-  },
+  }, */
 
   physicalStatus: {
     title: 'Estado Físico Transferente',
