@@ -176,8 +176,9 @@ export class SirsaePaymentConsultationListComponent
             let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
             /*SPECIFIC CASES*/
-            switch (filters.field) {
-              case 'accountbank.name_bank':
+            switch (filter.field) {
+              case 'accountbank':
+                field = `filter.accountbank.name_bank`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'ifdsc':
@@ -187,6 +188,7 @@ export class SirsaePaymentConsultationListComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'movDate':
+                filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'importdep':
@@ -196,6 +198,7 @@ export class SirsaePaymentConsultationListComponent
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'statusMov':
+                field = `filter.statusMov.statusDescription`;
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'statusMovDescription':
