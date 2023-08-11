@@ -29,3 +29,16 @@ export const APPROVAL_COLUMNS = {
     sort: false,
   },
 };
+
+export const GOOD_COLUMNS = {
+  goodId: {
+    title: 'No. Bien',
+    type: 'number',
+    sort: false,
+  },
+  amount: {
+    title: 'Cantidad',
+    type: 'number',
+    sort: false,
+  },
+};
