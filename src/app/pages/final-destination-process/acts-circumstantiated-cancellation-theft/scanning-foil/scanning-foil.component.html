@@ -1,10 +1,10 @@
 <div class="container">
-    <!-- Apartado folio de escaneo -->
-    <div class="row">
-        <div class="col-sm-12 col-12 col-md-12">
-            <div class="row">
-                <div class="col-sm-12 col-12 col-md-3 text-center">
-                    <!--<span
+  <!-- Apartado folio de escaneo -->
+  <div class="row">
+    <div class="col-sm-12 col-12 col-md-12">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-3 text-center">
+          <!--<span
             tooltip="Generar Folio de Escaneo y Solicitud"
             containerClass="tooltip-style">
             <button
@@ -14,7 +14,7 @@
               <i class="bx bxs-file-find"></i>
             </button>
           </span> -->
-                    <span tooltip="Escanear" containerClass="tooltip-style">
+          <span tooltip="Escanear" containerClass="tooltip-style">
             <button
               [disabled]="true"
               (click)="openScannerPage()"
@@ -22,27 +22,39 @@
               <i class="bx bxs-file"></i>
             </button>
           </span>
-                </div>
-                <div class="col-sm-12 col-12 col-md-6 w-100">
-                    <form [formGroup]="formScan" class="form-material">
-                        <div class="col-md-full col-sm-12 col-xs-12">
-                            <form-field label="Folio de Escaneo" [control]="formScan.get('scanningFoli')">
-                                <input [readonly]="true" type="text" class="form-control" formControlName="scanningFoli" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-12 col-sm-12 col-12">
-                            <div class="d-flex justify-content-center">
-                                <div class="m-3">
-                                    <button [disabled]="true" (click)="replicate()" type="button" class="btn btn-primary btn-sm active">
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 w-100">
+          <form [formGroup]="formScan" class="form-material">
+            <div class="col-md-full col-sm-12 col-xs-12">
+              <form-field
+                label="Folio de Escaneo"
+                [control]="formScan.get('scanningFoli')">
+                <input
+                  [readonly]="true"
+                  type="text"
+                  class="form-control"
+                  formControlName="scanningFoli" />
+              </form-field>
+            </div>
+            <div class="col-md-12 col-sm-12 col-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    [disabled]="true"
+                    (click)="replicate()"
+                    type="button"
+                    class="btn btn-primary btn-sm active">
                     Replicar Folio
                   </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                 </div>
-                <div class="col-sm-12 col-12 col-md-3 text-center">
-                    <span tooltip="Imprimir Solicitud de Escaneo" containerClass="tooltip-style">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 text-center">
+          <span
+            tooltip="Imprimir Solicitud de Escaneo"
+            containerClass="tooltip-style">
             <button
               [disabled]="true"
               (click)="showMessageDigitalization()"
@@ -50,7 +62,9 @@
               <i class="bx bxs-file-find"></i>
             </button>
           </span>
-                    <span tooltip="Consulta de Imágenes Escaneadas" containerClass="tooltip-style">
+          <span
+            tooltip="Consulta de Imágenes Escaneadas"
+            containerClass="tooltip-style">
             <button
               [disabled]="disabled"
               (click)="showScannerFoil()"
@@ -58,8 +72,8 @@
               <i class="bx bxs-file"></i>
             </button>
           </span>
-                </div>
-            </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
