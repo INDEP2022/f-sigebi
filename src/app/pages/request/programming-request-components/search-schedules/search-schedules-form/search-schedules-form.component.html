@@ -21,24 +21,63 @@
 
         <div class="col-md-4">
           <form-field
-            [control]="performForm.get('programmingStatus')"
+            [control]="performForm.get('status')"
             label="Estatus Programación">
-            <ng-select class="form-control" formControlName="programmingStatus">
+            <ng-select class="form-control" formControlName="status">
               <ng-option value="EN_PROGRAMACION">EN PROGRAMACIÓN</ng-option>
               <ng-option value="APROBADA">APROBADA</ng-option>
               <ng-option value="CANCELADA">CANCELADA</ng-option>
             </ng-select>
           </form-field>
         </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('startDate')"
+            label="Fecha Inicio Operativo">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              [daysDisabled]="[6, 0]"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('endDate')"
+            label="Fecha Fin Operativo">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              [daysDisabled]="[6, 0]"
+              [bsConfig]="{
+                withTimepicker: true,
+                rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                dateInputFormat: 'DD/MM/YYYY HH:mm:ss'
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
       </div>
     </form>
 
-    <div class="row">
+    <div class="row pt-5">
       <div class="justify-content-end btn-toolbar">
         <button
           (click)="searchProgramming()"
           class="btn btn-primary btn-sm active">
           Buscar <i class="fa fa-search"></i>
+        </button>
+        <button (click)="cleanForm()" class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
         </button>
       </div>
     </div>
@@ -50,11 +89,13 @@
     </div>
     <div class="row">
       <div class="col-md-12">
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settings"
-          [source]="programmings">
-        </ng2-smart-table>
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settings"
+            [source]="programmings">
+          </ng2-smart-table>
+        </div>
 
         <app-pagination
           [params]="paramsProgramming"
