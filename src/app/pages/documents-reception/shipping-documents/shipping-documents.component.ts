@@ -169,7 +169,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (data: { job: any; copies: any[]; estado: any; }) => {
+        callback: (data: { job: any; copies: any[]; estado: any }) => {
           //console.log("data", data);
           const cadena = JSON.stringify(data);
           //console.log("entraaaaa :", cadena);
@@ -183,7 +183,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
             this.jobForm.reset();
             this.officeNumber = null;
             this.officeKey = null;
-
           } else {
             if (data) {
               //console.log("entra1");
@@ -196,7 +195,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
               this.documentsForm.enable();
             }
           }
-
         },
       },
     };

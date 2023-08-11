@@ -55,6 +55,9 @@ export class CommercializationDestinationModalComponent
     if (this.data !== undefined) {
       // this.edit = true;
       this.formGroup.patchValue(this.data);
+      // setTimeout(() => {
+      //   this.formGroup.get('email').disable();
+      // }, 300);
     }
   }
 

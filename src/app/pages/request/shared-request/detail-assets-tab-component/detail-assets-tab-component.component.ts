@@ -671,6 +671,7 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
+      val25: [null],
     });
 
     /* METODO QUE CAMBIA LOS CAMPOS DEL DOMICILIO A REQUERIDOS
@@ -1227,6 +1228,8 @@ export class DetailAssetsTabComponentComponent
     let value = checked === true ? 'Y' : 'N';
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
+    const val25 = value == 'Y' ? 'APTO PARA CIRCULAR' : 'NO APTO PARA CIRCULAR';
+    this.detailAssets.controls['val25'].setValue(val25);
   }
 
   handleTheftReportEvent(event: any) {
