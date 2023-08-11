@@ -409,10 +409,14 @@ export class NotificationAssetsTabComponent
     const dataClarifications2 = this.dataNotificationSelected;
 
     if (this.rowSelected == false) {
-      this.message('', 'Error', 'Seleccione notificación a rechazar');
+      this.message(
+        'warning',
+        'Atención',
+        'Seleccione una notificación a rechazar'
+      );
     } else {
       if (this.selectedRow.answered == 'RECHAZADA') {
-        this.message('error', 'Error', 'La notificación ya fue rechazada');
+        this.message('warning', 'Atención', 'La notificación ya fue rechazada');
       }
 
       if (
@@ -421,7 +425,7 @@ export class NotificationAssetsTabComponent
       ) {
         this.onLoadToast(
           'warning',
-          'Acción no permitida',
+          'Atención',
           'La notificación ya fue aclarada'
         );
       } else if (this.selectedRow.answered != 'ACLARADA') {
@@ -444,8 +448,8 @@ export class NotificationAssetsTabComponent
       } else {
         this.onLoadToast(
           'warning',
-          'Acción no valida',
-          'La notificación ya fue aclarada no se puede rechazar'
+          'Atención',
+          'La notificación ya fue aclarada, no se puede rechazar'
         );
       }
     }
@@ -468,8 +472,8 @@ export class NotificationAssetsTabComponent
     if (this.goodsReject.count() < this.columns.length) {
       this.onLoadToast(
         'warning',
-        'Para verificar el cumplimiento se necesita tener todos los bienes seleccionados',
-        ''
+        'Atención',
+        'Para verificar el cumplimiento se necesita tener todos los bienes seleccionados'
       );
     } else {
       this.goodsReject.getElements().then(data => {
@@ -487,13 +491,14 @@ export class NotificationAssetsTabComponent
         if (filterGood.length < this.goodsReject.count()) {
           this.onLoadToast(
             'warning',
-            'Acción no permitida',
-            'El estatus de la notificación de todos los bienes debe de estar en aclarado'
+            'Atención',
+            'Las notificaciones de los Bienes deben estar aclaradas'
+            //'El estatus de la notificación de todos los Bienes debe de estar en "ACLARADO"'
           );
         } else {
           this.alertQuestion(
             'warning',
-            'Acción',
+            'Atención',
             'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -511,7 +516,7 @@ export class NotificationAssetsTabComponent
                     this.msgGuardado2(
                       'warning',
                       'Atención',
-                      `La solicitud ya no cuenta con bienes para continuar`
+                      `La solicitud ya no cuenta con Bienes para continuar`
                     );
                   },
                 });
@@ -626,7 +631,7 @@ export class NotificationAssetsTabComponent
         this.msgGuardado(
           'success',
           'Creación de tarea exitosa',
-          `Se creó la tarea verificar cumplimiento con el id: ${this.requestData.id}`
+          `Se creó la tarea verificar cumplimiento con el ID: ${this.requestData.id}`
         );
       }
     }
@@ -732,7 +737,7 @@ export class NotificationAssetsTabComponent
         } else {
           this.onLoadToast(
             'warning',
-            'De los bienes seleccionados, existen bienes sin aclarar para enviar a Verificar Cumplimiento',
+            'De los Bienes seleccionados, existen Bienes sin aclarar para enviar a Verificar Cumplimiento',
             ''
           );
         }
@@ -742,7 +747,7 @@ export class NotificationAssetsTabComponent
 
   finishClarifiImpro() {
     let message =
-      '¿Está seguro de que desea finalizar la aclaración?\nSe sugiere subir documentación soporte para esta sección';
+      '¿Está seguro de que desea finalizar la aclaración?\nSe sugiere subir documentación de soporte para esta sección';
     this.alertQuestion(
       undefined,
       'Confirmación de Aclaración',
@@ -977,7 +982,11 @@ export class NotificationAssetsTabComponent
         }
       }
     } else {
-      this.onLoadToast('error', 'Error', 'Seleccione al menos un registro');
+      this.onLoadToast(
+        'warning',
+        'Atención',
+        'Seleccione al menos un registro'
+      );
     }
   }
 
@@ -1887,18 +1896,30 @@ export class NotificationAssetsTabComponent
 
   openRecipients() {
     const notification = this.selectedRow;
-    console.log('Abriendo modal de Destinatarios');
-    let config = {
-      ...MODAL_CONFIG,
-      class: 'modal-lg modal-dialog-centered',
-    };
-    config.initialState = {
-      callback: (next: boolean) => {
-        if (next) {
+    this.goodsReject.getElements().then(data => {
+      data.map((item: IGoodresdev) => {
+        if (item.clarificationstatus == 'ACLARADO') {
+          console.log('Abriendo modal de Destinatarios');
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+          config.initialState = {
+            callback: (next: boolean) => {
+              if (next) {
+              }
+            },
+          };
+          this.modalService.show(RecipientsEmailComponent, config);
+        } else {
+          this.onLoadToast(
+            'warning',
+            'Atención',
+            'Para notificar por correo electrónico, se necesita tener aclarada la notificación del Bien seleccionado.'
+          );
         }
-      },
-    };
-    this.modalService.show(RecipientsEmailComponent, config);
+      });
+    });
   }
 
   msgGuardado(icon: any, title: string, message: string) {

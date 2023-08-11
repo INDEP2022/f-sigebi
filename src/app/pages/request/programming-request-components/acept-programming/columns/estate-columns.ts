@@ -1,3 +1,7 @@
+import { MeasureUnitSaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/measure-unit-sae-input/measure-unit-sae-input.component';
+import { QuantitySaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/quantity-sae-input/quantity-sae-input.component';
+import { SaeInputComponent } from '../../../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
+
 export const ESTATE_COLUMNS = {
   googId: {
     title: 'No. Gestión',
@@ -427,6 +431,123 @@ export const TRANS_GOODS_EXECUTE = {
 
   saeMeasureUnit: {
     title: 'Unidad de Medida INDEP',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const TRANS_GOODS_EXECUTE_EDITABLE = {
+  goodId: {
+    title: 'No. Gestión',
+    type: 'string',
+    sort: false,
+  },
+
+  uniqueKey: {
+    title: 'Clave Única',
+    type: 'string',
+    sort: false,
+  },
+
+  fileNumber: {
+    title: 'Expediente',
+    type: 'string',
+    sort: false,
+  },
+
+  goodDescription: {
+    title: 'Descripción Transferente',
+    sort: false,
+  },
+
+  descriptionGoodSae: {
+    title: 'Descripción Bien INDEP',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: SaeInputComponent,
+    onComponentInitFunction(instance?: any) {},
+    sort: false,
+  },
+
+  quantity: {
+    title: 'Cantidad Transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  quantitySae: {
+    title: 'Cantidad INDEP',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: QuantitySaeInputComponent,
+    onComponentInitFunction(instance?: any) {},
+    sort: false,
+  },
+
+  unitMeasure: {
+    title: 'Unidad Medida Transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  saeMeasureUnit: {
+    title: 'Unidad de Medida INDEP',
+    ype: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: MeasureUnitSaeInputComponent,
+    onComponentInitFunction(instance?: any) {},
+    sort: false,
+  },
+
+  physicalStatus: {
+    title: 'Estado Físico Transferente',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  saePhysicalState: {
+    title: 'Estado Físico INDEP',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  stateConservation: {
+    title: 'Estado de Conservación',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  stateConservationSae: {
+    title: 'Estado de Conservación INDEP',
+    type: 'html',
+    sort: false,
+    valuePrepareFunction: (value: string) => {
+      if (value == '1') return 'BUENO';
+      if (value == '2') return 'MALO';
+      return value;
+    },
+  },
+
+  observations: {
+    title: 'Observación',
     type: 'string',
     sort: false,
   },

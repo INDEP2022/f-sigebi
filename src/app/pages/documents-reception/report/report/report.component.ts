@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -33,12 +36,18 @@ export class ReportComponent extends BasePage implements OnInit {
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
   flyersForm: FormGroup;
+  minModeFromMonth: BsDatepickerViewMode = 'month';
+  minModeFromYear: BsDatepickerViewMode = 'year';
   params = new BehaviorSubject<ListParams>(new ListParams());
   PN_DELEG = new EventEmitter<IDelegation>();
   PN_SUBDEL = new EventEmitter<ISubdelegation>();
   selectedSubDelegation = new DefaultSelect<ISubdelegation>();
   selectedDelegation = new DefaultSelect<IDelegation>();
+  bsValueFromMonth: Date = new Date();
+  bsValueFromYear: Date = new Date();
   showSearchForm: boolean = true;
+  bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  bsConfigFromYear: Partial<BsDatepickerConfig>;
   searchForm: ModelForm<any>;
   reportForm: FormGroup;
   datePickerConfig: Partial<BsDatepickerConfig> = {
@@ -69,14 +78,12 @@ export class ReportComponent extends BasePage implements OnInit {
     const params = new ListParams();
     this.getDelegation(params);
     this.getSubDelegations(params);
+    this.startCalendars();
   }
   getDelegation(params?: ListParams) {
-    console.log(params);
     this.delegationService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
         this.selectedDelegation = new DefaultSelect(data.data, data.count);
-        console.log(this.selectedDelegation);
       },
       error: err => {
         console.log(err);
@@ -91,11 +98,9 @@ export class ReportComponent extends BasePage implements OnInit {
       'delegationNumber',
       this.reportForm.get(this.delegationField).value
     );
-    console.log(paramsF);
     this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
       next: data => {
         this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
-        console.log(this.selectedSubDelegation);
       },
       error: err => {
         let error = '';
@@ -108,6 +113,22 @@ export class ReportComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', error);
       },
     });
+  }
+  startCalendars() {
+    this.bsConfigFromMonth = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromMonth,
+        dateInputFormat: 'MM',
+      }
+    );
+    this.bsConfigFromYear = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromYear,
+        dateInputFormat: 'YYYY',
+      }
+    );
   }
 
   prepareForm() {
@@ -125,12 +146,11 @@ export class ReportComponent extends BasePage implements OnInit {
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
       PN_SUBDEL: Number(this.reportForm.controls['subdelegation'].value),
-      PF_MES: this.reportForm.controls['PF_MES'].value,
-      PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
+      PF_MES: this.bsValueFromMonth.getFullYear(),
+      PF_ANIO: this.bsValueFromYear.getMonth(),
     };
 
     //this.showSearch = true;
-    console.log(params);
 
     setTimeout(() => {
       this.onLoadToast('success', 'procesando', '');
@@ -154,8 +174,8 @@ export class ReportComponent extends BasePage implements OnInit {
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
       PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
-      PF_MES: this.reportForm.controls['PF_MES'].value,
-      PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
+      PF_MES: this.bsValueFromMonth.getFullYear(),
+      PF_ANIO: this.bsValueFromYear.getMonth(),
     };
 
     this.siabService
