@@ -55,6 +55,7 @@
           <div class="m-3">
             <button
               type="submit"
+              [disabled]="notificationsForm.invalid"
               class="btn btn-primary btn-sm active"
               (click)="Generar()">
               Guardar

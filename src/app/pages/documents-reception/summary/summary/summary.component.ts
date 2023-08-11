@@ -166,7 +166,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   save() {}
 
   getEndDateErrorMessage(fin: any, ini: any) {
-    console.log(fin, ini);
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
