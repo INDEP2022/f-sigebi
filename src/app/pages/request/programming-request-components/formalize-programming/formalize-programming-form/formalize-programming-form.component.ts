@@ -355,7 +355,7 @@ export class FormalizeProgrammingFormComponent
         });
 
         this.receiptWarehouseData = infoWarehouse[0];
-        this.receipts.load(infoWarehouse);
+        this.receiptWarehouseGood.load(infoWarehouse);
         //this.receiptWarehouseGood = infoWarehouse[0];
         //this.receiptWarehouse.load(infoWarehouse);
 
@@ -368,9 +368,9 @@ export class FormalizeProgrammingFormComponent
           });
 
           this.receiptGuardData = infoGuard[0];
-          this.receipts.load(infoGuard);
+          //this.receipts.load(infoGuard);
           //this.receiptGuardGood = infoGuard[0];
-          //this.receiptGuards.load(infoGuard);
+          this.receiptGuardGood.load(infoGuard);
         }
       },
       error: error => {},
@@ -1350,18 +1350,44 @@ export class FormalizeProgrammingFormComponent
         body['ssubtype'] = 'ACCEPT';
 
         const closeTask = await this.closeTaskExecuteRecepcion(body);
+
         if (closeTask) {
-          this.alertInfo(
-            'success',
-            'Acción correcta',
-            'Se cerro la tarea formalizar entrega correctamente'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.router.navigate(['pages/siab-web/sami/consult-tasks']);
-            }
-          });
+          const deleteGoodsReprog = await this.deleteGoodReprog();
+          if (deleteGoodsReprog) {
+            this.alertInfo(
+              'success',
+              'Acción correcta',
+              'Se cerro la tarea formalizar entrega correctamente'
+            ).then(question => {
+              if (question.isConfirmed) {
+                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+              }
+            });
+          }
         }
       }
+    });
+  }
+
+  deleteGoodReprog() {
+    return new Promise((resolve, reject) => {
+      this.goodsGuards.getElements().then(data => {
+        const deleteGoodProg = {
+          programmingId: this.programming.id,
+          goodId: data.goodId,
+        };
+
+        this.programmingGoodService
+          .deleteGoodProgramming(deleteGoodProg)
+          .subscribe({
+            next: response => {
+              resolve(true);
+            },
+            error: error => {
+              resolve(true);
+            },
+          });
+      });
     });
   }
 

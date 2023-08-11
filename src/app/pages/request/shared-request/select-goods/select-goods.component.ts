@@ -363,12 +363,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   removeGoods() {
     if (this.selectedGoods.length == 0) {
-      this.onLoadToast('info', 'eleccione al menos un registro');
+      this.onLoadToast('warning', 'Seleccione al menos un registro');
       return;
     }
     this.alertQuestion(
       'question',
-      '¿Desea eliminar los bienes seleccionados?',
+      '¿Desea eliminar los Bienes seleccionados?',
       '',
       'Eliminar'
     ).then(question => {
@@ -392,7 +392,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
             this.selectedGoodColumns = [...this.selectedGoodColumns];
             this.selectedGoodTotalItems = this.selectedGoodColumns.length;
             this.selectedGoods = [];
-            this.onLoadToast('success', 'Los bienes se eliminaron');
+            this.onLoadToast('success', 'Los Bienes se eliminaron');
           }
         });
 
@@ -442,7 +442,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
   assignGoodGrouper() {
     if (this.selectedGoods.length == 0) {
-      this.onLoadToast('info', 'Seleccione al menos un registro');
+      this.onLoadToast('warning', 'Seleccione al menos un registro');
       return;
     }
     const modalRef = this.modalService.show(GrouperGoodFieldComponent, {
@@ -469,7 +469,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         },
         error: error => {
           reject(error);
-          this.onLoadToast('error', 'No se pudo eliminar los bienes');
+          this.onLoadToast('error', 'No se pudieron eliminar los Bienes');
         },
       });
     });
@@ -528,7 +528,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         },
         error: error => {
           reject(false);
-          this.onLoadToast('error', 'No se pudo actualizar los bienes');
+          this.onLoadToast('error', 'No se pudieron actualizar los Bienes');
         },
       });
     });
