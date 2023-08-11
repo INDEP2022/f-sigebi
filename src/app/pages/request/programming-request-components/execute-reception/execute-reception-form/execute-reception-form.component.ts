@@ -747,9 +747,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.programmingId;
     this.paramsTransportableGoods.getValue()['filter.status'] =
       'EN_TRANSPORTABLE';
-
     this.paramsTransportableGoods.getValue()['sortBy'] = 'goodId:ASC';
-
     this.programmingService
       .getGoodsProgramming(this.paramsTransportableGoods.getValue())
       .subscribe({
@@ -757,12 +755,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsTransportableGoods = data.count;
           data.data.map((item: IGoodProgramming) => {
             this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+            this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
             this.goodService
               .getAll(this.paramsShowTransportable.getValue())
               .subscribe({
                 next: async data => {
                   _data.push(data.data[0]);
-
                   this.goodsTransportable.clear();
                   _data.forEach(async item => {
                     if (item.physicalStatus == 1) {
@@ -774,8 +772,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.stateConservationName = 'BUENO';
                     } else if (item.stateConservation == 2) {
                       item.stateConservationName = 'MALO';
+                    } else if (item.transferentDestiny == 1) {
+                      item.transferentDestiny = 'VENTA';
+                    } else if (item.transferentDestiny == 2) {
+                      item.transferentDestiny = 'DONACIÓN';
+                    } else if (item.transferentDestiny == 3) {
+                      item.transferentDestiny = 'DESTRUCCIÓN';
+                    } else if (item.transferentDestiny == 4) {
+                      item.transferentDestiny = 'ADMINISTRACIÓN';
                     }
 
+                    //item.transferentDestiny = showDestinyTransferent;
                     this.goodData = item;
                     const form = this.fb.group({
                       id: [item?.id],
@@ -797,7 +804,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       regionalDelegationNumber: [
                         item?.regionalDelegationNumber,
                       ],
-                      destiny: [item?.destiny],
+                      destiny: [item?.transferentDestiny],
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
@@ -936,12 +943,29 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     }
   } */
 
+  showDestinyTrasnferent(destinyTNumber: number) {
+    console.log('destinyTNumber', destinyTNumber);
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.name'] = 'Destino';
+      params.getValue()['filter.keyId'] = destinyTNumber;
+
+      this.genericService.getAll(params.getValue()).subscribe({
+        next: (response: any) => {
+          resolve(response.data[0].description);
+        },
+        error: error => {},
+      });
+    });
+  }
+
   getDestinyIndep() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.name'] = 'Destino';
 
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
+        console.log('destino indep', response);
         this.transfersDestinity = response.data;
       },
       error: error => {},
@@ -962,6 +986,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsGuard = data.count;
           data.data.forEach(items => {
             this.params.getValue()['filter.id'] = items.goodId;
+            this.params.getValue()['sortBy'] = 'id:ASC';
             this.goodService.getAll(this.params.getValue()).subscribe({
               next: response => {
                 _data.push(response.data[0]);
@@ -977,6 +1002,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
+                  } else if (item.transferentDestiny == 1) {
+                    item.transferentDestiny = 'VENTA';
+                  } else if (item.transferentDestiny == 2) {
+                    item.transferentDestiny = 'DONACIÓN';
+                  } else if (item.transferentDestiny == 3) {
+                    item.transferentDestiny = 'DESTRUCCIÓN';
+                  } else if (item.transferentDestiny == 4) {
+                    item.transferentDestiny = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -999,6 +1032,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     transferentDestiny: [item?.saeDestiny],
                     observations: [item?.observations],
+                    destiny: [item?.transferentDestiny],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                   });
                   this.goodsGuards.push(form);
@@ -1051,6 +1085,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
+                  } else if (item.transferentDestiny == 1) {
+                    item.transferentDestiny = 'VENTA';
+                  } else if (item.transferentDestiny == 2) {
+                    item.transferentDestiny = 'DONACIÓN';
+                  } else if (item.transferentDestiny == 3) {
+                    item.transferentDestiny = 'DESTRUCCIÓN';
+                  } else if (item.transferentDestiny == 4) {
+                    item.transferentDestiny = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1073,7 +1115,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                     observations: [item?.observations],
-                    destiny: [item?.destiny],
+                    destiny: [item?.transferentDestiny],
+
                     transferentDestiny: [item?.saeDestiny],
                   });
 
@@ -1180,6 +1223,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsWarehouse = data.count;
           data.data.forEach(items => {
             this.params.getValue()['filter.id'] = items.goodId;
+            this.params.getValue()['sortBy'] = 'goodId:ASC';
             this.goodService.getAll(this.params.getValue()).subscribe({
               next: response => {
                 _data.push(response.data[0]);
@@ -1194,6 +1238,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
+                  } else if (item.transferentDestiny == 1) {
+                    item.transferentDestiny = 'VENTA';
+                  } else if (item.transferentDestiny == 2) {
+                    item.transferentDestiny = 'DONACIÓN';
+                  } else if (item.transferentDestiny == 3) {
+                    item.transferentDestiny = 'DESTRUCCIÓN';
+                  } else if (item.transferentDestiny == 4) {
+                    item.transferentDestiny = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1216,6 +1268,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                     observations: [item?.observations],
+                    destiny: [item?.transferentDestiny],
                     transferentDestiny: [item?.saeDestiny],
                   });
                   this.goodsWarehouse.push(form);
@@ -1313,6 +1366,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsReprog = data.count;
           data.data.forEach(items => {
             this.params.getValue()['filter.id'] = items.goodId;
+            this.params.getValue()['sortBy'] = 'goodId:ASC';
             this.goodService.getAll(this.params.getValue()).subscribe({
               next: response => {
                 _data.push(response.data[0]);
@@ -1328,6 +1382,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
+                  } else if (item.transferentDestiny == 1) {
+                    item.transferentDestiny = 'VENTA';
+                  } else if (item.transferentDestiny == 2) {
+                    item.transferentDestiny = 'DONACIÓN';
+                  } else if (item.transferentDestiny == 3) {
+                    item.transferentDestiny = 'DESTRUCCIÓN';
+                  } else if (item.transferentDestiny == 4) {
+                    item.transferentDestiny = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1349,6 +1411,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationName: [item?.stateConservationName],
                     stateConservationSae: [item?.stateConservationSae],
                     observations: [item?.observations],
+                    destiny: [item?.transferentDestiny],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                   });
                   this.goodsReprog.push(form);
@@ -1457,6 +1520,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.goodsCancelation.clear();
           data.data.map(items => {
             this.params.getValue()['filter.id'] = items.goodId;
+            this.params.getValue()['sortBy'] = 'goodId:ASC';
             this.goodService.getAll(this.params.getValue()).subscribe({
               next: data => {
                 data.data.map(response => {
@@ -1491,6 +1555,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationName: [response?.stateConservationName],
                     stateConservationSae: [response?.stateConservationSae],
                     observations: [response?.observations],
+                    destiny: [response?.transferentDestiny],
                     regionalDelegationNumber: [
                       response?.regionalDelegationNumber,
                     ],

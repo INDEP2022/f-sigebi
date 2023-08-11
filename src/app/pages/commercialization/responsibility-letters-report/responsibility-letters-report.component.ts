@@ -26,6 +26,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLetterService } from 'src/app/core/services/ms-parametercomer/comer-letter.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
@@ -182,7 +183,8 @@ export class ResponsibilityLettersReportComponent
     private comerEventService: ComerEventService,
     private msLotService: LotService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private msComerClientsService: ComerClientsService
   ) {
     super();
     this.settings = {
@@ -235,7 +237,7 @@ export class ResponsibilityLettersReportComponent
           Validators.required,
         ],
       ],
-      fechaFactura: [null, [Validators.required]],
+      fechaFactura: [{ value: null, disabled: true }, [Validators.required]],
       fechaCarta: [null],
       fechaFallo: [null],
       cveProceso: [null],
@@ -341,6 +343,7 @@ export class ResponsibilityLettersReportComponent
     this.loading = true;
     this.comerLetterService.getById(id).subscribe({
       next: data => {
+        this.clientForm.reset();
         // this.loading = false;
         this.letter = data;
         console.log(data, this.letter);
@@ -355,12 +358,13 @@ export class ResponsibilityLettersReportComponent
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
         // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
         // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
-        this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
+        // this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
         this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.getComerLotes(this.letter.lotsId);
         this.getComerRespById(this.letter.id);
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
+        this.getDataCustomers();
         // this.comerLibsForm.value.paragraph1 =
         //   'Derivado de la ' +
         //   this.bienesLotesForm.get('description').value +
@@ -374,7 +378,7 @@ export class ResponsibilityLettersReportComponent
         //   .get('paragraph1')
         //   .setValue(this.comerLibsForm.value.paragraph1);
         this.comerLetterService
-          .getByIdResponsability('1') //this.letter.id)
+          .getByIdResponsability(this.letter.id) // 1 EL UNO ES PARA PROBAR
           .subscribe({
             next: data => {
               console.log('DATA DE RESPONSABILIDAD ', data);
@@ -406,6 +410,21 @@ export class ResponsibilityLettersReportComponent
         this.respForm.get('paragraph1').setValue(this.respLetter.paragraph1);
         this.respForm.get('paragraph2').setValue(this.respLetter.paragraph2);
         this.respForm.get('paragraph3').setValue(this.respLetter.paragraph3);
+      },
+      error: () => {
+        this.loading = false;
+        console.log('error');
+      },
+    });
+  }
+
+  getDataCustomers() {
+    this.loading = true;
+    this.msComerClientsService.getDataCustomersByLote(this.idLot).subscribe({
+      next: data => {
+        this.loading = false;
+        console.log(data);
+        this.clientForm.patchValue(data.data[0]);
       },
       error: () => {
         this.loading = false;
@@ -625,6 +644,8 @@ export class ResponsibilityLettersReportComponent
     this.bienesLotesForm.reset();
     this.dataTableGood.load([]);
     this.dataTableGood.refresh();
+    this.totalItems = 0;
+    this.respForm.reset();
   }
   goBack() {}
 
@@ -675,6 +696,9 @@ export class ResponsibilityLettersReportComponent
         }
       },
       error: () => {
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
+        this.totalItems = 0;
         console.error('error al filtrar bienes');
       },
     });
