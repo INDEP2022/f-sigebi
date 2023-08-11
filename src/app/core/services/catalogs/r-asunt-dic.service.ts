@@ -31,7 +31,7 @@ export class RAsuntDicService
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IRAsuntDic>> {
-    return this.rAsuntDicRepository.getAllPaginated(this.route, params);
+    return this.rAsuntDicRepository.getAll(this.route, params);
   }
 
   getById(id: string | number): Observable<IRAsuntDic> {

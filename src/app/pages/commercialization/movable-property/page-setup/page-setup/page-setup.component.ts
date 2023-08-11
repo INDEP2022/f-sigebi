@@ -127,7 +127,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'ordencol':
-                searchFilter = SearchFilter.ILIKE;
+                searchFilter = SearchFilter.EQ;
                 break;
               case 'ordentab':
                 searchFilter = SearchFilter.ILIKE;

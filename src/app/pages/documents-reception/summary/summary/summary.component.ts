@@ -17,9 +17,11 @@ import {
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { IEntfed } from 'src/app/core/models/catalogs/entfed.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -47,6 +49,7 @@ export class SummaryComponent extends BasePage implements OnInit {
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
   @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
+  maxDate: Date = new Date();
   idDelegation: number = null;
   entidad = new DefaultSelect<IDelegationState>();
   select = new DefaultSelect<IDepartment>();
@@ -55,6 +58,10 @@ export class SummaryComponent extends BasePage implements OnInit {
   selectDepartament = new DefaultSelect();
   start: string;
   end: string;
+
+  entfedSelect = new DefaultSelect<IEntfed>();
+  flagA: boolean = true;
+
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
     adaptivePosition: true,
@@ -87,7 +94,8 @@ export class SummaryComponent extends BasePage implements OnInit {
     private datePipe: DatePipe,
     private delegationService: DelegationService,
     private serviceSubDeleg: SubdelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private entFedService: EntFedService
   ) {
     super();
   }
@@ -100,7 +108,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.flyersForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      federative: [null],
+      federative: [null, [Validators.required]],
       PF_FECINI: [null, [Validators.required]],
       PF_FECFIN: [null, [Validators.required]],
       includeArea: [false],
@@ -113,6 +121,27 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.getSubDelegations(params);
     this.getDepartament(params);
   }
+
+  activeFlag() {
+    console.log('flag ', this.flagA);
+    if (this.flagA) {
+      this.flagA = false;
+    } else {
+      this.flagA = true;
+    }
+  }
+
+  validateTotal() {
+    if (
+      this.flyersForm.get('department').value != null &&
+      this.flyersForm.get('delegdestino').value != null &&
+      this.flyersForm.get('subddestino').value != null
+    ) {
+      console.log('bandera ', this.flagA);
+      this.flagA = true;
+    }
+  }
+
   getDelegation(params?: ListParams) {
     console.log(params);
     this.delegationService.getAll(params).subscribe({
@@ -124,6 +153,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       error: err => {
         console.log(err);
         this.selectedDelegation = new DefaultSelect();
+        console.log(err);
       },
     });
   }
@@ -131,14 +161,19 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.departamentService.getAll(params).subscribe({
       next: data => {
         console.log(data);
+        console.log(' selectDepartament');
+        this.validateTotal();
         this.selectDepartament = new DefaultSelect(data.data, data.count);
       },
-      error: err => {},
+      error: err => {
+        console.log(err);
+      },
     });
   }
   save() {}
 
   getEndDateErrorMessage(fin: any, ini: any) {
+    console.log(fin, ini);
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
@@ -163,18 +198,28 @@ export class SummaryComponent extends BasePage implements OnInit {
       );
       return;
     }
+    console.log(
+      "this.flyersForm.get('includeArea').value != null ",
+      this.flyersForm.get('includeArea').value
+    );
 
+    if (this.flyersForm.get('includeArea').value) {
+      this.FGEROFPRESUMENDIAA();
+    } else {
+      this.FGEROFPRESUMENDIA();
+    }
+  }
+
+  FGEROFPRESUMENDIA() {
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
-      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PC_ENTFED: this.flyersForm.controls['federative'].value,
       PF_FECINI: this.start,
       PF_FECFIN: this.end,
-      PC_ENTFED: this.flyersForm.controls['federative'].value,
-      DEPARTAMENTO: this.flyersForm.controls['department'].value,
     };
-
+    console.log('FGEROFPRESUMENDIA ', params);
+    //RGEROFPRESUMENDIA
     this.siabService.fetchReport('blank', params).subscribe(response => {
       //  response= null;
       if (response !== null) {
@@ -202,7 +247,54 @@ export class SummaryComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'warning',
           'advertencia',
-          'Sin datos para los rangos de fechas suministrados'
+          'Sin Datos Para los Rangos de Fechas Suministrados'
+        );
+      }
+    });
+  }
+
+  FGEROFPRESUMENDIAA() {
+    console.log('FGEROFPRESUMENDIAA');
+    let params = {
+      PN_DELEG: this.flyersForm.controls['delegation'].value,
+      PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
+      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
+      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PN_DEPARTAMENTO: this.flyersForm.controls['department'].value,
+      PC_ENTFED: this.flyersForm.controls['federative'].value,
+      PF_FECINI: this.start,
+      PF_FECFIN: this.end,
+    };
+    console.log('FGEROFPRESUMENDIAA ', params);
+    //RGEROFPRESUMENDIAA
+    this.siabService.fetchReport('blank', params).subscribe(response => {
+      //  response= null;
+      if (response !== null) {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+            callback: (data: any) => {
+              if (data) {
+                data.map((item: any) => {
+                  return item;
+                });
+              }
+            },
+          }, //pasar datos por aca
+          class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      } else {
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'Sin Datos Para los Rangos de Fechas Suministrados'
         );
       }
     });
@@ -266,12 +358,19 @@ export class SummaryComponent extends BasePage implements OnInit {
   onDelegationsChange(delegation: any) {
     this.resetFields([this.delegation]);
     this.selectedDelegation = new DefaultSelect();
+    this.validateTotal();
     this.emitDelegation.emit(delegation);
+  }
+
+  onDepartmentsChange(type: any) {
+    console.log('seleccionado departamento');
+    this.validateTotal();
   }
 
   onSubDelegationsChange(subdelegation: any) {
     this.resetFields([this.subdelegation]);
     this.selectedDelegation = new DefaultSelect();
+    this.validateTotal();
     // this.delegations = new DefaultSelect([subdelegation.delegation], 1);
     // this.delegation.setValue(subdelegation.delegation.id);
     this.emitSubdelegation.emit(subdelegation);
@@ -281,5 +380,17 @@ export class SummaryComponent extends BasePage implements OnInit {
     console.log('onDateChange' + event);
     //change mindate #toDate
     this.minDate = event;
+  }
+
+  getEntfed(params: ListParams) {
+    this.entFedService.getAll(params).subscribe({
+      next: data => {
+        console.log(data.data);
+        this.entfedSelect = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.entfedSelect = new DefaultSelect();
+      },
+    });
   }
 }

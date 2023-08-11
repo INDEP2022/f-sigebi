@@ -9,7 +9,7 @@ import {
 } from 'src/app/core/models/catalogs/numerary-categories-model';
 import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NAME_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -21,7 +21,7 @@ export class ModalNumeraryParameterizationComponent
   extends BasePage
   implements OnInit
 {
-  title: string = 'Parametrización de numerario';
+  title: string = 'Parametrización de Numerario';
   edit: boolean = false;
   form: ModelForm<ICategorizationAutomNumerary>;
   categories = new DefaultSelect<INumeraryCategories>();
@@ -47,7 +47,7 @@ export class ModalNumeraryParameterizationComponent
         null,
         [
           Validators.required,
-          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(NAME_PATTERN),
           Validators.maxLength(11),
         ],
       ],
@@ -73,6 +73,10 @@ export class ModalNumeraryParameterizationComponent
     this.edit ? this.update() : this.create();
   }
   create() {
+    if (this.form.controls['typeProceeding'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', '');
+      return;
+    }
     this.loading = true;
     this.numeraryParameterizationAutomService
       .create(this.form.value)

@@ -33,8 +33,8 @@ export class DetailIndParameterService
     return this.detailIndParameterRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IDetailIndParameter): Observable<Object> {
-    return this.detailIndParameterRepository.update(this.route, id, model);
+  update3(model: IDetailIndParameter): Observable<Object> {
+    return this.detailIndParameterRepository.update4(this.route, model);
   }
 
   remove(id: string | number): Observable<Object> {

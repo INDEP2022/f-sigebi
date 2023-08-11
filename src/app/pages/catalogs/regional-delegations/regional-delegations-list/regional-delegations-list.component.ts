@@ -86,6 +86,7 @@ export class RegionalDelegationsListComponent
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getRegionalDelegations();
         }
       });
@@ -100,15 +101,21 @@ export class RegionalDelegationsListComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.regionalDelegationService.getAll(params).subscribe(
-      response => {
+    this.regionalDelegationService.getAll(params).subscribe({
+      next: response => {
         this.regionalDelegation = response.data;
-        this.data.load(this.regionalDelegation);
+        this.data.load(response.data);
+        this.data.refresh();
         this.totalItems = response.count || 0;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: err => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
   }
 
   openForm(regionalDelegation?: IRegionalDelegation) {
@@ -137,7 +144,7 @@ export class RegionalDelegationsListComponent
   delete(id: number) {
     this.regionalDelegationService.remove(id).subscribe({
       next: () => {
-        this.alert('success', 'Delegación regional', 'Borrado Correctamente');
+        this.alert('success', 'Delegación Regional', 'Borrado Correctamente');
         this.getRegionalDelegations();
       },
       error: error => {

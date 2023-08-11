@@ -61,7 +61,7 @@ export class BatchFormComponent extends BasePage implements OnInit {
           Validators.pattern(STRING_PATTERN),
         ],
       ],
-      status: [null, [Validators.required, Validators.maxLength(1)]],
+      status: [null, [Validators.required]],
     });
     if (this.batch != null) {
       this.edit = true;
@@ -96,10 +96,21 @@ export class BatchFormComponent extends BasePage implements OnInit {
   }
 
   create() {
+    if (this.batchForm.controls['description'].value.trim() === '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      return; // Retorna temprano si el campo está vacío.
+    }
     this.loading = true;
     this.batchService.create(this.batchForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.alert(
+          'error',
+          'El Codigo Lote con el No. Almacen ya fueron registrados',
+          ''
+        );
+      },
     });
   }
 

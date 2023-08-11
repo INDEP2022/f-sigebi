@@ -7,32 +7,37 @@
     <form [formGroup]="flyersForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="flyersForm.get('delegation')">
-            <ngx-select
-              [form]="flyersForm"
-              [data]="selectedDelegation"
-              value="description"
-              bindLabel="description"
-              label="Delegación"
-              (fetchItems)="getDelegation($event)"
-              control="delegation">
-            </ngx-select>
-          </form-field>
-          <form-field [control]="flyersForm.get('subdelegation')">
-            <ngx-select
-              [form]="flyersForm"
-              [data]="selectedSubDelegation"
-              value="description"
-              bindLabel="description"
-              label="Subdelegación"
-              (fetchItems)="getSubDelegations($event)"
-              control="subdelegation">
-            </ngx-select>
-          </form-field>
-          <form-check label="Filtrar por &aacute;rea" for="make_filter">
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('delegation')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectedDelegation"
+                value="description"
+                bindLabel="description"
+                label="Delegación"
+                (fetchItems)="getDelegation($event)"
+                control="delegation">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('subdelegation')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectedSubDelegation"
+                value="description"
+                bindLabel="description"
+                label="Subdelegación"
+                (fetchItems)="getSubDelegations($event)"
+                control="subdelegation">
+              </ngx-select>
+            </form-field>
+          </div>
+          <form-check label="Filtrar Por Área" for="make_filter">
             <input
               id="make_filter"
               type="checkbox"
+              (click)="activeFlag()"
               formControlName="includeArea" />
           </form-check>
         </div>
@@ -46,7 +51,8 @@
                 (bsValueChange)="onDateChange($event)"
                 formControlName="PF_FECINI"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
 
@@ -59,7 +65,8 @@
                 formControlName="PF_FECFIN"
                 class="form-control"
                 [minDate]="minDate"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
           <div
@@ -80,6 +87,7 @@
                 bindLabel="description"
                 label="Departmento"
                 (fetchItems)="getDepartament($event)"
+                (click)="onDepartmentsChange($event)"
                 control="department">
               </ngx-select>
             </form-field>
@@ -95,6 +103,7 @@
               [data]="selectedDelegation"
               bindLabel="description"
               label="Delegación Destino"
+              (click)="onDepartmentsChange($event)"
               value="id"></ngx-select>
           </div>
           <div class="row pt-3">
@@ -105,6 +114,7 @@
               [showTooltip]="true"
               [data]="selectedSubDelegation"
               bindLabel="description"
+              (click)="onDepartmentsChange($event)"
               label="Subdelegación Destino"
               value="id"></ngx-select>
           </div>
@@ -119,7 +129,7 @@
           text="Imprimir"
           [btnSmall]="true"
           icon="bx bx-printer bx-sm float-icon"
-          [disabled]="flyersForm.invalid"
+          [disabled]="flyersForm.invalid || !flagA"
           [loading]="loading"
           (confirm)="Generar()">
         </confirm-button>

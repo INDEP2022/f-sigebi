@@ -106,25 +106,51 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    this.loading = true;
-    this.goodSubtypeService.create(this.goodSubtypeForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
-
-  update() {
-    this.loading = true;
-    const ids = {
-      id: this.goodSubtypeForm.controls['id'].value,
-      idTypeGood: this.goodSubtypeForm.controls['idTypeGood'].value,
-    };
-    this.goodSubtypeService
-      .updateByIds(ids, this.goodSubtypeForm.value)
-      .subscribe({
+    if (
+      this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' ||
+      this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+        '' ||
+      (this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' &&
+        this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.goodSubtypeService.create(this.goodSubtypeForm.value).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
+    }
+  }
+
+  update() {
+    if (
+      this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' ||
+      this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+        '' ||
+      (this.goodSubtypeForm.controls['nameSubtypeGood'].value.trim() == '' &&
+        this.goodSubtypeForm.controls['descriptionPhotography'].value.trim() ==
+          '')
+    ) {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      const ids = {
+        id: this.goodSubtypeForm.controls['id'].value,
+        idTypeGood: this.goodSubtypeForm.controls['idTypeGood'].value,
+      };
+      this.goodSubtypeService
+        .updateByIds(ids, this.goodSubtypeForm.value)
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

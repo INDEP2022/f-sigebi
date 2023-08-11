@@ -3,5 +3,5 @@ export interface IIfaiSerie {
   typeProcedure: string;
   description: string | null;
   status: string;
-  registryNumber: number | null;
+  registryNumber?: number | null;
 }

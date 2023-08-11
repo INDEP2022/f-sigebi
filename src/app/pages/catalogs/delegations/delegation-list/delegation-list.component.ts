@@ -43,15 +43,40 @@ export class DelegationListComponent extends BasePage implements OnInit {
     if (change.action === 'filter') {
       const filters = change.filter.filters;
       filters.map((filter: any) => {
-        let field = `filter.${filter.field}`;
-        let searchFilter = this.shouldUseEqualsFilter(filter.field)
-          ? SearchFilter.EQ
-          : SearchFilter.ILIKE;
-
+        let field = ``;
+        let searchFilter = SearchFilter.ILIKE;
+        field = `filter.${filter.field}`;
+        switch (filter.field) {
+          case 'id':
+            searchFilter = SearchFilter.EQ;
+            break;
+          case 'noRegister':
+            searchFilter = SearchFilter.EQ;
+            break;
+          case 'zoneContractKey':
+            searchFilter = SearchFilter.EQ;
+            break;
+          case 'idZoneGeographic':
+            searchFilter = SearchFilter.ILIKE;
+            //field = `filter.${filter.field}.description`;
+            break;
+          case 'diffHours':
+            searchFilter = SearchFilter.EQ;
+            //field = `filter.${filter.field}.description`;
+            break;
+          case 'etapaEdo':
+            searchFilter = SearchFilter.EQ;
+            //field = `filter.${filter.field}.description`;
+            break;
+          case 'zoneVigilanceKey':
+            searchFilter = SearchFilter.EQ;
+            //field = `filter.${filter.field}.description`;
+            break;
+          default:
+            searchFilter = SearchFilter.ILIKE;
+            break;
+        }
         if (filter.search !== '') {
-          if (filter.field === 'description') {
-            filter.field = 'description';
-          }
           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
         } else {
           delete this.columnFilters[field];
@@ -75,8 +100,12 @@ export class DelegationListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.settings.pager = { display: true };
-    this.delegationService.getAll(this.params.getValue()).subscribe({
+    //this.settings.pager = { display: true };
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.delegationService.getAll(params).subscribe({
       next: response => {
         console.log(response);
         this.data.load(response.data);

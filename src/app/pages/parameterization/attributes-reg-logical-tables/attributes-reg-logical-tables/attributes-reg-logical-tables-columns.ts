@@ -44,7 +44,7 @@ export const LOG_TAB_COLUMNS = {
     sort: false,
   },
   tableType: {
-    title: 'Tipo de tabla',
+    title: 'Tipo de Tabla',
     sort: false,
   },
 };

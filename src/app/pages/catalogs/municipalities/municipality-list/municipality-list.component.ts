@@ -48,13 +48,32 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'stateKey' ||
+            switch (filter.field) {
+              case 'stateKey':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'idMunicipality':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'state':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}.descCondition`;
+                break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            /*filter.field == 'stateKey' ||
             filter.field == 'nameMunicipality' ||
             filter.field == 'creationUser' ||
             filter.field == 'editionUser' ||
             filter.field == 'version'
               ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {

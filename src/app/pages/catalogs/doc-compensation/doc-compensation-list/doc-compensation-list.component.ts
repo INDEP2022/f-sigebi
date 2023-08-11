@@ -48,20 +48,33 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' ||
-            filter.field == 'satTypeJob' ||
-            filter.field == 'typeDocSae' ||
-            filter.field == 'type' ||
-            filter.field == 'idTypeDocSat' ||
-            filter.field == 'idTypeDocSatXml'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'satTypeJob':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'idTypeDocSat':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'idTypeDocSatXml':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getDocCompensation();
         }
       });
@@ -79,7 +92,7 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
     this.docCompensationService.getAll(params).subscribe({
       next: response => {
         this.docCompensation = response.data;
-        this.data.load(this.docCompensation);
+        this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count;
         this.loading = false;
@@ -103,7 +116,7 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea eliminar este registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(docCompensation.id);
@@ -116,7 +129,7 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Documento resarcimiento',
+          'Documento Resarcimiento',
           'Borrado Correctamente'
         ),
           this.getDocCompensation();

@@ -1,16 +1,16 @@
 export const TYPESERVICES_COLUMS = {
   id: {
-    title: 'ID tipo registro',
+    title: 'ID Tipo Registro',
     type: 'number',
     sort: false,
   },
   type: {
-    title: 'Tipo de servicio',
+    title: 'Tipo de Servicio',
     type: 'string',
     sort: false,
   },
   concept: {
-    title: 'Concepto de servicio',
+    title: 'Concepto de Servicio',
     type: 'string',
     sort: false,
   },

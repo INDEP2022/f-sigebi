@@ -13,7 +13,7 @@ export const IDENTIFIER_COLUMNS = {
   },
 
   keyview: {
-    title: 'Clave vista',
+    title: 'Clave Vista',
     type: 'string',
     sort: false,
   },

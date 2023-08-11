@@ -7,9 +7,6 @@ export const LEGAL_AFFAIR_COLUMNS = {
   legalAffair: {
     title: 'Descripción',
     sort: false,
-    filter: {
-      config: {},
-    },
   },
   status: {
     title: 'Status',

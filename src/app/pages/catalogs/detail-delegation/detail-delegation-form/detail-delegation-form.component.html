@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="detailDelegationForm" class="form-material">
@@ -16,17 +16,13 @@
 
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="detailDelegationForm.get('numberDelegation')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="detailDelegationForm"
-              control="numberDelegation"
-              [data]="delegation"
-              value="id"
-              bindLabel="description"
-              label="Delegaci&oacute;n"
-              (fetchItems)="getDelegation($event)">
-            </ngx-select>
+          <form-field
+            [control]="detailDelegationForm.get('numberDelegation')"
+            label="Delegación">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="numberDelegation" />
           </form-field>
 
           <!--<form-field
@@ -96,11 +92,7 @@
           <form-field
             [control]="detailDelegationForm.get('tel1')"
             label="Tel&eacute;fono 1">
-            <input
-              type="tel"
-              class="form-control"
-              formControlName="tel1"
-              maxlength="30" />
+            <input type="tel" class="form-control" formControlName="tel1" />
           </form-field>
         </div>
 
@@ -108,11 +100,7 @@
           <form-field
             [control]="detailDelegationForm.get('tel2')"
             label="Tel&eacute;fono 2">
-            <input
-              type="tel"
-              class="form-control"
-              formControlName="tel2"
-              maxlength="30" />
+            <input type="tel" class="form-control" formControlName="tel2" />
           </form-field>
         </div>
 
@@ -120,11 +108,7 @@
           <form-field
             [control]="detailDelegationForm.get('tel3')"
             label="Tel&eacute;fono 3">
-            <input
-              type="tel"
-              class="form-control"
-              formControlName="tel3"
-              maxlength="30" />
+            <input type="tel" class="form-control" formControlName="tel3" />
           </form-field>
         </div>
       </div>

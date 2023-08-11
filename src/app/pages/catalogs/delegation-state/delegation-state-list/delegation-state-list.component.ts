@@ -74,16 +74,13 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
               case 'status':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
             }
-            /*filter.field == 'regionalDelegation' ||
-            filter.field == 'stateCode' ||
-            filter.field == 'keyState' ||
-            filter.field == 'status'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);*/
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
