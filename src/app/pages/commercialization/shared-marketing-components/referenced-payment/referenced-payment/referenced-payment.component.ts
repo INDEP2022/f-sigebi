@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -23,14 +29,36 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AuxListComponent } from './aux-list/aux-list.component';
 import { AuxList2Component } from './aux-list2/aux-list2.component';
-import { COLUMNS, COLUMNS_DATA_CARGADAS } from './columns';
+import { COLUMNS, COLUMNS_CARGADOS } from './columns';
 import { ListReferenceComponent } from './list-reference/list-reference.component';
 import { NewAndUpdateComponent } from './new-and-update/new-and-update.component';
 
 @Component({
   selector: 'app-referenced-payment',
   templateUrl: './referenced-payment.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class ReferencedPaymentComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
@@ -44,10 +72,13 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   banks = new DefaultSelect();
   layout: string = '';
   loadingBtn: boolean = false;
+  loadingBtn2: boolean = false;
   cargado: boolean = false;
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   @ViewChild('file') fileInput: ElementRef;
   settings2 = { ...this.settings };
+  title: string = 'PAGOS REFERENCIADOS';
+  loading2: boolean = false;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -60,7 +91,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private comerEventosService: ComerEventosService,
     private bankService: BankService,
     private comerDetailsService: ComerDetailsService,
-    private msMassivecapturelineService: MsMassivecapturelineService
+    private msMassivecapturelineService: MsMassivecapturelineService,
+    private elementRef: ElementRef,
+    private renderer: Renderer2
   ) {
     super();
     this.settings = {
@@ -78,15 +111,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: false,
-      actions: {
-        columnTitle: 'Acciones',
-        edit: true,
-        add: false,
-        delete: false,
-        position: 'right',
-      },
-      columns: { ...COLUMNS_DATA_CARGADAS },
+      hideSubHeader: true,
+      actions: false,
+      columns: { ...COLUMNS_CARGADOS },
     };
   }
 
@@ -207,10 +234,34 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        this.paymentService.remove(data.paymentId).subscribe({
+          next: response => {
+            this.alert('success', 'El Registro se Eliminó Correctamente', '');
+            this.getPayments('no');
+          },
+          error: error => {
+            if (
+              error.error.message ==
+              'update or delete on table "comer_pagoref" violates foreign key constraint "comer_pagoref_obs_canc_pag_fk" on table "comer_pagoref_obs_canc"'
+            ) {
+              this.alert(
+                'error',
+                'Ocurrió un Error al Eliminar el Registro',
+                'Tiene Registros Relacionados en Otras Tablas'
+              );
+            } else {
+              this.alert(
+                'error',
+                'Ocurrió un Error al Eliminar el Registro',
+                ''
+              );
+            }
+          },
+        });
       }
     });
   }
@@ -331,6 +382,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
             item['descriptionSAT'] = item.satInfo
               ? item.satInfo.description
               : null;
+            item['descTypeSatId'] = item.satInfo
+              ? item.typeSatId + ' - ' + item.satInfo.description
+              : null;
           });
           Promise.all(result).then(resp => {
             this.data.load(response.data);
@@ -389,17 +443,18 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
 
     let params__ = '';
     if (lparams?.text.length > 0)
-      if (!isNaN(parseInt(lparams?.text))) {
-        console.log('SI');
-        params.addFilter('idCode', lparams.text, SearchFilter.EQ);
-        // params__ = `?filter.idCode=${lparams.text}`;
-        // params.addFilter('no_cuenta', lparams.text);
-      } else {
-        console.log('NO');
-        params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
-        // params__ = `?filter.cveBank=${lparams.text}`;
-        // params.addFilter('cve_banco', lparams.text);
-      }
+      params.addFilter('bankCode', lparams.text, SearchFilter.ILIKE);
+    // if (!isNaN(parseInt(lparams?.text))) {
+    //   console.log('SI');
+    //   params.addFilter('code', lparams.text, SearchFilter.EQ);
+    //   // params__ = `?filter.idCode=${lparams.text}`;
+    //   // params.addFilter('no_cuenta', lparams.text);
+    // } else {
+    //   console.log('NO');
+    // params.addFilter('bankCode', lparams.text, SearchFilter.ILIKE);
+    // params__ = `?filter.cveBank=${lparams.text}`;
+    // params.addFilter('cve_banco', lparams.text);
+    // }
 
     // this.hideError();
     return new Promise((resolve, reject) => {
@@ -432,6 +487,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       this.performScroll();
     }, 500);
   }
+
   clear() {
     this.form.reset();
     this.form2.reset();
@@ -439,12 +495,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.bankSelected = null;
     this.dataCargada.load([]);
     this.dataCargada.refresh();
-    this.cargado = false;
     this.searchWithEvent = false;
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getPayments('no'));
+    this.cargado = false;
+    this.getBanks(new ListParams());
+    this.getComerEvents(new ListParams());
   }
+
   async carga() {
     if (!this.eventSelected)
       return this.alert(
@@ -456,7 +512,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     if (!this.bankSelected) {
       return this.alert(
         'warning',
-        'Necesita Indicar de que Banco va a Cargar Datos',
+        'Necesita Indicar de qué Banco va a Cargar Datos',
         ''
       );
     }
@@ -466,42 +522,46 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       return this.alert('warning', 'El Evento no se Encuentra en una fase', '');
     } else {
       if (respEvent.phase == 1) {
-        this.alertInfo('info', 'Carga de Pagos Fase: 1', '').then(
-          async question => {
-            if (question.isConfirmed) {
-              // PUP_PROC_ANT;
-              await this.onButtonClick();
-            }
+        this.alertQuestion(
+          'question',
+          'Carga de Pagos Fase: 1',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            // PUP_PROC_ANT;
+            await this.onButtonClick();
           }
-        );
+        });
       } else if (respEvent.phase == 2) {
-        this.alertInfo('info', 'Carga de Pagos Fase: 2', '').then(
-          async question => {
-            if (question.isConfirmed) {
-              // PUP_PROC_NUEVO;
-              const pupNew: any = await this.PUP_PROC_NUEVO(
-                this.eventSelected.id
-              );
-              if (pupNew.data == null) {
-                this.alert('error', 'Error al Realizar la Carga', '');
+        this.alertQuestion(
+          'question',
+          'Carga de Pagos Fase: 2',
+          '¿Desea Continuar?'
+        ).then(async question => {
+          if (question.isConfirmed) {
+            // PUP_PROC_NUEVO;
+            const pupNew: any = await this.PUP_PROC_NUEVO(
+              this.eventSelected.id
+            );
+            if (pupNew.data == null) {
+              this.alert('error', 'Error al Realizar la Carga', '');
+            } else {
+              if (pupNew.data.length == 0) {
+                this.alert(
+                  'success',
+                  `No hay Pagos Pendientes del Evento: ${this.eventSelected.id}`,
+                  ''
+                );
               } else {
-                if (pupNew.data.length == 0) {
-                  this.alert(
-                    'success',
-                    `No hay Pagos Pendientes del Evento: ${this.eventSelected.id}`,
-                    ''
-                  );
-                } else {
-                  this.alert(
-                    'success',
-                    'Proceso Terminado, Referencias Cargadas Correctamente',
-                    ''
-                  );
-                }
+                this.alert(
+                  'success',
+                  'Proceso Terminado, Referencias Cargadas Correctamente',
+                  ''
+                );
               }
             }
           }
-        );
+        });
       } else {
         return this.alert(
           'warning',
@@ -526,49 +586,86 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       const formData = new FormData();
       formData.append('file', binaryExcel);
       formData.append('bank', this.bankSelected.bankCode);
-
+      this.loadingBtn = true;
       const cargaPagosCSV: any = await this.PUP_PROC_ANT(formData);
 
-      if (cargaPagosCSV) {
-        if (cargaPagosCSV.COMER_PAGOREF.length == 0) {
-          this.alert(
-            'success',
-            'Archivo Cargado Correctamente',
-            'No se Procesó Ningún Pago'
-          );
-          this.form2
-            .get('BLK_CTRL_CUANTOS')
-            .setValue(cargaPagosCSV.BLK_CTRL_CUANTOS);
-          this.form2
-            .get('BLK_CTRL_MONTO')
-            .setValue(cargaPagosCSV.BLK_CTRL_MONTO);
+      if (cargaPagosCSV.status == 200) {
+        const data = cargaPagosCSV.data;
+        if (data.COMER_PAGOREF.length == 0) {
+          this.alert('warning', 'No se Procesó Ningún Pago', 'Archivo Cargado');
+          this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
+          this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
           this.dataCargada.load([]);
           this.dataCargada.refresh();
           this.cargado = true;
+          this.loadingBtn = false;
           // BLK_CTRL_CUANTOS
           // BLK_CTRL_MONTO
         } else {
           this.alert('success', 'Archivo Cargado Correctamente', '');
-          this.form2
-            .get('BLK_CTRL_CUANTOS')
-            .setValue(cargaPagosCSV.BLK_CTRL_CUANTOS);
-          this.form2
-            .get('BLK_CTRL_MONTO')
-            .setValue(cargaPagosCSV.BLK_CTRL_MONTO);
-          this.dataCargada.load(cargaPagosCSV.COMER_PAGOREF);
-          this.dataCargada.refresh();
-          this.cargado = true;
+          this.form2.get('BLK_CTRL_CUANTOS').setValue(data.BLK_CTRL_CUANTOS);
+          this.form2.get('BLK_CTRL_MONTO').setValue(data.BLK_CTRL_MONTO);
+
+          let arr: any = [];
+          let result = data.COMER_PAGOREF.map((item: any) => {
+            let obj: any = {
+              movementNumber: item.COMER_PAGOREF_NO_MOVIMIENTO,
+              date: item.COMER_PAGOREF_FECHA,
+              move: item.COMER_PAGOREF_DESCPAGO,
+              bill: null,
+              referenceOri: item.COMER_PAGOREF_REFERENCIAORI,
+              bankKey: item.COMER_PAGOREF_CVE_BANCO,
+              branchOffice: item.COMER_PAGOREF_SUCURSAL,
+              amount: item.COMER_PAGOREF_MONTO,
+              result: item.COMER_PAGOREF_RESULTADO,
+              validSistem: item.COMER_PAGOREF_VAL,
+              paymentId: item.COMER_PAGOREF_ID,
+              reference: item.COMER_PAGOREF_REFERENCIA,
+              lotPub: null,
+              event: null,
+              entryOrderId: null,
+              descriptionSAT: null,
+              typeSatId: item.COMER_PAGOREF_ID_TIPO_SAT,
+              code: item.COMER_PAGOREF_CODIGO,
+              lotId: item.COMER_PAGOREF_ID_LOTE,
+              inTimeNumber: null,
+              type: null,
+              paymentReturnsId: null,
+              recordDate: item.COMER_PAGOREF_FECHA_REGISTRO,
+              dateOi: null,
+              appliedTo: null,
+              clientId: null,
+              folioOi: null,
+              indicator: null,
+              codeEdoCta: null,
+              affectationDate: null,
+              recordNumber: null,
+              spentId: null,
+              paymentRequestId: null,
+              customers: null,
+              bankAndNumber:
+                item.COMER_PAGOREF_CODIGO +
+                ' - ' +
+                item.COMER_PAGOREF_CVE_BANCO,
+            };
+            arr.push(obj);
+          });
+
+          Promise.all(result).then(resp => {
+            // this.title = 'PAGOS REFERENCIADOS CARGADOS DESDE EL CSV'
+            this.dataCargada.load(arr);
+            this.dataCargada.refresh();
+            this.cargado = true;
+            this.loadingBtn = false;
+          });
         }
         this.clearInput();
       } else {
-        this.alert(
-          'error',
-          'Ha Ocurrido un Error al Intentar Crear los Registros',
-          ''
-        );
+        this.alert('error', cargaPagosCSV.data, 'Verifique el Archivo');
         this.dataCargada.load([]);
         this.dataCargada.refresh();
         this.clearInput();
+        this.loadingBtn = false;
       }
 
       this.clearInput();
@@ -590,10 +687,26 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.msMassivecapturelineService.PUP_PROC_ANT(excelImport).subscribe({
         next: async (response: any) => {
-          resolve(response);
+          let obj = {
+            status: 200,
+            data: response,
+          };
+          resolve(obj);
         },
         error: error => {
-          resolve(null);
+          //
+          let message = 'Ha Ocurrido un Error al Intentar Registrar los Pagos';
+          if (
+            error.error.message ==
+            'duplicate key value violates unique constraint "unique_pago"'
+          ) {
+            message = 'Ha Ocurrido un Error, Se han Detectado Pagos Duplicados';
+          }
+          let obj: any = {
+            status: error.status,
+            data: message,
+          };
+          resolve(obj);
         },
       });
     });
@@ -859,5 +972,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
         block: 'start',
       });
     }
+  }
+
+  refresh() {
+    this.form2.reset();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getPayments('no'));
   }
 }
