@@ -1,5 +1,7 @@
 export enum PrepareEventEndpoints {
   PreparaEvent = 'prepareevent',
+  DetEvent = 'comer-event/detEvent',
+  ResumenAdmvxr = 'comer-event/summaryAdmvxr',
   Encrypt = 'util-comer-v1//fbEncrypt',
   ApplicationPufSearchEvent = 'application/pufSearchEvent',
   ComerGoodXLote = 'comer-good-xlot',

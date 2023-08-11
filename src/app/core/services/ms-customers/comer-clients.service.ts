@@ -4,7 +4,10 @@ import { CustomersEndpoints } from 'src/app/common/constants/endpoints/ms-custom
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
+import {
+  IComerClients,
+  IComerDataCustomers,
+} from 'src/app/core/models/ms-customers/customers-model';
 
 @Injectable({
   providedIn: 'root',
@@ -90,6 +93,14 @@ export class ComerClientsService extends HttpService {
     return this.get<IListResponse<any>>(
       CustomersEndpoints.ComerClientsXEventgetAllV2,
       params
+    );
+  }
+
+  getDataCustomersByLote(
+    idLote: number
+  ): Observable<IListResponse<IComerDataCustomers>> {
+    return this.get<IListResponse<IComerDataCustomers>>(
+      CustomersEndpoints.ApplicationDataCustomers + '/' + idLote
     );
   }
 }

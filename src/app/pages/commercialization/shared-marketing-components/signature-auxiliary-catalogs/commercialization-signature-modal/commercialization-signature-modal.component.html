@@ -20,11 +20,12 @@
             label="Usuario"
             value="usuario"
             (fetchItems)="getUsers($event)"
+            (change)="changeUsers($event)"
             [form]="formGroup"
             [showTooltip]="true"
             [searchOnInit]="true"
             termMaxLength="100"
-            control="usuario"></ngx-select>
+            control="user"></ngx-select>
         </div>
         <div class="col-sm-12 col-md-6">
           <!-- <form-field
@@ -42,11 +43,12 @@
             label="Tipo Firmante"
             value="signatoryType"
             (fetchItems)="getFirmType($event)"
+            (change)="changeFirm($event)"
             [form]="formGroup"
             [showTooltip]="true"
             [searchOnInit]="true"
             termMaxLength="100"
-            control="id_tipo_firmante"></ngx-select>
+            control="idGuySignatory"></ngx-select>
         </div>
       </div>
     </form>

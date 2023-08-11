@@ -4,19 +4,22 @@
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">Cambio de Clasificación del Bien</h5>
       </div>
-      <div
-        class="col-12 col-sm-12 col-md-4 text-end"
-        *ngIf="origin && origin > 0">
+    </div>
+  </div>
+  <div body>
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="row">
+      <div class="col-6">
+        <h6>Actual Clasificación</h6>
+      </div>
+      <div class="col-6 text-end">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
-  </div>
-  <div body>
-    <form-loader *ngIf="loading"></form-loader>
-    <h6>Actual Clasificación</h6>
+
     <br />
     <form [formGroup]="form" class="form-material">
       <div class="row">
