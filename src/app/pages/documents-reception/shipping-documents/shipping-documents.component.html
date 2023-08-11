@@ -203,7 +203,7 @@
 
       <div class="row pt-5">
         <div class="col-md-12 text-right">
-          <div class="col-md-10 text-right">
+          <div class="col-md-1 text-right">
             <button
               class="btn btn-primary btn-sm active"
               type="button"
@@ -211,10 +211,12 @@
               Consultar / Crear Envío
             </button>
           </div>
+          <!-- <confirm-button [loading]="loading" [text]="queryMode ? 'Imprimir' : 'Guardar'" [loadingText]="queryMode ? 'Imprimiendo...' : 'Guardando...'" [btnSmall]="true"></confirm-button>-->
           <confirm-button
+            *ngIf="!queryMode"
             [loading]="loading"
-            [text]="queryMode ? 'Imprimir' : 'Guardar'"
-            [loadingText]="queryMode ? 'Imprimiendo...' : 'Guardando...'"
+            [text]="queryMode ? '' : 'Guardar'"
+            [loadingText]="'Guardando...'"
             [btnSmall]="true"></confirm-button>
         </div>
       </div>

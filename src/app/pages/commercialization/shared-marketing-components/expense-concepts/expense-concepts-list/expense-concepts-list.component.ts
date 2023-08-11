@@ -215,7 +215,7 @@ export class ExpenseConceptsListComponent
                   );
                   // this.filesToDelete = [];
                   this.selectedConcept = body;
-                  this.expenseConceptsService.refreshParams.next(true);
+                  // this.expenseConceptsService.refreshParams.next(true);
                   // forkJoin(obs).subscribe({
                   //   complete: () => {
                   //     // this.files = [];
@@ -256,7 +256,7 @@ export class ExpenseConceptsListComponent
     }
 
     this.selectedConcept = row;
-    this.expenseConceptsService.refreshParams.next(true);
+    // this.expenseConceptsService.refreshParams.next(true);
   }
 
   override getParams() {

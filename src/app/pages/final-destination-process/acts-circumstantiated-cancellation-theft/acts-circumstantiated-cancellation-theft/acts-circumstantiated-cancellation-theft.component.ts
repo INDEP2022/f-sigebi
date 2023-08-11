@@ -3,13 +3,24 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  Observable,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
+
 import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -48,10 +59,11 @@ import { CreateActaComponent } from '../create-acta/create-acta.component';
 import { FindActaComponent } from '../find-acta/find-acta.component';
 import { FindAllExpedientComponent } from '../find-all-expedient/find-all-expedient.component';
 //import { IExpedient } from 'C:/indep/f-sigebi/src/app/core/models/ms-expedient/expedient';
-import { NotificationService } from 'src/app/core/services/notification/notification.service';
-import { DocumentsForDictumService } from '../../../../core/services/catalogs/documents-for-dictum.service';
-import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 
+import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings/proceeding-delivery-reception';
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -172,6 +184,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
   files: any;
+  userdelegacion: any;
+  userDepartament: any;
+  folioBoool: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private fileBrowserService: FileBrowserService,
@@ -379,7 +395,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   ngOnInit(): void {
-    // this.showScanForm = true;
+    this.showScanForm = true;
     this.prepareScan();
     const token = this.authService.decodeToken();
     console.log(token);
@@ -574,9 +590,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.loadingBienes = false;
         this.loadingBienes = false;
         this.bienes = data.data;
+
         console.log('Bienes', this.bienes);
 
         let result = data.data.map(async (item: any) => {
+          this.wheelNumber = item.flyerNumber;
           let obj = {
             vcScreen: 'FACTCIRCUNR_0001',
             pNumberGood: item.id,
@@ -1191,6 +1209,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .subscribe({
         next: async data => {
           this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          await this.confirmScanRequest();
         },
         error: error => {
           this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
@@ -1219,7 +1238,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   btnDetail() {}
   sendOffice() {}
 
-  Scanner() {
+  /*Scanner() {
     if (this.formScan.get('scanningFoli').value) {
       this.alertQuestion(
         'info',
@@ -1233,7 +1252,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.router.navigate([`/pages/general-processes/scan-documents`], {
             queryParams: {
               origin: 'FACTCIRCUNR_0001',
-              folio: this.actaRecepttionForm.get('consec').value,
+              folio: this.formScan.get('scanningFoli').value,
             },
           });
         }
@@ -1241,7 +1260,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     } else {
       this.alertInfo('warning', 'No Existe Folio de Escaneo a Escanear', '');
     }
-  }
+  }*/
   agregarActa() {
     const responsable = this.actaRecepttionForm.get('respConv').value;
     const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
@@ -1331,7 +1350,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     console.log('this.actasDefault', this.actasDefault);
     console.log(
       'this.circumstantialRecord',
-      this.expedient.circumstantialRecord
+      this.expedient
+      //this.expedient.circumstantialRecord
     );
     if (this.actasDefault != null) {
       if (this.actasDefault.keysProceedings == null) {
@@ -1451,101 +1471,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
     throw new Error('Method not implemented.');
   }
 
-  /* initSolicitud() {
-     
-     if (this.actaRecepttionForm.get('oficea').value != null) {
-       if (this.actaRecepttionForm.get('scanningFoli').value == null) {
-           this.alertQuestion(
-             'info',
-             'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?',
-             '',
-             'Aceptar',
-             'Cancelar'
-           ).then(res => {
-             console.log(res);
-             if (res.isConfirmed) {
-               this.notificationService
-                 .getByFileNumber(this.fileNumber)
-                 .subscribe({
-                   next: resp => {
-                     console.log('Respuesta primer: ', resp);
-                     let params = {
-                       fileNumber: this.fileNumber,
-                       actKey: this.actaRecepttionForm.get('oficea').value,
-                       delegationNumber: this.userdelegacion,
-                       subDelegationNumber: this.userSubdelegacion,
-                       departmentNumber: this.userDepartament,
-                       flyerNumber: resp.data[0].max,
-                     };
-                     this.DocumentsForDictumService
-                       .postDocuemntFolio(params)
-                       .subscribe({
-                         next: response => {
-                           this.folioScan = response.data[0].folio_universal;
-                           let formparams = {
-                             scanningFoli: response.data[0].folio_universal,
-                           };
-                           console.log('scanningFoli: ', formparams);
-                           this.folioBoool = true;
-                           this.formadd.patchValue(formparams);
-                           this.getReport();
-                         },
-                       });
-                   },
-                 });
-             }
-           });
-         } else {
-           this.alertInfo('warning', 'El Acta ya Tiene Folio de Escaneo.', '');
-         }
-       }
-     
-   }
- */
+  initSolicitud() {
 
+  }
   Generar() {
-    let params = {
-      PN_FOLIO: this.actaRecepttionForm.get('consec').value,
-    };
-    if (params.PN_FOLIO) {
-      const msg = setTimeout(() => {
-        this.jasperService
-          .fetchReport('RGERGENSOLICDIGIT', params)
-          .pipe(
-            tap(response => {
-              /*  this.alert(
-                  'success',
-                  'Generado correctamente',
-                  'Generado correctamente con folio: ' + this.folioScan
-                );*/
-              const blob = new Blob([response], { type: 'application/pdf' });
-              const url = URL.createObjectURL(blob);
-              let config = {
-                initialState: {
-                  documento: {
-                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
-                    type: 'pdf',
-                  },
-                  callback: (data: any) => {},
-                },
-                class: 'modal-lg modal-dialog-centered',
-                ignoreBackdropClick: true,
-              };
-              this.modalService.show(PreviewDocumentsComponent, config);
-              this.loadingDoc = false;
 
-              clearTimeout(msg);
-            })
-          )
-          .subscribe();
-      }, 1000);
-    } else {
-      this.alert(
-        'error',
-        'ERROR',
-        'Debe Tener el Folio en Pantalla para poder Imprimir'
-      );
-    }
   }
 
   getFileNamesByFolio(folio: number | string) {
@@ -1701,6 +1631,441 @@ export class ActsCircumstantiatedCancellationTheftComponent
   loadImages(folio: string | number) {
     this.getFileNamesByFolio(folio);
     this.updateSheets();
+  }
+  createDocument(document: IDocuments) {
+    return this.documentsService.create(document).pipe(
+      tap(_document => {
+        // END PROCESS
+      }),
+      catchError(error => {
+        this.onLoadToast(
+          'error',
+          'Error',
+          'Ocurrió un error al generar el documento'
+        );
+        return throwError(() => error);
+      })
+    );
+  }
+  async confirmScanRequest() {
+    const response = await this.alertQuestion(
+      'question',
+      'Aviso',
+      'Se generará un nuevo folio de Escaneo para el Acta, ¿Desea continuar?'
+    );
+
+    if (!response.isConfirmed) {
+      return;
+    }
+
+    const flyerNumber = this.wheelNumber;
+    if (!flyerNumber) {
+      this.alert(
+        'error',
+        'Error',
+        'Al localizar la información de Volante: ' +
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
+      );
+      return;
+    }
+    // const { numFile, keysProceedings } = this.controls;
+    const document = {
+      numberProceedings: this.fileNumber,
+      keySeparator: '60',
+      keyTypeDocument: 'ENTRE',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `EXPEDIENTE ${this.fileNumber}`, // Clave de Oficio Armada
+      significantDate: format(new Date(), 'MM-yyyy'),
+      scanStatus: 'SOLICITADO',
+      userRequestsScan:
+        this.dataUserLogged.user == 'SIGEBIADMON'
+          ? this.dataUserLogged.user.toLocaleLowerCase()
+          : this.dataUserLogged.user,
+      scanRequestDate: new Date(),
+      numberDelegationRequested: this.dataUserLogged.delegationNumber,
+      numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
+      numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+      flyerNumber: this.wheelNumber,
+    };
+
+    // this.createDocument(document)
+    //   .pipe(
+    //     tap(_document => {
+    //       this.formScan.get('scanningFoli').setValue(_document.id);
+    //     }),
+    //     switchMap((_document: any) => {
+    //       this.dataRecepcion.universalFolio =
+    //         this.formScan.get('scanningFoli').value;
+    //       return _document;
+    //     }),
+    //     switchMap(_document => this.generateScanRequestReport())
+    //   )
+    //   .subscribe();
+    this.createDocument(document)
+      .pipe(
+        tap(_document => {
+          this.formScan.get('scanningFoli').setValue(_document.id);
+        }),
+        switchMap(_document => {
+          this.dataRecepcion.universalFolio =
+            this.formScan.get('scanningFoli').value;
+          return Observable.create(() => {
+            _document;
+          });
+        }),
+        switchMap(_document => this.generateScanRequestReport())
+      )
+      .subscribe();
+  }
+  updateActa(data: IProceedingDeliveryReception) {
+    this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
+    delete this.actasDefault.numDelegation1Description;
+    delete this.actasDefault.numDelegation2Description;
+    delete this.actasDefault.numTransfer_;
+    this.proceedingsDeliveryReceptionService
+      .editProceeding(this.actasDefault.id, this.actasDefault)
+      .subscribe({
+        next: async data => {
+          this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+        },
+        error: error => {
+          this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
+          // this.loading = false
+        },
+      });
+  }
+  generateScanRequestReport() {
+    const pn_folio = this.formScan.get('scanningFoli').value;
+    return this.jasperService
+      .fetchReport('RGERGENSOLICDIGIT', { pn_folio })
+      .pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          const blob = new Blob([response], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          let config = {
+            initialState: {
+              documento: {
+                urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                type: 'pdf',
+              },
+              callback: (data: any) => {},
+            },
+            class: 'modal-lg modal-dialog-centered',
+            ignoreBackdropClick: true,
+          };
+          this.modalService.show(PreviewDocumentsComponent, config);
+        })
+      );
+  }
+  showScannerFoil() {
+    if (!this.dataRecepcion) {
+      return;
+    }
+    if (this.formScan.get('scanningFoli').value) {
+      // Insertar imagenes
+    } else {
+      this.alertInfo(
+        'warning',
+        'No tiene folio de Escaneo para visualizar',
+        ''
+      );
+    }
+  }
+
+  openScannerPage() {
+    if (!this.dataRecepcion) {
+      return;
+    }
+    if (
+      this.dataRecepcion.statusProceedings == 'ENVIADO' &&
+      this.dataRecepcion.keysProceedings
+    ) {
+      if (this.formScan.get('scanningFoli').value) {
+        this.alertQuestion(
+          'info',
+          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Acta. ¿Deseas continuar?',
+          '',
+          'Aceptar',
+          'Cancelar'
+        ).then(res => {
+          console.log(res);
+          if (res.isConfirmed) {
+            this.router.navigate(['/pages/general-processes/scan-documents'], {
+              queryParams: {
+                //origin: this.screenKey,
+                origin: 'FACTCIRCUNR_0001',
+                folio: this.formScan.get('scanningFoli').value,
+                expedient: this.fileNumber,
+                acta: this.formScan.get('type').value,
+                ...this.paramsScreen,
+              },
+            });
+          }
+        });
+      } else {
+        this.alertInfo(
+          'warning',
+          'No Existe Folio de Escaneo a Escanear',
+          ''
+        );
+      }
+    } else {
+      this.alertInfo(
+        'warning',
+        'No se puede Escanear para un Acta que esté abierta',
+        ''
+      );
+    }
+  }
+
+  showMessageDigitalization() {
+    let params = {
+      PN_FOLIO: this.actaRecepttionForm.get('consec').value,
+    };
+    if (params.PN_FOLIO) {
+      const msg = setTimeout(() => {
+        this.jasperService
+          .fetchReport('RGERGENSOLICDIGIT', params)
+          .pipe(
+            tap(response => {
+              /*  this.alert(
+                  'success',
+                  'Generado correctamente',
+                  'Generado correctamente con folio: ' + this.folioScan
+                );*/
+              const blob = new Blob([response], { type: 'application/pdf' });
+              const url = URL.createObjectURL(blob);
+              let config = {
+                initialState: {
+                  documento: {
+                    urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+                    type: 'pdf',
+                  },
+                  callback: (data: any) => { },
+                },
+                class: 'modal-lg modal-dialog-centered',
+                ignoreBackdropClick: true,
+              };
+              this.modalService.show(PreviewDocumentsComponent, config);
+              this.loadingDoc = false;
+
+              clearTimeout(msg);
+            })
+          )
+          .subscribe();
+      }, 1000);
+    } else {
+      this.alert(
+        'error',
+        'ERROR',
+        'Debe Tener el Folio en Pantalla para poder Imprimir'
+      );
+    }
+    /*if (this.formScan.get('scanningFoli').value) {
+      this.alertInfo(
+        'success',
+        'El folio universal generado es: "' +
+          this.formScan.get('scanningFoli').value +
+          '"',
+        ''
+      );
+    } else {
+      this.alertInfo('warning', 'No tiene Folio de Escaneo para Imprimir', '');
+    }*/
+  }
+  async replicate() {
+    if (!this.dataRecepcion) {
+      return;
+    }
+    if (
+      this.dataRecepcion.statusProceedings == 'ENVIADO' &&
+      this.dataRecepcion.universalFolio
+    ) {
+      if (this.formScan.get('scanningFoli').value) {
+        // Replicate function
+        const response = await this.alertQuestion(
+          'question',
+          'Aviso',
+          'Se generará un nuevo folio de escaneo y se le copiarán las imágenes del folio de escaneo actual. ¿Deseas continuar?'
+        );
+
+        if (!response.isConfirmed) {
+          return;
+        }
+
+        // if (!this.dictationData.wheelNumber) {
+        //   this.onLoadToast(
+        //     'error',
+        //     'Error',
+        //     'El trámite no tiene un número de volante'
+        //   );
+        //   return;
+        // }
+
+        this.getDocumentsCount().subscribe(count => {
+          if (count == null) {
+            this.alert(
+              'warning',
+              'Folio de escaneo inválido para replicar',
+              ''
+            );
+          } else {
+            // INSERTAR REGISTRO PARA EL DOCUMENTO
+            this.saveNewUniversalFolio_Replicate();
+          }
+        });
+      } else {
+        this.alertInfo(
+          'warning',
+          'Especifique el folio de escaneo a replicar',
+          ''
+        );
+        return;
+      }
+    } else {
+      this.alertInfo(
+        'warning',
+        'No se puede replicar el folio de escaneo en un acta abierta',
+        ''
+      );
+      return;
+    }
+  }
+  async createScannerFoil() {
+    if (this.actaRecepttionForm.get('consec').value == null) {
+      this.alertQuestion(
+        'info',
+        'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?',
+        '',
+        'Aceptar',
+        'Cancelar'
+      ).then(res => {
+        console.log(res);
+        if (res.isConfirmed) {
+          this.notificationService
+            .getByFileNumber(this.fileNumber)
+            .subscribe({
+              next: resp => {
+                console.log('Respuesta primer: ', resp);
+                let params = {
+                  fileNumber: this.fileNumber,
+                  actKey: this.actaRecepttionForm.get('type').value,
+                  delegationNumber: this.userdelegacion,
+                  subDelegationNumber: this.userdelegacion,
+                  departmentNumber: this.userDepartament,
+                  flyerNumber: resp.data[0].max,
+                };
+                this.documentsForDictumService
+                  .postDocuemntFolio2(params)
+                  .subscribe({
+                    next: response => {
+                      this.consec = response.data[0].folio_universal;
+                      let formparams = {
+                        consec: response.data[0].folio_universal,
+                      };
+                      this.folioBoool = true;
+                      this.actaRecepttionForm.patchValue(formparams);
+                      this.openScannerPage();
+                    },
+                  });
+              },
+            });
+        }
+      });
+    } else {
+      this.alertInfo('warning', 'El Acta ya Tiene Folio de Escaneo.', '');
+    }
+  }
+
+  saveNewUniversalFolio_Replicate() {
+    const document = {
+      numberProceedings: this.fileNumber,
+      keySeparator: '60',
+      keyTypeDocument: 'ENTRE',
+      natureDocument: 'ORIGINAL',
+      descriptionDocument: `DICTAMEN ${this.dataRecepcion.universalFolio}`, // Clave de Oficio Armada
+      significantDate: format(new Date(), 'MM-yyyy'),
+      scanStatus: 'ESCANEADO',
+      userRequestsScan:
+        this.dataUserLogged.user == 'SIGEBIADMON'
+          ? this.dataUserLogged.user.toLocaleLowerCase()
+          : this.dataUserLogged.user,
+      scanRequestDate: new Date(),
+      numberDelegationRequested: this.dataUserLogged.delegationNumber,
+      numberSubdelegationRequests: this.dataUserLogged.subdelegationNumber,
+      numberDepartmentRequest: this.dataUserLogged.departamentNumber,
+      associateUniversalFolio: this.formScan.get('scanningFoli').value,
+      flyerNumber: this.wheelNumber,
+    };
+    console.log('Documento a crear para el folio asociado', document);
+    this.createDocument(document)
+      .pipe(
+        tap(_document => {
+          this.onLoadToast(
+            'success',
+            'Se creó correctamente el nuevo Folio Universal: ' + _document.id,
+            ''
+          );
+          const folio = _document.id;
+          this.formScan.get('scanningFoli').setValue(folio);
+          this.formScan.get('scanningFoli').updateValueAndValidity();
+          this.alert('success', 'El folio universal generado es: ' + folio, '');
+          // this.updateDocumentsByFolio(
+          //   folio,
+          //   document.associateUniversalFolio
+          // ).subscribe();
+        }),
+        switchMap(_document => {
+          this.dataRecepcion.universalFolio =
+            this.formScan.get('scanningFoli').value;
+          return Observable.create(() => {
+            _document;
+          });
+        })
+        // switchMap(_document => this.generateScanRequestReport())
+        // switchMap(_document => {
+        //   this.dataRecepcion.universalFolio = Number(_document.id);
+        //   // this.form.get('scanningFoli').value;
+        //   return this.updateDictation(this.dataRecepcion).pipe(
+        //     map(() => _document)
+        //   );
+        // })
+        // switchMap(_document => this.generateScanRequestReport())
+      )
+      .subscribe();
+  }
+  getDocumentsCount() {
+    const params = new FilterParams();
+    params.addFilter('scanStatus', 'ESCANEADO');
+    params.addFilter(
+      'associateUniversalFolio',
+      SearchFilter.NULL,
+      SearchFilter.NULL
+    );
+    params.addFilter('id', this.formScan.get('scanningFoli').value);
+    console.log(params);
+    this.hideError();
+    return this.documentsService.getAllFilter(params.getParams()).pipe(
+      catchError(error => {
+        if (error.status < 500) {
+          return of({ count: 0 });
+        }
+        this.onLoadToast(
+          'error',
+          'Ocurrió un error al validar el Folio ingresado',
+          error.error.message
+        );
+        return throwError(() => error);
+      })
+      // map(response => {
+      //   return response.count;
+      // })
+    );
   }
 }
 

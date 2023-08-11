@@ -10,7 +10,7 @@ export const COLUMNS = {
     sort: false,
   },
   duct: {
-    title: '*Conducto',
+    title: 'Conducto',
     sort: false,
   },
   notifiedTo: {
@@ -22,7 +22,7 @@ export const COLUMNS = {
     sort: false,
   },
   editPublicationDate: {
-    title: '*Fecha Publicación',
+    title: 'Fecha Publicación',
     sort: false,
   },
   newspaperPublication: {

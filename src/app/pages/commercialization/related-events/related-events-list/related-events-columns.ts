@@ -5,7 +5,7 @@ export const RELATED_EVENTS_COLUMNS = {
     type: 'number',
     //width: '20%',
   },
-  eventRelId: {
+  id: {
     title: 'Id Evento Relacionado',
     sort: false,
     type: 'number',

@@ -5,17 +5,17 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-12">
           <form-field [control]="form.get('name')" label="Nombre">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6 pt-4">
           <form-field [control]="form.get('curp')" label="C.U.R.P.">
             <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6 pt-4">
           <form-field [control]="form.get('consecutive')" label="Consecutivo">
             <input
               type="number"

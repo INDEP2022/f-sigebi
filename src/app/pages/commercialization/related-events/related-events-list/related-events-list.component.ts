@@ -53,6 +53,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   columnFilters: any = [];
   idtable: string;
   relatedEventsDataLocal: LocalDataSource = new LocalDataSource();
+  column: string;
   relatedEventsSettings = {
     ...TABLE_SETTINGS,
     hideSubHeader: false,
@@ -417,10 +418,16 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   gettable(id: string | number) {
     this.relatedEventsColumns = [];
     this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+    let prueba1 = {
+      ...this.columnFilters,
+    };
+    console.log('prueba1 ', prueba1);
+
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log('params ', params);
     this.eventRelatedService.getByEvent(id, params).subscribe({
       next: response => {
         this.totalItems = response.count;
@@ -429,7 +436,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
           this.closeTable = true;
           let dataTable = {
             eventDadId: response.data[i].eventDadId,
-            eventRelId: response.data[i].eventRel.id,
+            id: response.data[i].eventRel.id,
             processKey: response.data[i].eventRel.processKey,
             statusvtaId: response.data[i].eventRel.statusvtaId,
           };
@@ -455,18 +462,22 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
+            console.log('field ', filter.field);
             /*SPECIFIC CASES*/
-            switch (filters.field) {
+            console.log('filters', filter.field);
+            switch (filter.field) {
               case 'eventDadId':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'eventRelId':
+              case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'eventRel.processKey':
+              case 'processKey':
+                field = 'filter.eventRel.processKey';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               case 'eventRel.statusvtaId':
+                field = 'filter.eventRel.statusvtaId';
                 searchFilter = SearchFilter.ILIKE;
                 break;
               default:
@@ -474,11 +485,16 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
                 break;
             }
             if (filter.search !== '') {
+              console.log('columnFilters, ', this.columnFilters);
+              console.log('field, ', field);
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+              console.log('columnFilters, ', this.columnFilters);
+              console.log('search, ', filter.search);
             } else {
               delete this.columnFilters[field];
             }
           });
+          console.log('this.params: antes: ', this.params);
           this.params = this.pageFilter(this.params);
           console.log('this.params: ', this.params);
           this.gettable(this.idtable);
@@ -492,6 +508,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   clearall() {
     this.relatedEventsColumns = [];
     this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+    this.relatedEventsDataLocal.reset();
     this.totalItems = 0;
     this.selectedEvent = null;
     this.eventForm.reset();
