@@ -23,7 +23,7 @@
               readonly
               class="form-control"
               min="1"
-              maxlength="15"
+              [max-length]="15"
               formControlName="ofDictNumber" />
           </form-field>
         </div>
@@ -36,7 +36,7 @@
               readonly
               type="text"
               class="form-control"
-              maxlength="15"
+              [max-length]="15"
               formControlName="typeDict" />
           </form-field>
         </div>
@@ -58,7 +58,7 @@
               type="number"
               class="form-control"
               min="1"
-              maxlength="15"
+              [max-length]="15"
               formControlName="proceedingsNumber" />
           </form-field>
         </div>
@@ -78,7 +78,7 @@
               type="number"
               class="form-control"
               min="1"
-              maxlength="15"
+              [max-length]="15"
               formControlName="id" />
           </form-field>
         </div>
@@ -91,7 +91,7 @@
               required
               type="text"
               class="form-control"
-              maxlength="1250"
+              [max-length]="250"
               formControlName="descriptionDict" />
           </form-field>
         </div>
@@ -103,7 +103,7 @@
             <input
               type="number"
               class="form-control"
-              maxlength="21"
+              [max-length]="21"
               formControlName="amountDict" />
           </form-field>
         </div>

@@ -159,7 +159,7 @@ export class NoticeAbandonmentForSecuringComponent
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', ' Revise los datos ingresados');
       },
     });
   }
@@ -178,7 +178,7 @@ export class NoticeAbandonmentForSecuringComponent
           error = err.message;
         }
 
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'Error', 'Revise los datos ingresados');
       },
     });
   }

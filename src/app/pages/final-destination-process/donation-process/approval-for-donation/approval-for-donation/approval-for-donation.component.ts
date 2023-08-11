@@ -1,14 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import {
-  BehaviorSubject,
-  catchError,
-  firstValueFrom,
-  map,
-  of,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
@@ -39,10 +32,15 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilter: any = [];
-  users = new DefaultSelect();
+  donation = new DefaultSelect();
   user = localStorage.getItem('username');
 
   area: string;
+  validate: boolean = true;
+  columnFilters: any = [];
+
+  status: string = null;
+  cveEvent: string;
 
   constructor(
     private fb: FormBuilder,
@@ -51,7 +49,6 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     private serviceUser: UsersService,
     private segAccessXAreas: SegAcessXAreasService,
     private eventProgrammingService: EventProgrammingService,
-
     private indUserService: IndUserService,
     private delegationService: DelegationService,
     private securityService: SecurityService,
@@ -104,167 +101,294 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.search());*/
-    this.getUsers(new ListParams());
+
+    //this.getUsers(new ListParams());
     const user: any = this.authService.decodeToken() as any;
     this.user = user.username;
 
     console.log(this.user, user);
+
+    this.inicialice();
   }
 
   initForm() {
     this.form = this.fb.group({
-      cveAct: [null, []],
-      estatusAct: ['todos', []],
+      cveActa: [null, []],
+      estatusAct: ['TODOS', []],
       noDelegation1: [null, [Validators.pattern(STRING_PATTERN)]],
       elaborated: [null, []],
     });
+    this.form.get('elaborated').disable();
+    this.form.get('noDelegation1').disable();
+    this.getEventComDonation(new ListParams());
   }
 
   onSubmit() {}
 
   filterButton() {
-    this.params.value.page = 1;
+    //this.params.value.page = 1;
     //this.search(false);
+    this.response = true;
+    const state = this.status ? this.status : '';
+    const cveAc = this.cveEvent;
+    const noDelegation1 = this.form.get('noDelegation1').value
+      ? this.form.get('noDelegation1').value
+      : '';
+    const elaborated = this.form.get('elaborated').value
+      ? this.form.get('elaborated').value
+      : '';
+    this.getEventComDonationAll(
+      'COMPDON',
+      state,
+      cveAc,
+      noDelegation1,
+      elaborated
+    );
   }
-
-  getUserDelegation() {
+  /*getUserDelegation() {
     return firstValueFrom(
       this.segAccessXAreas.getDelegationUser(this.user).pipe(
         catchError(() => of('0')),
         map(res => res.no_delegacion)
       )
     );
-  }
-
-  /*search(filter: boolean = true) {
-    this.eventProgrammingService
-      .faValUserInd({ user: this.user, indicator: '12' })
-      .subscribe({
-        next: async res => {
-          //logica nivel de usuario
-          console.log(res);
-          var level = res.level;
-          console.log('level: ' + level);
-          if (level == 2) {
-            let delegation = await this.getUserDelegation();
-            console.log('del: ' + delegation);
-            this.form.controls['noDelegation1'].setValue(delegation);
-          } else if (level == 3) {
-            this.form.controls['elaborated'].setValue(this.user);
-          }
-
-          this.loading = true;
-          //Poner this.form.value en una variable para poder modificarla
-          let forma: any = {};
-          Object.keys(this.form.value).forEach(key => {
-            const value = this.form.value[key];
-            console.log(key + ': ' + value);
-            if (value !== null && value !== '') {
-              forma['filter.' + key] = '$ilike:' + value;
-            }
-          });
-
-          let params = {
-            ...this.params.value,
-            ...forma,
-          };
-
-          if (filter) {
-            params = {
-              ...params,
-              ...this.columnFilter,
-            };
-          }
-
-          //si el valor de estatusAct es "todos" se elimina del objeto
-          if (params['filter.estatusAct'] == '$ilike:todos') {
-            delete params['filter.estatusAct'];
-          }
-
-          console.log(JSON.stringify(params));
-
-          this.donationService.getEventComDonation(params).subscribe(
-            data => {
-              if (!filter) {
-                this.columnFilter = [];
-                this.response = true;
-              }
-              this.data.load(data.data);
-              this.data.refresh();
-              this.totalItems = data.count;
-              this.loading = false;
-            },
-            err => {
-              this.loading = false;
-              this.data.load([]);
-              console.log(err);
-            }
-          );
-        },
-        error: err => {
-          console.log(err);
-          this.onLoadToast(
-            'error',
-            'No tiene permisos para acceder a esta vista'
-          );
-        },
-      });
   }*/
-
   export() {
     this.data.getAll().then(data => {
       this.excelService.export(data, { filename: 'hoja1.xls' });
     });
   }
 
-  getUsers(params: ListParams) {
-    this.securityService.getAllUsersTracker().subscribe({
+  getEventComDonation(params: ListParams) {
+    this.donationService.getEventComDonation(params).subscribe({
       next: resp => {
-        this.users = new DefaultSelect(resp.data, resp.count);
+        this.donation = new DefaultSelect(resp.data, resp.count);
       },
       error: err => {
-        this.users = new DefaultSelect();
+        this.donation = new DefaultSelect();
       },
     });
-    /*const routeUser = `?filter.name=$ilike:${params.text}`;
-    this.serviceUser.getAllSegUsers(routeUser).subscribe(res => {
-      this.users = new DefaultSelect(res.data, res.count);
+  }
+
+  getEventComDonationAll(
+    actType?: string | number,
+    estatusAct?: string | number,
+    cveAct?: string | number,
+    NoDelegation1?: string | number,
+    elaborated?: string | number
+  ) {
+    this.loading = true;
+    this.params.getValue()['filter.actType'] = `$eq:${actType}`;
+    this.params.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    if (NoDelegation1) {
+      this.params.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
+    }
+    if (estatusAct) {
+      this.params.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`;
+    }
+    if (elaborated) {
+      this.params.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
+    }
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.donationService.getEventComDonation(params).subscribe({
+      next: resp => {
+        this.data.load(resp.data);
+        this.data.refresh();
+        this.totalItems = resp.count;
+        this.loading = false;
+        //this.donation = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        //this.donation = new DefaultSelect();
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
+    });
+  }
+
+  async getIndicator() {
+    return new Promise((resolve, reject) => {
+      let body = {
+        user: this.user,
+        indicatorNumber: 12,
+      };
+      this.serviceUser.getAllIndicator(body).subscribe({
+        next: resp => {
+          //console.log(resp);
+          if (resp.data) {
+            resolve(resp);
+          } else {
+            resolve(null);
+          }
+        },
+        error: err => {
+          //console.log(err);
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getFaVal() {
+    return new Promise((resolve, reject) => {
+      let body = {
+        pUser: this.user,
+        pIndicatorNumber: 12,
+      };
+      this.serviceUser.getAllFaVal(body).subscribe({
+        next: resp => {
+          if (resp.data) {
+            resolve(resp.data);
+          } else {
+            resolve(null);
+          }
+        },
+        error: err => {
+          console.log(err);
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async getAccessArea(params: ListParams) {
+    return new Promise((resolve, reject) => {
+      params['filter.user'] = `$eq:${this.user}`;
+      this.segAccessXAreas.getAll(params).subscribe({
+        next: resp => {
+          if (resp.data) {
+            resolve(resp.data);
+          } else {
+            resolve(null);
+          }
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async inicialice() {
+    let access = await this.getAccessArea(new ListParams());
+    console.log(access);
+    let FaVal = await this.getFaVal();
+    console.log(FaVal);
+    let indicated = await this.getIndicator();
+    console.log(indicated);
+
+    if (indicated == null) {
+      this.alert(
+        'error',
+        `El Usuario`,
+        'No tiene privilegios para esta pantalla'
+      );
+      return;
+    }
+    const faVal: any = FaVal;
+    const level = faVal[0].fa_val_usuario_ind;
+    console.log(level);
+    if (level == 0) {
+      this.alert(
+        'error',
+        `El Usuario`,
+        'No tiene privilegios para esta pantalla'
+      );
+      return;
+    } else if (level == 2) {
+      const delegation: any = access;
+      const valDele = delegation[0].delegationNumber;
+      this.form.get('noDelegation1').setValue(valDele);
+    } else if (level == 3) {
+      this.form.get('elaborated').setValue(this.user);
+    }
+  }
+
+  onEventChange(type: any) {
+    if (type) {
+      this.validate = false;
+      //console.log(type.cveAct);
+      this.cveEvent = type.cveAct;
+    }
+    //
+  }
+
+  clean() {
+    this.response = false;
+    this.form.get('cveActa').setValue('');
+    this.validate = true;
+    this.status = null;
+    this.form.get('estatusAct').setValue('TODOS');
+  }
+
+  getRowSelec(event: any) {
+    this.status = event;
+    console.log(event);
+  }
+
+  exportAll(): void {
+    this.loading = true;
+    /*this.clientPenaltyService.getAll2().subscribe({
+      next: response => {
+        this.downloadDocument(
+          'TODOS_LOS_CLIENTES_PENALIZADOS',
+          'excel',
+          response.base64File
+        );
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
     });*/
   }
 
-  inicialice() {}
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
 
-  getIndicator() {
-    let body = {
-      user: '',
-      indicatorNumber: 12,
-    };
-    this.serviceUser.getAllIndicator(body).subscribe({
-      next: resp => {
-        console.log(resp);
-      },
-      error: err => {
-        console.log(err);
-      },
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
     });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.loading = false;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
   }
 
-  getFaVal() {
-    let body = {
-      pUser: '',
-      pIndicatorNumber: 12,
-    };
-    this.serviceUser.getAllIndicator(body).subscribe({
-      next: resp => {
-        console.log(resp);
-      },
-      error: err => {
-        console.log(err);
-      },
-    });
-  }
-
-  onUsersChange(type: any) {
-    console.log(type);
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 }
