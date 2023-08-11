@@ -4,7 +4,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
   IComerLayoutsH,
@@ -15,6 +18,7 @@ import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/la
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LayoutsConfigurationModalComponent } from './layouts-configuration-modal/layouts-configuration-modal.component';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   EXAMPLE_DAT2,
   EXAMPLE_DAT3,
@@ -57,6 +61,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   columns: any[] = [];
   @Output() refresh = new EventEmitter<true>();
   @Output() onConfirm = new EventEmitter<any>();
+  // Layouts Table
+  dataTableLayouts: LocalDataSource = new LocalDataSource();
+  dataTableParamsLayouts = new BehaviorSubject<ListParams>(new ListParams());
+  loadingLayouts: boolean = false;
+  totalLayouts: number = 0;
+  testDataLayouts: any[] = [];
+  columnFiltersLayouts: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -69,9 +80,10 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getLayoutH();
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getLayouts());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getLayouts());
+    this.loadingDataTableLayouts();
   }
 
   prepareForm() {
@@ -283,6 +295,83 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  /**
+   * FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
+   */
+
+  loadingDataTableLayouts() {
+    //Filtrado por columnas
+    this.dataTableLayouts
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              email: () => (searchFilter = SearchFilter.ILIKE),
+              name: () => (searchFilter = SearchFilter.ILIKE),
+            };
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFiltersLayouts[
+                field
+              ] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFiltersLayouts[field];
+            }
+          });
+          this.dataTableParamsLayouts = this.pageFilter(
+            this.dataTableParamsLayouts
+          );
+          //Su respectivo metodo de busqueda de datos
+          this.getLayoutsData();
+        }
+      });
+
+    // this.columnFiltersLayouts['filter.originId'] = `$eq:${this.originId}`;
+    //observador para el paginado
+    this.dataTableParamsLayouts
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLayoutsData());
+  }
+
+  getLayoutsData() {
+    this.loadingLayouts = true;
+    let params = {
+      ...this.dataTableParamsLayouts.getValue(),
+      ...this.columnFiltersLayouts,
+    };
+    console.log('PARAMS ', params);
+    this.layoutsConfigService.getAllLayouts(params).subscribe({
+      next: res => {
+        console.log('DATA Layouts', res);
+        this.testDataLayouts = res.data;
+        this.dataTableLayouts.load(this.testDataLayouts);
+        this.totalLayouts = res.count;
+        this.loadingLayouts = false;
+      },
+      error: error => {
+        console.log(error);
+        this.testDataLayouts = [];
+        this.dataTableLayouts.load([]);
+        this.totalLayouts = 0;
+        this.loadingLayouts = false;
+      },
+    });
+  }
+
+  /**
+   * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
+   */
 
   settings1 = {
     ...TABLE_SETTINGS,

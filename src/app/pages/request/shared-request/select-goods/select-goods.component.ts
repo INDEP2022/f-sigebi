@@ -78,6 +78,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idRequest: number = 0;
   goodSelected: boolean = false;
+  jsonBody: any = {};
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,
@@ -219,7 +220,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   getInfoGoods(filters: any) {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     this.params = new BehaviorSubject<ListParams>(new ListParams());
-
+    this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
       this.processDet == 'AMPARO' ||
@@ -228,17 +229,22 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'EXT_DOMINIO'
     ) {
       if (this.requestInfo.regionalDelegationId != 13) {
-        params.getValue()['filter.regionalDelegationId'] =
+        /*  params.getValue()['filter.regionalDelegationId'] =
+          this.requestInfo.regionalDelegationId; */
+
+        this.jsonBody.regionalDelegationId =
           this.requestInfo.regionalDelegationId;
       }
     }
 
     if (this.processDet != 'RES_ESPECIE') {
-      params.getValue()['filter.origin'] = 'INVENTARIOS';
+      //params.getValue()['filter.origin'] = 'INVENTARIOS';
+      this.jsonBody.origin = 'INVENTARIOS';
     }
 
     if (this.processDet == 'AMPARO') {
-      params.getValue()['filter.origin'] = 'INVENTARIOS';
+      //params.getValue()['filter.origin'] = 'INVENTARIOS';
+      this.jsonBody.origin = 'INVENTARIOS';
     }
 
     if (
@@ -246,7 +252,8 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'RES_PAGO_ESPECIE' ||
       this.processDet == 'RES_NUMERARIO'
     ) {
-      params.getValue()['filter.transfereeType'] = 'CE';
+      //params.getValue()['filter.transfereeType'] = 'CE';
+      this.jsonBody.transfereeType = 'CE';
     }
 
     if (
@@ -254,16 +261,18 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'DECOMISO' ||
       this.processDet == 'EXT_DOMINIO'
     ) {
-      params.getValue()['filter.transfereeType'] = 'A';
+      //params.getValue()['filter.transfereeType'] = 'A';
+      this.jsonBody.transfereeType = 'A';
     }
 
     for (const key in filters) {
       if (filters[key] != null && key != 'regionalDelegation') {
-        params.getValue()[key] = filters[key];
+        //params.getValue()[key] = filters[key];
+        this.jsonBody[key] = filters[key];
       }
     }
 
-    this.params = params;
+    //this.params = params;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getGoods(data);
     });
@@ -272,9 +281,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   getGoods(filters: ListParams) {
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
     const filter = params.getValue();*/
-    //debugger;
+    let page = filters.page;
+    let limit = filters.limit;
     this.loading = true;
-    this.goodResDevInvService.getAll(filters).subscribe({
+    this.goodResDevInvService.getAll(this.jsonBody, page, limit).subscribe({
       next: (response: any) => {
         this.goodColumns.load(response.data);
         this.goodTotalItems = response.data.length;

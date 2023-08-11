@@ -107,8 +107,8 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   }
 
   regionalDelegationSelect(item: IRegionalDelegation) {
-    this.regionalDelegationUser = item;
-    this.delegationId = item.id;
+    this.regionalDelegationUser = item != undefined ? item : null;
+    this.delegationId = item != undefined ? item.id : null;
     this.searchForm.get('regionalDelegationId').setValue(this.delegationId);
     this.getStateSelect(new ListParams());
   }

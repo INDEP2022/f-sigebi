@@ -123,11 +123,6 @@
                   [maxDate]="maxDate"
                   [min]="form.get('from').value"
                   [minDate]="form.get('from').value"
-                  [ngModel]="
-                    form.get('to').value < form.get('from').value
-                      ? form.get('from').value
-                      : form.get('to').value
-                  "
                   bsDatepicker />
               </form-field>
               <div class="col-sm-12 col-12 col-md-12 p-2">

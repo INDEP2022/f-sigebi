@@ -1,4 +1,4 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
@@ -20,6 +20,10 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsByFilter(params: HttpParams) {
     return this.get('eat-lots', params);
   }
 
