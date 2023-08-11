@@ -38,6 +38,16 @@ interface IExcelToJson {
   o_teso: string;
 }
 
+interface IExcelToJson {
+  idD: number;
+  id: number;
+  f_trnas: string;
+  f_sent: string;
+  Inte: number;
+  f_teso: string;
+  o_teso: string;
+}
+
 @Component({
   selector: 'app-confiscation-ratio',
   templateUrl: './confiscation-ratio.component.html',
