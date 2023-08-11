@@ -80,7 +80,11 @@ export class DeclarationAbandonmentInsuranceComponent
         console.log('RESPONSE', response);
         setTimeout(() => {
           this.good = response;
-
+          if (response.notifyDate != null) {
+            this.form
+              .get('fechaNotificacion')
+              .setValue(this.formatDate(response.notifyDate));
+          }
           this.getScreenStatusFinal(response, toast);
           this.loadGood(response);
         }, 100);
@@ -97,12 +101,13 @@ export class DeclarationAbandonmentInsuranceComponent
     params['filter.status'] = `$ilike:${good.status}`;
     await this.statusGoodService.getAll(params).subscribe({
       next: (response: any) => {
+        console.log('response 1', response);
         this.form.get('descripcion').setValue(good.description);
         this.form.get('cantidad').setValue(good.quantity);
         this.form.get('estatus').setValue(response.data[0].description);
         this.form
           .get('declaracionAbandonoSERA')
-          .setValue(good.seraAbnDeclaration);
+          .setValue(response.seraAbnDeclaration);
       },
       error: err => {
         this.form.get('descripcion').setValue(good.description);
@@ -126,7 +131,7 @@ export class DeclarationAbandonmentInsuranceComponent
       estatus: good.status,
       vc_pantalla: 'FACTJURDECLABAND',
     };
-
+    console.log('obj -> ', obj);
     let _statusFinal: any = {
       status: null,
     };
@@ -135,7 +140,7 @@ export class DeclarationAbandonmentInsuranceComponent
       (response: any) => {
         const { data } = response;
         _statusFinal.status = data[0].statusFinal.status;
-
+        console.log('Status -> ', _statusFinal);
         this.getDataNotixGood(_statusFinal);
       },
       error => {
@@ -159,8 +164,14 @@ export class DeclarationAbandonmentInsuranceComponent
       .getByNotificationxProperty2(notificationPropertyRequest)
       .subscribe({
         next: response => {
-          // console.log('NOTIFICATION X BIEN', response);
+          console.log('NOTIFICATION X BIEN', response);
+
           const { data } = response;
+          if (data[0].periodEndDate != null) {
+            this.form
+              .get('fechaTerminoPeriodo')
+              .setValue(this.formatDate(data[0].periodEndDate));
+          }
 
           if (
             data[0].userCorrectsKey == null &&
@@ -311,5 +322,9 @@ export class DeclarationAbandonmentInsuranceComponent
         );
       }
     );
+  }
+
+  formatDate(fecha: string) {
+    return fecha.split('T')[0].split('-').reverse().join('/');
   }
 }

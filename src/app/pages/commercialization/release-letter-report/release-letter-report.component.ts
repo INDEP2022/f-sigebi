@@ -685,8 +685,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   changeEvent(event: any) {
     console.log(event);
     this.comerLibsForm.get('lote').reset();
-    this.comerLibsForm.get('evento_descripcion').reset();
-    // .setValue(event ? event.observations : null);
+    this.comerLibsForm
+      .get('evento_descripcion') //.reset();
+      .setValue(event ? event.observations : null);
     this.getLoteData(new ListParams());
   }
 

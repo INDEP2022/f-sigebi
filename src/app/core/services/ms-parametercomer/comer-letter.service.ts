@@ -4,7 +4,10 @@ import { ComerLetterEndpoints } from 'src/app/common/constants/endpoints/comer-l
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IComerLetter } from '../../models/ms-parametercomer/comer-letter';
+import {
+  IComerLetter,
+  IComerLetterResp,
+} from '../../models/ms-parametercomer/comer-letter';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +25,8 @@ export class ComerLetterService extends HttpService {
   }
   getById(id: string | number): Observable<IComerLetter> {
     return this.get(`${this.endpint1}/${id}`);
+  }
+  getByIdResponsability(id: string | number): Observable<IComerLetterResp> {
+    return this.get(`${ComerLetterEndpoints.CartasResp}/${id}`);
   }
 }

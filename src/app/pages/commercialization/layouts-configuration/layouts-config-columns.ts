@@ -133,14 +133,14 @@ export const LAYOUTS_COLUMNS4 = {
 };
 
 export const LAYOUTS_COLUMNS5 = {
-  // idLayout: {
-  //   title: 'Layout',
-  //   type: 'number',
-  //   sort: true,
-  //   valuePrepareFunction: (cell: any, row: any) => {
-  //     return row.idLayout.id;
-  //   },
-  // },
+  idLayout: {
+    title: 'Id',
+    type: 'number',
+    sort: true,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.idLayout.id;
+    },
+  },
   descLayout: {
     title: 'Descripción',
     type: 'string',
@@ -173,14 +173,14 @@ export const LAYOUTS_COLUMNS5 = {
       return row.idLayout.criterion;
     },
   },
-  registryNumber: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.registryNumber;
-    },
-  },
+  // registryNumber: {
+  //   title: 'Número de registro',
+  //   type: 'number',
+  //   sort: true,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return row.idLayout.registryNumber;
+  //   },
+  // },
   indActive: {
     title: 'Activo',
     sort: true,
