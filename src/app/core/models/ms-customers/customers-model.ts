@@ -43,3 +43,13 @@ export interface IComerClients {
   penaltyEndDate: string;
   penalizeUser: string;
 }
+export interface IComerDataCustomers {
+  rfc: string;
+  calle: string;
+  colonia: string;
+  ciudad: string;
+  delegacion: string;
+  estado: string;
+  cp: number;
+  nom_razon: string;
+}

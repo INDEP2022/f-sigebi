@@ -313,12 +313,41 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     return this.lotService.validateCSV(body).pipe(
       catchError(error => {
         this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.excelControl.reset();
         return throwError(() => error);
       }),
-      tap(response => {
-        console.log({ response });
+      tap(async response => {
+        if (response.data) {
+          for (let index = 0; index < response.data.length; index++) {
+            await this.alertInfo('error', 'Error', response.data[index]);
+          }
+          this.excelControl.reset();
+          return;
+        }
+        if (!(response.message[0] ?? []).length) {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          this.excelControl.reset();
+          return;
+        }
+        if (response.message[0]) {
+          await this.successValCSV(this.getFileFromEvent(event));
+          return;
+        }
       })
     );
+  }
+
+  async successValCSV(file: File) {
+    this.excelControl.reset();
+
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      'No se encontraron errores en el archivo',
+      '¿Desea Lotificar el evento?'
+    );
+    if (isConfirmed) {
+      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES
+    }
   }
 
   /** PUP_VALCSV_CLIENTES */
@@ -328,12 +357,41 @@ export class EventLotsListComponent extends BasePage implements OnInit {
     return this.lotService.validateCustomersCSV(file).pipe(
       catchError(error => {
         this.alert('error', 'Error', UNEXPECTED_ERROR);
+        this.excelControl.reset();
         return throwError(() => error);
       }),
-      tap(response => {
-        console.log({ response });
+      tap(async response => {
+        if (response.data) {
+          for (let index = 0; index < response.data.length; index++) {
+            await this.alertInfo('error', 'Error', response.data[index]);
+          }
+          this.excelControl.reset();
+          return;
+        }
+        if (!(response.message[0] ?? []).length) {
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          this.excelControl.reset();
+          return;
+        }
+        if (response.message[0]) {
+          await this.successValCsvCustomer(this.getFileFromEvent(event));
+          return;
+        }
       })
     );
+  }
+
+  async successValCsvCustomer(file: File) {
+    this.excelControl.reset();
+
+    const { isConfirmed } = await this.alertQuestion(
+      'question',
+      'No se encontraron errores en el archivo',
+      '¿Desea Realiza la Carga de Clientes en el evento?'
+    );
+    if (isConfirmed) {
+      // TODO: MANDAR A LLAMAR A PUP_IMP_EXCEL_LOTES_CLIENTE¿
+    }
   }
 
   /** VALIDA_COLUMNASBASE */

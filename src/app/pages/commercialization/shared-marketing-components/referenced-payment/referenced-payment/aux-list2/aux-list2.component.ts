@@ -158,7 +158,7 @@ export class AuxList2Component extends BasePage implements OnInit {
   async seleccionar() {
     const requestBody: any = {
       paymentId: this.dataParams.paymentId,
-      reference: this.dataSelected.referential,
+      reference: this.dataSelected.cve_banco,
     };
 
     this.paymentService
