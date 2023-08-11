@@ -32,7 +32,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ClarificationFormTabComponent extends BasePage implements OnInit {
   public event: EventEmitter<any> = new EventEmitter();
   clarificationForm: ModelForm<ClarificationGoodRejectNotification>;
-  title: string = 'Aclaración';
+  title: string = 'Aclaración/Improcedencia';
   edit: boolean = false;
   // selectTypeClarification = new DefaultSelect<any>();
   clarificationTypes = ClarificationTypes;
@@ -83,7 +83,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         //params.value.addFilter('type', type.id);
         //params.value.addFilter('type', Number(val));
         const filter = params.getValue().getParams();
-        this.getClarification(filter);
+        this.getClarification();
       },
     });
     //this.getClarification(new ListParams());
@@ -110,7 +110,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       let params = new BehaviorSubject<FilterParams>(new FilterParams());
       params.value.limit = 100;
       const filter = params.getValue().getParams();
-      this.getClarification(filter);
+      this.getClarification();
 
       //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
@@ -127,7 +127,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   getTypeClarification(event: any): void {}
 
-  getClarification(params: ListParams | string): void {
+  getClarification(params?: ListParams): void {
+    params['sortBy'] = `clarification:ASC`;
     this.clarificationService.getAll(params).subscribe({
       next: data => {
         this.selectClarification = new DefaultSelect(data.data, data.count);
