@@ -109,7 +109,6 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.flyersForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      federative: [null],
       PF_FECINI: [null, [Validators.required]],
       PF_FECFIN: [null, [Validators.required, maxDate(new Date())]],
       includeArea: [false],
@@ -201,7 +200,6 @@ export class SummaryComponent extends BasePage implements OnInit {
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-      PC_ENTFED: this.flyersForm.controls['federative'].value,
       PF_FECINI: this.start,
       PF_FECFIN: this.end,
     };
@@ -246,7 +244,6 @@ export class SummaryComponent extends BasePage implements OnInit {
       PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
       PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
       PN_DEPARTAMENTO: this.flyersForm.controls['department'].value,
-      PC_ENTFED: this.flyersForm.controls['federative'].value,
       PF_FECINI: this.start,
       PF_FECFIN: this.end,
     };

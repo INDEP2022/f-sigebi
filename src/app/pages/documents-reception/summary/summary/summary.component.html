@@ -30,17 +30,6 @@
             </ngx-select>
           </form-field>
 
-          <form-field [control]="flyersForm.get('federative')">
-            <ngx-select
-              label="Entidad Federativa"
-              [form]="flyersForm"
-              control="federative"
-              [data]="entfedSelect"
-              value="id"
-              bindLabel="downloadState"
-              (fetchItems)="getEntfed($event)"></ngx-select>
-          </form-field>
-
           <form-check label="Filtrar por &Aacute;rea" for="make_filter">
             <input
               id="make_filter"
