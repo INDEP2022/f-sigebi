@@ -14,6 +14,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IMeasureUnit,
@@ -57,9 +58,11 @@ import { AssignReceiptFormComponent } from '../../../shared-request/assign-recei
 import { ShowDocumentsGoodComponent } from '../../../shared-request/expedients-tabs/sub-tabs/good-doc-tab/show-documents-good/show-documents-good.component';
 import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
-import { ESTATE_COLUMNS_VIEW } from '../../acept-programming/columns/estate-columns';
+import {
+  ESTATE_COLUMNS_VIEW,
+  TRANS_GOODS_EXECUTE_EDITABLE,
+} from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS_SHOW } from '../../acept-programming/columns/users-columns';
-import { settingTransGoodsExecute } from '../../perform-programming/perform-programming-form/settings-tables';
 import { GenerateReceiptGuardFormComponent } from '../../shared-components-programming/generate-receipt-guard-form/generate-receipt-guard-form.component';
 import { GoodsReceiptsFormComponent } from '../../shared-components-programming/goods-receipts-form/goods-receipts-form.component';
 import { CancelationGoodFormComponent } from '../cancelation-good-form/cancelation-good-form.component';
@@ -85,6 +88,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   goods: any[] = [];
   receiptGuards: LocalDataSource = new LocalDataSource();
   receiptWarehouse: LocalDataSource = new LocalDataSource();
+  goodsInfoTransportable: LocalDataSource = new LocalDataSource();
   goodsGuard: IGood[] = [];
   goodsWareh: IGood[] = [];
   goodsSelect: IGood[] = [];
@@ -172,10 +176,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   delegationDes: string = '';
   keyTransferent: string = '';
 
-  settingsTransportableGoods = {
+  /*settingsTransportableGoods = {
     ...this.settings,
     ...settingTransGoodsExecute,
+  }; */
+
+  settingsTransGood = {
+    ...TABLE_SETTINGS,
+    actions: false,
   };
+  columns = TRANS_GOODS_EXECUTE_EDITABLE;
 
   settingsGuardGoods = {
     ...this.settings,
@@ -341,6 +351,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.settingsTransGood.columns = TRANS_GOODS_EXECUTE_EDITABLE;
+
+    this.columns.descriptionGoodSae = {
+      ...this.columns.descriptionGoodSae,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          //this.setDescriptionGoodSae(data);
+        });
+      },
+    };
+
     this.prepareForm();
     this.prepareSearchForm();
     this.prepareReceptionForm();
@@ -740,7 +761,43 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   } */
 
   getInfoGoodsTransportable() {
-    this.formLoadingTrans = true;
+    const _data: any[] = [];
+
+    this.paramsTransportableGoods.getValue()['filter.programmingId'] =
+      this.programmingId;
+    this.paramsTransportableGoods.getValue()['filter.status'] =
+      'EN_TRANSPORTABLE';
+    this.paramsTransportableGoods.getValue()['sortBy'] = 'goodId:ASC';
+    this.programmingService
+      .getGoodsProgramming(this.paramsTransportableGoods.getValue())
+      .subscribe({
+        next: async data => {
+          this.totalItemsTransportableGoods = data.count;
+          data.data.map((item: IGoodProgramming) => {
+            this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
+            this.paramsShowTransportable.getValue()['sortBy'] = 'id:ASC';
+            this.goodService
+              .getAll(this.paramsShowTransportable.getValue())
+              .subscribe({
+                next: async data => {
+                  console.log('bienes transportable', data);
+                  _data.push(data.data[0]);
+                  this.goodsInfoTransportable.load(_data);
+                },
+                error: error => {
+                  this.formLoadingTrans = false;
+                },
+              });
+          });
+        },
+        error: error => {
+          this.formLoadingTrans = false;
+          this.totalItemsTransportableGoods = 0;
+          this.selectGood = [];
+        },
+      });
+
+    /*this.formLoadingTrans = true;
     const _data: any[] = [];
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
@@ -819,49 +876,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 },
               });
           });
-          /*
-        //
-        const showTransportable: any = [];
-         */
+         
         },
         error: error => {
           this.formLoadingTrans = false;
           this.totalItemsTransportableGoods = 0;
           this.selectGood = [];
         },
-      });
-
-    /*console.log('goodsProg', goodsProg);
-    console.log('count', count);
-    this.formLoadingGuard = true;
-    const filterTrans = goodsProg.filter(item => {
-      return item.status == 'EN_RESGUARDO_TMP';
-    });
-    const showGuard: any = [];
-    filterTrans.map((item: IGoodProgramming) => {
-      this.paramsShowTransportable.getValue()['filter.id'] = item.goodId;
-      this.goodService
-        .getAll(this.paramsShowTransportable.getValue())
-        .subscribe({
-          next: async data => {
-            data.data.map(async item => {
-              const aliasWarehouse: any = await this.getAliasWarehouse(
-                item.addressId
-              );
-              item['aliasWarehouse'] = aliasWarehouse;
-
-              if (item.statePhysicalSae == 1)
-                item['statePhysicalSae'] = 'BUENO';
-              if (item.statePhysicalSae == 2) item['statePhysicalSae'] = 'MALO';
-              showGuard.push(item);
-              this.goodsGuards.load(showGuard);
-              this.totalItemsTransportableGuard = count;
-              this.headingGuard = `Resguardo(${count})`;
-              this.formLoadingGuard = false;
-            });
-          },
-        });
-    }); */
+      }); */
   }
 
   getAliasWarehouse(idAddress: number) {
