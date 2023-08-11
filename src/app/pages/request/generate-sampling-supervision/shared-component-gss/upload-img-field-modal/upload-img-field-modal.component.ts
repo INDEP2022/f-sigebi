@@ -47,11 +47,17 @@ export class UploadImgFieldModalComponent implements OnInit {
         xidTransferente: '',
         xidBien: this.data[0].goodId,
         xnombreProceso: 'Generar Muestreo',
+        dDocTitle: `IMG_${this.getDate()}img`,
       };
       const contentType = 'img';
       const docName = `IMG_${this.getDate()}${contentType}`;
 
-      //this.insertImage(docName,contentType,JSON.stringify(formData),contentType)
+      this.insertImage(
+        docName,
+        contentType,
+        JSON.stringify(formData),
+        contentType
+      );
     });
   }
 
@@ -69,7 +75,7 @@ export class UploadImgFieldModalComponent implements OnInit {
 
   getDate() {
     const date = new Date();
-    return moment(date).format('DD-MM-YYYY');
+    return moment(date).format('DD_MM_YYYY');
   }
 
   close() {
