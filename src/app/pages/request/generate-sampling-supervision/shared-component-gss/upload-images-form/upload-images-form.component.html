@@ -31,69 +31,71 @@
         <div class="row">
           <div class="col-md-4">
             <form-field
-              [control]="searchPhotoForm.get('noManagement')"
+              [control]="searchPhotoForm.get('xidBien')"
               label="No&#46; Gesti&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="noManagement" />
+                formControlName="xidBien" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchPhotoForm.get('noProgramming')"
+              [control]="searchPhotoForm.get('xNoProgramacion')"
               label="No&#46; Programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="noProgramming" />
+                formControlName="xNoProgramacion" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchPhotoForm.get('noPhoto')"
+              [control]="searchPhotoForm.get('dDocName')"
               label="No&#46; Fotograf&iacute;a">
               <input
                 type="text"
                 class="form-control"
-                formControlName="noPhoto" />
+                formControlName="dDocName" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="searchPhotoForm.get('author')" label="Autor">
+            <form-field
+              [control]="searchPhotoForm.get('dDocAuthor')"
+              label="Autor">
               <input
                 type="text"
                 class="form-control"
-                formControlName="author" />
+                formControlName="dDocAuthor" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchPhotoForm.get('titleImage')"
+              [control]="searchPhotoForm.get('dDocTitle')"
               label="T&iacute;tulo Im&aacute;gen">
               <input
                 type="text"
                 class="form-control"
-                formControlName="titleImage" />
+                formControlName="dDocTitle" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="searchPhotoForm.get('folioProgramming')"
+              [control]="searchPhotoForm.get('xFolioProgramacion')"
               label="Folio Programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="folioProgramming" />
+                formControlName="xFolioProgramacion" />
             </form-field>
           </div>
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="searchPhotoForm.get('text')" label="Texto">
-              <textarea class="form-control" formControlName="text"></textarea>
+            <form-field [control]="searchPhotoForm.get('texto')" label="Texto">
+              <textarea class="form-control" formControlName="texto"></textarea>
             </form-field>
           </div>
         </div>
@@ -116,20 +118,21 @@
           </div>
         </div>
         <div class="p-2">
+          <!-- (click)="file.click()" -->
           <button
             class="btn btn-success btn-sm ml-2"
             type="button"
-            (click)="file.click()">
-            Adjuntar Im&aacute;gen
+            (click)="uploadImage()">
+            Adjuntar Im&aacute;genes
           </button>
-          <input
+          <!-- <input
             type="file"
             name="file"
             #file
             class="d-none"
             accept="image/*"
             multiple
-            (change)="addImage($event)" />
+            (change)="addImage($event)" /> -->
         </div>
         <div class="p-2" *ngIf="displayUploadPhoto">
           <button class="btn btn-primary btn-sm active">Subir foto</button>
