@@ -46,7 +46,7 @@ export const CONSULT_SIRSAE_COLUMNS = {
     type: 'number',
     sort: false,
     valuePrepareFunction: (_cell: any, row: any) => {
-      return row.statusMov?.id;
+      return row.statusMov?.statusDescription;
     },
   },
   statusMovDescription: {
@@ -64,7 +64,6 @@ export const CONSULT_SIRSAE_COLUMNS = {
       if (status == 2) {
         return 'Cheque Devuelto';
       }
-
       return '';
     },
   },
