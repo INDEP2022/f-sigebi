@@ -18,28 +18,19 @@
               control="delegation">
             </ngx-select>
           </form-field>
-          <form-field [control]="flyersForm.get('subdelegation')">
-            <ngx-select
-              [form]="flyersForm"
-              [data]="selectedSubDelegation"
-              value="description"
-              bindLabel="description"
-              label="Subdelegación"
-              (fetchItems)="getSubDelegations($event)"
-              control="subdelegation">
-            </ngx-select>
-          </form-field>
-
-          <form-field [control]="flyersForm.get('federative')">
-            <ngx-select
-              label="Entidad Federativa"
-              [form]="flyersForm"
-              control="federative"
-              [data]="entfedSelect"
-              value="id"
-              bindLabel="downloadState"
-              (fetchItems)="getEntfed($event)"></ngx-select>
-          </form-field>
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('subdelegation')">
+              <ngx-select
+                [form]="flyersForm"
+                [data]="selectedSubDelegation"
+                value="description"
+                bindLabel="description"
+                label="Subdelegación"
+                (fetchItems)="getSubDelegations($event)"
+                control="subdelegation">
+              </ngx-select>
+            </form-field>
+          </div>
 
           <form-check label="Filtrar por &Aacute;rea" for="make_filter">
             <input

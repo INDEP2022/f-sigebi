@@ -276,6 +276,10 @@ export class ResponsibilityLettersReportComponent
     });
   }
   confirm(): void {
+    if (this.letterDefault == null) {
+      this.alert('warning', 'Realiza una Consulta para Continuar', '');
+      return;
+    }
     this.loading = true;
     // console.log(this.comerLibsForm.value);
     this.carta = this.datePipe.transform(this.letter.invoiceDate, 'dd/MM/yyyy');
@@ -284,19 +288,19 @@ export class ResponsibilityLettersReportComponent
       DESTYPE: this.bienesLotesForm.value.description,
       ID_LOTE: this.bienesLotesForm.controls['lote'].value,
       OFICIO_CARTALIB: this.comerLibsForm.value.oficio,
-      DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
-      PUESTO: this.comerLibsForm.controls['puesto'].value,
-      PARRAFO1: this.comerLibsForm.controls['paragraph1'].value,
+      // DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
+      // PUESTO: this.comerLibsForm.controls['puesto'].value,
+      PARRAFO1: this.respForm.controls['paragraph1'].value,
       ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
       NO_FACTURA: this.comerLibsForm.controls['factura'].value,
       FECHA_FACTURA: this.start,
-      PARRAFO2: this.comerLibsForm.controls['paragraph2'].value,
-      FIRMANTE: this.comerLibsForm.controls['firmante'].value,
-      PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
-      CCP1: this.comerLibsForm.controls['ccp1'].value,
-      CCP2: this.comerLibsForm.controls['ccp1'].value,
-      PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
-      PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
+      PARRAFO2: this.respForm.controls['paragraph2'].value,
+      // FIRMANTE: this.comerLibsForm.controls['firmante'].value,
+      // PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
+      // CCP1: this.comerLibsForm.controls['ccp1'].value,
+      // CCP2: this.comerLibsForm.controls['ccp1'].value,
+      // PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
+      // PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
       FECHA_CARTA: this.carta,
     };
 
@@ -358,13 +362,12 @@ export class ResponsibilityLettersReportComponent
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
         // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
         // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
-        // this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
+        this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
         this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.getComerLotes(this.letter.lotsId);
         this.getComerRespById(this.letter.id);
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
-        this.getDataCustomers();
         // this.comerLibsForm.value.paragraph1 =
         //   'Derivado de la ' +
         //   this.bienesLotesForm.get('description').value +
@@ -418,9 +421,9 @@ export class ResponsibilityLettersReportComponent
     });
   }
 
-  getDataCustomers() {
+  getDataCustomers(idLote: number) {
     this.loading = true;
-    this.msComerClientsService.getDataCustomersByLote(this.idLot).subscribe({
+    this.msComerClientsService.getDataCustomersByLote(idLote).subscribe({
       next: data => {
         this.loading = false;
         console.log(data);
@@ -444,7 +447,16 @@ export class ResponsibilityLettersReportComponent
       P_DIRECCION: this.P_DIRECCION,
       loteId: this.comerLibsForm.get('lote').value,
     };
-
+    // Reset on search
+    this.comerLibsForm.get('oficio').reset();
+    this.comerLibsForm.get('factura').reset();
+    this.comerLibsForm.get('fechaFactura').reset();
+    this.comerLibsForm.get('adjudicatorio').reset();
+    this.bienesLotesForm.reset();
+    this.dataTableGood.load([]);
+    this.dataTableGood.refresh();
+    this.totalItems = 0;
+    this.respForm.reset();
     let modalRef = this.modalService.show(FindRespLetterComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       this.letterDefault = next;
@@ -711,6 +723,7 @@ export class ResponsibilityLettersReportComponent
     this.comerLibsForm
       .get('evento_descripcion') //.reset();
       .setValue(event ? event.observations : null);
+    this.comerLibsForm.get('lote_descripcion').reset();
     this.getLoteData(new ListParams());
   }
 
@@ -755,6 +768,11 @@ export class ResponsibilityLettersReportComponent
     this.comerLibsForm
       .get('lote_descripcion')
       .setValue(event ? event.description : null);
+    if (event) {
+      this.getDataCustomers(event.idLot);
+    } else {
+      this.clientForm.reset();
+    }
   }
 
   getLoteData(paramsData: ListParams, getByValue: boolean = false) {
