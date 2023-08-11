@@ -23,6 +23,9 @@ export class NotificationService
   extends HttpService
   implements ICrudMethods<AnyFn>
 {
+  getByFileNumber(fileNumber: number) {
+    throw new Error('Method not implemented.');
+  }
   constructor(private notificationRepository: Repository<any>) {
     super();
     this.microservice = NotificationEndpoints.BasePath;

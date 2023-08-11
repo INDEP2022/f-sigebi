@@ -20,6 +20,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { IComerGoodXLot } from 'src/app/common/constants/endpoints/ms-comersale/comer-good-x-lot.model';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
@@ -38,6 +39,7 @@ import { GroundsStatusModalComponent } from '../../grounds-status-modal/grounds-
 import { ComerEventForm } from '../../utils/forms/comer-event-form';
 import { IEventPreparationParameters } from '../../utils/interfaces/event-preparation-parameters';
 import { EVENT_LOT_GOODS_LIST_COLUMNS } from '../../utils/table-columns/event-lot-goods-list-columns';
+import { JuridicalCellComponent } from '../juridical-cell/juridical-cell.component';
 
 @Component({
   selector: 'event-goods-lots-list',
@@ -65,9 +67,11 @@ export class EventGoodsLotsListComponent
     private eventAppService: EventAppService
   ) {
     super();
+    const columns = EVENT_LOT_GOODS_LIST_COLUMNS;
+
     this.settings = {
       ...this.settings,
-      columns: EVENT_LOT_GOODS_LIST_COLUMNS,
+      columns,
       hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
@@ -78,6 +82,33 @@ export class EventGoodsLotsListComponent
       },
     };
   }
+
+  juridicalCs(instance: LinkCellComponent) {
+    instance.onNavigate
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(data => {
+          this.modalService.show(JuridicalCellComponent, {
+            ...MODAL_CONFIG,
+            initialState: {
+              good: data,
+              callback: (refresh: boolean) => {
+                if (refresh) {
+                  this.refreshTable();
+                }
+              },
+            },
+          });
+        })
+      )
+      .subscribe();
+  }
+
+  refreshTable() {
+    const params = this.params.getValue();
+    this.params.next(params);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['lot']) {
       const params = new FilterParams();
@@ -86,6 +117,18 @@ export class EventGoodsLotsListComponent
   }
 
   ngOnInit(): void {
+    if (this.parameters.pDirection == 'I') {
+      const columns = this.settings.columns as any;
+      columns.field8 = {
+        title: 'Campo 8',
+        sort: false,
+        type: 'custom',
+        renderComponent: LinkCellComponent,
+        onComponentInitFunction: (instance: LinkCellComponent) =>
+          this.juridicalCs(instance),
+      } as any;
+      this.settings = { ...this.settings, columns };
+    }
     this.columnsFilter().subscribe();
     this.params
       .pipe(
