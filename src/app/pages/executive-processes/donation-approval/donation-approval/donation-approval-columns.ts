@@ -33,6 +33,6 @@ export const DONATION_APPROVAL_COLUMNS = {
     title: 'Aprobado',
     type: 'boolean',
     sort: false,
-    filter: false,
+    //filter: false,
   },
 };
