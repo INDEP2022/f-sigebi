@@ -18,4 +18,11 @@ export class MsMassivecapturelineService extends HttpService {
       `${MassiveCaptureLineEndPoints.ApplicationExcel1}/${goodNumber}`
     );
   }
+
+  PUP_PROC_ANT(params: any) {
+    return this.post<any>(
+      `${MassiveCaptureLineEndPoints.PUP_PROC_ANT}`,
+      params
+    );
+  }
 }

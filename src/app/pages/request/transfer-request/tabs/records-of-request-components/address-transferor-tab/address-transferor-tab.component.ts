@@ -234,6 +234,7 @@ export class AddressTransferorTabComponent
       }
     } else {
       if (this.isNewAddress === true) {
+        params['sortBy'] = `descCondition:ASC`;
         this.stateOfRepublicService.getAll(params).subscribe({
           next: data => {
             this.selectState = new DefaultSelect(data.data, data.count);
