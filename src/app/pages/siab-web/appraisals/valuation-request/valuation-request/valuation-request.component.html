@@ -5,14 +5,22 @@
     </div>
   </div>
   <div body>
+    <div class="d-flex justify-content-end mb-3">
+      <div class="ml-auto" style="margin-top: -20px">
+        <p class="font-weight-bold" style="border-bottom: 1px solid black">
+          {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
+        </p>
+      </div>
+    </div>
+    <br />
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="form.get('event')" label="Evento">
             <input type="text" class="form-control" formControlName="event" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="form.get('cveService')" label="Clave oficio">
             <input
               type="text"
@@ -20,12 +28,13 @@
               formControlName="cveService" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4">
           <form-field [control]="form.get('folio')" label="Folio">
             <input type="text" class="form-control" formControlName="folio" />
           </form-field>
         </div>
       </div>
+
       <div class="row pt-5">
         <div class="col-md-6 alert alert-info">
           <div class="col-md-4">

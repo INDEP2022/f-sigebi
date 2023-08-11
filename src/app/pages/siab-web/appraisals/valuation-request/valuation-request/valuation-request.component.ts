@@ -20,6 +20,8 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  dateNow: Date;
+  intervalId: any;
 
   constructor(private fb: FormBuilder) {
     super();
@@ -33,6 +35,15 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getPagination();
+    this.actualizarHora();
+    // Actualizamos la hora cada 1000 milisegundos (1 segundo)
+    this.intervalId = setInterval(() => {
+      this.actualizarHora();
+    }, 1000);
+  }
+
+  actualizarHora(): void {
+    this.dateNow = new Date();
   }
 
   private prepareForm() {
@@ -106,5 +117,11 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   getPagination() {
     this.columns = this.data;
     this.totalItems = this.columns.length;
+  }
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 }
