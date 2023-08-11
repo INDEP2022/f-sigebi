@@ -14,6 +14,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
@@ -110,7 +111,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       subdelegation: [null, [Validators.required]],
       federative: [null, [Validators.required]],
       PF_FECINI: [null, [Validators.required]],
-      PF_FECFIN: [null, [Validators.required]],
+      PF_FECFIN: [null, [Validators.required, maxDate(new Date())]],
       includeArea: [false],
       department: [null],
       delegdestino: [null],
