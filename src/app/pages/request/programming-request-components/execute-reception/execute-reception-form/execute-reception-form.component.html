@@ -77,7 +77,7 @@
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -511,7 +511,7 @@
                         {{ good.get('observations')?.value }}
                       </td>
                       <td class="text-center align-baseline"></td>
-                      <td class="text-center align-baseline">
+                      <td class="align-baseline">
                         {{ good.get('destiny').value }}
                       </td>
                       <td class="text-center align-baseline">
@@ -1214,6 +1214,9 @@
                           </th>
 
                           <th scope="col" class="text-nowrap">Observación</th>
+                          <th scope="col" class="text-nowrap">
+                            Destino Transferente
+                          </th>
                           <th scope="col" class="text-nowrap">Destino INDEP</th>
                           <th scope="col" class="text-nowrap text-center">
                             Acciones
@@ -1355,6 +1358,10 @@
 
                               <td class="text-center align-baseline">
                                 {{ good.get('observations')?.value }}
+                              </td>
+
+                              <td class="align-baseline">
+                                {{ good.get('destiny').value }}
                               </td>
 
                               <td class="text-center align-baseline">
@@ -1644,6 +1651,9 @@
                             </th>
                             <th scope="col" class="text-nowrap">Observación</th>
                             <th scope="col" class="text-nowrap">
+                              Destino Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
                               Destino INDEP
                             </th>
                             <th scope="col" class="text-nowrap text-center">
@@ -1791,8 +1801,11 @@
                                   </select>
                                 </td>
 
-                                <td class="text-center align-baseline">
+                                <td class="align-baseline">
                                   {{ good.get('observations')?.value }}
+                                </td>
+                                <td class="text-center align-baseline">
+                                  {{ good.get('destiny').value }}
                                 </td>
                                 <td class="text-center align-baseline">
                                   <select
