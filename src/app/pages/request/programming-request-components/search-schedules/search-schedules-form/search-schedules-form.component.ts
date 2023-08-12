@@ -100,7 +100,12 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
   }
 
   searchProgramming() {
-    if (this.delegationId) {
+    if (
+      this.delegationId &&
+      !this.performForm.get('startDate').value &&
+      !this.performForm.get('endDate').value &&
+      !this.performForm.get('status').value
+    ) {
       this.paramsProgramming.getValue()['filter.regionalDelegationNumber'] =
         this.delegationId;
 
@@ -110,14 +115,20 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
     }
     if (
       this.performForm.get('startDate').value &&
-      !this.performForm.get('endDate').value
+      !this.performForm.get('endDate').value &&
+      !this.performForm.get('status').value
     ) {
       const startDate = moment(this.performForm.get('startDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+        'YYYY-MM-DD'
       );
 
       if (startDate) {
-        this.paramsProgramming.getValue()['filter.startDate'] = startDate;
+        this.paramsProgramming.getValue()[
+          'filter.startDate'
+        ] = `$btw:${startDate}`;
+
+        this.paramsProgramming.getValue()['filter.regionalDelegationNumber'] =
+          this.delegationId;
         this.paramsProgramming
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.infoProgramming());
@@ -126,13 +137,16 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
 
     if (
       this.performForm.get('endDate').value &&
-      !this.performForm.get('startDate').value
+      !this.performForm.get('startDate').value &&
+      !this.performForm.get('status').value
     ) {
       const endDate = moment(this.performForm.get('endDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+        'YYYY-MM-DD'
       );
       if (endDate) {
-        this.paramsProgramming.getValue()['filter.endDate'] = endDate;
+        this.paramsProgramming.getValue()['filter.endDate'] = `$btw:${endDate}`;
+        this.paramsProgramming.getValue()['filter.regionalDelegationNumber'] =
+          this.delegationId;
         this.paramsProgramming
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.infoProgramming());
@@ -141,7 +155,8 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
 
     if (
       this.performForm.get('endDate').value &&
-      this.performForm.get('startDate').value
+      this.performForm.get('startDate').value &&
+      !this.performForm.get('status').value
     ) {
       const startDate = moment(this.performForm.get('startDate').value).format(
         'YYYY-MM-DD HH:mm:ssz'
@@ -150,15 +165,48 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
         'YYYY-MM-DD HH:mm:ssz'
       );
       if (endDate && startDate) {
-        this.paramsProgramming.getValue()['filter.endDate'] = endDate;
-        this.paramsProgramming.getValue()['filter.startDate'] = startDate;
+        this.paramsProgramming.getValue()[
+          'filter.startDate'
+        ] = `$btw:${startDate},${endDate}`;
+        this.paramsProgramming.getValue()['filter.regionalDelegationNumber'] =
+          this.delegationId;
         this.paramsProgramming
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.infoProgramming());
       }
     }
 
-    if (this.performForm.get('status').value) {
+    if (
+      this.performForm.get('endDate').value &&
+      this.performForm.get('startDate').value &&
+      this.performForm.get('status').value
+    ) {
+      const startDate = moment(this.performForm.get('startDate').value).format(
+        'YYYY-MM-DD HH:mm:ssz'
+      );
+      const endDate = moment(this.performForm.get('endDate').value).format(
+        'YYYY-MM-DD HH:mm:ssz'
+      );
+      if (endDate && startDate) {
+        this.paramsProgramming.getValue()[
+          'filter.startDate'
+        ] = `$btw:${startDate},${endDate}`;
+        this.paramsProgramming.getValue()['filter.regionalDelegationNumber'] =
+          this.delegationId;
+
+        this.paramsProgramming.getValue()['filter.status'] =
+          this.performForm.get('status').value;
+        this.paramsProgramming
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.infoProgramming());
+      }
+    }
+
+    if (
+      this.performForm.get('status').value &&
+      !this.performForm.get('endDate').value &&
+      !this.performForm.get('startDate').value
+    ) {
       this.paramsProgramming.getValue()['filter.status'] =
         this.performForm.get('status').value;
 
@@ -167,7 +215,7 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
         .subscribe(() => this.infoProgramming());
     }
 
-    if (
+    /*if (
       this.performForm.get('endDate').value &&
       this.performForm.get('startDate').value &&
       this.performForm.get('status').value
@@ -188,13 +236,13 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.infoProgramming());
       }
-    }
+    } */
   }
 
   infoProgramming() {
     this.loading = true;
     this.paramsProgramming.getValue()['sortBy'] = 'id:ASC';
-
+    console.log('params', this.paramsProgramming.getValue());
     this.programmingService
       .getProgramming(this.paramsProgramming.getValue())
       .subscribe({
@@ -238,7 +286,11 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
             this.loading = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.programmings = new LocalDataSource();
+          this.totalItemProgramming = 0;
+          this.loading = false;
+        },
       });
   }
 
@@ -304,5 +356,6 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.performForm.reset();
+    this.paramsProgramming = new BehaviorSubject<ListParams>(new ListParams());
   }
 }
