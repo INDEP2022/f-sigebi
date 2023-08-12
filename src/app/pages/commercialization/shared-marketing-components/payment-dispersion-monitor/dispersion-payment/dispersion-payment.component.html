@@ -24,7 +24,11 @@
           [control]="form.get('event')"
           class="col-md-3"
           label="Evento">
-          <input type="text" formControlName="event" class="form-control" />
+          <input
+            id="event"
+            type="text"
+            formControlName="event"
+            class="form-control" />
         </form-field>
         <form-field
           [control]="form.get('cveProcess')"
@@ -77,7 +81,7 @@
                 </h5>
                 <form-field [control]="form.get('dateEvent')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateEvent').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateEvent').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -91,7 +95,7 @@
                 <form-field [control]="form.get('dateNotification')">
                   <p class="text-muted mb-0">
                     {{
-                      form.get('dateNotification').value | date: 'dd-MM-yyyy'
+                      form.get('dateNotification').value | date : 'dd-MM-yyyy'
                     }}
                   </p>
                 </form-field>
@@ -105,7 +109,7 @@
                 </h5>
                 <form-field [control]="form.get('dateClose')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateClose').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateClose').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -118,7 +122,9 @@
                 </h5>
                 <form-field [control]="form.get('dateMaxWarranty')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateMaxWarranty').value | date: 'dd-MM-yyyy' }}
+                    {{
+                      form.get('dateMaxWarranty').value | date : 'dd-MM-yyyy'
+                    }}
                   </p>
                 </form-field>
               </div>
@@ -131,7 +137,7 @@
                 </h5>
                 <form-field [control]="form.get('dateFail')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateFail').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateFail').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -144,7 +150,7 @@
                 </h5>
                 <form-field [control]="form.get('dateMaxPayment')">
                   <p class="text-muted mb-0">
-                    {{ form.get('dateMaxPayment').value | date: 'dd-MM-yyyy' }}
+                    {{ form.get('dateMaxPayment').value | date : 'dd-MM-yyyy' }}
                   </p>
                 </form-field>
               </div>
@@ -642,27 +648,108 @@
     </div>
     <div class="row text-center mb-3 mt-3">
       <div class="col">
-        <button type="button" class="btn btn-primary btn-sm active mr-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="executeScattering()">
           Ejecutar Dispersión
         </button>
-        <button type="button" class="btn btn-primary btn-sm active mr-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="sendToSirsae()">
           Enviar SIRSAE <i class="bx bx-send"></i>
         </button>
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="reprocessScattering()">
           Reprocesar Dispersión
         </button>
       </div>
     </div>
     <div class="row text-center mb-3 mt-3">
       <div class="col">
-        <button type="button" class="btn btn-primary btn-sm active mr-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="proposalScattering()">
           Propuesta de Dispersión
         </button>
-        <button type="button" class="btn btn-primary btn-sm active mr-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="proposalSendSirsae()">
           Propuesta de Envío SIRSAE
         </button>
-        <button type="button" class="btn btn-primary btn-sm active">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="proposalReprocess()">
           Propuesta de Reproceso
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-card>
+  <div body>
+    <div class="row mb-3 mt-5">
+      <form [formGroup]="formSirsae" class="form-material">
+        <div class="col d-flex justify-content-center">
+          <div class="col-md-6">
+            <form-field
+              [control]="formSirsae.get('maxDateSirsae')"
+              label="Último Día del Mes para envío a SIRSAE">
+              <input
+                type="text"
+                formControlName="maxDateSirsae"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row mb-3 mt-3 text-center">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="sirsaePayment()">
+          Pagos SIRSAE
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Garantías y LCs
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Usuarios Distribución
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active">
+          Actualización No. de Ols
+        </button>
+      </div>
+    </div>
+    <div class="row mb-3 mt-3">
+      <form [formGroup]="formSirsae" class="form-material">
+        <form-field
+          [control]="formSirsae.get('reference')"
+          class="col-md-12"
+          label="Referencia">
+          <input type="text" formControlName="reference" class="form-control" />
+        </form-field>
+      </form>
+    </div>
+    <div class="row mb-3 mt-3 text-center">
+      <div class="col">
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Carga de Pagos
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active mr-3">
+          Prueba_mand.
+        </button>
+        <button type="button" class="btn btn-primary btn-sm active">
+          Usuarios para avisos por Mandatos sin Facturación
         </button>
       </div>
     </div>
