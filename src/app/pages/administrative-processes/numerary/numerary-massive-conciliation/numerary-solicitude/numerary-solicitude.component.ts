@@ -219,7 +219,7 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
     console.log('Sí entra');
     console.log(this.id);
 
-    if (this.id != null) {
+    if(this.id != null){
       const model: IRequesNumMov = {
         applicationId: parseInt(this.id),
         motionNumber: this.form2.get('movement').value,
@@ -268,8 +268,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
           }
         }
       );
-    } else {
-      this.alert('warning', 'No selecccionó Propuesta', '');
+    }else{
+      this.alert('warning','No selecccionó Propuesta','')
     }
   }
 }
