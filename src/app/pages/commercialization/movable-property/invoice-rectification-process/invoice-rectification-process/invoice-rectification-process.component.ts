@@ -236,10 +236,15 @@ export class InvoiceRectificationProcessComponent
 
         rectInvoice.expDate = rectInvoice.expDate
           ? rectInvoice.expDate.split('-').reverse().join('/')
-          : '';
+          : null;
+
+        rectInvoice.billDate = rectInvoice.billDate
+          ? rectInvoice.billDate.split('-').reverse().join('/')
+          : null;
+
         rectInvoice.attentionDate = rectInvoice.attentionDate
           ? rectInvoice.attentionDate.split('-').reverse().join('/')
-          : '';
+          : null;
 
         const fecha = rectInvoice.hourAttention
           ? rectInvoice.hourAttention.split(' ')
@@ -270,7 +275,7 @@ export class InvoiceRectificationProcessComponent
   }
 
   saveData() {
-    if (!this.isSearch) this.setYear();
+    // if (!this.isSearch) this.setYear();
 
     const saveData = this.form.value;
 
@@ -278,10 +283,13 @@ export class InvoiceRectificationProcessComponent
       typeof saveData.expDate == 'string'
         ? saveData.expDate.split('/').reverse().join('-')
         : this.datePipe.transform(saveData.expDate, 'yyyy-MM-dd');
+
     saveData.attentionDate =
       typeof saveData.attentionDate == 'string'
         ? saveData.attentionDate.split('/').reverse().join('-')
-        : this.datePipe.transform(saveData.attentionDate, 'yyyy-MM-dd');
+        : saveData.attentionDate
+        ? this.datePipe.transform(saveData.attentionDate, 'yyyy-MM-dd')
+        : null;
 
     if (this.isSearch) {
       if (typeof saveData.hourAttention == 'string') {
@@ -290,7 +298,11 @@ export class InvoiceRectificationProcessComponent
           fecha[1]
         }`;
       } else {
-        saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+        // saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+        saveData.hourAttention = this.datePipe.transform(
+          saveData.hourAttention,
+          'yyyy-MM-dd HH:mm:ss'
+        );
       }
       saveData.billDate =
         typeof saveData.billDate == 'string'
@@ -316,7 +328,11 @@ export class InvoiceRectificationProcessComponent
           fecha[1]
         }`;
       } else {
-        saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+        // saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+        saveData.hourAttention = this.datePipe.transform(
+          saveData.hourAttention,
+          'yyyy-MM-dd HH:mm:ss'
+        );
       }
 
       saveData.billDate =
@@ -341,7 +357,7 @@ export class InvoiceRectificationProcessComponent
   }
 
   saveDataSilent() {
-    if (!this.isSearch) this.setYear();
+    // if (!this.isSearch) this.setYear();
 
     const saveData = this.form.value;
 
@@ -361,7 +377,11 @@ export class InvoiceRectificationProcessComponent
           fecha[1]
         }`;
       } else {
-        saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+        // saveData.hourAttention = this.parseDateNoOffset(saveData.hourAttention);
+        saveData.hourAttention = this.datePipe.transform(
+          saveData.hourAttention,
+          'yyyy-MM-dd HH:mm:ss'
+        );
       }
 
       saveData.billDate =
@@ -380,7 +400,8 @@ export class InvoiceRectificationProcessComponent
     }
   }
 
-  setYear() {
+  setYear(date?: string) {
+    if (this.isSearch) return;
     const { expDate } = this.form.value;
     let year =
       typeof expDate == 'string'
@@ -475,9 +496,9 @@ export class InvoiceRectificationProcessComponent
     this.dataFilter.refresh();
     this.totalItems = 0;
     this.isSearch = false;
-    this.form.get('hourAttention').patchValue(`
-    ${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00
-    `);
+    this.form
+      .get('hourAttention')
+      .patchValue(`${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`);
   }
 
   cleanData() {
@@ -486,9 +507,9 @@ export class InvoiceRectificationProcessComponent
     this.dataFilter.refresh();
     this.totalItems = 0;
     this.isSearch = false;
-    this.form.get('hourAttention').patchValue(`
-    ${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00
-    `);
+    this.form
+      .get('hourAttention')
+      .patchValue(`${this.datePipe.transform(new Date(), 'dd/MM/yyyy')} 12:00`);
   }
 
   openModal(): void {
@@ -705,7 +726,7 @@ export class InvoiceRectificationProcessComponent
         factura: this.form.value,
         callback: (next: boolean) => {
           if (next) {
-            if (!this.isSearch) {
+            if (this.isSearch) {
               this.paramsList.getValue()[
                 'filter.notJob'
               ] = `${SearchFilter.EQ}:${jobNot}`;
