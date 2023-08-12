@@ -29,6 +29,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -276,7 +277,8 @@ export class FormalizeProgrammingFormComponent
     private sanitizer: DomSanitizer,
     private taskService: TaskService,
     private authService: AuthService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private goodsProcessService: GoodprocessService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -1333,6 +1335,8 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
+    const sendGoodInventary = await this.sendGoodsGuardInventary();
+    /*
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1354,6 +1358,7 @@ export class FormalizeProgrammingFormComponent
         if (closeTask) {
           const deleteGoodsReprog = await this.deleteGoodReprog();
           if (deleteGoodsReprog) {
+         
             this.alertInfo(
               'success',
               'Acción correcta',
@@ -1366,6 +1371,21 @@ export class FormalizeProgrammingFormComponent
           }
         }
       }
+    }); */
+  }
+
+  sendGoodsGuardInventary() {
+    this.goodsGuards.getElements().then(data => {
+      data.map((item: IGood) => {
+        this.goodsProcessService.AddReceptionBpm(Number(item.id)).subscribe({
+          next: response => {
+            console.log('insertado a inventario', data);
+          },
+          error: error => {
+            console.log('error', error);
+          },
+        });
+      });
     });
   }
 

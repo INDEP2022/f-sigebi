@@ -42,7 +42,8 @@ import { FormProcedeFormalizacionComponent } from '../form-procede-formalizacion
 })
 export class FormalGoodsEstateComponent
   extends BasePage
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   // ------------------ PROCEDE FORMALIZACIÓN ------------------ //
   _dataTableProcedeFormalizacion: LocalDataSource = new LocalDataSource();
   _tableSettingsProcedeFormalizacion = { ...TABLE_SETTINGS2 };
