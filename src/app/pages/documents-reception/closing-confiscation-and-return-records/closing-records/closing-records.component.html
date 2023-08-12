@@ -37,9 +37,9 @@
                 readonly />
             </form-field>
           </div>
-          <div class="col-md-3" style="margin-top: -1%">
+          <div class="col-md-3">
             <button
-              class="btn btn-red btn-sm active m-3"
+              class="btn btn-red btn-sm active mt-1"
               (click)="deleteExpedient()">
               Borrar Expediente <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
@@ -48,32 +48,25 @@
       </div>
     </form>
     <div *ngIf="flag">
-      <div class="d-flex justify-content-end mt-5">
-        <div
-          class="col-md-3 text-right pr-0"
-          *ngIf="selectedProceedings"
-          style="margin-right: -2%">
+      <div class="row mb-4">
+        <div class="col-md-12-col-sm12 col-xs-12 text-end">
           <button
+            *ngIf="selectedProceedings"
             #closeButton
-            class="btn btn-primary btn-sm active"
+            class="btn btn-primary btn-sm active mr-3"
             (click)="closeProceedings()">
             Cerrar Acta
           </button>
-        </div>
-        <div class="row pr-4 pl-4" style="margin-top: -1%">
-          <div class="col-md-2 text-right pr-0">
-            <button
-              class="btn btn-primary btn-sm active m-3"
-              style="margin-top: 5px"
-              (click)="redirectOrigin()">
-              Validadores de Acta
-            </button>
+
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="redirectOrigin()">
+            Validadores de Acta
+          </button>
+          <div class="d-inline-block">
+            <app-columns-select [(settings)]="settings2"> </app-columns-select>
           </div>
         </div>
-        <app-columns-select
-          [(settings)]="settings2"
-          class="row justify-content-end">
-        </app-columns-select>
       </div>
       <ng-scrollbar
         style="min-height: 300px; border: none"
