@@ -50,7 +50,6 @@ export class CanTimesComponent extends BasePage implements OnInit {
 
   //Aceptar
   apply() {
-
     console.log(this.times.value);
     if (this.times.value < 1) {
       this.alert('warning', 'El Número Debe ser Mayor a Cero', '');
@@ -104,7 +103,7 @@ export class CanTimesComponent extends BasePage implements OnInit {
         }
 
         console.log(this.newData);
-        
+
         this.modalRef.content.callback(this.newData);
         this.modalRef.hide();
       }

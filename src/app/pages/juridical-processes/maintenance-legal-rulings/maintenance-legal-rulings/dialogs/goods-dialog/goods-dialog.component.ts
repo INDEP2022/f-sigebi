@@ -100,7 +100,11 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
     this.loading = true;
     this.dictationXGoodService.create(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'Error', `Verifique los datos ingresados`);
+        this.close();
+      },
     });
   }
 
@@ -108,7 +112,11 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
     this.loading = true;
     this.dictationXGoodService.update(this.dictationXGoodForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.onLoadToast('error', 'Error', `Verifique los datos ingresados`);
+        this.close();
+      },
     });
   }
 

@@ -16,17 +16,13 @@
 
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="detailDelegationForm.get('numberDelegation')">
-            <ngx-select
-              [searchOnInit]="true"
-              [form]="detailDelegationForm"
-              control="numberDelegation"
-              [data]="delegation"
-              value="id"
-              bindLabel="description"
-              label="Delegaci&oacute;n"
-              (fetchItems)="getDelegation($event)">
-            </ngx-select>
+          <form-field
+            [control]="detailDelegationForm.get('numberDelegation')"
+            label="Delegación">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="numberDelegation" />
           </form-field>
 
           <!--<form-field

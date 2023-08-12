@@ -225,34 +225,45 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
         motionNumber: this.form2.get('movement').value,
         amountAssign: this.form2.get('deposit').value,
       };
-  
+
       this.numeraryService.createRequestNumMov(model).subscribe(
         res => {
           const paramsF = new FilterParams();
           paramsF.addFilter('applicationId', this.id);
-          this.numeraryService.getAllRequestNumMov(paramsF.getParams()).subscribe(
-            res => {
-              console.log(res);
-              this.loading = false;
-              this.detailData.load(res.data);
-              this.totalItems2 = res.count;
-              this.form2.get('movement').reset();
-              this.form2.get('deposit').reset();
-              this.newDetail = false;
-              this.alert('success', 'Detalle creado', '');
-            },
-            err => {
-              console.log(err);
-            }
-          );
+          this.numeraryService
+            .getAllRequestNumMov(paramsF.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                this.loading = false;
+                this.detailData.load(res.data);
+                this.totalItems2 = res.count;
+                this.form2.get('movement').reset();
+                this.form2.get('deposit').reset();
+                this.newDetail = false;
+                this.alert('success', 'Detalle creado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
         },
         err => {
           this.loading = false;
-          console.log(err)
-          console.log(err.error.message)
-          if(err.error.message == 'duplicate key value violates unique constraint "nume_solicitud_movi_pk"'){
-            this.alert('error',`El Movimiento ${this.form2.get('movement').value} ya ha sido Registrado`,'')
-          }else{
+          console.log(err);
+          console.log(err.error.message);
+          if (
+            err.error.message ==
+            'duplicate key value violates unique constraint "nume_solicitud_movi_pk"'
+          ) {
+            this.alert(
+              'error',
+              `El Movimiento ${
+                this.form2.get('movement').value
+              } ya ha sido Registrado`,
+              ''
+            );
+          } else {
             this.alert('error', 'Se presentó un error inesperado', '');
           }
         }
@@ -260,7 +271,5 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
     }else{
       this.alert('warning','No selecccionó Propuesta','')
     }
-
-    
   }
 }
