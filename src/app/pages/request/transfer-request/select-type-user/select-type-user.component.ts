@@ -431,9 +431,12 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['title'] = title;
       task['programmingId'] = 0;
       task['requestId'] = request.id;
-      task['expedientId'] = 0;
+      task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
+      task['idstation'] = request.stationId;
+      task['idTransferee'] = request.transferenceId;
+      task['idAuthority'] = request.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 

@@ -27,6 +27,7 @@ import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-e
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
+import { CanUsuSirsaeComponent } from '../can-usu-sirsae/can-usu-sirsae.component';
 import { ComerPaymentVirtComponent } from '../comer-payment-virt/comer-payment-virt.component';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
 import {
@@ -38,6 +39,8 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
+import { IPupProcSeldisp } from 'src/app/core/services/ms-lot/models-lots';
+import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -72,6 +75,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   formCustomerBanks: FormGroup;
   formLotsBanks: FormGroup;
   formPaymentLots: FormGroup;
+  formSirsae: FormGroup
 
   statusEvent: string = null;
   eventType: string = null;
@@ -107,6 +111,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   paramsPaymentLots = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsPaymentLots: number = 0;
   limitPaymentLots = new FormControl(10);
+
+  statusVtaId: any = null
+  idClientCustomer: any = null
 
   isAvailableByType: boolean = true;
 
@@ -214,6 +221,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Inicializa forma
   private initialize() {
+    //TODO: Select que desencripta
+
     this.validateUser();
   }
 
@@ -322,6 +331,11 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
       totalWithoutIva: [null],
       totalSum: [null],
     });
+    //OPCIONES SIRSAE
+    this.formSirsae = this.fb.group({
+      maxDateSirsae: [null],
+      reference: [null]
+    })
   }
 
   //Gets
@@ -379,6 +393,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.dateMaxWarranty.setValue(resp.processKey);
         this.dateMaxPayment.setValue(resp.processKey);
         this.postQueryEvent(resp.eventTpId, resp.statusVtaId, resp.address);
+        this.statusVtaId = resp.statusVtaId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
         this.getDataLotes(resp.id);
@@ -650,6 +665,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   selectRowClientEvent(e: any) {
     console.log(e.data);
     this.loadingCustomerBanks = true;
+    this.idClientCustomer = e.data.ClientId
     this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
   }
 
@@ -989,4 +1005,131 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
     this.modalService.show(ComerPaymentVirtComponent, modalConfig);
   }
+
+  //Enviar a SIRSAE
+  sendToSirsae() {
+    if (this.txt_usu_valido != null) {
+      this.alertQuestion(
+        'question',
+        '¿Desea Ejecutar el Proceso de Envío a SIRSAE?',
+        '',
+        'Continuar'
+      ).then(q => {
+        if (q.isConfirmed) {
+          //TODO: PUP_PROC_ENV_SIRSAE
+        }
+      });
+    } else {
+      this.alert('warning', 'Usuario sin Permisos de Envío a SIRSAE', '');
+      let token = this.authService.decodeToken();
+      console.log(token);
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          user: token.preferred_username,
+          callback: (e: any) => {
+            console.log(e);
+          },
+        },
+        class: 'modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+
+      this.modalService.show(CanUsuSirsaeComponent, modalConfig);
+    }
+  }
+
+  //Ejecutar dispersión
+  executeScattering() {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Dispersión?',
+      '',
+      'Ejecutar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        //TODO: PUP_PROC_DISP
+      }
+    });
+  }
+
+  //Reprocesar Dispersión
+  reprocessScattering() {
+    if(this.id_tipo_disp != null){
+      let c_message = [1, 3].includes(this.id_tipo_disp)
+      ? '¿Desea Ejecutar el Reproceso de Clientes?'
+      : '¿Desea Ejecutar el Reproceso de Lotes?';
+
+      this.alertQuestion('question',c_message,'','Ejecutar').then(
+        q => {
+          if(q.isConfirmed){
+            //TODO: PUP_PROC_REPROC
+          }
+        }
+      )
+    }else{
+      const element = document.getElementById('event')
+      console.log(element)
+      if(element){
+        element.scrollIntoView({block: "center", behavior: 'smooth'})
+        this.event.markAsTouched()
+      }
+    }    
+  }
+
+  //Propuesta de Dispersión
+  proposalScattering(){
+    this.alertQuestion('question','¿Desea Ejecutar el Proceso de Propuesta?','','Ejecutar').then(
+      q => {
+        if(q.isConfirmed){
+          const model: IPupProcSeldisp = {
+            saleStatusId: this.statusVtaId,
+            typeDispId: this.id_tipo_disp,
+            totalAmount: '',
+            totalClient: '',
+            comerClientXEventsEventId: this.event.value,
+            dateGraceLiq: ''
+          }
+        }
+      }
+    )
+  }
+
+  //Propuesta de envío a SIRSAE
+  proposalSendSirsae(){
+    this.alertQuestion('question','¿Desea Ejecutar el Proceso de Propuesta?','','Ejecutar').then(
+      q => {
+        if(q.isConfirmed){
+          //TODO: PUP_PROC_SELSIRSAE
+        }
+      }
+    )
+  }
+
+  //Propuesta de Reproceso
+  proposalReprocess(){
+    this.alertQuestion('question','¿Desea Ejecutar el Proceso de Propuesta?','','Ejecutar').then(
+      q => {
+        if(q.isConfirmed){
+          //TODO: PUP_PROC_SELREPROCESO
+        }
+      }
+    )
+  }
+
+  //Pagos SIRSAE
+  sirsaePayment(){
+    let modalConfig = MODAL_CONFIG
+    modalConfig = {
+      initialState:{
+
+      },
+      class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+    }
+
+    this.modalService.show(CanPagosCabComponent, modalConfig)
+  }
+
+
 }

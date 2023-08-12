@@ -1,42 +1,42 @@
 import { VerImagenInputComponent } from '../../ver-imagen-input/ver-imagen-input.component';
 
 export const LIST_IMAGES_COLUMNS = {
-  NoManagement: {
-    title: 'No. Gestión',
+  dDocName: {
+    title: 'No. Fotografia',
     type: 'string',
     sort: false,
   },
-  noAssets: {
+  xidBien: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
   },
-  typeDocument: {
+  xTipoDoc: {
     title: 'Tipo Documento',
     type: 'string',
     sort: false,
   },
-  titleDocument: {
+  ddocTitle: {
     title: 'Título Documento',
     type: 'string',
     sort: false,
   },
-  author: {
+  dDocAuthor: {
     title: 'Autor',
     type: 'string',
     sort: false,
   },
-  date: {
+  dInDate: {
     title: 'Fecha Creación',
     type: 'string',
     sort: false,
   },
-  noProgramming: {
+  xnoProgramacion: {
     title: 'No. Programación',
     type: 'string',
     sort: false,
   },
-  folioProgramming: {
+  xfolioProgramacion: {
     title: 'Folio Programación',
     type: 'string',
     sort: false,
