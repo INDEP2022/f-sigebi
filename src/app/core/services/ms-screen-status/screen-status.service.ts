@@ -37,7 +37,7 @@ export class ScreenStatusService extends HttpService {
   }
 
   getAllFiltro(params: any) {
-    return this.get<IListResponse<IStatusXScreen>>(
+    return this.get<IListResponse<any>>(
       `status-x-screen?filter.status=$eq:${params.estatus}&filter.screenKey=$eq:${params.vc_pantalla}`
     );
   }

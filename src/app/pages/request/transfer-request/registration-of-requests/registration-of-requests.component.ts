@@ -1260,6 +1260,9 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
+      task['idstation'] = request.stationId;
+      task['idTransferee'] = request.transferenceId;
+      task['idAuthority'] = request.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
