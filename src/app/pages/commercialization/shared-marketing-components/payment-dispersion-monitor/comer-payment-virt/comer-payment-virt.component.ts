@@ -177,8 +177,8 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
         incomeData,
         callback: (data: any) => {
           console.log(data);
-          const newData = this.data['data'].concat(data);
-          this.data.load(newData);
+          const newData = this.data['data'].concat(data)
+          this.data.load(newData)
         },
       },
       class: 'modal-dialog-centered',
@@ -210,23 +210,26 @@ export class ComerPaymentVirtComponent extends BasePage implements OnInit {
   }
 
   //Delete Payment
-  deletePayment() {
-    if (this.dataPaymentVirt != null) {
-      if (this.dataModel.incomeOrderId == null) {
-        if (this.dataPaymentVirt.payId != null) {
-        } else {
-          this.alert('warning', 'El Registro tiene un Id de Pago Nulo', '');
+  deletePayment(){
+    if(this.dataPaymentVirt != null){
+      if(this.dataModel.incomeOrderId == null){
+        if(this.dataPaymentVirt.payId != null){
+          
+        }else{
+          this.alert('warning','El Registro tiene un Id de Pago Nulo','')
         }
-      } else {
-        this.alert('warning', 'El Registro tiene un Id de Orden de Ingreo', '');
+      }else{
+        this.alert('warning','El Registro tiene un Id de Orden de Ingreo','')
       }
-    } else {
-      this.alert('warning', 'No se Seleccionaron Pagos', '');
+    }else{
+      this.alert('warning','No se Seleccionaron Pagos','')
     }
   }
 
   //Función de Eliminar
-  deleteFn() {}
+  deleteFn(){
+    
+  }
 
   //gets
   get rfc() {

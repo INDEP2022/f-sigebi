@@ -10,13 +10,17 @@ import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-pr
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import * as XLSX from 'xlsx';
+import { BasePage } from '../../../../core/shared/base-page';
 
 @Component({
   selector: 'app-reception-delivery-minutes',
   templateUrl: './reception-delivery-minutes.component.html',
   styles: [],
 })
-export class ReceptionDeliveryMinutesComponent implements OnInit {
+export class ReceptionDeliveryMinutesComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   bsModalRef?: BsModalRef;
   refresh: boolean = false;
@@ -43,13 +47,13 @@ export class ReceptionDeliveryMinutesComponent implements OnInit {
     private modalRef: BsModalRef,
     private excelService: ExcelService,
     private proceedingsDetailDel: ProceedingsDeliveryReceptionService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
     this.getProceeding();
-    const headerArray = this.headerString.split('~');
-    this.dataExport.push(headerArray);
 
     //console.log('expediente ', this.expediente);
   }
@@ -75,7 +79,6 @@ export class ReceptionDeliveryMinutesComponent implements OnInit {
       //console.log(this.form.get('nameAr').value);
 
       //this.getFilterProceedings();
-      this.getFilterProceedings2();
       const workSheet = XLSX.utils.json_to_sheet(this.dataExport, {
         skipHeader: true,
       });
@@ -133,12 +136,25 @@ export class ReceptionDeliveryMinutesComponent implements OnInit {
     if (this.idActa != null) {
       this.proceedingsDetailDel.getFilterProceeding2(this.idActa).subscribe({
         next: response => {
-          console.log('getFilterProceedings2', response);
+          console.log('response -> excel', response);
+
+          let num = 0;
           for (let i = 0; i < response.data.length; i++) {
+            //console.log('data en i ', response.data[i].one);
             if (response.data[i] != undefined) {
+              num++;
               const Array = response.data[i].one.split('~');
               this.dataExport.push(Array);
             }
+          }
+          console.log('this.dataExport ', this.dataExport);
+          if (num == 0 || response.data == null) {
+            console.log('response data-> ', response.data);
+            this.alert(
+              'error',
+              'ACTAS DE DESTINO DE BIENES',
+              'No se Encontró Datos con la Clave del Acta Seleccionada'
+            );
           }
         },
       });
@@ -146,9 +162,13 @@ export class ReceptionDeliveryMinutesComponent implements OnInit {
   }
 
   stateChange(event: any) {
+    this.dataExport = [];
+    const headerArray = this.headerString.split('~');
+    this.dataExport.push(headerArray);
     console.log('select ', event);
     this.idActa = this.extractData(event);
     console.log(' this.idActa', this.idActa);
+    this.getFilterProceedings2();
   }
 
   extractData(event: string): string {
