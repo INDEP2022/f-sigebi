@@ -14,130 +14,308 @@
     </div>
     <br />
     <!--  -->
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-5">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
-          </form-field>
-        </div>
-        <div class="col-md-7">
-          <form-field
-            [control]="form.get('cveService')"
-            label="Folios de oficios de Avalúos ">
-            <ng-select
-              addTagText="Agregar Elemento"
-              formControlName="cveService"
-              class="form-control scroll-line"
-              bindValue="value"
-              bindLabel="label"
-              [items]="listKeyOffice">
-            </ng-select>
-          </form-field>
-        </div>
-      </div>
-      <!--  -->
-      <div class="row d-flex justify-content-center mt-3">
-        <div class="col-md-4">
-          <div class="col-md-6">
-            <form-radio label="Oficio de Respuesta">
-              <input type="radio" value="cat" checked />
-            </form-radio>
+    <div>
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-md-5">
+            <form-field [control]="form.get('event')" label="Evento">
+              <input type="text" class="form-control" formControlName="event" />
+            </form-field>
           </div>
-          <div class="col-md-6">
-            <form-radio label="Oficio de Cancelación">
-              <input type="radio" value="dog" checked />
-            </form-radio>
+          <div class="col-md-7">
+            <form-field
+              [control]="form.get('cveService')"
+              label="Folios de oficios de Avalúos ">
+              <ng-select
+                addTagText="Agregar Elemento"
+                formControlName="cveService"
+                class="form-control scroll-line"
+                bindValue="value"
+                bindLabel="label"
+                [items]="listKeyOffice">
+              </ng-select>
+            </form-field>
           </div>
         </div>
+        <!--  -->
+        <div class="row d-flex justify-content-center mt-3">
+          <div class="col-md-4">
+            <div class="col-md-6">
+              <form-radio label="Oficio de Respuesta">
+                <input type="radio" value="cat" checked />
+              </form-radio>
+            </div>
+            <div class="col-md-6">
+              <form-radio label="Oficio de Cancelación">
+                <input type="radio" value="dog" checked />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-4">
+            <form-field [control]="form.get('fol')" label="Folio">
+              <input type="text" class="form-control" formControlName="fol" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('key')" label="Clave">
+              <input type="text" class="form-control" formControlName="key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('cityCi')" label="Ciudad">
+              <ng-select
+                addTagText="Agregar Elemento"
+                formControlName="cityCi"
+                class="form-control scroll-line"
+                bindValue="value"
+                bindLabel="label"
+                [items]="listCitys">
+              </ng-select>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('dateRec')" label="Fecha Recepción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateRec"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('dateEla')"
+              label="Fecha Elaboración">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateEla"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('remi')" label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="remi"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('dest')" label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dest"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--  -->
+    <div class="mt-5">
+      <div>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
       </div>
-      <!--  -->
-      <div class="row mt-3">
-        <div class="col-md-4">
-          <form-field [control]="form.get('fol')" label="Folio">
-            <input type="text" class="form-control" formControlName="fol" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('key')" label="Clave">
-            <input type="text" class="form-control" formControlName="key" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('cityCi')" label="Ciudad">
-            <ng-select
-              addTagText="Agregar Elemento"
-              formControlName="cityCi"
-              class="form-control scroll-line"
-              bindValue="value"
-              bindLabel="label"
-              [items]="listCitys">
-            </ng-select>
-          </form-field>
-        </div>
+      <div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-      <!--  -->
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <form-field [control]="form.get('dateRec')" label="Fecha Recepción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dateRec"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('dateEla')" label="Fecha Elaboración">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dateEla"
-              bsDatepicker />
-          </form-field>
-        </div>
+    </div>
+    <!--  -->
+    <div class="mt-5">
+      <div>
+        <ng2-smart-table
+          [settings]="settingsTwo"
+          [source]="dataTwo"></ng2-smart-table>
       </div>
-      <!--  -->
-      <div class="row mt-3">
-        <div class="col-md-6">
-          <form-field [control]="form.get('remi')" label="Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="remi"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="form.get('dest')" label="Destinatario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="dest"
-              bsDatepicker />
-          </form-field>
-        </div>
+      <div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
-      <!--  -->
-      <div class="row mt-3"></div>
-      <!--  -->
-    </form>
+    </div>
+    <!--  -->
+    <div>
+      <div>
+        <form class="form-material" [formGroup]="formTwo">
+          <!--  -->
+          <div class="row">
+            <div class="col-md-5">
+              <form-field
+                [control]="formTwo.get('allGood')"
+                label="Total de Bienes">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="allGood" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="formTwo.get('selectedGood')"
+                label="Bienes Seleccionados">
+                <ng-select
+                  addTagText="Agregar Elemento"
+                  formControlName="selectedGood"
+                  class="form-control scroll-line"
+                  bindValue="value"
+                  bindLabel="label"
+                  [items]="listKeyOffice">
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm active mr-3">
+                Motivos de Cambio a REV
+              </button>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row">
+            <div class="col-md-6">
+              <button class="btn btn-sm btn-success active">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+            </div>
+            <div class="col-md-6">
+              <button type="button" class="btn btn-sm btn-success active">
+                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+              </button>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row mt-5">
+            <div class="col-md-12">
+              <form-field [control]="formTwo.get('ref')" label="Referencia">
+                <textarea class="form-control" formControlName="ref"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <form-field [control]="formTwo.get('aten')" label="Atención">
+                <textarea
+                  class="form-control"
+                  formControlName="aten"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <form-field
+                [control]="formTwo.get('espe')"
+                label="Especificaciones">
+                <textarea
+                  class="form-control"
+                  formControlName="espe"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--  -->
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Modificar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Visualizar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Guardar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Enviar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+          </div>
+          <!--  -->
+
+          <!-- Modal #1 -->
+          <div
+            style="border: 1px solid black; padding: 10px; border-radius: 20px">
+            <p>Este es el modal #1</p>
+            <div>
+              <form class="form-material" [formGroup]="formDialogOne">
+                <div class="row mt-5">
+                  <div class="col-md-12">
+                    <form-field
+                      [control]="formDialogOne.get('noti')"
+                      label="Notificaciones">
+                      <textarea
+                        class="form-control"
+                        formControlName="noti"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+                <!--  -->
+              </form>
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Cerrar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Continuar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--  -->
+        </form>
+      </div>
+    </div>
+    <!--  -->
   </div>
   <!--  -->
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-danger active">
-          Guardar cambios
+        <button type="button" class="btn btn-primary btn-sm active">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active">
+        <button type="button" class="btn btn-primary btn-sm active">
           Enviar a Valuaci&oacute;n
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active">Ver oficio</button>
+        <button type="button" class="btn btn-primary btn-sm active">
+          Ver oficio
+        </button>
       </div>
     </div>
   </div>

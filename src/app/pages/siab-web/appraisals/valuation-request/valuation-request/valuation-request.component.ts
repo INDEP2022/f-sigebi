@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
+import {
+  VALUATION_REQUEST_COLUMNS,
+  VALUATION_REQUEST_COLUMNS_TWO,
+} from './valuation-request-columns';
 
 @Component({
   selector: 'app-valuation-request',
@@ -12,7 +16,12 @@ import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
 })
 export class valuationRequestComponent extends BasePage implements OnInit {
   form: FormGroup;
+  formTwo: FormGroup;
 
+  formDialogOne: FormGroup;
+
+  data: LocalDataSource = new LocalDataSource();
+  dataTwo: LocalDataSource = new LocalDataSource();
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -20,6 +29,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   intervalId: any;
   listCitys: any;
   listKeyOffice: any;
+  settingsTwo: any;
 
   constructor(private fb: FormBuilder) {
     super();
@@ -27,6 +37,12 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: false,
       columns: { ...VALUATION_REQUEST_COLUMNS },
+    };
+
+    this.settingsTwo = {
+      ...this.settings,
+      actions: false,
+      columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
     };
   }
 
@@ -54,28 +70,17 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       remi: [null],
       dest: [null],
     });
+    this.formTwo = this.fb.group({
+      allGood: [null],
+      selectedGood: [null],
+      ref: [null],
+      aten: [null],
+      espe: [null],
+    });
+    this.formDialogOne = this.fb.group({
+      noti: [null],
+    });
   }
-
-  data = [
-    {
-      noBien: 564,
-      description: 'Descripción del 564',
-      amount: '$41,151.00',
-      status: 'Disponible',
-    },
-    {
-      noBien: 45,
-      description: 'Descripción del 45',
-      amount: '$1,500.00',
-      status: 'No Disponible',
-    },
-    {
-      noBien: 785,
-      description: 'Descripción del 785',
-      amount: '$201,500.00',
-      status: 'Disponible',
-    },
-  ];
 
   override ngOnDestroy(): void {
     super.ngOnDestroy();

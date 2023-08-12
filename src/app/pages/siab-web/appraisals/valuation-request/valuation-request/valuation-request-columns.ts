@@ -7,12 +7,27 @@ export const VALUATION_REQUEST_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  amount: {
-    title: 'Cantidad',
+  status: {
+    title: 'Estatus',
+    sort: false,
+  },
+};
+
+export const VALUATION_REQUEST_COLUMNS_TWO = {
+  noBien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
     sort: false,
   },
   status: {
-    title: 'Estado',
+    title: 'Estatus',
+    sort: false,
+  },
+  motivo: {
+    title: 'Motivo(s)',
     sort: false,
   },
 };
