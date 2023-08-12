@@ -510,7 +510,7 @@ export class FormalGoodsEstateComponent
       let obj = {
         icon: 'warning',
         title: 'ID DEL LOTE',
-        message: 'ID del Lote Vacio',
+        message: 'ID del Lote Vacío',
       };
       this.handleSuccess(obj);
     }
