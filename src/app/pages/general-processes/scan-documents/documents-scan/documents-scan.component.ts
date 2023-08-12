@@ -74,6 +74,10 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   expedientNumber: number = null; //no_expediente
   wheelNumber: number = null; //no_volante
   processNumber: number = null; //no_tramite
+
+  // pantalla FACTCIRCUNR_0001
+  expedient: string | number = null;
+  acta: string | number = null;
   tipoConv: number;
   paramsDepositaryAppointment: any = {
     P_NB: null,
@@ -107,6 +111,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.expedientNumber = params['expedientNumber'] ?? null;
         this.wheelNumber = params['wheelNumber'] ?? null;
         this.processNumber = params['processNumber'] ?? null;
+        this.expedient = params['expedient'] ?? null;
+        this.acta = params['acta'] ?? null;
         //fin
         console.log(this.expedientNumber);
         if (this.origin == 'FACTJURDICTAMOFICIO') {
@@ -641,6 +647,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         {
           queryParams: {
             folioScan: this.originFolio,
+            expedient: this.expedient,
+            acta: this.acta,
           },
         }
       );

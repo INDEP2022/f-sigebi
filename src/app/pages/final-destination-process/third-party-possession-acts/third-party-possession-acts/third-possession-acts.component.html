@@ -118,13 +118,26 @@
         </form>
       </div>
 
-      <div class="row pt-4">
+      <!--<div class="row pt-4">
         <div class="ch-content">
           <button
             (click)="closeExpedient()"
             class="btn btn-primary btn-sm active mr-3">
             Cerrar
           </button>
+        </div>
+      </div>-->
+
+      <div class="row pt-4">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm"
+              (click)="closeExpedient()">
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -441,30 +454,34 @@
             </div>
           </div>
         </form>
-        <div class="row mt-5">
-          <div class="ch-content">
-            <button
-              class="btn btn-primary active btn-sm m-2"
-              (click)="openModalApplicant('nuevo')">
-              Guardar Folio
-            </button>
-            <button
-              class="btn btn-info active btn-sm"
-              (click)="openScannerPage()">
-              Escanear <i class="bx bx-file bx-sm float-icon"></i>
-            </button>
-            <button
-              class="btn btn-info active btn-sm"
-              (click)="validationAct()">
-              Validacion <i class="bx bx-file bx-sm float-icon"></i>
-            </button>
-            <button
-              class="btn btn-info active btn-sm"
-              (click)="viewPictures($event)">
-              Folio <i class="bx bx-file bx-sm float-icon"></i>
-            </button>
+
+        <div class="row pt-4">
+          <div class="col-md-12 d-flex justify-content-center">
+            <div>
+              <button
+                class="btn btn-primary active btn-sm mr-3"
+                (click)="openModalApplicant('nuevo')">
+                Guardar Folio
+              </button>
+              <button
+                class="btn btn-info active btn-sm mr-3"
+                (click)="openScannerPage()">
+                Escanear <i class="bx bx-file bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-info active btn-sm mr-3"
+                (click)="validationAct()">
+                Validacion <i class="bx bx-file bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-info active btn-sm"
+                (click)="viewPictures($event)">
+                Folio <i class="bx bx-file bx-sm float-icon"></i>
+              </button>
+            </div>
           </div>
         </div>
+
         <div class="row mt-5">
           <app-divider class=""></app-divider>
         </div>

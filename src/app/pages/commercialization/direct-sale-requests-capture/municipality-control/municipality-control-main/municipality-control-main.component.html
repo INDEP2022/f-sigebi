@@ -35,16 +35,15 @@
         <ng2-smart-table
           id="applicantTable"
           [settings]="applicantSettings"
-          [source]="applicantColumns"
+          [source]="dataFactGen"
           (edit)="openFormApplicant($event.data)"
-          (delete)="askDelete($event.data, 'APPLICANT')">
+          (delete)="askDelete($event.data, 'APPLICANT')"
+          (userRowSelect)="getDataGoods($event.data.soladjinstgobId)">
         </ng2-smart-table>
         <div class="table-padding"></div>
       </div>
     </ng-scrollbar>
-    <app-pagination
-      [params]="applicantParams"
-      [totalItems]="applicantTotalItems">
+    <app-pagination [params]="params2" [totalItems]="totalItems">
     </app-pagination>
     <div class="ms-3 mb-2"></div>
     <div class="row mt-3">
