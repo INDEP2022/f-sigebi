@@ -431,9 +431,9 @@ export class ClassifyAssetsTabComponent
         this.getSection(new ListParams(), this.good.ligieSection);
       } else {
         this.onLoadToast(
-          'info',
+          'warning',
           'Clasificación del bien',
-          'El bien no cuenta con la fracción arancelaria'
+          'El Bien no cuenta con la fracción arancelaria'
         );
       }
       this.classiGoodsForm.patchValue(this.good);
@@ -878,18 +878,18 @@ export class ClassifyAssetsTabComponent
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
-        'error',
-        'Domicilio requerido',
-        'Es requerido el domicilio del bien'
+        'warning',
+        'Domicilio Requerido:',
+        'Es requerido el domicilio del Bien'
       );
       return;
     }
 
     if (this.fractionCode.length < 8) {
       this.message(
-        'error',
-        'Código de fracción',
-        'Todos los bienes deben tener una fracción de 8 números'
+        'warning',
+        'Código de Fracción:',
+        'Todos los Bienes deben tener una fracción de 8 números'
       );
       return;
     }
@@ -922,7 +922,7 @@ export class ClassifyAssetsTabComponent
     ) {
       if (goods.quantity > 1) {
         this.onLoadToast(
-          'error',
+          'warning',
           'La cantidad transferente no puede ser mayor a uno'
         );
         return;
@@ -982,7 +982,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrió un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el Bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -1016,7 +1016,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrió un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el Bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -1303,9 +1303,9 @@ export class ClassifyAssetsTabComponent
         } else {
           this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
           this.message(
-            'info',
-            'clasificación de bien nula',
-            'El bien seleccionado no tiene número de clasificación de bien'
+            'warning',
+            'Clasificación de Bien nula',
+            'El Bien seleccionado no tiene número de clasificación'
           );
         }
       }
@@ -1344,7 +1344,7 @@ export class ClassifyAssetsTabComponent
                 );
               } else {
                 this.message(
-                  'info',
+                  'warning',
                   'clasificación de bien nula',
                   'el bien seleccionado no tiene numero de clasificación de bien'
                 );
