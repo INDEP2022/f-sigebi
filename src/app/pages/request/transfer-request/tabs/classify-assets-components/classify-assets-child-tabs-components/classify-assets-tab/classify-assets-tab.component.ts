@@ -929,6 +929,15 @@ export class ClassifyAssetsTabComponent
       }
     }
 
+    //Revisa si va vacio Unidad de Medida de Transferente
+    if (goods.unitMeasure == null) {
+      this.onLoadToast(
+        'warning',
+        'Debe ingresar unidad de medida transferente'
+      );
+      return;
+    }
+
     //Establece el campo val25 si es apto o no
     if (goods.val25 == null && goods.goodTypeId == 2) {
       goods.val25 =
