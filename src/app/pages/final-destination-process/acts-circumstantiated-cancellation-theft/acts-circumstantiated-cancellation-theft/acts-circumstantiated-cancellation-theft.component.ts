@@ -141,7 +141,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formTag: FormGroup;
   actaReception: IProceduremanagement;
   gTramite: IProceduremanagement[] = [];
-  statusCanc: string | number = '';
+  statusCanc: string = '';
   expedient: IExpedient;
   validateEx: boolean = true;
   wheelNumber: number = 0;
@@ -1261,6 +1261,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }*/
   }
   agregarActa() {
+    if (this.fileNumber == 0 || this.fileNumber == null) {
+      this.alertInfo(
+        'error',
+        'No se Puede Crear una Nueva Acta sin Selecccionar el Expediente',
+        ''
+      );
+      return;
+    }
     const responsable = this.actaRecepttionForm.get('respConv').value;
     const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
     const testigoTree = this.actaRecepttionForm.get('testigoTree').value;
@@ -1772,32 +1780,29 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
   }
 
+  //ESCANEAR
   openScannerPage() {
-    if (!this.dataRecepcion) {
-      return;
-    }
     if (
-      this.dataRecepcion.statusProceedings == 'ENVIADO' &&
-      this.dataRecepcion.keysProceedings
+      !['CERRADO', 'CERRADA'].includes(this.statusCanc) &&
+      this.statusCanc != null
     ) {
       if (this.formScan.get('scanningFoli').value) {
         this.alertQuestion(
           'info',
-          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta. ¿Deseas continuar?',
+          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta Abierta ¿Deseas continuar?',
           '',
           'Aceptar',
           'Cancelar'
         ).then(res => {
           console.log(res);
           if (res.isConfirmed) {
-            this.router.navigate(['/pages/general-processes/scan-documents'], {
+            this.router.navigate([`/pages/general-processes/scan-documents`], {
               queryParams: {
-                //origin: this.screenKey,
                 origin: 'FACTCIRCUNR_0001',
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
-                acta: this.formScan.get('type').value,
-                ...this.paramsScreen,
+                //acta: this.formScan.get('type').value,
+                //...this.paramsScreen,
               },
             });
           }
@@ -1812,6 +1817,48 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
     }
+
+
+
+    /* if (!this.dataRecepcion) {
+       return;
+     }
+     if (
+       this.dataRecepcion.statusProceedings == 'ENVIADO' &&
+       this.dataRecepcion.keysProceedings
+     ) {
+       if (this.formScan.get('scanningFoli').value) {
+         this.alertQuestion(
+           'info',
+           'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta. ¿Deseas continuar?',
+           '',
+           'Aceptar',
+           'Cancelar'
+         ).then(res => {
+           console.log(res);
+           if (res.isConfirmed) {
+             this.router.navigate(['/pages/general-processes/scan-documents'], {
+               queryParams: {
+                 //origin: this.screenKey,
+                 origin: 'FACTCIRCUNR_0001',
+                 folio: this.formScan.get('scanningFoli').value,
+                 expedient: this.fileNumber,
+                 acta: this.formScan.get('type').value,
+                 ...this.paramsScreen,
+               },
+             });
+           }
+         });
+       } else {
+         this.alertInfo('warning', 'No Existe Folio de Escaneo a Escanear', '');
+       }
+     } else {
+       this.alertInfo(
+         'warning',
+         'No se puede Escanear para un Acta que esté Cerrada',
+         ''
+       );
+     }*/
   }
 
   showMessageDigitalization() {
