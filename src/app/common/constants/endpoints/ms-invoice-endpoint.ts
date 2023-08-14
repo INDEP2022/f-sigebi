@@ -18,4 +18,5 @@ export enum ENDPOINT_INVOICE {
   ApplicationFolioDispo = 'application/valida-folios-dispo',
   ValidateUser = 'procedure-sera/validate-user',
   ControlProcedure = 'procedure-sera/ctrl-generate-preinvoices',
+  Fcomer112ICountHeader = 'application/fcomer112ICountHeader',
 }
