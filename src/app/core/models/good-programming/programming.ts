@@ -50,3 +50,8 @@ export interface Iprogramming {
   validateGood: string;
   version: number;
 }
+
+export interface IprogrammingDate {
+  date: string;
+  total: number;
+}

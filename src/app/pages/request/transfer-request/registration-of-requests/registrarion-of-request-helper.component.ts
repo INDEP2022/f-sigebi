@@ -101,12 +101,30 @@ export class RegistrationHelper extends BasePage {
     return new Promise((resolve, reject) => {
       let body: any = {};
       body['xidSolicitud'] = id;
-      body['xtipoDocumento'] = 90;
+      //body['xTipoDocumento'] = 90;
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
           //console.log(resp);
           const length = resp.data.length;
           resolve(length);
+        },
+        error: error => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  getDocInai(id: string) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      body['xTipoDocumento'] = 94;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: (resp: any) => {
+          console.log('Documento INAI: ', resp.data[0]);
+          const inaiDoc = resp.data[0]?.xtipoDocumento;
+          resolve(inaiDoc);
         },
         error: error => {
           resolve(0);
@@ -135,21 +153,39 @@ export class RegistrationHelper extends BasePage {
     const priorityDate = request.priorityDate;
 
     const lisDocument: any = await this.getDocument(idRequest);
+
+    //Revisa si tiene caráctula inai
+    const inaiDoc: any = await this.getDocInai(idRequest);
+    console.log(inaiDoc);
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
+    } else if (inaiDoc != 94) {
+      console.log('No tiene caráctula');
+      this.message(
+        'warning',
+        'Falta Carátula INAI',
+        'Se requiere subir el documento'
+      );
+      //validoOk = false;
     } else if (!lisDocument || lisDocument < 2) {
       this.message(
         'warning',
-        'Se debe adjuntar un documento a la solicitud para continuar',
-        ''
+        'Falta Documento relacionado a la solicitud',
+        'Se requiere subir documento(s)'
       );
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-      this.message('warning', 'Atención', 'Debe seleccionar una fecha');
+      this.message(
+        'warning',
+        'Atención',
+        'Debe seleccionar una fecha de prioridad'
+      );
+      validoOk = false;
+    } else if (idTrandference === 1) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
@@ -174,13 +210,12 @@ export class RegistrationHelper extends BasePage {
           'Atención',
           'El No. Oficio no puede ser vacío'
         );
-        /*this.message(
-          'error',
-
+      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
+        this.message(
           'warning',
-
-          'Para la transferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
-        );*/
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
+          ''
+        );
       } else {
         validoOk = true;
       }

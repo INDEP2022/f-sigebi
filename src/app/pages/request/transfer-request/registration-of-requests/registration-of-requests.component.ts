@@ -626,6 +626,33 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  //createdDateTask: string= '';
+  getOldTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          console.log('Tarea antigua:', resp.data[1]);
+          console.log('Fecha de creación', resp.data[1].createdDate);
+          //this.createdDateTask = resp.data[1].createdDate
+          const task = {
+            //
+            assignees: resp.data[1].assignees,
+            assigneesDisplayname: resp.data[1].assigneesDisplayname,
+            createdDate: resp.data[1].createdDate,
+          };
+          resolve(task);
+        },
+        error: error => {
+          this.message('error', 'error', 'Error al obtener la tarea antigua');
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
   async finishMethod() {
     const body: any = {};
     body['id'] = this.requestData.id;
@@ -730,7 +757,10 @@ export class RegistrationOfRequestsComponent
               this.updateGoodStatus('SOLICITAR_APROBACION');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
-                //si existe crea solo la Notificacion de aclaracion
+                console.log(
+                  'si existe crea solo la Notificacion de aclaracion'
+                );
+                this.createApprovalProcessOnly();
                 //await this.notifyClarificationsMethod();
               } else {
                 //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
@@ -763,31 +793,39 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    const task1: any = await this.getOldTask();
+    //
+    console.log('public async confirmMethod()');
     /* trae solicitudes actualizadas */
     const request: any = await this.getAsyncRequestById();
     if (request) {
       /* valida campos */
+      console.log(' /* valida campos */');
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
         /* actualizamos el campo  fileNumber (expediente) de bienes*/
+        console.log(
+          ' /* actualizamos el campo  fileNumber (expediente) de bienes*/'
+        );
         const expUpdated = await this.registrationHelper.updateExpedient(
           request.id,
           request.recordId
         );
         if (expUpdated) {
           /* abre modal del elegir usuario */
-          this.cambiarTipoUsuario(this.requestData);
+          this.cambiarTipoUsuario(this.requestData, task1);
         }
       }
     }
   }
 
-  cambiarTipoUsuario(request: any) {
+  cambiarTipoUsuario(request: any, task1: any) {
     this.openModal(
       SelectTypeUserComponent,
       request,
       'commit-request',
-      this.task
+      this.task,
+      task1
     );
   }
   /* Fin guardar captura de solicitud */
@@ -982,6 +1020,7 @@ export class RegistrationOfRequestsComponent
 
       this.taskService.createTask(task).subscribe({
         next: resp => {
+          console.log('Se creó la tarea de aprobar');
           resolve(true);
         },
         error: error => {
@@ -1260,6 +1299,9 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
+      task['idstation'] = request.stationId;
+      task['idTransferee'] = request.transferenceId;
+      task['idAuthority'] = request.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
@@ -1656,13 +1698,15 @@ export class RegistrationOfRequestsComponent
     component: any,
     data?: any,
     typeAnnex?: String,
-    task?: number
+    task?: number,
+    task1?: any
   ): void {
     let config: ModalOptions = {
       initialState: {
         data: data,
         typeAnnex: typeAnnex,
         task: task,
+        task1: task1,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

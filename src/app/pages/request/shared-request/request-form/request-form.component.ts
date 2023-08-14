@@ -506,6 +506,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
                   'pages/request/transfer-request/registration-request';
                 task['processName'] = 'SolicitudTransferencia';
                 task['idDelegationRegional'] = actualUser.department;
+                task['idstation'] = form.stationId;
+                task['idTransferee'] = form.transferenceId;
+                task['idAuthority'] = form.authorityId;
+
                 body['task'] = task;
 
                 let orderservice: any = {};
@@ -742,6 +746,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
+  idTransferente: number = 0;
+  idEmisora: number = 0;
+  idAuthoridad: number = 0;
+
   async turnRequestTest() {
     this.getRegionalDeleg(new ListParams());
     const createTask = await this.generateFirstTask();
@@ -749,6 +757,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
     if (createTask) {
       this.loadingTurn = true;
       const form = this.requestForm.getRawValue();
+      //Estableciendo valores a transferente, emisora y autoridad
+      this.idTransferente = form.transferenceId;
+      this.idEmisora = form.stationId;
+      this.idAuthoridad = form.authorityId;
       form.id = this.requestId;
       const idRequest = form.id;
       const title =
@@ -781,6 +793,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['expedientId'] = 0;
         task['urlNb'] = urlNb;
         task['processName'] = processName;
+        task['idstation'] = this.idEmisora;
+        task['idTransferee'] = this.idTransferente;
+        task['idAuthority'] = this.idAuthoridad;
         task['idDelegationRegional'] = actualUser.department;
         body['task'] = task;
 

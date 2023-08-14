@@ -61,6 +61,7 @@ export class ReviewResourceReportComponent
   phaseEdo: number;
   patchValue: boolean = false;
   dateMinEnd: Date = null;
+  maxDate: Date = null;
 
   get startDate(): AbstractControl {
     return this.form.get('startDate');
@@ -96,6 +97,7 @@ export class ReviewResourceReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.maxDate = new Date();
     this.loading = true;
   }
 

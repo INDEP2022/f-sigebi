@@ -292,7 +292,17 @@
               </form-field> -->
             </div>
             <div class="col-md-6 pt-5">
-              <form-field
+              <ngx-select
+                [form]="consultTasksForm"
+                control="txtNoTransferente"
+                (fetchItems)="getTransferent($event)"
+                [showTooltip]="true"
+                [data]="transferents$"
+                bindLabel="nameAndId"
+                label="Transferente"
+                value="id"></ngx-select>
+
+              <!-- <form-field
                 [control]="consultTasksForm.get('txtNoTransferente')"
                 label="No. Transferente">
                 <input
@@ -303,7 +313,7 @@
                   formControlName="txtNoTransferente"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
-              </form-field>
+              </form-field> -->
             </div>
             <!-- </div>
           <div class="row margin-input"> -->
@@ -333,15 +343,18 @@
               </button>
             </div>
             <div class="col-md-auto pt-5">
-              <confirm-button
-                type="button"
-                [loading]="excelLoading"
-                text="Exportar a Excel"
-                loadingText="Cargando..."
-                className="btn-success ml-2"
-                [icon]="'bx bx-download'"
-                [btnSmall]="true"
-                (confirm)="exportToExcel()"></confirm-button>
+              <button
+                class="btn btn-sm btn-success active"
+                (click)="exportToExcel()">
+                Descargar a Excel <i class="bx bx-download"> </i>
+              </button>
+            </div>
+            <div class="col-md-auto pt-5">
+              <button
+                class="btn btn-sm btn-success active"
+                (click)="donwloadReport()">
+                Reporte de atrasos <i class="bx bx-download"> </i>
+              </button>
             </div>
             <div class="col-md-auto pt-5">
               <button

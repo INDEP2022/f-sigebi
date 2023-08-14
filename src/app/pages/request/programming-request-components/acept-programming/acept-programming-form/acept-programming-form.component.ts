@@ -1085,6 +1085,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['idDelegationRegional'] = user.department;
     task['urlNb'] = 'pages/request/programming-request/schedule-notify';
     task['processName'] = 'SolicitudProgramacion';
+    task['idAuthority'] = this.programming.autorityId;
+    task['idStore'] = this.programming.storeId;
+    task['idTransferee'] = this.programming.tranferId;
+    task['nbTransferee'] = this.programming.transferentName;
     body['task'] = task;
 
     await this.createTaskOrderService(body);
@@ -1113,6 +1117,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['idDelegationRegional'] = user.department;
     task['urlNb'] = 'pages/request/programming-request/execute-reception';
     task['processName'] = 'SolicitudProgramacion';
+    task['idAuthority'] = this.programming.autorityId;
+    task['idStore'] = this.programming.storeId;
+    task['idTransferee'] = this.programming.tranferId;
+    task['nbTransferee'] = this.programming.transferentName;
     body['task'] = task;
 
     await this.createTaskOrderService(body);
@@ -1142,6 +1150,10 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     task['idDelegationRegional'] = user.department;
     task['urlNb'] = 'pages/request/programming-request/formalize-programming';
     task['processName'] = 'SolicitudProgramacion';
+    task['idAuthority'] = this.programming.autorityId;
+    task['idStore'] = this.programming.storeId;
+    task['idTransferee'] = this.programming.tranferId;
+    task['nbTransferee'] = this.programming.transferentName;
     body['task'] = task;
 
     const taskResult = await this.createTaskOrderService(body);
