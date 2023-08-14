@@ -276,7 +276,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           causa_penal: this.dataExcel[i].causa_penal,
         });
       }
-
       this.source.load(mappedData);
       this.source.refresh();
 
@@ -383,7 +382,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('wrong').patchValue(insertResp['error']);
       this.file.get('processed').patchValue('0');
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
-
       return;
     }
   }
