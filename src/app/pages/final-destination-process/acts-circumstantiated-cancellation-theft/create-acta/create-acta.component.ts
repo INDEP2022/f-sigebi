@@ -73,7 +73,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.expedient);
+    console.log('expedient--', this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
     for (let i = 1900; i <= this.currentYear; i++) {
@@ -175,11 +175,16 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
   }
 
+
   consultREG_TRANSFERENTES(lparams: ListParams) {
+
+    console.log('LPARAMS - ', lparams);
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
       expedientType: this.expedient.expedientType,
     };
+
+    console.log('ObJ --', obj);
 
     const params = new FilterParams();
 
