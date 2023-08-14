@@ -5,6 +5,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ComerceDocumentsXmlH,
   ComerceDocumentsXmlT,
+  IComerDocumsXmlT,
 } from '../../models/ms-documents/documents-comerce.model';
 
 @Injectable({
@@ -25,6 +26,13 @@ export class DocumentsComerceService extends HttpService {
 
   createComerceDocumentsXmlT(body: Partial<ComerceDocumentsXmlT>) {
     return this.post<IListResponse<ComerceDocumentsXmlT>>(
+      DocumentsComersEndpoints.ComerceDocumentsXmlT,
+      body
+    );
+  }
+
+  deleteComerceDocumentsXmlT(body: Partial<IComerDocumsXmlT>) {
+    return this.delete<IListResponse<ComerceDocumentsXmlT>>(
       DocumentsComersEndpoints.ComerceDocumentsXmlT,
       body
     );
@@ -62,6 +70,13 @@ export class DocumentsComerceService extends HttpService {
     return this.put<IListResponse<any>>(
       DocumentsComersEndpoints.ComerceDocumentsXmlH,
       body
+    );
+  }
+
+  deleteComerceDocumentsXmlH(id: number) {
+    //body: Partial<ComerceDocumentsXmlH>) {
+    return this.delete<IListResponse<any>>(
+      DocumentsComersEndpoints.ComerceDocumentsXmlH + '/' + id
     );
   }
 }

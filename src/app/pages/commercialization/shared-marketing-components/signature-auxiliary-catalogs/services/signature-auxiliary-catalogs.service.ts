@@ -4,6 +4,7 @@ import { _Params } from 'src/app/common/services/http.service';
 import {
   ComerceDocumentsXmlH,
   ComerceDocumentsXmlT,
+  IComerDocumsXmlT,
 } from 'src/app/core/models/ms-documents/documents-comerce.model';
 import {
   IComerDestXML,
@@ -61,11 +62,17 @@ export class SignatureAuxiliaryCatalogsService {
       params
     );
   }
+  getAllComerceDocumentsXmlT(params: _Params) {
+    return this.msDocumentsComerceService.getAllComerceDocumentsXmlT(params);
+  }
   updateComerceDocumentsXmlT(body: Partial<ComerceDocumentsXmlT>) {
     return this.msDocumentsComerceService.updateComerceDocumentsXmlT(body);
   }
   createComerceDocumentsXmlT(body: Partial<ComerceDocumentsXmlT>) {
     return this.msDocumentsComerceService.createComerceDocumentsXmlT(body);
+  }
+  deleteComerceDocumentsXmlT(body: Partial<IComerDocumsXmlT>) {
+    return this.msDocumentsComerceService.deleteComerceDocumentsXmlT(body);
   }
   getAllComerceDocumentsXmlH(params: _Params) {
     return this.msDocumentsComerceService.getAllComerceDocumentsXmlH(params);
@@ -75,6 +82,9 @@ export class SignatureAuxiliaryCatalogsService {
   }
   updateComerceDocumentsXmlH(body: Partial<ComerceDocumentsXmlH>) {
     return this.msDocumentsComerceService.updateComerceDocumentsXmlH(body);
+  }
+  deleteComerceDocumentsXmlH(id: number) {
+    return this.msDocumentsComerceService.deleteComerceDocumentsXmlH(id);
   }
   getParameterMod(params: ListParams) {
     return this.msParameterModService.getAll(params);

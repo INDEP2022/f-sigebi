@@ -640,7 +640,7 @@ export class ResponsibilityLettersReportComponent
         );
         // this.bienesLotesForm.get('descEvento').setValue(this.event.descEvento);
         this.comerLibsForm.get('fechaCarta').setValue(this.carta);
-        this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
+        // this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
         this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
         // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
         console.log(this.event);
