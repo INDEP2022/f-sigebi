@@ -182,8 +182,29 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   exportCsv() {
-    const filename: string = 'Nombre del archivo';
-    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    const title = 'Muestreo de Bienes para Supervisión';
+    const filename: string = 'MuestreoBienesSupervision';
+    this.jsonToCsv = this.generateJsonExcel();
+    //console.log(this.jsonToCsv)
+    //{type: 'csv'}
+    this.excelService.export(this.jsonToCsv, { filename });
+  }
+
+  generateJsonExcel() {
+    let good: any = {};
+    let jsonBody: any = [{}];
+    this.paragraphs3.map((item: any) => {
+      (good.NomInventario = item.inventoryNumber),
+        (good.NoGestion = item.goodId),
+        (good.Descripcion = item.goodDescription),
+        (good.DelegaRegional = item.regionalDelegation),
+        (good.Cantidad = item.quantity),
+        (good.ResultEvaluación = item.resultTest);
+
+      jsonBody.push(good);
+    });
+
+    return jsonBody;
   }
 
   close(): void {}
