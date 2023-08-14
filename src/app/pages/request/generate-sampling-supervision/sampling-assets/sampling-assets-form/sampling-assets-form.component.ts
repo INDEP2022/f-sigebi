@@ -165,19 +165,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   addAssets() {
-    console.log(this.table2.grid);
-
-    /*const table = document.getElementById('table2');
-    const tbody = table.children[0].children[1].children;
-
-    for (let index = 0; index < tbody.length; index++) {
-      const ele:any = tbody[index];
-      
-      console.log(ele.children[0].checked )
-      ele.children[0].children[0].checked = false
-    }*/
-
-    return;
     let ids: any = [];
     this.listAssetsSelected.map((item: any) => {
       const index = this.paragraphs3.indexOf(item);
@@ -198,6 +185,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       );
       ids = [];
     }
+    this.unselectGoodRows();
   }
 
   selectAsstsCopy(event: any) {
@@ -407,6 +395,22 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
     this.paragraphs3 = [...this.paragraphs3];
     this.listAssetsCopiedSelected = [];
+  }
+
+  unselectGoodRows() {
+    const a = this.table2.grid.getRows();
+    a.map((item: any) => {
+      item.isSelected = false;
+    });
+    /*const table = document.getElementById('table2');
+    const tbody = table.children[0].children[1].children;
+
+    for (let index = 0; index < tbody.length; index++) {
+      const ele:any = tbody[index];
+      
+      console.log(ele.children[0].checked )
+      ele.children[0].children[0].checked = false
+    }*/
   }
 
   deductiveSelected(event: any) {
