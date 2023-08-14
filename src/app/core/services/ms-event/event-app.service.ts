@@ -45,4 +45,7 @@ export class EventAppService extends HttpService {
   postDetResumer(params: any) {
     return this.post(`EventEndpoints.DetResumen`, params);
   }
+  postPaGetsRequestType(model: any) {
+    return this.post(`application/paGetsRequestType`, model);
+  }
 }

@@ -5,8 +5,9 @@
     </div>
   </div>
   <div body>
+    <h5 class="title">{{ title }}</h5>
     <form class="form-material" [formGroup]="form">
-      <div class="row">
+      <div class="row pt-5">
         <div class="col-md-2">
           <form-field [control]="form.get('event')" label="Evento">
             <input type="text" class="form-control" formControlName="event" />
@@ -17,7 +18,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="cveService" />
+              formControlName="cveService"
+              [readOnly]="true" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -27,55 +29,73 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-6 alert alert-info">
-          <div class="col-md-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('sender')">
+            <ngx-select
+              (fetchItems)="getUsersList($event)"
+              [data]="sender"
+              [form]="form"
+              value="usuario"
+              label="Remitente"
+              bindLabel="nombre"
+              control="sender"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+          </form-field>
+
+          <ng-template #userLabel let-item="item"
+            >{{ item.usuario }} - {{ item.nombre }}</ng-template
+          >
+          <ng-template #userOption let-item="item"
+            >{{ item.usuario }} - {{ item.nombre }}</ng-template
+          >
+          <!--             
             <form-field [control]="form.get('sender')" label="Remitente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="sender" />
-            </form-field>
-          </div>
-          <div class="col-md-8">
-            <form-field [control]="form.get('senderTxt')" label="Texto Mensaje">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="senderTxt"></textarea>
-            </form-field>
-          </div>
+              <input type="text" class="form-control" formControlName="sender" [readOnly]="true" />
+            </form-field> -->
         </div>
-        <div class="col-md-6 alert alert-info">
-          <div class="col-md-4">
-            <form-field [control]="form.get('addressee')" label="Destinatario">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="addressee" />
-            </form-field>
-          </div>
-          <div class="col-md-8">
-            <form-field
-              [control]="form.get('addresseeTxt')"
-              label="Texto Mensaje">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="addresseeTxt"></textarea>
-            </form-field>
-          </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('addressee')">
+            <ngx-select
+              (fetchItems)="getUsersDesList($event)"
+              [data]="addressee"
+              [form]="form"
+              value="usuario"
+              label="Destinatario"
+              bindLabel="nombre"
+              control="addressee"
+              [labelTemplate]="userLabel"
+              [optionTemplate]="userOption">
+            </ngx-select>
+          </form-field>
+
+          <ng-template #userLabel let-item="item"
+            >{{ item.usuario }} - {{ item.nombre }}</ng-template
+          >
+          <ng-template #userOption let-item="item"
+            >{{ item.usuario }} - {{ item.nombre }}</ng-template
+          >
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
+        <div class="col-md-6">
+          <form-field [control]="form.get('city')">
+            <ngx-select
+              (fetchItems)="getCitiesList($event)"
+              [data]="cityList"
+              [form]="form"
+              value="idCity"
+              label="Ciudad"
+              bindLabel="legendOffice"
+              control="city">
+            </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
-          <div class="col-md-12 alert alert-success">
+          <div class="col-md-12">
             <form-field
               [control]="form.get('paragraph1')"
               label="P&aacute;rrafo 1">
@@ -87,7 +107,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="col-md-12 alert alert-success">
+          <div class="col-md-12">
             <form-field
               [control]="form.get('paragraph2')"
               label="P&aacute;rrafo 2">
@@ -99,7 +119,7 @@
           </div>
         </div>
         <div class="col-md-4">
-          <div class="col-md-12 alert alert-success">
+          <div class="col-md-12">
             <form-field
               [control]="form.get('paragraph3')"
               label="P&aacute;rrafo final">
