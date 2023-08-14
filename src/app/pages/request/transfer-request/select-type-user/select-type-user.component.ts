@@ -441,7 +441,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['idTransferee'] = request.transferenceId;
       task['idAuthority'] = request.authorityId;
       task['idDelegationRegional'] = user.department;
-      task['createdDate'] = this.task1.createdDate;
+      task['createdDate'] = this.task1?.createdDate;
       task['endDate'] = this.today;
       body['task'] = task;
 
