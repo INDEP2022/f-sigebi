@@ -333,6 +333,13 @@
       <div class="row" *ngIf="formLoadingTrans" style="margin-bottom: 5rem">
         <form-loader *ngIf="formLoadingTrans"></form-loader>
       </div>
+
+      <!--<ng2-smart-table
+        [attr.class]="'table-bordered pt-3 table-responsive'"
+        [settings]="settingsTransGood"
+        [source]="goodsInfoTransportable">
+      </ng2-smart-table> -->
+
       <div class="row pt-3" *ngIf="!formLoadingTrans">
         <form [formGroup]="executeForm">
           <div class="table-responsive">
@@ -440,13 +447,6 @@
                             maxlength="100"
                             formControlName="quantitySae" />
                         </form-field>
-                        <!--<form-field [control]="executeForm.get('quantitySae')">
-                          <input
-                            class="form-control"
-                            maxlength="50"
-                            
-                            formControlName="quantitySae" />
-                        </form-field> -->
                       </td>
                       <td class="text-left align-baseline">
                         {{ good.get('unitMeasure')?.value }}

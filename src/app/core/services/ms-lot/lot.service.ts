@@ -5,6 +5,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IPupProcSeldisp } from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -301,6 +302,11 @@ export class LotService extends HttpService {
     return this.post('apps/lotifica-tabla-tc', body);
   }
 
+  lotifyExcelCount(eventId: string | number) {
+    const url = `apps/lotifica-excel-count/event/${eventId}`;
+    return this.get<{ totlot: string; catlot: string; aprolot: string }>(url);
+  }
+
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA
@@ -331,5 +337,10 @@ export class LotService extends HttpService {
       `${LotEndpoints.GetBankReference}?reference=${reference}`,
       params
     );
+  }
+
+  //pup-proc-seldisp
+  pupProcSeldisp(body: IPupProcSeldisp){
+    return this.post<any>('apps/pup-proc-seldisp', body)
   }
 }

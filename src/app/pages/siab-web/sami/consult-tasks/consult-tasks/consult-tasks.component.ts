@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { saveAs } from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -10,12 +11,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/consult-tasks/consult-tasks-columns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-consult-tasks',
   templateUrl: './consult-tasks.component.html',
@@ -35,6 +40,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   department = '';
   delegation: string = null;
   excelLoading = this.loading;
+  transferents$ = new DefaultSelect<ITransferente>();
 
   get txtFecAsigDesde() {
     return this.consultTasksForm.get('txtFecAsigDesde');
@@ -50,7 +56,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     public router: Router,
     private fb: FormBuilder,
-    private regionalDelegacionService: RegionalDelegationService
+    private regionalDelegacionService: RegionalDelegationService,
+    private transferentService: TransferenteService
   ) {
     super();
     this.settings = {
@@ -147,6 +154,97 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe();
   }
 
+  donwloadReport() {
+    const obj: Object = {
+      idDelegationRegional: this.consultTasksForm.value.txtNoDelegacionRegional,
+      idTransferee: Number(this.consultTasksForm.value.txtNoTransferente),
+    };
+
+    console.log('Objeto', obj);
+
+    this.taskService.downloadReport(obj).subscribe({
+      next: resp => {
+        const data = resp.base64File;
+        console.log('Base64: ', data);
+        if (data != '') {
+          const base64String = data;
+          const binaryData = atob(base64String);
+          const bytes = new Uint8Array(binaryData.length);
+          for (let i = 0; i < binaryData.length; i++) {
+            bytes[i] = binaryData.charCodeAt(i);
+          }
+
+          const workbook = XLSX.read(bytes, { type: 'array' });
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+          });
+
+          const blob = new Blob([excelBuffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const filename = 'reporteAtrasos.xlsx';
+          saveAs(blob, filename);
+        } else if (data === '') {
+          this.alert(
+            'warning',
+            'Sin información',
+            'No hay reporte disponible para la transferente seleccionada'
+          );
+        }
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Hubo un problema al generar el reporte');
+      },
+    });
+  }
+
+  replaceAccents(text: string) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  getTransferent(params?: ListParams) {
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    //params['filter.typeTransferent'] = `$eq:NO`;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        const text = this.replaceAccents(params.text);
+        data.data.map(data => {
+          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+
+        if (params.text) {
+          let copyData = [...data.data];
+          copyData.map(data => {
+            data.nameAndId = this.replaceAccents(data.nameAndId);
+            return data;
+          });
+
+          copyData = copyData.filter(item => {
+            return text.toUpperCase() === ''
+              ? item
+              : item.nameAndId.toUpperCase().includes(text.toUpperCase());
+          });
+
+          copyData.map(x => {
+            x.nameAndId = `${x.id} - ${x.nameTransferent}`;
+            return x;
+          });
+
+          if (copyData.length > 0) {
+            this.transferents$ = new DefaultSelect(copyData, copyData.length);
+          }
+        }
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
+  }
+
   async exportToExcel() {
     this.excelLoading = true;
     const filename: string = this.userName + '-Tasks';
@@ -219,10 +317,11 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
+        //Cambiar filtro a PROCESO, cuando esten abiertas
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
         this.getDelegationRegional(user.department);
       } else if (filterStatus === 'FINALIZADA') {
-        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+        this.filterParams.getValue().addFilter('State', filterStatus);
         this.getDelegationRegional(user.department);
       }
       if (filterStatus === 'TODOS') {
@@ -407,7 +506,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.filterParams
         .getValue()
         .addFilter(
-          'request.transferenceId',
+          'idTransferee',
           this.consultTasksForm.value.txtNoTransferente,
           SearchFilter.EQ
         );

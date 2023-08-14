@@ -6,4 +6,5 @@ export enum DonationEndPoint {
   requestUpdate = 'donac-request-good/update-request-donation-good/',
   eventComDonation = 'event-com-donation',
   DetailEventComDon = 'detail-event-com-don',
+  eventComDonationExcel = 'event-com-donation/excel-export',
 }

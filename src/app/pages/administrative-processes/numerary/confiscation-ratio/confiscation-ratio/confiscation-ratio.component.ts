@@ -1,11 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import {
+  BsModalService,
+  ModalDirective,
+  ModalOptions,
+} from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -23,9 +29,20 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ScreenStatusService } from 'src/app/core/services/ms-screen-status/screen-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-//import { EXCEL_TO_JSON } from 'src/app/pages/admin/home/constants/excel-to-json-columns';
+import { EXCEL_TO_JSON } from 'src/app/pages/admin/home/constants/excel-to-json-columns';
+import { JSON_TO_CSV_FRELDECOMISO } from 'src/app/pages/admin/home/constants/json-to-csv';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import * as XLSX from 'xlsx';
+
+declare var $: any;
+interface IExcelToJson {
+  idD: number;
+  id: number;
+  f_trnas: string;
+  f_sent: string;
+  Inte: number;
+  f_teso: string;
+  o_teso: string;
+}
 
 interface IExcelToJson {
   idD: number;
@@ -43,12 +60,19 @@ interface IExcelToJson {
   styles: [],
 })
 export class ConfiscationRatioComponent extends BasePage implements OnInit {
+  @ViewChild('modal', { static: false }) modal?: ModalDirective;
   form: FormGroup;
   file: FormGroup;
+  jsonToCsv = JSON_TO_CSV_FRELDECOMISO;
   dataExcel: any = [];
   data: FormGroup[];
   totalItems: number = 0;
   lock: boolean = false;
+  binaryExcel: string | ArrayBuffer;
+  currentPage = 1;
+  pageSize = 10;
+  paginatedData: any[] = [];
+  fileReader = new FileReader();
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   filterParams = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -94,14 +118,16 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
-      //columns: EXCEL_TO_JSON,
+      columns: EXCEL_TO_JSON,
     };
   }
   token: TokenInfoModel;
   ngOnInit(): void {
     this.prepareForm();
     this.token = this.authService.decodeToken();
-
+    setTimeout(() => {
+      $('[data-toggle="tooltip"]').tooltip('show');
+    });
     console.log('Información del usuario logeado: ', this.token);
 
     // this.getGood(new ListParams)
@@ -114,18 +140,19 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   //toolbarUser: user.username.toUpperCase(),
   prepareForm() {
     this.form = this.fb.group({
-      forfeitureKey: [null],
-      check: [null, Validators.required],
+      forfeitureKey: [null, [Validators.required]],
+      check: [null],
       import: [null],
-      pgr: [null, Validators.required],
-      ssa: [null, Validators.required],
-      pjf: [null, Validators.required],
+      pgr: [null],
+      ssa: [null],
+      pjf: [null],
+      totalAmount: [null],
     });
     this.file = this.fb.group({
-      recordRead: [null, Validators.required],
-      recordsProcessed: [null, Validators.required],
-      processed: [null, Validators.required],
-      wrong: [null, Validators.required],
+      recordRead: [null],
+      recordsProcessed: [null],
+      processed: [null],
+      wrong: [null],
     });
     this.data = [this.dataTemplate];
   }
@@ -163,8 +190,8 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   }
 
   public callReport() {
-    const { forfeitureKey } = this.form.get('forfeitureKey').value;
-
+    const forfeitureKey = this.form.get('forfeitureKey').value;
+    console.log(forfeitureKey);
     if (!forfeitureKey) {
       this.onLoadToast(
         'info',
@@ -173,8 +200,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       );
     } else {
       const params = {
-        P_CLAVE_DECOMISO: forfeitureKey,
+        P_Clave_Decomiso: forfeitureKey,
       };
+      console.log(params);
       this.report.fetchReport('RRELDECOMISO', params).subscribe({
         next: response => {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -202,22 +230,41 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   brings() {}
 
   onFileChange(event: Event) {
-    const files = (event.target as HTMLInputElement).files;
-    if (files.length != 1) throw 'No files selected, or more than of allowed';
-    const fileReader = new FileReader();
-    fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
-    console.log(fileReader);
-    console.log((fileReader.onload = () => this.readExcel(fileReader.result)));
+    try {
+      const files = (event.target as HTMLInputElement).files;
+      if (!files || files.length !== 1) {
+        throw new Error('Please select one file.');
+      }
+
+      // Limpia cualquier evento onload anterior
+      this.fileReader.onload = null;
+
+      // Asigna el evento onload para manejar la lectura del archivo
+      this.fileReader.onload = loadEvent => {
+        if (loadEvent.target && loadEvent.target.result) {
+          // Llama a la función para procesar el archivo
+          this.readExcel(loadEvent.target.result);
+
+          // Limpia el input de archivo para permitir cargar el mismo archivo nuevamente
+          (event.target as HTMLInputElement).value = '';
+        }
+      };
+
+      // Lee el contenido binario del archivo
+      this.fileReader.readAsBinaryString(files[0]);
+    } catch (error) {
+      console.error('Error:', error);
+      // Maneja el error de acuerdo a tus necesidades
+    }
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.dataExcel = this.excelService.getData(binaryExcel);
       console.log(this.dataExcel);
+
       const mappedData: any = [];
       for (let i = 0; i < this.dataExcel.length; i++) {
-        const user = this.authService.decodeToken();
         mappedData.push({
           idD: this.dataExcel[i].clave_decom,
           id: this.dataExcel[i].no_bien,
@@ -228,13 +275,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           o_teso: this.dataExcel[i].oficio_tesofe,
           curr: this.dataExcel[i].money,
           aut: this.dataExcel[i].autoridad,
-          screenkey: this.dataExcel[i].screenkey,
-          toolbar_user: this.dataExcel[i].toolbar_user,
           causa_penal: this.dataExcel[i].causa_penal,
         });
       }
       console.log(mappedData);
-
       this.source.load(mappedData);
       this.source.refresh();
       console.log(this.source);
@@ -246,25 +290,112 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     }
   }
 
-  aprove() {
-    /*const user = this.authService.decodeToken();
-    let body = {
-      data: this.dataExcel
-    }
-    console.log(body);
-    this.detRelationConfiscationService.Insert(body).subscribe({
-      next: resp => {
-        console.log(resp);
-        this.file.get('recordsProcessed').patchValue(resp['total']);
-        this.file.get('processed').patchValue(resp['sucess']);
-        this.file.get('wrong').patchValue(resp['error']);
-        console.log(resp['total']);
+  exportCsv() {
+    const filename: string = 'Archivo Prueba';
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
 
-      },
-      error: err => {
+  async aprove() {
+    if (this.dataExcel.length === 0) {
+      this.alert('info', 'Se debe importar el archivo excel', '');
+      return;
+    }
+    const user = this.authService.decodeToken();
+    const useri = user.username.toUpperCase();
+    this.dataExcel.map((item: any) => {
+      item['screenkey'] = 'FRELDECOMISO';
+      item['toolbar_user'] = useri;
+    });
+
+    let insertBody = {
+      data: this.dataExcel,
+    };
+    console.log(insertBody);
+
+    // Crear un arreglo para almacenar los números de bien duplicados
+    const duplicateNumbers = [];
+    const mon: any = [];
+    const data1: any = [];
+    for (let i = 0; i < this.dataExcel.length; i++) {
+      data1.push([this.dataExcel[i].no_bien]);
+      const data = this.dataExcel[i].no_bien;
+      // mon.push([this.dataExcel[i].money]);
+      console.log(data1);
+
+      let body = {
+        goodNumber: data,
+      };
+      try {
+        const resp = await this.detRelationConfiscationService
+          .getById(body)
+          .toPromise();
+        console.log(resp);
+
+        // Verificar si el número de bien ya existe en la respuesta
+        if (resp || resp['exists']) {
+          duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
+        }
+      } catch (err) {
         console.log(err);
-      },
-    });*/
+      }
+    }
+
+    // console.log(mon);
+
+    // if (!mon.includes(1424) && !mon.includes(1426) && !mon.includes(1590)) {
+    //   this.alert('warning', 'El Tipo de Moneda es Inválida', '');
+    //   return;
+    // }
+
+    // Si se encontraron números de bien duplicados, mostrar la alerta y detener el proceso
+
+    // Si no se encontraron números de bien duplicados, continuar con la inserción
+
+    let insertResp;
+    try {
+      insertResp = await this.detRelationConfiscationService
+        .Insert(insertBody)
+        .toPromise();
+
+      this.file.get('recordsProcessed').patchValue(insertResp['total']);
+      this.file.get('processed').patchValue(insertResp['sucess']);
+      this.file.get('wrong').patchValue(insertResp['error']);
+      console.log(insertResp['total']);
+      //this.alert('success', 'Registros Procesados', '');
+    } catch (err) {
+      console.log(err);
+
+      // Verificar si err es de tipo HttpErrorResponse
+      if (err instanceof HttpErrorResponse) {
+        if (
+          err.status === 500 ||
+          (err.error && err.error.includes('column "undefined" does not exist'))
+        ) {
+          this.alert(
+            'error',
+            'Todas las columnas deben contar con información',
+            ''
+          );
+        } else {
+          this.alert('error', 'Error desconocido.', '');
+        }
+      } else {
+        this.alert('error', 'Error desconocido.', '');
+      }
+    }
+    if (duplicateNumbers.length > 0) {
+      console.log(data1);
+      this.alert(
+        'warning',
+        'El No. Bien que Intenta Ingresar ya Existe',
+        duplicateNumbers.join(', ')
+      );
+      this.file.get('wrong').patchValue(insertResp['error']);
+      this.file.get('processed').patchValue('0');
+      this.file.get('recordsProcessed').patchValue(insertResp['total']);
+      console.log(duplicateNumbers);
+      return;
+    }
   }
 
   getGoodFilter(money: number | string, goodNumber: number | string) {
@@ -335,16 +466,63 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       },
     });
   }
-  openFile(file: any): void {
-    console.log('asd');
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      const workbook = XLSX.read(e.target.result, { type: 'binary' });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      this.data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-    };
-    reader.readAsBinaryString(file);
-    document.getElementById('uploadfile').click();
+  openFile(): void {
+    const forfeitureKey = this.form.get('forfeitureKey').value;
+    console.log(forfeitureKey);
+
+    const filter = new FilterParams();
+    filter.addFilter('confiscationKey', forfeitureKey, SearchFilter.EQ);
+
+    this.detRelationConfiscationService
+      .getAllMore(filter.getParams())
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          const data = resp.data[0];
+          this.form.get('import').patchValue(data.amountDlls);
+          this.form.get('pgr').patchValue(data.pgr);
+          this.form.get('ssa').patchValue(data.ssa);
+          this.form.get('pjf').patchValue(data.pjf);
+          this.form.get('totalAmount').patchValue(data.totalAmount);
+        },
+        error: err => {
+          console.log(err);
+          const forfeitureKey = this.form.get('forfeitureKey').value;
+          if (!forfeitureKey) {
+            this.alert(
+              'info',
+              'Es necesario contar con la Clave del Decomiso',
+              ''
+            );
+            return;
+          }
+
+          if (
+            err.status === 400 ||
+            err.message.includes('No se encontrarón registros')
+          ) {
+            this.alert('error', 'No se encontraron registros', '');
+            return;
+          }
+        },
+      });
+  }
+  cleanFilter() {
+    this.form.get('import').setValue(null);
+    this.form.get('pgr').setValue(null);
+    this.form.get('ssa').setValue(null);
+    this.form.get('pjf').setValue(null);
+    this.form.get('totalAmount').setValue(null);
+    this.form.get('forfeitureKey').setValue(null);
+  }
+  clean() {
+    this.file.get('recordsProcessed').setValue(null);
+    this.file.get('processed').setValue(null);
+    this.file.get('wrong').setValue(null);
+    this.file.get('recordRead').setValue(null);
+    this.source.reset();
+    this.dataExcel = [];
+    console.log(this.dataExcel);
+    this.source.load(this.dataExcel);
   }
 }

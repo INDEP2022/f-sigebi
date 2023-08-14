@@ -44,7 +44,10 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
         startDate: [null, [Validators.required]],
         endDate: [null, [Validators.required]],
         file: [null],
-        name: [null, [Validators.required]],
+        name: [
+          null,
+          [Validators.required, Validators.pattern('^[a-zA-Z0-9]+$')],
+        ],
       },
       { validator: dateRangeValidator() }
     );

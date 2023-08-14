@@ -23,6 +23,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
@@ -84,7 +85,8 @@ export class EventGoodsLotsListActionsComponent
     private comerEventService: ComerEventService,
     private lotService: LotService,
     private modalService: BsModalService,
-    private utilComerV1Service: UtilComerV1Service
+    private utilComerV1Service: UtilComerV1Service,
+    private invoiceService: MsInvoiceService
   ) {
     super();
   }
@@ -408,6 +410,10 @@ export class EventGoodsLotsListActionsComponent
       );
       return;
     }
+    if (this.parameters.pDirection == 'I') {
+      await this.onLotifyCustomersI();
+      return;
+    }
     if (eventTpId.value == 2) {
       const checkLoadAsk = await this.alertQuestion(
         'question',
@@ -421,6 +427,65 @@ export class EventGoodsLotsListActionsComponent
     }
 
     this.customersImportInput.nativeElement.click();
+  }
+
+  async onLotifyCustomersI() {
+    const { statusVtaId, eventTpId } = this.controls;
+    const valid = this.consignment();
+    const alreadyPaid = true;
+    if (!alreadyPaid) {
+      this.alert(
+        'error',
+        'Error',
+        'Este tipo de evento ya no admite carga de clientes'
+      );
+      return;
+    }
+    const repFailure = false;
+    try {
+      const { aprolot, catlot, totlot } = await this.lotifyCountLot();
+      if (totlot != aprolot) {
+        if (totlot != catlot) {
+          this.alert(
+            'error',
+            'Error',
+            'El Evento ya tiene un proceso adicional al fallo'
+          );
+          return;
+        }
+        await this.lotifyCountInvoice();
+      }
+    } catch (error) {
+      this.alert('error', 'Error', UNEXPECTED_ERROR);
+    }
+  }
+
+  async lotifyCountInvoice() {
+    const { id } = this.controls;
+    return await firstValueFrom(
+      this.invoiceService.lotifyExcelCount(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.log(response);
+        })
+      )
+    );
+  }
+
+  async lotifyCountLot() {
+    const { id } = this.controls;
+    return await firstValueFrom(
+      this.lotService.lotifyExcelCount(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.log(response);
+        })
+      )
+    );
   }
 
   /** REMESA */
