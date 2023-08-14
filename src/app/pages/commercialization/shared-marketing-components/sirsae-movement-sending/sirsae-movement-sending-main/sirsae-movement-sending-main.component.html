@@ -33,30 +33,31 @@
                   class="form-control loading"
                   formControlName="description" />
               </form-field>
-              <!-- <p class="mt-3" *ngIf="selectedEvent != null">
-            {{ selectedEvent.description }}
-          </p> -->
             </div>
-            <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+            <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
+                *ngIf="layout == 'M'"
                 [disabled]="!eventSelected || loading || loadingBtn"
                 (click)="search()"
                 class="btn btn-sm btn-block btn-primary active">
                 Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
-            <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+            <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
+                *ngIf="layout == 'M'"
                 (click)="clear()"
                 class="btn btn-sm btn-block btn-danger active">
                 Limpiar <i class="fas fa-eraser"> </i>
               </button>
             </div>
-            <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+            <div
+              *ngIf="layout == 'I'"
+              class="col-sm-3 col-md-3 col-xl-3 mt-2"></div>
+            <div *ngIf="layout == 'M'" class="col-sm-2 col-md-2 col-xl-2 mt-2">
               <button
                 [ngClass]="{ loading: loadingBtn }"
                 [disabled]="loading || loadingBtn || !eventSelected"
-                *ngIf="layout == 'M'"
                 type="button"
                 class="btn btn-primary btn-sm active mr-3"
                 tooltip="Enviar a SIRSAE"
@@ -65,12 +66,62 @@
                 Enviar SIRSAE <i *ngIf="!loadingBtn" class="bx bx-send"></i>
               </button>
             </div>
-            <div class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
+            <div *ngIf="layout == 'I'" class="col-sm-3 col-md-3 col-xl-3">
               <button
                 [disabled]="loading || loadingBtn || !eventSelected"
                 (click)="obtenerOI()"
                 class="w-100 btn btn-sm btn-block btn-info active">
                 Obtener OI
+              </button>
+            </div>
+            <div
+              *ngIf="layout == 'M'"
+              class="col-sm-2 col-md-2 col-xl-2 mt-2 mb-3">
+              <button
+                [disabled]="loading || loadingBtn || !eventSelected"
+                (click)="obtenerOI()"
+                class="w-100 btn btn-sm btn-block btn-info active">
+                Obtener OI
+              </button>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div *ngIf="layout == 'I'" class="col-sm-2 col-lg-2">
+              <form-field [control]="form.get('batch')">
+                <ngx-select
+                  [readonly]="!eventSelected"
+                  [form]="form"
+                  [data]="lotes"
+                  bindLabel="lotPublic"
+                  label="Lote"
+                  (fetchItems)="getLotes($event, 'no')"
+                  control="batch"
+                  (change)="selectBatch($event)">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div *ngIf="layout == 'I'" class="col-sm-4 col-md-4">
+              <form-field [control]="form.get('cliente')" label="Cliente">
+                <input
+                  readonly
+                  type="text"
+                  class="form-control loading"
+                  formControlName="cliente" />
+              </form-field>
+            </div>
+            <div class="col-sm-3 col-md-3 col-xl-3 mt-2"></div>
+            <div class="col-sm-3 col-md-3 col-xl-3 mt-2">
+              <button
+                [ngClass]="{ loading: loadingBtn }"
+                [disabled]="loading || loadingBtn || !eventSelected"
+                *ngIf="layout == 'I'"
+                type="button"
+                class="btn btn-primary btn-block btn-sm active mr-3"
+                tooltip=""
+                containerClass="tooltip-style"
+                (click)="enviarSIRSAE()">
+                Enviar x Lote y/o Evento
+                <i *ngIf="!loadingBtn" class="bx bx-send"></i>
               </button>
             </div>
           </div>
@@ -84,25 +135,64 @@
         <div accordion-heading class="d-flex justify-content-between">
           <h5>CLIENTES DEL EVENTO</h5>
         </div>
-        <!-- <div class="row mt-4 d-flex justify-content-center">
-          <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-            <button [disabled]="loading" (click)="obtenerOI()" class="w-100 btn btn-sm btn-block btn-info active">
-              Obtener OI
-            </button>
+        <form class="form-material" [formGroup]="formInmueble">
+          <div class="row mt-2" *ngIf="layout == 'I'">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+              <div class="d-flex flex-row-reverse my-3">
+                <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+                  <button
+                    *ngIf="layout == 'I'"
+                    (click)="clearInmueble()"
+                    class="btn btn-sm btn-block btn-danger active">
+                    Limpiar <i class="fas fa-eraser"> </i>
+                  </button>
+                </div>
+                <div class="col-sm-2 col-md-2 col-xl-2 mt-2 mr-2">
+                  <button
+                    *ngIf="layout == 'I'"
+                    [disabled]="!eventSelectedInmueble || loading || loadingBtn"
+                    (click)="searchInmueble()"
+                    class="btn btn-sm btn-block btn-primary active">
+                    Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                </div>
+                <div class="col-sm-6 col-md-6">
+                  <form-field
+                    [control]="formInmueble.get('descriptionInmueble')"
+                    label="Descripción">
+                    <input
+                      readonly
+                      type="text"
+                      class="form-control loading"
+                      formControlName="descriptionInmueble" />
+                  </form-field>
+                </div>
+                <div class="col-sm-2 col-lg-2">
+                  <form-field [control]="formInmueble.get('eventInmueble')">
+                    <ngx-select
+                      [form]="formInmueble"
+                      [searchOnInit]="true"
+                      [data]="comerEventSelectInmueble"
+                      value="id"
+                      bindLabel="id"
+                      label="Evento"
+                      (fetchItems)="getComerEventsInmueble($event)"
+                      control="eventInmueble"
+                      (change)="selectEventInmueble($event)">
+                    </ngx-select>
+                  </form-field>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
-            <button [disabled]="loading" *ngIf="layout == 'M'" type="button" class="btn w-100 btn-primary btn-sm active"
-              tooltip="Enviar a SIRSAE" containerClass="tooltip-style" (click)="enviarSIRSAE()">
-              Enviar <i class="bx bx-send"></i>
-            </button>
-          </div>
-        </div> -->
+        </form>
+
         <div class="row mt-2">
           <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div class="d-flex flex-row-reverse my-3">
               <div class="mb-2 col-2">
                 <button
-                  [disabled]="loading || loadingBtn"
+                  [disabled]="loading || loadingBtn || totalItems == 0"
                   (click)="allNo()"
                   type="button"
                   tooltip="Cambiar Enviar Sirsae a NO"
@@ -114,7 +204,7 @@
               </div>
               <div class="mb-2 mr-2 col-2">
                 <button
-                  [disabled]="loading || loadingBtn"
+                  [disabled]="loading || loadingBtn || totalItems == 0"
                   (click)="allYes()"
                   type="button"
                   tooltip="Cambiar Enviar Sirsae a SI"
@@ -122,6 +212,29 @@
                   class="w-100 btn btn-block btn-success active btn-sm">
                   Todos SI
                   <!-- <i class="bx bx-plus bx-sm float-icon"></i> -->
+                </button>
+              </div>
+              <div class="col-sm-2 col-md-2 col-xl-2">
+                <button
+                  *ngIf="layout == 'I'"
+                  [disabled]="loading || loadingBtn || !eventSelectedInmueble"
+                  (click)="obtenerOI()"
+                  class="w-100 btn btn-sm btn-block btn-info active">
+                  Obtener OI
+                </button>
+              </div>
+              <div class="col-sm-2 col-md-2 col-xl-2 mr-2">
+                <button
+                  *ngIf="layout == 'I'"
+                  [ngClass]="{ loading: loadingBtn }"
+                  [disabled]="loading || loadingBtn || !eventSelectedInmueble"
+                  type="button"
+                  class="btn btn-primary btn-sm active mr-3"
+                  tooltip="Enviar a SIRSAE"
+                  containerClass="tooltip-style"
+                  (click)="enviarSIRSAExCliente()">
+                  Enviar x Cliente
+                  <i *ngIf="!loadingBtn" class="bx bx-send"></i>
                 </button>
               </div>
             </div>
