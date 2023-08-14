@@ -334,12 +334,13 @@
         <form-loader *ngIf="formLoadingTrans"></form-loader>
       </div>
 
-      <ng2-smart-table
+      <!--<ng2-smart-table
         [attr.class]="'table-bordered pt-3 table-responsive'"
         [settings]="settingsTransGood"
         [source]="goodsInfoTransportable">
-      </ng2-smart-table>
-      <!--<div class="row pt-3" *ngIf="!formLoadingTrans">
+      </ng2-smart-table> -->
+
+      <div class="row pt-3" *ngIf="!formLoadingTrans">
         <form [formGroup]="executeForm">
           <div class="table-responsive">
             <table class="table table-bordered">
@@ -446,7 +447,6 @@
                             maxlength="100"
                             formControlName="quantitySae" />
                         </form-field>
-                       
                       </td>
                       <td class="text-left align-baseline">
                         {{ good.get('unitMeasure')?.value }}
@@ -592,7 +592,7 @@
         <app-pagination
           [params]="paramsTransportableGoods"
           [totalItems]="totalItemsTransportableGoods"></app-pagination>
-      </div> -->
+      </div>
 
       <!--Bienes seleccionados-->
       <div class="row pt-5">

@@ -777,7 +777,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   } */
 
   getInfoGoodsTransportable() {
-    const _data: any[] = [];
+    /* const _data: any[] = [];
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
       this.programmingId;
@@ -811,9 +811,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           this.totalItemsTransportableGoods = 0;
           this.selectGood = [];
         },
-      });
+      }); */
 
-    /*this.formLoadingTrans = true;
+    this.formLoadingTrans = true;
     const _data: any[] = [];
 
     this.paramsTransportableGoods.getValue()['filter.programmingId'] =
@@ -892,14 +892,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 },
               });
           });
-         
         },
         error: error => {
           this.formLoadingTrans = false;
           this.totalItemsTransportableGoods = 0;
           this.selectGood = [];
         },
-      }); */
+      });
   }
 
   getAliasWarehouse(idAddress: number) {
