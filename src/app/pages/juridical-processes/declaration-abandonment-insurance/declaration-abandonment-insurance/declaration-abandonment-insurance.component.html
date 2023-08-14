@@ -55,7 +55,7 @@
                 [control]="form.get('fechaNotificacion')"
                 label="Fecha Notificaci&oacute;n">
                 <input
-                  readonly
+                  [readOnly]="true"
                   class="form-control"
                   formControlName="fechaNotificacion" />
               </form-field>
@@ -90,7 +90,7 @@
                 [control]="form.get('fechaTerminoPeriodo')"
                 label="Fecha Termino Periodo">
                 <input
-                  readonly
+                  [readOnly]="true"
                   class="form-control"
                   formControlName="fechaTerminoPeriodo" />
                 <!-- bsDatepicker -->
