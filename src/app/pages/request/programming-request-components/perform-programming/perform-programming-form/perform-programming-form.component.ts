@@ -103,6 +103,7 @@ export class PerformProgrammingFormComponent
   dataProgramming: Iprogramming;
   regionalDelegationUser: any;
   performForm: FormGroup = new FormGroup({});
+  infoSelectForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
   searchGoodsForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
@@ -126,6 +127,7 @@ export class PerformProgrammingFormComponent
   idAuthority: string = '';
   idState: number = 0;
   idStation: string | number;
+  checked: string = 'checked';
   idTypeRelevant: number = 0;
   showForm: boolean = false;
   showUbication: boolean = false;
@@ -184,6 +186,7 @@ export class PerformProgrammingFormComponent
   minDateFecElab = new Date();
   otValors = new DefaultSelect();
   idMunicipality: string = '';
+  authorityName: string = '';
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingsTransportableGoodsClose = {
     ...this.settings,
@@ -211,7 +214,8 @@ export class PerformProgrammingFormComponent
     ...settingWarehouseClose,
   };
 
-  transferentId: number;
+  transferentId: number = 0;
+  transferentName: string = '';
   stationId: string | number;
   autorityId: string | number;
 
@@ -410,7 +414,7 @@ export class PerformProgrammingFormComponent
       storeId: [null],
       folio: [null],
       concurrentMsg: [null],
-      value: [null],
+      aptoCilcular: [null],
     });
   }
   checkInfoDate2() {
@@ -1157,7 +1161,6 @@ export class PerformProgrammingFormComponent
     params['filter.nmtable'] = 445;
     this.dynamicCatalogService.getTvalTable1(params).subscribe({
       next: response => {
-        console.log('data', response);
         this.otValors = new DefaultSelect(response.data, response.count);
       },
       error: error => {},
@@ -1166,10 +1169,13 @@ export class PerformProgrammingFormComponent
 
   transferentSelect(transferent: ITransferente) {
     this.transferentId = transferent?.id;
+    this.transferentName = transferent?.nameTransferent;
     this.performForm.get('stationId').setValue(null);
     this.performForm.get('autorityId').setValue(null);
     if (transferent?.id == 903) {
       this.showTypeValor = true;
+    } else {
+      this.showTypeValor = false;
     }
     this.getStations(new ListParams());
   }
@@ -1307,6 +1313,7 @@ export class PerformProgrammingFormComponent
   authoritySelect(item: IAuthority) {
     this.idAuthority = item.idAuthority;
     this.autorityId = item.idAuthority;
+    this.authorityName = item.authorityName;
   }
 
   getTypeRelevantSelect(params: ListParams) {
@@ -1354,42 +1361,90 @@ export class PerformProgrammingFormComponent
       typeRelevant = this.dataProgramming.typeRelevantId;
     }
 
-    const filterColumns: Object = {
-      regionalDelegation: Number(this.dataProgramming.regionalDelegationNumber),
-      transferent: tranferent,
-      relevantType: typeRelevant,
-      statusGood: 'APROBADO',
-    };
+    if (this.transferentId != 903 || this.dataProgramming.tranferId != 903) {
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+      };
 
-    this.loadingGoods = true;
+      this.loadingGoods = true;
 
-    this.goodsQueryService
-      .postGoodsProgramming(this.params.getValue(), filterColumns)
-      .subscribe({
-        next: response => {
-          let goodsFilter = response.data.map(items => {
-            if (items.physicalState) {
-              if (items.physicalState == 1) {
-                items.physicalState = 'BUENO';
-                return items;
-              } else if (items.physicalState == 2) {
-                items.physicalState = 'MALO';
+      this.goodsQueryService
+        .postGoodsProgramming(this.params.getValue(), filterColumns)
+        .subscribe({
+          next: response => {
+            let goodsFilter = response.data.map(items => {
+              if (items.physicalState) {
+                if (items.physicalState == 1) {
+                  items.physicalState = 'BUENO';
+                  return items;
+                } else if (items.physicalState == 2) {
+                  items.physicalState = 'MALO';
+                  return items;
+                }
+              } else {
                 return items;
               }
-            } else {
-              return items;
-            }
-          });
+            });
 
-          //goodsFilter = goodsFilter.filter(item => item);
-          this.estatesList.load(goodsFilter);
-          this.goodsProgCopy = goodsFilter;
-          this.loadingGoods = false;
-          this.totalItems = response.count;
-          //this.filterGoodsProgramming(goodsFilter);
-        },
-        error: error => (this.loadingGoods = false),
-      });
+            //goodsFilter = goodsFilter.filter(item => item);
+            this.estatesList.load(goodsFilter);
+            this.goodsProgCopy = goodsFilter;
+            this.loadingGoods = false;
+            this.totalItems = response.count;
+            //this.filterGoodsProgramming(goodsFilter);
+          },
+          error: error => (this.loadingGoods = false),
+        });
+    }
+
+    if (this.transferentId == 903 || this.dataProgramming.tranferId == 903) {
+      const type = this.performForm.get('aptoCilcular').value;
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        val25: type,
+      };
+
+      this.loadingGoods = true;
+
+      this.goodsQueryService
+        .postGoodsProgramming(this.params.getValue(), filterColumns)
+        .subscribe({
+          next: response => {
+            let goodsFilter = response.data.map(items => {
+              if (items.physicalState) {
+                if (items.physicalState == 1) {
+                  items.physicalState = 'BUENO';
+                  return items;
+                } else if (items.physicalState == 2) {
+                  items.physicalState = 'MALO';
+                  return items;
+                }
+              } else {
+                return items;
+              }
+            });
+
+            //goodsFilter = goodsFilter.filter(item => item);
+            this.estatesList.load(goodsFilter);
+            this.goodsProgCopy = goodsFilter;
+            this.loadingGoods = false;
+            this.totalItems = response.count;
+            //this.filterGoodsProgramming(goodsFilter);
+          },
+          error: error => (this.loadingGoods = false),
+        });
+    }
   }
 
   getProgGoodsSearch(filterData: Object) {
@@ -2389,6 +2444,8 @@ export class PerformProgrammingFormComponent
 
   //Actualizar programación con información de la programación
   confirm() {
+    this.performForm.removeControl('aptoCilcular');
+
     if (
       this.dataProgramming.startDate &&
       this.dataProgramming.endDate &&
@@ -2591,6 +2648,7 @@ export class PerformProgrammingFormComponent
 
   //Enviar datos para terminar la tarea//
   sendProgramation() {
+    this.performForm.removeControl('aptoCilcular');
     let message: string = '';
     let error: number = 0;
 
@@ -2864,6 +2922,11 @@ export class PerformProgrammingFormComponent
     task['programmingId'] = this.idProgramming;
     task['expedientId'] = 0;
     task['idDelegationRegional'] = this.delegationId;
+    task['idAuthority'] = this.autorityId;
+    task['nbAuthority'] = this.authorityName;
+    task['idTransferee'] = this.transferentId;
+    task['nbTransferee'] = this.transferentName;
+    task['idStore'] = this.warehouseId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
     task['processName'] = 'SolicitudProgramacion';
     task['taskDefinitionId'] = _task.id;

@@ -95,9 +95,11 @@
         <div class="col-sm-12 col-12 col-md-12 p-2">
           <button
             [disabled]="form.invalid || loading"
-            class="btn active btn-primary btn-sm"
-            type="submit">
-            Enviar
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            tooltip="Enviar"
+            containerClass="tooltip-style">
+            Enviar <i class="bx bx-send"></i>
           </button>
         </div>
       </div>

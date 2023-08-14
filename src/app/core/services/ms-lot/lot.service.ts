@@ -5,6 +5,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IPupProcSeldisp } from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -253,13 +254,27 @@ export class LotService extends HttpService {
     formData.append('tpeventId', `${tpeventId}`);
     const url = this.buildRoute('apps/pup-valcsv');
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
-    return this.httpClient.post(url, formData, { headers });
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   validateCustomersCSV(file: File) {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.post('apps/pup-valcsv-clients', formData);
+    const url = this.buildRoute('apps/pup-valcsv-clients');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   importCustomersBase(body: {
@@ -317,5 +332,10 @@ export class LotService extends HttpService {
       `${LotEndpoints.GetBankReference}?reference=${reference}`,
       params
     );
+  }
+
+  //pup-proc-seldisp
+  pupProcSeldisp(body: IPupProcSeldisp){
+    return this.post<any>('apps/pup-proc-seldisp', body)
   }
 }

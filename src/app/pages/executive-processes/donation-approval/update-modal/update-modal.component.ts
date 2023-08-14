@@ -55,6 +55,8 @@ export class UpdateModalComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.form.patchValue(this.good);
     this.form.disable();
+    this.form.get('extDomProcess').reset();
+    this.form.get('status').reset();
     this.form.get('status').enable();
     this.form.get('extDomProcess').enable();
   }
