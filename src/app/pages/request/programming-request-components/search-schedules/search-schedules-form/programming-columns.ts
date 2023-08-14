@@ -1,5 +1,15 @@
 export const PROGRAMMING_COLUMNS = {
-  id: {
+  date: {
+    title: 'Fecha',
+    type: 'string',
+    sort: false,
+  },
+  total: {
+    title: 'Total',
+    type: 'number',
+    sort: false,
+  },
+  /*id: {
     title: 'Programación',
     type: 'number',
     sort: false,
@@ -50,6 +60,56 @@ export const PROGRAMMING_COLUMNS = {
   address: {
     title: 'Dirección',
     type: 'string',
+    sort: false,
+  }, */
+};
+
+export const PROGRAMMING_DELEGATION_COLUMNS = {
+  date: {
+    title: 'Fecha',
+    type: 'string',
+    sort: false,
+  },
+  regionalBranch: {
+    title: 'Delegación Regional',
+    type: 'string',
+    sort: false,
+  },
+  total: {
+    title: 'Total',
+    type: 'number',
+    sort: false,
+  },
+};
+
+export const PROGRAMMING_STATUS_DATE_COLUMNS = {
+  date: {
+    title: 'Fecha',
+    type: 'string',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus Programación',
+    type: 'string',
+    sort: false,
+  },
+  total: {
+    title: 'Total',
+    type: 'number',
+    sort: false,
+  },
+};
+
+export const GOODS_PROGRAMMING_COLUMNS = {
+  goodId: {
+    title: 'No. Bien',
+    type: 'number',
+    sort: false,
+  },
+
+  count: {
+    title: 'No. Reprogramaciones',
+    type: 'number',
     sort: false,
   },
 };
