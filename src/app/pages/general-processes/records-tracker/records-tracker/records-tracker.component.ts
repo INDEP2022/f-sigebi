@@ -69,6 +69,7 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
   consulto: boolean = false;
   notificationSelect: any;
   isInstitutionNumber: boolean = false;
+  isMinpubNumber: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -151,8 +152,15 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
               case 'wheelNumber':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'entFedKey':
+                searchFilter = SearchFilter.EQ;
+                break;
               case 'institutionNumber':
                 this.isInstitutionNumber = true;
+                searchFilter = SearchFilter.LIKE;
+                break;
+              case 'minpubNumber':
+                this.isMinpubNumber = true;
                 searchFilter = SearchFilter.LIKE;
                 break;
               case 'courtNumber':
@@ -176,7 +184,7 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
             }
 
             if (filter.search !== '') {
-              if (this.isInstitutionNumber) {
+              if (this.isInstitutionNumber || this.isMinpubNumber) {
                 this.columnFilters[
                   `${field}.description`
                 ] = `${searchFilter}:${filter.search}`;
@@ -184,6 +192,8 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
                 this.columnFilters[field] = `${searchFilter}:${filter.search}`;
               }
               this.params.value.page = 1;
+              this.isInstitutionNumber = false;
+              this.isMinpubNumber = false;
             } else {
               delete this.columnFilters[field];
               delete this.columnFilters[`${field}.description`];
@@ -193,9 +203,11 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
           this.getNotificationsTable();
         }
       });
+
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.consulto) this.getNotificationsTable();
     });
+
     this.paramsGood.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (this.notificationSelect)
         this.getGoodsTable(this.notificationSelect.expedientNumber);
@@ -441,6 +453,7 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
     };
     this.notificationService.getAll(params).subscribe({
       next: resp => {
+        console.log(resp);
         this.data.load(resp.data);
         this.data.refresh();
         this.totalItems = resp.count;
@@ -471,7 +484,6 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
               params,
               element.goodClassNumber
             );
-            console.log(type);
             return {
               ...element,
               typeDescription: type.numType.nameGoodType,
@@ -481,7 +493,6 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
             };
           })
         );
-        console.log(data);
         this.dataGood.load(data);
         this.dataGood.refresh();
         this.totalItemsGood = resp.count;
@@ -498,7 +509,6 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
 
   selectNotification(event: any) {
     this.notificationSelect = event;
-    console.log(event);
     this.getGoodsTable(event.expedientNumber);
   }
 
@@ -507,21 +517,17 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
       'numberExpedientTracker',
       JSON.stringify(event.expedientNumber)
     );
-    console.log(event);
     this.location.back();
   }
 
   async onEntidadChange(event: any) {
-    console.log(event);
     if (event) {
       let vc_ent: string = '';
       const data = await this.getTValTable1();
-      console.log(data);
       data.forEach(element => {
         vc_ent = vc_ent + element.otkey;
       });
       this.form.get('cveEntFed').setValue(vc_ent);
-      console.log(vc_ent);
     }
   }
 
@@ -583,11 +589,8 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
       default:
         return;
     }
-
-    console.log(model);
     this.notificationService.getDistinct(params, model).subscribe({
       next: response => {
-        console.log(response.data);
         switch (name) {
           case TypeFilter.fileNumber:
             this.fileNumberselect = new DefaultSelect(
@@ -708,7 +711,6 @@ export class RecordsTrackerComponent extends BasePage implements OnInit {
       _params['filter.numClasifGoods'] = id;
       delete _params.search;
       delete _params.text;
-      console.log(_params);
       this.goodSssubtypeService.getAll(_params).subscribe({
         next: data => {
           res(data.data[0]);

@@ -340,7 +340,7 @@ export class LotService extends HttpService {
   }
 
   //pup-proc-seldisp
-  pupProcSeldisp(body: IPupProcSeldisp){
-    return this.post<any>('apps/pup-proc-seldisp', body)
+  pupProcSeldisp(body: IPupProcSeldisp) {
+    return this.post<any>('apps/pup-proc-seldisp', body);
   }
 }
