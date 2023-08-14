@@ -7,6 +7,7 @@ import { ICopiesOfficialOpinion } from 'src/app/core/models/ms-dictation/copies-
 import { CopiesOfficialOpinionService } from 'src/app/core/services/catalogs/copies-official-opinion.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -51,12 +52,26 @@ export class CopyDocumentationGoodsDialogComponent
 
   private prepareForm() {
     this.copiesOfficialForm = this.fb.group({
-      numberOfDicta: [null, Validators.required],
-      typeDictamination: ['', Validators.required],
-      copyDestinationNumber: [null],
-      recipientCopy: [''],
-      namePersonExt: [''],
-      personExtInt: ['', Validators.required],
+      numberOfDicta: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      typeDictamination: ['', [Validators.required, Validators.maxLength(15)]],
+      copyDestinationNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      recipientCopy: ['', [Validators.required, Validators.maxLength(15)]],
+      namePersonExt: ['', [Validators.required, Validators.maxLength(45)]],
+      personExtInt: ['', [Validators.required, Validators.maxLength(45)]],
       id: [null],
     });
 
@@ -86,8 +101,8 @@ export class CopyDocumentationGoodsDialogComponent
       error: error => {
         this.onLoadToast(
           'error',
-          'Error',
-          `Verifique los datos ingresados en el formulario`
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
         );
         console.log(error);
         this.close();
