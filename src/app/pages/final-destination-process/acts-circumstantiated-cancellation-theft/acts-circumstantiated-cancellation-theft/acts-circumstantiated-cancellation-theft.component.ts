@@ -558,15 +558,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('receive')
           .setValue(this.expedient.courtName);
-        this.actaRecepttionForm
-          .get('testigoTwo')
-          .setValue(this.expedient.indicatedName);
-        this.actaRecepttionForm
-          .get('testigoTree')
-          .setValue(this.expedient.indicatedName);
-        this.actaRecepttionForm
-          .get('testigoOIC')
-          .setValue(this.expedient.authorityOrdersDictum); // console.log(this.expedient);
 
         this.getGoodsByStatus(this.fileNumber);
       },
@@ -747,6 +738,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         parrafo1: next.parrafo1,
+        testigoOIC: next.comptrollerWitness,
+        testigoTwo: next.witness1,
+        testigoTree: next.witness2,
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
