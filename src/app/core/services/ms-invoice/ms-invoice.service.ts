@@ -26,4 +26,9 @@ export class MsInvoiceService extends HttpService {
     // VALIDA_PAGOSREF.OBT_PARAMETROS
     return this.get(`ctrl-invoice/obt-parameters/${id}`);
   }
+
+  lotifyExcelCount(eventId: string | number) {
+    const url = `application/lotifica-excel-count/event/${eventId}`;
+    return this.get<{ totlot: string; catlot: number }>(url);
+  }
 }

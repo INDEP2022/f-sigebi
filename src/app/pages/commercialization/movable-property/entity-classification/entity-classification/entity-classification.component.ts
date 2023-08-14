@@ -203,6 +203,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast('success', 'Entidad', ' Eliminada Correctamente');
         this.getData();
+        location.reload();
       },
       error: () => {
         this.loading = false;

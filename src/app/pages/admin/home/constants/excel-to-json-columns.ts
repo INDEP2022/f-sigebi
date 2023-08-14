@@ -58,14 +58,6 @@ export const EXCEL_TO_JSON = {
     title: 'Autoridad',
     sort: false,
   },
-  screenkey: {
-    title: 'Clave Pantalla',
-    sort: false,
-  },
-  toolbar_user: {
-    title: 'Usuario',
-    sort: false,
-  },
   causa_penal: {
     title: 'Causa Penal',
     sort: false,

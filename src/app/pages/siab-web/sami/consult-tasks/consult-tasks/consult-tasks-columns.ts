@@ -1,3 +1,5 @@
+import { DatePipe } from '@angular/common';
+
 export const REQUEST_LIST_COLUMNS = {
   title: {
     title: 'Tarea',
@@ -14,11 +16,26 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  instanceId: {
-    title: 'No. Instancia',
+  /*dffDays: {
+
+    title: 'Días de Atraso',
+    type: 'number',
+    sort: false,
+
+  },*/
+  /*nonBusinessDays: {
+
+    title: 'Días Inhábiles',
+    type: 'number',
+    sort: false,
+
+  },*/
+  backwardness: {
+    title: 'Días de Atraso',
     type: 'number',
     sort: false,
   },
+
   State: {
     title: 'Estatus',
     type: 'string',
@@ -65,15 +82,34 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  assignedDate: {
+  /*assignedDate: {
     title: 'Fecha Asignación',
     type: 'string',
     sort: false,
+  },*/
+  createdDate: {
+    title: 'Fecha Creación',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      if (date != null) {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      }
+      return formatted;
+    },
   },
   endDate: {
     title: 'Fecha Finalización',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (date: Date) => {
+      if (date != null) {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      }
+      return formatted;
+    },
   },
   programmingId: {
     title: 'No. Programación',
@@ -90,5 +126,21 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  idstation: {
+    title: 'No. Emisora',
+    type: 'string',
+    sort: false,
+  },
+  idAuthority: {
+    title: 'No. Autoridad',
+    type: 'string',
+    sort: false,
+  },
+  instanceId: {
+    title: 'No. Instancia',
+    type: 'number',
+    sort: false,
+  },
+
   //
 };
