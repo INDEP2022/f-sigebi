@@ -43,11 +43,24 @@ export class UploadImgFieldModalComponent implements OnInit {
       const formData = {
         xidcProfile: 'NSBDB_Gral',
         dDocAuthor: this.userLogName,
-        //xidSolicitud: this.idRequest,
-        xidTransferente: '',
+        xidSolicitud: '123456',
+        //xidTransferente: '123456',
         xidBien: this.data[0].goodId,
         xnombreProceso: 'Generar Muestreo',
         dDocTitle: `IMG_${this.getDate()}img`,
+
+        ddocType: '',
+        ddocCreator: '',
+
+        dID: '',
+        dSecurityGroup: 'Public',
+        dDocAccount: '',
+        dDocId: '',
+        dInDate: '08-May-2022',
+        dOutDate: '',
+        dRevLabel: '',
+        xIdcProfile: '',
+        xidExpediente: '',
       };
       const contentType = 'img';
       const docName = `IMG_${this.getDate()}${contentType}`;
@@ -56,7 +69,7 @@ export class UploadImgFieldModalComponent implements OnInit {
         docName,
         contentType,
         JSON.stringify(formData),
-        contentType
+        item.file
       );
     });
   }
