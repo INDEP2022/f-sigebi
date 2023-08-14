@@ -2,7 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -62,6 +65,10 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.deleRegionalId = storeData.delegacionreg;
     this.requestForm.controls['typeUser'].valueChanges.subscribe(
       (data: any) => {
+        if (this.typeUser != data) {
+          this.params.getValue().page = 1;
+          this.params.getValue().limit = 10;
+        }
         this.typeUser = data;
 
         this.getUserList();
@@ -83,7 +90,11 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);
-    //this.params.value.addFilter('regionalDelegation', this.deleRegionalId);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
