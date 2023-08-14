@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { BasePage } from 'src/app/core/shared';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -14,19 +15,24 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class RecipientsEmailComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   today: Date;
+  idSolicitud: any;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private emailService: EmailService,
-    private authService: AuthService
+    private authService: AuthService,
+    private wcontentService: WContentService
   ) {
     super();
     this.today = new Date();
   }
 
   ngOnInit(): void {
+    console.log('ID de la solicitud, ', this.idSolicitud);
     this.prepareForm();
+
+    this.getDocsNotifi();
   }
 
   prepareForm() {
@@ -43,7 +49,49 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {
+  createArrayDocs: string = '';
+  arrayDocs: any;
+
+  getDocsNotifi() {
+    let body: any = {};
+    body['xidSolicitud'] = this.idSolicitud;
+    this.wcontentService.getDocumentos(body).subscribe({
+      next: (resp: any) => {
+        //Revisa cuantos documentos tiene
+        const length = resp.data.length;
+        console.log('Cantidad de documentos:', length);
+
+        for (let i = 0; i < length; i++) {
+          if (
+            resp.data[i].xtipoDocumento === '111' ||
+            resp.data[i].xtipoDocumento === '216' ||
+            resp.data[i].xtipoDocumento === '213' ||
+            resp.data[i].xtipoDocumento === '212' ||
+            resp.data[i].xtipoDocumento === '211'
+          ) {
+            console.log(
+              'Tipo de documento: ',
+              resp.data[i].xtipoDocumento,
+              '- Nombre document: ',
+              resp.data[i].ddocTitle,
+              '- Id Documento: ',
+              resp.data[i].dDocName
+            );
+            this.createArrayDocs =
+              `${resp.data[i].dDocName},` + this.createArrayDocs;
+          }
+        }
+
+        let str = this.createArrayDocs;
+        str = str.substring(0, str.length - 1);
+        this.arrayDocs = str.split(',');
+        console.log(this.arrayDocs);
+      },
+      error: error => {},
+    });
+  }
+
+  async confirm() {
     const token = this.authService.decodeToken();
     console.log('String de los correos', this.form.controls['emails'].value);
 
@@ -60,14 +108,14 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
       subject: `${this.form.controls['subject'].value}`,
       nameAtt: 'Reporte',
       typeAtt: 'application/pdf;',
-      //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
-      process: '',
-      wcontent: 'SAE548665',
+      process: 'Notificar Aclaraciones/improcedencias',
+      wcontent: this.arrayDocs,
+      //report: ["http://sigebimsqa.indep.gob.mx/processgoodreport/report/showReport?nombreReporte=SolicitudTransferencia.jasper&ID_SOLICITUD=56901&NOM_CIUDAD=" ]
     };
     console.log('Objeto que se envia', data);
 
     //Llamar a método
-    this.emailService.createEmailNotify(data).subscribe({
+    this.emailService.createEmailDocs(data).subscribe({
       next: response => {
         this.close();
         this.onLoadToast('success', 'Correo Enviado Correctamente', '');
