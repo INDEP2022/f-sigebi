@@ -41,6 +41,8 @@ import {
 } from './columns';
 import { IPupProcSeldisp } from 'src/app/core/services/ms-lot/models-lots';
 import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
+import { CanLcsWarrantyComponent } from '../can-lcs-warranty/can-lcs-warranty.component';
+import { CanRelusuComponent } from '../can-relusu/can-relusu.component';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -1122,7 +1124,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     let modalConfig = MODAL_CONFIG
     modalConfig = {
       initialState:{
-
+        idEvent: this.event.value
       },
       class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
@@ -1131,5 +1133,32 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.modalService.show(CanPagosCabComponent, modalConfig)
   }
 
+  //Garantías y LCs
+  warrantyLcs(){
+    let modalConfig = MODAL_CONFIG
+    modalConfig = {
+      initialState:{
+        idEvent: this.event.value
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true
+    }
 
+    this.modalService.show(CanLcsWarrantyComponent, modalConfig)
+  }
+
+
+  //Usuario Distribución
+  distributionUser(){
+    let modalConfig = MODAL_CONFIG
+    modalConfig = {
+      initialState: {
+        
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true
+    }
+
+    this.modalService.show(CanRelusuComponent, modalConfig)
+  }
 }

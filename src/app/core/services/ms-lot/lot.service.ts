@@ -338,4 +338,9 @@ export class LotService extends HttpService {
   pupProcSeldisp(body: IPupProcSeldisp){
     return this.post<any>('apps/pup-proc-seldisp', body)
   }
+
+  //get-lot-comer-ref-guarentee
+  getLotComerRefGuarentee(params?: string){
+    return this.get('apps/get-lot-comer-ref-guarantee', params)
+  }
 }

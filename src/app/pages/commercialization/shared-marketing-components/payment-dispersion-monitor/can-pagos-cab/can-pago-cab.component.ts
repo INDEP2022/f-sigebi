@@ -41,6 +41,8 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
     columns: COLUMNS_DETALLE,
   };
 
+  idEvent: any = null
+
   constructor(
     private comerInvoiceService: ComerInvoiceService,
     private comerDetailsService: ComerDetailsService,
@@ -64,6 +66,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
     this.loading = true;
 
     const paramsF = new FilterParams();
+    this.idEvent != null ? paramsF.addFilter('idEvent', this.idEvent) : '';
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
     this.comerInvoiceService.getValidPayments(paramsF.getParams()).subscribe(
