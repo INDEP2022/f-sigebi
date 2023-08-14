@@ -10,6 +10,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -70,11 +71,39 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.dictationXGoodForm = this.fb.group({
-      amountDict: [null],
-      descriptionDict: ['', Validators.required],
-      id: [null, Validators.required],
-      ofDictNumber: [null, Validators.required],
-      proceedingsNumber: [null, Validators.required],
+      amountDict: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(21),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      descriptionDict: ['', [Validators.required, Validators.maxLength(1250)]],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      ofDictNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      proceedingsNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       typeDict: ['', Validators.required],
     });
 
@@ -102,7 +131,11 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Error', `Verifique los datos ingresados`);
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
         this.close();
       },
     });
@@ -114,7 +147,11 @@ export class GoodsDialogComponent extends BasePage implements OnInit {
       next: data => this.handleSuccess(),
       error: error => {
         this.loading = false;
-        this.onLoadToast('error', 'Error', `Verifique los datos ingresados`);
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
         this.close();
       },
     });
