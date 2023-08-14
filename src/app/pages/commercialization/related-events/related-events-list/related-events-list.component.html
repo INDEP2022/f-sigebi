@@ -8,15 +8,15 @@
         <div class="row d-flex justify-content-center align-content-center">
           <div class="col-sm-12 col-md-4 mh-80">
             <!-- <div class="col-md-8">  -->
-            <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-            <ngx-select
+            <!-- <h5 class="font-size-14 mb-2 d-inline">Evento</h5> -->
+            <!-- <ngx-select
               [form]="eventForm"
               [data]="eventItems"
               value="id"
               bindLabel="id"
               (fetchItems)="getEvents($event)"
               control="event">
-            </ngx-select>
+            </ngx-select> -->
             <!-- <form-field [control]="eventForm.get('status')" label="Estado">
                 <input type="text" formControlName="status" class="form-control" />
               </form-field>
@@ -27,12 +27,19 @@
                   <i class="bx bx-search-alt bx-sm float-icon"></i>
                 </button>
               </div> -->
+            <form-field [control]="eventForm.get('event')" label="Evento">
+              <input
+                formControlName="event"
+                class="form-control"
+                type="number" />
+            </form-field>
           </div>
-          <div class="col-sm-12 col-md-2" style="margin-top: 2%">
+          <div class="col-sm-12 col-md-2" style="margin-top: 0.5%">
             <button
               type="button"
               class="btn btn-primary active btn-sm"
-              (click)="selectEvent($event)">
+              (click)="getEvents()"
+              [disabled]="!eventForm.valid">
               Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
