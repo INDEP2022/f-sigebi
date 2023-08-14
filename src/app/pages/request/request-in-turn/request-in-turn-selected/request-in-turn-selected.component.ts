@@ -165,6 +165,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
         const taskResult = await this.createTask(item);
 
         if (taskResult) {
+          console.log('taskResult: ', taskResult);
           if (this.requestToTurn.length === index) {
             this.loading = false;
             const list = this.listResquestForTurn.join(',');
@@ -198,6 +199,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   createTask(request: any) {
+    console.log('Creando tarea');
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
@@ -218,9 +220,14 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       //task['assignedDate'] = new Date().toISOString();
       task['urlNb'] = 'pages/request/transfer-request/registration-request';
       task['processName'] = 'SolicitudTransferencia';
+      task['idTransferee'] = this.requestToTurn[0]?.transferenceId;
+      task['idAuthority'] = this.requestToTurn[0]?.authorityId;
+      task['idstation'] = this.requestToTurn[0]?.stationId;
 
+      console.log('Objeto a enviar: ', task);
       this.taskService.createTask(task).subscribe({
         next: resp => {
+          console.log('Se creo la tarea: ', resp);
           resolve(true);
         },
         error: error => {
