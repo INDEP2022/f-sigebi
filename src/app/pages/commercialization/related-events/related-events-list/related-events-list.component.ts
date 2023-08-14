@@ -177,7 +177,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
                 process: item.processKey,
                 status: item.statusVtaId,
                 type: item.tpsolavalId,
-                direction: item.addres,
+                direction: item.address,
               };
               // console.log('event: ', event);
               arrEvents.push(event);
@@ -194,8 +194,14 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   selectEvent(event: any) {
-    this.selectedEvent = event;
+    console.log('evento: ', this.eventItems.data[0]);
+    this.selectedEvent = this.eventItems.data[0];
     console.log('Evento: ', this.selectedEvent);
+    if (this.selectedEvent.direction == 'M') {
+      this.selectedEvent.direction = 'MUEBLES';
+    } else {
+      this.selectedEvent.direction = 'INMUEBLES';
+    }
     let dataform = {
       process: this.selectedEvent.process,
       status: this.selectedEvent.status,
@@ -203,8 +209,8 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       direction: this.selectedEvent.direction,
     };
     this.eventForm.patchValue(dataform);
-    this.gettable(event.id);
-    this.idtable = event.id;
+    this.gettable(this.selectedEvent.id);
+    this.idtable = this.selectedEvent.id;
     this.relatedEventsColumns = this.relatedEventsData;
     this.totalItems = this.relatedEventsColumns.length;
     this.hideFilters();
