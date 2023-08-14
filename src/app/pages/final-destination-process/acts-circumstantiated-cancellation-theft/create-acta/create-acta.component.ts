@@ -41,6 +41,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
   responsable: any;
   testigoTwo: any;
   years: number[] = [];
+  foolio: number;
+  mes: any;
   currentYear: number = new Date().getFullYear();
   months = [
     { value: 1, label: 'Enero' },
@@ -223,10 +225,14 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
 
+
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
 
     let consec_ = consec.toString().padStart(4, '0');
+    this.foolio = consec;
+    console.log('MES', mes);
+    console.log('numeraryFolio - >', consec);
     if (consec_.length > 4) {
       consec_ = consec_.toString().slice(0, 4);
     }
@@ -234,7 +240,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
       .toString()
       .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
-    console.log(cveActa);
+    console.log('cveActa -->', cveActa);
 
     if (cveActa) {
       const params = new ListParams();
@@ -271,7 +277,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       witness1: this.testigoTwo,
       witness2: this.testigoTree,
       typeProceedings: 'ROBO',
-      dateElaborationReceipt: null,
+      dateElaborationReceipt: this.mes,
       dateDeliveryGood: null,
       responsible: this.responsable,
       destructionMethod: null,
@@ -286,7 +292,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       identifier: null,
       label: null,
       universalFolio: null,
-      numeraryFolio: null,
+      numeraryFolio: this.foolio,
       numTransfer: null,
       idTypeProceedings: null,
       receiptKey: null,
@@ -303,6 +309,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       numDelegation_1: null,
       numDelegation_2: null,
       file: this.fileNumber,
+
     };
     this.proceedingsDeliveryReceptionService
       .createDeliveryReception(obj)

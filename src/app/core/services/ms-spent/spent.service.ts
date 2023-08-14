@@ -57,4 +57,11 @@ export class SpentService extends HttpService {
   getComerPaymentRefGensV2Total(params?: _Params) {
     return this.get<IListResponse<ISpentType>>(this.route.V2Total, params);
   }
+
+  getPupObttotDevPenalizes(params: any) {
+    return this.post<IListResponse<ISpentType>>(
+      this.route.PupObttotDevPenalizes,
+      params
+    );
+  }
 }

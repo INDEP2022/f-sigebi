@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
@@ -13,7 +14,12 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { BasePage } from 'src/app/core/shared';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { PROGRAMMING_COLUMNS } from './programming-columns';
+import {
+  GOODS_PROGRAMMING_COLUMNS,
+  PROGRAMMING_COLUMNS,
+  PROGRAMMING_DELEGATION_COLUMNS,
+  PROGRAMMING_STATUS_DATE_COLUMNS,
+} from './programming-columns';
 
 @Component({
   selector: 'app-search-schedules-form',
@@ -22,13 +28,26 @@ import { PROGRAMMING_COLUMNS } from './programming-columns';
 })
 export class SearchSchedulesFormComponent extends BasePage implements OnInit {
   performForm: FormGroup = new FormGroup({});
+  performGoodForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
   delegationId: number = 0;
   delegation: string = '';
   programmings: LocalDataSource = new LocalDataSource();
+  goods: LocalDataSource = new LocalDataSource();
   paramsProgramming = new BehaviorSubject<ListParams>(new ListParams());
+  paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemProgramming: number = 0;
+  totalItemGoods: number = 0;
+  showDelegationSelect: boolean = false;
+  loadingGoods: boolean = false;
 
+  settingsGoods = {
+    ...this.settings,
+    actions: false,
+    columns: {
+      ...GOODS_PROGRAMMING_COLUMNS,
+    },
+  };
   constructor(
     private programmingService: ProgrammingRequestService,
     private regionalDelegationService: RegionalDelegationService,
@@ -62,6 +81,14 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.getRegionalDelegationSelect(new ListParams());
     this.prepareForm();
+    this.prepareGoodForm();
+  }
+
+  prepareGoodForm() {
+    this.performGoodForm = this.fb.group({
+      goodId: [null],
+      aptoCilcular: [null],
+    });
   }
 
   prepareForm() {
@@ -100,101 +127,186 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
   }
 
   searchProgramming() {
-    if (this.delegationId) {
-      this.paramsProgramming.getValue()['filter.regionalDelegationNumber'] =
-        this.delegationId;
-
-      this.paramsProgramming
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.infoProgramming());
-    }
     if (
+      this.performForm.get('endDate').value &&
       this.performForm.get('startDate').value &&
-      !this.performForm.get('endDate').value
+      !this.delegationId &&
+      !this.performForm.get('status').value
     ) {
-      const startDate = moment(this.performForm.get('startDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+      this.paramsProgramming = new BehaviorSubject<ListParams>(
+        new ListParams()
       );
-
-      if (startDate) {
-        this.paramsProgramming.getValue()['filter.startDate'] = startDate;
-        this.paramsProgramming
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.infoProgramming());
-      }
-    }
-
-    if (
-      this.performForm.get('endDate').value &&
-      !this.performForm.get('startDate').value
-    ) {
-      const endDate = moment(this.performForm.get('endDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
-      );
-      if (endDate) {
-        this.paramsProgramming.getValue()['filter.endDate'] = endDate;
-        this.paramsProgramming
-          .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.infoProgramming());
-      }
-    }
-
-    if (
-      this.performForm.get('endDate').value &&
-      this.performForm.get('startDate').value
-    ) {
       const startDate = moment(this.performForm.get('startDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+        'YYYY-MM-DD'
       );
       const endDate = moment(this.performForm.get('endDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+        'YYYY-MM-DD'
       );
       if (endDate && startDate) {
-        this.paramsProgramming.getValue()['filter.endDate'] = endDate;
-        this.paramsProgramming.getValue()['filter.startDate'] = startDate;
         this.paramsProgramming
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.infoProgramming());
+          .subscribe(() => this.infoProgrammingDate(startDate, endDate));
       }
-    }
-
-    if (this.performForm.get('status').value) {
-      this.paramsProgramming.getValue()['filter.status'] =
-        this.performForm.get('status').value;
-
-      this.paramsProgramming
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe(() => this.infoProgramming());
-    }
-
-    if (
+    } else if (
       this.performForm.get('endDate').value &&
       this.performForm.get('startDate').value &&
+      this.delegationId &&
+      !this.performForm.get('status').value
+    ) {
+      this.paramsProgramming = new BehaviorSubject<ListParams>(
+        new ListParams()
+      );
+      const startDate = moment(this.performForm.get('startDate').value).format(
+        'YYYY-MM-DD'
+      );
+      const endDate = moment(this.performForm.get('endDate').value).format(
+        'YYYY-MM-DD'
+      );
+      if (endDate && startDate && this.delegationId) {
+        this.paramsProgramming
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() =>
+            this.infoProgrammingDateDelegation(
+              startDate,
+              endDate,
+              this.delegationId
+            )
+          );
+      }
+    } else if (
+      this.performForm.get('endDate').value &&
+      this.performForm.get('startDate').value &&
+      this.delegationId &&
       this.performForm.get('status').value
     ) {
+      this.paramsProgramming = new BehaviorSubject<ListParams>(
+        new ListParams()
+      );
       const startDate = moment(this.performForm.get('startDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+        'YYYY-MM-DD'
       );
       const endDate = moment(this.performForm.get('endDate').value).format(
-        'YYYY-MM-DD HH:mm:ssz'
+        'YYYY-MM-DD'
       );
-      if (endDate && startDate) {
-        this.paramsProgramming.getValue()['filter.endDate'] = endDate;
-        this.paramsProgramming.getValue()['filter.startDate'] = startDate;
 
-        this.paramsProgramming.getValue()['filter.status'] =
-          this.performForm.get('status').value;
+      const status = this.performForm.get('status').value;
+      if (endDate && startDate && this.delegationId && status) {
         this.paramsProgramming
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.infoProgramming());
+          .subscribe(() =>
+            this.infoProgrammingDateStatus(startDate, endDate, status)
+          );
       }
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Es requerido seleccionar el rango de fechas'
+      );
     }
   }
 
-  infoProgramming() {
+  infoProgrammingDate(startDate: string, endDate: string) {
+    this.loading = true;
+    const formData = {
+      startDate: startDate,
+      endDate: endDate,
+    };
+
+    this.programmingService
+      .getProgrammingByDate(this.paramsProgramming.getValue(), formData)
+      .subscribe({
+        next: response => {
+          console.log('responseDates', response);
+          this.settings = {
+            ...this.settings,
+            actions: false,
+            columns: {
+              ...PROGRAMMING_COLUMNS,
+            },
+          };
+          this.programmings.load(response.data);
+          this.totalItemProgramming = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+
+  infoProgrammingDateDelegation(
+    startDate: string,
+    endDate: string,
+    delegation: number
+  ) {
+    this.loading = true;
+    const formData = {
+      startDate: startDate,
+      endDate: endDate,
+      regionalBranchNumber: delegation,
+    };
+    console.log('formData', formData);
+    this.programmingService
+      .getProgrammingByDelegation(this.paramsProgramming.getValue(), formData)
+      .subscribe({
+        next: response => {
+          this.settings = {
+            ...this.settings,
+            actions: false,
+            columns: {
+              ...PROGRAMMING_DELEGATION_COLUMNS,
+            },
+          };
+
+          console.log('response', response);
+          this.programmings.load(response.data);
+          this.totalItemProgramming = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+
+  infoProgrammingDateStatus(
+    startDate: string,
+    endDate: string,
+    status: string
+  ) {
+    const formData = {
+      startDate: startDate,
+      endDate: endDate,
+      status: status,
+    };
+
+    this.programmingService
+      .getProgrammingByDateStatus(this.paramsProgramming.getValue(), formData)
+      .subscribe({
+        next: response => {
+          this.settings = {
+            ...this.settings,
+            actions: false,
+            columns: {
+              ...PROGRAMMING_STATUS_DATE_COLUMNS,
+            },
+          };
+          console.log('sdas', response);
+          this.programmings.load(response.data);
+          this.totalItemProgramming = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+  }
+
+  /*infoProgramming() {
     this.loading = true;
     this.paramsProgramming.getValue()['sortBy'] = 'id:ASC';
-
+    console.log('params', this.paramsProgramming.getValue());
     this.programmingService
       .getProgramming(this.paramsProgramming.getValue())
       .subscribe({
@@ -214,9 +326,9 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
               programming.typeRelevantId
             );
 
-            /* const showWarehouse: any = await this.getWarehouse(
+             const showWarehouse: any = await this.getWarehouse(
               programming.storeId
-            ); */
+            ); 
             programming.regionalDelegationName = showDelegation;
             programming.stateKeyName = showState;
             programming.transferentName = showTransferent;
@@ -238,9 +350,13 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
             this.loading = false;
           });
         },
-        error: error => {},
+        error: error => {
+          this.programmings = new LocalDataSource();
+          this.totalItemProgramming = 0;
+          this.loading = false;
+        },
       });
-  }
+  } */
 
   showDelegation(delegationId?: number) {
     return new Promise((resolve, reject) => {
@@ -297,12 +413,162 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
     });
   }
 
-  regionalDelegationSelect(item: IRegionalDelegation) {
+  regionalDelegationSelect(item?: IRegionalDelegation) {
     //this.regionalDelegationUser = item;
-    this.delegationId = item.id;
+    this.delegationId = item?.id;
   }
 
   cleanForm() {
     this.performForm.reset();
+    this.delegationId = null;
+    this.paramsProgramming = new BehaviorSubject<ListParams>(new ListParams());
+  }
+
+  getProgrammingByDelegation(infoDateProgramming: any) {
+    console.log(infoDateProgramming);
+  }
+
+  searchGood() {
+    const startDate = this.performForm.get('startDate').value;
+    const endDate = this.performForm.get('endDate').value;
+    const goodId = this.performGoodForm.get('goodId').value;
+    const aptoCilcular = this.performGoodForm.get('aptoCilcular').value;
+    if (startDate && endDate && !goodId && !aptoCilcular) {
+      this.paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsGoods
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.infoGoodProgramming(startDate, endDate));
+    } else if (startDate && endDate && aptoCilcular && !goodId) {
+      this.paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsGoods
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() =>
+          this.infoGoodProgrammingApt(startDate, endDate, aptoCilcular)
+        );
+    } else if (startDate && endDate && goodId) {
+      this.paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsGoods
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() =>
+          this.infoGoodIdProgramming(startDate, endDate, goodId)
+        );
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere la fecha de inicio y de fin'
+      );
+    }
+  }
+
+  infoGoodProgramming(startDate: string, endDate: string) {
+    this.loadingGoods = true;
+    const formData = {
+      startDate: startDate,
+      endDate: endDate,
+    };
+
+    this.programmingService
+      .getGoodsProgrammingByDate(this.paramsGoods.getValue(), formData)
+      .subscribe({
+        next: response => {
+          this.goods.load(response.data);
+          this.totalItemGoods = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => {
+          this.loadingGoods = false;
+        },
+      });
+  }
+
+  infoGoodIdProgramming(startDate: string, endDate: string, goodId: string) {
+    this.loadingGoods = true;
+    const formData = {
+      startDate: startDate,
+      endDate: endDate,
+      goodId: goodId,
+    };
+
+    this.programmingService
+      .getGoodsIdProgrammingByDate(this.paramsGoods.getValue(), formData)
+      .subscribe({
+        next: response => {
+          this.goods.load(response.data);
+          this.totalItemGoods = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => {
+          this.loadingGoods = false;
+        },
+      });
+  }
+
+  infoGoodProgrammingApt(startDate: string, endDate: string, apto: string) {
+    this.loadingGoods = true;
+    const formData = {
+      startDate: startDate,
+      endDate: endDate,
+      transfereeId: 571,
+    };
+
+    this.programmingService
+      .getGoodApt(this.paramsGoods.getValue(), formData)
+      .subscribe({
+        next: response => {
+          this.goods.load(response.data);
+          this.totalItemGoods = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => {
+          this.goods = new LocalDataSource();
+          this.totalItemGoods = 0;
+          this.loadingGoods = false;
+        },
+      });
+  }
+
+  cleanFormGood() {
+    this.performGoodForm.reset();
+    this.delegationId = null;
+    this.paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+  }
+
+  checkValidateDate() {
+    const startDate = moment(this.performForm.get('startDate').value).format(
+      'YYYY-MM-DD'
+    );
+    const endDate = moment(this.performForm.get('endDate').value).format(
+      'YYYY-MM-DD'
+    );
+
+    if (startDate >= endDate) {
+      this.performForm
+        .get('startDate')
+        .addValidators([minDate(new Date(endDate))]);
+      this.performForm
+        .get('startDate')
+        .setErrors({ minDate: { min: new Date(endDate) } });
+      this.performForm.markAllAsTouched();
+    }
+  }
+
+  checkValidateEndDate() {
+    const startDate = moment(this.performForm.get('startDate').value).format(
+      'YYYY-MM-DD'
+    );
+    const endDate = moment(this.performForm.get('endDate').value).format(
+      'YYYY-MM-DD'
+    );
+
+    if (endDate <= startDate) {
+      this.performForm
+        .get('endDate')
+        .addValidators([minDate(new Date(startDate))]);
+      this.performForm
+        .get('endDate')
+        .setErrors({ minDate: { min: new Date(startDate) } });
+      this.performForm.markAllAsTouched();
+    }
   }
 }

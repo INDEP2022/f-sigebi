@@ -400,7 +400,7 @@ export class GeneralDocumentsFormComponent
         '¿Está seguro de querer asociar la solicitud actual con el expediente Nº ' +
         request.recordId +
         '?',
-      icon: 'info',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',

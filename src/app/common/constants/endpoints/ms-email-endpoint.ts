@@ -4,6 +4,7 @@ export enum EmailEndPoint {
   Email = 'email',
   EmailProgramming = 'email/programming',
   EmailProgrammingNotify = 'email/programming-notify',
+  EmailProgrammingDocs = 'email/programming-docs',
   VigEmailBody = 'vig-email-body',
   VigEmailSend = 'vig-email-send',
   VigMailBook = 'vig-mail-book',
