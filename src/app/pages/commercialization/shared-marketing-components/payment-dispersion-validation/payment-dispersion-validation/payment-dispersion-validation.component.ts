@@ -430,12 +430,20 @@ export class PaymentDispersionValidationComponent
   }
 
   loteSelected: any = null;
-  rowsSelected(event: any) {
+  async rowsSelected(event: any) {
     const data = event.data;
-    if (data.client) {
-      if (data.client.rfc) {
-        console.log('SI', data);
-        this.llenarInputs(data);
+    if (this.layout == 'M') {
+      if (data.client) {
+        if (data.client.rfc) {
+          console.log('SI', data);
+          this.llenarInputs(data);
+        } else {
+          this.form2.patchValue({
+            montoDevolucion: '',
+            montoPenalizacion: '',
+            listaNegra: '',
+          });
+        }
       } else {
         this.form2.patchValue({
           montoDevolucion: '',
@@ -443,12 +451,27 @@ export class PaymentDispersionValidationComponent
           listaNegra: '',
         });
       }
-    } else {
-      this.form2.patchValue({
-        montoDevolucion: '',
-        montoPenalizacion: '',
-        listaNegra: '',
-      });
+    } else if (this.layout == 'I') {
+      let obj = {
+        pEvent: 1,
+        pClient: 1,
+      };
+      const DevPen = await this.pupObttotDevPenalizes(obj);
+      console.log('DevPen', DevPen);
+      if (!DevPen) {
+        this.form2.patchValue({
+          montoDevolucion: '',
+          montoPenalizacion: '',
+          listaNegra: '',
+        });
+      } else {
+        this.form2.patchValue({
+          montoDevolucion: '',
+          montoPenalizacion: '',
+          listaNegra: '',
+        });
+      }
+      ('aplication/pup-obttot-dev-penalizes');
     }
 
     this.loteSelected = event.data;
@@ -489,6 +512,19 @@ export class PaymentDispersionValidationComponent
     // setTimeout(() => {
     //   this.performScroll2();
     // }, 500);
+  }
+
+  async pupObttotDevPenalizes(params: any) {
+    return new Promise((resolve, reject) => {
+      this.spentService.getPupObttotDevPenalizes(params).subscribe({
+        next: async data => {
+          resolve(data.data[0]);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   async llenarInputs(lote: any) {
@@ -662,6 +698,8 @@ export class PaymentDispersionValidationComponent
       this.alert('warning', `Debe Especificar un Evento`, '');
       return;
     }
+
+    // if (this.layout == "M") {
     const lots: any = await this.getLotsPayment(this.eventSelected.id);
     if (!lots) {
       this.alert('error', 'Ocurrió un Error', '');
@@ -686,6 +724,9 @@ export class PaymentDispersionValidationComponent
         await this.exportarExcel1(obj);
       }
     }
+    // } else if (this.layout == "I") {
+
+    // }
   }
 
   async exportAsXLSXBienes() {
@@ -734,8 +775,11 @@ export class PaymentDispersionValidationComponent
     params.limit = lparams.limit;
 
     if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+    if (this.layout == 'M') params.addFilter('address', `M`, SearchFilter.EQ);
 
-    params.addFilter('address', `M`, SearchFilter.EQ);
+    if (this.layout == 'I') {
+      params.addFilter('address', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+    }
     // params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
     // params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
 
