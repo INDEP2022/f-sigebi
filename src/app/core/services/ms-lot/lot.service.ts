@@ -301,6 +301,11 @@ export class LotService extends HttpService {
     return this.post('apps/lotifica-tabla-tc', body);
   }
 
+  lotifyExcelCount(eventId: string | number) {
+    const url = `apps/lotifica-excel-count/event/${eventId}`;
+    return this.get<{ totlot: string; catlot: string; aprolot: string }>(url);
+  }
+
   // ------------------------
   PUP_ENTRA(body: any) {
     // PUP_ENTRA
