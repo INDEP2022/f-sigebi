@@ -18,7 +18,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { APPROVAL_COLUMNS } from './approval-columns';
+import { APPROVAL_COLUMNS, GOOD_COLUMNS } from './approval-columns';
 
 @Component({
   selector: 'app-approval-for-donation',
@@ -28,10 +28,18 @@ import { APPROVAL_COLUMNS } from './approval-columns';
 export class ApprovalForDonationComponent extends BasePage implements OnInit {
   form: FormGroup;
   response: boolean = false;
+  detail: boolean = false;
   data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+
   totalItems: number = 0;
+  totalItems1: number = 0;
+
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   columnFilter: any = [];
+  columnFilter1: any = [];
   donation = new DefaultSelect();
   user = localStorage.getItem('username');
 
@@ -41,6 +49,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
   status: string = null;
   cveEvent: string;
+
+  settings1 = { ...this.settings };
 
   constructor(
     private fb: FormBuilder,
@@ -58,6 +68,12 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = APPROVAL_COLUMNS;
     this.settings.hideSubHeader = false;
+
+    this.settings1 = {
+      ...this.settings,
+      hideSubHeader: false,
+      columns: { ...GOOD_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -89,13 +105,48 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               this.columnFilter[field] = `${searchFilter}:${filter.search}`;
-              this.params.value.page = 1;
+              //this.params.value.page = 1;
             } else {
               delete this.columnFilter[field];
             }
           });
           this.params = this.pageFilter(this.params);
-          //this.search();
+          this.getEventComDonationAll();
+        }
+      });
+
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'goodId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+
+            if (filter.search !== '') {
+              this.columnFilter1[field] = `${searchFilter}:${filter.search}`;
+              //this.params.value.page = 1;
+            } else {
+              delete this.columnFilter1[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getDetailComDonation();
         }
       });
     /*this.params
@@ -207,6 +258,96 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         this.data.load([]);
         this.data.refresh();
         this.totalItems = 0;
+      },
+    });
+  }
+
+  changeEvent(event: any) {
+    if (event) {
+      const data: any = event.data;
+      this.getDetailComDonation(data.actId);
+      console.log(event.data);
+    }
+  }
+
+  getDetailComDonation(idActa?: number | string) {
+    this.loading = true;
+    if (idActa) {
+      this.params1.getValue()['filter.recordId'] = `$eq:${idActa}`;
+    }
+    let params = {
+      ...this.params1.getValue(),
+      ...this.columnFilter1,
+    };
+    this.donationService.getEventComDonationDetail(params).subscribe({
+      next: resp => {
+        console.log(resp.data);
+        this.data1.load(resp.data);
+        this.data1.refresh();
+        this.totalItems1 = resp.count;
+        this.loading = false;
+      },
+      error: err => {
+        this.loading = false;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems1 = 0;
+      },
+    });
+  }
+
+  /*getEventComDonationExcel(
+    actType?: string | number,
+    estatusAct?: string | number,
+    cveAct?: string | number,
+    NoDelegation1?: string | number,
+    elaborated?: string | number
+  ) {
+    this.loading = true;
+    this.params2.getValue()['filter.actType'] = `$eq:${actType}`;
+    this.params2.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    if (NoDelegation1) {
+      this.params2.getValue()['filter.NoDelegation1'] = `$eq:${NoDelegation1}`;
+    }
+    if (estatusAct) {
+      this.params2.getValue()['filter.estatusAct'] = `$eq:${estatusAct}`;
+    }
+    if (elaborated) {
+      this.params2.getValue()['filter.elaborated'] = `$eq:${elaborated}`;
+    }
+    let params = {
+      ...this.params2.getValue()
+    };
+    this.donationService.getExcel(params).subscribe({
+      next: response => {
+        this.downloadDocument(
+          'Aprobaci&oacute;n para Donaci&oacute;n',
+          'excel',
+          response.base64File
+        );
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }*/
+
+  getEventComDonationExcel(cveAct?: string | number) {
+    this.loading = true;
+    this.params2.getValue()['filter.cveAct'] = `$eq:${cveAct}`;
+    let params = {
+      ...this.params2.getValue(),
+    };
+    this.donationService.getExcel(params).subscribe({
+      next: response => {
+        this.downloadDocument(
+          'Aprobación para Donación',
+          'excel',
+          response.base64File
+        );
+      },
+      error: error => {
+        this.loading = false;
       },
     });
   }
@@ -324,6 +465,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.validate = true;
     this.status = null;
     this.form.get('estatusAct').setValue('TODOS');
+    this.getDetailComDonation(-1);
   }
 
   getRowSelec(event: any) {
@@ -332,20 +474,28 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
   }
 
   exportAll(): void {
-    this.loading = true;
-    /*this.clientPenaltyService.getAll2().subscribe({
-      next: response => {
-        this.downloadDocument(
-          'TODOS_LOS_CLIENTES_PENALIZADOS',
-          'excel',
-          response.base64File
-        );
-        this.modalRef.hide();
-      },
-      error: error => {
-        this.loading = false;
-      },
-    });*/
+    //this.loading = true;
+    const state = this.status ? this.status : '';
+    const cveAc = this.cveEvent;
+    const noDelegation1 = this.form.get('noDelegation1').value
+      ? this.form.get('noDelegation1').value
+      : '';
+    const elaborated = this.form.get('elaborated').value
+      ? this.form.get('elaborated').value
+      : '';
+    /*this.getEventComDonationExcel(
+      //'COMPDON',
+      state,
+      cveAc
+      //noDelegation1,
+      //elaborated
+    );*/
+    this.getEventComDonationExcel(
+      //'COMPDON',
+      cveAc
+      //noDelegation1,
+      //elaborated
+    );
   }
 
   //Descargar Excel

@@ -77,6 +77,7 @@ import {
   RECEIPT_GUARD_COLUMNS,
 } from './columns/minute-columns';
 import { tranGoods } from './execute-reception-data';
+import { SelectInputComponent } from './select-input/select-input.component';
 
 @Component({
   selector: 'app-execute-reception-form',
@@ -175,7 +176,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   count: number = 0;
   delegationDes: string = '';
   keyTransferent: string = '';
-
   /*settingsTransportableGoods = {
     ...this.settings,
     ...settingTransGoodsExecute,
@@ -352,6 +352,22 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.settingsTransGood.columns = TRANS_GOODS_EXECUTE_EDITABLE;
+
+    const self = this;
+    this.settingsTransGood.columns = {
+      saeMeasureUnit: {
+        title: 'Unidad de Medida INDEP',
+        type: 'custom',
+        sort: false,
+        renderComponent: SelectInputComponent,
+        onComponentInitFunction(instance: any, component: any = self) {
+          instance.input.subscribe(async (row: any) => {
+            console.log('process', process);
+          });
+        },
+      },
+      ...this.settingsTransGood.columns,
+    };
 
     this.columns.descriptionGoodSae = {
       ...this.columns.descriptionGoodSae,

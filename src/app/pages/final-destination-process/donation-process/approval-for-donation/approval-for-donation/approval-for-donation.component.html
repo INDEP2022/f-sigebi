@@ -102,12 +102,6 @@
       <div class="row pt-4">
         <div class="col-md-12 d-flex justify-content-center">
           <div>
-            <!--<button
-              class="btn btn-sm btn-primary active mr-3"
-              [disabled]="!form.valid"
-              (click)="filterButton()">
-              Buscar
-            </button>-->
             <button
               type="button"
               class="btn btn-primary active btn-sm mr-3"
@@ -164,6 +158,52 @@
             <ng2-smart-table
               [attr.class]="'table-bordered table-responsive'"
               [settings]="settings"
+              [source]="data"
+              (rowSelect)="changeEvent($event)">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+
+      <hr />
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params1" [totalItems]="totalItems1">
+      </app-pagination>
+
+      <div class="row pt-4">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm"
+              routerLink="capture-approval-donation">
+              Captura de Evento
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!--<div *ngIf="detail">
+      <hr />
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
               [source]="data">
             </ng2-smart-table>
           </div>
@@ -184,32 +224,6 @@
           </div>
         </div>
       </div>
-
-      <!--<div
-        class="row mt-3 pt-2 scroll-table"
-        [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          [attr.class]="'table-bordered'"
-          class="col-md-12"
-          [settings]="settings"
-          [source]="data">
-        </ng2-smart-table>
-      </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>-->
-
-      <!-- <div class="row mt-5 justify-content-sm-end justify-content-center">
-        <div class="col-12 col-sm-3 text-right">
-          <button class="btn btn-success btn-sm" (click)="export()">
-            Exportar
-          </button>
-        </div>
-        <div class="col-12 col-sm-2 text-center mt-3 mt-sm-0 text-sm-left">
-          <button class="btn btn-primary active btn-sm" routerLink="capture-approval-donation">
-            Capturar Evento
-          </button>
-        </div>
-      </div> -->
-    </div>
+    </div>-->
   </div>
 </app-card>

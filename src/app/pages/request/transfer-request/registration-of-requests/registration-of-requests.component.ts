@@ -763,13 +763,19 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    //
+    console.log('public async confirmMethod()');
     /* trae solicitudes actualizadas */
     const request: any = await this.getAsyncRequestById();
     if (request) {
       /* valida campos */
+      console.log(' /* valida campos */');
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
         /* actualizamos el campo  fileNumber (expediente) de bienes*/
+        console.log(
+          ' /* actualizamos el campo  fileNumber (expediente) de bienes*/'
+        );
         const expUpdated = await this.registrationHelper.updateExpedient(
           request.id,
           request.recordId
@@ -1260,6 +1266,9 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
+      task['idstation'] = request.stationId;
+      task['idTransferee'] = request.transferenceId;
+      task['idAuthority'] = request.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 

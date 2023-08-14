@@ -553,6 +553,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                   ''
                 );
               } else {
+                this.getPayments('no');
                 this.alert(
                   'success',
                   'Proceso Terminado, Referencias Cargadas Correctamente',

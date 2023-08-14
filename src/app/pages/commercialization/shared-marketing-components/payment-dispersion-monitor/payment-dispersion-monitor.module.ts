@@ -27,6 +27,8 @@ import { OrderWOBillingComponent } from './dispersion-payment-details/order-w-o-
 import { SirsaePaymentsComponent } from './dispersion-payment-details/sirsae-payments/sirsae-payments.component';
 import { DispersionPaymentComponent } from './dispersion-payment/dispersion-payment.component';
 import { NewComerPaymentVirt } from './new-comer-payment-virt/new-comer-payment-virt.component';
+import { CanUsuSirsaeComponent } from './can-usu-sirsae/can-usu-sirsae.component';
+import { CanPagosCabComponent } from './can-pagos-cab/can-pago-cab.component'
 
 @NgModule({
   declarations: [
@@ -44,6 +46,8 @@ import { NewComerPaymentVirt } from './new-comer-payment-virt/new-comer-payment-
     ComerPaymentVirtComponent,
     CanTimesComponent,
     NewComerPaymentVirt,
+    CanUsuSirsaeComponent,
+    CanPagosCabComponent
   ],
   imports: [
     CommonModule,
