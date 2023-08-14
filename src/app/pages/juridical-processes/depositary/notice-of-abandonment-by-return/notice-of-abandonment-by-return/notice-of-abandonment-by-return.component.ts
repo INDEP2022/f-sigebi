@@ -15,6 +15,8 @@ import { COLUMNS } from './columns';
 
 import { LocalDataSource } from 'ng2-smart-table';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
+import { NotificacionAbandonoService } from 'src/app/core/services/notificacion-abandono/notificacion-abandono.service';
 @Component({
   selector: 'app-notice-of-abandonment-by-return',
   templateUrl: './notice-of-abandonment-by-return.component.html',
@@ -34,9 +36,12 @@ export class NoticeOfAbandonmentByReturnComponent
   form: FormGroup;
   period: boolean = false;
   searching: boolean = false;
+  username: string = '';
 
   dataTable: LocalDataSource = new LocalDataSource();
   filterParams2 = new BehaviorSubject<FilterParams>(new FilterParams());
+
+  dataArray: any = [];
 
   get goodId() {
     return this.form.get('goodId');
@@ -61,7 +66,9 @@ export class NoticeOfAbandonmentByReturnComponent
     private fb: FormBuilder,
     private goodService: GoodService,
     private notificationService: NotificationService,
-    private goodTypesService: GoodTypeService
+    private goodTypesService: GoodTypeService,
+    private notificacionAbandono: NotificacionAbandonoService,
+    private programmingRequestService: ProgrammingRequestService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -70,6 +77,7 @@ export class NoticeOfAbandonmentByReturnComponent
 
   ngOnInit(): void {
     this.buildForm();
+    this.getUserInfo();
   }
 
   /**
@@ -150,6 +158,7 @@ export class NoticeOfAbandonmentByReturnComponent
             dataCreada.push(fichaObjeto);
           }
           this.dataTable.load(dataCreada);
+          this.dataArray = dataCreada;
           this.totalItems = response.data.length;
 
           this.loading = false;
@@ -239,7 +248,18 @@ export class NoticeOfAbandonmentByReturnComponent
   clean() {
     this.form.reset();
     this.searching = false;
-    this.data = [];
+
+    let fichaObjeto: any = {};
+    fichaObjeto.periodEndDate = null;
+    fichaObjeto.notificationDate = null;
+    fichaObjeto.duct = null;
+    fichaObjeto.notifiedTo = null;
+    fichaObjeto.notifiedPlace = null;
+    fichaObjeto.editPublicationDate = null;
+    fichaObjeto.newspaperPublication = null;
+    fichaObjeto.observation = null;
+    fichaObjeto.statusNotified = null;
+    this.dataTable.load([fichaObjeto]);
   }
 
   search() {
@@ -252,8 +272,53 @@ export class NoticeOfAbandonmentByReturnComponent
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
   }
+
+  getUserInfo() {
+    return this.programmingRequestService.getUserInfo().subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.username = data.username;
+      },
+      error: error => {
+        error;
+      },
+    });
+  }
+
   accept() {
-    //Trae el registro seleccionado
-    //Verifica si el numero de notificaciones DE es mayor a 2
+    let body = {
+      estatus: 'DE',
+      fec_notificacion: this.dataArray[0].notificationDate,
+      fec_termino_periodo: this.dataArray[0].periodEndDate,
+      fec_vencimiento_abandono: this.dataArray[0].editPublicationDate,
+      no_bien: Number(this.form.value.goodId),
+      usuario: this.username,
+      vc_pantalla: 'Dato de tipo texto',
+    };
+
+    const validacionStatus = this.dataArray.every((item: any) => {
+      item.statusNotified === 'DE';
+    });
+    console.log('Body a enviar: ', body);
+    if (this.dataArray.length < 2) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Deben haber 2 notificaciones de devolución para confirmar'
+      );
+    } else {
+      this.notificacionAbandono.confirmarStatus(body).subscribe({
+        next: data => {
+          this.onLoadToast(
+            'success',
+            'Guardado',
+            'Registros actualizados exitosamente'
+          );
+        },
+        error: error => {
+          this.onLoadToast('error', 'Error', 'Hubo un error en la consulta');
+        },
+      });
+    }
   }
 }
