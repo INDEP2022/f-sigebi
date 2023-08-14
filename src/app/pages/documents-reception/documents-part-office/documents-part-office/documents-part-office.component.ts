@@ -408,7 +408,8 @@ export class DocumentsPartOfficeComponent extends BasePage implements OnInit {
     let params = new FilterParams();
     params.page = $params.page;
     params.limit = $params.limit;
-    params.addFilter('name', $params.text, SearchFilter.LIKE);
+    params.search = $params.text;
+    // params.addFilter('name', $params.text, SearchFilter.LIKE);
     this.usersService.getAllSegUsers(params.getParams()).subscribe({
       next: data => {
         data.data.map(user => {
