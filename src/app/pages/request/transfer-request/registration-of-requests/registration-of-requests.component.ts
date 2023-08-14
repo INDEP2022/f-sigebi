@@ -634,14 +634,14 @@ export class RegistrationOfRequestsComponent
       const filter = params.getParams();
       this.taskService.getAll(filter).subscribe({
         next: resp => {
-          console.log('Tarea antigua:', resp.data[1]);
-          console.log('Fecha de creación', resp.data[1].createdDate);
+          //console.log('Tarea antigua:', resp.data[1]);
+          //console.log('Fecha de creación', resp.data[1]?.createdDate);
           //this.createdDateTask = resp.data[1].createdDate
           const task = {
             //
-            assignees: resp.data[1].assignees,
-            assigneesDisplayname: resp.data[1].assigneesDisplayname,
-            createdDate: resp.data[1].createdDate,
+            assignees: resp.data[1]?.assignees,
+            assigneesDisplayname: resp.data[1]?.assigneesDisplayname,
+            createdDate: resp.data[1]?.createdDate,
           };
           resolve(task);
         },
