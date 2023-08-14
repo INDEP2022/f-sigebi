@@ -22,3 +22,18 @@ export const JSON_TO_CSV = [
     user: 'BLARA',
   },
 ];
+
+export const JSON_TO_CSV_FRELDECOMISO = [
+  {
+    clave_decom: '',
+    no_bien: '',
+    fec_transferencia: '',
+    fec_sentencia: '',
+    intereses: '',
+    fec_of_tesofe: '',
+    oficio_tesofe: '',
+    money: '',
+    autoridad: '',
+    causa_penal: '',
+  },
+];
