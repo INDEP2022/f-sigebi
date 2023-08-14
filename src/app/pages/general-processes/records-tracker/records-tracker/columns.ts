@@ -5,26 +5,53 @@ export const NOTIFICATIONS_COLUMNS = {
     title: 'No. Expediente',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   preliminaryInquiry: {
     title: 'Averiguación Previa',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   criminalCase: {
     title: 'Causa Penal',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   wheelNumber: {
     title: 'No. Volante',
     type: 'number',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   versionUser: {
     title: 'Nombre Indiciado',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   receiptDate: {
     title: 'Fecha Recepción',
@@ -37,21 +64,42 @@ export const NOTIFICATIONS_COLUMNS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   protectionKey: {
     title: 'Amparo',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   touchPenaltyKey: {
     title: 'Toca Penal ',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   courtNumber: {
     title: 'No. Juzgado ',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
   externalOfficeDate: {
     title: 'Fecha Oficio Externo',
@@ -64,14 +112,19 @@ export const NOTIFICATIONS_COLUMNS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   minpubNumber: {
     title: 'Ministerio Público',
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: any) => {
-      console.log(value);
       return value ? value.descripcion : '';
+    },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
     },
   },
   institutionNumber: {
@@ -81,11 +134,20 @@ export const NOTIFICATIONS_COLUMNS = {
     valuePrepareFunction: (value: any) => {
       return value.description;
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   entFedKey: {
     title: 'Entidad Federativa',
     type: 'string',
     sort: false,
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
+    /* valuePrepareFunction: (value: any) => {
+      return value ? value : '';
+    }, */
   },
 };
 
