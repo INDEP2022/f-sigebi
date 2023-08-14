@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { IWContent } from 'src/app/core/models/ms-wcontent/wcontent.model';
+import { WContentService } from 'src/app/core/services/ms-wcontent/wcontent.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
@@ -42,6 +44,7 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   good: any[] = [];
 
   private modalService = inject(BsModalService);
+  private wcontentService = inject(WContentService);
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
@@ -79,7 +82,25 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   }
 
   getData() {
-    this.paragraphs = data;
+    this.loading = true;
+    let body: IWContent = {};
+    body.xidBien = this.good[0].id; //'9549189'
+    this.wcontentService.getDocumentos(body).subscribe({
+      next: resp => {
+        const result = resp.data.filter(x => x.dDocType == 'DigitalMedia');
+
+        const data = result.map(async (item: any) => {
+          const xtipoDoc = await this.getTypeDocuments(item.xtipoDocumento);
+          item['xTipoDoc'] = xtipoDoc;
+        });
+
+        Promise.all(data).then(item => {
+          this.paragraphs = result;
+          this.totalItems = result.length;
+          this.loading = false;
+        });
+      },
+    });
   }
 
   addImage(event: any): void {
@@ -97,8 +118,8 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   messageSuccess() {
     const message = 'La(s) fotografías se han cargado correctamente';
     Swal.fire({
-      icon: undefined,
-      title: 'Información',
+      icon: 'success',
+      title: '',
       text: message,
       confirmButtonColor: '#9D2449',
       confirmButtonText: 'Aceptar',
@@ -112,38 +133,32 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
       initialState: {
         data: this.good,
         process: 'sampling-assets',
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
-          debugger;
+        callback: (next?: boolean) => {
+          if (next) {
+            setTimeout(() => {
+              this.messageSuccess();
+              this.getData();
+            }, 300);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(UploadImgFieldModalComponent, config);
+  }
 
-    /* let loadingPhotos = 0;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-  
-      callBack: (next?: boolean) => {
-        if (next) {
+  getTypeDocuments(id: number | string) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      this.wcontentService.getDocumentTypes(params).subscribe({
+        next: resp => {
+          const result: any = resp.data.filter(x => x.ddocType == id);
+          const descrip = result.length > 0 ? result[0].ddescription : '';
 
-          debugger
-          loadingPhotos = loadingPhotos + 1;
-          setTimeout(() => {
-            
-          }, 7000);
-          if (loadingPhotos == 1) {
-            this.alert(
-              'success',
-              'Acción correcta',
-              'Imagen agregada correctamente'
-            );
-          }
-        }
-      },
-    };
-    this.modalService.show(UploadFileComponent, config); */
+          resolve(descrip);
+        },
+      });
+    });
   }
 }

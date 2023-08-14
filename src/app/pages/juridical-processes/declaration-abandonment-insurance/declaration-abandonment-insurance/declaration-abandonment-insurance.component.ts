@@ -28,6 +28,13 @@ export class DeclarationAbandonmentInsuranceComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   notifications: any[] = [];
   validRatificacion: boolean = true;
+  ratificado: boolean = false;
+
+  //estatus: string = '';
+  estatusFinalM: string = '';
+  usuario: string = '';
+  statusGood: string = '';
+
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
@@ -43,14 +50,17 @@ export class DeclarationAbandonmentInsuranceComponent
   ngOnInit(): void {
     let toast = {
       icon: 'warning',
-      message: 'El Bien ya se encuentra Ratificado',
+      message: 'El Bien ya se Encuentra Ratificado',
     };
     const id = this.activateRoute.snapshot.paramMap.get('id');
     if (id) this.idBien = String(id);
+
     this.getGood(id, toast);
 
     this.prepareForm();
     this.loading = true;
+
+    //this.getDataNotixGood('PRP');
   }
 
   // PREPARAMOS EL FORMULARIO //
@@ -77,19 +87,18 @@ export class DeclarationAbandonmentInsuranceComponent
   private getGood(id: number | string, toast: any) {
     this.goodService.getGoodById(id).subscribe(
       response => {
-        console.log('RESPONSE', response);
-        setTimeout(() => {
-          this.good = response;
-          if (response.notifyDate != null) {
-            this.form
-              .get('fechaNotificacion')
-              .setValue(this.formatDate(response.notifyDate));
-          }
-          this.getScreenStatusFinal(response, toast);
-          this.loadGood(response);
-        }, 100);
-      },
+        console.log('getGood ', response);
+        this.good = response;
+        if (response.notifyDate != null) {
+          this.form
+            .get('fechaNotificacion')
+            .setValue(this.formatDate(response.notifyDate));
+        }
 
+        this.getScreenStatusFinal(response, toast);
+        this.loadGood(response);
+        this.getScreenStatus(this.good);
+      },
       error => (this.loading = false)
     );
   }
@@ -107,8 +116,13 @@ export class DeclarationAbandonmentInsuranceComponent
         this.form.get('estatus').setValue(response.data[0].description);
         this.form
           .get('declaracionAbandonoSERA')
-          .setValue(response.seraAbnDeclaration);
+          .setValue(good.seraAbnDeclaration);
+        let status = localStorage.getItem('status_bien');
+        this.getDataNotixGood(status);
+        this.statusGood = good.estatus.id;
+        console.log(' this.statusGood ->', this.statusGood);
       },
+
       error: err => {
         this.form.get('descripcion').setValue(good.description);
         this.form.get('cantidad').setValue(good.quantity);
@@ -122,7 +136,18 @@ export class DeclarationAbandonmentInsuranceComponent
 
   // ACCIÓN DEL BOTÓN RATIFICAR
   public btnRatificacion() {
-    this.getScreenStatus(this.good);
+    if (this.ratificado != true) {
+      console.log('estatus good ', this.statusGood);
+      console.log('estatus usuario ', this.usuario);
+      let status = localStorage.getItem('status_bien');
+      if (this.usuario == null && this.statusGood != status) {
+        //this.updateGood();
+        this.UpdateNotificationXProperty();
+      } else {
+        this.ratificado = false;
+        this.alert('error', 'No Se Puede Ratificar', '');
+      }
+    }
   }
 
   // BUSCAMOS EL STATUSFINAL EN LA TABLA STATUSXSCREEN //
@@ -131,27 +156,32 @@ export class DeclarationAbandonmentInsuranceComponent
       estatus: good.status,
       vc_pantalla: 'FACTJURDECLABAND',
     };
-    console.log('obj -> ', obj);
+    console.log('getScreenStatus -> ', obj);
     let _statusFinal: any = {
       status: null,
     };
 
-    this.screenStatusService.getAllFiltro(obj).subscribe(
-      (response: any) => {
+    this.screenStatusService.getAllFiltro(obj).subscribe({
+      next: response => {
         const { data } = response;
-        _statusFinal.status = data[0].statusFinal.status;
-        console.log('Status -> ', _statusFinal);
-        this.getDataNotixGood(_statusFinal);
-      },
-      error => {
-        // this.getDataNotixGood(_statusFinal);
-        this.onLoadToast(
-          'warning',
-          'Estatus por Pantalla',
-          '¡No se encontró el Estatus Final!'
+        localStorage.setItem(
+          'status_bien',
+          response.data[0].statusFinal.status
         );
-      }
-    );
+        _statusFinal.status = data[0].statusfinal;
+        console.log('Status -> ', _statusFinal.status);
+        console.log('data --> ', data[0]);
+        //this.getDataNotixGood(_statusFinal);
+      },
+      error: err => {
+        // this.getDataNotixGood(_statusFinal);
+        // this.onLoadToast(
+        //   'warning',
+        //   'Estatus por Pantalla',
+        //   '¡No se Encontró el Estatus Final!'
+        // );
+      },
+    });
   }
 
   // OBTENEMOS DATA DE LA TABLA NOTIFICACIONES X BIENES //
@@ -159,7 +189,6 @@ export class DeclarationAbandonmentInsuranceComponent
     let notificationPropertyRequest = {
       numberProperty: this.good.id,
     };
-
     this.notificationService
       .getByNotificationxProperty2(notificationPropertyRequest)
       .subscribe({
@@ -172,13 +201,23 @@ export class DeclarationAbandonmentInsuranceComponent
               .get('fechaTerminoPeriodo')
               .setValue(this.formatDate(data[0].periodEndDate));
           }
+          if (data[0].notificationDate != null) {
+            this.form
+              .get('fechaNotificacion')
+              .setValue(this.formatDate(data[0].notificationDate));
+          }
+          this.usuario = data[0].userCorrectsKey;
+          console.log('Response -> ', response);
+          console.log('Response data[0] -> ', data[0]);
 
+          /*
           if (
             data[0].userCorrectsKey == null &&
             this.good.status != _statusFinal.status
           ) {
-            this.UpdateNotificationXProperty(data[0]);
-            this.updateGood(data[0], _statusFinal);
+            console.log('status final -> ', _statusFinal);
+            //this.UpdateNotificationXProperty(data[0]);
+            //this.updateGood(data[0], _statusFinal);
           } else if (
             data[0].userCorrectsKey != null &&
             this.good.status != _statusFinal.status
@@ -197,16 +236,20 @@ export class DeclarationAbandonmentInsuranceComponent
               'Notificación por Bien',
               'El Estatus Bien y el Estatus Final son Iguales'
             );
-          }
+          }*/
         },
         error: err => {
-          this.onLoadToast('error', 'Notificación por Bien', err.error.message);
+          this.onLoadToast(
+            'error',
+            'Notificación por Bien',
+            'No se Encontró Registros en Notificación por Bien'
+          );
         },
       });
   }
 
   // ACTUALIZAMOS EN LA TABLA NOTIFICACIÓNXBIENES
-  async UpdateNotificationXProperty(data: any) {
+  async UpdateNotificationXProperty() {
     // const formData: any = {
     //   numberProperty: data.numberProperty,
     //   notificationDate: this.form.get('fechaNotificacion').value,
@@ -232,53 +275,51 @@ export class DeclarationAbandonmentInsuranceComponent
     // };
 
     const formData: any = {
-      numberProperty: data.numberProperty,
-      // periodEndDate: this.form.get('fechaTerminoPeriodo').value,
+      numberProperty: this.idBien,
+      periodEndDate: this.form.get('fechaTerminoPeriodo').value || new Date(),
       userCorrectsKey: this.token.decodeToken().preferred_username,
     };
 
+    console.log('formData ', formData);
     this.notificationService
-      .updateNotiXProperty(data.numberProperty, data.periodEndDate, formData)
+      .updateNotiXProperty(
+        this.idBien,
+        this.formatDate2(this.form.get('fechaNotificacion').value),
+        formData
+      )
       .subscribe({
         next: response => {
           this.onLoadToast(
             'success',
             'Ratificado',
-            'Se modificó la Cve. del Usuario que Ratifica'
+            'Se Modificó la Cve. del Usuario que Ratifica'
           );
+          this.updateGood();
         },
         error: err => {
-          this.onLoadToast(
-            'error',
-            'Declaración de Abandono',
-            err.error.message
-          );
+          console.log('error', err);
         },
       });
   }
 
   // ACTUALIZAR STATUS DEL BIEN //
-  async updateGood(data: any, _status: any) {
+  async updateGood() {
     // data.status = _status.status;
     // data.seraAbnDeclaration = this.form.get('declaracionAbandonoSERA').value;
-
+    let status = localStorage.getItem('status_bien');
     let obj = {
       id: this.idBien,
       goodId: this.idBien,
-      status: _status.status,
+      status: status,
       seraAbnDeclaration: this.form.get('declaracionAbandonoSERA').value,
     };
 
     this.goodService.updateWithParams(obj).subscribe({
       next: response => {
-        let toast = {
-          icon: 'success',
-          message: 'Se Ratificó el Bien Correctamente',
-        };
+        this.delayedFunction('Se Ratificó el Bien Correctamente');
 
-        this.getGood(this.idBien, toast);
-        this.form.get('estatus').setValue(_status.description);
-        // this, this.onLoadToast('success', 'Ratificado', 'Estatus del Bien Actualizado')
+        //this.getGood(this.idBien, toast);
+        this.form.get('estatus').setValue(status);
       },
       error: err => {
         this.onLoadToast(
@@ -291,7 +332,7 @@ export class DeclarationAbandonmentInsuranceComponent
   }
 
   // OBTENEMOS SCREEN STATUS FINAL //
-  getScreenStatusFinal(good: any, toast: any) {
+  getScreenStatusFinal(good: any, toast?: any) {
     let obj = {
       vc_pantalla: 'FACTJURDECLABAND',
     };
@@ -300,8 +341,8 @@ export class DeclarationAbandonmentInsuranceComponent
       (response: any) => {
         const { data } = response;
 
-        console.log('SCREEN', data);
-
+        console.log(' data[0].statusFinal.status ', data[0].statusFinal.status);
+        console.log('good.status', good.status);
         if (good.status == data[0].statusFinal.status) {
           this.alertInfo(
             toast.icon,
@@ -309,7 +350,9 @@ export class DeclarationAbandonmentInsuranceComponent
             toast.message
           );
 
+          this.ratificado = true;
           this.validRatificacion = false;
+          return;
         } else {
           this.validRatificacion = true;
         }
@@ -318,7 +361,7 @@ export class DeclarationAbandonmentInsuranceComponent
         this.onLoadToast(
           'info',
           'Declaración de Abandono',
-          'No se encontró Estatus en la tabla Estatus_X_Pantalla'
+          'No se encontró Estatus en la Tabla Estatus_X_Pantalla '
         );
       }
     );
@@ -326,5 +369,20 @@ export class DeclarationAbandonmentInsuranceComponent
 
   formatDate(fecha: string) {
     return fecha.split('T')[0].split('-').reverse().join('/');
+  }
+  formatDate2(fecha: string) {
+    return fecha.split('T')[0].split('/').reverse().join('-');
+  }
+
+  delayedFunction(message: string) {
+    console.log('Inicio de la función');
+
+    setTimeout(() => {
+      this.alertInfo(
+        'success',
+        'Declaración de Abandono por Aseguramiento',
+        message
+      );
+    }, 3000); // 2000 milisegundos (2 segundos) de retraso
   }
 }

@@ -454,6 +454,7 @@ export class ConciliationExecutionMainComponent
           );
         }
       }
+      await this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso Terminado Correctamente', '');
       this.loadingBtn = false;
     } else if (eventProcess.phase == 2) {
@@ -463,7 +464,7 @@ export class ConciliationExecutionMainComponent
         this.GLOBALV_CL = 'A';
       }
       let obj: any = {
-        fase: eventProcess.phase,
+        fase: this.conciliationForm.get('phase').value,
         fases: this.globalFASES,
         v_cl: this.GLOBALV_CL,
         evento: this.selectedEvent.id_evento,
@@ -475,6 +476,7 @@ export class ConciliationExecutionMainComponent
       const endpointEjecutar: any = await this.PUP_ENTRA(obj); //PUP_ENTRA
       if (endpointEjecutar.status == 200) {
         this.loadingBtn = false;
+        await this.getComerClientsXEvent('no');
         this.alert('success', 'Proceso Terminado Correctamente', '');
       } else {
         this.loadingBtn = false;
@@ -717,6 +719,7 @@ export class ConciliationExecutionMainComponent
         }
       }
       this.loadingBtn2 = false;
+      await this.getComerClientsXEvent('no');
       this.alert('success', 'Proceso Terminado Correctamente', '');
     } else if (eventProcess.phase == 2) {
       const fase = this.conciliationForm.get('phase').value;
@@ -746,6 +749,7 @@ export class ConciliationExecutionMainComponent
                 return;
               } else {
                 this.loadingBtn2 = false;
+                await this.getComerClientsXEvent('no');
                 this.alert('success', 'Proceso Terminado Correctamente', '');
               }
             } else {
@@ -779,6 +783,7 @@ export class ConciliationExecutionMainComponent
                 return;
               } else {
                 this.loadingBtn2 = false;
+                await this.getComerClientsXEvent('no');
                 this.alert('success', 'Proceso Terminado Correctamente', '');
               }
             } else {
@@ -823,7 +828,7 @@ export class ConciliationExecutionMainComponent
     return new Promise((resolve, reject) => {
       this.msDepositaryService.MODIFICA_ESTATUS_ANT(body).subscribe({
         next: data => {
-          resolve(data);
+          resolve(true);
         },
         error: err => {
           resolve(null);
@@ -837,10 +842,10 @@ export class ConciliationExecutionMainComponent
     return new Promise((resolve, reject) => {
       this.comerDetailsService.CAMBIAR_ESTATUS_ANT(body).subscribe({
         next: response => {
-          resolve(response.data);
+          resolve(true);
         },
         error: err => {
-          resolve(false);
+          resolve(null);
           console.log('ERR', err);
         },
       });
@@ -904,16 +909,13 @@ export class ConciliationExecutionMainComponent
       this.comerDetailsService.reverseEverything(body).subscribe({
         next: response => {
           this.loadingBtn3 = false;
-          return this.alert('success', 'Proceso Terminado Correctamente', '');
+          this.getComerClientsXEvent('no');
+          this.alert('success', 'Proceso Terminado Correctamente', '');
           resolve(true);
         },
         error: err => {
           this.loadingBtn3 = false;
-          return this.alert(
-            'error',
-            'Ocurrió un Error al Intentar Deshacer',
-            ''
-          );
+          this.alert('error', 'Ocurrió un Error al Intentar Deshacer', '');
           resolve(false);
           console.log('ERR', err);
         },
@@ -1262,7 +1264,7 @@ export class ConciliationExecutionMainComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay Lotes Asociados a este Evento', '');
+          this.alert('warning', 'No hay Lotes Disponibles al Evento', '');
         }
         this.conciliationForm.get('batch').setValue(null);
         this.lotes = new DefaultSelect([], 0);

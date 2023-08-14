@@ -67,10 +67,10 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
       columns: { ...DONATION_APPROVAL_COLUMNS },
       rowClassFunction: (row: any) => {
         if (row.data.di_disponible === 'S') {
-          return 'text-success';
+          return 'bg-success text-white';
         } else {
-          return 'text-danger';
-        }
+          return 'bg-dark text-white';
+        } //bg-dark text-white
       },
     };
   }
