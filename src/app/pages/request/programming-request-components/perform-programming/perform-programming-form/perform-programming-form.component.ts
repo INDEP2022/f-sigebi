@@ -186,6 +186,7 @@ export class PerformProgrammingFormComponent
   minDateFecElab = new Date();
   otValors = new DefaultSelect();
   idMunicipality: string = '';
+  authorityName: string = '';
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
   settingsTransportableGoodsClose = {
     ...this.settings,
@@ -213,7 +214,8 @@ export class PerformProgrammingFormComponent
     ...settingWarehouseClose,
   };
 
-  transferentId: number;
+  transferentId: number = 0;
+  transferentName: string = '';
   stationId: string | number;
   autorityId: string | number;
 
@@ -1167,6 +1169,7 @@ export class PerformProgrammingFormComponent
 
   transferentSelect(transferent: ITransferente) {
     this.transferentId = transferent?.id;
+    this.transferentName = transferent?.nameTransferent;
     this.performForm.get('stationId').setValue(null);
     this.performForm.get('autorityId').setValue(null);
     if (transferent?.id == 903) {
@@ -1310,6 +1313,7 @@ export class PerformProgrammingFormComponent
   authoritySelect(item: IAuthority) {
     this.idAuthority = item.idAuthority;
     this.autorityId = item.idAuthority;
+    this.authorityName = item.authorityName;
   }
 
   getTypeRelevantSelect(params: ListParams) {
@@ -2918,6 +2922,11 @@ export class PerformProgrammingFormComponent
     task['programmingId'] = this.idProgramming;
     task['expedientId'] = 0;
     task['idDelegationRegional'] = this.delegationId;
+    task['idAuthority'] = this.autorityId;
+    task['nbAuthority'] = this.authorityName;
+    task['idTransferee'] = this.transferentId;
+    task['nbTransferee'] = this.transferentName;
+    task['idStore'] = this.warehouseId;
     task['urlNb'] = 'pages/request/programming-request/acept-programming';
     task['processName'] = 'SolicitudProgramacion';
     task['taskDefinitionId'] = _task.id;

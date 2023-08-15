@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -26,38 +26,16 @@ import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-
 import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
+import { LIST_DEDUCTIVES_COLUMNS } from './columns/list-deductivas-column';
 import { LIST_WAREHOUSE_COLUMN } from './columns/list-warehouse-columns';
 
 var data = [
   {
     id: 1,
-    noWarehouse: '410',
-    nameWarehouse: 'ALMACEN PRUEBA LAR',
-    state: 'CIUDAD DE MEXICO',
-    address:
-      'PRIVADA DE LOS REYES, LOS REYS, 27, AZCAPOTZALCO, CIUDAD DE MEXICO',
-    postalCode: '02010',
-  },
-];
-
-var data2 = [
-  {
-    noInventory: '1',
-    noManagement: '011',
-    noSiab: '0',
-    address: 'FUNDA PARA VOLANTE',
-    regionalDelegation: 'METROPOLITANA',
-    quantity: '2',
-    unity: 'PIEZA',
-  },
-  {
-    noInventory: '2',
-    noManagement: '031',
-    noSiab: '3',
-    address: 'FUNDA PARA VOLANTE',
-    regionalDelegation: 'METROPOLITANA',
-    quantity: '1',
-    unity: 'PIEZA',
+    deductDescription:
+      'Recepcion documenta, electronica y validadion de requisitos (17%)',
+    observation: 'Observacion',
+    selected: true,
   },
 ];
 
@@ -67,6 +45,7 @@ var data2 = [
   styleUrls: ['./sampling-assets-form.component.scss'],
 })
 export class SamplingAssetsFormComponent extends BasePage implements OnInit {
+  @ViewChild('table2', { static: false }) table2: any;
   dateForm: ModelForm<any>;
   searchForm: ModelForm<any>;
   showSearchForm: boolean = true;
@@ -99,6 +78,14 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
 
+  settings4 = {
+    ...TABLE_SETTINGS,
+    actions: false,
+    selectMode: '',
+  };
+  columns4 = LIST_DEDUCTIVES_COLUMNS;
+  paragraphsDeductivas: any[] = [{}];
+
   delegationId: string = '';
 
   //private domicilieService = inject(DomicileService);
@@ -123,8 +110,26 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       selectMode: '',
       columns: LIST_WAREHOUSE_COLUMN,
     };
+
     this.initDateForm();
     this.initSearchForm();
+
+    this.settings4.columns = LIST_DEDUCTIVES_COLUMNS;
+
+    this.columns4.observation = {
+      ...this.columns4.observation,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          this.deductivesObservations(data);
+        });
+      },
+    };
+    this.columns4.selected = {
+      ...this.columns4.selected,
+      onComponentInitFunction: this.deductiveSelected.bind(this),
+    };
+
+    this.paragraphsDeductivas = data;
   }
 
   initDateForm() {
@@ -160,8 +165,27 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   addAssets() {
-    this.paragraphs3 = this.listAssetsSelected;
-    console.log(this.paragraphs3);
+    let ids: any = [];
+    this.listAssetsSelected.map((item: any) => {
+      const index = this.paragraphs3.indexOf(item);
+      if (index == -1) {
+        this.paragraphs3.push(item);
+      } else {
+        ids.push(item.goodId);
+      }
+      this.paragraphs3 = [...this.paragraphs3];
+    });
+
+    if (ids.length > 0) {
+      const idsg = ids.join(',');
+      this.onLoadToast(
+        'info',
+        `Los bienes con ne No. de Gestion ya estan actualmente agregados`,
+        `${idsg}`
+      );
+      ids = [];
+    }
+    this.unselectGoodRows();
   }
 
   selectAsstsCopy(event: any) {
@@ -182,8 +206,29 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   exportCsv() {
-    const filename: string = 'Nombre del archivo';
-    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    const title = 'Muestreo de Bienes para Supervisión';
+    const filename: string = 'MuestreoBienesSupervision';
+    this.jsonToCsv = this.generateJsonExcel();
+    //console.log(this.jsonToCsv)
+    //{type: 'csv'}
+    this.excelService.export(this.jsonToCsv, { filename });
+  }
+
+  generateJsonExcel() {
+    let good: any = {};
+    let jsonBody: any = [{}];
+    this.paragraphs3.map((item: any) => {
+      (good.NomInventario = item.inventoryNumber),
+        (good.NoGestion = item.goodId),
+        (good.Descripcion = item.goodDescription),
+        (good.DelegaRegional = item.regionalDelegation),
+        (good.Cantidad = item.quantity),
+        (good.ResultEvaluación = item.resultTest);
+
+      jsonBody.push(good);
+    });
+
+    return jsonBody;
   }
 
   close(): void {}
@@ -287,6 +332,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     }).then(result => {
       if (result.isConfirmed) {
         console.log('Guardar solicitud');
+        const size = this.paragraphs3.length;
+        const evaResult = this.paragraphs3.filter(x => x.resultTest != null);
+        debugger;
+        if (size != evaResult.length && size == 0) {
+          this.onLoadToast(
+            'info',
+            'Los bienes no tienen resultado de evaluacion'
+          );
+          return;
+        }
       }
     });
   }
@@ -340,5 +395,31 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     });
     this.paragraphs3 = [...this.paragraphs3];
     this.listAssetsCopiedSelected = [];
+  }
+
+  unselectGoodRows() {
+    const a = this.table2.grid.getRows();
+    a.map((item: any) => {
+      item.isSelected = false;
+    });
+    /*const table = document.getElementById('table2');
+    const tbody = table.children[0].children[1].children;
+
+    for (let index = 0; index < tbody.length; index++) {
+      const ele:any = tbody[index];
+      
+      console.log(ele.children[0].checked )
+      ele.children[0].children[0].checked = false
+    }*/
+  }
+
+  deductiveSelected(event: any) {
+    event.toggle.subscribe((data: any) => {
+      console.log(data);
+    });
+  }
+
+  deductivesObservations(event: any) {
+    console.log(event);
   }
 }

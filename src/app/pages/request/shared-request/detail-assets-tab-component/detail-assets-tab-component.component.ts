@@ -671,7 +671,7 @@ export class DetailAssetsTabComponentComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
-      val25: [null],
+      //val25: [null],
     });
 
     /* METODO QUE CAMBIA LOS CAMPOS DEL DOMICILIO A REQUERIDOS
@@ -1130,6 +1130,11 @@ export class DetailAssetsTabComponentComponent
         Validators.pattern(DOUBLE_PATTERN),
       ]);
     }
+
+    if (this.typeOfRequest == 'PGR_SAE' || this.typeOfRequest == 'SAT_SAE') {
+      this.detailAssets.controls['quantity'].disable();
+    }
+
     this.detailAssets.updateValueAndValidity();
   }
 
@@ -1229,7 +1234,7 @@ export class DetailAssetsTabComponentComponent
     this.circulateString = value;
     this.detailAssets.controls['fitCircular'].setValue(value);
     const val25 = value == 'Y' ? 'APTO PARA CIRCULAR' : 'NO APTO PARA CIRCULAR';
-    this.detailAssets.controls['val25'].setValue(val25);
+    //this.detailAssets.controls['val25'].setValue(val25);
   }
 
   handleTheftReportEvent(event: any) {

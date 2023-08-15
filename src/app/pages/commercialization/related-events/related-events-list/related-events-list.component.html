@@ -8,36 +8,57 @@
         <div class="row d-flex justify-content-center align-content-center">
           <div class="col-sm-12 col-md-4 mh-80">
             <!-- <div class="col-md-8">  -->
-            <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
-            <ngx-select
+            <!-- <h5 class="font-size-14 mb-2 d-inline">Evento</h5> -->
+            <!-- <ngx-select
               [form]="eventForm"
               [data]="eventItems"
               value="id"
               bindLabel="id"
               (fetchItems)="getEvents($event)"
-              (change)="selectEvent($event)"
               control="event">
-            </ngx-select>
+            </ngx-select> -->
             <!-- <form-field [control]="eventForm.get('status')" label="Estado">
-              <input type="text" formControlName="status" class="form-control" />
+                <input type="text" formControlName="status" class="form-control" />
+              </form-field>
+              </div>
+              <div class="col-md-4">
+                <button type="button" class="btn btn-primary active btn-sm">
+                  Buscar
+                  <i class="bx bx-search-alt bx-sm float-icon"></i>
+                </button>
+              </div> -->
+            <form-field [control]="eventForm.get('event')" label="Evento">
+              <input
+                formControlName="event"
+                class="form-control"
+                type="number" />
             </form-field>
-            </div>
-            <div class="col-md-4">
-              <button type="button" class="btn btn-primary active btn-sm">
-                Buscar
-                <i class="bx bx-search-alt bx-sm float-icon"></i>
-              </button>
-            </div> -->
           </div>
+          <div class="col-sm-12 col-md-2" style="margin-top: 0.5%">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="getEvents()"
+              [disabled]="!eventForm.valid">
+              Buscar<i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <br />
+        <div
+          class="row mt-3 d-flex justify-content-center align-content-center"
+          *ngIf="selectedEvent != null"
+          style="margin-top: 5%"
+          @OnEventSelected>
           <div
-            class="col-sm-6 col-md-4"
+            class="col-sm-6 col-md-3"
             *ngIf="selectedEvent != null"
             @OnEventSelected>
             <!-- <div class="ms-4">
-              <i class="bx bx-edit text-success me-2 d-inline float-icon"></i>
-              <h5 class="font-size-14 mb-2 d-inline">Proceso</h5>
-              <p class="text-muted">{{ selectedEvent.process }}</p>
-            </div> -->
+                            <i class="bx bx-edit text-success me-2 d-inline float-icon"></i>
+                            <h5 class="font-size-14 mb-2 d-inline">Proceso</h5>
+                            <p class="text-muted">{{ selectedEvent.process }}</p>
+                          </div> -->
             <form-field [control]="eventForm.get('process')" label="Proceso">
               <input
                 type="text"
@@ -47,15 +68,15 @@
             </form-field>
           </div>
           <div
-            class="col-sm-6 col-md-4"
+            class="col-sm-6 col-md-3"
             *ngIf="selectedEvent != null"
             @OnEventSelected>
             <!-- <i
-              class="bx bx-info-circle text-success me-2 d-inline float-icon"></i>
-            <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
-            <p class="text-muted">
-              {{ selectedEvent.status }}
-            </p> -->
+                            class="bx bx-info-circle text-success me-2 d-inline float-icon"></i>
+                          <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+                          <p class="text-muted">
+                            {{ selectedEvent.status }}
+                          </p> -->
             <form-field [control]="eventForm.get('status')" label="Estado">
               <input
                 type="text"
@@ -64,13 +85,7 @@
                 readOnly />
             </form-field>
           </div>
-        </div>
-        <div
-          class="row mt-3 d-flex justify-content-center align-content-center"
-          *ngIf="selectedEvent != null"
-          @OnEventSelected>
-          <div class="col-sm-12 col-md-4"></div>
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-3">
             <!-- <i
               class="bx bx-tag bx-rotate-180l text-success me-2 d-inline float-icon"></i>
             <h5 class="font-size-14 mb-2 d-inline">Tipo de Evento</h5>
@@ -87,7 +102,7 @@
                 readOnly />
             </form-field>
           </div>
-          <div class="col-sm-12 col-md-4">
+          <div class="col-sm-12 col-md-3">
             <!-- <i
               class="bx bx-buildings text-success me-2 d-inline float-icon"></i>
             <h5 class="font-size-14 mb-2 d-inline">Direcci&oacute;n</h5>
