@@ -7,32 +7,39 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('event')">
+            <!--<input type="text" class="form-control" formControlName="event" />-->
+            <ngx-select
+              [form]="form"
+              [data]="evento"
+              label="Evento"
+              bindLabel="evento"
+              value="id_evento"
+              (fetchItems)="getEvent($event)"
+              control="event">
+            </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-2">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid"
-              (click)="showWinners = !showWinners">
-              Reporte ganadores
-            </button>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="justify-content-center">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid"
-              (click)="showNotWinners = !showNotWinners">
-              Reporte no ganadores
-            </button>
-          </div>
+        <div class="col-md-6">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!form.valid"
+            (click)="getWinner()">
+            Reporte Ganadores <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active m-2"
+            [disabled]="!form.valid"
+            (click)="getLoser()">
+            Reporte No Ganadores
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+          <button class="btn btn-danger btn-sm active" (click)="clean()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
         </div>
       </div>
     </form>
@@ -45,23 +52,30 @@
           </div>
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-sm btn-success active"
             [disabled]="!form.valid"
-            (click)="openPrevPdf()">
-            Descargar Reporte
+            (click)="exportarWinner()">
+            Descargar Reporte <i class="bx bx-download float-icon"></i>
           </button>
         </div>
       </div>
       <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data"></ng2-smart-table>
+          </div>
+        </ng-scrollbar>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
     </div>
     <!-- Es la misma tabla, solo cambia el título, falta configuración por separado (Pendiente) -->
-    <div class="row pt-5" *ngIf="showNotWinners">
+    <div class="row pt-5" *ngIf="showReport">
       <div class="mb-2 ch-content" header>
         <h5 class="title">No Ganadores</h5>
         <div class="justify-content-end">
@@ -70,19 +84,26 @@
           </div>
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-sm btn-success active"
             [disabled]="!form.valid"
-            (click)="openPrevPdf()">
-            Descargar Reporte
+            (click)="exportarLoser()">
+            Descargar Reporte <i class="bx bx-download float-icon"></i>
           </button>
         </div>
       </div>
       <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data1"></ng2-smart-table>
+          </div>
+        </ng-scrollbar>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [params]="params1" [totalItems]="totalItems1">
       </app-pagination>
     </div>
   </div>

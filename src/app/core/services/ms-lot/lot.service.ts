@@ -1,5 +1,6 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -61,6 +62,10 @@ export class LotService extends HttpService {
 
   eventValDesc(eventId: string | number) {
     return this.get('apps/comer-bases-valdesc-when-button-pressed/' + eventId);
+  }
+
+  lotApp(id: any, params: ListParams): Observable<IListResponse<any>> {
+    return this.get('apps/query-winners-report/' + id, params);
   }
 
   updateMandate(body: {
