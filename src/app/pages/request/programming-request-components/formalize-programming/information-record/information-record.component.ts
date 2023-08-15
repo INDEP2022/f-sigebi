@@ -291,7 +291,7 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         this.infoForm.get('bases').setValue(response.data[0].bases);
         this.infoForm.get('celebrates').setValue(response.data[0].celebrates);
 
-        if (this.programming.tranferId == 120) {
+        if (this.programming.tranferId == 120 && response.data[0].dateOfficie) {
           this.infoForm
             .get('dateOfficie')
             .setValue(
