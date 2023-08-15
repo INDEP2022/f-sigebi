@@ -414,7 +414,7 @@
             [settings]="tableSettings"
             [source]="dataTableDicta.data"></ng2-smart-table>
           <app-pagination
-            [totalItems]="dataTableDicta.count"
+            [totalItems]="totalItemsDocument"
             [filterParams]="params"></app-pagination>
         </div>
       </div>
@@ -502,7 +502,7 @@
               [settings]="tableSettingsDoc"
               [source]="dataTableDoc.data"></ng2-smart-table>
             <app-pagination
-              [totalItems]="dataTableDoc.count"
+              [totalItems]="totalItemsDic"
               [filterParams]="paramsDoc"></app-pagination>
           </div>
         </div>

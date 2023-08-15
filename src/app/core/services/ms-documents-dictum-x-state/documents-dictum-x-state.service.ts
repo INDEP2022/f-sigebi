@@ -5,7 +5,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IDocumentsDictumXState,
-  KeyDocument,
+  KeyDocumentPeer,
 } from '../../models/ms-documents/documents-dictum-x-state.model';
 
 @Injectable({
@@ -31,9 +31,9 @@ export class DocumentsDictumXStateService extends HttpService {
   }
   getDocumentsDictamen(
     params?: string
-  ): Observable<IListResponse<KeyDocument>> {
-    return this.get<IListResponse<KeyDocument>>(
-      DocumentsEndpoints.DocumentsForDictum,
+  ): Observable<IListResponse<KeyDocumentPeer>> {
+    return this.get<IListResponse<KeyDocumentPeer>>(
+      DocumentsEndpoints.DocumentRequestPerGood,
       params
     );
   }
