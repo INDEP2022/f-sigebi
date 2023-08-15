@@ -444,12 +444,19 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
-      task['idstation'] = request.stationId;
-      task['idTransferee'] = request.transferenceId;
-      task['idAuthority'] = request.authorityId;
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
       task['idDelegationRegional'] = user.department;
-      task['createdDate'] = this.task1?.createdDate;
-      task['endDate'] = this.today;
+
+      if (this.task1?.createdDate != null) {
+        task['createdDate'] = this.task1?.createdDate;
+      } else {
+        task['createdDate'] = this.today;
+      }
+
+      //task['endDate'] = this.today;
+
       body['task'] = task;
 
       let orderservice: any = {};
