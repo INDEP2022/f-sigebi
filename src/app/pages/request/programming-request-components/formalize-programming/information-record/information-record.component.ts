@@ -290,9 +290,14 @@ export class InformationRecordComponent extends BasePage implements OnInit {
         this.infoForm.get('startTime').setValue(response.data[0].startTime);
         this.infoForm.get('bases').setValue(response.data[0].bases);
         this.infoForm.get('celebrates').setValue(response.data[0].celebrates);
-        this.infoForm
-          .get('dateOfficie')
-          .setValue(moment(response.data[0].dateOfficie).format('DD/MM/YYYY'));
+
+        if (this.programming.tranferId == 120 && response.data[0].dateOfficie) {
+          this.infoForm
+            .get('dateOfficie')
+            .setValue(
+              moment(response.data[0].dateOfficie).format('DD/MM/YYYY')
+            );
+        }
 
         //this.infoForm.patchValue(response.data[0]);
       },
@@ -301,6 +306,9 @@ export class InformationRecordComponent extends BasePage implements OnInit {
   }
 
   confirm() {
+    if (this.programming.tranferId != 120) {
+      this.infoForm.removeControl('dateOfficie');
+    }
     this.loading = true;
     if (this.infoForm.get('electronicSignatureWorker1').value == 1) {
       this.infoForm.get('electronicSignatureWorker1').setValue(1);

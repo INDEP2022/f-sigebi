@@ -62,3 +62,7 @@ export interface ComerceDocumentsXmlH {
   shipmentDate: Date;
   recordNumber: number;
 }
+export interface IComerDocumsXmlT {
+  documentTypeId: string;
+  documentId: string;
+}

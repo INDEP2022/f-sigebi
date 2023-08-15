@@ -95,5 +95,10 @@ export class ComerEventService extends HttpService {
     );
   }
 
-  
+  postResumenAdmvxr(params: any) {
+    return this.post<IListResponse<IFindAllComerGoodXlotTotal>>(
+      PrepareEventEndpoints.ResumenAdmvxr,
+      params
+    );
+  }
 }

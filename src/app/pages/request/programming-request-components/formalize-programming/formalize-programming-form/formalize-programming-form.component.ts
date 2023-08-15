@@ -1335,8 +1335,6 @@ export class FormalizeProgrammingFormComponent
   }
 
   async confirm() {
-    const sendGoodInventary = await this.sendGoodsGuardInventary();
-    /*
     this.alertQuestion(
       'question',
       'Confirmación',
@@ -1358,56 +1356,94 @@ export class FormalizeProgrammingFormComponent
         if (closeTask) {
           const deleteGoodsReprog = await this.deleteGoodReprog();
           if (deleteGoodsReprog) {
-         
-            this.alertInfo(
-              'success',
-              'Acción correcta',
-              'Se cerro la tarea formalizar entrega correctamente'
-            ).then(question => {
-              if (question.isConfirmed) {
-                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+            const updateProgramming = await this.updateProgrammingInfo();
+            if (updateProgramming) {
+              const sendGoodInventary = await this.sendGoodsGuardInventary();
+              if (sendGoodInventary) {
+                this.alertInfo(
+                  'success',
+                  'Acción correcta',
+                  'Se cerro la tarea formalizar entrega correctamente'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+                  }
+                });
               }
-            });
+            }
           }
         }
       }
-    }); */
+    });
+  }
+
+  updateProgrammingInfo() {
+    return new Promise((resolve, reject) => {
+      const form = {
+        id: this.programming.id,
+        status: 'APROBADA',
+      };
+
+      this.programmingService
+        .updateProgramming(this.programming.id, form)
+        .subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(true);
+          },
+        });
+    });
   }
 
   sendGoodsGuardInventary() {
-    this.goodsGuards.getElements().then(data => {
-      data.map((item: IGood) => {
-        this.goodsProcessService.AddReceptionBpm(Number(item.id)).subscribe({
-          next: response => {
-            console.log('insertado a inventario', data);
-          },
-          error: error => {
-            console.log('error', error);
-          },
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          data.map((item: IGood) => {
+            this.goodsProcessService
+              .AddReceptionBpm(Number(item.id), Number(item.goodId))
+              .subscribe({
+                next: response => {
+                  console.log('se envio', response);
+                  resolve(true);
+                },
+                error: error => {
+                  resolve(true);
+                },
+              });
+          });
         });
-      });
+      } else {
+        resolve(true);
+      }
     });
   }
 
   deleteGoodReprog() {
     return new Promise((resolve, reject) => {
-      this.goodsGuards.getElements().then(data => {
-        const deleteGoodProg = {
-          programmingId: this.programming.id,
-          goodId: data.goodId,
-        };
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          const deleteGoodProg = {
+            programmingId: this.programming.id,
+            goodId: data.goodId,
+          };
 
-        this.programmingGoodService
-          .deleteGoodProgramming(deleteGoodProg)
-          .subscribe({
-            next: response => {
-              resolve(true);
-            },
-            error: error => {
-              resolve(true);
-            },
-          });
-      });
+          this.programmingGoodService
+            .deleteGoodProgramming(deleteGoodProg)
+            .subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+        });
+      } else {
+        resolve(true);
+      }
     });
   }
 

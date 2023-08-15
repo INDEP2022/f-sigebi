@@ -181,32 +181,34 @@ export class CreateActaComponent extends BasePage implements OnInit {
     params.page = lparams.page;
     params.limit = lparams.limit;
 
-    if (lparams?.text.length > 0)
-      if (!isNaN(parseInt(lparams?.text))) {
+    if (lparams.text)
+      if (!isNaN(parseInt(lparams.text))) {
         console.log('SI');
 
-        params.addFilter3('number', lparams.text);
+        params.addFilter3('filter.TransfereeNumber', lparams.text);
       } else {
-        params.addFilter3('password', lparams.text);
+        params.addFilter3('filter.password', lparams.text);
       }
 
-    this.transferenteService.appsGetPassword(obj, lparams).subscribe({
-      next: (data: any) => {
-        console.log('data', data);
-        let result = data.data.map(async (item: any) => {
-          item['transfer'] =
-            item.password + ' - ' + item.number + ' - ' + item.name;
-        });
+    this.transferenteService
+      .appsGetPassword(obj, params.getParams())
+      .subscribe({
+        next: (data: any) => {
+          console.log('data', data);
+          let result = data.data.map(async (item: any) => {
+            item['transfer'] =
+              item.password + ' - ' + item.number + ' - ' + item.name;
+          });
 
-        Promise.all(result).then(resp => {
-          this.trans = new DefaultSelect(data.data, data.count);
-        });
-        console.log('data222', data);
-      },
-      error: error => {
-        this.trans = new DefaultSelect([], 0);
-      },
-    });
+          Promise.all(result).then(resp => {
+            this.trans = new DefaultSelect(data.data, data.count);
+          });
+          console.log('data222', data);
+        },
+        error: error => {
+          this.trans = new DefaultSelect([], 0);
+        },
+      });
   }
 
   agregarActa() {

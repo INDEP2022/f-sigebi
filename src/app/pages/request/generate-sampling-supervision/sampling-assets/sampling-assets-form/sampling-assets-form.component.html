@@ -171,6 +171,8 @@
     </div>
     <div class="row pt-4">
       <ng2-smart-table
+        #table2
+        id="table2"
         [attr.class]="'table-bordered'"
         [settings]="settings2"
         [source]="paragraphs2"
@@ -264,7 +266,20 @@
         </tab>
         <tab heading="Deductivas">
           <div class="row pt-2">
-            <table class="table table-bordered">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng-scrollbar
+                  track="all"
+                  style="min-height: 200px; border: none"> -->
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings4"
+                  [source]="paragraphsDeductivas">
+                </ng2-smart-table>
+                <!--  </ng-scrollbar> -->
+              </div>
+            </div>
+            <!-- <table class="table table-bordered">
               <thead>
                 <tr style="text-align: center">
                   <th scope="col">Descripci&oacute;n deductiva</th>
@@ -283,7 +298,7 @@
                   </td>
                 </tr>
               </tbody>
-            </table>
+            </table> -->
           </div>
         </tab>
       </tabset>
