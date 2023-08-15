@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
@@ -24,9 +25,11 @@ import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
 })
 export class valuationRequestComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
+
   user: string;
   event: number = 0;
   tipo: any;
@@ -75,7 +78,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getPagination();
     // this.route.queryParams.subscribe(params => {
     //   if (params['user']) {
     //     this.user= params['user'];
@@ -87,9 +89,9 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     // this.getsContent();
     //   }
     // });
-    // 23959- 23496 - 23972
+    // 23959- 23496 - 23972 - 6185
     this.user = localStorage.getItem('username');
-    this.event = 23972;
+    this.event = 6185;
     this.form.controls['event'].setValue(this.event);
     this.getsContent();
   }
@@ -144,32 +146,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       ],
     });
   }
-
-  data = [
-    {
-      noBien: 564,
-      description: 'Descripción del 564',
-      amount: '$41,151.00',
-      status: 'Disponible',
-    },
-    {
-      noBien: 45,
-      description: 'Descripción del 45',
-      amount: '$1,500.00',
-      status: 'No Disponible',
-    },
-    {
-      noBien: 785,
-      description: 'Descripción del 785',
-      amount: '$201,500.00',
-      status: 'Disponible',
-    },
-  ];
-
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
-  }
   async getsContent() {
     this.loader.load = true;
     if (this.event == 0) {
@@ -214,7 +190,10 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     } else {
       this.estatus = 'GENERADO';
     }
-    this.loadGrid(this.event, this.estatus);
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      this.loadGrid(this.event, this.estatus);
+    });
+
     let data_rem: any = await this.getUsers(1);
     console.log(data_rem);
     this.sender = new DefaultSelect(data_rem.data, data_rem.count);
@@ -437,6 +416,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
     });
   }
   loadGrid(idType: number, estatus: string) {
+    this.loading = true;
     let data = {
       eventId: idType,
       actionJob: estatus,
@@ -446,10 +426,17 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       .postGetListGood(data, this.params.getValue())
       .subscribe({
         next: resp => {
+          this.data.load(resp.data);
+          this.data.refresh();
+          this.totalItems = resp.count;
           console.log(resp);
+          this.loading = false;
         },
         error: eror => {
           this.loader.load = false;
+          this.loading = false;
+          this.data.load([]);
+          this.data.refresh();
         },
       });
   }
@@ -478,6 +465,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       next: resp => {
         console.log(resp);
         this.addressee = new DefaultSelect(resp.data, resp.count);
+        this.usersList = new DefaultSelect(resp.data, resp.count);
       },
       error: eror => {
         this.loader.load = false;
@@ -496,6 +484,58 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         this.cityList = new DefaultSelect([], 0, true);
       },
     });
+  }
+  getAddUser() {
+    if (this.form.controls['user'].value) {
+      let usuariocopia: string = '';
+      let verificauser: boolean = false;
+      if (this.lsbConCopiaList.length > 0) {
+        for (const value of this.lsbConCopiaList) {
+          usuariocopia = value.splint('-').toString();
+          if (usuariocopia == this.form.controls['user'].value) {
+            verificauser = true;
+          }
+        }
+        if (verificauser != true) {
+          this.lsbConCopiaList.push(this.form.controls['user'].value);
+        }
+      }
+    } else {
+      this.alert('warning', 'Debe Seleccionar un Usuario', '');
+    }
+  }
+  getDeleteUser() {
+    try {
+      if (this.form.controls['lsbConCopiaCCP'].value != null) {
+        if (this.idOficio != null) {
+          //InsertaUsuConCopia
+          //eliminar lsbCopia
+        } else {
+          //eliminar lsbCopia
+        }
+      }
+    } catch (error) {}
+  }
+  async saveChanges() {
+    try {
+      let type = await this.getType(this.event);
+      console.log(type);
+      this.tipo = type;
+      if (this.tipo.direccion == 'I') {
+        this.title = 'OFICIO DE ' + this.tipo.tipo_aval + ' INMUEBLES';
+        this.address = this.tipo.direccion;
+      } else if (this.tipo.direccion == 'M') {
+        this.title = 'OFICIO DE ' + this.tipo.tipo_aval + ' MUEBLES';
+        this.address = this.tipo.direccion;
+      }
+      if (this.form.controls['folio'].value != null) {
+        let mComer = await this.getTrade(this.event);
+        console.log(mComer);
+        this.m_comer = mComer;
+        if (this.m_comer.cve_oficio != null) {
+        }
+      }
+    } catch (error) {}
   }
   controlControls() {
     this.addUser = true;
