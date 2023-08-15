@@ -1,6 +1,6 @@
 export const REQUESTS_COLUMNS = {
   solnumId: {
-    title: 'Id de solicitud',
+    title: 'Id de Solicitud',
     type: 'string',
     sort: false,
   },

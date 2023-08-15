@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { Router } from '@angular/router';
 import { format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -16,17 +17,27 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IGraceDate } from 'src/app/core/models/ms-event/event.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { ComerTpEventosService } from 'src/app/core/services/ms-event/comer-tpeventos.service';
+import { ISendSirsaeLot } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae-model';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
+import {
+  IPupProcSeldisp,
+  IPupValidateMandatoNfac,
+} from 'src/app/core/services/ms-lot/models-lots';
 import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SpentService } from 'src/app/core/services/ms-spent/comer-expenses.service';
 import { BasePage } from 'src/app/core/shared';
+import { CanLcsWarrantyComponent } from '../can-lcs-warranty/can-lcs-warranty.component';
+import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
+import { CanRelusuComponent } from '../can-relusu/can-relusu.component';
 import { CanUsuSirsaeComponent } from '../can-usu-sirsae/can-usu-sirsae.component';
 import { ComerPaymentVirtComponent } from '../comer-payment-virt/comer-payment-virt.component';
 import { clearGoodCheckCustomer } from '../dispersion-payment-details/customers/columns';
@@ -39,10 +50,6 @@ import {
   COLUMNS_PAYMENT_LOT,
   setCheckHide,
 } from './columns';
-import { IPupProcSeldisp } from 'src/app/core/services/ms-lot/models-lots';
-import { CanPagosCabComponent } from '../can-pagos-cab/can-pago-cab.component';
-import { CanLcsWarrantyComponent } from '../can-lcs-warranty/can-lcs-warranty.component';
-import { CanRelusuComponent } from '../can-relusu/can-relusu.component';
 
 @Component({
   selector: 'app-dispersion-payment',
@@ -77,7 +84,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   formCustomerBanks: FormGroup;
   formLotsBanks: FormGroup;
   formPaymentLots: FormGroup;
-  formSirsae: FormGroup
+  formSirsae: FormGroup;
 
   statusEvent: string = null;
   eventType: string = null;
@@ -114,8 +121,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   totalItemsPaymentLots: number = 0;
   limitPaymentLots = new FormControl(10);
 
-  statusVtaId: any = null
-  idClientCustomer: any = null
+  statusVtaId: any = null;
+  idClientCustomer: any = null;
 
   isAvailableByType: boolean = true;
 
@@ -148,7 +155,9 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     private spentService: SpentService,
     private comerEventosService: ComerEventosService,
     private modalService: BsModalService,
-    private customersService: ComerClientsService
+    private customersService: ComerClientsService,
+    private interfaceSirsaeService: InterfacesirsaeService,
+    private router: Router
   ) {
     super();
   }
@@ -164,6 +173,13 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.navigateCustomerXClient();
     //Settings
     this.prepareSettings();
+    //Verificar si hay idEvento
+    const idLocal = localStorage.getItem('eventId_dispersion');
+    if (idLocal != null) {
+      this.event.setValue(idLocal);
+      this.selectEvent();
+      localStorage.removeItem('eventId_dispersion');
+    }
   }
 
   //Navegar en la tabla de clientes
@@ -336,8 +352,8 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     //OPCIONES SIRSAE
     this.formSirsae = this.fb.group({
       maxDateSirsae: [null],
-      reference: [null]
-    })
+      reference: [null],
+    });
   }
 
   //Gets
@@ -373,13 +389,24 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     return this.form.get('dateMaxPayment');
   }
 
+  //Limpiar tablas
+  cleanAllTables() {
+    this.dataCustomer.load([]);
+    this.dataLotEvent.load([]);
+    this.dataDesertedLots.load([]);
+    this.dataCustomerBanks.load([]);
+    this.dataLotsBanks.load([]);
+    this.dataPaymentLots.load([]);
+  }
+
   //Seleccionar eventos
   selectEvent() {
+    this.cleanAllTables()
     this.loadingCustomer = true;
     this.loadingLotEvent = true;
     this.loadingDesertLots = true;
-    this.loadingLotBanks = true;
-    this.loadingPaymentLots = true;
+    /* this.loadingLotBanks = true; */
+    /* this.loadingPaymentLots = true; */
     const paramsF = new FilterParams();
     paramsF.addFilter('id', this.event.value);
     console.log(this.event.value);
@@ -394,7 +421,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
         this.dateNotification.setValue(resp.notificationDate);
         this.dateMaxWarranty.setValue(resp.processKey);
         this.dateMaxPayment.setValue(resp.processKey);
-        this.postQueryEvent(resp.eventTpId, resp.statusVtaId, resp.address);
+        this.postQueryEvent(
+          resp.eventTpId,
+          resp.statusVtaId,
+          resp.address,
+          resp.failureDate,
+          resp.eventClosingDate,
+          resp.notificationDate
+        );
         this.statusVtaId = resp.statusVtaId;
         this.eventManagement = resp.address == 'M' ? 'MUEBLES' : 'INMUEBLES';
         this.getDataComerCustomer();
@@ -413,7 +447,14 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   }
 
   //POSTQUERY del Evento
-  postQueryEvent(eventTpId: string, salesStatusId: string, address: string) {
+  postQueryEvent(
+    eventTpId: string,
+    salesStatusId: string,
+    address: string,
+    failDate: string,
+    closeDate: string,
+    notifyDate: string | Date
+  ) {
     const paramsF = new FilterParams();
     paramsF.addFilter('id', eventTpId);
     this.comerTpEventsService.getAllComerTpEvent(paramsF.getParams()).subscribe(
@@ -462,8 +503,44 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     );
 
     //Parte final del postquery
-    this.dateMaxWarranty.setValue(new Date()); //TODO: Hay que corregir según un endpoint
-    this.dateMaxPayment.setValue(new Date()); //TODO: Hay que corregir según un endpoint
+    const modelWarranty: IGraceDate = {
+      param: 'GCE',
+      typeEvent: eventTpId,
+      address: address,
+      closeEventDate: closeDate,
+      faildDate: failDate,
+      notificationDate: notifyDate != null ? notifyDate.toString() : notifyDate,
+    };
+
+    const modelPayment: IGraceDate = {
+      param: 'LIQE',
+      typeEvent: eventTpId,
+      address: address,
+      closeEventDate: closeDate,
+      faildDate: failDate,
+      notificationDate: notifyDate != null ? notifyDate.toString() : notifyDate,
+    };
+
+    this.comerEventosService.pufGraceDate(modelWarranty).subscribe(
+      res => {
+        console.log(res);
+        this.dateMaxWarranty.setValue(new Date(this.correctDate(res.fecha_habil)));
+      },
+      err => {
+        console.log(err);
+      }
+    );
+
+    this.comerEventosService.pufGraceDate(modelPayment).subscribe(
+      res => {
+        console.log(res);
+        this.dateMaxPayment.setValue(new Date(this.correctDate(res.fecha_habil))); //TODO: Hay que corregir según un endpoint
+      },
+      err => {
+        console.log(err);
+      }
+    );
+
 
     //TODO: Falta endpoint de insert
   }
@@ -667,7 +744,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
   selectRowClientEvent(e: any) {
     console.log(e.data);
     this.loadingCustomerBanks = true;
-    this.idClientCustomer = e.data.ClientId
+    this.idClientCustomer = e.data.ClientId;
     this.getPaymentByCustomer(e.data.ClientId, e.data.EventId);
   }
 
@@ -714,10 +791,10 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
     this.comerLotsService.getSumLotComerPayRef(model).subscribe(
       res => {
         console.log(res);
-        this.loadingValidAmount = false;
         this.formCustomerBanks
-          .get('validAmount')
-          .setValue(res.data[0].suma_total);
+        .get('validAmount')
+        .setValue(res.data[0].suma_total);
+        this.loadingValidAmount = false;
       },
       err => {
         console.log(err);
@@ -745,6 +822,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE PAGOS RECIBIDOS EN EL BANCO POR LOTE
   getLotsBanks(idLote: string) {
+    this.loadingLotBanks = true
     const paramsF = new FilterParams();
     paramsF.addFilter('SystemValid', 'R,D,B', SearchFilter.NOTIN);
     paramsF.addFilter('BatchID', idLote);
@@ -766,6 +844,7 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //DATOS DE COMPOSICIÓN DE PAGOS RECIBIDOS POR LOTE
   getPaymentLots(lotId: string) {
+    this.loadingPaymentLots = true
     const paramsF = new FilterParams();
     paramsF.addFilter('lotId', lotId);
     this.spentService.getAllComerPagosRef(paramsF.getParams()).subscribe(
@@ -992,20 +1071,25 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Abrir modal de Pagos
   async unbundlePayments() {
-    const dataModel = await this.unbundlePaymentsFn();
-    let modalConfig = MODAL_CONFIG;
-    modalConfig = {
-      initialState: {
-        dataModel,
-        callback: (e: any) => {
-          console.log(e);
+    if(this.dataBatch != null){
+      const dataModel = await this.unbundlePaymentsFn();
+      let modalConfig = MODAL_CONFIG;
+      modalConfig = {
+        initialState: {
+          dataModel,
+          callback: (e: any) => {
+            console.log(e);
+          },
         },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-
-    this.modalService.show(ComerPaymentVirtComponent, modalConfig);
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      };
+  
+      this.modalService.show(ComerPaymentVirtComponent, modalConfig);
+    }else{
+      this.alert('warning','Debe Seleccionar un Pago Recibido en el Banco por Cliente','')
+    }
+    
   }
 
   //Enviar a SIRSAE
@@ -1057,108 +1141,164 @@ export class DispersionPaymentComponent extends BasePage implements OnInit {
 
   //Reprocesar Dispersión
   reprocessScattering() {
-    if(this.id_tipo_disp != null){
+    if (this.id_tipo_disp != null) {
       let c_message = [1, 3].includes(this.id_tipo_disp)
-      ? '¿Desea Ejecutar el Reproceso de Clientes?'
-      : '¿Desea Ejecutar el Reproceso de Lotes?';
+        ? '¿Desea Ejecutar el Reproceso de Clientes?'
+        : '¿Desea Ejecutar el Reproceso de Lotes?';
 
-      this.alertQuestion('question',c_message,'','Ejecutar').then(
-        q => {
-          if(q.isConfirmed){
-            //TODO: PUP_PROC_REPROC
-          }
+      this.alertQuestion('question', c_message, '', 'Ejecutar').then(q => {
+        if (q.isConfirmed) {
+          //TODO: PUP_PROC_REPROC
         }
-      )
-    }else{
-      const element = document.getElementById('event')
-      console.log(element)
-      if(element){
-        element.scrollIntoView({block: "center", behavior: 'smooth'})
-        this.event.markAsTouched()
+      });
+    } else {
+      const element = document.getElementById('event');
+      console.log(element);
+      if (element) {
+        element.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        this.event.markAsTouched();
       }
-    }    
+    }
   }
 
   //Propuesta de Dispersión
-  proposalScattering(){
-    this.alertQuestion('question','¿Desea Ejecutar el Proceso de Propuesta?','','Ejecutar').then(
-      q => {
-        if(q.isConfirmed){
-          const model: IPupProcSeldisp = {
-            saleStatusId: this.statusVtaId,
-            typeDispId: this.id_tipo_disp,
-            totalAmount: '',
-            totalClient: '',
-            comerClientXEventsEventId: this.event.value,
-            dateGraceLiq: ''
-          }
-        }
+  proposalScattering() {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Propuesta?',
+      '',
+      'Ejecutar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        const model: IPupProcSeldisp = {
+          saleStatusId: this.statusVtaId,
+          typeDispId: this.id_tipo_disp,
+          totalAmount: '',
+          totalClient: '',
+          comerClientXEventsEventId: this.event.value,
+          dateGraceLiq: '',
+        };
       }
-    )
+    });
   }
 
   //Propuesta de envío a SIRSAE
-  proposalSendSirsae(){
-    this.alertQuestion('question','¿Desea Ejecutar el Proceso de Propuesta?','','Ejecutar').then(
-      q => {
-        if(q.isConfirmed){
-          //TODO: PUP_PROC_SELSIRSAE
-        }
+  proposalSendSirsae() {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Propuesta?',
+      '',
+      'Ejecutar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        //TODO: PUP_PROC_SELSIRSAE
       }
-    )
+    });
   }
 
   //Propuesta de Reproceso
-  proposalReprocess(){
-    this.alertQuestion('question','¿Desea Ejecutar el Proceso de Propuesta?','','Ejecutar').then(
-      q => {
-        if(q.isConfirmed){
-          //TODO: PUP_PROC_SELREPROCESO
-        }
+  proposalReprocess() {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Propuesta?',
+      '',
+      'Ejecutar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        //TODO: PUP_PROC_SELREPROCESO
       }
-    )
+    });
   }
 
   //Pagos SIRSAE
-  sirsaePayment(){
-    let modalConfig = MODAL_CONFIG
+  sirsaePayment() {
+    let modalConfig = MODAL_CONFIG;
     modalConfig = {
-      initialState:{
-        idEvent: this.event.value
+      initialState: {
+        idEvent: this.event.value,
       },
       class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-    }
+      ignoreBackdropClick: true,
+    };
 
-    this.modalService.show(CanPagosCabComponent, modalConfig)
+    this.modalService.show(CanPagosCabComponent, modalConfig);
   }
 
   //Garantías y LCs
-  warrantyLcs(){
-    let modalConfig = MODAL_CONFIG
-    modalConfig = {
-      initialState:{
-        idEvent: this.event.value
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true
-    }
-
-    this.modalService.show(CanLcsWarrantyComponent, modalConfig)
-  }
-
-
-  //Usuario Distribución
-  distributionUser(){
-    let modalConfig = MODAL_CONFIG
+  warrantyLcs() {
+    let modalConfig = MODAL_CONFIG;
     modalConfig = {
       initialState: {
-        
+        idEvent: this.event.value,
       },
       class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true
-    }
+      ignoreBackdropClick: true,
+    };
 
-    this.modalService.show(CanRelusuComponent, modalConfig)
+    this.modalService.show(CanLcsWarrantyComponent, modalConfig);
+  }
+
+  //Usuario Distribución
+  distributionUser() {
+    let modalConfig = MODAL_CONFIG;
+    modalConfig = {
+      initialState: {},
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+
+    this.modalService.show(CanRelusuComponent, modalConfig);
+  }
+
+  //Actualizar No de OIs
+  updateNumberOis() {
+    this.alertQuestion(
+      'question',
+      '¿Desea Ejecutar el Proceso de Actualización de Números de Órdenes de Ingreso?',
+      '',
+      'Ejecutar'
+    ).then(q => {
+      if (q.isConfirmed) {
+        let body: ISendSirsaeLot = {};
+        //TODO
+        this.interfaceSirsaeService.sendSirsaeLot(body).subscribe(
+          res => {
+            console.log(res);
+          },
+          err => {
+            console.log(err);
+            this.alert('error', 'Se Presentó un Error Inesperado', '');
+          }
+        );
+      }
+    });
+  }
+
+  //Cargar pagos
+  chargePayments() {
+    localStorage.setItem('eventId_dispersion', this.event.value);
+    this.router.navigate(['/pages/commercialization/referenced-payment/M'], {
+      queryParams: { origin: 'FCOMER_MTODISP' },
+    });
+  }
+
+  //PRUEBA MAND
+  testSend() {
+    //TODO: PUP_VALIDA_MANDATO_NFAC
+    if (this.event.value != null && this.id_tipo_disp != null) {
+      const model: IPupValidateMandatoNfac = {
+        id_tipo_disp: this.id_tipo_disp,
+        id_evento: this.event.value,
+      };
+
+      this.comerLotsService.pupValidaMandatoNfac(model).subscribe(
+        res => {
+          console.log(res);
+        },
+        err => {
+          console.log(err);
+        }
+      );
+    }
   }
 }

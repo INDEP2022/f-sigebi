@@ -5,7 +5,7 @@ import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.i
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPupProcSeldisp } from './models-lots';
+import { IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -342,5 +342,9 @@ export class LotService extends HttpService {
   //get-lot-comer-ref-guarentee
   getLotComerRefGuarentee(params?: string){
     return this.get('apps/get-lot-comer-ref-guarantee', params)
+  }
+
+  pupValidaMandatoNfac(body: IPupValidateMandatoNfac){
+    return this.post('apps/pup-valida-mandato-to-nfac', body)
   }
 }

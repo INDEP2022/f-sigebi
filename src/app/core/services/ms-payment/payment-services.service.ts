@@ -25,8 +25,16 @@ export class PaymentService extends HttpService {
     return this.get(`comer-reldis-disp`, params);
   }
 
-  updateComerReldisDisp(body:  IComerReldisDisp){
-    return this.put(`comer-reldis-disp`, body)
+  updateComerReldisDisp(id: string, body:  IComerReldisDisp){
+    return this.put(`comer-reldis-disp/${id}`, body)
+  }
+
+  deleteComerReldisDisp(id: string){
+    return this.delete(`comer-reldis-disp/${id}`)
+  }
+
+  postComerReldisDiso(body: IComerReldisDisp){
+    return this.post(`comer-reldis-disp`, body)
   }
 
   createHeader(params: any) {
