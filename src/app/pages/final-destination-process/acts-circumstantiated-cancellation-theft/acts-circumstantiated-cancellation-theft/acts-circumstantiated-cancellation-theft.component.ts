@@ -102,7 +102,8 @@ import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scannin
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -518,7 +519,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -737,7 +738,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         parrafo1: next.parrafo1,
-        testigoOIC: next.comptrollerWitness,
+        // testigoOIC: next.comptrollerWitness,
+        testigoOIC: next.witness1,
         testigoTwo: next.witness1,
         testigoTree: next.witness2,
         // parrafo2: next.parrafo2,
@@ -1211,7 +1213,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       });
   }*/
 
-  cleanActa() { }
+  cleanActa() {}
 
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1228,8 +1230,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1309,7 +1311,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         claveTrans: next.numTransfer,
         cveActa: next.keysProceedings,
         respConv: next.receiveBy,
-
 
         //mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
@@ -1661,9 +1662,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -1750,7 +1751,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1811,8 +1812,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
     }
-
-
 
     /* if (!this.dataRecepcion) {
        return;
@@ -1878,7 +1877,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
