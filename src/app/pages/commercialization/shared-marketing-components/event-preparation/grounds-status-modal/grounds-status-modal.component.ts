@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { ICatMotiveRev } from 'src/app/core/models/catalogs/cat-motive-rev';
 import { CatMotiveRevService } from 'src/app/core/services/catalogs/cat-motive-rev.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -46,7 +47,8 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private modalRef: BsModalRef,
-    private catMotiveRevService: CatMotiveRevService
+    private catMotiveRevService: CatMotiveRevService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
@@ -76,10 +78,7 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      reasons: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      reasons: [null],
     });
   }
   getMinPubAll(initialStatus: string, goodType: string) {
@@ -108,7 +107,11 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
     this.form.controls['file'].setValue(this.fileName);
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
-    // fileReader.onload = () => this.readExcel(fileReader.result);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    let data = this.excelService.getData(binaryExcel);
+    console.log(data);
   }
   pupWhereMotivos() {
     if (this.ESTATUS != null) {
@@ -122,7 +125,7 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
       console.log('Entra');
       let description: string = '';
       goodCheck.map((row: any) => {
-        description = description + row.row.descriptionReason;
+        description = description + ' / ' + row.row.descriptionReason;
 
         console.log(row);
       });
