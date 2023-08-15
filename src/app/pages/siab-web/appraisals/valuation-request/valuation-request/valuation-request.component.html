@@ -17,23 +17,22 @@
     <div>
       <form class="form-material" [formGroup]="form">
         <div class="row">
-          <div class="col-md-5">
+          <!-- <div class="col-md-5">
             <form-field [control]="form.get('event')" label="Evento">
               <input type="text" class="form-control" formControlName="event" />
             </form-field>
-          </div>
-          <div class="col-md-7">
-            <form-field
-              [control]="form.get('cveService')"
-              label="Folios de oficios de Avalúos ">
-              <ng-select
-                addTagText="Agregar Elemento"
-                formControlName="cveService"
-                class="form-control scroll-line"
-                bindValue="value"
-                bindLabel="label"
-                [items]="listKeyOffice">
-              </ng-select>
+          </div> -->
+          <div class="col-md-12">
+            <form-field [control]="form.get('office')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getOffices($event)"
+                [data]="offices"
+                [form]="form"
+                bindLabel="cveJob"
+                label="Folios de oficios de Avalúos"
+                control="office">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -256,6 +255,7 @@
           </div>
           <!--  -->
 
+          <!--  -->
           <!-- Modal #1 -->
           <div
             style="border: 1px solid black; padding: 10px; border-radius: 20px">

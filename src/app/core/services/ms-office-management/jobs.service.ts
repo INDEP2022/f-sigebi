@@ -16,6 +16,14 @@ export class JobsService extends HttpService {
     return this.get<IListResponse<IJob>>('jobs', params);
   }
 
+  getAll(params: _Params) {
+    return this.get('comer-jobs', params);
+  }
+
+  postByFilters(body: any) {
+    return this.post('application/getOfficeAvaluo', body);
+  }
+
   getById(id: number | string) {
     return this.httpClient.get(
       `${environment.API_URL}officemanagement/api/v1/jobs/${id}`
