@@ -9,9 +9,9 @@ export interface IComerPaymentsRefVir {
 }
 
 export interface IComerReldisDisp {
-  user: string,
-  inddistance: number,
-  indsirsae: number,
-  numberRecord: number,
-  indlibpg: number
+  user: string;
+  inddistance: number;
+  indsirsae: number;
+  numberRecord: number;
+  indlibpg: number;
 }
