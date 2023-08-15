@@ -845,16 +845,17 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.stateConservationName = 'BUENO';
                     } else if (item.stateConservation == 2) {
                       item.stateConservationName = 'MALO';
-                    } else if (item.transferentDestiny == 1) {
-                      item.transferentDestiny = 'VENTA';
-                    } else if (item.transferentDestiny == 2) {
-                      item.transferentDestiny = 'DONACIÓN';
-                    } else if (item.transferentDestiny == 3) {
-                      item.transferentDestiny = 'DESTRUCCIÓN';
-                    } else if (item.transferentDestiny == 4) {
-                      item.transferentDestiny = 'ADMINISTRACIÓN';
                     }
-
+                    if (item.transferentDestiny == 1) {
+                      item.transferentDestinyName = 'VENTA';
+                    } else if (item.transferentDestiny == 2) {
+                      item.transferentDestinyName = 'DONACIÓN';
+                    } else if (item.transferentDestiny == 3) {
+                      item.transferentDestinyName = 'DESTRUCCIÓN';
+                    } else if (item.transferentDestiny == 4) {
+                      item.transferentDestinyName = 'ADMINISTRACIÓN';
+                    }
+                    console.log('formfg', item.transferentDestinyName);
                     //item.transferentDestiny = showDestinyTransferent;
                     this.goodData = item;
                     const form = this.fb.group({
@@ -877,11 +878,11 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       regionalDelegationNumber: [
                         item?.regionalDelegationNumber,
                       ],
-                      destiny: [item?.transferentDestiny],
+                      destiny: [item?.transferentDestinyName],
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
-
+                    console.log('form', form.value);
                     this.goodsTransportable.push(form);
                     this.formLoadingTrans = false;
                     this.showTransportable = true;
@@ -1034,21 +1035,22 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.physicalStatusName = 'BUENO';
                   } else if (item.physicalStatus == 2) {
                     item.physicalStatusName = 'MALO';
-                  }
-                  if (item.stateConservation == 1) {
+                  } else if (item.stateConservation == 1) {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
-                  } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
-                  } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
-                  } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
-                  } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
                   }
 
+                  if (item.transferentDestiny == 1) {
+                    item.transferentDestinyName = 'VENTA';
+                  } else if (item.transferentDestiny == 2) {
+                    item.transferentDestinyName = 'DONACIÓN';
+                  } else if (item.transferentDestiny == 3) {
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
+                  } else if (item.transferentDestiny == 4) {
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
+                  }
+                  console.log('datasfd', item.transferentDestinyName);
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1069,7 +1071,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     transferentDestiny: [item?.saeDestiny],
                     observations: [item?.observations],
-                    destiny: [item?.transferentDestiny],
+                    destiny: [item?.transferentDestinyName],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                   });
                   this.goodsGuards.push(form);
@@ -1122,14 +1124,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
-                  } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                  }
+
+                  if (item.transferentDestiny == 1) {
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1152,7 +1156,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                     observations: [item?.observations],
-                    destiny: [item?.transferentDestiny],
+                    destiny: [item?.transferentDestinyName],
 
                     transferentDestiny: [item?.saeDestiny],
                   });
@@ -1270,19 +1274,20 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.physicalStatusName = 'BUENO';
                   } else if (item.physicalStatus == 2) {
                     item.physicalStatusName = 'MALO';
-                  }
-                  if (item.stateConservation == 1) {
+                  } else if (item.stateConservation == 1) {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
-                  } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                  }
+
+                  if (item.transferentDestiny == 1) {
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1305,7 +1310,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                     observations: [item?.observations],
-                    destiny: [item?.transferentDestiny],
+                    destiny: [item?.transferentDestinyName],
                     transferentDestiny: [item?.saeDestiny],
                   });
                   this.goodsWarehouse.push(form);
@@ -1420,13 +1425,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
                   } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
