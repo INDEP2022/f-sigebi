@@ -70,7 +70,7 @@ export class MoreInformationComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
+          Validators.maxLength(1000),
         ],
       ],
       textoy: [
@@ -78,7 +78,7 @@ export class MoreInformationComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
+          Validators.maxLength(1000),
         ],
       ],
       textoz: [
@@ -86,7 +86,7 @@ export class MoreInformationComponent
         [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(4000),
+          Validators.maxLength(1000),
         ],
       ],
     });

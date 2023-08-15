@@ -7,3 +7,11 @@ export interface IComerPaymentsRefVir {
   amountGrief: number | string;
   numberRecord: number | string;
 }
+
+export interface IComerReldisDisp {
+  user: string,
+  inddistance: number,
+  indsirsae: number,
+  numberRecord: number,
+  indlibpg: number
+}
