@@ -492,7 +492,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
               if (this.docClarification === undefined) {
                 reject('Existe bienes con aclaracion');
                 this.onLoadToast(
-                  'info',
+                  'warning',
                   'Algunos bienes tienen o tuvieron aclaración'
                 );
               }

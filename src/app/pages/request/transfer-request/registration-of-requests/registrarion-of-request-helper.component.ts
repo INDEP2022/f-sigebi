@@ -115,16 +115,16 @@ export class RegistrationHelper extends BasePage {
     });
   }
 
-  getDocInai(id: string) {
+  getDocSolTrans(id: string) {
     return new Promise((resolve, reject) => {
       let body: any = {};
       body['xidSolicitud'] = id;
-      body['xTipoDocumento'] = 94;
+      body['xTipoDocumento'] = 90;
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
-          console.log('Documento INAI: ', resp.data[0]);
-          const inaiDoc = resp.data[0]?.xtipoDocumento;
-          resolve(inaiDoc);
+          console.log('Documento Sol Trans: ', resp.data[0]);
+          const solTrans = resp.data[0]?.xtipoDocumento;
+          resolve(solTrans);
         },
         error: error => {
           resolve(0);
@@ -155,18 +155,18 @@ export class RegistrationHelper extends BasePage {
     const lisDocument: any = await this.getDocument(idRequest);
 
     //Revisa si tiene caráctula inai
-    const inaiDoc: any = await this.getDocInai(idRequest);
-    console.log(inaiDoc);
+    const solTrans: any = await this.getDocSolTrans(idRequest);
+    console.log(solTrans);
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (inaiDoc != 94) {
-      console.log('No tiene caráctula');
+    } else if (solTrans != 90) {
+      console.log('No tiene Sol. Trans');
       this.message(
         'warning',
-        'Falta Carátula INAI',
+        'Falta Documento: Solicitud de Transferencia',
         'Se requiere subir el documento'
       );
       //validoOk = false;
