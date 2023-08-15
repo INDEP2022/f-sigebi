@@ -213,8 +213,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private usersService: UsersService,
     private notificationService: NotificationService,
     private documentsForDictumService: DocumentsForDictumService,
-    private activatedRoute: ActivatedRoute,
-
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -224,15 +223,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.consec = params['folioScan']
-          ? Number(params['folioScan'])
-          : null;
+        this.consec = params['folioScan'] ? Number(params['folioScan']) : null;
         this.fileNumber = params['expedient']
           ? Number(params['expedient'])
           : null;
-        this.type = params['acta']
-          ? Number(params['acta'])
-          : null;
+        this.type = params['acta'] ? Number(params['acta']) : null;
       });
     this.validPermisos = !this.validPermisos;
     this.settings = {
@@ -431,7 +426,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
     this.actaRecepttionForm.patchValue({
       type: this.type,
-    })
+    });
   }
 
   initForm() {
@@ -572,7 +567,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.causa = this.expedient.criminalCase;
         this.transfer = this.expedient.transferNumber;
 
-        console.log("this.expedient ", this.expedient);
+        console.log('this.expedient ', this.expedient);
 
         // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
 
@@ -595,7 +590,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('testigoTree')
           .setValue(this.expedient.indicatedName);
-        this.actaRecepttionForm
+        this.actaRecepttionForm;
         //  .get('testigoOIC')
         //.setValue(this.expedient.comptrollerWitness); // console.log(this.expedient);
         this.getGoodsByStatus(this.fileNumber);
@@ -763,9 +758,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.disabledBtnCerrar = true;
       }
 
-
-      // MAPEAR DATOS 
-      console.log("acta NEXT ", next);
+      // MAPEAR DATOS
+      console.log('acta NEXT ', next);
       this.actaRecepttionForm.patchValue({
         administra: next.approvedXAdmon,
         testigoOIC: next.comptrollerWitness,
@@ -781,7 +775,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         direccion: next.address,
         parrafo1: next.parrafo1,
         // testigoOIC: next.comptrollerWitness,
-        testigoOIC: next.witness1,
+        //testigoOIC: next.witness1,
         testigoTwo: next.witness1,
         testigoTree: next.witness2,
         // parrafo2: next.parrafo2,
@@ -1061,7 +1055,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
-    console.log("select RRR", this.selectedRow);
+    console.log('select RRR', this.selectedRow);
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -1266,7 +1260,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.dataRecepcionGood.load([]);
   }
 
-
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
       skipHeader: true,
@@ -1440,56 +1433,49 @@ export class ActsCircumstantiatedCancellationTheftComponent
       ) {
         null;
       } else {
-        this.alertQuestion('question', '¿Seguro que Desea Realizar el Cierre de esta Acta?', '').then(
-          async question => {
-            if (question.isConfirmed) {
-              // await this.createDET();
-              this.actasDefault.statusProceedings = 'CERRADA';
-              delete this.actasDefault.numDelegation1Description;
-              delete this.actasDefault.numDelegation2Description;
-              delete this.actasDefault.numTransfer_;
-              this.proceedingsDeliveryReceptionService
-                .editProceeding(this.actasDefault.id, this.actasDefault)
-                .subscribe({
-                  next: async data => {
-                    this.loading = false;
-                    console.log(data);
-                    let obj = {
-                      pActaNumber: this.actasDefault.id,
-                      pStatusActa: 'CERRADA',
-                      pVcScreen: 'FACTCIRCUNR_0001',
-                      pUser:
-                        this.authService.decodeToken().preferred_username,
-                    };
+        this.alertQuestion(
+          'question',
+          '¿Seguro que Desea Realizar el Cierre de esta Acta?',
+          ''
+        ).then(async question => {
+          if (question.isConfirmed) {
+            // await this.createDET();
+            this.actasDefault.statusProceedings = 'CERRADA';
+            delete this.actasDefault.numDelegation1Description;
+            delete this.actasDefault.numDelegation2Description;
+            delete this.actasDefault.numTransfer_;
+            this.proceedingsDeliveryReceptionService
+              .editProceeding(this.actasDefault.id, this.actasDefault)
+              .subscribe({
+                next: async data => {
+                  this.loading = false;
+                  console.log(data);
+                  let obj = {
+                    pActaNumber: this.actasDefault.id,
+                    pStatusActa: 'CERRADA',
+                    pVcScreen: 'FACTCIRCUNR_0001',
+                    pUser: this.authService.decodeToken().preferred_username,
+                  };
 
-                    await this.updateGoodEInsertHistoric(obj);
+                  await this.updateGoodEInsertHistoric(obj);
 
-                    this.alertInfo(
-                      'success',
-                      'El Acta Ha Sido Cerrada',
-                      ''
-                    );
-                    this.alert('success', 'Acta Cerrada', '');
-                    this.disabledBtnCerrar = false;
-                    this.disabledBtnActas = false;
-                    this.getGoodsByStatus(this.fileNumber);
-                    await this.getDetailProceedingsDevollution(
-                      this.actasDefault.id
-                    );
-                    // this.initForm();
-                  },
-                  error: error => {
-                    this.alert(
-                      'error',
-                      'Ocurrió un Error al Cerrar el Acta',
-                      ''
-                    );
-                    // this.loading = false
-                  },
-                });
-            }
+                  this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
+                  this.alert('success', 'Acta Cerrada', '');
+                  this.disabledBtnCerrar = false;
+                  this.disabledBtnActas = false;
+                  this.getGoodsByStatus(this.fileNumber);
+                  await this.getDetailProceedingsDevollution(
+                    this.actasDefault.id
+                  );
+                  // this.initForm();
+                },
+                error: error => {
+                  this.alert('error', 'Ocurrió un Error al Cerrar el Acta', '');
+                  // this.loading = false
+                },
+              });
           }
-        );
+        });
       }
     } else {
       this.alert(
