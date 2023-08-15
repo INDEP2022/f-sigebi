@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 
 export const WINNERS_REPORT_COLUMNS = {
   id_evento: {
-    title: 'ID Evento',
+    title: 'Id Evento',
     sort: false,
   },
   lote: {
@@ -18,7 +18,7 @@ export const WINNERS_REPORT_COLUMNS = {
     sort: false,
   },
   fecha_pago: {
-    title: 'Fecha pago',
+    title: 'Fecha Pago',
     sort: false,
     valuePrepareFunction: (fecha_pago: string) => {
       const datePipe = new DatePipe('en-US');
@@ -35,7 +35,7 @@ export const WINNERS_REPORT_COLUMNS = {
     sort: false,
   },
   id_cliente: {
-    title: 'ID Cliente',
+    title: 'Id Cliente',
     sort: false,
   },
   cliente: {
@@ -67,7 +67,7 @@ export const WINNERS_REPORT_COLUMNS = {
     sort: false,
   },
   cuenta_cheques: {
-    title: 'Cuenta de cheques',
+    title: 'Cuenta de Cheques',
     sort: false,
   },
 };
