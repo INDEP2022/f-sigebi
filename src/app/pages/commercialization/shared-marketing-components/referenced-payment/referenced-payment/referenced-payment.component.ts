@@ -9,7 +9,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
@@ -93,7 +93,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private comerDetailsService: ComerDetailsService,
     private msMassivecapturelineService: MsMassivecapturelineService,
     private elementRef: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -116,11 +117,17 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_CARGADOS },
     };
   }
-
+  backVal: boolean = false;
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params: any) => {
+      if (params?.origin == 'FCOMER_MTODISP') {
+        this.backVal = true;
+      }
+    });
     this.route.paramMap.subscribe(params => {
+      console.log('OPARAS', params);
+
       if (params.get('goodType')) {
-        console.log(params.get('goodType'));
         this.layout = params.get('goodType');
       }
     });
@@ -980,5 +987,10 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPayments('no'));
+  }
+  goBack() {
+    this.router.navigateByUrl(
+      '/pages/commercialization/payment-dispersion-monitor'
+    );
   }
 }

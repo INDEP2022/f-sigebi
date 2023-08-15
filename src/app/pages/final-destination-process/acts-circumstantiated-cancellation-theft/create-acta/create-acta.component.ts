@@ -175,9 +175,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     });
   }
 
-
   consultREG_TRANSFERENTES(lparams: ListParams) {
-
     console.log('LPARAMS - ', lparams);
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
@@ -229,7 +227,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
-
 
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
@@ -314,7 +311,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
       numDelegation_1: null,
       numDelegation_2: null,
       file: this.fileNumber,
-
     };
     this.proceedingsDeliveryReceptionService
       .createDeliveryReception(obj)
