@@ -1,11 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { CapturelineService } from 'src/app/core/services/ms-capture-line/captureline.service';
+import { ComerGoodsXLotService } from 'src/app/core/services/ms-comersale/comer-goods-x-lot.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WINNERS_REPORT_COLUMNS } from './winners-report-columns';
 
 @Component({
@@ -17,16 +23,29 @@ export class winnersReportComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup([]);
   showWinners = false;
   showNotWinners = false;
+  showReport = false;
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-
+  jsonToCsv: any[] = [];
   columns: any[] = [];
   totalItems: number = 0;
+  totalItems1: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  evento = new DefaultSelect();
+  loserr: any[] = [];
+  winnerr: any[] = [];
+  data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+  @Output() selectEvent = new EventEmitter();
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private event: CapturelineService,
+    private loser: ComerGoodsXLotService,
+    private winner: LotService,
+    private excelService: ExcelService
   ) {
     super();
     this.settings = {
@@ -38,7 +57,14 @@ export class winnersReportComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getPagination();
+    this.getEvent(new ListParams());
+
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLoser());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getWinner());
   }
 
   private prepareForm() {
@@ -47,28 +73,15 @@ export class winnersReportComponent extends BasePage implements OnInit {
     });
   }
 
-  data = [
-    {
-      idEvent: 564,
-      allotment: 987,
-      reference: 'Referencia 465',
-      amount: '$100,515.00',
-      payDate: '21/05/2015',
-      cveBank: 323213,
-      bill: 987,
-      idClient: 3213,
-      client: 'Manuel',
-      rfc: 'XXXX0000',
-      tel: '272-102-65-45',
-      email: 'emai@hotmail.com',
-      clabe: '1321313123131132',
-      bank: 'Banamex',
-      branchOffice: 101,
-      checkAccount: 65461,
-    },
-  ];
+  openPrevCSV() {
+    const event = this.form.get('event').value;
 
-  openPrevPdf() {
+    if (!event) {
+      this.alert('info', 'Es necesario contar con el Evento', '');
+    } else {
+      const params = {};
+    }
+
     let config: ModalOptions = {
       initialState: {
         documento: {
@@ -83,8 +96,188 @@ export class winnersReportComponent extends BasePage implements OnInit {
     this.modalService.show(PreviewDocumentsComponent, config);
   }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  getEvent(params: ListParams) {
+    const val = this.form.get('event').value;
+    console.log(val);
+    if (val === null) {
+      if (params['search']) {
+        params['eventId'] = params['search'];
+      } else {
+        delete params['eventId'];
+      }
+    } else {
+      params['eventId'] = val;
+    }
+    console.log(params);
+
+    this.event.getAllAdminCaptureLine(params).subscribe({
+      next: resp => {
+        this.evento = new DefaultSelect(resp.data, resp.count);
+        console.log(this.evento);
+      },
+    });
+  }
+
+  getLoser() {
+    this.loading = true;
+    this.loserr = [];
+    let params = {
+      ...this.params1.getValue(),
+    };
+    let body = {
+      idEventIn: Number(this.form.get('event').value),
+    };
+
+    this.loser.getpaREportLoser(body, params).subscribe({
+      next: resp => {
+        console.log(resp);
+        if (resp.data.length === 0) {
+          this.alert(
+            'error',
+            'No existe Reporte con el Evento Seleccionado',
+            ''
+          );
+          return;
+        }
+        this.loserr = resp.data;
+        this.data1.load(resp.data);
+        this.data1.refresh();
+        this.loading = false;
+        this.totalItems1 = resp.count;
+        console.log(this.totalItems1);
+        this.showReport = true;
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  getWinner() {
+    this.loading = true;
+    this.winnerr = [];
+    let params = {
+      ...this.params.getValue(),
+    };
+    this.winner.lotApp(this.form.get('event').value, params).subscribe({
+      next: resp => {
+        console.log(resp);
+        this.winnerr = resp.data;
+        this.data.load(resp.data);
+        this.data.refresh();
+        this.totalItems = resp.count;
+        this.loading = false;
+        this.showWinners = true;
+      },
+      error: err => {
+        console.log(err);
+        this.alert('error', 'No existe Reporte con el Evento Seleccionado', '');
+      },
+    });
+  }
+
+  async exportarLoser() {
+    if (this.data1.count() == 0) {
+      this.alert('warning', 'No hay Bienes en la Tabla', '');
+      return;
+    }
+    const filename: string = 'Reporte No Ganadores';
+    const jsonToCsv: any = await this.returnJsonToCsv();
+    let arr: any = [];
+    let result = jsonToCsv.map((item: any) => {
+      let obj = {
+        NO_EVENTO: item.id_evento,
+        LOTE: item.lote,
+        REFERENCIA: item.referencia,
+        MONTO: item.monto,
+        FECHA_PAGO: item.fecha_pago,
+        CLAVE_BANCO: item.cve_banco,
+        CUENTA: item.cuenta,
+        ID_CLIENTE: item.id_cliente,
+        CLIENTE: item.cliente,
+        RFC: item.rfc,
+        TELEFONO: item.telefono,
+        CORREO: item.correoweb,
+        CLABE_INTERBANCARIA: item.clabe_interbancaria,
+        BANCO: item.banco,
+        SUCURSAL: item.sucursal,
+        CUENTA_CHEQUES: item.cuenta_cheques,
+      };
+      arr.push(obj);
+    });
+    Promise.all(result).then(item => {
+      console.log('jsonToCsv', jsonToCsv);
+      this.jsonToCsv = arr;
+      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    });
+  }
+
+  async returnJsonToCsv() {
+    return this.data1.getAll();
+    this.data1.getAll().then(resp => {
+      let arr: any = [];
+      let result = resp.map((item: any) => {
+        arr.push(item);
+      });
+      return arr;
+    });
+  }
+
+  async exportarWinner() {
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Bienes en la Tabla', '');
+      return;
+    }
+    const filename: string = 'Reporte Ganadores';
+    const jsonToCsv: any = await this.returnJsonToCsv1();
+    let arr: any = [];
+    let result = jsonToCsv.map((item: any) => {
+      let obj = {
+        NO_EVENTO: item.id_evento,
+        LOTE: item.lote,
+        REFERENCIA: item.referencia,
+        MONTO: item.monto,
+        FECHA_PAGO: item.fecha_pago,
+        CLAVE_BANCO: item.cve_banco,
+        CUENTA: item.cuenta,
+        ID_CLIENTE: item.id_cliente,
+        CLIENTE: item.cliente,
+        RFC: item.rfc,
+        TELEFONO: item.telefono,
+        CORREO: item.correoweb,
+        CLABE_INTERBANCARIA: item.clabe_interbancaria,
+        BANCO: item.banco,
+        SUCURSAL: item.sucursal,
+        CUENTA_CHEQUES: item.cuenta_cheques,
+      };
+      arr.push(obj);
+    });
+    Promise.all(result).then(item => {
+      console.log('jsonToCsv', jsonToCsv);
+      this.jsonToCsv = arr;
+      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+    });
+  }
+
+  async returnJsonToCsv1() {
+    return this.data.getAll();
+    this.data.getAll().then(resp => {
+      let arr: any = [];
+      let result = resp.map((item: any) => {
+        arr.push(item);
+      });
+      return arr;
+    });
+  }
+
+  clean() {
+    this.showReport = false;
+    this.showWinners = false;
+    this.data.load([]);
+    this.data1.load([]);
+    this.form.get('event').setValue(null);
+
+    // Llamar a getEvent sin el filtro
+    this.getEvent({});
   }
 }
