@@ -191,6 +191,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   search() {
+    let LV_MSG_PROCESO: string;
+    let LV_EST_PROCESO: number;
+    let LV_TOTREG: number;
+
+    if (this.searchForm.get('searchType').value == 5) {
+      this.searchForm.get('bank');
+    } else {
+    }
     this.getTableData();
   }
 

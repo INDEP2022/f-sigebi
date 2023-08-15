@@ -17,4 +17,6 @@ export enum UserEndpoints {
 
   IndUserNoInd = 'ind-user/noind',
   FaValUserInd = 'seg-users/fa-val-user-ind',
+  GetText = 'seg-users/getText',
+  GetUserOt = 'seg-users/getuserOt',
 }

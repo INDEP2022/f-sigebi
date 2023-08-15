@@ -1,13 +1,27 @@
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
+
 export const HISTORICAL_GOOD_SITUATION_COLUMNS = {
   descripcion: {
     title: 'Situación',
     sort: false,
-    valuePrepareFunction: (value: string) => value ?? 'Estatus no habilitado',
+    // valuePrepareFunction: (value: string) => value ?? 'Estatus no habilitado',
   },
   fec_cambio: {
     title: 'Fecha Cambio',
     sort: false,
     valuePrepareFunction: (value: string) => formatDate(value),
+    filter: {
+      type: 'custom',
+      component: CustomDateFilterComponent,
+    },
+    filterFunction(cell?: any, search?: string): boolean {
+      let column = cell;
+      if (column?.toUpperCase() >= search.toUpperCase() || search === '') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   usuario_cambio: {
     title: 'Usuario',
