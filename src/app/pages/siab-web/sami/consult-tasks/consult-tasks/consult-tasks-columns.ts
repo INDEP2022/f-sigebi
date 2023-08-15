@@ -86,6 +86,11 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  programmingId: {
+    title: 'No. Programación',
+    type: 'number',
+    sort: false,
+  },
   activitydescription: {
     title: 'Nombre de la Actividad',
     type: 'string',
@@ -133,12 +138,6 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },*/
-
-  programmingId: {
-    title: 'No. Programación',
-    type: 'string',
-    sort: false,
-  },
 
   instanceId: {
     title: 'No. Instancia',

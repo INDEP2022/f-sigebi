@@ -1,11 +1,12 @@
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IPupProcSeldisp } from './models-lots';
+import { IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -61,6 +62,10 @@ export class LotService extends HttpService {
 
   eventValDesc(eventId: string | number) {
     return this.get('apps/comer-bases-valdesc-when-button-pressed/' + eventId);
+  }
+
+  lotApp(id: any, params: ListParams): Observable<IListResponse<any>> {
+    return this.get('apps/query-winners-report/' + id, params);
   }
 
   updateMandate(body: {
@@ -342,5 +347,14 @@ export class LotService extends HttpService {
   //pup-proc-seldisp
   pupProcSeldisp(body: IPupProcSeldisp) {
     return this.post<any>('apps/pup-proc-seldisp', body);
+  }
+
+  //get-lot-comer-ref-guarentee
+  getLotComerRefGuarentee(params?: string) {
+    return this.get('apps/get-lot-comer-ref-guarantee', params);
+  }
+
+  pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
+    return this.post('apps/pup-valida-mandato-to-nfac', body);
   }
 }

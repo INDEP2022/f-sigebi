@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGenerateClave } from '../../models/ms-security/generate-clave-model';
@@ -22,5 +23,8 @@ export class GenerateCveService extends HttpService {
 
   getAccountBank(id: string | number): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(`${this.apiAccountBank}/${id}`);
+  }
+  postSpUserAppraisal(body: Object, params: ListParams) {
+    return this.post('application/spUserAppraisal', body, params);
   }
 }

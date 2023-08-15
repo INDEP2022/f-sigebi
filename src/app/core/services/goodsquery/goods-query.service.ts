@@ -212,12 +212,16 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
-  getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
-    const route = `goodsquery/api/v1/views/cat-store-view`;
+  getCatStoresView(
+    _params: ListParams | string
+  ): Observable<IListResponse<any>> {
+    /*const route = `goodsquery/api/v1/views/cat-store-view`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<any>>(
       `${environment.API_URL}${route}?${params}`
-    );
+    );*/
+    const route = `views/cat-store-view`;
+    return this.get<IListResponse<any>>(`${route}`, _params);
   }
 
   getHistoryIndicatorsView(params: _Params) {
