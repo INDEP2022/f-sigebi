@@ -11,6 +11,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -79,6 +80,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings };
   title: string = 'PAGOS REFERENCIADOS';
   loading2: boolean = false;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -982,7 +984,9 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     }
   }
 
-  refresh() {
+  async refresh() {
+    await this.clearSubheaderFields();
+    this.searchWithEvent = false;
     this.form2.reset();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -992,5 +996,12 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     this.router.navigateByUrl(
       '/pages/commercialization/payment-dispersion-monitor'
     );
+  }
+
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
   }
 }
