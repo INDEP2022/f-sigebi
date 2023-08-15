@@ -19,11 +19,10 @@
               control="ofDictNumber">
             </ngx-select> -->
             <input
-              type="number"
+              type="text"
               readonly
               class="form-control"
               min="1"
-              [max-length]="15"
               formControlName="ofDictNumber" />
           </form-field>
         </div>
@@ -55,10 +54,10 @@
               control="proceedingsNumber">
             </ngx-select> -->
             <input
-              type="number"
+              required
+              type="text"
               class="form-control"
               min="1"
-              [max-length]="15"
               formControlName="proceedingsNumber" />
           </form-field>
         </div>
@@ -75,23 +74,21 @@
               control="id">
             </ngx-select> -->
             <input
-              type="number"
+              type="text"
               class="form-control"
               min="1"
-              [max-length]="15"
               formControlName="id" />
           </form-field>
         </div>
 
         <div class="col-md-12 mt-4">
           <form-field
-            label="Descripción (Max.1250 caracteres)"
+            label="Descripción"
             [control]="dictationXGoodForm.get('descriptionDict')">
             <input
               required
               type="text"
               class="form-control"
-              [max-length]="1250"
               formControlName="descriptionDict" />
           </form-field>
         </div>
@@ -101,9 +98,8 @@
             label="Cantidad"
             [control]="dictationXGoodForm.get('amountDict')">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              [max-length]="21"
               formControlName="amountDict" />
           </form-field>
         </div>

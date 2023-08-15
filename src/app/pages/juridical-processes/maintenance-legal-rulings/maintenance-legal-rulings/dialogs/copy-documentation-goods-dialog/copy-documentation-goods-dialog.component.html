@@ -19,9 +19,8 @@
               control="numberOfDicta"></ngx-select> -->
             <input
               readonly
-              type="number"
+              type="text"
               class="form-control"
-              [max-length]="15"
               formControlName="numberOfDicta" />
           </form-field>
         </div>
@@ -35,7 +34,6 @@
               required
               type="text"
               class="form-control"
-              [max-length]="15"
               formControlName="typeDictamination" />
           </form-field>
         </div>
@@ -47,7 +45,6 @@
             <input
               type="text"
               class="form-control"
-              [max-length]="15"
               formControlName="recipientCopy" />
           </form-field>
         </div>
@@ -57,9 +54,8 @@
             label="No. Destinatario Copia"
             [control]="copiesOfficialForm.get('copyDestinationNumber')">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              [max-length]="3"
               formControlName="copyDestinationNumber" />
           </form-field>
         </div>
@@ -72,7 +68,6 @@
               required
               type="text"
               class="form-control"
-              [max-length]="15"
               formControlName="personExtInt" />
           </form-field>
         </div>
@@ -84,7 +79,6 @@
             <input
               type="text"
               class="form-control"
-              [max-length]="45"
               formControlName="namePersonExt" />
           </form-field>
         </div>
