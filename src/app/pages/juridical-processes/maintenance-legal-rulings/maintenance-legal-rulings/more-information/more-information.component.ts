@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IJobDictumTexts } from 'src/app/core/models/ms-officemanagement/job-dictum-texts.model';
 import { JobDictumTextsService } from 'src/app/core/services/ms-office-management/job-dictum-texts.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -56,11 +56,39 @@ export class MoreInformationComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      dictatesNumber: [null, Validators.required],
-      rulingType: ['', Validators.required],
-      textx: [''],
-      textoy: ['', [Validators.pattern(STRING_PATTERN)]],
-      textoz: ['', [Validators.pattern(STRING_PATTERN)]],
+      dictatesNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      rulingType: ['', [Validators.required, Validators.maxLength(15)]],
+      textx: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1000),
+        ],
+      ],
+      textoy: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1000),
+        ],
+      ],
+      textoz: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(1000),
+        ],
+      ],
     });
   }
 

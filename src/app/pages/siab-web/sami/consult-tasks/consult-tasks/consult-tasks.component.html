@@ -52,9 +52,10 @@
                 [control]="consultTasksForm.get('State')"
                 label="Estatus">
                 <ng-select class="form-control" formControlName="State">
-                  <ng-option value="null">Asignados</ng-option>
+                  <ng-option value="PROCESO">En Proceso</ng-option>
                   <ng-option value="FINALIZADA">Finalizados</ng-option>
-                  <ng-option value="TODOS">Todos</ng-option>
+                  <ng-option value="null">Todos</ng-option>
+                  <!-- <ng-option value="TODOS">Todos</ng-option> -->
                 </ng-select>
               </form-field>
             </div>
@@ -218,7 +219,7 @@
             <div class="col-md-6">
               <form-field
                 [control]="consultTasksForm.get('txtNoMuestreoOrden')"
-                label="No. de Muestreo de Orden">
+                label="No. De Muestreo de Orden">
                 <input
                   type="number"
                   min="0"
@@ -371,7 +372,9 @@
     <div class="row">
       <div class="d-flex justify-content-end">
         <div class="m-3">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <app-columns-select
+            [defaultColumns]="11"
+            [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>

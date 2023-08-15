@@ -14,6 +14,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -169,7 +170,8 @@ export class SirsaeMovementSendingMainComponent
     private comerInvoiceService: ComerInvoiceService,
     private paymentService: PaymentService,
     private comerDetailsService: ComerDetailsService,
-    private lotService: LotService
+    private lotService: LotService,
+    private interfacesirsaeService: InterfacesirsaeService
   ) {
     super();
     this.settings = {
@@ -693,8 +695,8 @@ export class SirsaeMovementSendingMainComponent
         }
       });
     } else if (this.layout == 'I') {
-      if (!this.selectedBatch)
-        return this.alert('warning', 'Debe Seleccionar un Lote', '');
+      // if (!this.selectedBatch)
+      //   return this.alert('warning', 'Debe Seleccionar un Lote', '');
       this.loadingBtn = true;
       let obj = {
         eventId: this.eventSelected.id,
@@ -719,7 +721,20 @@ export class SirsaeMovementSendingMainComponent
         return;
       }
 
-      // ENVIA_LEE_SIRSAE(1, : BLK_CTRL.LOTE_PUBLICO);
+      let objSirsae: any = {
+        pMode: 1,
+        pLot: this.selectedBatch ? this.selectedBatch.lotId : null,
+        lotPublic: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        idEvent: this.eventSelected.id,
+      };
+      const sendReadSirsae: any = await this.ENVIA_LEE_SIRSAE(objSirsae);
+      if (!sendReadSirsae) {
+        this.alert('error', 'Ha Ocurrido un error al Enviar', '');
+        this.loadingBtn = false;
+        return;
+      } else {
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+      }
       this.loadingBtn = false;
     }
   }
@@ -760,12 +775,12 @@ export class SirsaeMovementSendingMainComponent
 
   async ENVIA_LEE_SIRSAE(body: any) {
     return new Promise((resolve, reject) => {
-      this.lotService.getLotbyEvent_(body).subscribe({
+      this.interfacesirsaeService.sendReadSirsae(body).subscribe({
         next: data => {
-          resolve(data.count);
+          resolve(data);
         },
         error: err => {
-          resolve(0);
+          resolve(null);
         },
       });
     });

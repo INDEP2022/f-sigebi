@@ -13,6 +13,7 @@ import { OficialDictationService } from 'src/app/core/services/ms-dictation/ofic
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -59,22 +60,79 @@ export class DocumentTradeComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      officialNumber: [null, Validators.required],
-      sender: ['', [Validators.pattern(STRING_PATTERN)]],
-      city: ['', [Validators.pattern(STRING_PATTERN)]],
-      text1: ['', [Validators.pattern(STRING_PATTERN)]],
-      text2: ['', [Validators.pattern(STRING_PATTERN)]],
-      text2To: ['', [Validators.pattern(STRING_PATTERN)]],
-      text3: ['', [Validators.pattern(STRING_PATTERN)]],
+      officialNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      sender: [
+        '',
+        [Validators.maxLength(15), Validators.pattern(STRING_PATTERN)],
+      ],
+      city: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(25)],
+      ],
+      text1: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+      ],
+      text2: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+      ],
+      text2To: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+      ],
+      text3: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(250)],
+      ],
       recipient: ['', [Validators.pattern(STRING_PATTERN)]],
-      delegacionRecipientNumber: '',
-      recipientDepartmentNumber: '',
-      statusOf: ['', [Validators.pattern(STRING_PATTERN)]],
-      typeDict: ['', [Validators.pattern(STRING_PATTERN), Validators.required]],
-      recipientEsxt: ['', [Validators.pattern(STRING_PATTERN)]],
-      desSenderPa: ['', [Validators.pattern(STRING_PATTERN)]],
-      notaryNumber: '',
-      cveChargeRem: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      delegacionRecipientNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), , Validators.maxLength(15)],
+      ],
+      recipientDepartmentNumber: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), , Validators.maxLength(25)],
+      ],
+      statusOf: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(25)],
+      ],
+      typeDict: [
+        '',
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+          Validators.maxLength(15),
+        ],
+      ],
+      recipientEsxt: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(15)],
+      ],
+      desSenderPa: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(20)],
+      ],
+      notaryNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      cveChargeRem: [
+        '',
+        [Validators.pattern(KEYGENERATION_PATTERN), Validators.maxLength(20)],
+      ],
     });
   }
 
@@ -94,6 +152,7 @@ export class DocumentTradeComponent
     console.log(this.form.value);
     this.officialDictationService.create(this.form.value).subscribe({
       next: data => {
+        console.log(data);
         this.alert(
           'success',
           'Se ha agregado la información correctamente',
@@ -101,7 +160,11 @@ export class DocumentTradeComponent
         );
       },
       error: err => {
-        this.alert('error', 'No se ha podido agregar la información', '');
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
       },
     });
   }
@@ -109,6 +172,7 @@ export class DocumentTradeComponent
   update() {
     this.officialDictationService.update(this.form.value).subscribe({
       next: data => {
+        console.log(data);
         this.alert(
           'success',
           'Se ha agregado la información correctamente',
@@ -116,7 +180,11 @@ export class DocumentTradeComponent
         );
       },
       error: err => {
-        this.alert('error', 'No se ha podido agregar la información', '');
+        this.onLoadToast(
+          'error',
+          ' Los Datos Ingresados son Incorrectos.',
+          `Por favor de Verificar`
+        );
       },
     });
   }
