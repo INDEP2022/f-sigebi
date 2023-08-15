@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IComerPaymentsRefVir } from './payment-service';
+import { IComerPaymentsRefVir, IComerReldisDisp } from './payment-service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +21,22 @@ export class PaymentService extends HttpService {
     return this.delete(`${PaymentEndPoints.ComerPaymentRef}/${id}`);
   }
 
-  getComerReldisDisp() {
-    return this.get(`comer-reldis-disp`);
+  getComerReldisDisp(params?: string) {
+    return this.get(`comer-reldis-disp`, params);
   }
+
+  updateComerReldisDisp(id: string, body:  IComerReldisDisp){
+    return this.put(`comer-reldis-disp/${id}`, body)
+  }
+
+  deleteComerReldisDisp(id: string){
+    return this.delete(`comer-reldis-disp/${id}`)
+  }
+
+  postComerReldisDiso(body: IComerReldisDisp){
+    return this.post(`comer-reldis-disp`, body)
+  }
+
   createHeader(params: any) {
     return this.post(PaymentEndPoints.CreateHeaderFcomer113, params);
   }

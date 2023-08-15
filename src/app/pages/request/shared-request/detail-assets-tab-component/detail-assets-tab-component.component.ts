@@ -1114,7 +1114,7 @@ export class DetailAssetsTabComponentComponent
       unity === 'CAJAS'
     ) {
       this.detailAssets.controls['quantity'].setValidators([
-        Validators.required,
+        //Validators.required,
         Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     } else if (
@@ -1126,10 +1126,15 @@ export class DetailAssetsTabComponentComponent
       unity === 'METRO CUADRADO'
     ) {
       this.detailAssets.controls['quantity'].setValidators([
-        Validators.required,
+        //Validators.required,
         Validators.pattern(DOUBLE_PATTERN),
       ]);
     }
+
+    if (this.typeOfRequest == 'PGR_SAE' || this.typeOfRequest == 'SAT_SAE') {
+      this.detailAssets.controls['quantity'].disable();
+    }
+
     this.detailAssets.updateValueAndValidity();
   }
 

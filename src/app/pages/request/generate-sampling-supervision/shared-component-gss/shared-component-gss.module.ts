@@ -11,6 +11,7 @@ import { AssetsFilterComponent } from './assets-filter/assets-filter.component';
 import { AssetsTabComponent } from './assets-tab/assets-tab.component';
 import { DeductivesComponent } from './deductives/deductives.component';
 import { DetailAnnexComponent } from './detail-annex/detail-annex.component';
+import { GssInputFieldComponent } from './gss-input-field/gss-input-field.component';
 import { NewDocumentFormComponent } from './new-document-form/new-document-form.component';
 import { SamplingDetailComponent } from './sampling-detail/sampling-detail.component';
 import { UploadExpedientFormComponent } from './upload-expedient-form/upload-expedient-form.component';
@@ -32,6 +33,7 @@ import { VerificationsComponent } from './verifications/verifications.component'
     VerificationsComponent,
     DetailAnnexComponent,
     UploadImgFieldModalComponent,
+    GssInputFieldComponent,
   ],
   exports: [
     AssetsFilterComponent,
