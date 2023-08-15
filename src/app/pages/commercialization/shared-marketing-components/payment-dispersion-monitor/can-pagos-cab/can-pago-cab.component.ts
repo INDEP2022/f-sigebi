@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
@@ -10,7 +11,6 @@ import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/come
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { BasePage } from 'src/app/core/shared';
 import { COLUMNS_DETALLE, COLUMNS_PAGOS } from './columns';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-can-pagos-cab',
@@ -41,7 +41,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
     columns: COLUMNS_DETALLE,
   };
 
-  idEvent: any = null
+  idEvent: any = null;
 
   constructor(
     private comerInvoiceService: ComerInvoiceService,
@@ -85,35 +85,35 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
     );
   }
 
-  selectComer(e: any){
-    console.log(e.data)
-    this.getDetailPayment(e.data.idIdentifier, e.data.idEvent)
+  selectComer(e: any) {
+    console.log(e.data);
+    this.getDetailPayment(e.data.idIdentifier, e.data.idEvent);
   }
 
   getDetailPayment(idIdentifier: string, idEvent: string) {
     this.loading2 = true;
 
-    const paramsF = new FilterParams()
-    paramsF.addFilter('id', idIdentifier)
-    paramsF.addFilter('eventId', idEvent)
+    const paramsF = new FilterParams();
+    paramsF.addFilter('id', idIdentifier);
+    paramsF.addFilter('eventId', idEvent);
 
     this.comerDetailsService.getComerDetails(paramsF.getParams()).subscribe(
-        res => {
-            console.log(res)
-            this.dataDetail.load(res.data)
-            this.totalItemsDetail = res.count
-            this.loading2 = false
-        },
-        err => {
-            console.log(err)
-            this.dataDetail.load([])
-            this.totalItemsDetail = 0
-            this.loading2 = false
-        }
-    )
+      res => {
+        console.log(res);
+        this.dataDetail.load(res.data);
+        this.totalItemsDetail = res.count;
+        this.loading2 = false;
+      },
+      err => {
+        console.log(err);
+        this.dataDetail.load([]);
+        this.totalItemsDetail = 0;
+        this.loading2 = false;
+      }
+    );
   }
 
-  close(){
-    this.bsModal.hide()
+  close() {
+    this.bsModal.hide();
   }
 }
