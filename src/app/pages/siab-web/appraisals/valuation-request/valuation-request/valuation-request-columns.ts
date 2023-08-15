@@ -1,9 +1,9 @@
 export const VALUATION_REQUEST_COLUMNS = {
-  noBien: {
+  bien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },

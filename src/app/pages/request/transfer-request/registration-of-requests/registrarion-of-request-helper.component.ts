@@ -170,7 +170,7 @@ export class RegistrationHelper extends BasePage {
         'Se requiere subir el documento'
       );
       //validoOk = false;
-    } else if (!lisDocument || lisDocument < 2) {
+    } else if (!lisDocument || lisDocument < 1) {
       this.message(
         'warning',
         'Falta Documento relacionado a la solicitud',
@@ -283,6 +283,7 @@ export class RegistrationHelper extends BasePage {
         let sinDescripcionT: boolean = false;
         let codigoFraccion: any = null;
         let faltaClasificacion: boolean = false;
+        let sinNoClasificador: boolean = false;
         // variables para validaci�n de atributos por tipo de bien LIRH 06/02/2021
         let tipoRelVehiculo: boolean = false;
         let tipoRelAeronave: boolean = false;
@@ -303,6 +304,16 @@ export class RegistrationHelper extends BasePage {
               'Todos los Bienes deben tener asociada una dirección o deben ser menajes'
             );
             break;
+          } else if (
+            good.goodClassNumber == 0 ||
+            good.goodClassNumber == null
+          ) {
+            sinNoClasificador = true;
+            this.message(
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'No se ha guardado la clasificación del bien'
+            );
           } else if (good.goodTypeId == null) {
             sinTipoRelevante = true;
             this.message(
@@ -774,6 +785,7 @@ export class RegistrationHelper extends BasePage {
           faltaClasificacion === false &&
           sinDireccion === false &&
           sinTipoRelevante === false &&
+          sinNoClasificador === false &&
           sinCantidad === false &&
           sinDestinoT === false &&
           sinUnidadM === false &&

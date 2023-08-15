@@ -22,8 +22,6 @@ export class OfficesSend {
   styles: [],
 })
 export class valuationRequestComponent extends BasePage implements OnInit {
-  //
-
   arrayResponseOffice: any[] = [];
   form: FormGroup;
   formTwo: FormGroup;
@@ -77,6 +75,15 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         this.offices = new DefaultSelect();
       },
     });
+  }
+  async getsContent() {
+    // this.loader.load = true;
+    // if (this.event == 0) {
+    //   this.event = this.form.controls['event'].value;
+    // }
+    // let type = await this.getType(this.event);
+    // console.log(type);
+    // this.tipo = type;
   }
 
   findDataTable(data: any) {
