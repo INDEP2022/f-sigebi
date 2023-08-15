@@ -106,34 +106,6 @@ export class NoticeOfAbandonmentByReturnComponent
         .getValue()
         .addFilter('goodId', this.form.value.goodId, SearchFilter.EQ);
     }
-    // if (this.form.value.quantity) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('quantity', this.form.value.quantity, SearchFilter.ILIKE);
-    // }
-    // if (this.form.value.periods) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('period', this.form.value.periods, SearchFilter.ILIKE);
-    // }
-
-    // if (this.form.value.periods) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('period1', this.form.value.periods, SearchFilter.ILIKE);
-    // }
-
-    // if (this.form.value.periods) {
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter('period2', this.form.value.periods, SearchFilter.ILIKE);
-    // }
-
-    // console.log(
-    //   'this.filterParams: ',
-    //   this.filterParams.getValue().getParams()
-    // );
-
     this.loading = true;
     this.loadingText = 'Cargando';
 
@@ -161,10 +133,17 @@ export class NoticeOfAbandonmentByReturnComponent
           this.dataArray = dataCreada;
           this.totalItems = response.data.length;
 
+          console.log(dataCreada);
+
           this.loading = false;
           this.searching = true;
         },
-        error: () => (this.loading = false),
+        error: error => {
+          console.log(error);
+          this.onLoadToast('error', 'Error', 'Este registro no existe');
+          this.clean();
+          this.loading = false;
+        },
       });
   }
 
@@ -285,21 +264,37 @@ export class NoticeOfAbandonmentByReturnComponent
     });
   }
 
+  formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   accept() {
+    let fecha1 = this.formatDate(this.dataArray[0].notificationDate);
+    let fecha2 = this.formatDate(this.dataArray[0].periodEndDate);
+    let fecha3 = this.formatDate(this.dataArray[0].editPublicationDate);
+
     let body = {
-      estatus: 'DE',
-      fec_notificacion: this.dataArray[0].notificationDate,
-      fec_termino_periodo: this.dataArray[0].periodEndDate,
-      fec_vencimiento_abandono: this.dataArray[0].editPublicationDate,
+      estatus: 'VXP',
+      fec_notificacion: fecha1 || '',
+      fec_termino_periodo: fecha2 || '',
+      fec_vencimiento_abandono: fecha3 || '',
       no_bien: Number(this.form.value.goodId),
       usuario: this.username,
-      vc_pantalla: 'Dato de tipo texto',
+      vc_pantalla: 'FACTREFACTAENTREC',
+      changeStatusProgram: 'FACTREFACTAERCIER',
     };
 
     const validacionStatus = this.dataArray.every((item: any) => {
       item.statusNotified === 'DE';
     });
+
     console.log('Body a enviar: ', body);
+
     if (this.dataArray.length < 2) {
       this.onLoadToast(
         'error',
@@ -309,14 +304,21 @@ export class NoticeOfAbandonmentByReturnComponent
     } else {
       this.notificacionAbandono.confirmarStatus(body).subscribe({
         next: data => {
+          console.log(data);
           this.onLoadToast(
             'success',
             'Guardado',
             'Registros actualizados exitosamente'
           );
+          this.clean();
         },
         error: error => {
-          this.onLoadToast('error', 'Error', 'Hubo un error en la consulta');
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Hubo un error actualizando la base de datos'
+          );
+          this.clean();
         },
       });
     }
