@@ -81,6 +81,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
     if (this.typeAnnex === 'commit-request') {
       this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.params.getValue().page = 1;
+        this.params.getValue().limit = 10;
+
         this.getUsers();
         this.TLPMessage();
       });
@@ -168,7 +171,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       'SolicitudProgramacion.DelegadosRegionales'
     );
     this.params.value.addFilter('employeetype', 'DR');*/
-
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalUserId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAllUsersWithRol(filter).subscribe({
       next: resp => {
