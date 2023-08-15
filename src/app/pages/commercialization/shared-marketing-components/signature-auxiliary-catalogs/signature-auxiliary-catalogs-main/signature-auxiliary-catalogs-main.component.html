@@ -150,9 +150,8 @@
                   id="eventTable"
                   [settings]="eventSettings"
                   [source]="dataTableEvent"
-                  (userRowSelect)="selectEvent($event)">
-                  <!-- 
-                  (edit)="editCommercializationEvent($event)" -->
+                  (userRowSelect)="selectEvent($event)"
+                  (delete)="deleteCommercializationEvent($event)">
                 </ng2-smart-table>
               </div>
               <div class="table-padding"></div>

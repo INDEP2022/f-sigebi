@@ -102,7 +102,8 @@ import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scannin
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -141,7 +142,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formTag: FormGroup;
   actaReception: IProceduremanagement;
   gTramite: IProceduremanagement[] = [];
-  statusCanc: string | number = '';
+  statusCanc: string = '';
   expedient: IExpedient;
   validateEx: boolean = true;
   wheelNumber: number = 0;
@@ -518,7 +519,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -557,15 +558,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('receive')
           .setValue(this.expedient.courtName);
-        this.actaRecepttionForm
-          .get('testigoTwo')
-          .setValue(this.expedient.indicatedName);
-        this.actaRecepttionForm
-          .get('testigoTree')
-          .setValue(this.expedient.indicatedName);
-        this.actaRecepttionForm
-          .get('testigoOIC')
-          .setValue(this.expedient.authorityOrdersDictum); // console.log(this.expedient);
 
         this.getGoodsByStatus(this.fileNumber);
       },
@@ -746,6 +738,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         parrafo1: next.parrafo1,
+        // testigoOIC: next.comptrollerWitness,
+        testigoOIC: next.witness1,
+        testigoTwo: next.witness1,
+        testigoTree: next.witness2,
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
@@ -1217,7 +1213,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       });
   }*/
 
-  cleanActa() { }
+  cleanActa() {}
 
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1234,8 +1230,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1261,6 +1257,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }*/
   }
   agregarActa() {
+    if (this.fileNumber == 0 || this.fileNumber == null) {
+      this.alertInfo(
+        'error',
+        'No se Puede Crear una Nueva Acta sin Selecccionar el Expediente',
+        ''
+      );
+      return;
+    }
     const responsable = this.actaRecepttionForm.get('respConv').value;
     const testigoTwo = this.actaRecepttionForm.get('testigoTwo').value;
     const testigoTree = this.actaRecepttionForm.get('testigoTree').value;
@@ -1307,7 +1311,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         claveTrans: next.numTransfer,
         cveActa: next.keysProceedings,
         respConv: next.receiveBy,
-
 
         //mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
@@ -1659,9 +1662,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -1748,7 +1751,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1772,32 +1775,29 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
   }
 
+  //ESCANEAR
   openScannerPage() {
-    if (!this.dataRecepcion) {
-      return;
-    }
     if (
-      this.dataRecepcion.statusProceedings == 'ENVIADO' &&
-      this.dataRecepcion.keysProceedings
+      !['CERRADO', 'CERRADA'].includes(this.statusCanc) &&
+      this.statusCanc != null
     ) {
       if (this.formScan.get('scanningFoli').value) {
         this.alertQuestion(
           'info',
-          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta. ¿Deseas continuar?',
+          'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta Abierta ¿Deseas continuar?',
           '',
           'Aceptar',
           'Cancelar'
         ).then(res => {
           console.log(res);
           if (res.isConfirmed) {
-            this.router.navigate(['/pages/general-processes/scan-documents'], {
+            this.router.navigate([`/pages/general-processes/scan-documents`], {
               queryParams: {
-                //origin: this.screenKey,
                 origin: 'FACTCIRCUNR_0001',
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
-                acta: this.formScan.get('type').value,
-                ...this.paramsScreen,
+                //acta: this.formScan.get('type').value,
+                //...this.paramsScreen,
               },
             });
           }
@@ -1812,6 +1812,46 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
     }
+
+    /* if (!this.dataRecepcion) {
+       return;
+     }
+     if (
+       this.dataRecepcion.statusProceedings == 'ENVIADO' &&
+       this.dataRecepcion.keysProceedings
+     ) {
+       if (this.formScan.get('scanningFoli').value) {
+         this.alertQuestion(
+           'info',
+           'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Acta. ¿Deseas continuar?',
+           '',
+           'Aceptar',
+           'Cancelar'
+         ).then(res => {
+           console.log(res);
+           if (res.isConfirmed) {
+             this.router.navigate(['/pages/general-processes/scan-documents'], {
+               queryParams: {
+                 //origin: this.screenKey,
+                 origin: 'FACTCIRCUNR_0001',
+                 folio: this.formScan.get('scanningFoli').value,
+                 expedient: this.fileNumber,
+                 acta: this.formScan.get('type').value,
+                 ...this.paramsScreen,
+               },
+             });
+           }
+         });
+       } else {
+         this.alertInfo('warning', 'No Existe Folio de Escaneo a Escanear', '');
+       }
+     } else {
+       this.alertInfo(
+         'warning',
+         'No se puede Escanear para un Acta que esté Cerrada',
+         ''
+       );
+     }*/
   }
 
   showMessageDigitalization() {
@@ -1837,7 +1877,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,

@@ -150,6 +150,13 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       columns: {
         ...GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
       },
+      rowClassFunction: (row: any) => {
+        if (row.data.cumplio == true) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
       noDataMessage: 'No se encontraron registros',
     };
   }
