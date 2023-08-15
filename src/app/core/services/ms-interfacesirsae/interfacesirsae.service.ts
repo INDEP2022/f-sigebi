@@ -40,4 +40,8 @@ export class InterfacesirsaeService extends HttpService {
   sendSirsae(body: ISendSirsae) {
     return this.post('sirsae/send-sirsae', body);
   }
+
+  sendReadSirsae(body: any) {
+    return this.post('sirsae/sendReadSirsae', body);
+  }
 }
