@@ -170,7 +170,7 @@ export class RegistrationHelper extends BasePage {
         'Se requiere subir el documento'
       );
       //validoOk = false;
-    } else if (!lisDocument || lisDocument < 2) {
+    } else if (!lisDocument || lisDocument < 1) {
       this.message(
         'warning',
         'Falta Documento relacionado a la solicitud',

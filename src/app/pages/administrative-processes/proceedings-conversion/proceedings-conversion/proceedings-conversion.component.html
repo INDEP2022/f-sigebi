@@ -17,10 +17,10 @@
               <span class="ml-3 mr-3" style="display: initial !important">
                 {{ statusConv || '-----' }}
               </span> -->
-          <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
             Regresar
             <i class="fas fa-arrow-circle-left"></i>
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="col-md-12">
@@ -33,12 +33,15 @@
               </h5>
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <!-- <div class="float-right pl-3">
-                <button (click)="searchProcs()" class="btn btn-primary btn-sm active m-1" tooltip="Conversiones"
+              <div class="float-right pl-3">
+                <button
+                  (click)="searchProcs()"
+                  class="btn btn-primary btn-sm active m-1"
+                  tooltip="Conversiones"
                   containerClass="tooltip-style">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div> -->
+              </div>
 
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
@@ -140,6 +143,7 @@
                           <i aria-hidden="true" class="fa fa-save"></i>
                         </button>
                         <button
+                          [disabled]="!conversion"
                           (click)="agregarActa()"
                           type="button"
                           class="btn btn-info active btn-sm mr-3">
