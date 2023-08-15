@@ -194,10 +194,10 @@
                 [disabled]="loading || loadingBtn2"
                 (click)="refresh()"
                 type="button"
-                tooltip="Actualizar Tabla"
+                tooltip="Limpiar Filtros y Actualizar Tabla"
                 containerClass="tooltip-style"
                 class="btn btn-primary btn-sm active mb-3 mr-3">
-                Actualizar <i class="fas fa-sync-alt"> </i>
+                Actualizar Filtros <i class="fas fa-sync-alt"> </i>
               </button>
             </div>
           </div>
@@ -210,6 +210,7 @@
       [track]="'all'"
       [ngStyle]="{ height: loading ? '0px' : '400px' }">
       <ng2-smart-table
+        #myTable
         [attr.class]="'table-bordered table-responsive'"
         class="table-responsive"
         [settings]="settings"

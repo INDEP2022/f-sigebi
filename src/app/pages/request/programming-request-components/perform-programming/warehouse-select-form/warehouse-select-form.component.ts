@@ -94,6 +94,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     params['filter.regionalDelegation'] = this.delegation;
     params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe(data => {
+      console.log('data', data);
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }
