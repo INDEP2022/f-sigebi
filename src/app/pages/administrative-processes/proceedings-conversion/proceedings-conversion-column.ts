@@ -277,11 +277,8 @@ export const JURIDICAL_FILE_UPDATE_SHIFT_CHANGE_COLUMNS = {
 };
 
 export const COUNT_ACTAS_COLUMNS = {
-  bienesConversiones: {
+  id: {
     title: 'No. Conversión',
-    valuePrepareFunction: (value: any) => {
-      return value != null ? value.conversionId : '';
-    },
     type: 'number',
     sort: false,
   },
