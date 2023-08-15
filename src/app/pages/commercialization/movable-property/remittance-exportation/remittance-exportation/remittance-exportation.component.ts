@@ -300,10 +300,42 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  postDetResumen(params: any) {
+  Resumen(params: any) {
+    this.eventAppService.postResumen(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp Resumen-> ', resp);
+      }
+    });
+  }
+
+  DetResumen(params: any) {
     this.eventAppService.postDetResumer(params).subscribe(resp => {
       if (resp != null && resp != undefined) {
         console.log('Resp DetResumen=> ', resp);
+      }
+    });
+  }
+
+  DetRemesa(params: any) {
+    this.eventAppService.postDetRemesa(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp DetRemesa-> ', resp);
+      }
+    });
+  }
+
+  DetEvent(params: any) {
+    this.comerEventService.postDetEvento(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp DetEvent-> ', resp);
+      }
+    });
+  }
+
+  ResumenAdmvxr(params: any) {
+    this.comerEventService.postResumenAdmvxr(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp ResumenAdmvxr', resp);
       }
     });
   }
