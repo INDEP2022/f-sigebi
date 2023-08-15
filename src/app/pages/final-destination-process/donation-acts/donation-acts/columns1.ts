@@ -5,7 +5,7 @@ export const COLUMNS1 = {
     sort: false,
   },
   goodDescription: {
-    title: 'Descripcion',
+    title: 'Descripción',
     type: 'string',
     sort: false,
   },
