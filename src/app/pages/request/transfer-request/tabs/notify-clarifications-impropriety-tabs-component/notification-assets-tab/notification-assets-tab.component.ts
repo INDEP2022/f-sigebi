@@ -202,7 +202,7 @@ export class NotificationAssetsTabComponent
     this.task = JSON.parse(localStorage.getItem('Task'));
 
     //Verifica que la tarea esta FINALIZADA, para ocultar botones
-    this.paramsReject.getValue()['filter.id'] = this.task.id;
+    this.paramsReject.getValue()['filter.id'] = `$eq:${this.task.id}`;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
         this.dataTask = response.data[0];
@@ -473,7 +473,7 @@ export class NotificationAssetsTabComponent
       this.onLoadToast(
         'warning',
         'Atención',
-        'Para verificar el cumplimiento se necesita tener todos los bienes seleccionados'
+        'Para verificar el cumplimiento se necesita tener todos los Bienes seleccionados'
       );
     } else {
       this.goodsReject.getElements().then(data => {
@@ -499,9 +499,11 @@ export class NotificationAssetsTabComponent
           this.alertQuestion(
             'warning',
             'Atención',
-            'Los bienes seleccionados regresarán al proceso de verificar cumplimiento'
+            'Los Bienes seleccionados regresarán al proceso de verificar cumplimiento'
           ).then(async question => {
             if (question.isConfirmed) {
+              //Actualiza a cerrada tarea de notificaciones
+              //this.taskService.update()
               const updateData = await this.verifyGoodCompliance();
               if (updateData == true) {
                 let params = new ListParams();
@@ -510,6 +512,7 @@ export class NotificationAssetsTabComponent
 
                 this.goodService.getAll(params).subscribe({
                   next: resp => {
+                    this.changeStatusTask();
                     this.createTaskVerifyCompliance();
                   },
                   error: error => {
@@ -695,6 +698,10 @@ export class NotificationAssetsTabComponent
       task['expedientId'] = request.recordId;
       task['idDelegationRegional'] = user.department;
       task['urlNb'] = url;
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
+      task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
       let orderservice: any = {};
@@ -1515,7 +1522,7 @@ export class NotificationAssetsTabComponent
   //Cambia el State a FINALIZADA
   changeStatusTask() {
     this.task = JSON.parse(localStorage.getItem('Task'));
-    this.paramsReject.getValue()['filter.id'] = this.task.id;
+    this.paramsReject.getValue()['filter.id'] = `$eq:${this.task.id}`;
     this.taskService.getAll(this.paramsReject.getValue()).subscribe({
       next: response => {
         this.dataTask = response.data[0];
@@ -1537,6 +1544,7 @@ export class NotificationAssetsTabComponent
       programmingId: dataTask.programmingId,
       requestId: dataTask.requestId,
       expedientId: dataTask.expedientId,
+      endDate: this.today,
     };
 
     //Actualizar State a FINALIZADA
@@ -1895,31 +1903,75 @@ export class NotificationAssetsTabComponent
   }
 
   openRecipients() {
-    const notification = this.selectedRow;
-    this.goodsReject.getElements().then(data => {
-      data.map((item: IGoodresdev) => {
-        if (item.clarificationstatus == 'ACLARADO') {
-          console.log('Abriendo modal de Destinatarios');
+    if (this.goodsReject.count() < this.columns.length) {
+      this.onLoadToast(
+        'warning',
+        'Atención',
+        'Para notificar se necesita tener todos los Bienes seleccionados'
+      );
+    } else {
+      this.goodsReject.getElements().then(data => {
+        const good = data.map((bien: any) => {
+          if (
+            bien.clarificationstatus == 'ACLARADO' ||
+            bien.clarificationstatus == 'CANCELADO'
+          ) {
+            return bien;
+          }
+        });
+        const filterGood = good.filter((good: any) => {
+          return good;
+        });
+        if (filterGood.length < this.goodsReject.count()) {
+          this.onLoadToast(
+            'warning',
+            'Atención',
+            'Las notificaciones de los Bienes deben estar aclaradas'
+            //'El estatus de la notificación de todos los Bienes debe de estar en "ACLARADO"'
+          );
+        } else {
           let config = {
             ...MODAL_CONFIG,
             class: 'modal-lg modal-dialog-centered',
           };
+          const idSolicitud = this.idRequest;
           config.initialState = {
+            idSolicitud,
             callback: (next: boolean) => {
               if (next) {
               }
             },
           };
           this.modalService.show(RecipientsEmailComponent, config);
-        } else {
-          this.onLoadToast(
-            'warning',
-            'Atención',
-            'Para notificar por correo electrónico, se necesita tener aclarada la notificación del Bien seleccionado.'
-          );
         }
       });
-    });
+    }
+
+    // const notification = this.selectedRow;
+    // this.goodsReject.getElements().then(data => {
+    //   data.map((item: IGoodresdev) => {
+    //     if (item.clarificationstatus == 'ACLARADO') {
+    //       console.log('Abriendo modal de Destinatarios');
+    //       let config = {
+    //         ...MODAL_CONFIG,
+    //         class: 'modal-lg modal-dialog-centered',
+    //       };
+    //       config.initialState = {
+    //         callback: (next: boolean) => {
+    //           if (next) {
+    //           }
+    //         },
+    //       };
+    //       this.modalService.show(RecipientsEmailComponent, config);
+    //     } else {
+    //       this.onLoadToast(
+    //         'warning',
+    //         'Atención',
+    //         'Para notificar por correo electrónico, se necesita tener aclarada la notificación del Bien seleccionado.'
+    //       );
+    //     }
+    //   });
+    // });
   }
 
   msgGuardado(icon: any, title: string, message: string) {

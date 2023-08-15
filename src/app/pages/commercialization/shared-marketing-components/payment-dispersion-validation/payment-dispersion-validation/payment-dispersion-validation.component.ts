@@ -206,6 +206,8 @@ export class PaymentDispersionValidationComponent
       montoDevolucion: [''],
       montoPenalizacion: [''],
       listaNegra: [''],
+      clienteName: [''],
+      montoNormal: [''],
     });
 
     this.amountForm = this.fb.group({
@@ -430,12 +432,20 @@ export class PaymentDispersionValidationComponent
   }
 
   loteSelected: any = null;
-  rowsSelected(event: any) {
+  async rowsSelected(event: any) {
     const data = event.data;
-    if (data.client) {
-      if (data.client.rfc) {
-        console.log('SI', data);
-        this.llenarInputs(data);
+    if (this.layout == 'M') {
+      if (data.client) {
+        if (data.client.rfc) {
+          console.log('SI', data);
+          this.llenarInputs(data);
+        } else {
+          this.form2.patchValue({
+            montoDevolucion: '',
+            montoPenalizacion: '',
+            listaNegra: '',
+          });
+        }
       } else {
         this.form2.patchValue({
           montoDevolucion: '',
@@ -443,12 +453,49 @@ export class PaymentDispersionValidationComponent
           listaNegra: '',
         });
       }
-    } else {
-      this.form2.patchValue({
-        montoDevolucion: '',
-        montoPenalizacion: '',
-        listaNegra: '',
-      });
+    } else if (this.layout == 'I') {
+      let obj = {
+        pEvent: this.eventSelected.id,
+        pClient: data.idClient,
+      };
+      const DevPen: any = await this.pupObttotDevPenalizes(obj);
+      console.log('DevPen', DevPen);
+      if (!DevPen) {
+        if (data.client) {
+          await this.llenarInputs2(data);
+        }
+        this.form2.get('montoDevolucion').setValue('0');
+        this.form2.get('montoPenalizacion').setValue('0');
+        this.form2.get('montoNormal').setValue('0');
+      } else {
+        // RESPUESTA DevPen
+        // let obj = {
+        //   "type": "N",
+        //   "amount": "0.00",
+        //   "iva": "0.00",
+        //   "amountWithoutIva": "690000.00",
+        //   "totAmount": "690000.00"
+        // }
+        console.log('AQUI', data);
+        if (data.client) {
+          await this.llenarInputs2(data);
+        } else {
+          this.form2.get('clienteName').setValue('');
+          this.form2.get('listaNegra').setValue('');
+        }
+
+        if (DevPen.type == 'D') {
+          this.form2.get('montoDevolucion').setValue(DevPen.totAmount);
+          this.form2.get('montoPenalizacion').setValue('0');
+        } else if (DevPen.type == 'P') {
+          this.form2.get('montoDevolucion').setValue('0');
+          this.form2.get('montoPenalizacion').setValue(DevPen.totAmount);
+        } else {
+          this.form2.get('montoDevolucion').setValue('0');
+          this.form2.get('montoPenalizacion').setValue('0');
+          this.form2.get('montoNormal').setValue(DevPen.totAmount);
+        }
+      }
     }
 
     this.loteSelected = event.data;
@@ -489,6 +536,28 @@ export class PaymentDispersionValidationComponent
     // setTimeout(() => {
     //   this.performScroll2();
     // }, 500);
+  }
+
+  async llenarInputs2(lote: any) {
+    if (lote.client.blackList == 'S') {
+      this.form2.get('listaNegra').setValue('SI');
+    } else {
+      this.form2.get('listaNegra').setValue('NO');
+    }
+    this.form2.get('clienteName').setValue(lote.client.nomRazon);
+  }
+
+  async pupObttotDevPenalizes(params: any) {
+    return new Promise((resolve, reject) => {
+      this.spentService.getPupObttotDevPenalizes(params).subscribe({
+        next: async data => {
+          resolve(data.data[0]);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   async llenarInputs(lote: any) {
@@ -662,30 +731,37 @@ export class PaymentDispersionValidationComponent
       this.alert('warning', `Debe Especificar un Evento`, '');
       return;
     }
-    const lots: any = await this.getLotsPayment(this.eventSelected.id);
-    if (!lots) {
-      this.alert('error', 'Ocurrió un Error', '');
-    } else {
-      if (lots.lotes == 0) {
-        this.alert(
-          'warning',
-          `No se han Procesado Pagos en el Evento: ${this.eventSelected.id}.`,
-          ''
-        );
-      } else if (lots.lotes > 0) {
-        this.alert(
-          'success',
-          `El Evento : ${this.eventSelected.id} Cuenta con ${lots.pagos} Pago(s) de ${lots.lotes} Lote(s).`,
-          ''
-        );
 
-        let obj = {
-          pEventKey: this.eventSelected.id,
-          pDirection: this.layout,
-        };
-        await this.exportarExcel1(obj);
+    if (this.layout == 'M') {
+      const lots: any = await this.getLotsPayment(this.eventSelected.id);
+      if (!lots) {
+        this.alert('error', 'Ocurrió un Error', '');
+      } else {
+        if (lots.lotes == 0) {
+          this.alert(
+            'warning',
+            `No se han Procesado Pagos en el Evento: ${this.eventSelected.id}.`,
+            ''
+          );
+        } else if (lots.lotes > 0) {
+          this.alert(
+            'success',
+            `El Evento: ${this.eventSelected.id} Cuenta con ${lots.pagos} Pago(s) de ${lots.lotes} Lote(s).`,
+            ''
+          );
+
+          let obj = {
+            pEventKey: this.eventSelected.id,
+            pDirection: this.layout,
+          };
+          await this.exportarExcel1(obj);
+        }
       }
+    } else if (this.layout == 'I') {
     }
+    // } else if (this.layout == "I") {
+
+    // }
   }
 
   async exportAsXLSXBienes() {
@@ -705,10 +781,14 @@ export class PaymentDispersionValidationComponent
       this.alert('warning', `Debe Especificar un Evento`, '');
       return;
     }
-    let obj = {
-      pEventKey: this.eventSelected.id,
-    };
-    await this.exportarExcel3(obj);
+
+    if (this.layout == 'M') {
+      let obj = {
+        pEventKey: this.eventSelected.id,
+      };
+      await this.exportarExcel3(obj);
+    } else {
+    }
   }
 
   async exportAsXLSXCompos() {
@@ -716,12 +796,14 @@ export class PaymentDispersionValidationComponent
       this.alert('warning', `Debe Especificar un Evento`, '');
       return;
     }
-
-    let obj = {
-      pEventKey: this.eventSelected.id,
-      pType: 1,
-    };
-    await this.exportarExcel4(obj);
+    if (this.layout == 'M') {
+      let obj = {
+        pEventKey: this.eventSelected.id,
+        pType: 1,
+      };
+      await this.exportarExcel4(obj);
+    } else {
+    }
   }
 
   // ------------------------- WILMER -------------------------- //
@@ -734,8 +816,12 @@ export class PaymentDispersionValidationComponent
     params.limit = lparams.limit;
 
     if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
+    if (this.layout == 'M') params.addFilter('address', `M`, SearchFilter.EQ);
 
-    params.addFilter('address', `M`, SearchFilter.EQ);
+    if (this.layout == 'I') {
+      params.addFilter('address', `I`, SearchFilter.EQ);
+      params.addFilter('eventTpId', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+    }
     // params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
     // params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
 
@@ -782,7 +868,9 @@ export class PaymentDispersionValidationComponent
         });
 
         Promise.all(result).then(resp => {
-          this.amountForm.get('tot_precio_final').setValue(finalPriceTot);
+          this.amountForm
+            .get('tot_precio_final')
+            .setValue(finalPriceTot.toFixed(2));
           this.lotByEvent.load(items);
           this.lotByEvent.refresh();
           this.totalItems = count;
@@ -873,8 +961,12 @@ export class PaymentDispersionValidationComponent
             //   tot_iva_final = tot_iva_final + Number(item.finalVat);
           });
           Promise.all(result).then(resp => {
-            this.amountForm2.get('tot_precio_final').setValue(totFinalPrice);
-            this.amountForm2.get('tot_iva_final').setValue(totFinalVat);
+            this.amountForm2
+              .get('tot_precio_final')
+              .setValue(totFinalPrice.toFixed(2));
+            this.amountForm2
+              .get('tot_iva_final')
+              .setValue(totFinalVat.toFixed(2));
             this.dataBienes_.load(data);
             this.dataBienes_.refresh();
             this.totalItems2 = count;
@@ -931,7 +1023,7 @@ export class PaymentDispersionValidationComponent
           // if (item.amount) tot_deposit = tot_deposit + Number(item.amount);
         });
         Promise.all(result).then(resp => {
-          this.amountForm3.get('tot_deposit').setValue(totAmount);
+          this.amountForm3.get('tot_deposit').setValue(totAmount.toFixed(2));
           this.dataPagosBanco_.load(data);
           this.dataPagosBanco_.refresh();
           this.totalItems3 = count;
@@ -993,14 +1085,16 @@ export class PaymentDispersionValidationComponent
           //   tot_monto_sin_iva = tot_monto_sin_iva + Number(item.amountNoAppVat);
         });
         Promise.all(result).then(resp => {
-          this.amountForm4.get('tot_monto_con_iva').setValue(totalAmountAppVat);
-          this.amountForm4.get('tot_iva').setValue(totalVat);
+          this.amountForm4
+            .get('tot_monto_con_iva')
+            .setValue(totalAmountAppVat.toFixed(2));
+          this.amountForm4.get('tot_iva').setValue(totalVat.toFixed(2));
           this.amountForm4
             .get('tot_monto_sin_iva')
-            .setValue(totalAmountNoAppVat);
+            .setValue(totalAmountNoAppVat.toFixed(2));
           this.amountForm4
             .get('suma_totales')
-            .setValue(totalSumAmountNoAppVatVatAmountAppVat);
+            .setValue(totalSumAmountNoAppVatVatAmountAppVat.toFixed(2));
           this.dataCompos_.load(data);
           this.dataCompos_.refresh();
           this.totalItems4 = count;

@@ -2,7 +2,10 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IUserProcess } from 'src/app/core/models/ms-user-process/user-process.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { OrderServiceService } from 'src/app/core/services/ms-order-service/order-service.service';
@@ -62,6 +65,10 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.deleRegionalId = storeData.delegacionreg;
     this.requestForm.controls['typeUser'].valueChanges.subscribe(
       (data: any) => {
+        if (this.typeUser != data) {
+          this.params.getValue().page = 1;
+          this.params.getValue().limit = 10;
+        }
         this.typeUser = data;
 
         this.getUserList();
@@ -83,7 +90,11 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.loading = true;
     this.typeUser = this.requestForm.controls['typeUser'].value;
     this.params.value.addFilter('employeeType', this.typeUser);
-    //this.params.value.addFilter('regionalDelegation', this.deleRegionalId);
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAll(filter).subscribe({
       next: resp => {
@@ -165,6 +176,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
         const taskResult = await this.createTask(item);
 
         if (taskResult) {
+          console.log('taskResult: ', taskResult);
           if (this.requestToTurn.length === index) {
             this.loading = false;
             const list = this.listResquestForTurn.join(',');
@@ -198,6 +210,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   createTask(request: any) {
+    console.log('Creando tarea');
     return new Promise((resolve, reject) => {
       const user: any = this.authService.decodeToken();
       let body: any = {};
@@ -218,9 +231,14 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       //task['assignedDate'] = new Date().toISOString();
       task['urlNb'] = 'pages/request/transfer-request/registration-request';
       task['processName'] = 'SolicitudTransferencia';
+      task['idTransferee'] = this.requestToTurn[0]?.transferenceId;
+      task['idAuthority'] = this.requestToTurn[0]?.authorityId;
+      task['idstation'] = this.requestToTurn[0]?.stationId;
 
+      console.log('Objeto a enviar: ', task);
       this.taskService.createTask(task).subscribe({
         next: resp => {
+          console.log('Se creo la tarea: ', resp);
           resolve(true);
         },
         error: error => {

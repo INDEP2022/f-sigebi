@@ -9,8 +9,9 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { TheadFitlersRowComponent } from 'ng2-smart-table/lib/components/thead/rows/thead-filters-row.component';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
@@ -79,6 +80,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings };
   title: string = 'PAGOS REFERENCIADOS';
   loading2: boolean = false;
+  @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   constructor(
     private fb: FormBuilder,
     private paymentService: PaymentService,
@@ -93,7 +95,8 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     private comerDetailsService: ComerDetailsService,
     private msMassivecapturelineService: MsMassivecapturelineService,
     private elementRef: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private router: Router
   ) {
     super();
     this.settings = {
@@ -116,11 +119,17 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
       columns: { ...COLUMNS_CARGADOS },
     };
   }
-
+  backVal: boolean = false;
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params: any) => {
+      if (params?.origin == 'FCOMER_MTODISP') {
+        this.backVal = true;
+      }
+    });
     this.route.paramMap.subscribe(params => {
+      console.log('OPARAS', params);
+
       if (params.get('goodType')) {
-        console.log(params.get('goodType'));
         this.layout = params.get('goodType');
       }
     });
@@ -553,6 +562,7 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
                   ''
                 );
               } else {
+                this.getPayments('no');
                 this.alert(
                   'success',
                   'Proceso Terminado, Referencias Cargadas Correctamente',
@@ -974,10 +984,24 @@ export class ReferencedPaymentComponent extends BasePage implements OnInit {
     }
   }
 
-  refresh() {
+  async refresh() {
+    await this.clearSubheaderFields();
+    this.searchWithEvent = false;
     this.form2.reset();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getPayments('no'));
+  }
+  goBack() {
+    this.router.navigateByUrl(
+      '/pages/commercialization/payment-dispersion-monitor'
+    );
+  }
+
+  async clearSubheaderFields() {
+    const subheaderFields: any = this.table.grid.source;
+    const filterConf = subheaderFields.filterConf;
+    filterConf.filters = [];
+    this.columnFilters = [];
   }
 }

@@ -498,6 +498,7 @@ export const TRANS_GOODS_EXECUTE_EDITABLE = {
     filter: false,
     renderComponent: MeasureUnitSaeInputComponent,
     onComponentInitFunction(instance?: any) {},
+
     sort: false,*/
 
   /*  title: 'Unidad Medida INDEP',

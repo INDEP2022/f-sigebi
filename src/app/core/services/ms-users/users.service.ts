@@ -108,6 +108,13 @@ export class UsersService extends HttpService {
     return this.get(UserEndpoints.SegUsers);
   }
 
+  getText(text: string) {
+    return this.get(`${UserEndpoints.GetText}/${text}`);
+  }
+  getUserOt(text: string) {
+    return this.get(`${UserEndpoints.GetUserOt}/${text}`);
+  }
+
   getAllUsersAsigne(_params: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.UserAsigne, _params);
   }

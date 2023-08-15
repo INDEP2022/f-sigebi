@@ -40,7 +40,29 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-goods-review-status',
   templateUrl: './goods-review-status.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
@@ -66,6 +88,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   permitSelect = true;
   @Output() onSelect = new EventEmitter<any>();
   @ViewChild('file', { static: false }) myInput: ElementRef;
+  loadingBtn: boolean = false;
+  loadingBtn2: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -133,12 +157,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               motive20: () => (searchFilter = SearchFilter.ILIKE),
               descriptionGood: () => (searchFilter = SearchFilter.ILIKE),
             };
-            // console.log("search.goodId()1", search.goodId())
+            // //console.log("search.goodId()1", search.goodId())
             // if (search.goodId()) {
-            //   console.log("search.goodId()", search.goodId())
+            //   //console.log("search.goodId()", search.goodId())
             //   search.goodNumber()
             // }
-            // console.log("filter.field", search[filter.field])
+            // //console.log("filter.field", search[filter.field])
 
             search[filter.field]();
 
@@ -163,7 +187,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   handleGenderChange() {
-    console.log('Selected gender: ' + this.selectedGender);
+    //console.log('Selected gender: ' + this.selectedGender);
     this.loading = true;
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
@@ -257,7 +281,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           this.data.refresh();
           this.totalItems = response.count;
           this.loading = false;
-          console.log(response);
+          //console.log(response);
         });
       },
       error: err => {
@@ -276,14 +300,14 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.delegationService.getAll(params).subscribe({
         next: response => {
-          console.log('ressss', response);
+          //console.log('ressss', response);
           // this.loading = false;
           resolve(response.data[0]);
         },
         error: err => {
           resolve(null);
           // this.loading = false;
-          console.log(err);
+          //console.log(err);
         },
       });
     });
@@ -316,7 +340,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // CARGAR EXCEL / CSV //
   onFileChange(event: Event) {
-    console.log('event', event);
+    //console.log('event', event);
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
@@ -339,7 +363,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   // FUNCIÓN DE BOTÓN DE ATENCIÓN MASIVA //
   async attentionMassive(excelImport: any) {
-    console.log('excelImport', excelImport);
+    //console.log('excelImport', excelImport);
     if (excelImport.length == 0) {
       this.alert('warning', 'No hay Data Cargada en el Archivo', '');
       return;
@@ -359,20 +383,22 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         // TEXT_IO.GET_LINE(LFIARCHIVO, LST_CADENA);
         // V_NO_BIEN:= GETWORDCSV(LST_CADENA, 1);
         let ArrayNoAtendidos: any = [];
+        this.loadingBtn = true;
         for (let i = 0; i < excelImport.length; i++) {
-          if (excelImport[i].goodNumber != null) {
+          if (excelImport[i].NO_BIEN) {
+            //console.log("excelImport[i].NO_BIEN", excelImport[i])
             EXISTE = 0;
             ATENCION = 1;
             ACTUALIZA = 0;
             vl_ID_EVENTO = 0;
 
             let obj = {
-              goodNumber: excelImport[i].goodNumber,
+              goodNumber: excelImport[i].NO_BIEN,
               attended: 0,
               manager: this.responsable,
             };
             const good: any = await this.getGoodReturn(obj);
-            console.log('good', good);
+            //console.log('good', good);
 
             if (good != null) {
               EXISTE = good.goodNumber.id;
@@ -380,20 +406,15 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               ESTATUSB = good.status;
             } else {
               let obj = {
-                goodNumber: excelImport[i].goodNumber,
+                goodNumber: excelImport[i].NO_BIEN,
                 message: 'Verifique las Condiciones de Atención de Proceso REV',
               };
               ArrayNoAtendidos.push(obj);
-              // this.alert(
-              //   'warning',
-              //   `Verifique las condiciones de atención de proceso REV del bien: ${excelImport[i].goodNumber}`,
-              //   ''
-              // );
             }
 
             if (EXISTE > 0) {
               let obj_: any = {
-                goodNumber: excelImport[i].goodNumber,
+                goodNumber: excelImport[i].NO_BIEN,
                 eventId: good.eventId.id,
                 goodType: good.goodType,
                 status: good.status,
@@ -410,19 +431,14 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                 ACTUALIZA = 1;
               } else {
                 let obj = {
-                  goodNumber: excelImport[i].goodNumber,
-                  message: `El Bien: ${excelImport[i].goodNumber} no se pudo Atender en MOTIVOSREV`,
+                  goodNumber: excelImport[i].NO_BIEN,
+                  message: `El Bien: ${excelImport[i].NO_BIEN} no se pudo Atender en MOTIVOSREV`,
                 };
                 ArrayNoAtendidos.push(obj);
-                // this.alert(
-                //   'warning',
-                //   `El bien: ${excelImport[i].goodNumber} no se pudo atender en MOTIVOSREV`,
-                //   ''
-                // );
               }
 
               let objGood: any = {
-                goodNumber: excelImport[i].goodNumber,
+                goodNumber: excelImport[i].NO_BIEN,
                 attended: 0,
               };
 
@@ -437,7 +453,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
               if (ATENCION == 0 && ACTUALIZA == 1) {
                 let objScreen = {
-                  goodNumber: excelImport[i].goodNumber,
+                  goodNumber: excelImport[i].NO_BIEN,
                   status: ESTATUSB,
                 };
                 const screenXStatus: any = await this.getScreenXStatus(
@@ -448,22 +464,16 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                   ESTATUSF = screenXStatus;
                 } else {
                   let obj = {
-                    goodNumber: excelImport[i].goodNumber,
-                    message: `No se Identificó el Estatus Final para el Bien: ${excelImport[i].goodNumber}`,
+                    goodNumber: excelImport[i].NO_BIEN,
+                    message: `No se Identificó el Estatus Final para el Bien: ${excelImport[i].NO_BIEN}`,
                   };
                   ArrayNoAtendidos.push(obj);
-
-                  // this.alert(
-                  //   'warning',
-                  //   `No se identificó el estatus final para el bien: ${excelImport[i].goodNumber}`,
-                  //   ''
-                  // );
                   ACTUALIZA = 0;
                 }
 
                 let objUpdateGood: any = {
-                  id: excelImport[i].goodNumber,
-                  goodId: excelImport[i].goodDetails.goodId,
+                  id: excelImport[i].NO_BIEN,
+                  goodId: good.goodNumber.goodId,
                   status: ESTATUSF,
                 };
                 const updateGood: any = await this.updateGoodStatus(
@@ -474,16 +484,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                   ACTUALIZA = 0;
 
                   let obj = {
-                    goodNumber: excelImport[i].goodNumber,
-                    message: `Error al Actualizar el Estatus del Bien: ${excelImport[i].goodNumber}`,
+                    goodNumber: excelImport[i].NO_BIEN,
+                    message: `Error al Actualizar el Estatus del Bien: ${excelImport[i].NO_BIEN}`,
                   };
                   ArrayNoAtendidos.push(obj);
-
-                  // this.alert(
-                  //   'error',
-                  //   `Error al actualizar el estatus del bien: ${excelImport[i].goodNumber}`,
-                  //   ''
-                  // );
                 }
 
                 if (ACTUALIZA == 1) {
@@ -491,7 +495,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                   var futureDate = new Date(currentDate.getTime() + 5 * 1000); // A
 
                   const historyGood: IHistoryGood = {
-                    propertyNum: excelImport[i].goodNumber,
+                    propertyNum: excelImport[i].NO_BIEN,
                     status: ESTATUSF,
                     changeDate: futureDate,
                     userChange: this.token.decodeToken().preferred_username,
@@ -505,7 +509,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                   );
                 } else {
                   let obj__: any = {
-                    goodNumber: excelImport[i].goodNumber,
+                    goodNumber: excelImport[i].NO_BIEN,
                     eventId: vl_ID_EVENTO,
                     goodType: good.goodType,
                     status: good.status,
@@ -522,7 +526,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
           }
         }
         Promise.all(ArrayNoAtendidos).then(async resp => {
-          console.log('ArrayNoAtendidos', ArrayNoAtendidos);
+          // //console.log('ArrayNoAtendidos', ArrayNoAtendidos);
           if (ArrayNoAtendidos.length > 0) {
             if (ArrayNoAtendidos.length == excelImport.length) {
               this.alertQuestion(
@@ -534,6 +538,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                   this.openForm(ArrayNoAtendidos);
                 }
               });
+              this.loadingBtn = false;
             } else {
               this.alertQuestion(
                 'question',
@@ -544,6 +549,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
                   this.openForm(ArrayNoAtendidos);
                 }
               });
+              this.loadingBtn = false;
               await this.getMotives();
             }
           } else {
@@ -552,6 +558,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               'Todos los Bienes del Archivo Fueron Atendidos',
               ''
             );
+            this.loadingBtn = false;
             await this.getMotives();
           }
           this.clearInput();
@@ -573,7 +580,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.goodsMotivesrev.getAll(params).subscribe({
         next: response => {
-          console.log('res', response);
+          // //console.log('res', response);
           resolve(response.data[0]);
         },
         error: err => {
@@ -588,7 +595,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.goodService.updateGoodsRev(params).subscribe({
         next: response => {
-          console.log('res', response);
+          //console.log('res', response);
           resolve(true);
         },
         error: err => {
@@ -606,7 +613,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.goodsMotivesrev.getAll(params).subscribe({
         next: response => {
-          console.log('res', response);
+          //console.log('res', response);
           resolve(response.data[0]);
         },
         error: err => {
@@ -621,7 +628,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.goodprocessService.getAppliesControl(data).subscribe({
         next: response => {
-          console.log('res', response);
+          //console.log('res', response);
           resolve(response.data[0].estatus_nuevo_bien);
         },
         error: err => {
@@ -636,7 +643,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.goodService.updateWithParams(params).subscribe({
         next: response => {
-          console.log('res', response);
+          //console.log('res', response);
           resolve(true);
         },
         error: err => {
@@ -695,7 +702,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.segAcessXAreasService.getAll(params).subscribe({
         next: (resp: any) => {
-          console.log('resp', resp);
+          //console.log('resp', resp);
           const data = resp.data[0];
           resolve(data);
           // this.loading = false;
@@ -713,7 +720,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.dynamicCatalogsService.getOtValor(data).subscribe({
         next: (resp: any) => {
-          console.log('resp', resp);
+          //console.log('resp', resp);
           const data = resp.data[0].otvalor;
           resolve(data);
           // this.loading = false;
@@ -769,7 +776,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       arr.push(obj);
     });
     Promise.all(result).then(item => {
-      console.log('jsonToCsv', jsonToCsv);
+      //console.log('jsonToCsv', jsonToCsv);
       this.jsonToCsv = arr;
       this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
     });
@@ -787,7 +794,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
 
   selectRow(row: any) {
-    console.log(row);
+    //console.log(row);
     this.selectedRow = row.data;
     this.form.get('responsable').setValue(row.data.manager);
     this.rowSelected = true;
@@ -819,6 +826,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       ''
     ).then(async question => {
       if (question.isConfirmed) {
+        this.loadingBtn2 = true;
         let obj_: any = {
           goodNumber: this.selectedRow.goodNumber,
           eventId: this.selectedRow.eventId.id,
@@ -838,6 +846,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             `El Bien: ${this.selectedRow.goodNumber} no se pudo Actualizar`,
             ''
           );
+          this.loadingBtn2 = false;
           return;
         }
 
@@ -871,6 +880,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               `No se Identificó el Estatus Final para el Bien: ${this.selectedRow.goodNumber}`,
               ''
             );
+            this.loadingBtn2 = false;
             return;
           }
 
@@ -887,6 +897,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
               `Error al Actualizar el Estatus del Bien: ${this.selectedRow.goodNumber}`,
               ''
             );
+            this.loadingBtn2 = false;
             return;
           }
 
@@ -904,22 +915,24 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             extDomProcess: null,
           };
           const insertHistoric: any = await this.putInsertHistoric(historyGood);
-          console.log('1', insertHistoric);
+          //console.log('1', insertHistoric);
           if (insertHistoric == null) {
-            console.log('2', insertHistoric);
+            //console.log('2', insertHistoric);
             this.alert(
               'error',
               `Error al Actualizar el Estatus del Bien: ${this.selectedRow.goodNumber}`,
               ''
             );
+            this.loadingBtn2 = false;
             return;
           } else {
-            console.log('3', insertHistoric);
+            //console.log('3', insertHistoric);
             this.alert(
               'success',
               `El Bien: ${this.selectedRow.goodNumber} se ha Atendido Correctamente`,
               ''
             );
+            this.loadingBtn2 = false;
             this.getMotives();
           }
         } else {
@@ -928,6 +941,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             `El Bien: ${this.selectedRow.goodNumber} se ha Atendido Correctamente`,
             ''
           );
+          this.loadingBtn2 = false;
           this.getMotives();
         }
         // -------------------------------------------------------------------------------------------------- //
@@ -936,7 +950,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   }
   clickTimer: any;
   async onDblClick(event: any) {
-    console.log('DB', event);
+    //console.log('DB', event);
     if (this.clickTimer) {
       clearTimeout(this.clickTimer);
       this.clickTimer = null;
@@ -1087,7 +1101,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.revisionReasonService.getAll(params).subscribe({
         next: (resp: any) => {
-          console.log('resp', resp);
+          //console.log('resp', resp);
           const data = resp.data[0];
           resolve(data);
           // this.loading = false;
@@ -1105,7 +1119,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     return new Promise((resolve, reject) => {
       this.goodService.getGoodById(id).subscribe({
         next: response => {
-          console.log('res', response);
+          //console.log('res', response);
           resolve(response);
         },
         error: err => {
@@ -1129,7 +1143,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         error: err => {
           resolve(null);
           // this.loading = false;
-          console.log(err);
+          //console.log(err);
         },
       });
     });
@@ -1193,6 +1207,6 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
   miFuncion() {
     this.getMotives();
-    // console.log('Función ejecutada desde el componente hijo');
+    // //console.log('Función ejecutada desde el componente hijo');
   }
 }

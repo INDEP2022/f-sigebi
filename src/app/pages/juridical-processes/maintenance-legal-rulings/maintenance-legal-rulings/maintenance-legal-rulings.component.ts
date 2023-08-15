@@ -68,7 +68,7 @@ export class MaintenanceLegalRulingComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      justificacion: ['', Validators.required],
+      justificacion: ['', [Validators.required, Validators.maxLength(1000)]],
     });
   }
   dictation: IDictation;

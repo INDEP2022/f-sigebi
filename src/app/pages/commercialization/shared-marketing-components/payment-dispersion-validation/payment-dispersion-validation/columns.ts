@@ -161,6 +161,8 @@ export const RECEIVED_COLUMNS = {
           { value: 'D', title: 'Devolución' },
           { value: 'P', title: 'Penalización' },
           { value: 'N', title: 'Normal' },
+          { value: 'I', title: 'Interés' },
+          { value: 'M', title: 'Moratorio' },
         ],
       },
     },
@@ -169,6 +171,10 @@ export const RECEIVED_COLUMNS = {
         return 'Penalización';
       } else if (row.type == 'D') {
         return 'Devolución';
+      } else if (row.type == 'I') {
+        return 'Interés';
+      } else if (row.type == 'M') {
+        return '';
       } else if (row.type == 'N') {
         return 'Normal';
       } else {

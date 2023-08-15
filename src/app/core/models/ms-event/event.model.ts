@@ -9,7 +9,7 @@ export interface IComerEvent {
   address?: string;
   failedDate?: Date;
   place?: string;
-  eventDate?: Date;
+  eventDate?: Date | string;
   text1?: string;
   text2?: string;
   signatory?: string;
@@ -25,8 +25,8 @@ export interface IComerEvent {
   delegationNumber?: number;
   phaseInmu?: number;
   thirdEatId?: number;
-  notificationDate?: Date;
-  closingEventDate?: Date;
+  notificationDate?: Date | string;
+  closingEventDate?: Date | string;
   tpsolavalId?: number;
   applyIva?: string;
   eventClosingDate?: string;
@@ -233,4 +233,13 @@ export interface IFindAllComerGoodXlotTotal_Items {
   appraisalId: string;
   vatA: string;
   good: IGood;
+}
+
+export interface IGraceDate {
+  param: string;
+  typeEvent: string;
+  address: string;
+  closeEventDate: string;
+  faildDate: string;
+  notificationDate: string | Date;
 }
