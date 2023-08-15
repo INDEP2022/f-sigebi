@@ -35,6 +35,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   data: any; // solicitud pasada por el modal
   typeAnnex: string;
   task: any = null;
+  task1: any;
 
   paragraphs: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -42,6 +43,7 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
   user: IUserProcess = null;
   warningTLP: boolean = false;
   deleRegionalUserId: number = null;
+  today: Date;
 
   //injections
   private fb = inject(FormBuilder);
@@ -56,10 +58,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
 
   constructor(private modalRef: BsModalRef) {
     super();
+    this.today = new Date();
   }
 
   ngOnInit(): void {
-    //console.log(this.data);
+    console.log('Tarea Antigua', this.task1);
     const authService: any = this.authService.decodeToken();
     this.deleRegionalUserId = authService.delegacionreg;
     let column: any = null;
@@ -78,6 +81,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
     if (this.typeAnnex === 'commit-request') {
       this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.params.getValue().page = 1;
+        this.params.getValue().limit = 10;
+
         this.getUsers();
         this.TLPMessage();
       });
@@ -165,7 +171,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       'SolicitudProgramacion.DelegadosRegionales'
     );
     this.params.value.addFilter('employeetype', 'DR');*/
-
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalUserId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAllUsersWithRol(filter).subscribe({
       next: resp => {
@@ -418,9 +428,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
         body['userProcess'] = userProcess;
       }
 
-      body['type'] = type;
-      body['subtype'] = subtype;
-      body['ssubtype'] = ssubtype;
+      body['type'] = 'SOLICITUD_TRANSFERENCIA';
+      body['subtype'] = 'Verificar_Cumplimiento';
+      body['ssubtype'] = 'APPROVE';
 
       let task: any = {};
       task['id'] = 0;
@@ -438,6 +448,8 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['idTransferee'] = request.transferenceId;
       task['idAuthority'] = request.authorityId;
       task['idDelegationRegional'] = user.department;
+      task['createdDate'] = this.task1?.createdDate;
+      task['endDate'] = this.today;
       body['task'] = task;
 
       let orderservice: any = {};

@@ -1130,6 +1130,11 @@ export class DetailAssetsTabComponentComponent
         Validators.pattern(DOUBLE_PATTERN),
       ]);
     }
+
+    if (this.typeOfRequest == 'PGR_SAE' || this.typeOfRequest == 'SAT_SAE') {
+      this.detailAssets.controls['quantity'].disable();
+    }
+
     this.detailAssets.updateValueAndValidity();
   }
 

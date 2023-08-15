@@ -128,7 +128,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     setTimeout(() => {
       $('[data-toggle="tooltip"]').tooltip('show');
     });
-    console.log('Información del usuario logeado: ', this.token);
 
     // this.getGood(new ListParams)
     // this.filterParams.getValue().addFilter('description', '', SearchFilter.ILIKE)
@@ -191,7 +190,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
 
   public callReport() {
     const forfeitureKey = this.form.get('forfeitureKey').value;
-    console.log(forfeitureKey);
+
     if (!forfeitureKey) {
       this.onLoadToast(
         'info',
@@ -202,7 +201,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       const params = {
         P_Clave_Decomiso: forfeitureKey,
       };
-      console.log(params);
+
       this.report.fetchReport('RRELDECOMISO', params).subscribe({
         next: response => {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -261,7 +260,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.dataExcel = this.excelService.getData(binaryExcel);
-      console.log(this.dataExcel);
 
       const mappedData: any = [];
       for (let i = 0; i < this.dataExcel.length; i++) {
@@ -278,11 +276,9 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           causa_penal: this.dataExcel[i].causa_penal,
         });
       }
-      console.log(mappedData);
       this.source.load(mappedData);
       this.source.refresh();
-      console.log(this.source);
-      console.log(this.source);
+
       this.totalItems = this.dataExcel.length;
       this.file.get('recordRead').patchValue(this.totalItems);
     } catch (error) {
@@ -310,7 +306,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     let insertBody = {
       data: this.dataExcel,
     };
-    console.log(insertBody);
 
     // Crear un arreglo para almacenar los números de bien duplicados
     const duplicateNumbers = [];
@@ -320,7 +315,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       data1.push([this.dataExcel[i].no_bien]);
       const data = this.dataExcel[i].no_bien;
       // mon.push([this.dataExcel[i].money]);
-      console.log(data1);
 
       let body = {
         goodNumber: data,
@@ -329,15 +323,12 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
         const resp = await this.detRelationConfiscationService
           .getById(body)
           .toPromise();
-        console.log(resp);
 
         // Verificar si el número de bien ya existe en la respuesta
         if (resp || resp['exists']) {
           duplicateNumbers.push(data); // Agregar el número de bien duplicado al arreglo
         }
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     }
 
     // console.log(mon);
@@ -360,11 +351,10 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
       this.file.get('processed').patchValue(insertResp['sucess']);
       this.file.get('wrong').patchValue(insertResp['error']);
-      console.log(insertResp['total']);
-      //this.alert('success', 'Registros Procesados', '');
+      if (this.file.get('processed').value > 0) {
+        this.alert('success', 'Registros Procesados con Éxito', '');
+      }
     } catch (err) {
-      console.log(err);
-
       // Verificar si err es de tipo HttpErrorResponse
       if (err instanceof HttpErrorResponse) {
         if (
@@ -384,7 +374,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       }
     }
     if (duplicateNumbers.length > 0) {
-      console.log(data1);
       this.alert(
         'warning',
         'El No. Bien que Intenta Ingresar ya Existe',
@@ -393,7 +382,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       this.file.get('wrong').patchValue(insertResp['error']);
       this.file.get('processed').patchValue('0');
       this.file.get('recordsProcessed').patchValue(insertResp['total']);
-      console.log(duplicateNumbers);
       return;
     }
   }
@@ -468,7 +456,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
   }
   openFile(): void {
     const forfeitureKey = this.form.get('forfeitureKey').value;
-    console.log(forfeitureKey);
 
     const filter = new FilterParams();
     filter.addFilter('confiscationKey', forfeitureKey, SearchFilter.EQ);
@@ -477,7 +464,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
       .getAllMore(filter.getParams())
       .subscribe({
         next: resp => {
-          console.log(resp);
           const data = resp.data[0];
           this.form.get('import').patchValue(data.amountDlls);
           this.form.get('pgr').patchValue(data.pgr);
@@ -486,7 +472,6 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
           this.form.get('totalAmount').patchValue(data.totalAmount);
         },
         error: err => {
-          console.log(err);
           const forfeitureKey = this.form.get('forfeitureKey').value;
           if (!forfeitureKey) {
             this.alert(
@@ -522,7 +507,7 @@ export class ConfiscationRatioComponent extends BasePage implements OnInit {
     this.file.get('recordRead').setValue(null);
     this.source.reset();
     this.dataExcel = [];
-    console.log(this.dataExcel);
+
     this.source.load(this.dataExcel);
   }
 }

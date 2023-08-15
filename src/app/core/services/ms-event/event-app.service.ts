@@ -45,4 +45,12 @@ export class EventAppService extends HttpService {
   postDetResumer(params: any) {
     return this.post(`EventEndpoints.DetResumen`, params);
   }
+
+  postDetRemesa(params: any) {
+    return this.post(`EventEndpoints.DetRemesa`, params);
+  }
+
+  postResumen(params: any) {
+    return this.post(`Eventendpoints.Resumen`, params);
+  }
 }

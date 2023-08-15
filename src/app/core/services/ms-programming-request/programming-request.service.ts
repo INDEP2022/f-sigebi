@@ -6,7 +6,10 @@ import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUser } from '../../models/catalogs/user.model';
 import { IGoodProgramming } from '../../models/good-programming/good-programming';
-import { Iprogramming } from '../../models/good-programming/programming';
+import {
+  Iprogramming,
+  IprogrammingDate,
+} from '../../models/good-programming/programming';
 import { ICatThirdView } from '../../models/ms-goods-inv/goods-inv.model';
 
 @Injectable({ providedIn: 'root' })
@@ -111,5 +114,75 @@ export class ProgrammingRequestService {
     return this.http.delete(`${environment.API_URL}/${route}`, {
       body: data,
     });
+  }
+
+  getProgrammingByDate(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IprogrammingDate>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programminggood/apps/programmingByDate`;
+    return this.http.post<IListResponse<IprogrammingDate>>(
+      `${environment.API_URL}/${route}?${params}`,
+      formData
+    );
+  }
+
+  getProgrammingByDelegation(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IprogrammingDate>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programminggood/apps/programmingByDateAndDelReg2`;
+    return this.http.post<IListResponse<IprogrammingDate>>(
+      `${environment.API_URL}/${route}?${params}`,
+      formData
+    );
+  }
+
+  getProgrammingByDateStatus(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IprogrammingDate>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programminggood/apps/programmingByDateAndStatus2`;
+    return this.http.post<IListResponse<IprogrammingDate>>(
+      `${environment.API_URL}/${route}?${params}`,
+      formData
+    );
+  }
+  getGoodsProgrammingByDate(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IprogrammingDate>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programminggood/apps/programmingOfGood2`;
+    return this.http.post<IListResponse<IprogrammingDate>>(
+      `${environment.API_URL}/${route}?${params}`,
+      formData
+    );
+  }
+  getGoodsIdProgrammingByDate(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IprogrammingDate>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programminggood/apps/programmingOfGood1`;
+    return this.http.post<IListResponse<IprogrammingDate>>(
+      `${environment.API_URL}/${route}?${params}`,
+      formData
+    );
+  }
+
+  getGoodApt(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IprogrammingDate>> {
+    const params = this.makeParams(_params);
+    const route = `programminggood/api/v1/programminggood/apps/programmingOfGoodScrapIron`;
+    return this.http.post<IListResponse<IprogrammingDate>>(
+      `${environment.API_URL}/${route}?${params}`,
+      formData
+    );
   }
 }

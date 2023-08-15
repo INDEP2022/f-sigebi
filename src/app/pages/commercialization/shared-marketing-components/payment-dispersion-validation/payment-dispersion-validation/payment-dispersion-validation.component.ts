@@ -759,6 +759,9 @@ export class PaymentDispersionValidationComponent
       }
     } else if (this.layout == 'I') {
     }
+    // } else if (this.layout == "I") {
+
+    // }
   }
 
   async exportAsXLSXBienes() {
