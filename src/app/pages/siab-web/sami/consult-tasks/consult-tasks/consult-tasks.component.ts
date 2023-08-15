@@ -64,7 +64,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: '',
-      hideSubHeader: false,
+      hideSubHeader: true,
     };
     this.settings.columns = REQUEST_LIST_COLUMNS;
   }
@@ -133,7 +133,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: ['null'],
+      State: ['PROCESO'],
       typeOfTrasnfer: [null],
     });
 
@@ -323,11 +323,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       } else if (filterStatus === 'FINALIZADA') {
         this.filterParams.getValue().addFilter('State', filterStatus);
         this.getDelegationRegional(user.department);
+      } else if (filterStatus === 'PROCESO') {
+        this.filterParams.getValue().addFilter('State', filterStatus);
+        this.getDelegationRegional(user.department);
       }
-      if (filterStatus === 'TODOS') {
-        this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
-        this.delegation = '';
-      }
+      // if (filterStatus === 'TODOS') {
+      //   this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+      //   this.delegation = '';
+      // }
     }
 
     if (this.consultTasksForm.value.typeOfTrasnfer) {
