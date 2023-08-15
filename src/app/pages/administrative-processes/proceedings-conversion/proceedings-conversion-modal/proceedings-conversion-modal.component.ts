@@ -165,7 +165,6 @@ export class ProceedingsConversionModalComponent
     } else {
       this.selectedRow = null;
     }
-
     console.log(this.selectedRow);
   }
 

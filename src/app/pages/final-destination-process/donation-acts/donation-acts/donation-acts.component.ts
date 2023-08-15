@@ -8,7 +8,13 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, filter, Observable, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  Observable,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { ExpedientService } from 'src/app/core/services/expedients/expedient.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -92,7 +98,14 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.params = this.pageFilter(this.params);
     // this.startCalendars();
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe((params: any) => {
+      this.getDataTableOne(params);
+    });
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe((params: any) => {
+      this.getDataTableTwo(params);
+    });
   }
 
   //
@@ -168,28 +181,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
       let paramsGood = new HttpParams();
       paramsGood = paramsGood.append('filter.fileNumber', this.noExpe);
-      this.serviceGood.getByFilter(paramsGood).subscribe({
-        next: response => {
-          this.columns = response.data;
-          this.datas.load(this.columns);
-          this.totalItems = response.count | 0;
-          this.datas.refresh();
-          this.loading = false;
-        },
-        error: error => {
-          if (error.status == 400) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `No se encontraron registros de bienes`
-            );
-            this.datas.load([]);
-          } else {
-            this.alert('error', 'Error', 'Ha ocurrido un error');
-            this.datas.load([]);
-          }
-        },
-      });
+      this.getDataTableOne(paramsGood);
 
       let paramsRecep = new HttpParams();
       paramsRecep = paramsRecep.append('filter.numFile', this.noExpe);
@@ -268,27 +260,6 @@ export class DonationActsComponent extends BasePage implements OnInit {
           }
         },
       });
-
-      this.num$
-        .pipe(
-          filter(num => num !== null),
-          switchMap(num =>
-            this.serviceDetailProceeding.getGoodsByProceedings(num)
-          )
-        )
-        .subscribe({
-          next: response => {
-            this.varObjectFinal = response.data;
-            this.columns2 = response.data;
-            this.data2.load(this.columns2);
-            this.totalItems2 = response.count | 0;
-            this.data2.refresh();
-            this.loading = false;
-          },
-          error: error => {
-            console.log('');
-          },
-        });
     }
   }
 
@@ -428,5 +399,52 @@ export class DonationActsComponent extends BasePage implements OnInit {
     }
   }
 
+  getDataTableOne(param?: HttpParams) {
+    this.serviceGood.getByFilter(param).subscribe({
+      next: response => {
+        this.columns = response.data;
+        this.datas.load(this.columns);
+        this.totalItems = response.count | 0;
+        this.datas.refresh();
+        this.loading = false;
+      },
+      error: error => {
+        if (error.status == 400) {
+          this.alert(
+            'warning',
+            'Advertencia',
+            `No se encontraron registros de bienes`
+          );
+          this.datas.load([]);
+        } else {
+          this.alert('error', 'Error', 'Ha ocurrido un error');
+          this.datas.load([]);
+        }
+      },
+    });
+  }
+
+  getDataTableTwo(params: any) {
+    this.num$
+      .pipe(
+        filter(num => num !== null),
+        switchMap(num =>
+          this.serviceDetailProceeding.getGoodsByProceedings(num, params)
+        )
+      )
+      .subscribe({
+        next: response => {
+          this.varObjectFinal = response.data;
+          this.columns2 = response.data;
+          this.data2.load(this.columns2);
+          this.totalItems2 = response.count || 0;
+          this.data2.refresh();
+          this.loading = false;
+        },
+        error: error => {
+          console.log('');
+        },
+      });
+  }
   //
 }

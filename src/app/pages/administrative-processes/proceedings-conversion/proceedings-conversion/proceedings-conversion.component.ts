@@ -742,17 +742,21 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         next: (res: IConvertiongood) => {
           console.log(res);
           // this.loading = false;
-          this.fileNumber = res.fileNumber.id;
+          this.fileNumber = res.fileNumber ? res.fileNumber.id : res.fileNumber;
           this.conversion = res.id;
           this.goodFatherNumber = res.goodFatherNumber;
           this.fCreate = this.datePipe.transform(res.fCreate, 'dd/MM/yyyy');
           this.typeConv = res.typeConv;
           this.statusConv = res.statusConv;
           this.witnessOic = res.witnessOic;
-          this.preAver = res.fileNumber.preliminaryInquiry;
-          this.criCase = res.fileNumber.criminalCase;
+          this.preAver = res.fileNumber
+            ? res.fileNumber.preliminaryInquiry
+            : null;
+          this.criCase = res.fileNumber ? res.fileNumber.criminalCase : null;
           this.cveActa = res.minutesErNumber;
-          this.userRes = res.fileNumber.usrResponsibleFile;
+          this.userRes = res.fileNumber
+            ? res.fileNumber.usrResponsibleFile
+            : null;
           this.actaGoodForm.value.acta = this.cveActa;
           this.time = new Date().toISOString().slice(0, 16);
           this.getExpedient(this.fileNumber);
@@ -1324,7 +1328,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       modalConfig
     );
     modalRef.content.onSave.subscribe((next: any) => {
-      console.log(next);
+      console.log('aaaa', next);
       this.paramsScreen.PAR_IDCONV = next.id;
       console.log(this.paramsScreen.PAR_IDCONV);
 

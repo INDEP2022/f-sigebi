@@ -29,6 +29,9 @@ import { DispersionPaymentComponent } from './dispersion-payment/dispersion-paym
 import { NewComerPaymentVirt } from './new-comer-payment-virt/new-comer-payment-virt.component';
 import { CanUsuSirsaeComponent } from './can-usu-sirsae/can-usu-sirsae.component';
 import { CanPagosCabComponent } from './can-pagos-cab/can-pago-cab.component'
+import { CanLcsWarrantyComponent } from './can-lcs-warranty/can-lcs-warranty.component'
+import { CanRelusuComponent } from './can-relusu/can-relusu.component';
+import { NewCanRelusuComponent } from './can-relusu/new-can-relusu/new-can-relusu.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +50,10 @@ import { CanPagosCabComponent } from './can-pagos-cab/can-pago-cab.component'
     CanTimesComponent,
     NewComerPaymentVirt,
     CanUsuSirsaeComponent,
-    CanPagosCabComponent
+    CanPagosCabComponent,
+    CanLcsWarrantyComponent,
+    CanRelusuComponent,
+    NewCanRelusuComponent
   ],
   imports: [
     CommonModule,
