@@ -34,6 +34,13 @@ export class AccountMovementService extends HttpService {
     );
   }
 
+  getAllFilterSelf(self?: AccountMovementService, params?: _Params) {
+    return self.get<IListResponse<IAccountMovement>>(
+      'account-movements',
+      params
+    );
+  }
+
   getBeneficiarios() {
     return this.get<IListResponse<{ beneficiario_cheque: string }>>(
       AccountmvmntEndpoint.getBeneficiarios

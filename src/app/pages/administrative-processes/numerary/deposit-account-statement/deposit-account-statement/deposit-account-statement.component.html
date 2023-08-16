@@ -143,7 +143,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3 mt-4">
+          <div class="col-md-4 mt-4">
             <app-select-modal-table-shared
               [form]="form"
               [maxlengthInput]="12"
@@ -182,7 +182,7 @@
                 formControlName="bank" />
             </form-field>
           </div>
-          <div class="col-md-3 mt-4">
+          <div class="col-md-2 mt-4">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
                 readonly
@@ -203,6 +203,23 @@
         </div>
         <div class="row">
           <div class="col-md-3 mt-4">
+            <app-select-modal-table-shared
+              [form]="form"
+              [maxlengthInput]="12"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              label="Movimiento"
+              formField="movementNumber"
+              [service]="accountMovementService"
+              [columnsType]="columnsMovementType"
+              searchField="description"
+              id="numberMotion"
+              title="Movimiento"
+              (selectRow)="
+                changeAccount($event)
+              "></app-select-modal-table-shared>
             <!-- <form-field [control]="devolutionnumber" label="Devolución">
               <input
                 readonly

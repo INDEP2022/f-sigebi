@@ -132,6 +132,28 @@ export class DepositAccountStatementComponent
   ];
 
   ilikeAccountFilters = ['cveBank'];
+  columnsMovementType = {
+    numberMotion: {
+      title: 'Movimiento',
+      type: 'string',
+      sort: false,
+    },
+    deposit: {
+      title: 'Importe',
+      type: 'string',
+      sort: false,
+    },
+    dateMotion: {
+      title: 'Fecha Depósito',
+      type: 'string',
+      sort: false,
+    },
+    dateTransfer: {
+      title: 'Fecha de Transferencia',
+      type: 'string',
+      sort: false,
+    },
+  };
   columnsAccountType = {
     cveAccount: {
       title: 'Cuenta',
@@ -261,7 +283,7 @@ export class DepositAccountStatementComponent
     private goodService: GoodService,
     private goodParametersService: GoodParametersService,
     private screenStatusService: ScreenStatusService,
-    private accountMovementService: AccountMovementService,
+    public accountMovementService: AccountMovementService,
     private datePipe: DatePipe,
     public bankAccountService: BankAccountService,
     private parameterService: ParametersService,
