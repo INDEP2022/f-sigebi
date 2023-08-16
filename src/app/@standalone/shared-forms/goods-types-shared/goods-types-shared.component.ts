@@ -193,6 +193,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     }
     delete _params.search;
     delete _params.text;
+    _params['sortBy'] = 'id:ASC';
     this.service.search(_params).subscribe({
       next: data => {
         this.types = new DefaultSelect(data.data, data.count);
@@ -219,6 +220,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     }
     delete _params.search;
     delete _params.text;
+    _params['sortBy'] = 'id:ASC';
     if (this.type.value) {
       _params['filter.idTypeGood'] = this.type.value;
     }
@@ -241,6 +243,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     }
     delete _params.search;
     delete _params.text;
+    _params['sortBy'] = 'id:ASC';
     if (this.type.value) {
       _params['filter.noType'] = this.type.value;
     }
@@ -266,6 +269,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     }
     delete _params.search;
     delete _params.text;
+    _params['sortBy'] = 'id:ASC';
     if (this.type.value) {
       _params['filter.numType'] = this.type.value;
     }

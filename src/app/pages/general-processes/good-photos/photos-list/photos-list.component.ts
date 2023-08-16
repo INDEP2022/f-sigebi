@@ -188,6 +188,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
             // debugger;
             if (response) {
               this.files = [...response];
+              this.errorMessage = null;
               // const index = last.indexOf('F');
               // this.lastConsecutive += +last.substring(index + 1, index + 5);
               const pufValidaUsuario = await this.pufValidaUsuario();

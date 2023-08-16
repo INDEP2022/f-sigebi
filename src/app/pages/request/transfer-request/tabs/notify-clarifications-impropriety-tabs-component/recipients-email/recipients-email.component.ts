@@ -92,7 +92,10 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
     });
   }
 
+  loadingButton: boolean = false;
+
   async confirm() {
+    this.loadingButton = true;
     const token = this.authService.decodeToken();
     console.log('String de los correos', this.form.controls['emails'].value);
 
@@ -118,11 +121,13 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
     //Llamar a método
     this.emailService.createEmailDocs(data).subscribe({
       next: response => {
+        this.loadingButton = false;
         this.close();
         this.onLoadToast('success', 'Correo Enviado Correctamente', '');
         console.log('Se envió correctamente', response);
       },
       error: error => {
+        this.loadingButton = false;
         this.close();
         this.onLoadToast(
           'error',
