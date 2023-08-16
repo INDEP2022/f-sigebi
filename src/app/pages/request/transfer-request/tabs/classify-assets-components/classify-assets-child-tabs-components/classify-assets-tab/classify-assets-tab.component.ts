@@ -1346,6 +1346,7 @@ export class ClassifyAssetsTabComponent
   setNoClasifyGood(fraction: any) {
     if (fraction.fractionCode != null) {
       if (fraction.fractionCode.length === 8) {
+        debugger;
         if (fraction.clasificationId) {
           this.classiGoodsForm.controls['goodClassNumber'].setValue(
             fraction.clasificationId

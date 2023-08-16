@@ -9,9 +9,14 @@ import { SharedComponentGssModule } from '../shared-component-gss/shared-compone
 import { SamplingAssetsFormComponent } from './sampling-assets-form/sampling-assets-form.component';
 import { SamplingAssetsRoutingModule } from './sampling-assets-routing.module';
 import { SelectInputComponent } from './select-input/select-input.component';
+import { TurnModalComponent } from './turn-modal/turn-modal.component';
 
 @NgModule({
-  declarations: [SamplingAssetsFormComponent, SelectInputComponent],
+  declarations: [
+    SamplingAssetsFormComponent,
+    SelectInputComponent,
+    TurnModalComponent,
+  ],
   imports: [
     CommonModule,
     SamplingAssetsRoutingModule,

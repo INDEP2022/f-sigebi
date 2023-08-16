@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CapturelineEndpoints } from 'src/app/common/constants/endpoints/ms-captureline';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Repository } from 'src/app/common/repository/repository';
 import { HttpService } from 'src/app/common/services/http.service';
 import {
   ICaptureLinesMain,
@@ -16,7 +17,7 @@ export class CapturelineService extends HttpService {
   private readonly route: string = CapturelineEndpoints.ComerCaptureLines;
   private readonly route2: string = CapturelineEndpoints.ComerDetCaptureLines;
   private readonly route3: string = CapturelineEndpoints.AdminCaptureLine;
-  constructor() {
+  constructor(private binnacle: Repository<any>) {
     super();
     this.microservice = CapturelineEndpoints.BasePath;
   }
@@ -26,6 +27,10 @@ export class CapturelineService extends HttpService {
   }
   getAllAdminCaptureLine(params?: ListParams): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>(this.route3, params);
+  }
+
+  getAllAdminCaptureLine1(params: ListParams): Observable<IListResponse<any>> {
+    return this.binnacle.getAllPaginated(this.route3, params);
   }
 
   getAll2(params?: string): Observable<IListResponse<ICaptureLinesMain>> {

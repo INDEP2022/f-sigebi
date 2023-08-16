@@ -1,37 +1,44 @@
+import { DatePipe } from '@angular/common';
+
 export const WINNERS_REPORT_COLUMNS = {
-  idEvent: {
-    title: 'ID Evento',
+  id_evento: {
+    title: 'Id Evento',
     sort: false,
   },
-  allotment: {
+  lote: {
     title: 'Lote',
     sort: false,
   },
-  reference: {
+  referencia: {
     title: 'Referencia',
     sort: false,
   },
-  amount: {
+  monto: {
     title: 'Monto',
     sort: false,
   },
-  payDate: {
-    title: 'Fecha pago',
+  fecha_pago: {
+    title: 'Fecha Pago',
     sort: false,
+    valuePrepareFunction: (fecha_pago: string) => {
+      const datePipe = new DatePipe('en-US');
+      const fechaObjeto = new Date(fecha_pago);
+      return datePipe.transform(fechaObjeto, 'dd/MM/yyyy');
+    },
   },
-  cveBank: {
+  cve_banco: {
     title: 'Cve Banco',
     sort: false,
   },
-  bill: {
+  cuenta: {
     title: 'Cuenta',
     sort: false,
   },
-  idClient: {
-    title: 'ID Cliente',
+  id_cliente: {
+    title: 'Id Cliente',
     sort: false,
   },
-  client: {
+  cliente: {
     title: 'Cliente',
     sort: false,
   },
@@ -39,28 +46,28 @@ export const WINNERS_REPORT_COLUMNS = {
     title: 'RFC',
     sort: false,
   },
-  tel: {
+  telefono: {
     title: 'Teléfono',
     sort: false,
   },
-  email: {
+  correoweb: {
     title: 'Correo Web',
     sort: false,
   },
-  clabe: {
+  clabe_interbancaria: {
     title: 'CLABE',
     sort: false,
   },
-  bank: {
+  banco: {
     title: 'Banco',
     sort: false,
   },
-  branchOffice: {
+  sucursal: {
     title: 'Sucursal',
     sort: false,
   },
-  checkAccount: {
-    title: 'Cuenta de cheques',
+  cuenta_cheques: {
+    title: 'Cuenta de Cheques',
     sort: false,
   },
 };
