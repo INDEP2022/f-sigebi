@@ -421,6 +421,56 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.actaForm();
     this.formFolio();
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
+
+
+    // const claveActa = "RFP/D/AEROBANOBRAS/CCB/TIJ/0066/98/02"; // Año 2019, Mes Febrero
+    // const resultado = this.generarDatosDesdeUltimosCincoDigitos(claveActa);
+
+    // if (resultado) {
+    //   console.log(`Año: ${resultado.anio}`);
+    //   console.log(`Mes: ${resultado.mes}`);
+    // } else {
+    //   console.log("Clave de acta no válida.");
+    // }
+  }
+
+  generarDatosDesdeUltimosCincoDigitos(claveActa: string): { anio: number, mes: string } | null {
+    // Verificar que la longitud de la clave sea la esperada
+    if (claveActa.length < 5) {
+      return null; // Clave no válida
+    }
+
+    // Obtener los últimos cinco dígitos de la clave
+    const ultimosCincoDigitos = claveActa.slice(-5);
+
+    // Obtener el año y el mes a partir de los últimos cinco dígitos
+    const anio = parseInt(ultimosCincoDigitos.substring(0, 2), 10);
+    const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
+
+    // Validar los valores obtenidos
+    if (isNaN(anio) || isNaN(mesNumero) || anio < 0 || mesNumero < 1 || mesNumero > 12) {
+      return null; // Valores no válidos
+    }
+
+    const mesesTexto = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    const mesTexto = mesesTexto[mesNumero - 1]; // Restamos 1 porque los meses en el array comienzan desde 0
+
+    // Obtener el año completo basado en el siglo actual
+    const fechaActual = new Date();
+    const sigloActual = Math.floor(fechaActual.getFullYear() / 100) * 100;
+    const anioCompleto = anio < 100 ? sigloActual + anio : anio;
+
+    this.actaRecepttionForm.patchValue({
+      anio: anioCompleto,
+      mes: mesTexto,
+    });
+
+    return { anio: anioCompleto, mes: mesTexto };
+
   }
 
   // LLAMAR DATOS DESPUES DE ESCANEAR
@@ -780,9 +830,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
         parrafo1: next.parrafo1,
         testigoTwo: next.witness1,
         testigoTree: next.witness2,
+
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
+
+      // Pasar clave a esta función
+      this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
       await this.getDetailProceedingsDevollution(this.actasDefault.id);
     });
@@ -1368,6 +1422,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
+      this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
       //   'MM/yyyy'
