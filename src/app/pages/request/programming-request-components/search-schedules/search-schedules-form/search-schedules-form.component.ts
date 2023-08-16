@@ -217,7 +217,6 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
       .getProgrammingByDate(this.paramsProgramming.getValue(), formData)
       .subscribe({
         next: response => {
-          console.log('responseDates', response);
           this.settings = {
             ...this.settings,
             actions: false,
@@ -246,7 +245,7 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
       endDate: endDate,
       regionalBranchNumber: delegation,
     };
-    console.log('formData', formData);
+
     this.programmingService
       .getProgrammingByDelegation(this.paramsProgramming.getValue(), formData)
       .subscribe({
@@ -259,7 +258,6 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
             },
           };
 
-          console.log('response', response);
           this.programmings.load(response.data);
           this.totalItemProgramming = response.count;
           this.loading = false;
@@ -292,7 +290,7 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
               ...PROGRAMMING_STATUS_DATE_COLUMNS,
             },
           };
-          console.log('sdas', response);
+
           this.programmings.load(response.data);
           this.totalItemProgramming = response.count;
           this.loading = false;
@@ -306,7 +304,7 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
   /*infoProgramming() {
     this.loading = true;
     this.paramsProgramming.getValue()['sortBy'] = 'id:ASC';
-    console.log('params', this.paramsProgramming.getValue());
+  
     this.programmingService
       .getProgramming(this.paramsProgramming.getValue())
       .subscribe({
@@ -420,12 +418,12 @@ export class SearchSchedulesFormComponent extends BasePage implements OnInit {
 
   cleanForm() {
     this.performForm.reset();
+    this.performForm.get('startDate').clearValidators();
+    this.performForm.get('endDate').clearValidators();
+    this.performForm.updateValueAndValidity();
     this.delegationId = null;
+    this.performForm.markAllAsTouched();
     this.paramsProgramming = new BehaviorSubject<ListParams>(new ListParams());
-  }
-
-  getProgrammingByDelegation(infoDateProgramming: any) {
-    console.log(infoDateProgramming);
   }
 
   searchGood() {

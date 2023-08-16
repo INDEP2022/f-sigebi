@@ -135,6 +135,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
       State: ['PROCESO'],
       typeOfTrasnfer: [null],
+      txtDaysAtrasos: [null],
     });
 
     this.params
@@ -362,6 +363,29 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
 
+    if (this.consultTasksForm.value.txtNoTransferente) {
+      console.log('Filtro de transferente activado');
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'idTransferee',
+          this.consultTasksForm.value.txtNoTransferente,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtDaysAtrasos) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'backwardness',
+          this.consultTasksForm.value.txtDaysAtrasos,
+          SearchFilter.BTW
+        );
+    }
+
     if (this.consultTasksForm.value.txtTituloTarea) {
       isfilterUsed = true;
       this.filterParams
@@ -466,7 +490,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
       this.filterParams
         .getValue()
-        .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
+        .addFilter('createdDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
       isfilterUsed = true;
@@ -504,17 +528,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     }
-    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'idTransferee',
-          this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.EQ
-        );
-    }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
+      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()

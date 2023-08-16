@@ -1017,6 +1017,10 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = this.requestData.recordId;
       task['idDelegationRegional'] = user.department;
       task['urlNb'] = 'pages/request/transfer-request/process-approval';
+      task['idstation'] = this.requestData?.stationId;
+      task['idTransferee'] = this.requestData?.transferenceId;
+      task['idAuthority'] = this.requestData?.authorityId;
+      task['idDelegationRegional'] = user.department;
 
       this.taskService.createTask(task).subscribe({
         next: resp => {
@@ -1139,7 +1143,7 @@ export class RegistrationOfRequestsComponent
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
-        'info',
+        'warning',
         'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
@@ -1215,7 +1219,7 @@ export class RegistrationOfRequestsComponent
       'Rechazar',
       '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
-      undefined,
+      'question',
       'refuse'
     );
   }
@@ -1299,9 +1303,9 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
-      task['idstation'] = request.stationId;
-      task['idTransferee'] = request.transferenceId;
-      task['idAuthority'] = request.authorityId;
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 

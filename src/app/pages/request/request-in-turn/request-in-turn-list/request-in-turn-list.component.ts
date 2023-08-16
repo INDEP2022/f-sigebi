@@ -80,9 +80,9 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   openTurnRequests() {
     if (this.requestSelected.length === 0) {
       this.onLoadToast(
-        'info',
+        'warning',
         'Información',
-        `Seleccione una o mas solicitudes!`
+        `Seleccione una o mas solicitudes`
       );
       return;
     }
