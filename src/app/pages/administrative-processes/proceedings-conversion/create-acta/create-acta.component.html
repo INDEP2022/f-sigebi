@@ -60,7 +60,7 @@
                 <ngx-select
                   [form]="actaRecepttionForm"
                   [data]="arrayDele"
-                  (fetchItems)="consulREG_DEL_ADMIN($event)"
+                  (fetchItems)="consulREG_DEL_DESTR($event)"
                   bindLabel="cveAdmin"
                   value="delegation"
                   control="administra"
@@ -85,12 +85,12 @@
                 <ngx-select
                   [form]="actaRecepttionForm"
                   [data]="dele"
-                  (fetchItems)="consulREG_DEL_DESTR($event)"
+                  (fetchItems)="consulREG_DEL_ADMIN($event)"
                   bindLabel="cveReceived"
                   value="delegation"
                   control="cveReceived"
                   label="Admin"
-                  [searchOnInit]="true"
+                  [searchOnInit]="false"
                   [showTooltip]="true"
                   termMaxLength="30">
                 </ngx-select>
