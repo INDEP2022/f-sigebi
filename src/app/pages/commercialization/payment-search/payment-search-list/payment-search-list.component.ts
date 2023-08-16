@@ -15,6 +15,7 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -163,6 +164,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     console.log('antes servicio');
+    const params = new ListParams();
+    this.getPaymentSat(params, 17);
   }
 
   private prepareForm(): void {
@@ -267,7 +270,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       //Cod PUP_BUSQUEDA
     }
 
-    //this.getTableData();
+    this.getTableData();
   }
 
   cleanSearch() {
@@ -397,6 +400,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.paymentService.getBusquedaPag().subscribe({
       next: res => {
         console.log('Res -> ', res);
+        const params = new ListParams();
         for (let i = 0; i < res.count; i++) {
           if (res.data[i] != undefined) {
             let item = {
@@ -414,7 +418,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
               paymentId: res.data[i].payId,
               batchId: res.data[i].batchId,
               entryOrderId: res.data[i].numbermovement,
-              //satDescription: res.data[i] 'Descripción Pago SAT'
+              satDescription: this.getPaymentSat(params, res.data[i].idGuySat),
               type: res.data[i].guy,
               inconsistencies: res.data[i].idinconsis,
             };
@@ -437,8 +441,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  getBusquedaPagMae(params: string) {
-    this.paymentService.getBusquedaMae(params).subscribe(resp => {
+  getBusquedaPagMae(lparams: string) {
+    this.paymentService.getBusquedaMae(lparams).subscribe(resp => {
       if (resp != null && resp != undefined) {
         console.log('Resp PagosMae-> ', resp);
       }
@@ -451,5 +455,21 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         console.log('Resp BusquedaPagDet', resp);
       }
     });
+  }
+
+  getPaymentSat(params: _Params, id: number): any {
+    const _params: any = params;
+    _params['filter.idType'] = `$eq:${id}`;
+    this.accountMovementService.getPaymentTypeSat(_params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp PaymentSat', resp);
+          return resp.data[0].description;
+        }
+      },
+      error => {
+        return null;
+      }
+    );
   }
 }
