@@ -30,7 +30,7 @@
                 label="Id"
                 formField="expenseNumber"
                 [service]="spentService"
-                [columnsType]="columnsType"
+                [columnsType]="columns"
                 id="expenseNumber"
                 title="Gastos del Área Comercial"
                 (selectRow)="fillForm($event)"></app-select-modal-table-shared>
@@ -247,12 +247,37 @@
           </div>
           <br />
           <app-data-receipt [expense]="data"></app-data-receipt>
-          <button
-            type="button"
-            class="btn btn-sm btn-primary active"
-            (click)="sendToSIRSAE()">
-            Envíar Solicitud de pago a SIRSAE
-          </button>
+          <tr>
+            <td colspan="5" align="center">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="sendToSIRSAE()">
+                Envíar Solicitud de pago a SIRSAE
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="notify()">
+                Notificar A:
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="updateClasif()">
+                Actualizar Clasificación
+              </button>
+            </td>
+          </tr>
         </form>
       </div>
     </app-card>
