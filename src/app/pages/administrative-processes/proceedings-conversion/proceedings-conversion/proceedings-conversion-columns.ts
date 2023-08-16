@@ -75,30 +75,7 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
-  // file: {
-  //   title: 'No. Expediente',
-  //   type: 'number',
-  //   sort: false,
-  //   valuePrepareFuncion: (cell: any, row: any) => {
-  //     return row.file.filesId
-  //   }
-  // },
-  approvalUserXAdmon: {
-    title: 'Administra',
-    type: 'string',
-    sort: false,
-  },
-  numeraryFolio: {
-    title: 'Folio Universal',
-    type: 'string',
-    sort: false,
-  },
-  numTransfer_: {
-    title: 'Transferente',
-    type: 'number',
-    sort: false,
-  },
-  dateElaborationReceipt: {
+  elaborationDate: {
     title: 'Fecha de Elaboración',
     type: 'html',
     sort: false,
@@ -109,6 +86,29 @@ export const ACTAS = {
       type: 'custom',
       component: CustomDateFilterComponent,
     },
+  },
+  // file: {
+  //   title: 'No. Expediente',
+  //   type: 'number',
+  //   sort: false,
+  //   valuePrepareFuncion: (cell: any, row: any) => {
+  //     return row.file.filesId
+  //   }
+  // },
+  // approvedXAdmon: {
+  //   title: 'Administra',
+  //   type: 'string',
+  //   sort: false,
+  // },
+  universalFolio: {
+    title: 'Folio Universal',
+    type: 'string',
+    sort: false,
+  },
+  numTransfer_: {
+    title: 'Transferente',
+    type: 'number',
+    sort: false,
   },
 };
 export class IGoodStatus {

@@ -133,6 +133,22 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+
+    if (params['filter.motionDate_']) {
+      var fecha = new Date(params['filter.motionDate_']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['motionDate'] = fechaFormateada;
+      delete params['filter.motionDate_'];
+    }
+
+    params['filter.typeProceedings'] = `$eq:CONVERSION`;
     this.proceedingsDeliveryReceptionService
       .getStatusDeliveryCveExpendienteAll(params)
       .subscribe({

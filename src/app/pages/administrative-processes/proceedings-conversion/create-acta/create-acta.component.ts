@@ -1,12 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { format } from 'date-fns';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { HistoricalService } from 'src/app/core/services/ms-historical/historical.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
@@ -69,7 +72,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
     private rNomenclaService: RNomenclaService,
     private transferenteService: TransferenteService,
     private parametersService: ParametersService,
-    private abandonmentsService: AbandonmentsDeclarationTradesService
+    private abandonmentsService: AbandonmentsDeclarationTradesService,
+    private delegationService: DelegationService
   ) {
     super();
   }
@@ -137,7 +141,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
     //   gnu_delegacion: 0,
     //   gst_rec_adm: 'FILTRAR',
     // };
-    console.log('WILMER');
     const params = new FilterParams();
 
     params.page = lparams.page;
@@ -156,20 +159,22 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
 
+    params.addFilter('stageedo', 2, SearchFilter.EQ);
     this.parametersService
       .GetDelegationGlobal(obj, params.getParams())
       .subscribe({
         next: (data: any) => {
           console.log('REG_DEL_ADMIN', data);
           let result = data.data.map(async (item: any) => {
-            item['cveAdmin'] = item.delegationNumber2 + ' - ' + item.delegation;
+            item['cveReceived'] =
+              item.delegationNumber2 + ' - ' + item.delegation;
           });
           Promise.all(result).then(resp => {
-            this.arrayDele = new DefaultSelect(data.data, data.count);
+            this.dele = new DefaultSelect(data.data, data.count);
           });
         },
         error: error => {
-          this.arrayDele = new DefaultSelect();
+          this.dele = new DefaultSelect();
         },
       });
   }
@@ -196,7 +201,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   // REG_DEL_DESTR
-  consulREG_DEL_DESTR(lparams: ListParams) {
+  async consulREG_DEL_DESTR(lparams: ListParams) {
     const params = new FilterParams();
 
     params.page = lparams.page;
@@ -211,21 +216,22 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
 
+    params.addFilter('stageedo', this.stagecreated, SearchFilter.EQ);
     params.sortBy = 'numberDelegation2:ASC';
+
     this.rNomenclaService.getAll(params.getParams()).subscribe({
       next: (data: any) => {
         console.log('REG_DEL_DESTR', data);
         let result = data.data.map(async (item: any) => {
-          item['cveReceived'] =
-            item.numberDelegation2 + ' - ' + item.delegation;
+          item['cveAdmin'] = item.numberDelegation2 + ' - ' + item.delegation;
         });
 
         Promise.all(result).then(resp => {
-          this.dele = new DefaultSelect(data.data, data.count);
+          this.arrayDele = new DefaultSelect(data.data, data.count);
         });
       },
       error: error => {
-        this.dele = new DefaultSelect([], 0);
+        this.arrayDele = new DefaultSelect([], 0);
       },
     });
   }
@@ -347,7 +353,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       universalFolio: null,
       numeraryFolio: null,
       numTransfer: null,
-      idTypeProceedings: null,
+      idTypeProceedings: 'CONV',
       receiptKey: null,
       comptrollerWitness: this.witnessOic,
       numRequest: null,
@@ -387,6 +393,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
+  stagecreated: any = null;
   async get___Senders(lparams: ListParams) {
     const params = new FilterParams();
     params.page = lparams.page;
@@ -400,11 +407,35 @@ export class CreateActaComponent extends BasePage implements OnInit {
         this.delegation = data.data[0].delegationNumber;
         this.subdelegation = data.data[0].subdelegationNumber;
         this.areaDict = data.data[0].departamentNumber;
+        this.stagecreated = await this.delegationWhere();
+        console.log('aaaaaaaaa', this.stagecreated);
         await this.validacionFirst();
+        await this.consulREG_DEL_DESTR(new ListParams());
       },
       error: async () => {
+        await this.consulREG_DEL_DESTR(new ListParams());
         await this.validacionFirst();
       },
+    });
+  }
+
+  async delegationWhere() {
+    return new Promise((resolve, reject) => {
+      if (this.delegation != null) {
+        this.parametersService
+          .getPhaseEdo(`date=${format(new Date(), 'yyyy-MM-dd')}`)
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(
+            (res: any) => {
+              console.log('REESS', res);
+              resolve(res.stagecreated);
+            },
+            err => {
+              resolve(null);
+              console.log(err);
+            }
+          );
+      }
     });
   }
 }
