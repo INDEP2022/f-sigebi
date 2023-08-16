@@ -1,13 +1,16 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { catchError, firstValueFrom, map, of, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError, firstValueFrom, of, takeUntil, tap } from 'rxjs';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseScreenService } from '../../services/expense-screen.service';
 import { SpentIService } from '../../services/spentI.service';
 import { SpentMService } from '../../services/spentM.service';
+import { NotifyComponent } from '../notify/notify.component';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-expense-comercial',
@@ -40,250 +43,15 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     'spDate',
     'dateOfResolution',
   ];
-  columnsType = {
-    expenseNumber: {
-      title: 'Id',
-      type: 'string',
-      sort: false,
-    },
-    conceptNumber: {
-      title: 'Concepto',
-      type: 'string',
-      sort: false,
-    },
-    conceptDescription: {
-      title: 'Concepto Descripción',
-      type: 'string',
-      sort: false,
-      valuePrepareFunction: (value: any, row: any) => {
-        // DATA FROM HERE GOES TO renderComponent
-        return row.concepts ? row.concepts.description : null;
-      },
-    },
-    address: {
-      title: 'Dirección',
-      type: 'string',
-      sort: false,
-      class: 'w-md',
-      filter: {},
-      // editor: {
-      //   type: 'list',
-      //   config: {
-      //     selectText: 'Seleccionar',
-      //     list: [
-      //       { value: '', title: 'SELECCIONAR' },
-      //       { value: 'MUEBLES', title: 'MUEBLES' },
-      //       { value: 'INMUEBLES', title: 'INMUEBLES' },
-      //       { value: 'GENERAL', title: 'GENERAL' },
-      //     ],
-      //   },
-      // },
-    },
-    paymentRequestNumber: {
-      title: 'Solicitud Pago',
-      type: 'string',
-      sort: true,
-    },
-    comment: {
-      title: 'Servicio',
-      type: 'string',
-      sort: false,
-    },
-    idOrdinginter: {
-      title: 'OI Intercambio',
-      type: 'string',
-      sort: false,
-    },
-    eventNumber: {
-      title: 'Evento',
-      type: 'string',
-      sort: false,
-    },
-    eventDescription: {
-      title: 'Evento Descripción',
-      type: 'string',
-      sort: false,
-      valuePrepareFunction: (value: any, row: any) => {
-        // DATA FROM HERE GOES TO renderComponent
-        return row.comerEven ? row.comerEven.observations : null;
-      },
-    },
-    lotNumber: {
-      title: 'Lote',
-      type: 'string',
-      sort: false,
-    },
-    lotDescription: {
-      title: 'Lote Descripción',
-      type: 'string',
-      sort: false,
-      valuePrepareFunction: (value: any, row: any) => {
-        // DATA FROM HERE GOES TO renderComponent
-        return row.comerLot ? row.comerLot.description : null;
-      },
-    },
-    folioAtnCustomer: {
-      title: 'Folio Atn. Cliente',
-      type: 'string',
-      sort: false,
-    },
-    dateOfResolution: {
-      title: 'Fecha de Resolución',
-      type: 'string',
-      sort: false,
-    },
-    providerName: {
-      title: 'Proveedor',
-      type: 'string',
-      sort: false,
-    },
-    invoiceRecNumber: {
-      title: 'No. de Documento',
-      type: 'string',
-      sort: false,
-    },
-    numReceipts: {
-      title: 'No. Comprobantes',
-      type: 'string',
-      sort: false,
-    },
-    invoiceRecDate: {
-      title: 'Fecha Documento',
-      type: 'string',
-      sort: false,
-    },
-    payDay: {
-      title: 'Fecha Pago',
-      type: 'string',
-      sort: false,
-    },
-    captureDate: {
-      title: 'Fecha Captura',
-      type: 'string',
-      sort: false,
-    },
-    fecha_contrarecibo: {
-      title: 'Fecha Contrarecibo',
-      type: 'string',
-      sort: false,
-    },
-    attachedDocumentation: {
-      title: 'Documentación Anexa',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense: {
-      title: 'Enero',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense2: {
-      title: 'Febrero',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense3: {
-      title: 'Marzo',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense4: {
-      title: 'Abril',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense5: {
-      title: 'Mayo',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense6: {
-      title: 'Junio',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense7: {
-      title: 'Julio',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense8: {
-      title: 'Agosto',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense9: {
-      title: 'Setiembre',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense10: {
-      title: 'Octubre',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense11: {
-      title: 'Noviembre',
-      type: 'string',
-      sort: false,
-    },
-    monthExpense12: {
-      title: 'Diciembre',
-      type: 'string',
-      sort: false,
-    },
-    exchangeRate: {
-      title: 'Tipo de Cambio',
-      type: 'string',
-      sort: false,
-    },
-    formPayment: {
-      title: 'Forma de Pago',
-      type: 'string',
-      sort: false,
-    },
-    comproafmandsae: {
-      title: 'Comprobantes a Nombre',
-      type: 'string',
-      sort: false,
-    },
-    capturedUser: {
-      title: 'Captura',
-      type: 'string',
-      sort: false,
-    },
-    nomEmplcapture: {
-      title: 'Captura Nombre',
-      type: 'string',
-      sort: false,
-    },
-    authorizedUser: {
-      title: 'Autoriza',
-      type: 'string',
-      sort: false,
-    },
-    nomEmplAuthorizes: {
-      title: 'Autoriza Nombre',
-      type: 'string',
-      sort: false,
-    },
-    requestedUser: {
-      title: 'Solicita',
-      type: 'string',
-      sort: false,
-    },
-    nomEmplRequest: {
-      title: 'Solicita Nombre',
-      type: 'string',
-      sort: false,
-    },
-  };
+  columns: any;
   constructor(
     private dataService: ExpenseCaptureDataService,
     private spentMService: SpentMService,
     private spentIService: SpentIService,
-    private parameterService: ParametersConceptsService,
-    private comerEventService: ComerEventosService
+    private comerEventService: ComerEventosService,
+    private screenService: ExpenseScreenService,
+    private modalService: BsModalService,
+    private parameterService: ParametersConceptsService
   ) {
     super();
     this.prepareForm();
@@ -306,10 +74,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
       if (changes['address'].currentValue === 'I') {
         list.push({ value: 'I', title: 'INMUEBLES' });
       }
-      this.columnsType = {
-        ...this.columnsType,
+      this.columns = {
+        ...COLUMNS,
         address: {
-          ...this.columnsType.address,
+          ...COLUMNS.address,
           filter: {
             type: 'list',
             config: {
@@ -402,17 +170,43 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     }, 500);
   }
 
-  getParams(concept: { id: string }) {
-    return this.dataService.getParams(concept);
+  getParams(id: string) {
+    return this.dataService.readParams(id);
+  }
+
+  notify() {
+    console.log('Notificar');
+    let config: ModalOptions = {
+      initialState: {
+        // message,
+        // action,
+        // proceeding: this.proceedingForm.value,
+        callback: (next: boolean) => {
+          if (next) {
+            // const id = this.controls.keysProceedings.value;
+            // this.findProceeding(id).subscribe();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NotifyComponent, config);
   }
 
   fillForm(event: any) {
     console.log(event);
     this.data = event;
-    this.dataService.updateExpenseComposition.next(true);
     this.conceptNumber.setValue(event.conceptNumber);
     if (event.conceptNumber) {
-      this.getParams({ id: event.conceptNumber }).subscribe();
+      this.getParams(event.conceptNumber).subscribe({
+        next: response => {
+          this.dataService.updateOI.next(true);
+        },
+        error: err => {
+          this.dataService.updateOI.next(true);
+        },
+      });
     }
     if (event.eventNumber) {
       this.eventNumber.setValue(event.eventNumber);
@@ -435,6 +229,8 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
         : null
     );
     this.comment.setValue(event.comment);
+    this.dataService.updateExpenseComposition.next(true);
+    this.dataService.updateFolio.next(true);
     // this.reloadConcepto = !this.reloadConcepto;
   }
 
@@ -481,57 +277,71 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     return this.dataService.dataCompositionExpenses;
   }
 
-  private async getLS_ESTATUS() {
-    const filterParams = new FilterParams();
-    filterParams.addFilter('conceptId', this.conceptNumber.value);
-    filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
-    return await firstValueFrom(
-      this.parameterService.getAll(filterParams.getParams()).pipe(
-        catchError(x => of(null)),
-        map(x => (x && x.data && x.data.length > 0 ? x.data[0].value : null))
-      )
-    );
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
   }
-
-  private async getn_COUNT() {
-    const filterParams = new FilterParams();
-    filterParams.addFilter('id', this.eventNumber.value);
-    filterParams.addFilter('eventTpId', 10);
-    filterParams.addFilter('address', this.address);
-    return firstValueFrom(
-      this.comerEventService
-        .getAll(filterParams.getParams())
-        .pipe(catchError(x => of(null)))
-    );
-  }
-
-  private ENVIA_MOTIVOS() {}
 
   async sendToSIRSAE() {
-    console.log(this.dataCompositionExpenses);
-    return;
-    let LS_ESTATUS = this.getLS_ESTATUS();
-    if (LS_ESTATUS) {
-      this.ENVIA_SOLICITUD();
-    } else {
-      if (!this.dataCompositionExpenses[0].goodNumber) {
-        this.ENVIA_SOLICITUD();
-      } else {
-        if (this.eventNumber.value) {
-          const n_COUN = await this.getn_COUNT();
-          if (n_COUN && n_COUN.data && n_COUN.data) {
-            if (n_COUN.data.length === 0) {
-              this.ENVIA_MOTIVOS();
-            } else {
-            }
-          } else {
-            this.alert('error', 'Evento Equivocado', '');
-            this.eventNumber.setValue(null);
-          }
-        }
-      }
-    }
+    await this.dataService.updateByGoods(true);
   }
 
-  private ENVIA_SOLICITUD() {}
+  updateClasif() {
+    const VALIDA_DET = this.dataCompositionExpenses.filter(
+      row => row.changeStatus && row.changeStatus === true && row.goodNumber
+    );
+
+    if (VALIDA_DET.length === 0) {
+      this.alert(
+        'error',
+        'Actualizar Clasificación a Reporte de Robo',
+        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehiculo con Reporte de Robo'
+      );
+    } else {
+      this.alertQuestion(
+        'question',
+        'Actualizar Clasificación',
+        '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          let errors = [];
+          this.dataCompositionExpenses.forEach(async row => {
+            if (
+              row.changeStatus &&
+              row.changeStatus === true &&
+              row.goodNumber
+            ) {
+              const result = await firstValueFrom(
+                this.screenService
+                  .PUP_VAL_BIEN_ROBO({
+                    goodNumber: '524', //row.goodNumber,
+                    type: 'U',
+                    screenKey: 'FCOMER084',
+                    conceptNumber: this.conceptNumber.value,
+                  })
+                  .pipe(
+                    catchError(x => of(null)),
+                    tap(x => console.log(x))
+                  )
+              );
+              console.log(result);
+              if (!result) {
+                console.log('ERROR');
+                errors.push(row.goodNumber);
+              } else {
+                // if(result.message[0]){
+                // }
+              }
+            }
+          });
+          if (errors.length > 0) {
+            this.alert(
+              'error',
+              'Registros no encontrados por clave pantalla y número de concepto',
+              ''
+            );
+          }
+        }
+      });
+    }
+  }
 }

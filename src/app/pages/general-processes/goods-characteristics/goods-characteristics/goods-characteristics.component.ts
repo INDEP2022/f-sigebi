@@ -1165,6 +1165,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           }
         } else {
           this.disactivateForUser();
+          // this.activateForEdit();
         }
       }
     } else {
