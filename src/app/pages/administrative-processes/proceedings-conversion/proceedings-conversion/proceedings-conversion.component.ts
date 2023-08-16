@@ -333,10 +333,10 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           type: 'custom',
           showAlways: true,
           valuePrepareFunction: (isSelected: boolean, row: IGood) =>
-            this.isGoodSelectedValid(row),
+            this.isGoodSelected(row),
           renderComponent: CheckboxElementComponent,
           onComponentInitFunction: (instance: CheckboxElementComponent) =>
-            this.onGoodSelectValid(instance),
+            this.onGoodSelect(instance),
         },
         goodId: {
           title: 'No. Bien',
@@ -1308,7 +1308,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.selectedRow = event.data;
     console.log(this.selectedRow);
     await this.getStatusGoodService(this.selectedRow.status);
-    this.selectedGooods = event.selected;
+    // this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
   }
   selectActa(data: IActasConversion) {
@@ -1663,7 +1663,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           );
           return;
         } else {
-          console.log('aaa', this.goods);
+          console.log('aaa', this.selectedGooods);
 
           let result = this.selectedGooods.map(async (good: any) => {
             if (good.di_acta != null) {
@@ -1682,24 +1682,24 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
               console.log('GOOD', good);
               this.loading2 = true;
 
-              if (!this.dataRecepcion.some((v: any) => v === good)) {
-                let indexGood = this.dataTableGood_.findIndex(
-                  _good => _good.id == good.id
-                );
-                console.log('indexGood', indexGood);
-                // if (indexGood != -1)
-                // this.dataTableGood_[indexGood].di_disponible = 'N';
+              // if (!this.dataRecepcion.some((v: any) => v === good)) {
+              // let indexGood = this.dataTableGood_.findIndex(
+              //   _good => _good.id == good.id
+              // );
+              // console.log('indexGood', indexGood);
+              // if (indexGood != -1)
+              // this.dataTableGood_[indexGood].di_disponible = 'N';
 
-                await this.createDET(good);
-                // this.dataTableGood_ = this.bienes;
-                // this.dataRecepcion.push(good);
-                // this.dataRecepcion = [...this.dataRecepcion];
-              }
+              await this.createDET(good);
+              // this.dataTableGood_ = this.bienes;
+              // this.dataRecepcion.push(good);
+              // this.dataRecepcion = [...this.dataRecepcion];
+              // }
             }
           });
 
           Promise.all(result).then(async item => {
-            this.getGoodsByStatus(this.fileNumber);
+            await this.getGoodsByStatus(this.fileNumber);
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
         }

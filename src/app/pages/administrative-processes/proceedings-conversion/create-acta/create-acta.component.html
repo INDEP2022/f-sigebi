@@ -56,19 +56,24 @@
           </div>
           <div class="col-md-3 mt-2">
             <div>
-              <form-field
-                [control]="actaRecepttionForm.get('administra')"
-                label="Conversión">
-                <ng-select
-                  formControlName="administra"
-                  class="form-control pt-1">
-                  <ng-option
-                    *ngFor="let item of arrayDele"
-                    [value]="item.delegacion"
-                    >{{ item.no_delegacion_2 }} -
-                    {{ item.delegacion }}</ng-option
-                  >
-                </ng-select>
+              <form-field [control]="actaRecepttionForm.get('administra')">
+                <ngx-select
+                  [form]="actaRecepttionForm"
+                  [data]="arrayDele"
+                  (fetchItems)="consulREG_DEL_DESTR($event)"
+                  bindLabel="cveAdmin"
+                  value="delegation"
+                  control="administra"
+                  label="Conv"
+                  [searchOnInit]="false"
+                  [showTooltip]="true"
+                  termMaxLength="30">
+                </ngx-select>
+
+                <!-- <ng-select formControlName="administra" class="form-control pt-1">
+                  <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} -
+                    {{ item.delegacion }}</ng-option>
+                </ng-select> -->
                 <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
                                     readonly /> -->
               </form-field>
@@ -80,12 +85,12 @@
                 <ngx-select
                   [form]="actaRecepttionForm"
                   [data]="dele"
-                  (fetchItems)="consulREG_DEL_DESTR($event)"
+                  (fetchItems)="consulREG_DEL_ADMIN($event)"
                   bindLabel="cveReceived"
                   value="delegation"
                   control="cveReceived"
                   label="Admin"
-                  [searchOnInit]="true"
+                  [searchOnInit]="false"
                   [showTooltip]="true"
                   termMaxLength="30">
                 </ngx-select>
@@ -180,13 +185,16 @@
         <button
           [disabled]="!actaRecepttionForm.valid"
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary btn-sm active"
           (click)="agregarActa()">
           Guardar <i class="fas fa-save bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="return()">
+        <button
+          type="button"
+          class="btn btn-sm btn-danger active"
+          (click)="return()">
           Cancelar
         </button>
       </div>

@@ -29,11 +29,11 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IAccountDetailInd } from 'src/app/core/models/ms-account-movements/account-detail-ind';
 import { IUserChecks } from 'src/app/core/models/ms-account-movements/account-movement.model';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import { IPupCalculateDevolutionResult } from 'src/app/core/models/ms-parametergood/parameters.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { ChecksDevolutionService } from 'src/app/core/services/ms-account-movements/checks-devolution.service';
 import { DetailsIndMovementService } from 'src/app/core/services/ms-account-movements/details-ind-movement.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DetailInterestReturnService } from 'src/app/core/services/ms-deposit/detail-interest-return.service';
@@ -116,6 +116,8 @@ export class DepositAccountStatementComponent
   form2: FormGroup;
   dateTransfer: Date;
   transferDate: Date;
+  disabledAccount = false;
+  disabledMovement = false;
   checksDevolution: IUserChecks[] = [];
   ilikeFilters = [
     'nameindicated',
@@ -126,17 +128,69 @@ export class DepositAccountStatementComponent
     'checkfolio',
   ];
   dateFilters = [
+    'movementdate',
     'interestcalculationdate',
     'scheduleddatebyconfiscationreturn',
   ];
+
+  ilikeAccountFilters = ['cveBank'];
+  columnsMovementType = {
+    numberMotion: {
+      title: 'Movimiento',
+      type: 'string',
+      sort: false,
+    },
+    deposit: {
+      title: 'Importe',
+      type: 'string',
+      sort: false,
+    },
+    dateMotion: {
+      title: 'Fecha Depósito',
+      type: 'string',
+      sort: false,
+    },
+    dateTransfer: {
+      title: 'Fecha de Transferencia',
+      type: 'string',
+      sort: false,
+    },
+  };
+  columnsAccountType = {
+    cveAccount: {
+      title: 'Cuenta',
+      type: 'string',
+      sort: false,
+    },
+    cveBank: {
+      title: 'Banco',
+      type: 'string',
+      sort: false,
+    },
+    cveCurrency: {
+      title: 'Moneda',
+      type: 'string',
+      sort: false,
+    },
+    accountNumberTransfer: {
+      title: 'Cuenta Traspaso',
+      type: 'string',
+      sort: false,
+    },
+  };
   columnsType = {
+    devolutionnumber: {
+      title: 'Devolución',
+      type: 'string',
+      sort: true,
+    },
     accountkey: {
       title: 'Cuenta',
       type: 'string',
       sort: true,
     },
-    devolutionnumber: {
-      title: 'Devolución',
+    accountnumber: {
+      title: 'Movimiento',
       type: 'string',
       sort: true,
     },
@@ -231,14 +285,15 @@ export class DepositAccountStatementComponent
     private goodService: GoodService,
     private goodParametersService: GoodParametersService,
     private screenStatusService: ScreenStatusService,
-    private accountMovementService: AccountMovementService,
+    public accountMovementService: AccountMovementService,
     private datePipe: DatePipe,
-    private bankAccountService: BankAccountService,
+    public bankAccountService: BankAccountService,
     private parameterService: ParametersService,
     private expedientService: ExpedientService,
     private detailInterestReturnService: DetailInterestReturnService,
     private paymentServicesService: PaymentServicesService,
     private authService: AuthService,
+    public checkDevolutionService: ChecksDevolutionService,
     public detailsIndMovementService: DetailsIndMovementService
   ) {
     super();
@@ -295,61 +350,9 @@ export class DepositAccountStatementComponent
           this.updateTransferDate(response);
         },
       });
-    //this.getGood(new ListParams());
-    /*this.paramsActNavigate
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        console.log(params);
-        this.newLimitparamsActNavigate = new FormControl(params.limit);
-        //this.getGoodsActFn();
-        //console.log();
-        this.returnChecks(new ListParams());
-      });*/
-
-    /////////////////////////////////////////////////////////////
-    /*
-    this.paramsActNavigate
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(params => {
-        this.loading = true;
-        this.dataGoodAct.load([]);
-        //this.clearInputs();
-        const paramsF = new FilterParams();
-        paramsF.page = params.page;
-        paramsF.limit = 1;
-        paramsF.addFilter('numFile', this.form.get('expediente').value);
-        paramsF.addFilter(
-          'typeProceedings',
-          'ENTREGA,DECOMISO',
-          SearchFilter.IN
-        ); //!Un in
-
-        this.accountMovementService.getAllUsersChecks(paramsF.getParams()).subscribe({
-          next: data => {
-            console.log(data.data);
-            console.log(data);
-            const dataRes = JSON.parse(JSON.stringify(data.data[0]));
-            this.fillIncomeProceeding(dataRes, '');
-            this.accountChecksSelect = new DefaultSelect(data.data, data.count);
-          },
-          error: error => {
-            this.accountChecksSelect = new DefaultSelect();
-          },
-        });
-
-
-        this.serviceProcVal.getByFilter(paramsF.getParams()).subscribe(
-          res => {
-            console.log(res);
-            const dataRes = JSON.parse(JSON.stringify(res.data[0]));
-            this.fillIncomeProceeding(dataRes, '');
-          },
-          err => {
-            this.loading = false;
-          }
-        );
-      });*/
   }
+
+  changeAccount(account: any) {}
 
   public updateCalculateData() {
     // setTimeout(() => {
@@ -368,7 +371,7 @@ export class DepositAccountStatementComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      movementNumber: [null, Validators.required],
+      movementNumber: [null],
       account: [null, Validators.required],
       bank: [null, Validators.nullValidator],
       currency: [null, Validators.nullValidator],
@@ -413,6 +416,14 @@ export class DepositAccountStatementComponent
     //this.validation();
   }
 
+  get movementNumber() {
+    return this.form.get('movementNumber');
+  }
+
+  get accountNumber() {
+    return this.form.get('account');
+  }
+
   get goodFilter() {
     return this.form.get('goodFilter');
   }
@@ -452,13 +463,13 @@ export class DepositAccountStatementComponent
     return this.form.get('depositDate');
   }
 
-  changeGood(good: IGood) {
-    console.log(good);
-    this.goodIdSearch = null;
-    this.goodDescription.setValue(good.description);
-    this.status.setValue(good.status);
-    this.di_fec_programada_devolucion = good.dateRenderDecoDev as string;
-  }
+  // changeGood(good: IGood) {
+  //   console.log(good);
+  //   this.goodIdSearch = null;
+  //   this.goodDescription.setValue(good.description);
+  //   this.status.setValue(good.status);
+  //   this.di_fec_programada_devolucion = good.dateRenderDecoDev as string;
+  // }
 
   clean() {
     for (const controlName in this.form.controls) {
@@ -742,6 +753,17 @@ export class DepositAccountStatementComponent
       +this.userChecks.returnamount - +this.userChecks.creditedinterest
     );
     this.updatePupReturnsByDates = false;
+    this.disabledAccount = true;
+    this.disabledMovement = true;
+    if (this.userChecks.accountnumberorigindeposit) {
+      this.accountNumber.setValue(this.userChecks.accountnumberorigindeposit);
+      this.accountnumberorigindeposit.setValue(
+        this.userChecks.accountnumberorigindeposit
+      );
+    }
+    if (this.userChecks.movementnumber) {
+      this.movementNumber.setValue(this.userChecks.movementnumber);
+    }
     // this.accountPayReturn = this.userChecks.accountnumberpayreturn;
     if (this.userChecks.scheduleddatebyconfiscationreturn) {
       const datePipeReturn = new DatePipe('en-US');
@@ -768,9 +790,7 @@ export class DepositAccountStatementComponent
     this.status.setValue(this.userChecks.status);
     this.expedient.setValue(this.userChecks.expedientnumber);
     this.devolutionnumber.setValue(this.userChecks.devolutionnumber);
-    this.accountnumberorigindeposit.setValue(
-      this.userChecks.accountnumberorigindeposit
-    );
+
     this.accountnumberpayreturn.setValue(
       this.userChecks.accountnumberpayreturn
     );
@@ -902,44 +922,48 @@ export class DepositAccountStatementComponent
       });
   }
 
-  preInsert() {
-    const statusBien = this.form.get('status').value;
-    if (statusBien) {
-      const params = { estatus: statusBien, vc_pantalla: 'FCONADBEDOCTAXIND' };
-      this.screenStatusService
-        .getAllFiltro(params)
-        .pipe(takeUntil(this.$unSubscribe))
-        .subscribe({
-          next: (data: { count: number }) => {
-            if (data.count > 0) {
-              this.vb_valid = true;
-            }
-          },
-          error: (error: any) => {},
-        });
-    } else {
+  async preInsert() {
+    const statusBien = this.status.value;
+    if (!statusBien) {
       this.alert(
         'warning',
         'No tiene definido un Bien Estatus',
         'El cual es necesario para registrar la Devolución'
       );
-      // INTERRUMPIR EL FLUJO
+      return false;
     }
-    if (this.vb_valid == false) {
+    const params = { estatus: statusBien, vc_pantalla: 'FCONADBEDOCTAXIND' };
+    const results = await firstValueFrom(
+      this.screenStatusService
+        .getAllFiltro(params)
+        .pipe(catchError(x => of(null)))
+    );
+    if (!results || results.count === 0) {
       this.alert(
         'warning',
         'El Bien se encuentra en un Estatus',
         'En el cual no se permite registrar la Devolución'
       );
-      // INTERRUMPIR EL FLUJO
+      return false;
     }
-
     // VERIFICAR SI VA no-devolucion
 
     if (this.form.controls['transfDate'].value === null) {
       if (this.form.controls['transferDate'].value != null) {
+        if (
+          this.userChecks.accountnumberorigindeposit &&
+          this.userChecks.accountnumberpayreturn
+        ) {
+          await firstValueFrom(
+            this.accountMovementService.update({
+              dateCalculationInterests:
+                this.form.controls['transferDate'].value,
+              accountNumber: this.userChecks.accountnumber,
+            })
+          );
+        }
         //actualizar movimiento de cuentas
-        //this.accountMovementService.update();
+
         //vf_fecha_interses:= : blk_dev.ti_fec_inicio_interes ;
       }
     } else {
@@ -947,13 +971,23 @@ export class DepositAccountStatementComponent
         this.form.controls['transfDate'].value !=
         this.form.controls['transferDate'].value
       ) {
-        // actualizar movimiento cuentas
-        //this.accountMovementService.update();
-        //vf_fecha_interses:= : blk_dev.ti_fec_inicio_interes;
+        if (
+          this.userChecks.accountnumberorigindeposit &&
+          this.userChecks.accountnumberpayreturn
+        ) {
+          await firstValueFrom(
+            this.accountMovementService.update({
+              dateCalculationInterests:
+                this.form.controls['transferDate'].value,
+              accountNumber: this.userChecks.accountnumber,
+            })
+          );
+        }
       } else {
         //vf_fecha_interses:= : blk_dev.di_fec_transferencia_deposito;
       }
     }
+    return true;
   }
 
   preRecord() {
@@ -1526,6 +1560,15 @@ export class DepositAccountStatementComponent
     //return data;
   }
 
+  async insert() {
+    const preInsert = await this.preInsert();
+    if (preInsert) {
+      // this.accountMovementService.createUserChecks({
+      //   accountOriginDepositNumber:+this.userChecks.accountnumberorigindeposit,
+      // });
+    }
+  }
+
   async interestCheck() {
     this.loader.load = true;
     if (!this.userChecks.devolutionnumber) {
@@ -1543,7 +1586,8 @@ export class DepositAccountStatementComponent
       this.loader.load = false;
       return;
     }
-
+    await this.insert();
+    return;
     priorInterest = this.form.controls['interestCredited'].value;
 
     this.form.controls['check'].setValue(null);

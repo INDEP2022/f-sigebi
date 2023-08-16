@@ -70,7 +70,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       //console.error(this.goodSelect);
       this.search();
     }
-    this.getGoodsSheard({ limit: 10, page: 1 });
+    this.getGoodsSheard(new ListParams());
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -330,6 +330,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
   getGoodsSheard(params: ListParams) {
     //Provisional data
+    console.log(params);
     // this.searchTabForm.controls['noBien'].disable();
     this.loader.load = true;
     this.params = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -340,8 +341,9 @@ export class SearchTabComponent extends BasePage implements OnInit {
     if (this.classifGood) {
       data.addFilter('goodClassNumber', this.classifGood);
     }
+
     if (params.text != undefined && params.text != '') {
-      data.addFilter('description', params.text, SearchFilter.ILIKE);
+      data.addFilter('id', params.text, SearchFilter.EQ);
     }
 
     this.service.getAll2(data.getParams()).subscribe({
