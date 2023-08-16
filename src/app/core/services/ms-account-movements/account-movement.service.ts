@@ -54,6 +54,10 @@ export class AccountMovementService extends HttpService {
     return this.put('user-checks/' + id, body);
   }
 
+  createUserChecks(body: IUserChecks) {
+    return this.post('user-checks', body);
+  }
+
   update(movement: any) {
     return this.put(`account-movements`, movement);
   }

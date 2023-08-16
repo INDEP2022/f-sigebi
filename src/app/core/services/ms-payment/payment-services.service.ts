@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IComerPaymentsRefVir } from './payment-service';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import { IComerPaymentsRefVir, IOI, IOI_DTO } from './payment-service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +12,10 @@ export class PaymentService extends HttpService {
   constructor() {
     super();
     this.microservice = PaymentEndPoints.BasePath;
+  }
+
+  getOI(body: IOI_DTO) {
+    return this.post<IListResponseMessage<IOI>>(PaymentEndPoints.getOI, body);
   }
 
   getComerPaymentRef(params: _Params) {

@@ -1,8 +1,20 @@
 <form class="form-material" [formGroup]="form">
   <div class="row pt-5">
-    <div class="col-md-2">
-      <h5 class="font-size-14 d-inline">Ingrese No. de Evento</h5>
-      <ngx-select
+    <div class="col-md-12">
+      <!-- <h5 class="font-size-14 d-inline">Ingrese No. de Evento</h5> -->
+      <ng-custom-select-loading
+        [form]="form"
+        formControlName="idEvent"
+        label="Evento"
+        [path]="pathEvent"
+        value="observations"
+        bindLabel="observations"
+        paramSearch="filter.observations"
+        prefixSearch="$ilike"
+        (valueChange)="selectEvent($event)">
+      </ng-custom-select-loading>
+
+      <!-- <ngx-select
         [form]="form"
         [data]="eventItems"
         value="idEvent"
@@ -10,23 +22,16 @@
         (fetchItems)="getEvents($event)"
         (change)="selectEvent($event)"
         control="idEvent">
-      </ngx-select>
+      </ngx-select> -->
     </div>
     <div class="col-md-2" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">ID Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.idEvent }}</p>
+      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.id }}</p>
       <!-- <form-field [control]="form.get('idEvent')" label="ID Evento">
         <input type="text" class="form-control" formControlName="idEvent" />
       </form-field> -->
     </div>
-    <div class="col-md-2" *ngIf="selectedEvent != null">
-      <h5 class="font-size-14 d-inline">Clave de Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.cveEvent }}</p>
-      <!-- <form-field [control]="form.get('cveEvent')" label="Clave de Evento">
-        <input type="text" class="form-control" formControlName="idEvent" />
-      </form-field> -->
-    </div>
-    <div class="col-md-2" *ngIf="selectedEvent != null">
+    <div class="col-md-4" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Nombre de Evento</h5>
       <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.nameEvent }}</p>
       <!-- <form-field [control]="form.get('nameEvent')" label="Nombre de Evento">
@@ -35,7 +40,7 @@
     </div>
     <div class="col-md-2" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Clave de Evento</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.cveEvent }}</p>
+      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.processKey }}</p>
       <!-- <form-field [control]="form.get('cveEvent')" label="Clave de Evento">
         <input type="text" class="form-control" formControlName="idEvent" />
       </form-field> -->
@@ -63,7 +68,9 @@
   <div class="row">
     <div class="col-md-5" *ngIf="selectedEvent != null">
       <h5 class="font-size-14 d-inline">Observaciones</h5>
-      <p class="mt-2 font-size-28 text-muted">{{ selectedEvent.obsEvent }}</p>
+      <p class="mt-2 font-size-28 text-muted">
+        {{ selectedEvent.observations }}
+      </p>
       <!-- <form-field [control]="form.get('obsEvent')" label="Observaciones">
         <input type="text" class="form-control" formControlName="obsEvent" />
       </form-field> -->

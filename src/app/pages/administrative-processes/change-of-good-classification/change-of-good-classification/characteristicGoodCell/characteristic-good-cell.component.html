@@ -5,6 +5,9 @@
   class="goodCellContainer"
   *ngIf="!row.tableCd"
   [class]="haveError(row) ? 'error' : ''">
+  <label *ngIf="row.required" class="float-label" style="right: 12px">
+    <span style="color: rgb(157, 36, 73)">*</span>
+  </label>
   <input
     *ngIf="row.dataType !== 'D' && !row.attribute.includes('FECHA')"
     type="text"
