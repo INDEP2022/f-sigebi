@@ -162,6 +162,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showWarehouse: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
+  checkSeleccionado: boolean = false;
   receiptClose: boolean = true;
   receiptGuardClose: boolean = true;
   receiptWarehouseClose: boolean = true;
@@ -361,9 +362,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         sort: false,
         renderComponent: SelectInputComponent,
         onComponentInitFunction(instance: any, component: any = self) {
-          instance.input.subscribe(async (row: any) => {
-            console.log('process', process);
-          });
+          instance.input.subscribe(async (row: any) => {});
         },
       },
       ...this.settingsTransGood.columns,
@@ -846,6 +845,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     } else if (item.stateConservation == 2) {
                       item.stateConservationName = 'MALO';
                     }
+
                     if (item.transferentDestiny == 1) {
                       item.transferentDestinyName = 'VENTA';
                     } else if (item.transferentDestiny == 2) {
@@ -855,7 +855,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     } else if (item.transferentDestiny == 4) {
                       item.transferentDestinyName = 'ADMINISTRACIÓN';
                     }
-                    console.log('formfg', item.transferentDestinyName);
+
                     //item.transferentDestiny = showDestinyTransferent;
                     this.goodData = item;
                     const form = this.fb.group({
@@ -982,7 +982,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   } */
 
   showDestinyTrasnferent(destinyTNumber: number) {
-    console.log('destinyTNumber', destinyTNumber);
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.name'] = 'Destino';
@@ -1003,7 +1002,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('destino indep', response);
         this.transfersDestinity = response.data;
       },
       error: error => {},
@@ -1040,7 +1038,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
                   }
-
                   if (item.transferentDestiny == 1) {
                     item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
@@ -1724,10 +1721,28 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
   }
-  goodSelect(good: IGood) {
-    this.goodIdSelect = good.id;
-    this.selectGood.push(good);
+  goodSelect(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectGood.push(good);
+      console.log('selectGood', this.selectGood);
+    } else {
+      this.selectGood = [];
+      console.log('good delete', this.selectGood);
+    }
   }
+
+  /*goodSelect(event: any) {
+    console.log('event', event);
+
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectGood.push(good);
+    } else {
+      this.selectGood = [];
+      console.log('good delete', this.selectGood);
+    } 
+  } */
   goodSelectGuard(good: IGood) {
     this.goodIdSelectGuard = good.id;
     this.selectGoodGuard.push(good);
