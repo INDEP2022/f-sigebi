@@ -394,8 +394,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.type.value === null) {
       this.alert(
         'warning',
-        'Cálculo de numerario',
-        'Debe especificar el tipo de proceso.'
+        'Cálculo de Numerario',
+        'Debe Especificar el Tipo de Proceso.'
       );
       return;
     }
@@ -403,15 +403,15 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === null) {
       this.alert(
         'warning',
-        'Cálculo de numerario',
-        'Debe especificar el tipo de moneda.'
+        'Cálculo de Numerario',
+        'Debe Especificar el Tipo de Moneda.'
       );
       return;
     }
     const response = await this.alertQuestion(
       'question',
-      '¿Desea continuar?',
-      '¿Se continua con la selección?'
+      '¿Desea Continuar?',
+      '¿Se Continua con la Selección?'
     );
     if (response.isConfirmed) {
       this.openModal();
@@ -455,7 +455,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Cálculo de numerario',
+        'Cálculo de Numerario',
         'El proceso no presenta ninguna comisión bancaria.'
       );
     }
@@ -498,7 +498,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async deleteRequest() {
     const response = await this.alertQuestion(
       'question',
-      'Cálculo de numerario',
+      'Cálculo de Numerario',
       'Se eliminará proceso de numerario. ¿Deseas continuar?'
     );
     if (response.isConfirmed) {
@@ -509,7 +509,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         this.clearAll();
         this.alert(
           'success',
-          'Cálculo de numerario',
+          'Cálculo de Numerario',
           'Fue eliminado el cálculo solicitado correctamente'
         );
       } else {
@@ -638,14 +638,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       } else {
         this.alert(
           'warning',
-          'Cálculo de numerario',
+          'Cálculo de Numerario',
           'No se encontró la solicitud.'
         );
       }
     } else {
       this.alert(
         'warning',
-        'Cálculo de numerario',
+        'Cálculo de Numerario',
         'No se especificó el proceso a calcular.'
       );
     }
@@ -744,7 +744,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId != null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Se ejecuta el cálculo?',
+          '¿Se Ejecuta el Cálculo?',
           ''
         );
 
@@ -755,14 +755,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           );
           console.log(vResul);
           if (vResul === 'Error') {
-            this.alert('error', 'Ha ocurrido un error', '');
+            this.alert('error', 'Ha Ocurrido un Error', '');
           } else {
             this.alert('success', 'Se realizó el Cálculo de Numerario', '');
             this.searchProcess();
           }
         }
       } else {
-        this.alert('error', 'No se encontró la solicitud', '');
+        this.alert('error', 'No se Encontró la Solicitud', '');
       }
     } else {
       this.alert('error', 'No se especificó el proceso a calcular', '');
@@ -782,7 +782,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (res.registers === 0) {
         this.alert(
           'warning',
-          'Cálculo de numerario',
+          'Cálculo de Numerario',
           'No se encontro el tipo de moneda en este proceso. \n Debe seleccionar uno para continuar con el proceso'
         );
         this.currency.enable();
@@ -791,8 +791,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (res.registers > 1) {
         this.alert(
           'warning',
-          'Cálculo de numerario',
-          'Se encontraron mas tipos de moneda.'
+          'Cálculo de Numerario',
+          'Se encontraron más tipos de moneda.'
         );
         return;
       }

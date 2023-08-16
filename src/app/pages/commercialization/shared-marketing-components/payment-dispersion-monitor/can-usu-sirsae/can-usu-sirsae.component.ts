@@ -1,45 +1,44 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
-import { BsModalRef } from "ngx-bootstrap/modal";
-import { BasePage } from "src/app/core/shared";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared';
 
 @Component({
-    selector: 'app-can-usu-sirsae',
-    templateUrl: './can-usu-sirsae.component.html',
-    styleUrls: []
+  selector: 'app-can-usu-sirsae',
+  templateUrl: './can-usu-sirsae.component.html',
+  styleUrls: [],
 })
+export class CanUsuSirsaeComponent extends BasePage implements OnInit {
+  formUsu: FormGroup;
+  user: any;
 
-export class CanUsuSirsaeComponent extends BasePage implements OnInit{
-    formUsu: FormGroup
-    user: any
-    
-    constructor(private fb: FormBuilder, private bsModel: BsModalRef){
-        super()
-    }
+  constructor(private fb: FormBuilder, private bsModel: BsModalRef) {
+    super();
+  }
 
-    ngOnInit(): void {
-        this.prepareForm()
-        console.log(this.user)
-        this.formUsu.get('user').setValue(this.user)
-    }
-    
-    private prepareForm(){
-        this.formUsu = this.fb.group({
-            user: [null],
-            password: [null]
-        })
-    }
+  ngOnInit(): void {
+    this.prepareForm();
+    console.log(this.user);
+    this.formUsu.get('user').setValue(this.user);
+  }
 
-    //Gets
-    get userForm(){
-        return this.formUsu.get('user')
-    }
+  private prepareForm() {
+    this.formUsu = this.fb.group({
+      user: [null],
+      password: [null],
+    });
+  }
 
-    get password(){
-        return this.formUsu.get('password')
-    }
+  //Gets
+  get userForm() {
+    return this.formUsu.get('user');
+  }
 
-    close(){
-        this.bsModel.hide()
-    }
+  get password() {
+    return this.formUsu.get('password');
+  }
+
+  close() {
+    this.bsModel.hide();
+  }
 }
