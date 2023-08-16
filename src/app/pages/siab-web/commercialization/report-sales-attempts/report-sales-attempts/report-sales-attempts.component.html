@@ -12,7 +12,7 @@
         </div>
         <div class="row">
           <div class="col-md-2">
-            <form-check label="Por bien" for="label1">
+            <form-check label="Por Bien" for="label1">
               <input
                 id="label1"
                 type="checkbox"
@@ -20,20 +20,33 @@
             </form-check>
           </div>
           <div class="col-md-2">
-            <form-check label="Con archivo de texto" for="label2">
+            <form-check label="Con Archivo de Texto" for="label2">
               <input id="label2" type="checkbox" formControlName="filterText" />
             </form-check>
           </div>
           <div class="col-md-3" *ngIf="filterText.value">
-            <input type="file" (change)="chargeFile($event.target)" />
+            <button
+              class="btn btn-success btn-sm ml-2"
+              type="button"
+              (click)="file.click()">
+              Abrir archivo Excel / CSV
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
           </div>
           <div class="col-md-2" *ngIf="filterText.value">
             <div class="justify-content-center">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary active btn-sm"
                 [disabled]="!form.valid">
-                Buscar bienes
+                Buscar Bienes
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -60,9 +73,10 @@
             <div class="justify-content-center">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary active btn-sm"
                 [disabled]="!form.valid">
                 Consultar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>
