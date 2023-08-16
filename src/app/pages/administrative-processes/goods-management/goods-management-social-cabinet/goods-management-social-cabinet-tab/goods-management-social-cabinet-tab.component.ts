@@ -118,11 +118,7 @@ export class GoodsManagementSocialCabinetTabComponent
             message.includes('correctamente') ||
             message.includes('procesado')
           ) {
-            this.alert(
-              'success',
-              'Procesamiento Gabinete Social',
-              'Bienes procesados'
-            );
+            this.alert('success', 'Bienes Procesados', '');
           } else {
             this.alert('error', 'Procesamiento Gabinete Social', message);
           }
