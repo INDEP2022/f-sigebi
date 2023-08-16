@@ -12,11 +12,12 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
 import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-shared.component';
+import { KitchenwareModalGoodComponent } from './kitchenware-modal-good/kitchenware-modal-good.component';
 import { KitchenwareRoutingModule } from './kitchenware-routing.module';
 import { PropertyRegistrationComponent } from './property-registration/property-registration.component';
 
 @NgModule({
-  declarations: [PropertyRegistrationComponent],
+  declarations: [PropertyRegistrationComponent, KitchenwareModalGoodComponent],
   imports: [
     CommonModule,
     SharedModule,
