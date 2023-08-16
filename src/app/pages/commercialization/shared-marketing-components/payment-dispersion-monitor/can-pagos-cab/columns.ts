@@ -1,5 +1,5 @@
 export const COLUMNS_PAGOS = {
-    idIdentifier: {
+  idIdentifier: {
     title: 'ID',
     sort: false,
   },
@@ -86,88 +86,88 @@ export const COLUMNS_PAGOS = {
 };
 
 export const COLUMNS_DETALLE = {
-    id:{
-        title:'ID',
-        sort:false
-    },
-    consecutive:{
-        title:'Consecutivo',
-        sort:false
-    },
-    mandate:{
-        title:'Mandato',
-        sort:false
-    },
-    entry:{
-        title:'Ingreso',
-        sort:false
-    },
-    amount:{
-        title:'Importe',
-        sort:false
-    },
-    vat:{
-        title:'IVA',
-        sort:false
-    },
-    amountSVat:{
-        title:'Importe sin IVA',
-        sort:false
-    },
-    indType:{
-        title:'I.T',
-        sort:false
-    },
-    lotSiab:{
-        title:'Lote SIAB',
-        sort:false
-    },
-    description:{
-        title:'Descripción',
-        sort:false
-    },
-    aResponsable:{
-        title:'U.Resp.',
-        sort:false
-    },
-    eventId:{
-        title:'Evento',
-        sort:false
-    },
-    reference:{
-        title:'Referencia',
-        sort:false
-    },
-    loteId:{
-        title:'Id. Lote',
-        sort:false
-    },
-    paymentType:{
-        title:'T.P.',
-        sort:false
-    },
-    percentVat:{
-        title:'% IVA',
-        sort:false
-    },
-    priceVtaLot:{
-        title:'Precio Venta Lote',
-        sort:false
-    },
-    percentageRetained:{
-        title:'% Ret.',
-        sort:false
-    },
-    amountRetained:{
-        title:'Monto Retenido',
-        sort:false
-    },
-    recordedOrderId:{
-        title:'Id. Orden Grabada',
-        sort:false
-    },
-    goodSiab:{
-        title:'Bienes SIAB',
-        sort:false
-    },
-}
+  id: {
+    title: 'ID',
+    sort: false,
+  },
+  consecutive: {
+    title: 'Consecutivo',
+    sort: false,
+  },
+  mandate: {
+    title: 'Mandato',
+    sort: false,
+  },
+  entry: {
+    title: 'Ingreso',
+    sort: false,
+  },
+  amount: {
+    title: 'Importe',
+    sort: false,
+  },
+  vat: {
+    title: 'IVA',
+    sort: false,
+  },
+  amountSVat: {
+    title: 'Importe sin IVA',
+    sort: false,
+  },
+  indType: {
+    title: 'I.T',
+    sort: false,
+  },
+  lotSiab: {
+    title: 'Lote SIAB',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  aResponsable: {
+    title: 'U.Resp.',
+    sort: false,
+  },
+  eventId: {
+    title: 'Evento',
+    sort: false,
+  },
+  reference: {
+    title: 'Referencia',
+    sort: false,
+  },
+  loteId: {
+    title: 'Id. Lote',
+    sort: false,
+  },
+  paymentType: {
+    title: 'T.P.',
+    sort: false,
+  },
+  percentVat: {
+    title: '% IVA',
+    sort: false,
+  },
+  priceVtaLot: {
+    title: 'Precio Venta Lote',
+    sort: false,
+  },
+  percentageRetained: {
+    title: '% Ret.',
+    sort: false,
+  },
+  amountRetained: {
+    title: 'Monto Retenido',
+    sort: false,
+  },
+  recordedOrderId: {
+    title: 'Id. Orden Grabada',
+    sort: false,
+  },
+  goodSiab: {
+    title: 'Bienes SIAB',
+    sort: false,
+  },
+};

@@ -1,13 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
-import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
+  VALUATION_REQUEST_COLUMNS,
+  VALUATION_REQUEST_COLUMNS_TWO,
+} from './valuation-request-columns';
+
+export class OfficesSend {
+  eventId: number;
+  officeType: number;
+}
 
 @Component({
   selector: 'app-valuation-request',
@@ -15,96 +22,132 @@ import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
   styles: [],
 })
 export class valuationRequestComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-
+  arrayResponseOffice: any[] = [];
+  form: FormGroup;
+  formTwo: FormGroup;
+  formDialogOne: FormGroup;
+  data: LocalDataSource = new LocalDataSource();
+  dataTwo: LocalDataSource = new LocalDataSource();
+  offices = new DefaultSelect();
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  dateNow: Date;
+  intervalId: any;
+  listCitys: any;
+  listKeyOffice: any;
+  settingsTwo: any;
+  subscribeDelete: Subscription;
 
-  constructor(private fb: FormBuilder) {
+  //
+
+  constructor(private fb: FormBuilder, private serviceJobs: JobsService) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: { ...VALUATION_REQUEST_COLUMNS },
     };
+
+    this.settingsTwo = {
+      ...this.settings,
+      actions: false,
+      columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
+    };
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.prepareForm();
-    this.getPagination();
+    this.actualizarHora();
+    this.intervalId = setInterval(() => {
+      this.actualizarHora();
+    }, 1000);
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      cveService: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      folio: [null, [Validators.required]],
+  //
 
-      sender: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      senderTxt: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+  getOffices(event: any) {
+    this.serviceJobs.getAll(event).subscribe({
+      next: data => {
+        this.offices = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.offices = new DefaultSelect();
+      },
+    });
+  }
+  async getsContent() {
+    // this.loader.load = true;
+    // if (this.event == 0) {
+    //   this.event = this.form.controls['event'].value;
+    // }
+    // let type = await this.getType(this.event);
+    // console.log(type);
+    // this.tipo = type;
+  }
 
-      addressee: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      addresseeTxt: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-
-      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-
-      paragraph1: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraph2: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      paragraph3: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-
-      user: [null, [Validators.required]],
-      txtUserCCP: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+  findDataTable(data: any) {
+    let valorObjeto: any;
+    valorObjeto = data;
+    let body: OfficesSend = new OfficesSend();
+    body.eventId = valorObjeto?.eventId;
+    body.officeType = valorObjeto?.jobType;
+    this.serviceJobs.postByFilters(body).subscribe({
+      next: response => {
+        this.arrayResponseOffice = response.data;
+        this.iterableAssign(this.arrayResponseOffice);
+      },
+      error: error => {},
     });
   }
 
-  data = [
-    {
-      noBien: 564,
-      description: 'Descripción del 564',
-      amount: '$41,151.00',
-      status: 'Disponible',
-    },
-    {
-      noBien: 45,
-      description: 'Descripción del 45',
-      amount: '$1,500.00',
-      status: 'No Disponible',
-    },
-    {
-      noBien: 785,
-      description: 'Descripción del 785',
-      amount: '$201,500.00',
-      status: 'Disponible',
-    },
-  ];
+  actualizarHora(): void {
+    this.dateNow = new Date();
+  }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  iterableAssign(array: any[]) {
+    for (const i of array) {
+      console.log('Iterando la mamada esta: ', i?.cargo_destina);
+    }
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      event: [null],
+      cveService: [null],
+      fol: [null],
+      key: [null],
+      cityCi: [null],
+      dateRec: [null],
+      dateEla: [null],
+      remi: [null],
+      dest: [null],
+      office: [null],
+    });
+    this.formTwo = this.fb.group({
+      allGood: [null],
+      selectedGood: [null],
+      ref: [null],
+      aten: [null],
+      espe: [null],
+    });
+    this.formDialogOne = this.fb.group({
+      noti: [null],
+    });
+    this.subscribeDelete = this.form
+      .get('office')
+      .valueChanges.subscribe(value => {
+        this.findDataTable(value);
+      });
+  }
+
+  //
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+    this.subscribeDelete.unsubscribe();
   }
 }

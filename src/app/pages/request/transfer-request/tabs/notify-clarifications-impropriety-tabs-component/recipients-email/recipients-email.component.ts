@@ -67,18 +67,19 @@ export class RecipientsEmailComponent extends BasePage implements OnInit {
             resp.data[i].xtipoDocumento === '216' ||
             resp.data[i].xtipoDocumento === '213' ||
             resp.data[i].xtipoDocumento === '212' ||
-            resp.data[i].xtipoDocumento === '211'
+            resp.data[i].xtipoDocumento === '211' ||
+            resp.data[i].xtipoDocumento === '104'
           ) {
             console.log(
               'Tipo de documento: ',
-              resp.data[i].xtipoDocumento,
+              resp.data[i]?.xtipoDocumento,
               '- Nombre document: ',
-              resp.data[i].ddocTitle,
+              resp.data[i]?.ddocTitle,
               '- Id Documento: ',
-              resp.data[i].dDocName
+              resp.data[i]?.dDocName
             );
             this.createArrayDocs =
-              `${resp.data[i].dDocName},` + this.createArrayDocs;
+              `${resp.data[i]?.dDocName},` + this.createArrayDocs;
           }
         }
 

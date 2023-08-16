@@ -1399,10 +1399,39 @@ export class FormalizeProgrammingFormComponent
 
   sendGoodsGuardInventary() {
     return new Promise((resolve, reject) => {
-      this.goodsGuards.getElements().then(data => {
-        data.map((item: IGood) => {
-          this.goodsProcessService
-            .AddReceptionBpm(Number(item.id), Number(item.goodId))
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          data.map((item: IGood) => {
+            this.goodsProcessService
+              .AddReceptionBpm(Number(item.id), Number(item.goodId))
+              .subscribe({
+                next: response => {
+                  console.log('se envio', response);
+                  resolve(true);
+                },
+                error: error => {
+                  resolve(true);
+                },
+              });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  deleteGoodReprog() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          const deleteGoodProg = {
+            programmingId: this.programming.id,
+            goodId: data.goodId,
+          };
+
+          this.programmingGoodService
+            .deleteGoodProgramming(deleteGoodProg)
             .subscribe({
               next: response => {
                 resolve(true);
@@ -1412,29 +1441,9 @@ export class FormalizeProgrammingFormComponent
               },
             });
         });
-      });
-    });
-  }
-
-  deleteGoodReprog() {
-    return new Promise((resolve, reject) => {
-      this.goodsGuards.getElements().then(data => {
-        const deleteGoodProg = {
-          programmingId: this.programming.id,
-          goodId: data.goodId,
-        };
-
-        this.programmingGoodService
-          .deleteGoodProgramming(deleteGoodProg)
-          .subscribe({
-            next: response => {
-              resolve(true);
-            },
-            error: error => {
-              resolve(true);
-            },
-          });
-      });
+      } else {
+        resolve(true);
+      }
     });
   }
 

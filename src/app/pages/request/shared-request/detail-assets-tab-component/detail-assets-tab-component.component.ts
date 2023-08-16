@@ -1114,7 +1114,7 @@ export class DetailAssetsTabComponentComponent
       unity === 'CAJAS'
     ) {
       this.detailAssets.controls['quantity'].setValidators([
-        Validators.required,
+        //Validators.required,
         Validators.pattern(POSITVE_NUMBERS_PATTERN),
       ]);
     } else if (
@@ -1126,7 +1126,7 @@ export class DetailAssetsTabComponentComponent
       unity === 'METRO CUADRADO'
     ) {
       this.detailAssets.controls['quantity'].setValidators([
-        Validators.required,
+        //Validators.required,
         Validators.pattern(DOUBLE_PATTERN),
       ]);
     }

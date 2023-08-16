@@ -19,7 +19,7 @@
     </div>
     <div class="row pt-4">
       <div class="col-md-7">
-        <label class="title" for="">Cargar Archivo (CSV)</label>
+        <label class="title" for="">Cargar Archivo (CSV,XLS)</label>
         <form [formGroup]="form" class="form-material">
           <form-field [control]="form.get('fileCSV')">
             <input
@@ -53,7 +53,11 @@
         <div class="row mt-4">
           <div class="col-md-12">
             <form-field [control]="form.get('file')" label="Archivo">
-              <input type="text" formControlName="file" class="form-control" />
+              <input
+                type="text"
+                formControlName="file"
+                class="form-control"
+                [readOnly]="true" />
             </form-field>
           </div>
         </div>
@@ -63,17 +67,23 @@
               <input
                 type="text"
                 formControlName="whereMot"
-                class="form-control" />
+                class="form-control"
+                [readOnly]="true" />
             </form-field>
           </div>
         </div>
         <div class="row mt-4">
           <div class="col-md-12">
             <form-field [control]="form.get('reasons')" label="Motivos">
-              <input
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="reasons"
+                [readOnly]="true"></textarea>
+              <!-- <input
                 type="text"
                 formControlName="reasons"
-                class="form-control" />
+                class="form-control" /> -->
             </form-field>
           </div>
         </div>
@@ -86,7 +96,8 @@
         <button
           type="button"
           class="btn btn-primary active"
-          (click)="loadMotifs()">
+          (click)="loadMotifs()"
+          [disabled]="!form.valid">
           Cargar
         </button>
       </div>
