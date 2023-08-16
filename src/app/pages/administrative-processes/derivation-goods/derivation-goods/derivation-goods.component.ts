@@ -436,13 +436,13 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             if (this.classificationOfGoods) {
               this.goodChange++;
             }
-            this.flagCargMasiva = true;
+            this.flagCargMasiva = false;
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
             this.flagCambia = true;
             this.flagUpdate = true;
-            this.flagGoodNew = true;
-            this.flagGoodDelete = true;
+            this.flagGoodNew = false;
+            this.flagGoodDelete = false;
           }
         },
       });

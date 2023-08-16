@@ -381,7 +381,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   async change() {
-    this.goods.forEach(async good => {
+    let result = this.goods.map(async good => {
+      console.log('good', good);
+      if (!good.approved) return;
       // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
       let obj: any = {
         id: good.id,
@@ -398,6 +400,13 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
           this.idsNotExist.push({ id: good.id, reason: err.error.message });
         },
       });
+    });
+    Promise.all(result).then(resp => {
+      this.alert(
+        'success',
+        'Se ha Actualizado el Motivo de Cambio de los Bienes Válidos',
+        ''
+      );
     });
     // this.onLoadToast(
     //   'success',

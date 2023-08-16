@@ -193,4 +193,10 @@ export class UsersService extends HttpService {
       UserEndpoints.SegUsers + '/getOtValueFromUser/' + name
     );
   }
+  postSpInsertWithcopyOfficia(body: any) {
+    return this.post<IListResponse<any>>(
+      UserEndpoints.SpInsertWithcopyOfficial,
+      body
+    );
+  }
 }
