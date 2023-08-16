@@ -19,3 +19,13 @@ export interface KeyDocument {
   numRegister: string;
   nbOrigin: any;
 }
+
+export interface KeyDocumentPeer {
+  goodNumber: number;
+  proceedingsNumber: number;
+  solicitousDate: string;
+  cveDocument: string;
+  rulingType: string;
+  solicitousUser: string;
+  receivedDate: string;
+}
