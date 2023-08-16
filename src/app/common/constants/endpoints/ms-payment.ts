@@ -12,4 +12,5 @@ export enum PaymentEndPoints {
   getFcomerC3 = 'comer-payment-ref/get-fcomer-c3',
   getFcomerC4 = 'comer-payment-ref/get-fcomer-c4',
   BusquedaPagosDet = 'search-payments-det',
+  BusquedaPagosMae = 'search-payments-mae',
 }

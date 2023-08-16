@@ -1,11 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -19,7 +29,7 @@ import { PAYMENT_COLUMNS } from './payment-search-columns';
   styles: [],
 })
 export class PaymentSearchListComponent extends BasePage implements OnInit {
-  searchForm: FormGroup = new FormGroup({});
+  searchForm: FormGroup = new FormGroup({ bank: new FormControl(null) });
   params = new BehaviorSubject<ListParams>(new ListParams());
   addRows: any[] = [];
   editRows: any[] = [];
@@ -30,6 +40,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   eventItems = new DefaultSelect();
   bankItems = new DefaultSelect();
   localdata: LocalDataSource = new LocalDataSource();
+  banks = new DefaultSelect();
+
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
     ...TABLE_SETTINGS,
@@ -141,7 +153,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private excelService: ExcelService,
     private modalService: BsModalService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -164,7 +177,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       ],
       validity: [null, [Validators.required]],
       searchType: [null, [Validators.required]],
+      processType: [null, [Validators.required]],
       system: [null, [Validators.required]],
+      action: [null, [Validators.required]],
     });
     this.getEvents({ page: 1, text: '' });
     this.getBanks({ page: 1, text: '' });
@@ -190,16 +205,69 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     }
   }
 
+  getBanks2(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    let params__ = '';
+    if (lparams?.text.length > 0)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('idCode', lparams.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
+
+        // params.addFilter('cve_banco', lparams.text);
+      }
+
+    // this.hideError();
+    return new Promise((resolve, reject) => {
+      this.accountMovementService
+        .getPaymentControl(params.getParams())
+        .subscribe({
+          next: response => {
+            console.log('ress1', response);
+            let result = response.data.map(item => {
+              item['bankAndNumber'] = item.idCode + ' - ' + item.cveBank;
+            });
+
+            Promise.all(result).then((resp: any) => {
+              this.banks = new DefaultSelect(response.data, response.count);
+              this.loading = false;
+            });
+          },
+          error: err => {
+            this.banks = new DefaultSelect();
+            console.log(err);
+          },
+        });
+    });
+  }
+
   search() {
     let LV_MSG_PROCESO: string;
-    let LV_EST_PROCESO: number;
+    let LV_EST_PROCESO: number = 1;
     let LV_TOTREG: number;
 
-    if (this.searchForm.get('searchType').value == 5) {
-      this.searchForm.get('bank');
+    if (this.searchForm.get('system').value == 1) {
+      if (this.searchForm.get('searchType').value == 5) {
+        this.searchForm.get('bank');
+      } else {
+        //Cod pasado back
+        //
+        if (LV_EST_PROCESO == 1) {
+          console.log('Tipo búsqueda', this.searchForm.get('searchType').value);
+          this.getBusquedaPagMae(this.searchForm.get('searchType').value);
+        }
+      }
     } else {
+      //Cod PUP_BUSQUEDA
     }
-    this.getTableData();
+
+    //this.getTableData();
   }
 
   cleanSearch() {
@@ -366,6 +434,22 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'No hay bienes que mostrar con los filtros seleccionado'
         );
       },
+    });
+  }
+
+  getBusquedaPagMae(params: string) {
+    this.paymentService.getBusquedaMae(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp PagosMae-> ', resp);
+      }
+    });
+  }
+
+  getBusquedaPagDet(params?: string) {
+    this.paymentService.getBusquedaPag(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp BusquedaPagDet', resp);
+      }
     });
   }
 }
