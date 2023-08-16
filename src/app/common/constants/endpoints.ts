@@ -201,4 +201,8 @@ export enum ENDPOINT_LINKS {
   Departamentuser = 'departament',
   insertDocumentFolio = 'application/insertDocumentFolio',
   insertDocumentFol = 'application/insertDocumentFolio2',
+  insertDocument = 'application/setDocuments',
+  documentFolio = 'documents/folio',
+  setStatus = 'application/setbienVstatus',
+  documentHist = 'application/setHistBien',
 }

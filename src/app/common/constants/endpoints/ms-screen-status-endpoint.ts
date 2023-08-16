@@ -10,4 +10,6 @@ export enum ScreenStatusEndpoints {
   GetGoodScreenStatus = 'application/get-good-screen-status',
   PermissionsByScreenAndUser = 'seg-app-screen/get-permissions-by-screen-and-user',
   Application = 'application',
+  statusxpant = 'application/get-status-x-pant',
+  getStatusV = 'application/get-v-status',
 }
