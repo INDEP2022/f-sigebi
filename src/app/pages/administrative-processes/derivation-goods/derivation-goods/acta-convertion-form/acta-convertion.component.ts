@@ -34,6 +34,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   flagNewActa: boolean = false;
   flagAsignaActa: boolean = false;
   disableAllChecks: boolean = false;
+  printMinutes: boolean = false;
   delegation: any;
   states = new DefaultSelect<IStateOfRepublic>();
   zones = new DefaultSelect<IZoneGeographic>();
@@ -77,13 +78,13 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   }
 
   insertarParrafos(descTransferente: string) {
-    this.parrafo1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 200__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ___________________ adscrito a _______________ del Servicio de Administración y Enajenación de Bienes (SAE), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de bienes muebles transferidos y en administración del SAE - - - - - - - - - - - - - - - - - - - - - - - - -\n
+    this.parrafo1 = `- - - En la Ciudad de ______________, siendo las _____ horas, del día ____de ________ de 200__, se encuentran presentes en la Bodega ubicada en la calle de ________________________ de esta Ciudad, el C. _____________________ con cargo de ___________________, de la empresa ______________ y el C. ___________________ adscrito a _______________ del Instituto para Devolver al Pueblo lo Robado (INDEP), Organismo Descentralizado de la Administración Pública Federal; ambos con el fin de llevar a cabo la validación y conversión de bienes muebles transferidos y en administración del INDEP - - - - - - - - - - - - - - - - - - - - - - - - -\n
     - - -Intervienen como testigos de asistencia los CC. _______________________, y _____________________, - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - - -\n\n
     -------------------------------------------------- A N T E C E D E N T E S ------------------------------------------\n
-    - - - l. Los bienes muebles fueron transferidos al SAE por [_____________________________], con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - -\n
-    - - - II.- Los bienes muebles sujetos a validación y conversión de unidades de medida, se encuentran en administración del SAE y bajo la custodia de _(precisar MYMLAND, CR o DEBM)____________ los cuales se incorporan a este procedimiento a efecto de facilitar la ejecución de su destino.- - - - - - - - - - - -\n\n
+    - - - l. Los bienes muebles fueron transferidos al INDEP por [_____________________________], con fundamento en los artículos 3 de la LFAEBSP, 12 y 13 del Reglamento de la ley en comento. - -\n
+    - - - II.- Los bienes muebles sujetos a validación y conversión de unidades de medida, se encuentran en administración del INDEP y bajo la custodia de _(precisar MYMLAND, CR o DEBM)____________ los cuales se incorporan a este procedimiento a efecto de facilitar la ejecución de su destino.- - - - - - - - - - - -\n\n
     ----------------------------------------------------- DECLARACIONES ---------------------------------------------\n
-    - - - PRIMERA.- El C. _________________ manifiesta que los bienes muebles que fueron transferidos al SAE se encuentran bajo su custodia y que con el fin de dar cumplimento al destino final de precisar destino -venta-donación o destrucción-  sugerido por la Entidad ${
+    - - - PRIMERA.- El C. _________________ manifiesta que los bienes muebles que fueron transferidos al INDEP se encuentran bajo su custodia y que con el fin de dar cumplimento al destino final de precisar destino -venta-donación o destrucción-  sugerido por la Entidad ${
       descTransferente != null ? descTransferente : ''
     }, se sujetarán a un procedimiento de validación y conversión de unidades de medida toda vez que fueron puestos a disposición con un tipo de unidad diferente al requerido para el destino previsto.\n\n
     - - - SEGUNDA.- Que para realizar el proceso de validación se verifican las cantidades físicas contra las cantidades señaladas en los documentos oficiales y registros SIAB para posteriormente determinar el valor de conversión de los bienes muebles siguientes:- - - - - - - - - - - - - - - - -`;
@@ -261,6 +262,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
         this.flagAsignaActa = true;
         this.disableAllChecks = true;
         this.save = true;
+        this.printMinutes = true;
         let filter = {
           pDelivery: this.actConvertion,
           vFilter: 'false',

@@ -19,4 +19,5 @@ export enum UserEndpoints {
   FaValUserInd = 'seg-users/fa-val-user-ind',
   GetText = 'seg-users/getText',
   GetUserOt = 'seg-users/getuserOt',
+  SpInsertWithcopyOfficial = 'seg-users/sp-insert-withcopy-official',
 }
