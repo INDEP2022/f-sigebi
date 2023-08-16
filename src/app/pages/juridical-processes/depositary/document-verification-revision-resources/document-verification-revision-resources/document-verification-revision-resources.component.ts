@@ -59,7 +59,9 @@ export class DocumentVerificationRevisionResourcesComponent
   aprevia: string = '';
   causa: string = '';
   totalItems = 0;
+
   totalItemsDic = 0;
+  createDicta: IDocumentsDictumXState;
   dateAgreementAssurance: Date;
   filterParams = new FilterParams();
   transfer: number = 0;
@@ -75,6 +77,7 @@ export class DocumentVerificationRevisionResourcesComponent
   loadingGood: boolean = false;
   goodChange: number = 0;
   documentDicta: KeyDocument[] = [];
+  selectedKey: KeyDocument;
   expedient: IExpedient;
   loadingBienes: boolean = false;
   goodUpdate: IGoodRevision;
@@ -91,26 +94,19 @@ export class DocumentVerificationRevisionResourcesComponent
     mode: 'external',
 
     columns: {
-      cveDocument: {
+      key: {
         title: 'Cve. Documento',
       },
-      rulingType: {
-        title: 'Tipo de Regla',
+      description: {
+        title: 'Descripción',
+      },
+      typeDictum: {
+        title: 'Tipo de Dictaminación',
+      },
+      goodNumber: {
+        title: 'No. Bien',
+      },
 
-        // valuePrepareFunction: (value: any) => {
-        //   return value[0].description;
-        // },
-      },
-      receivedDate: {
-        title: 'Fecha Recibió',
-        type: 'string',
-        valuePrepareFunction: (value: any) => {
-          return value ? value.split('-').reverse().join('-') : '';
-        },
-      },
-      status: {
-        title: 'Status',
-      },
       solicitarDocumentacion: {
         title: 'Solicitar Documentación',
         type: 'custom',
@@ -169,10 +165,10 @@ export class DocumentVerificationRevisionResourcesComponent
     hideSubHeader: true,
     // mode: 'external',
     columns: {
-      id: {
+      key: {
         title: 'Cve. Documento',
       },
-      descriptionDocument: {
+      description: {
         title: 'Descripción',
         type: 'string',
       },
@@ -209,6 +205,8 @@ export class DocumentVerificationRevisionResourcesComponent
     {} as IListResponse<IDocumentsDictumXState>;
   public dataTableDicta: IListResponse<KeyDocumentPeer> =
     {} as IListResponse<KeyDocumentPeer>;
+  public dataTableDocument: IListResponse<KeyDocument> =
+    {} as IListResponse<KeyDocument>;
 
   public dataTableDoc: IListResponse<IDocumentsForDictum> =
     {} as IListResponse<IDocumentsForDictum>;
@@ -295,7 +293,7 @@ export class DocumentVerificationRevisionResourcesComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.dateToday = this.datePipe.transform(this.time, 'dd/MM/yyyy');
+    this.dateToday = this.datePipe.transform(this.time, 'dd/MM/yyyy HH:mm:ss');
   }
 
   // getExpedient(params?: ListParams) {
@@ -496,7 +494,9 @@ export class DocumentVerificationRevisionResourcesComponent
           .patchValue(resp.data[0].typeDict);
         this.form.get('di_situacion_bien').patchValue(resp.data[0].statusDict);
         this.form.get('di_fec_dictaminacion').patchValue(resp.data[0].dateDict);
+        this.getDocumentsRevision();
         this.getDocumentsDictamen();
+        this.getDocuments();
       },
       error: () => {
         this.form.get('di_situacion_bien').patchValue('NO DICTAMINADO');
@@ -522,7 +522,7 @@ export class DocumentVerificationRevisionResourcesComponent
   getDocuments() {
     const filter = new FilterParams();
     filter.addFilter('typeDictum', 'RECREVISION');
-    // filter.addFilter('goodNumber', this.form.get('goodId').value);
+    filter.addFilter('goodNumber', this.form.get('goodId').value);
     filter.sortBy = 'key:ASC';
     this.loading = true;
     this.documents.getAllFirters(filter.getParams()).subscribe({
@@ -535,6 +535,26 @@ export class DocumentVerificationRevisionResourcesComponent
       error: () => {
         this.dataTable.data = [];
         this.dataTable.count = 0;
+        this.loading = false;
+      },
+    });
+  }
+  getDocumentsRevision() {
+    const filter = new FilterParams();
+    // filter.addFilter('typeDictum', 'RECREVISION');
+    // filter.addFilter('goodNumber', this.form.get('goodId').value);
+    filter.sortBy = 'key:ASC';
+    this.loading = true;
+    this.documents.getDocFoDIcta(filter.getParams()).subscribe({
+      next: resp => {
+        this.dataTableDocument = resp;
+        this.totalItemsDocument = resp.count;
+        console.log(this.dataTableDocument);
+        this.loading = false;
+      },
+      error: () => {
+        this.dataTableDocument.data = [];
+        this.totalItemsDocument = 0;
         this.loading = false;
       },
     });
@@ -730,6 +750,7 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
+                this.createDocumentDicta();
                 this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
@@ -1091,9 +1112,7 @@ export class DocumentVerificationRevisionResourcesComponent
         this.form.patchValue(good);
         this.form
           .get('descriptionStatus')
-          .patchValue(
-            good.estatus ? good.estatus.descriptionStatus : 'NO DEFINIDO'
-          );
+          .patchValue(good.estatus ? good.estatus : 'RECREVISION');
         this.form
           .get('observations')
           .patchValue(good.revRecObservations ? good.revRecObservations : '');
@@ -1103,6 +1122,17 @@ export class DocumentVerificationRevisionResourcesComponent
         this.form
           .get('notifyRevRecDate')
           .patchValue(good.revRecRemedyDate ? good.revRecRemedyDate : '');
+        this.form
+          .get('agreementDate')
+          .patchValue(
+            good.admissionAgreementDate ? good.admissionAgreementDate : ''
+          );
+        this.form
+          .get('initialAgreement')
+          .patchValue(good.initialAgreement ? good.initialAgreement : '');
+        // this.form
+        //   .get('notificationDate')
+        //   .patchValue(good.notifyRevRecDate ? good.notifyRevRecDate : '');
 
         this.getDateAndStatus();
         this.getDocuments();
@@ -1152,6 +1182,9 @@ export class DocumentVerificationRevisionResourcesComponent
       revRecObservations: this.form.get('observations').value,
       revRecRemedyDate: this.form.get('notifyRevRecDate').value,
       revRecCause: this.form.get('revRecCause').value,
+      admissionAgreementDate: this.form.get('agreementDate').value,
+      initialAgreement: this.form.get('initialAgreement').value,
+      notifyRevRecDate: this.form.get('notifyRevRecDate').value,
     };
 
     this.goodService.update(this.goodUpdate).subscribe({
@@ -1171,6 +1204,32 @@ export class DocumentVerificationRevisionResourcesComponent
       },
     });
   }
+
+  createDocumentDicta() {
+    const obj: IDocumentsDictumXState = {
+      recordNumber: this.good.fileNumber,
+      goodNumber: this.form.get('goodId').value,
+      typeDictum: 'RECREVISION',
+      dateReceipt: this.dateToday,
+      userReceipt: this.user.decodeToken().username,
+      insertionDate: this.form.get('agreementDate').value,
+      userInsertion: this.user.decodeToken().username,
+      numRegister: '',
+      officialNumber: '',
+      key: this.documentDicta.toString(),
+      keyDocument: this.documentDicta,
+    };
+    this.documents.createDocsRevi(obj).subscribe({
+      next: data => {
+        console.log('documento agregado', data);
+      },
+      error: () => {},
+    });
+  }
+  userRowSelect(event: any) {
+    this.selectedKey = event;
+    console.log(event);
+  }
 }
 
 export interface IGoodRevision {
@@ -1182,4 +1241,7 @@ export interface IGoodRevision {
   revRecObservations: string;
   revRecRemedyDate: string;
   revRecCause: string;
+  admissionAgreementDate: string;
+  initialAgreement: string;
+  notifyRevRecDate: string;
 }
