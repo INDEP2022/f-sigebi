@@ -37,7 +37,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Conversión a numerario',
-            link: '/pages/commercialization/numeraire-conversion-tabs',
+            link: '/pages/commercialization/numeraire-conversion-tabs/M',
           },
           {
             label: 'Consulta de Avalúo',
@@ -167,7 +167,7 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Conversión a numerario',
-            link: '/pages/commercialization/numeraire-conversion-tabs',
+            link: '/pages/commercialization/numeraire-conversion-tabs/I',
           },
           {
             label: 'Consulta de Avalúo',
