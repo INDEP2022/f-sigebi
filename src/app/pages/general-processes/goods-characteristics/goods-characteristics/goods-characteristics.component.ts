@@ -1164,8 +1164,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
             this.disactivateForStatus();
           }
         } else {
-          this.disactivateForUser();
-          // this.activateForEdit();
+          // this.disactivateForUser();
+          this.activateForEdit();
         }
       }
     } else {
