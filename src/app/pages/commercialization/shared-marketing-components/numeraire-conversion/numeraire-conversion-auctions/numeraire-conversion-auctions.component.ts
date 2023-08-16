@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -16,6 +16,7 @@ export class NumeraireConversionAuctionsComponent
   extends BasePage
   implements OnInit
 {
+  @Input() address: string;
   settings2 = {
     ...this.settings,
     actions: false,
@@ -108,6 +109,13 @@ export class NumeraireConversionAuctionsComponent
     },
   ];
 
+  get pathEvent() {
+    return (
+      'event/api/v1/comer-event?filter.eventTpId=$in:0,1,2,3,4,5&sortBy=id:ASC' +
+      (this.address ? '&filter.address=$eq:' + this.address : '')
+    );
+  }
+
   getEvents(params: ListParams) {
     if (params.text == '') {
       this.eventItems = new DefaultSelect(this.data, 3);
@@ -119,6 +127,7 @@ export class NumeraireConversionAuctionsComponent
   }
 
   selectEvent(event: any) {
+    console.log(event);
     this.selectedEvent = event;
   }
 }

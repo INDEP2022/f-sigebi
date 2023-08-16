@@ -579,9 +579,10 @@ if (id) {
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
+
         this.data.load(response.data);
-        this.totalItems = response.count || 0;
         this.data.refresh();
+        this.totalItems = response.count;
         //this.params.value.page = 1;
         this.loading = false;
       },
@@ -597,10 +598,10 @@ if (id) {
   getDetailProcedings(expId: string | number) {
     this.loading = true;
     if (expId) {
-      this.params.getValue()['filter.good.fileNumber'] = `$eq:${expId}`;
+      this.params5.getValue()['filter.good.fileNumber'] = `$eq:${expId}`;
     }
     let params = {
-      ...this.params.getValue(),
+      ...this.params5.getValue(),
       ...this.columnFilters1,
     };
     this.detailProceedingsDevolutionService.getAll(params).subscribe({

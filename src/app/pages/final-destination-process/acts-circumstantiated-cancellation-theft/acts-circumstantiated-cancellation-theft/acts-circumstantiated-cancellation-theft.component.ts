@@ -480,7 +480,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
     this.actaRecepttionForm.patchValue({
       type: this.type,
-    })
+    });
+
   }
 
   initForm() {
@@ -644,7 +645,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.actaRecepttionForm
           .get('testigoTree')
           .setValue(this.expedient.indicatedName);
+
         this.actaRecepttionForm
+
         this.getGoodsByStatus(this.fileNumber);
       },
       error: () => {
@@ -811,6 +814,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
 
 
+
       // MAPEAR DATOS 
       console.log("acta NEXT ", next);
       this.actaRecepttionForm.patchValue({
@@ -828,6 +832,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         //anio: new Date(next.dateElaborationReceipt),
         direccion: next.address,
         parrafo1: next.parrafo1,
+        // testigoOIC: next.comptrollerWitness,
+        //testigoOIC: next.witness1,
         testigoTwo: next.witness1,
         testigoTree: next.witness2,
 
@@ -1112,6 +1118,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
     console.log("select RRR", this.selectedRow);
+
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -1315,8 +1322,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.dataTableGood.load([]);
     this.dataRecepcionGood.load([]);
   }
-
-
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
       skipHeader: true,
@@ -1570,20 +1575,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       },
     });
   }
-
-  // exportToExcel() {
-  //   this.isLoading = true;
-  //   if (this.capturasDig.length == 0) {
-  //     this.alert('info', 'No hay información para descargar', '');
-  //     this.isLoading = false;
-  //     return;
-  //   }
-  //   const filename: string = this.userName + '-CapturaYdigita';
-  //   this.loading = false;
-  //   this.excelService.export(this.capturasDig, { filename });
-  //   this.alert('success', 'Datos Exportados', '');
-  // }
-
   exportToExcel() {
     this.loadingExcel = true;
     if (

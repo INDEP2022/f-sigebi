@@ -363,6 +363,18 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         );
     }
 
+    if (this.consultTasksForm.value.txtNoTransferente) {
+      console.log('Filtro de transferente activado');
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'idTransferee',
+          this.consultTasksForm.value.txtNoTransferente,
+          SearchFilter.EQ
+        );
+    }
+
     if (this.consultTasksForm.value.txtDaysAtrasos) {
       isfilterUsed = true;
       this.filterParams
@@ -516,17 +528,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     }
-    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'idTransferee',
-          this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.EQ
-        );
-    }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
+      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()
