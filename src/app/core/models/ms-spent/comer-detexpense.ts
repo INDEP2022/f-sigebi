@@ -13,6 +13,8 @@ export interface IComerDetExpense {
   comerExpenses: ComerExpenses;
   goods: any;
   goodDescription?: string;
+  changeStatus?: boolean;
+  reportDelit?: boolean;
 }
 
 interface ComerExpenses {
