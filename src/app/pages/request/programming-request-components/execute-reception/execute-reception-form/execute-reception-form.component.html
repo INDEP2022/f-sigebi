@@ -399,9 +399,14 @@
                       <th scope="row" class="align-baseline">
                         <input
                           type="checkbox"
-                          (click)="goodSelect(good.value)"
+                          (change)="goodSelect($event, good.value)"
                           class="form-control ng-pristine ng-valid ng-touched"
                           ng-reflect-model="true" />
+                        <!--<input
+                          type="checkbox"
+                          (change)="goodSelect($event)"
+                          class="form-control ng-pristine ng-valid ng-touched"
+                          ng-reflect-model="true" /> -->
                       </th>
                       <td scope="row" class="align-baseline">
                         {{ good.get('goodId')?.value }}
@@ -810,7 +815,7 @@
                                   <th scope="row" class="align-baseline">
                                     <input
                                       type="checkbox"
-                                      (click)="goodSelect(good.value)"
+                                      (change)="goodSelect($event, good.value)"
                                       class="form-control ng-pristine ng-valid ng-touched"
                                       ng-reflect-model="true" />
                                   </th>
@@ -954,7 +959,7 @@
                                   <td class="text-center align-baseline">
                                     {{ good.get('destiny').value }}
                                   </td>
-                                  <td class="text-center align-baseline">
+                                  <td class="align-baseline">
                                     <select
                                       [value]="
                                         executeForm.get('transferentDestiny')
@@ -1236,7 +1241,7 @@
                               <th scope="row" class="align-baseline">
                                 <input
                                   type="checkbox"
-                                  (click)="goodSelect(good.value)"
+                                  (change)="goodSelect($event, good.value)"
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
@@ -1364,7 +1369,7 @@
                                 {{ good.get('destiny').value }}
                               </td>
 
-                              <td class="text-center align-baseline">
+                              <td class="align-baseline">
                                 <select
                                   [value]="
                                     executeForm.get('transferentDestiny').value
@@ -1674,7 +1679,7 @@
                                 <th scope="row" class="align-baseline">
                                   <input
                                     type="checkbox"
-                                    (click)="goodSelect(good.value)"
+                                    (change)="goodSelect($event, good.value)"
                                     class="form-control ng-pristine ng-valid ng-touched"
                                     ng-reflect-model="true" />
                                 </th>
@@ -1804,10 +1809,10 @@
                                 <td class="align-baseline">
                                   {{ good.get('observations')?.value }}
                                 </td>
-                                <td class="text-center align-baseline">
+                                <td class="align-baseline">
                                   {{ good.get('destiny').value }}
                                 </td>
-                                <td class="text-center align-baseline">
+                                <td class="align-baseline">
                                   <select
                                     [value]="
                                       executeForm.get('transferentDestiny')
@@ -2097,7 +2102,7 @@
                                 <th scope="row" class="align-baseline">
                                   <input
                                     type="checkbox"
-                                    (click)="goodSelect(good.value)"
+                                    (change)="goodSelect($event, good.value)"
                                     class="form-control ng-pristine ng-valid ng-touched"
                                     ng-reflect-model="true" />
                                 </th>
@@ -2454,7 +2459,7 @@
                               <th scope="row" class="align-baseline">
                                 <input
                                   type="checkbox"
-                                  (click)="goodSelect(good.value)"
+                                  (change)="goodSelect($event, good.value)"
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>

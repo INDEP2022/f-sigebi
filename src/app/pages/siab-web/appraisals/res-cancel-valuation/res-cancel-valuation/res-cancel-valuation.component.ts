@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { RES_CANCEL_VALUATION_COLUMS } from './res-cancel-valuation-columns';
+
+import { LocalDataSource } from 'ng2-smart-table';
+import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { OfficesSend } from '../../valuation-request/valuation-request/valuation-request.component';
+import {
+  VALUATION_REQUEST_COLUMNS,
+  VALUATION_REQUEST_COLUMNS_TWO,
+} from './res-cancel-valuation-columns';
 
 @Component({
   selector: 'app-res-cancel-valuation',
@@ -13,80 +19,132 @@ import { RES_CANCEL_VALUATION_COLUMS } from './res-cancel-valuation-columns';
   styles: [],
 })
 export class resCancelValuationComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-
+  arrayResponseOffice: any[] = [];
+  form: FormGroup;
+  formTwo: FormGroup;
+  formDialogOne: FormGroup;
+  data: LocalDataSource = new LocalDataSource();
+  dataTwo: LocalDataSource = new LocalDataSource();
+  offices = new DefaultSelect();
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  dateNow: Date;
+  intervalId: any;
+  listCitys: any;
+  listKeyOffice: any;
+  settingsTwo: any;
+  subscribeDelete: Subscription;
 
-  constructor(private fb: FormBuilder) {
+  //
+
+  constructor(private fb: FormBuilder, private serviceJobs: JobsService) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
-      columns: { ...RES_CANCEL_VALUATION_COLUMS },
+      columns: { ...VALUATION_REQUEST_COLUMNS },
+    };
+
+    this.settingsTwo = {
+      ...this.settings,
+      actions: false,
+      columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
     };
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.prepareForm();
-    this.getPagination();
+    this.actualizarHora();
+    this.intervalId = setInterval(() => {
+      this.actualizarHora();
+    }, 1000);
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      event: [null, [Validators.required]],
-      folios: [null, [Validators.required]],
-      radio: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
-      cve: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      receptionDate: [null, [Validators.required, maxDate(new Date())]],
-      elaborationDate: [null, [Validators.required, maxDate(new Date())]],
-      sender: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      senderTxt: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+  //
 
-      addressee: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      addresseeTxt: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+  getOffices(event: any) {
+    this.serviceJobs.getAll(event).subscribe({
+      next: data => {
+        this.offices = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.offices = new DefaultSelect();
+      },
+    });
+  }
+  async getsContent() {
+    // this.loader.load = true;
+    // if (this.event == 0) {
+    //   this.event = this.form.controls['event'].value;
+    // }
+    // let type = await this.getType(this.event);
+    // console.log(type);
+    // this.tipo = type;
+  }
+
+  findDataTable(data: any) {
+    let valorObjeto: any;
+    valorObjeto = data;
+    let body: OfficesSend = new OfficesSend();
+    body.eventId = valorObjeto?.eventId;
+    body.officeType = valorObjeto?.jobType;
+    this.serviceJobs.postByFilters(body).subscribe({
+      next: response => {
+        this.arrayResponseOffice = response.data;
+        this.iterableAssign(this.arrayResponseOffice);
+      },
+      error: error => {},
     });
   }
 
-  data = [
-    {
-      noBien: 564,
-      description: 'Descripción del 564',
-      amount: '$41,151.00',
-      status: 'Disponible',
-      motive: 'Motivo 564',
-    },
-    {
-      noBien: 45,
-      description: 'Descripción del 45',
-      amount: '$1,500.00',
-      status: 'No Disponible',
-      motive: 'Motivo 45',
-    },
-    {
-      noBien: 785,
-      description: 'Descripción del 785',
-      amount: '$201,500.00',
-      status: 'Disponible',
-      motive: 'Motivo 785',
-    },
-  ];
+  actualizarHora(): void {
+    this.dateNow = new Date();
+  }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  iterableAssign(array: any[]) {
+    for (const i of array) {
+      console.log('Iterando la mamada esta: ', i?.cargo_destina);
+    }
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      event: [null],
+      cveService: [null],
+      fol: [null],
+      key: [null],
+      cityCi: [null],
+      dateRec: [null],
+      dateEla: [null],
+      remi: [null],
+      dest: [null],
+      office: [null],
+    });
+    this.formTwo = this.fb.group({
+      allGood: [null],
+      selectedGood: [null],
+      ref: [null],
+      aten: [null],
+      espe: [null],
+    });
+    this.formDialogOne = this.fb.group({
+      noti: [null],
+    });
+    this.subscribeDelete = this.form
+      .get('office')
+      .valueChanges.subscribe(value => {
+        this.findDataTable(value);
+      });
+  }
+
+  //
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+    this.subscribeDelete.unsubscribe();
   }
 }

@@ -231,6 +231,10 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
 
+    localStorage.setItem('anio', anio);
+    console.log('AÑO', anio);
+    localStorage.setItem('mes', mes.label);
+
     let consec_ = consec.toString().padStart(4, '0');
     this.foolio = consec;
     console.log('MES', mes);
@@ -266,6 +270,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       });
     }
   }
+
   newRegister: any;
   guardarRegistro(cveActa: any) {
     let obj: any = {

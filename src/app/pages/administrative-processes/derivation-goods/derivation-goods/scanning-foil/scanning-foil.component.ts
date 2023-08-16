@@ -178,7 +178,7 @@ export class ScanningFoilComponent
             const params = {
               pn_folio: this.form.get('scanningFoli').value,
             };
-            this.downloadReport(this.reportPrint, params);
+            // this.downloadReport(this.reportPrint, params);
           },
           error: err => {
             console.error(err);

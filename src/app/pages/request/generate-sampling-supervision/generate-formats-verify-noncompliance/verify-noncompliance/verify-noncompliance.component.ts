@@ -106,4 +106,8 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     //this.requestForm.get('receiUser').patchValue(res.user);
     //});
   }
+
+  goBack() {
+    window.history.back();
+  }
 }
