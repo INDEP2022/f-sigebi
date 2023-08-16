@@ -96,7 +96,7 @@
                                   <div class="col-md-3">
                                     <div>
                                       <label for="">Hora de Creación: </label>
-                                      {{ time | date: 'hh:mm' }}
+                                      {{ time | date : 'hh:mm' }}
                                     </div>
                                   </div>
                                 </div>
@@ -361,6 +361,11 @@
                     </form>
                     <div class="row"></div>
                     <div class="row p-3">
+                      <div class="justify-content-end d-flex mb-2">
+                        <app-columns-select
+                          [defaultColumns]="5"
+                          [(settings)]="settings"></app-columns-select>
+                      </div>
                       <div class="col-md-3"></div>
                       <form [formGroup]="actaGoodForm" class="form-material">
                         <div class="row mt-12 d-flex justify-content-center">
