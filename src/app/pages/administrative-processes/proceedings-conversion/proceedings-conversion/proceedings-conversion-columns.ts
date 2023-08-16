@@ -105,11 +105,11 @@ export const ACTAS = {
     type: 'string',
     sort: false,
   },
-  numTransfer_: {
-    title: 'Transferente',
-    type: 'number',
-    sort: false,
-  },
+  // numTransfer_: {
+  //   title: 'Transferente',
+  //   type: 'number',
+  //   sort: false,
+  // },
 };
 export class IGoodStatus {
   goodClassNumber: string | number;

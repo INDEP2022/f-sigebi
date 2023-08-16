@@ -159,7 +159,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
 
-    params.addFilter('stageedo', 2, SearchFilter.EQ);
+    params.addFilter('stageEdo', this.stagecreated, SearchFilter.EQ);
     this.parametersService
       .GetDelegationGlobal(obj, params.getParams())
       .subscribe({
@@ -411,9 +411,11 @@ export class CreateActaComponent extends BasePage implements OnInit {
         console.log('aaaaaaaaa', this.stagecreated);
         await this.validacionFirst();
         await this.consulREG_DEL_DESTR(new ListParams());
+        await this.consulREG_DEL_ADMIN(new ListParams());
       },
       error: async () => {
         await this.consulREG_DEL_DESTR(new ListParams());
+        await this.consulREG_DEL_ADMIN(new ListParams());
         await this.validacionFirst();
       },
     });

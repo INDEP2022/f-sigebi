@@ -74,42 +74,79 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
   }
   ngOnInit(): void {
     // this.providerForm.patchValue(this.actas);
+    // this.dataFactActas
+    //   .onChanged()
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(change => {
+    //     if (change.action === 'filter') {
+    //       let filters = change.filter.filters;
+    //       filters.map((filter: any) => {
+    //         let field = ``;
+    //         let searchFilter = SearchFilter.ILIKE;
+    //         this.cve = filter.field == 'cveActaConv';
+    //         field = `filter.${filter.field}`;
+    //         switch (filter.field) {
+    //           case 'statusProceedings':
+    //             searchFilter = SearchFilter.EQ;
+    //             break;
+    //           case 'numTransfer':
+    //             searchFilter = SearchFilter.EQ;
+    //             break;
+    //           case 'dateElaborationReceipt':
+    //             filter.search = this.returnParseDate(filter.search);
+    //             searchFilter = SearchFilter.EQ;
+    //             break;
+    //           default:
+    //             searchFilter = SearchFilter.ILIKE;
+    //             break;
+    //         }
+    //         if (filter.search !== '') {
+    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+    //         } else {
+    //           delete this.columnFilters[field];
+    //         }
+    //       });
+    //       this.params = this.pageFilter(this.params);
+    //       this.getStatusDeliveryCve();
+    //     }
+    //   });
+
     this.dataFactActas
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
-            this.cve = filter.field == 'cveActaConv';
             field = `filter.${filter.field}`;
-            switch (filter.field) {
-              case 'statusProceedings':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'numTransfer':
-                searchFilter = SearchFilter.EQ;
-                break;
-              case 'dateElaborationReceipt':
-                filter.search = this.returnParseDate(filter.search);
-                searchFilter = SearchFilter.EQ;
-                break;
-              default:
-                searchFilter = SearchFilter.ILIKE;
-                break;
-            }
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              statusProceedings: () => (searchFilter = SearchFilter.ILIKE),
+              keysProceedings: () => (searchFilter = SearchFilter.ILIKE),
+              idTypeProceedings: () => (searchFilter = SearchFilter.EQ),
+              elaborationDate: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
             if (filter.search !== '') {
+              // this.columnFilters[field] = `${filter.search}`;
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
           this.params = this.pageFilter(this.params);
+          //Su respectivo metodo de busqueda de datos
           this.getStatusDeliveryCve();
         }
       });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getStatusDeliveryCve());
@@ -134,8 +171,8 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
       ...this.columnFilters,
     };
 
-    if (params['filter.motionDate_']) {
-      var fecha = new Date(params['filter.motionDate_']);
+    if (params['filter.elaborationDate']) {
+      var fecha = new Date(params['filter.elaborationDate']);
 
       // Obtener los componentes de la fecha (año, mes y día)
       var año = fecha.getFullYear();
@@ -144,8 +181,8 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada = año + '-' + mes + '-' + día;
-      params['motionDate'] = fechaFormateada;
-      delete params['filter.motionDate_'];
+      params['filter.elaborationDate'] = `$eq:${fechaFormateada}`;
+      // delete params['filter.elaborationDate'];
     }
 
     params['filter.typeProceedings'] = `$eq:CONVERSION`;
