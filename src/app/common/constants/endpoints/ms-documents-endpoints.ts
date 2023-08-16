@@ -16,4 +16,5 @@ export enum DocumentsEndpoints {
   postPup = 'application/pupFolEscMas',
   ApplicationGetMaxConsec = 'application/getMaxConsec',
   ComerceDocumentsXmlT = 'comerce-documents-xml-t',
+  DocumentRequestPerGoodNew = 'documents-request-per-good',
 }
