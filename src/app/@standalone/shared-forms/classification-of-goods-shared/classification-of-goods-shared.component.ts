@@ -33,6 +33,7 @@ export class ClassificationOfGoodsSharedComponent
   @Input() label: string = 'Clasificación de Bien';
   @Input() showClasification: boolean = true;
   @Output() descriptionClasification = new EventEmitter<string>();
+  @Output() clasificationEmit = new EventEmitter<any>();
   @Input() patchValue: boolean = false;
   data: IClasifi[] = [];
   sssubtypes = new DefaultSelect<IGoodSsubType>();
