@@ -191,21 +191,21 @@ export class PhotosListComponent extends BasePage implements OnInit {
               this.errorMessage = null;
               // const index = last.indexOf('F');
               // this.lastConsecutive += +last.substring(index + 1, index + 5);
-              const pufValidaUsuario = await this.pufValidaUsuario();
-              if (pufValidaUsuario === 1) {
-                this.errorMessage = null;
-              } else {
-                const noActa = await this.pufValidaProcesoBien();
-                if (noActa) {
-                  this.errorMessage =
-                    'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
-                    noActa +
-                    ' y esta se encuentra cerrada';
-                  // console.log(this.errorMessage);
-                } else {
-                  this.errorMessage = null;
-                }
-              }
+              // const pufValidaUsuario = await this.pufValidaUsuario();
+              // if (pufValidaUsuario === 1) {
+              //   this.errorMessage = null;
+              // } else {
+              //   const noActa = await this.pufValidaProcesoBien();
+              //   if (noActa) {
+              //     this.errorMessage =
+              //       'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
+              //       noActa +
+              //       ' y esta se encuentra cerrada';
+              //     // console.log(this.errorMessage);
+              //   } else {
+              //     this.errorMessage = null;
+              //   }
+              // }
             }
           }
         },
@@ -259,8 +259,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Fotos Eliminadas',
-          'Pero no se puediero eliminar todas las fotos porque ' +
-            this.errorImages.toString()
+          'Pero no se puedieron eliminar todas las fotos'
         );
       } else {
         this.alert(

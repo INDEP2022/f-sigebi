@@ -294,8 +294,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
                 return {
                   noGoodMenaje: menaje.noGoodMenaje,
                   id: menaje.menajeDescription.id as number,
-                  description: menaje.menajeDescription
-                    .goodDescription as string,
+                  description: menaje.menajeDescription.description as string,
                 } as IGood;
               }
             })
