@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -29,6 +30,7 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   dataTwo: LocalDataSource = new LocalDataSource();
   offices = new DefaultSelect();
+  cityList = new DefaultSelect();
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -38,10 +40,15 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   listKeyOffice: any;
   settingsTwo: any;
   subscribeDelete: Subscription;
+  city: any;
 
   //
 
-  constructor(private fb: FormBuilder, private serviceJobs: JobsService) {
+  constructor(
+    private fb: FormBuilder,
+    private serviceJobs: JobsService,
+    private cityService: CityService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -66,16 +73,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
 
   //
 
-  getOffices(event: any) {
-    this.serviceJobs.getAll(event).subscribe({
-      next: data => {
-        this.offices = new DefaultSelect(data.data, data.count);
-      },
-      error: () => {
-        this.offices = new DefaultSelect();
-      },
-    });
-  }
   async getsContent() {
     // this.loader.load = true;
     // if (this.event == 0) {
@@ -106,9 +103,63 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
 
   iterableAssign(array: any[]) {
+    let city: any;
     for (const i of array) {
-      console.log('Iterando la mamada esta: ', i?.cargo_destina);
+      console.log('El objeto completo en cada busqueda: ', i);
+      console.log(
+        'Aqui ya se esta trabajando con la ciudad que se obtuvo: ',
+        this.city
+      );
+      this.form.patchValue({
+        dest: i?.destinatario,
+        key: i?.cve_oficio,
+        remi: i?.remitente,
+        cityCi: this.city,
+        ref: i?.texto1,
+        aten: i?.texto2,
+        espe: i?.texto3,
+        fol: i?.num_cv_armada,
+      });
     }
+  }
+
+  getOffices(event: any) {
+    this.serviceJobs.getAll(event).subscribe({
+      next: data => {
+        this.offices = new DefaultSelect(data.data, data.count);
+      },
+      error: () => {
+        this.offices = new DefaultSelect();
+      },
+    });
+  }
+
+  getCitiesList(params: ListParams) {
+    this.cityService.getAllCitysTwo(params).subscribe({
+      next: resp => {
+        console.log('Por aqui esta pasando: ', resp);
+        this.cityList = new DefaultSelect(resp.data, resp.count);
+      },
+      error: eror => {
+        this.loader.load = false;
+        this.cityList = new DefaultSelect([], 0, true);
+      },
+    });
+  }
+
+  getCityById(id: any) {
+    let data: any;
+    this.cityService.getId(id).subscribe({
+      next: response => {
+        this.city = response;
+        console.log('La respuesta pero sin asignar aun: ', response);
+        console.log('Response de la ciudad que se busca: ', this.city);
+      },
+      error: error => {
+        this.loader.load = false;
+        this.cityList = new DefaultSelect([], 0, true);
+      },
+    });
   }
 
   prepareForm() {
@@ -123,13 +174,13 @@ export class valuationRequestComponent extends BasePage implements OnInit {
       remi: [null],
       dest: [null],
       office: [null],
+      ref: [null],
+      aten: [null],
+      espe: [null],
     });
     this.formTwo = this.fb.group({
       allGood: [null],
       selectedGood: [null],
-      ref: [null],
-      aten: [null],
-      espe: [null],
     });
     this.formDialogOne = this.fb.group({
       noti: [null],

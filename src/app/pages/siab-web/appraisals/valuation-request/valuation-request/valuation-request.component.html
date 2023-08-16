@@ -64,15 +64,17 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="form.get('cityCi')" label="Ciudad">
-              <ng-select
-                addTagText="Agregar Elemento"
-                formControlName="cityCi"
-                class="form-control scroll-line"
-                bindValue="value"
-                bindLabel="label"
-                [items]="listCitys">
-              </ng-select>
+            <form-field [control]="form.get('cityCi')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getCitiesList($event)"
+                [data]="cityList"
+                [form]="form"
+                value="idCity"
+                label="Ciudad"
+                bindLabel="legendOffice"
+                control="cityCi">
+              </ngx-select>
             </form-field>
           </div>
         </div>
@@ -120,6 +122,31 @@
             </form-field>
           </div>
         </div>
+        <!--  -->
+        <div class="row mt-5">
+          <div class="col-md-12">
+            <form-field [control]="form.get('ref')" label="Referencia">
+              <textarea class="form-control" formControlName="ref"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <form-field [control]="form.get('aten')" label="Atención">
+              <textarea class="form-control" formControlName="aten"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <form-field [control]="form.get('espe')" label="Especificaciones">
+              <textarea class="form-control" formControlName="espe"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
       </form>
     </div>
     <!--  -->
@@ -197,35 +224,29 @@
             </div>
           </div>
           <!--  -->
-          <div class="row mt-5">
+          <!-- <div class="row mt-5">
             <div class="col-md-12">
               <form-field [control]="formTwo.get('ref')" label="Referencia">
                 <textarea class="form-control" formControlName="ref"></textarea>
               </form-field>
             </div>
-          </div>
+          </div> -->
           <!--  -->
-          <div class="row mt-2">
+          <!-- <div class="row mt-2">
             <div class="col-md-12">
               <form-field [control]="formTwo.get('aten')" label="Atención">
-                <textarea
-                  class="form-control"
-                  formControlName="aten"></textarea>
+                <textarea class="form-control" formControlName="aten"></textarea>
               </form-field>
             </div>
-          </div>
+          </div> -->
           <!--  -->
-          <div class="row mt-2">
+          <!-- <div class="row mt-2">
             <div class="col-md-12">
-              <form-field
-                [control]="formTwo.get('espe')"
-                label="Especificaciones">
-                <textarea
-                  class="form-control"
-                  formControlName="espe"></textarea>
+              <form-field [control]="formTwo.get('espe')" label="Especificaciones">
+                <textarea class="form-control" formControlName="espe"></textarea>
               </form-field>
             </div>
-          </div>
+          </div> -->
           <!--  -->
           <div class="d-flex justify-content-center">
             <div class="m-3">
