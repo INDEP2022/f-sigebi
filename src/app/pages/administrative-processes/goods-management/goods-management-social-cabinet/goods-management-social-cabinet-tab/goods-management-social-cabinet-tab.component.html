@@ -7,7 +7,11 @@
       <div class="row justify-content-between">
         <div class="col-12 mb-3 excuse" *ngIf="cantByProcess(process) > 0">
           <form-field [control]="form.get('excuse')" label="Justificación">
-            <textarea class="form-control" formControlName="excuse" rows="4">
+            <textarea
+              class="form-control"
+              formControlName="excuse"
+              rows="4"
+              maxlength="300">
             </textarea>
           </form-field>
         </div>
@@ -30,7 +34,7 @@
         (click)="processCabinetSocial()"
         [disabled]="form.invalid || disabledProcess">
         Procesar
-        <i class="bx bx-search-alt bx-sm float-icon"></i>
+        <i class="fa fa-arrow-right bx-sm float-icon"></i>
       </button>
       <!-- <button
       class="btn btn-danger btn-sm active ml-3"
