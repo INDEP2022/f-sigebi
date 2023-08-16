@@ -5,191 +5,315 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('cveService')" label="Clave oficio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cveService" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('folio')" label="Folio">
-            <input type="text" class="form-control" formControlName="folio" />
-          </form-field>
-        </div>
+    <div class="d-flex justify-content-end mb-3">
+      <div class="ml-auto" style="margin-top: -20px">
+        <p class="font-weight-bold" style="border-bottom: 1px solid black">
+          {{ dateNow | date: 'dd/MM/yyyy - HH:mm:ss' }}
+        </p>
       </div>
-      <div class="row pt-5">
-        <div class="col-md-6 alert alert-info">
+    </div>
+    <br />
+    <!--  -->
+    <div>
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <!-- <div class="col-md-5">
+            <form-field [control]="form.get('event')" label="Evento">
+              <input type="text" class="form-control" formControlName="event" />
+            </form-field>
+          </div> -->
+          <div class="col-md-12">
+            <form-field [control]="form.get('office')">
+              <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getOffices($event)"
+                [data]="offices"
+                [form]="form"
+                bindLabel="cveJob"
+                label="Folios de oficios de Avalúos"
+                control="office">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row d-flex justify-content-center mt-3">
           <div class="col-md-4">
-            <form-field [control]="form.get('sender')" label="Remitente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="sender" />
-            </form-field>
-          </div>
-          <div class="col-md-8">
-            <form-field [control]="form.get('senderTxt')" label="Texto Mensaje">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="senderTxt"></textarea>
-            </form-field>
+            <div class="col-md-6">
+              <form-radio label="Oficio de Respuesta">
+                <input type="radio" value="cat" checked />
+              </form-radio>
+            </div>
+            <div class="col-md-6">
+              <form-radio label="Oficio de Cancelación">
+                <input type="radio" value="dog" checked />
+              </form-radio>
+            </div>
           </div>
         </div>
-        <div class="col-md-6 alert alert-info">
+        <!--  -->
+        <div class="row mt-3">
           <div class="col-md-4">
-            <form-field [control]="form.get('addressee')" label="Destinatario">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="addressee" />
+            <form-field [control]="form.get('fol')" label="Folio">
+              <input type="text" class="form-control" formControlName="fol" />
             </form-field>
           </div>
-          <div class="col-md-8">
-            <form-field
-              [control]="form.get('addresseeTxt')"
-              label="Texto Mensaje">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="addresseeTxt"></textarea>
+          <div class="col-md-4">
+            <form-field [control]="form.get('key')" label="Clave">
+              <input type="text" class="form-control" formControlName="key" />
             </form-field>
           </div>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="form.get('city')" label="Ciudad">
-            <input type="text" class="form-control" formControlName="city" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-4">
-          <div class="col-md-12 alert alert-success">
-            <form-field
-              [control]="form.get('paragraph1')"
-              label="P&aacute;rrafo 1">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="paragraph1"></textarea>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="col-md-12 alert alert-success">
-            <form-field
-              [control]="form.get('paragraph2')"
-              label="P&aacute;rrafo 2">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="paragraph2"></textarea>
-            </form-field>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="col-md-12 alert alert-success">
-            <form-field
-              [control]="form.get('paragraph3')"
-              label="P&aacute;rrafo final">
-              <textarea
-                class="form-control"
-                type="text"
-                formControlName="paragraph3"></textarea>
-            </form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row pt-5">
-        <div class="ch-content">
-          <h5 class="title">Bienes</h5>
-        </div>
-        <div class="table-responsive">
-          <ng2-smart-table
-            [settings]="settings"
-            [source]="data"></ng2-smart-table>
-        </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
-        </app-pagination>
-
-        <div class="ch-content">
-          <h5 class="title">Con copia para&#58;</h5>
-        </div>
-        <div class="row pt-5">
-          <div class="col-md-2">
-            <form-field [control]="form.get('user')" label="Usuario y nombre">
+          <div class="col-md-4">
+            <form-field [control]="form.get('cityCi')" label="Ciudad">
               <ng-select
-                formControlName="user"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="0">user-01 - Cristobal</ng-option>
-                <ng-option value="1">user-02 - Antonia</ng-option>
+                addTagText="Agregar Elemento"
+                formControlName="cityCi"
+                class="form-control scroll-line"
+                bindValue="value"
+                bindLabel="label"
+                [items]="listCitys">
               </ng-select>
             </form-field>
           </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="form.get('txtUserCCP')"
-              label="Texto con copia">
-              <textarea
-                class="form-control"
+        </div>
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('dateRec')" label="Fecha Recepción">
+              <input
                 type="text"
-                formControlName="txtUserCCP"></textarea>
+                class="form-control"
+                formControlName="dateRec"
+                bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-2">
-            <div class="justify-content-center">
-              <button type="button" class="btn btn-primary btn-sm active">
-                Agregar Usuario
-              </button>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="justify-content-center">
-              <button type="button" class="btn btn-primary btn-sm active">
-                Quitar Usuario
-              </button>
-            </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('dateEla')"
+              label="Fecha Elaboración">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateEla"
+                bsDatepicker />
+            </form-field>
           </div>
         </div>
+        <!--  -->
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <form-field [control]="form.get('remi')" label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="remi"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('dest')" label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dest"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--  -->
+    <div class="mt-5">
+      <div>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
       </div>
-    </form>
+      <div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
+    <!--  -->
+    <div class="mt-5">
+      <div>
+        <ng2-smart-table
+          [settings]="settingsTwo"
+          [source]="dataTwo"></ng2-smart-table>
+      </div>
+      <div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
+    <!--  -->
+    <div>
+      <div>
+        <form class="form-material" [formGroup]="formTwo">
+          <!--  -->
+          <div class="row">
+            <div class="col-md-5">
+              <form-field
+                [control]="formTwo.get('allGood')"
+                label="Total de Bienes">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="allGood" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="formTwo.get('selectedGood')"
+                label="Bienes Seleccionados">
+                <ng-select
+                  addTagText="Agregar Elemento"
+                  formControlName="selectedGood"
+                  class="form-control scroll-line"
+                  bindValue="value"
+                  bindLabel="label"
+                  [items]="listKeyOffice">
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-primary btn-sm active mr-3">
+                Motivos de Cambio a REV
+              </button>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row">
+            <div class="col-md-6">
+              <button class="btn btn-sm btn-success active">
+                Exportar a Excel
+                <i class="bx bx-download float-icon"></i>
+              </button>
+            </div>
+            <div class="col-md-6">
+              <button type="button" class="btn btn-sm btn-success active">
+                Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+              </button>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row mt-5">
+            <div class="col-md-12">
+              <form-field [control]="formTwo.get('ref')" label="Referencia">
+                <textarea class="form-control" formControlName="ref"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <form-field [control]="formTwo.get('aten')" label="Atención">
+                <textarea
+                  class="form-control"
+                  formControlName="aten"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--  -->
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <form-field
+                [control]="formTwo.get('espe')"
+                label="Especificaciones">
+                <textarea
+                  class="form-control"
+                  formControlName="espe"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--  -->
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Modificar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Visualizar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Guardar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Enviar Oficio
+                <i aria-hidden="true" class="fa fa-save"></i>
+              </button>
+            </div>
+          </div>
+          <!--  -->
+
+          <!--  -->
+          <!-- Modal #1 -->
+          <div
+            style="border: 1px solid black; padding: 10px; border-radius: 20px">
+            <p>Este es el modal #1</p>
+            <div>
+              <form class="form-material" [formGroup]="formDialogOne">
+                <div class="row mt-5">
+                  <div class="col-md-12">
+                    <form-field
+                      [control]="formDialogOne.get('noti')"
+                      label="Notificaciones">
+                      <textarea
+                        class="form-control"
+                        formControlName="noti"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+                <!--  -->
+              </form>
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Cerrar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Continuar
+                    <i aria-hidden="true" class="fa fa-save"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--  -->
+        </form>
+      </div>
+    </div>
+    <!--  -->
   </div>
+  <!--  -->
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active"
-          [disabled]="form.invalid">
-          Guardar cambios
+        <button type="button" class="btn btn-primary btn-sm active">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
         </button>
       </div>
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active"
-          [disabled]="form.invalid">
+        <button type="button" class="btn btn-primary btn-sm active">
           Enviar a Valuaci&oacute;n
         </button>
       </div>
       <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger active"
-          [disabled]="form.invalid">
+        <button type="button" class="btn btn-primary btn-sm active">
           Ver oficio
         </button>
       </div>

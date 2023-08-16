@@ -845,6 +845,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     } else if (item.stateConservation == 2) {
                       item.stateConservationName = 'MALO';
                     }
+
                     if (item.transferentDestiny == 1) {
                       item.transferentDestinyName = 'VENTA';
                     } else if (item.transferentDestiny == 2) {
@@ -881,7 +882,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
-
+                    console.log('form', form.value);
                     this.goodsTransportable.push(form);
                     this.formLoadingTrans = false;
                     this.showTransportable = true;
@@ -1037,7 +1038,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
                   }
-
                   if (item.transferentDestiny == 1) {
                     item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
@@ -1047,7 +1047,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.transferentDestiny == 4) {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
-
+                  console.log('datasfd', item.transferentDestinyName);
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],

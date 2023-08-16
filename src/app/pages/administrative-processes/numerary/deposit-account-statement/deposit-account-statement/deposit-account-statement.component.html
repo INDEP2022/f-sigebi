@@ -87,16 +87,17 @@
               [haveColumnFilters]="true"
               [ilikeFilters]="ilikeFilters"
               [dateFilters]="dateFilters"
-              label="Cuenta"
-              formField="account"
+              label="Devolución"
+              formField="devolutionnumber"
               [service]="detailsIndMovementService"
               [columnsType]="columnsType"
               searchField="description"
-              id="accountkey"
-              title="Cuenta"
+              id="devolutionnumber"
+              title="Devolución"
               (selectRow)="
                 changeChecks($event)
               "></app-select-modal-table-shared>
+
             <!-- <form-field [control]="form.get('account')">
               <ngx-select
                 label="Cuenta"
@@ -131,97 +132,102 @@
           </div>
           <div class="col-md-4 mt-4">
             <form-field
-              [control]="accountnumberorigindeposit"
-              label="Origen Depósito">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="accountnumberorigindeposit"
-                [readonly]="readonly" />
-            </form-field>
-          </div>
-          <div class="col-md-4 mt-4">
-            <form-field
               [control]="accountnumberpayreturn"
               label="Origen Devolución">
               <input
+                readonly
                 type="text"
                 class="form-control"
-                formControlName="accountnumberpayreturn"
-                [readonly]="readonly" />
+                formControlName="accountnumberpayreturn" />
             </form-field>
           </div>
         </div>
         <div class="row">
           <div class="col-md-4 mt-4">
+            <app-select-modal-table-shared
+              [form]="form"
+              [maxlengthInput]="12"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              [ilikeFilters]="ilikeAccountFilters"
+              label="Cuenta"
+              formField="accountnumberpayreturn"
+              [service]="bankAccountService"
+              [columnsType]="columnsAccountType"
+              searchField="description"
+              id="cveAccount"
+              title="Cuenta"
+              (selectRow)="
+                changeAccount($event)
+              "></app-select-modal-table-shared>
+
+            <!-- <form-field
+              [control]="accountnumberorigindeposit"
+              label="Origen Depósito">
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="accountnumberorigindeposit" />
+            </form-field> -->
+          </div>
+          <div class="col-md-3 mt-4">
             <form-field [control]="form.get('bank')" label="Banco">
               <input
+                readonly
                 type="text"
                 class="form-control"
-                formControlName="bank"
-                [readonly]="readonly" />
+                formControlName="bank" />
             </form-field>
           </div>
-          <div class="col-md-4 mt-4">
+          <div class="col-md-2 mt-4">
             <form-field [control]="form.get('currency')" label="Moneda">
               <input
+                readonly
                 type="text"
                 class="form-control"
-                formControlName="currency"
-                [readonly]="readonly" />
+                formControlName="currency" />
             </form-field>
           </div>
-          <div class="col-md-4 mt-4">
+          <div class="col-md-3 mt-4">
             <form-field [control]="form.get('amount')" label="Importe">
               <input
+                readonly
                 type="text"
                 class="form-control"
-                formControlName="amount"
-                [readonly]="readonly" />
+                formControlName="amount" />
             </form-field>
           </div>
         </div>
         <div class="row">
           <div class="col-md-3 mt-4">
-            <form-field [control]="goodId" label="Bien">
-              <input
-                type="number"
-                class="form-control"
-                formControlName="goodId"
-                [readonly]="readonly" />
-            </form-field>
-          </div>
-          <div class="col-md-3 mt-4">
-            <form-field [control]="form.get('status')" label="Estatus">
+            <app-select-modal-table-shared
+              [form]="form"
+              [maxlengthInput]="12"
+              [disabled]="false"
+              [widthDescription]="false"
+              [haveSelectColumns]="true"
+              [haveColumnFilters]="true"
+              label="Movimiento"
+              formField="movementNumber"
+              [service]="accountMovementService"
+              [columnsType]="columnsMovementType"
+              searchField="description"
+              id="numberMotion"
+              title="Movimiento"
+              (selectRow)="
+                changeAccount($event)
+              "></app-select-modal-table-shared>
+            <!-- <form-field [control]="devolutionnumber" label="Devolución">
               <input
                 readonly
-                type="text"
-                class="form-control"
-                formControlName="status" />
-            </form-field>
-          </div>
-          <div class="col-md-6 fixTextarea mt-4">
-            <form-field
-              [control]="form.get('goodDescription')"
-              label="Descripción">
-              <textarea
-                readonly
-                rows="2"
-                class="form-control"
-                formControlName="goodDescription"
-                [max-length]="4000"></textarea>
-            </form-field>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3 mt-4">
-            <form-field [control]="devolutionnumber" label="Devolución">
-              <input
                 type="number"
                 class="form-control"
                 formControlName="devolutionnumber"
-                [readonly]="readonly" />
-            </form-field>
+               />
+            </form-field> -->
           </div>
           <div class="col-md-3 mt-4">
             <form-field [control]="expedient" label="Expediente">
@@ -229,7 +235,7 @@
                 type="number"
                 class="form-control"
                 formControlName="expedient"
-                [readonly]="readonly" />
+                readonly />
             </form-field>
           </div>
           <div class="col-md-3 mt-4" [class]="readonly ? 'disabledInput' : ''">
@@ -257,6 +263,39 @@
             </form-field>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-3 mt-4">
+            <form-field [control]="goodId" label="Bien">
+              <input
+                readonly
+                type="number"
+                class="form-control"
+                formControlName="goodId" />
+            </form-field>
+          </div>
+          <div class="col-md-3 mt-4">
+            <form-field [control]="form.get('status')" label="Estatus">
+              <input
+                readonly
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+          </div>
+          <div class="col-md-6 fixTextarea mt-4">
+            <form-field
+              [control]="form.get('goodDescription')"
+              label="Descripción">
+              <textarea
+                readonly
+                rows="2"
+                class="form-control"
+                formControlName="goodDescription"
+                [max-length]="4000"></textarea>
+            </form-field>
+          </div>
+        </div>
+
         <div class="row">
           <div class="col-md-6 mt-4">
             <form-field

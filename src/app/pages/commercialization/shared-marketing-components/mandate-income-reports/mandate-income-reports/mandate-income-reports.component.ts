@@ -14,6 +14,7 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -38,6 +39,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
   minDate = new Date(new Date().getFullYear(), 0);
 
   eventSelect = new DefaultSelect();
+  user1 = new DefaultSelect();
+  user2 = new DefaultSelect();
+  user3 = new DefaultSelect();
 
   constructor(
     private fb: FormBuilder,
@@ -46,7 +50,8 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
     private sanitizer: DomSanitizer,
     private modalService: BsModalService,
     private comerEventService: ComerEventService,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private usersService: UsersService
   ) {
     super();
     this.settings = {
@@ -75,6 +80,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
       reportNumber: [null, [Validators.required]],
     });
     this.getEvent(new ListParams());
+    this.getAllSegUser1(new ListParams());
+    this.getAllSegUser2(new ListParams());
+    this.getAllSegUser3(new ListParams());
   }
 
   settingsChange($event: any): void {
@@ -99,7 +107,9 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
       },
     });
   }
-  changeEvent(event: any) {}
+  changeEvent(event: any) {
+    console.log(event);
+  }
 
   report() {
     let params = {
@@ -138,5 +148,50 @@ export class MandateIncomeReportsComponent extends BasePage implements OnInit {
         this.modalService.show(PreviewDocumentsComponent, config);
       }
     });
+  }
+
+  getAllSegUser1(params: ListParams) {
+    this.usersService.getAllSegUsers2(params).subscribe({
+      next: resp => {
+        this.user1 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.user1 = new DefaultSelect();
+      },
+    });
+  }
+
+  changeUser1(event: any) {
+    console.log(event);
+  }
+
+  getAllSegUser2(params: ListParams) {
+    this.usersService.getAllSegUsers2(params).subscribe({
+      next: resp => {
+        this.user2 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.user2 = new DefaultSelect();
+      },
+    });
+  }
+
+  changeUser2(event: any) {
+    console.log(event);
+  }
+
+  getAllSegUser3(params: ListParams) {
+    this.usersService.getAllSegUsers2(params).subscribe({
+      next: resp => {
+        this.user3 = new DefaultSelect(resp.data, resp.count);
+      },
+      error: err => {
+        this.user3 = new DefaultSelect();
+      },
+    });
+  }
+
+  changeUser3(event: any) {
+    console.log(event);
   }
 }

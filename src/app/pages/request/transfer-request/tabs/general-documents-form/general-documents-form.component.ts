@@ -413,7 +413,7 @@ export class GeneralDocumentsFormComponent
           next: resp => {
             Swal.fire({
               title: `Se asoció la solicitud correctamente`,
-              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la carátula INAI`,
+              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de Solicitud de Transferencia`,
               icon: 'success',
               showDenyButton: false,
               showCancelButton: false,

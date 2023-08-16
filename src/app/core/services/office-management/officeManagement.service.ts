@@ -61,4 +61,7 @@ export class OfficeManagementService extends HttpService {
     const route = OfficeManagementEndpoint.updateStatusProcess;
     return this.put(`${route}/${no_process}`);
   }
+  postOfficeAvaluo(model: any) {
+    return this.post(`application/getOfficeAvaluo`, model);
+  }
 }
