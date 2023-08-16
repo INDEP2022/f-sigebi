@@ -166,9 +166,11 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
-    this.notLoadedGoods = [];
+    this.clear();
     this.pageLoading = true;
     const file = event.target.files[0];
+    console.log(file);
+
     let fileReader = new FileReader();
     fileReader.onload = async e => {
       const result = fileReader.result as string;
@@ -199,7 +201,9 @@ export class GoodsManagementSocialCabinetComponent
         });
       });
       if (newArray.length === 0) {
+        this.selectedGoodstxt = [...newArray];
         this.alert('error', 'No hay datos válidos en el archivo', '');
+        this.pageLoading = false;
         return;
       }
       this.selectedGoodstxt = [...newArray];

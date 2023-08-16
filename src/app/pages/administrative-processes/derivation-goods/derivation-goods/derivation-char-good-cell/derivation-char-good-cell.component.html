@@ -1,5 +1,11 @@
 <div *ngIf="disabledTable || row.tableCd" style="padding: 0 10px">
-  {{ row?.value }}
+  <label
+    *ngIf="row.required"
+    class="float-label"
+    style="position: relative; margin-right: 2px; float: right; top: -3px">
+    <span style="color: rgb(157, 36, 73)">*</span>
+  </label>
+  <div>{{ row?.value }}</div>
 </div>
 <div
   class="goodCellContainer"
