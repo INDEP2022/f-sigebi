@@ -5,7 +5,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IComerLayouts,
-  IComerLayoutsW,
   IL,
 } from 'src/app/core/models/ms-parametercomer/parameter';
 import { LayoutsConfigService } from 'src/app/core/services/ms-parametercomer/layouts-config.service';
@@ -44,39 +43,70 @@ export class LayoutsConfigurationModalComponent
     super();
   }
   ngOnInit(): void {
+    console.log(this.provider);
     this.prepareForm();
-    this.structureLayoutSelected = this.structureLayout;
+    // this.structureLayoutSelected = this.structureLayout;
     // this.inpuLayout = this.idLayout.toString().toUpperCase();
-    console.log(this.structureLayout);
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      idLayout: [null],
-      // descLayout: [null, [Validators.required]],
-      // screenKey: [null, [Validators.required]],
-      // table: [null, [Validators.required]],
-      // criterion: [null, [Validators.required]],
-      indActive: [null],
-      idConsec: [null],
-      position: [
+      id: [null],
+      descLayout: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
-      column: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      type: [null, [Validators.required]],
-      length: [new Date()],
-      constant: [null, [Validators.required]],
-      carFilling: [null, [Validators.required]],
-      justification: [null, [Validators.required]],
-      decimal: [null, [Validators.required]],
-      dateFormat: [null, [Validators.required]],
-      registryNumber: [null, [Validators.required]],
+      screenKey: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(32),
+        ],
+      ],
+      table: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(32),
+        ],
+      ],
+      criterion: [
+        null,
+        [
+          Validators.required,
+          // Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(500),
+        ],
+      ],
+      indActive: [null],
+      // idConsec: [null],
+      // position: [
+      //   null,
+      //   [Validators.required, Validators.pattern(STRING_PATTERN)],
+      // ],
+      // column: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      // // mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      // type: [null, [Validators.required]],
+      // length: [new Date()],
+      // constant: [null, [Validators.required]],
+      // carFilling: [null, [Validators.required]],
+      // justification: [null, [Validators.required]],
+      // decimal: [null, [Validators.required]],
+      // dateFormat: [null, [Validators.required]],
+      // registryNumber: [null, [Validators.required]],
     });
-    if (this.provider !== undefined) {
+    if (this.provider != undefined) {
       this.edit = true;
       this.providerForm.patchValue(this.provider);
+      // this.providerForm.get('criterion').setValue(this.provider.criterion);
+      this.providerForm.markAllAsTouched();
+      console.log(this.providerForm.value);
     } else {
       this.edit = false;
     }
@@ -87,17 +117,27 @@ export class LayoutsConfigurationModalComponent
   }
 
   confirm() {
+    console.log(this.providerForm.value);
     this.edit ? this.update() : this.create();
   }
 
   create() {
     try {
       this.loading = false;
-      this.layoutsConfigService.create(this.providerForm.value).subscribe({
+      let data = {
+        ...this.providerForm.value,
+        indActive: this.providerForm.value.indActive == true ? 1 : 0,
+      };
+      delete data.id;
+      this.layoutsConfigService.createH(data).subscribe({
         next: data => this.handleSuccess(),
         error: error => {
           this.loading = false;
-          this.onLoadToast('error', 'No se puede duplicar layout!!', '');
+          this.alert(
+            'error',
+            'Error al Crear',
+            'Ocurrió un Error al Crear el Layout'
+          );
           return;
         },
       });
@@ -108,30 +148,34 @@ export class LayoutsConfigurationModalComponent
   update() {
     this.alertQuestion(
       'warning',
-      'Actualizar',
-      'Desea actualizar este layout?'
+      'Actualizar Layout',
+      '¿Desea Actualizar este layout?'
     ).then(question => {
       if (question.isConfirmed) {
-        let params: IComerLayoutsW = {
-          idConsec: this.provider.idConsec,
-          carFilling: this.provider.carFilling,
-          column: this.provider.column,
-          constant: this.provider.constant,
-          dateFormat: this.provider.dateFormat,
-          decimal: this.provider.decimal,
-          indActive: this.provider.indActive,
-          justification: this.provider.justification,
-          length: this.provider.length,
-          position: this.provider.position,
-          registryNumber: this.provider.registryNumber,
-          type: this.provider.type,
-        };
+        // let params: IComerLayoutsW = {
+        //   idConsec: this.provider.idConsec,
+        //   carFilling: this.provider.carFilling,
+        //   column: this.provider.column,
+        //   constant: this.provider.constant,
+        //   dateFormat: this.provider.dateFormat,
+        //   decimal: this.provider.decimal,
+        //   indActive: this.provider.indActive,
+        //   justification: this.provider.justification,
+        //   length: this.provider.length,
+        //   position: this.provider.position,
+        //   registryNumber: this.provider.registryNumber,
+        //   type: this.provider.type,
+        // };
         this.layoutsConfigService
-          .updateL(this.provider.idLayout.id, params)
+          .updatelayoutSH(this.provider.id, this.providerForm.value)
           .subscribe({
             next: data => this.handleSuccess(),
             error: error => {
-              this.onLoadToast('error', 'layout', '');
+              this.alert(
+                'error',
+                'Error al Actualizar',
+                'Ocurrió un Error al Actualizar el Layout'
+              );
               this.loading = false;
             },
           });
@@ -142,12 +186,12 @@ export class LayoutsConfigurationModalComponent
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     // setTimeout(() => {
-    //   this.onLoadToast('success', this.title, `${message} Correctamente`);
+    //   this.alert('success', this.title, `${message} Correctamente`);
     // }, 2000);
-    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.alert('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.onConfirm.emit(true);
-    this.modalRef.content.callback(true);
+    // this.modalRef.content.callback(true);
     this.close();
   }
 }

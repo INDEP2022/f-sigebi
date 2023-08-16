@@ -17,10 +17,10 @@
               <span class="ml-3 mr-3" style="display: initial !important">
                 {{ statusConv || '-----' }}
               </span> -->
-          <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
             Regresar
             <i class="fas fa-arrow-circle-left"></i>
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="col-md-12">
@@ -33,16 +33,19 @@
               </h5>
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <!-- <div class="float-right pl-3">
-                <button (click)="searchProcs()" class="btn btn-primary btn-sm active m-1" tooltip="Conversiones"
+              <div class="float-right pl-3">
+                <button
+                  (click)="searchProcs()"
+                  class="btn btn-primary btn-sm active m-1"
+                  tooltip="Conversiones"
                   containerClass="tooltip-style">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div> -->
+              </div>
 
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
-                <app-card [header]="false" [footer]="true">
+                <app-card [header]="false" [footer]="false">
                   <div body>
                     <div class="row">
                       <div class="col-md-12">
@@ -140,6 +143,7 @@
                           <i aria-hidden="true" class="fa fa-save"></i>
                         </button>
                         <button
+                          [disabled]="!conversion"
                           (click)="agregarActa()"
                           type="button"
                           class="btn btn-info active btn-sm mr-3">
@@ -357,6 +361,11 @@
                     </form>
                     <div class="row"></div>
                     <div class="row p-3">
+                      <div class="justify-content-end d-flex mb-2">
+                        <app-columns-select
+                          [defaultColumns]="5"
+                          [(settings)]="settings"></app-columns-select>
+                      </div>
                       <div class="col-md-3"></div>
                       <form [formGroup]="actaGoodForm" class="form-material">
                         <div class="row mt-12 d-flex justify-content-center">
@@ -502,6 +511,47 @@
                         </div>
                       </form>
                     </div>
+                    <div
+                      class="d-flex mt-3 flex-row justify-content-center align-items-center">
+                      <!-- <div class="m-3">
+                                      <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
+                                        Detalle de Acta
+                                        <i class="fas fa-edit bx-sm float-icon"></i>
+                                      </button>
+                                    </div> -->
+                      <!-- <div class="m-3">
+                                      <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
+                                        (click)="savActa()">
+                                        Guardar
+                                        <i aria-hidden="true" class="fa fa-save"></i>
+                                      </button>
+                                    </div> -->
+                      <!-- <div class="m-3">
+                                      <button class="btn btn-secondary btn-sm active" type="button" (click)="cargueMasive()">
+                                        Carga Masiva
+                                        <i class="fa fa-upload bx-sm float-icon"></i>
+                                      </button>
+                                    </div> -->
+                      <div class="m-3">
+                        <button
+                          type="button"
+                          class="btn btn-primary active btn-sm"
+                          (click)="Generar()">
+                          Imprimir
+                          <i class="bx bx-printer bx-sm float-icon"></i>
+                        </button>
+                      </div>
+                      <div class="m-3">
+                        <button
+                          [disabled]="!disabledBtnCerrar"
+                          type="button"
+                          class="btn btn-primary active btn-sm"
+                          (click)="cerrarActa(goodFatherNumber)">
+                          Cerrar Acta
+                          <i class="fas fa-close bx-sm float-icon"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </app-card>
               </div>
@@ -524,34 +574,25 @@
                     <i aria-hidden="true" class="fa fa-save"></i>
                   </button>
                 </div> -->
-                <div class="m-3">
-                  <button
-                    class="btn btn-secondary btn-sm active"
-                    type="button"
-                    (click)="cargueMasive()">
+                <!-- <div class="m-3">
+                  <button class="btn btn-secondary btn-sm active" type="button" (click)="cargueMasive()">
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm"
-                    (click)="Generar()">
+                </div> -->
+                <!-- <div class="m-3">
+                  <button type="button" class="btn btn-primary active btn-sm" (click)="Generar()">
                     Imprimir
                     <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                 </div>
                 <div class="m-3">
-                  <button
-                    [disabled]="!disabledBtnCerrar"
-                    type="button"
-                    class="btn btn-primary active btn-sm"
+                  <button [disabled]="!disabledBtnCerrar" type="button" class="btn btn-primary active btn-sm"
                     (click)="cerrarActa(goodFatherNumber)">
                     Cerrar Acta
                     <i class="fas fa-close bx-sm float-icon"></i>
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
           </accordion-group>

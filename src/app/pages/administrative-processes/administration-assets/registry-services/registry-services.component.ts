@@ -42,7 +42,7 @@ export class RegistryServicesComponent
     this.settings.hideSubHeader = false;
     this.settings.columns = {
       serviceCode: {
-        title: 'Clave Servicio',
+        title: 'Descripción Servicio',
         type: 'number',
         sort: false,
       },

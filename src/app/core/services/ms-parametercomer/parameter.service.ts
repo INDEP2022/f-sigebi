@@ -85,5 +85,4 @@ export class ParameterModService
       `${ParameterComerEndpoints.ApplicationSigna}?user=${user}&address=${adress}`
     );
   }
-
 }

@@ -73,7 +73,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.expedient);
+    console.log('expedient--', this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
     for (let i = 1900; i <= this.currentYear; i++) {
@@ -176,10 +176,13 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   consultREG_TRANSFERENTES(lparams: ListParams) {
+    console.log('LPARAMS - ', lparams);
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
       expedientType: this.expedient.expedientType,
     };
+
+    console.log('ObJ --', obj);
 
     const params = new FilterParams();
 
@@ -225,9 +228,12 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
 
-
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
+
+    localStorage.setItem('anio', anio);
+    console.log('AÑO', anio);
+    localStorage.setItem('mes', mes.label);
 
     let consec_ = consec.toString().padStart(4, '0');
     this.foolio = consec;
@@ -264,6 +270,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       });
     }
   }
+
   newRegister: any;
   guardarRegistro(cveActa: any) {
     let obj: any = {
@@ -309,7 +316,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
       numDelegation_1: null,
       numDelegation_2: null,
       file: this.fileNumber,
-
     };
     this.proceedingsDeliveryReceptionService
       .createDeliveryReception(obj)

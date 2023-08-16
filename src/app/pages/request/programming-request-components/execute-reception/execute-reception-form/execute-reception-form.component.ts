@@ -162,6 +162,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   showWarehouse: boolean = false;
   showReprog: boolean = false;
   showCancel: boolean = false;
+  checkSeleccionado: boolean = false;
   receiptClose: boolean = true;
   receiptGuardClose: boolean = true;
   receiptWarehouseClose: boolean = true;
@@ -361,9 +362,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         sort: false,
         renderComponent: SelectInputComponent,
         onComponentInitFunction(instance: any, component: any = self) {
-          instance.input.subscribe(async (row: any) => {
-            console.log('process', process);
-          });
+          instance.input.subscribe(async (row: any) => {});
         },
       },
       ...this.settingsTransGood.columns,
@@ -845,14 +844,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       item.stateConservationName = 'BUENO';
                     } else if (item.stateConservation == 2) {
                       item.stateConservationName = 'MALO';
-                    } else if (item.transferentDestiny == 1) {
-                      item.transferentDestiny = 'VENTA';
+                    }
+
+                    if (item.transferentDestiny == 1) {
+                      item.transferentDestinyName = 'VENTA';
                     } else if (item.transferentDestiny == 2) {
-                      item.transferentDestiny = 'DONACIÓN';
+                      item.transferentDestinyName = 'DONACIÓN';
                     } else if (item.transferentDestiny == 3) {
-                      item.transferentDestiny = 'DESTRUCCIÓN';
+                      item.transferentDestinyName = 'DESTRUCCIÓN';
                     } else if (item.transferentDestiny == 4) {
-                      item.transferentDestiny = 'ADMINISTRACIÓN';
+                      item.transferentDestinyName = 'ADMINISTRACIÓN';
                     }
 
                     //item.transferentDestiny = showDestinyTransferent;
@@ -877,7 +878,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       regionalDelegationNumber: [
                         item?.regionalDelegationNumber,
                       ],
-                      destiny: [item?.transferentDestiny],
+                      destiny: [item?.transferentDestinyName],
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
@@ -981,7 +982,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   } */
 
   showDestinyTrasnferent(destinyTNumber: number) {
-    console.log('destinyTNumber', destinyTNumber);
     return new Promise((resolve, reject) => {
       const params = new BehaviorSubject<ListParams>(new ListParams());
       params.getValue()['filter.name'] = 'Destino';
@@ -1002,7 +1002,6 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
     this.genericService.getAll(params.getValue()).subscribe({
       next: response => {
-        console.log('destino indep', response);
         this.transfersDestinity = response.data;
       },
       error: error => {},
@@ -1034,19 +1033,19 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.physicalStatusName = 'BUENO';
                   } else if (item.physicalStatus == 2) {
                     item.physicalStatusName = 'MALO';
-                  }
-                  if (item.stateConservation == 1) {
+                  } else if (item.stateConservation == 1) {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
-                  } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                  }
+                  if (item.transferentDestiny == 1) {
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1069,7 +1068,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     transferentDestiny: [item?.saeDestiny],
                     observations: [item?.observations],
-                    destiny: [item?.transferentDestiny],
+                    destiny: [item?.transferentDestinyName],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                   });
                   this.goodsGuards.push(form);
@@ -1122,14 +1121,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
-                  } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                  }
+
+                  if (item.transferentDestiny == 1) {
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1152,7 +1153,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                     observations: [item?.observations],
-                    destiny: [item?.transferentDestiny],
+                    destiny: [item?.transferentDestinyName],
 
                     transferentDestiny: [item?.saeDestiny],
                   });
@@ -1270,19 +1271,20 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     item.physicalStatusName = 'BUENO';
                   } else if (item.physicalStatus == 2) {
                     item.physicalStatusName = 'MALO';
-                  }
-                  if (item.stateConservation == 1) {
+                  } else if (item.stateConservation == 1) {
                     item.stateConservationName = 'BUENO';
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
-                  } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                  }
+
+                  if (item.transferentDestiny == 1) {
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1305,7 +1307,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     stateConservationSae: [item?.stateConservationSae],
                     regionalDelegationNumber: [item?.regionalDelegationNumber],
                     observations: [item?.observations],
-                    destiny: [item?.transferentDestiny],
+                    destiny: [item?.transferentDestinyName],
                     transferentDestiny: [item?.saeDestiny],
                   });
                   this.goodsWarehouse.push(form);
@@ -1420,13 +1422,13 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.stateConservation == 2) {
                     item.stateConservationName = 'MALO';
                   } else if (item.transferentDestiny == 1) {
-                    item.transferentDestiny = 'VENTA';
+                    item.transferentDestinyName = 'VENTA';
                   } else if (item.transferentDestiny == 2) {
-                    item.transferentDestiny = 'DONACIÓN';
+                    item.transferentDestinyName = 'DONACIÓN';
                   } else if (item.transferentDestiny == 3) {
-                    item.transferentDestiny = 'DESTRUCCIÓN';
+                    item.transferentDestinyName = 'DESTRUCCIÓN';
                   } else if (item.transferentDestiny == 4) {
-                    item.transferentDestiny = 'ADMINISTRACIÓN';
+                    item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
 
                   this.goodData = item;
@@ -1719,10 +1721,26 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         },
       });
   }
-  goodSelect(good: IGood) {
-    this.goodIdSelect = good.id;
-    this.selectGood.push(good);
+  goodSelect(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectGood.push(good);
+    } else {
+      this.selectGood = [];
+    }
   }
+
+  /*goodSelect(event: any) {
+    console.log('event', event);
+
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectGood.push(good);
+    } else {
+      this.selectGood = [];
+      console.log('good delete', this.selectGood);
+    } 
+  } */
   goodSelectGuard(good: IGood) {
     this.goodIdSelectGuard = good.id;
     this.selectGoodGuard.push(good);
@@ -2671,33 +2689,43 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
-        const createReceiptGood: any = await this.createReceiptGuard(
-          this.proceedingOpen[0]
-        );
-
-        if (createReceiptGood) {
-          const createReceiptGoodGuard = await this.createReceiptGoodGuard(
-            createReceiptGood
-          );
-          if (createReceiptGoodGuard) {
-            const updateProgrammingGood = await this.updateProgGoodGuard(
+        this.receiptGuards.getElements().then(async data => {
+          if (data[0]?.statusReceiptGuard == 'ABIERTO') {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'Se encuentra un recibo resguardo abierto'
+            );
+          } else {
+            const createReceiptGood: any = await this.createReceiptGuard(
               this.proceedingOpen[0]
             );
-            if (updateProgrammingGood) {
-              const updateGood = await this.updateGoodGuard();
-              if (updateGood) {
-                this.goodsGuards.clear();
-                this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                this.getReceiptsGuard();
-                this.paramsGuardGoods
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getInfoGoodsGuard());
-                this.selectGood = [];
-                this.formLoadingGuard = false;
+
+            if (createReceiptGood) {
+              const createReceiptGoodGuard = await this.createReceiptGoodGuard(
+                createReceiptGood
+              );
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood = await this.updateProgGoodGuard(
+                  this.proceedingOpen[0]
+                );
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodGuard();
+                  if (updateGood) {
+                    this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.getReceiptsGuard();
+                    this.paramsGuardGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoGoodsGuard());
+                    this.selectGood = [];
+                    this.formLoadingGuard = false;
+                  }
+                }
               }
             }
           }
-        }
+        });
       }
     } else if (type == 'almacen') {
       if (this.proceedingOpen.length == 0) {
@@ -2738,33 +2766,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
-        const createReceiptGood: any = await this.createReceiptWarehouse(
-          this.proceedingOpen[0]
-        );
-
-        if (createReceiptGood) {
-          const createReceiptGoodGuard = await this.createReceiptGoodWarehouse(
-            createReceiptGood
-          );
-          if (createReceiptGoodGuard) {
-            const updateProgrammingGood = await this.updateProgGoodWarehouse(
+        this.receiptWarehouse.getElements().then(async data => {
+          if (data[0]?.statusReceiptGuard == 'ABIERTO') {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'Se encuentra un recibo almacén abierto'
+            );
+          } else {
+            const createReceiptGood: any = await this.createReceiptWarehouse(
               this.proceedingOpen[0]
             );
-            if (updateProgrammingGood) {
-              const updateGood = await this.updateGoodWarehouse();
-              if (updateGood) {
-                this.goodsWarehouse.clear();
-                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                this.selectGood = [];
-                this.paramsGoodsWarehouse
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getInfoWarehouse());
 
-                this.getReceiptsGuard();
+            if (createReceiptGood) {
+              const createReceiptGoodGuard =
+                await this.createReceiptGoodWarehouse(createReceiptGood);
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood =
+                  await this.updateProgGoodWarehouse(this.proceedingOpen[0]);
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodWarehouse();
+                  if (updateGood) {
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectGood = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
+
+                    this.getReceiptsGuard();
+                  }
+                }
               }
             }
           }
-        }
+        });
       }
       /* console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {

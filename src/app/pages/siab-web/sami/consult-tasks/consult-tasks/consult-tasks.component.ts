@@ -64,7 +64,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       ...TABLE_SETTINGS,
       actions: false,
       selectMode: '',
-      hideSubHeader: false,
+      hideSubHeader: true,
     };
     this.settings.columns = REQUEST_LIST_COLUMNS;
   }
@@ -133,8 +133,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: ['null'],
+      State: ['PROCESO'],
       typeOfTrasnfer: [null],
+      txtDaysAtrasos: [null],
     });
 
     this.params
@@ -323,11 +324,14 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       } else if (filterStatus === 'FINALIZADA') {
         this.filterParams.getValue().addFilter('State', filterStatus);
         this.getDelegationRegional(user.department);
+      } else if (filterStatus === 'PROCESO') {
+        this.filterParams.getValue().addFilter('State', filterStatus);
+        this.getDelegationRegional(user.department);
       }
-      if (filterStatus === 'TODOS') {
-        this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
-        this.delegation = '';
-      }
+      // if (filterStatus === 'TODOS') {
+      //   this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+      //   this.delegation = '';
+      // }
     }
 
     if (this.consultTasksForm.value.typeOfTrasnfer) {
@@ -356,6 +360,29 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           'requestId',
           this.consultTasksForm.value.txtNoSolicitud,
           SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtNoTransferente) {
+      console.log('Filtro de transferente activado');
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'idTransferee',
+          this.consultTasksForm.value.txtNoTransferente,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtDaysAtrasos) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'backwardness',
+          this.consultTasksForm.value.txtDaysAtrasos,
+          SearchFilter.BTW
         );
     }
 
@@ -463,7 +490,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
       this.filterParams
         .getValue()
-        .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
+        .addFilter('createdDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
       isfilterUsed = true;
@@ -501,17 +528,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     }
-    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'idTransferee',
-          this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.EQ
-        );
-    }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
+      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()

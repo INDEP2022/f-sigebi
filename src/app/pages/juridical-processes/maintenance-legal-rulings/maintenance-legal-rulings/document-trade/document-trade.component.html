@@ -6,8 +6,7 @@
         label="No&#46; Dictaminaci&oacute;n">
         <input
           required
-          [max-length]="15"
-          type="number"
+          type="text"
           class="form-control"
           formControlName="officialNumber" />
       </form-field>
@@ -17,7 +16,7 @@
         [control]="form.get('typeDict')"
         label="Tipo Dictaminaci&oacute;n">
         <input
-          [max-length]="15"
+          type="text"
           required
           class="form-control"
           formControlName="typeDict" />
@@ -25,22 +24,18 @@
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('statusOf')" label="Estatus">
-        <input
-          [max-length]="15"
-          class="form-control"
-          formControlName="statusOf" />
+        <input type="text" class="form-control" formControlName="statusOf" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('city')" label="Ciudad">
-        <input [max-length]="25" class="form-control" formControlName="city" />
+        <input type="text" class="form-control" formControlName="city" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('notaryNumber')" label="No. Notario">
         <input
-          type="number"
-          [max-length]="15"
+          type="text"
           class="form-control"
           formControlName="notaryNumber" />
       </form-field>
@@ -49,7 +44,7 @@
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('text1')" label="P&aacute;rrafo Inicial">
         <textarea
-          [max-length]="250"
+          type="text"
           class="form-control"
           formControlName="text1"></textarea>
       </form-field>
@@ -57,7 +52,7 @@
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('text2')" label="P&aacute;rrafo Final">
         <textarea
-          [max-length]="250"
+          type="text"
           class="form-control"
           formControlName="text2"></textarea>
       </form-field>
@@ -68,7 +63,7 @@
         [control]="form.get('text2To')"
         label="M&aacute;s Informaci&oacute;n 1">
         <textarea
-          [max-length]="250"
+          type="text"
           class="form-control"
           formControlName="text2To"></textarea>
       </form-field>
@@ -78,7 +73,7 @@
         [control]="form.get('text3')"
         label="M&aacute;s Informaci&oacute;n 3">
         <textarea
-          [max-length]="250"
+          type="text"
           class="form-control"
           formControlName="text3"></textarea>
       </form-field>
@@ -86,17 +81,14 @@
 
     <div class="col-sm-12 col-12 col-md-4 p-2">
       <form-field [control]="form.get('sender')" label="Remitente">
-        <input
-          [max-length]="15"
-          class="form-control"
-          formControlName="sender" />
+        <input type="text" class="form-control" formControlName="sender" />
       </form-field>
     </div>
 
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('cveChargeRem')" label="Clave Cargo">
         <input
-          [max-length]="15"
+          type="text"
           class="form-control"
           formControlName="cveChargeRem" />
       </form-field>
@@ -106,10 +98,7 @@
       <form-field
         [control]="form.get('desSenderPa')"
         label="Destinatario Remitente">
-        <input
-          [max-length]="20"
-          class="form-control"
-          formControlName="desSenderPa" />
+        <input type="text" class="form-control" formControlName="desSenderPa" />
       </form-field>
     </div>
 
@@ -127,9 +116,8 @@
         [control]="form.get('delegacionRecipientNumber')"
         label="No&#46; Delegaci&oacute;n Destinatario">
         <input
-          type="number"
+          type="text"
           class="form-control"
-          [max-length]="15"
           formControlName="delegacionRecipientNumber" />
       </form-field>
     </div>
@@ -138,7 +126,7 @@
         [control]="form.get('recipientDepartmentNumber')"
         label="No&#46; Departamento Destinatario">
         <input
-          [max-length]="25"
+          type="text"
           class="form-control"
           formControlName="recipientDepartmentNumber" />
       </form-field>
@@ -149,7 +137,7 @@
         [control]="form.get('recipientEsxt')"
         label="Destinatario ESXT">
         <input
-          [max-length]="15"
+          type="text"
           class="form-control"
           formControlName="recipientEsxt" />
       </form-field>
@@ -157,7 +145,7 @@
 
     <div class="col-sm-12 col-12 col-md-12 p-2">
       <button
-        type="button"
+        type="submit"
         class="btn btn-primary btn-sm active"
         [disabled]="form.invalid">
         Guardar

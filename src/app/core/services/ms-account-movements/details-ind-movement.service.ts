@@ -15,6 +15,7 @@ export class DetailsIndMovementService extends HttpService {
   getAll(params: _Params) {
     return this.get<IListResponse<IAccountDetailInd>>(
       AccountmvmntEndpoint.getDetailsInd,
+      // + '?filter.accountnumberorigindeposit=$not:$null'
       params
     );
   }
@@ -22,6 +23,7 @@ export class DetailsIndMovementService extends HttpService {
   getAllFilterSelf(self?: DetailsIndMovementService, params?: _Params) {
     return self.get<IListResponse<IAccountDetailInd>>(
       AccountmvmntEndpoint.getDetailsInd,
+      //+ '?filter.accountnumberorigindeposit=$not:$null'
       params
     );
   }

@@ -52,9 +52,10 @@
                 [control]="consultTasksForm.get('State')"
                 label="Estatus">
                 <ng-select class="form-control" formControlName="State">
-                  <ng-option value="null">Asignados</ng-option>
+                  <ng-option value="PROCESO">En Proceso</ng-option>
                   <ng-option value="FINALIZADA">Finalizados</ng-option>
-                  <ng-option value="TODOS">Todos</ng-option>
+                  <ng-option value="null">Todos</ng-option>
+                  <!-- <ng-option value="TODOS">Todos</ng-option> -->
                 </ng-select>
               </form-field>
             </div>
@@ -184,7 +185,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="consultTasksForm.get('txtFecAsigDesde')"
-                label="Fecha de Asignación Desde: ">
+                label="Fecha de Creación Desde: ">
                 <input
                   class="form-control"
                   ngModel
@@ -218,7 +219,7 @@
             <div class="col-md-6">
               <form-field
                 [control]="consultTasksForm.get('txtNoMuestreoOrden')"
-                label="No. de Muestreo de Orden">
+                label="No. De Muestreo de Orden">
                 <input
                   type="number"
                   min="0"
@@ -317,7 +318,7 @@
             </div>
             <!-- </div>
           <div class="row margin-input"> -->
-            <div class="col-md-6 pt-5">
+            <div class="col-md-3 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoProgramacion')"
                 label="No. de Programaci&oacute;n">
@@ -329,6 +330,30 @@
                   formControlName="txtNoProgramacion"
                   maxlength="20"
                   (keydown.enter)="onKeydown($event)" />
+              </form-field>
+            </div>
+            <div class="col-md-3 pt-5">
+              <form-field
+                [control]="consultTasksForm.get('txtDaysAtrasos')"
+                label="Rango de Días de Atraso">
+                <ng-select
+                  formControlName="txtDaysAtrasos"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="1,5">Entre 1-5 días</ng-option>
+                  <ng-option value="6,30">Entre 5-30 días</ng-option>
+                  <ng-option value="31,60">Entre 30-60 días</ng-option>
+                  <ng-option value="61,99999">Mayor a 60 días</ng-option>
+                </ng-select>
+                <!-- <input
+                  type="number"
+                  min="0"
+                  max="999999999999999"
+                  class="form-control"
+                  formControlName="txtDaysAtrasos"
+                  maxlength="20"
+                  (keydown.enter)="onKeydown($event)" /> -->
               </form-field>
             </div>
           </div>
@@ -371,7 +396,9 @@
     <div class="row">
       <div class="d-flex justify-content-end">
         <div class="m-3">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <app-columns-select
+            [defaultColumns]="11"
+            [(settings)]="settings"></app-columns-select>
         </div>
       </div>
     </div>

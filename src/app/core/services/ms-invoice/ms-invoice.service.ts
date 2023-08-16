@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ENDPOINT_INVOICE } from 'src/app/common/constants/endpoints/ms-invoice-endpoint';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
@@ -20,6 +21,10 @@ export class MsInvoiceService extends HttpService {
 
   getComerHeadboard(params?: string) {
     return this.get(`comer-headboard`, params);
+  }
+
+  getGetGegrafica(body: any, params?: ListParams) {
+    return this.post(ENDPOINT_INVOICE.GetGegraficaFacturas, body, params);
   }
 
   VALIDA_PAGOSREF_OBT_PARAMETROS(id: any) {

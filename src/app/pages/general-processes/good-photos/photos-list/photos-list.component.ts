@@ -184,10 +184,11 @@ export class PhotosListComponent extends BasePage implements OnInit {
       .subscribe({
         next: async response => {
           if (response) {
-            console.log(response);
+            // console.log(response);
             // debugger;
             if (response) {
               this.files = [...response];
+              this.errorMessage = null;
               // const index = last.indexOf('F');
               // this.lastConsecutive += +last.substring(index + 1, index + 5);
               const pufValidaUsuario = await this.pufValidaUsuario();
@@ -200,7 +201,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                     'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
                     noActa +
                     ' y esta se encuentra cerrada';
-                  console.log(this.errorMessage);
+                  // console.log(this.errorMessage);
                 } else {
                   this.errorMessage = null;
                 }
@@ -258,8 +259,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Fotos Eliminadas',
-          'pero no se puediero eliminar las siguientes fotos ' +
-            this.errorImages.toString()
+          'Pero no se puedieron eliminar todas las fotos'
         );
       } else {
         this.alert(
@@ -314,12 +314,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
       .deletePhoto(this.goodNumber + '', consecNumber)
       .pipe(
         catchError(error => {
+          console.log(error);
           // this.alert(
           //   'error',
           //   'Error',
           //   'Ocurrió un error al eliminar la imagen'
           // );
-          this.errorImages.push(filename);
+          this.errorImages.push(error.error.message);
           return of(null);
         })
       );
@@ -330,14 +331,14 @@ export class PhotosListComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/*',
+        accept: 'image/jpg,image/png',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          console.log(refresh);
+          // console.log(refresh);
           this.fileUploaderClose(refresh);
         },
       },
@@ -357,7 +358,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          console.log(refresh);
+          // console.log(refresh);
           this.fileUploaderClose(refresh);
         },
       },

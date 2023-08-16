@@ -179,7 +179,7 @@ export class UploadDictamenElectronicModalComponent
     //       }
     //     }
     //   }
-    // }
+    // } //GUARDAR LA FIRMA EN LA TABLA CORRESPONDIENTE
     this.msSignatoriesService
       .signerServiceForOfficeDictation(formData)
       .subscribe({
@@ -187,7 +187,7 @@ export class UploadDictamenElectronicModalComponent
           console.log(data);
           this.alertInfo(
             'success',
-            'Se Realizó el Proceso de Firmar el Dictamen Correctamente',
+            'Se realizó el proceso de firmar el dictamen correctamente',
             'Archivo firmado correctamente'
           ).then(() => {
             this.fileForm.controls['signature'] = data.signature;

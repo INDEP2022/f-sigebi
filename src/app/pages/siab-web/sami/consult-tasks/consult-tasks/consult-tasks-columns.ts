@@ -41,14 +41,54 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  creator: {
-    title: 'Autor',
+
+  createdDate: {
+    title: 'Fecha Creación',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      if (date != null) {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      }
+      return formatted;
+    },
+  },
+  endDate: {
+    title: 'Fecha Finalización',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (date: Date) => {
+      if (date != null) {
+        var raw = new Date(date);
+        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
+      }
+      return formatted;
+    },
+  },
+  idDelegationRegional: {
+    title: 'No. Delegación Regional',
     type: 'string',
     sort: false,
   },
-  processName: {
-    title: 'Proceso',
+  idTransferee: {
+    title: 'No. Transferente',
     type: 'string',
+    sort: false,
+  },
+  idstation: {
+    title: 'No. Emisora',
+    type: 'string',
+    sort: false,
+  },
+  idAuthority: {
+    title: 'No. Autoridad',
+    type: 'string',
+    sort: false,
+  },
+  programmingId: {
+    title: 'No. Programación',
+    type: 'number',
     sort: false,
   },
   activitydescription: {
@@ -56,9 +96,20 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  creator: {
+    title: 'Autor',
+    type: 'string',
+    sort: false,
+  },
   assignees: {
     //originalAssigneeUser: {
     title: 'Asignado a',
+    type: 'string',
+    sort: false,
+  },
+
+  processName: {
+    title: 'Proceso',
     type: 'string',
     sort: false,
   },
@@ -87,55 +138,7 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },*/
-  createdDate: {
-    title: 'Fecha Creación',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (date: Date) => {
-      if (date != null) {
-        var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      }
-      return formatted;
-    },
-  },
-  endDate: {
-    title: 'Fecha Finalización',
-    type: 'string',
-    sort: false,
-    valuePrepareFunction: (date: Date) => {
-      if (date != null) {
-        var raw = new Date(date);
-        var formatted = new DatePipe('en-EN').transform(raw, 'dd/MM/yyyy');
-      }
-      return formatted;
-    },
-  },
-  programmingId: {
-    title: 'No. Programación',
-    type: 'string',
-    sort: false,
-  },
-  idDelegationRegional: {
-    title: 'No. Delegación Regional',
-    type: 'string',
-    sort: false,
-  },
-  idTransferee: {
-    title: 'No. Transferente',
-    type: 'string',
-    sort: false,
-  },
-  idstation: {
-    title: 'No. Emisora',
-    type: 'string',
-    sort: false,
-  },
-  idAuthority: {
-    title: 'No. Autoridad',
-    type: 'string',
-    sort: false,
-  },
+
   instanceId: {
     title: 'No. Instancia',
     type: 'number',
