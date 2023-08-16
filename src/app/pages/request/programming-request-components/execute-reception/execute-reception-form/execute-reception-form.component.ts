@@ -882,7 +882,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
-                    console.log('form', form.value);
+
                     this.goodsTransportable.push(form);
                     this.formLoadingTrans = false;
                     this.showTransportable = true;
@@ -1047,7 +1047,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.transferentDestiny == 4) {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
-                  console.log('datasfd', item.transferentDestinyName);
+
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1725,10 +1725,8 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (event.target.checked == true) {
       this.goodIdSelect = good.id;
       this.selectGood.push(good);
-      console.log('selectGood', this.selectGood);
     } else {
       this.selectGood = [];
-      console.log('good delete', this.selectGood);
     }
   }
 
@@ -2691,33 +2689,43 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
-        const createReceiptGood: any = await this.createReceiptGuard(
-          this.proceedingOpen[0]
-        );
-
-        if (createReceiptGood) {
-          const createReceiptGoodGuard = await this.createReceiptGoodGuard(
-            createReceiptGood
-          );
-          if (createReceiptGoodGuard) {
-            const updateProgrammingGood = await this.updateProgGoodGuard(
+        this.receiptGuards.getElements().then(async data => {
+          if (data[0]?.statusReceiptGuard == 'ABIERTO') {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'Se encuentra un recibo resguardo abierto'
+            );
+          } else {
+            const createReceiptGood: any = await this.createReceiptGuard(
               this.proceedingOpen[0]
             );
-            if (updateProgrammingGood) {
-              const updateGood = await this.updateGoodGuard();
-              if (updateGood) {
-                this.goodsGuards.clear();
-                this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                this.getReceiptsGuard();
-                this.paramsGuardGoods
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getInfoGoodsGuard());
-                this.selectGood = [];
-                this.formLoadingGuard = false;
+
+            if (createReceiptGood) {
+              const createReceiptGoodGuard = await this.createReceiptGoodGuard(
+                createReceiptGood
+              );
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood = await this.updateProgGoodGuard(
+                  this.proceedingOpen[0]
+                );
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodGuard();
+                  if (updateGood) {
+                    this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.getReceiptsGuard();
+                    this.paramsGuardGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoGoodsGuard());
+                    this.selectGood = [];
+                    this.formLoadingGuard = false;
+                  }
+                }
               }
             }
           }
-        }
+        });
       }
     } else if (type == 'almacen') {
       if (this.proceedingOpen.length == 0) {
@@ -2758,33 +2766,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
-        const createReceiptGood: any = await this.createReceiptWarehouse(
-          this.proceedingOpen[0]
-        );
-
-        if (createReceiptGood) {
-          const createReceiptGoodGuard = await this.createReceiptGoodWarehouse(
-            createReceiptGood
-          );
-          if (createReceiptGoodGuard) {
-            const updateProgrammingGood = await this.updateProgGoodWarehouse(
+        this.receiptWarehouse.getElements().then(async data => {
+          if (data[0]?.statusReceiptGuard == 'ABIERTO') {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'Se encuentra un recibo almacén abierto'
+            );
+          } else {
+            const createReceiptGood: any = await this.createReceiptWarehouse(
               this.proceedingOpen[0]
             );
-            if (updateProgrammingGood) {
-              const updateGood = await this.updateGoodWarehouse();
-              if (updateGood) {
-                this.goodsWarehouse.clear();
-                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                this.selectGood = [];
-                this.paramsGoodsWarehouse
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getInfoWarehouse());
 
-                this.getReceiptsGuard();
+            if (createReceiptGood) {
+              const createReceiptGoodGuard =
+                await this.createReceiptGoodWarehouse(createReceiptGood);
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood =
+                  await this.updateProgGoodWarehouse(this.proceedingOpen[0]);
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodWarehouse();
+                  if (updateGood) {
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectGood = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
+
+                    this.getReceiptsGuard();
+                  }
+                }
               }
             }
           }
-        }
+        });
       }
       /* console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {
