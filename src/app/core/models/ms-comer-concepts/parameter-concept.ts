@@ -9,6 +9,26 @@ export interface IParameterConcept {
   parameterFk: ParameterFk;
 }
 
+export interface IReadParameter {
+  PMONTOXMAND: string;
+  PDEVCLIENTE: string;
+  PCAMBIAESTATUS: string;
+  PCONDIVXMAND: string;
+  PCANVTA: string;
+  P_MANDCONTIPO: string;
+  PDEVPARCIAL: string;
+  PCHATMORSINFLUJOPM: string;
+  PCHATMORSINFLUJOPF: string;
+  PCHATMORSINFLUJOPFSR: string;
+  PCHATMORSINFLUJOPMSR: string;
+  PCANFACT: string;
+  PCREAFACT: string;
+  VALBIEVEND: string;
+  PNOENVIASIRSAE: string;
+  PDEVPARCIALBIEN: string;
+  PVALIDADET: string;
+}
+
 export interface IParameterConceptCreate extends IParameterConceptUpdate {
   creationDate: string;
   creationUser: string;

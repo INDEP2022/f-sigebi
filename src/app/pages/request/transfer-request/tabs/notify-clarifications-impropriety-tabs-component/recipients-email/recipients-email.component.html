@@ -55,8 +55,10 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="form.invalid"
           [text]="'Enviar'"
+          [loadingText]="'Enviando'"
+          [loading]="loadingButton"
+          [disabled]="form.invalid"
           (confirm)="confirm()">
         </confirm-button>
       </div>

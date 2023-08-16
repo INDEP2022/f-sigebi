@@ -9,10 +9,13 @@ import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { SelectModalTableSharedComponent } from 'src/app/@standalone/shared-forms/select-modal-table-shared/select-modal-table-shared.component';
 import { ExpenseConceptsModule } from '../expense-concepts/expense-concepts.module';
 import { ExpenseCaptureRoutingModule } from './expense-capture-routing.module';
+import { EntryOrdersComponent } from './expense-capture/entry-orders/entry-orders.component';
 import { ExpenseCaptureComponent } from './expense-capture/expense-capture.component';
 import { DataReceiptComponent } from './expense-capture/expense-comercial/data-receipt/data-receipt.component';
 import { ExpenseComercialComponent } from './expense-capture/expense-comercial/expense-comercial.component';
 import { ExpenseCompositionComponent } from './expense-capture/expense-composition/expense-composition.component';
+import { NotifyComponent } from './expense-capture/notify/notify.component';
+import { ScanFilesComponent } from './expense-capture/scan-files/scan-files.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +23,9 @@ import { ExpenseCompositionComponent } from './expense-capture/expense-compositi
     ExpenseComercialComponent,
     DataReceiptComponent,
     ExpenseCompositionComponent,
+    NotifyComponent,
+    EntryOrdersComponent,
+    ScanFilesComponent,
   ],
   imports: [
     CommonModule,
