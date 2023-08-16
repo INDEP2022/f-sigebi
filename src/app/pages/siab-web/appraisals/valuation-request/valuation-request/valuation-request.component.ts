@@ -18,6 +18,11 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
 
+export class OfficesSend {
+  eventId: number;
+  officeType: number;
+}
+
 @Component({
   selector: 'app-valuation-request',
   templateUrl: './valuation-request.component.html',

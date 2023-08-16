@@ -10,4 +10,5 @@ export enum ScreenStatusEndpoints {
   GetGoodScreenStatus = 'application/get-good-screen-status',
   PermissionsByScreenAndUser = 'seg-app-screen/get-permissions-by-screen-and-user',
   Application = 'application',
+  PUP_VAL_BIEN_ROBO = 'application/val-good-steal',
 }

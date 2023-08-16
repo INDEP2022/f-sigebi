@@ -67,3 +67,22 @@ export const GOODS_COLUMNS = {
     sort: false,
   },
 };
+
+export const DOCUMENT_COLUMNS = {
+  cveDocument: {
+    title: 'Cve. Documento',
+    sort: false,
+  },
+  rulingType: {
+    title: 'Tipo de Regla',
+    sort: false,
+  },
+  solicitousDate: {
+    title: 'Fecha de Recepción',
+    sort: false,
+  },
+  receivedDate: {
+    title: 'Fecha de Solicitud',
+    sort: false,
+  },
+};

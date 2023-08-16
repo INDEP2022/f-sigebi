@@ -8,7 +8,13 @@ import {
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, filter, Observable, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  Observable,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { ExpedientService } from 'src/app/core/services/expedients/expedient.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
@@ -38,7 +44,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   settings2: any;
   response: boolean = false;
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsOne = new BehaviorSubject<ListParams>(new ListParams());
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
   bsValueFromMonth: Date = new Date();
@@ -57,6 +63,8 @@ export class DonationActsComponent extends BasePage implements OnInit {
   private numSubject: BehaviorSubject<number> = new BehaviorSubject<number>(
     null
   );
+  loadingOne: boolean = false;
+  loadingTwo: boolean = false;
   num$: Observable<number> = this.numSubject.asObservable();
   datas: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
@@ -93,6 +101,15 @@ export class DonationActsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.initForm();
     // this.startCalendars();
+    this.paramsOne
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log('Aqui se manda a llamar cuando cambia de pagina');
+        this.getDataTableOne(params, `filter.fileNumber=${this.noExpe}`);
+      });
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe((params: any) => {
+      this.getDataTableTwo(params);
+    });
   }
 
   //
@@ -166,30 +183,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
         },
       });
 
-      let paramsGood = new HttpParams();
-      paramsGood = paramsGood.append('filter.fileNumber', this.noExpe);
-      this.serviceGood.getByFilter(paramsGood).subscribe({
-        next: response => {
-          this.columns = response.data;
-          this.datas.load(this.columns);
-          this.totalItems = response.count | 0;
-          this.datas.refresh();
-          this.loading = false;
-        },
-        error: error => {
-          if (error.status == 400) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `No se encontraron registros de bienes`
-            );
-            this.datas.load([]);
-          } else {
-            this.alert('error', 'Error', 'Ha ocurrido un error');
-            this.datas.load([]);
-          }
-        },
-      });
+      let paramsGoodTwo = new HttpParams();
+      paramsGoodTwo = paramsGoodTwo.append('filter.fileNumber', this.noExpe);
+      this.getDataTableOne(paramsGoodTwo);
 
       let paramsRecep = new HttpParams();
       paramsRecep = paramsRecep.append('filter.numFile', this.noExpe);
@@ -268,27 +264,6 @@ export class DonationActsComponent extends BasePage implements OnInit {
           }
         },
       });
-
-      this.num$
-        .pipe(
-          filter(num => num !== null),
-          switchMap(num =>
-            this.serviceDetailProceeding.getGoodsByProceedings(num)
-          )
-        )
-        .subscribe({
-          next: response => {
-            this.varObjectFinal = response.data;
-            this.columns2 = response.data;
-            this.data2.load(this.columns2);
-            this.totalItems2 = response.count | 0;
-            this.data2.refresh();
-            this.loading = false;
-          },
-          error: error => {
-            console.log('');
-          },
-        });
     }
   }
 
@@ -368,6 +343,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
               this.varCreateObject = null;
               this.alert('success', 'Registro creado correctamente', '');
               this.getAllBLKByFilters();
+              this.getDataTableTwo();
             },
             error: error => {
               if (error.status == 400) {
@@ -417,6 +393,9 @@ export class DonationActsComponent extends BasePage implements OnInit {
                 this.varDeleteObject = null;
                 this.alert('success', 'Registro eliminado correctamente', '');
                 this.getAllBLKByFilters();
+                if (this.data2.count() == 1 || 0) {
+                  this.data2.load([]);
+                }
               },
               error: error => {
                 this.alert('error', 'Error', 'Ha ocurrido un error');
@@ -428,5 +407,58 @@ export class DonationActsComponent extends BasePage implements OnInit {
     }
   }
 
+  getDataTableOne(param?: HttpParams, filter?: any) {
+    console.log('El valor de la variable: ', this.noExpe);
+    if (this.noExpe != '') {
+      this.loadingOne = true;
+      this.serviceGood.getByFilter(param, filter).subscribe({
+        next: response => {
+          this.columns = response.data;
+          this.datas.load(this.columns);
+          this.totalItems = response.count | 0;
+          this.datas.refresh();
+          this.loadingOne = false;
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `No se encontraron registros de bienes`
+            );
+            this.datas.load([]);
+          } else {
+            this.alert('error', 'Error', 'Ha ocurrido un error');
+            this.datas.load([]);
+          }
+          this.loadingOne = false;
+        },
+      });
+    }
+  }
+
+  getDataTableTwo(params?: any) {
+    this.num$
+      .pipe(
+        filter(num => num !== null),
+        switchMap(num =>
+          this.serviceDetailProceeding.getGoodsByProceedings(num, params)
+        )
+      )
+      .subscribe({
+        next: response => {
+          this.varObjectFinal = response.data;
+          this.columns2 = response.data;
+          this.data2.load(this.columns2);
+          this.totalItems2 = response.count || 0;
+          this.data2.refresh();
+          this.loading = false;
+        },
+        error: error => {
+          console.log('');
+          this.loading = false;
+        },
+      });
+  }
   //
 }
