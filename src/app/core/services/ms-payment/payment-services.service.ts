@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IComerPaymentsRefVir, IComerReldisDisp } from './payment-service';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import {
+  IComerPaymentsRefVir,
+  IComerReldisDisp,
+  IOI,
+  IOI_DTO,
+} from './payment-service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +17,10 @@ export class PaymentService extends HttpService {
   constructor() {
     super();
     this.microservice = PaymentEndPoints.BasePath;
+  }
+
+  getOI(body: IOI_DTO) {
+    return this.post<IListResponseMessage<IOI>>(PaymentEndPoints.getOI, body);
   }
 
   getComerPaymentRef(params: _Params) {
@@ -25,16 +35,16 @@ export class PaymentService extends HttpService {
     return this.get(`comer-reldis-disp`, params);
   }
 
-  updateComerReldisDisp(id: string, body:  IComerReldisDisp){
-    return this.put(`comer-reldis-disp/${id}`, body)
+  updateComerReldisDisp(id: string, body: IComerReldisDisp) {
+    return this.put(`comer-reldis-disp/${id}`, body);
   }
 
-  deleteComerReldisDisp(id: string){
-    return this.delete(`comer-reldis-disp/${id}`)
+  deleteComerReldisDisp(id: string) {
+    return this.delete(`comer-reldis-disp/${id}`);
   }
 
-  postComerReldisDiso(body: IComerReldisDisp){
-    return this.post(`comer-reldis-disp`, body)
+  postComerReldisDiso(body: IComerReldisDisp) {
+    return this.post(`comer-reldis-disp`, body);
   }
 
   createHeader(params: any) {

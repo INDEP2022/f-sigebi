@@ -72,6 +72,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
+    //info de la solicitud
+    console.log('Solicitud', this.request);
+
     //this.getGoodResDev(Number(this.goodTransfer.id));
     this.getGoodResDev(this.goodTransfer);
     this.loading = false;
@@ -128,7 +131,13 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   getTypeClarification(event: any): void {}
 
   getClarification(params?: ListParams): void {
+    //Mostrar individualización de bienes solo para los de Comercio Exterior
     params['sortBy'] = `clarification:ASC`;
+
+    if (this.request.typeOfTransfer != 'SAT_SAE') {
+      params['filter.id'] = `$not:19`;
+    }
+
     this.clarificationService.getAll(params).subscribe({
       next: data => {
         this.selectClarification = new DefaultSelect(data.data, data.count);
@@ -493,7 +502,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
                 reject('Existe bienes con aclaracion');
                 this.onLoadToast(
                   'warning',
-                  'Algunos bienes tienen o tuvieron aclaración'
+                  'Algunos Bienes tienen o tuvieron aclaración'
                 );
               }
             }

@@ -1,0 +1,29 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <h3>{{ subtext }}</h3>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active m-3" (click)="confirm()">
+          Aceptar <i class="fas fa-edit bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active btn-sm m-3"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
