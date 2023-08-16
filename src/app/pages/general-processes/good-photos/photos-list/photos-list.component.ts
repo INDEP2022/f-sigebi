@@ -259,8 +259,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Fotos Eliminadas',
-          'Pero no se puediero eliminar todas las fotos porque ' +
-            this.errorImages.toString()
+          'Pero no se puedieron eliminar todas las fotos'
         );
       } else {
         this.alert(
