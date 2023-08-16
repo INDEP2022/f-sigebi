@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -52,7 +52,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   readOnlyInput: any;
   columnFilters: any = [];
   idtable: string;
-  relatedEventsDataLocal: LocalDataSource = new LocalDataSource();
+  relatedEventsDataLocal = new LocalDataSource();
   column: string;
   relatedEventsSettings = {
     ...TABLE_SETTINGS,
@@ -130,10 +130,9 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getEvents({ page: 1, text: '' });
     this.eventForm = this.fb.group({
-      event: [null],
-      txtSearch: [''],
+      event: [null, [Validators.required]],
+      txtSearch: [null],
       process: [null],
       status: [null],
       typeEvent: [null],
@@ -142,8 +141,9 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.filter();
   }
 
-  getEvents(params: ListParams) {
-    console.log('params: ', params);
+  getEvents() {
+    this.relatedEventsDataLocal.reset();
+
     // if (params.text == '') {
     //   this.eventItems = new DefaultSelect(this.eventsData, 5);
     // } else {
@@ -155,12 +155,11 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     //this.filterParams.getValue().removeAllFilters();
     //this.filterParams.getValue().page = params.page;
     this.totalItems = 0;
-    this.filterParams.getValue().addFilter('id', params.text, SearchFilter.EQ);
 
-    if (this.eventForm.value.txtSearch) {
+    if (this.eventForm.get('event').value) {
       this.filterParams
         .getValue()
-        .addFilter('title', this.eventForm.value.txtSearch, SearchFilter.ILIKE);
+        .addFilter('id', this.eventForm.get('event').value, SearchFilter.EQ);
     }
     console.log('params service ', this.filterParams.getValue().getParams());
     this.comerClientService
@@ -177,7 +176,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
                 process: item.processKey,
                 status: item.statusVtaId,
                 type: item.tpsolavalId,
-                direction: item.addres,
+                direction: item.address,
               };
               // console.log('event: ', event);
               arrEvents.push(event);
@@ -187,15 +186,26 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
           this.loading = false;
           // this.eventsData = arrEvents; //response.data;
           this.eventItems = new DefaultSelect(arrEvents, response.count);
+          this.selectEvent();
           //this.totalItems = response.count;
         },
-        error: () => (this.loading = false),
+        error: () => (
+          (this.loading = false),
+          (this.selectedEvent = null),
+          this.onLoadToast('error', 'Error', 'No se Encontraron Registros')
+        ),
       });
   }
 
-  selectEvent(event: any) {
-    this.selectedEvent = event;
+  selectEvent() {
+    console.log('evento: ', this.eventItems.data[0]);
+    this.selectedEvent = this.eventItems.data[0];
     console.log('Evento: ', this.selectedEvent);
+    if (this.selectedEvent.direction == 'M') {
+      this.selectedEvent.direction = 'MUEBLES';
+    } else {
+      this.selectedEvent.direction = 'INMUEBLES';
+    }
     let dataform = {
       process: this.selectedEvent.process,
       status: this.selectedEvent.status,
@@ -203,9 +213,8 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
       direction: this.selectedEvent.direction,
     };
     this.eventForm.patchValue(dataform);
-    this.gettable(event.id);
-    this.idtable = event.id;
-    this.relatedEventsColumns = this.relatedEventsData;
+    this.gettable(this.selectedEvent.id);
+    this.idtable = this.selectedEvent.id;
     this.totalItems = this.relatedEventsColumns.length;
     this.hideFilters();
   }
@@ -263,7 +272,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.onLoadToast(
       'error',
       'Evento faltante',
-      'Seleccione un evento para continuar'
+      'Seleccione un Evento para Continuar'
     );
   }
 
@@ -417,12 +426,12 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
 
   gettable(id: string | number) {
     this.relatedEventsColumns = [];
-    this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+    this.relatedEventsDataLocal.load([]);
+    this.totalItems = 0;
     let prueba1 = {
       ...this.columnFilters,
     };
     console.log('prueba1 ', prueba1);
-
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
@@ -431,6 +440,11 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
     this.eventRelatedService.getByEvent(id, params).subscribe({
       next: response => {
         this.totalItems = response.count;
+        console.log('Longitud: ', response.data.length);
+        console.log(
+          'this.relatedEventsColumns length ',
+          this.relatedEventsColumns.length
+        );
         for (let i = 0; i < response.data.length; i++) {
           console.log('DATA: ', response.data);
           this.closeTable = true;
@@ -440,14 +454,28 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
             processKey: response.data[i].eventRel.processKey,
             statusvtaId: response.data[i].eventRel.statusvtaId,
           };
+          console.log('this.relatedEventsColumns ', this.relatedEventsColumns);
           this.relatedEventsColumns.push(dataTable);
-          this.relatedEventsDataLocal.load(this.relatedEventsColumns);
-          this.relatedEventsDataLocal.refresh();
+          console.log(
+            'this.relatedEventsColumns length push ',
+            this.relatedEventsColumns.length
+          );
           this.totalItems = response.data.length;
         }
+        this.relatedEventsDataLocal.load(this.relatedEventsColumns);
+        this.relatedEventsDataLocal.refresh();
       },
       error: err => {
-        //this.closeTable = false;
+        console.log(
+          "this.eventForm.get('event').value ",
+          this.eventForm.get('event').value
+        );
+        if (this.eventForm.get('event').value != null) {
+          this.onLoadToast('error', 'Error', 'No se Encontraron Registros');
+          this.selectedEvent = null;
+        }
+        this.closeTable = false;
+        this.selectedEvent = null;
       },
     });
   }
@@ -470,7 +498,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'id':
-                searchFilter = SearchFilter.EQ;
+                searchFilter = SearchFilter.ILIKE;
                 break;
               case 'processKey':
                 field = 'filter.eventRel.processKey';
@@ -506,11 +534,13 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   clearall() {
+    this.selectedEvent = null;
+    this.totalItems = 0;
+    this.eventForm.reset();
     this.relatedEventsColumns = [];
     this.relatedEventsDataLocal.load(this.relatedEventsColumns);
-    this.relatedEventsDataLocal.reset();
-    this.totalItems = 0;
-    this.selectedEvent = null;
-    this.eventForm.reset();
+    this.relatedEventsDataLocal.refresh();
+    console.log('relatedEventsDataLocal ', this.relatedEventsDataLocal);
+    console.log('this.relatedEventsColumns ', this.relatedEventsColumns);
   }
 }

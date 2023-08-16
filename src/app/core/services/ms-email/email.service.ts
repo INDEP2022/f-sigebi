@@ -92,4 +92,9 @@ export class EmailService extends HttpService {
   getIniEmailCentral(data: Object) {
     return this.post(EmailEndPoint.IniEmailCentral, data);
   }
+
+  createEmailDocs(data: any) {
+    //formData.append('files', documentProgramming);
+    return this.post(`${EmailEndPoint.EmailProgrammingDocs}`, data);
+  }
 }

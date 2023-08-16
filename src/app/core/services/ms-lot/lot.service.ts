@@ -1,10 +1,12 @@
-import { HttpHeaders } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
 import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
 
 interface IValidateStatus {
   val: string | number;
@@ -20,6 +22,10 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsByFilter(params: HttpParams) {
     return this.get('eat-lots', params);
   }
 
@@ -56,6 +62,10 @@ export class LotService extends HttpService {
 
   eventValDesc(eventId: string | number) {
     return this.get('apps/comer-bases-valdesc-when-button-pressed/' + eventId);
+  }
+
+  lotApp(id: any, params: ListParams): Observable<IListResponse<any>> {
+    return this.get('apps/query-winners-report/' + id, params);
   }
 
   updateMandate(body: {
@@ -249,13 +259,27 @@ export class LotService extends HttpService {
     formData.append('tpeventId', `${tpeventId}`);
     const url = this.buildRoute('apps/pup-valcsv');
     const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
-    return this.httpClient.post(url, formData, { headers });
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   validateCustomersCSV(file: File) {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.post('apps/pup-valcsv-clients', formData);
+    const url = this.buildRoute('apps/pup-valcsv-clients');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
   }
 
   importCustomersBase(body: {
@@ -281,6 +305,11 @@ export class LotService extends HttpService {
     bank: string;
   }) {
     return this.post('apps/lotifica-tabla-tc', body);
+  }
+
+  lotifyExcelCount(eventId: string | number) {
+    const url = `apps/lotifica-excel-count/event/${eventId}`;
+    return this.get<{ totlot: string; catlot: string; aprolot: string }>(url);
   }
 
   // ------------------------
@@ -313,5 +342,19 @@ export class LotService extends HttpService {
       `${LotEndpoints.GetBankReference}?reference=${reference}`,
       params
     );
+  }
+
+  //pup-proc-seldisp
+  pupProcSeldisp(body: IPupProcSeldisp) {
+    return this.post<any>('apps/pup-proc-seldisp', body);
+  }
+
+  //get-lot-comer-ref-guarentee
+  getLotComerRefGuarentee(params?: string) {
+    return this.get('apps/get-lot-comer-ref-guarantee', params);
+  }
+
+  pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
+    return this.post('apps/pup-valida-mandato-to-nfac', body);
   }
 }

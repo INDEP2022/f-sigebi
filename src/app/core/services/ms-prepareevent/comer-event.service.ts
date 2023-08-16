@@ -87,9 +87,16 @@ export class ComerEventService extends HttpService {
     );
   }
 
-  postDetEvento(params: _Params) {
+  postDetEvento(params: any) {
     return this.post<IListResponse<IFindAllComerGoodXlotTotal>>(
       PrepareEventEndpoints.DetEvent,
+      params
+    );
+  }
+
+  postResumenAdmvxr(params: any) {
+    return this.post<IListResponse<IFindAllComerGoodXlotTotal>>(
+      PrepareEventEndpoints.ResumenAdmvxr,
       params
     );
   }

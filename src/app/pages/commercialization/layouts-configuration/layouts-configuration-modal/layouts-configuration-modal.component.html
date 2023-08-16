@@ -14,65 +14,60 @@
               readonly />
           </form-field>
         </div> -->
-        <!-- <div class="col-md-3">
+        <div class="col-md-12">
           <form-field
             [control]="providerForm.get('descLayout')"
             label="Descripción de Layout">
-            <input
-              type="text"
+            <textarea
               class="form-control"
-              formControlName="descLayout" />
+              formControlName="descLayout"
+              rows="3"
+              maxlength="100">
+            </textarea>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field
             [control]="providerForm.get('screenKey')"
             label="Pantalla">
             <input
               type="text"
               class="form-control"
-              formControlName="screenKey" />
+              formControlName="screenKey"
+              maxlength="32" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-5">
           <form-field [control]="providerForm.get('table')" label="Tabla">
             <input
               type="text"
               class="form-control"
-              formControlName="screenKey" />
+              formControlName="table"
+              maxlength="32" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
+          <form-check label="Activo" for="activeCheck">
+            <input
+              id="activeCheck"
+              type="checkbox"
+              formControlName="indActive" />
+          </form-check>
+        </div>
+        <div class="col-md-12">
           <form-field
             [control]="providerForm.get('criterion')"
             label="Criterio">
-            <input
-              type="text"
+            <textarea
               class="form-control"
-              formControlName="criterion" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="providerForm.get('indActive')" label="Activo">
-            <select class="form-control" formControlName="indActive">
-              <option [value]="null">Seleccione</option>
-              <option value="1">Activo</option>
-              <option value="2">Inactivo</option>
-            </select>
+              formControlName="criterion"
+              rows="4"
+              maxlength="500">
+            </textarea>
           </form-field>
         </div>
 
-        <div class="col-md-3">
-          <form-field
-            [control]="providerForm.get('registryNumber')"
-            label="Número de registro">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="registryNumber" />
-          </form-field>
-        </div> -->
-        <div class="col-md-3">
+        <!-- <div class="col-md-3">
           <form-field [control]="providerForm.get('idConsec')" label="idConsec">
             <input
               type="number"
@@ -166,14 +161,15 @@
           </form-field>
         </div>
       </div>
-      <div class="row"></div>
+      <div class="row"></div> -->
+      </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!providerForm.valid"
+          [disabled]="providerForm.invalid"
           [loading]="loading"
           (confirm)="confirm()"
           >Agregar estructura</confirm-button

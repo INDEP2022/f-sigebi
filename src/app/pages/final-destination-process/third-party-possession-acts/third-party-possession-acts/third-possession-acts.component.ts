@@ -27,6 +27,7 @@ import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.s
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
+import { MaximunClosingTimeService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -104,7 +105,11 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private statusGoodService: StatusGoodService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
     //crime
-    private affairService: AffairService
+    private affairService: AffairService,
+    //document
+    private serviceDocuments: DocumentsService,
+    // maximun-closing-time
+    private maximunClosingTimeService: MaximunClosingTimeService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -286,6 +291,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     console.log(this.expedientSearch);
     //this.response = !this.response;
     this.getExpedient(term);
+    // this.actForm.disable();
+    //this.formTable1.disable();
   }
 
   onSubmit() {}
@@ -354,6 +361,7 @@ if (id) {
     this.expedientService.getAll(params).subscribe({
       next: response => {
         this.expedient = response.data;
+        console.log('expedient', this.expedient);
         this.formTable1.controls['id'].setValue(this.expedient[0].id);
         this.formTable1.controls['preliminaryInquiry'].setValue(
           this.expedient[0].preliminaryInquiry
@@ -403,7 +411,7 @@ if (id) {
           console.log('response', response.data[0].authorityOrder);
           console.log('response', response.data[0].beneficiaryOwner);
           this.proceedingDev = response.data;
-          console.log(this.proceedingDev);
+          console.log('proceedingDev', this.proceedingDev);
           this.actForm.controls['actSelect'].setValue(
             this.proceedingDev[0].proceeding
           );
@@ -450,6 +458,7 @@ if (id) {
             this.proceedingDev[0].proceedingStatus
           );
 
+          this.getDetailProcedings(this.proceedingDev[0].id);
           /*proceedingsTypeId
         receiptCve
         elaborationDate
@@ -570,9 +579,10 @@ if (id) {
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
+
         this.data.load(response.data);
-        this.totalItems = response.count || 0;
         this.data.refresh();
+        this.totalItems = response.count;
         //this.params.value.page = 1;
         this.loading = false;
       },
@@ -588,10 +598,10 @@ if (id) {
   getDetailProcedings(expId: string | number) {
     this.loading = true;
     if (expId) {
-      this.params.getValue()['filter.good.fileNumber'] = `$eq:${expId}`;
+      this.params5.getValue()['filter.good.fileNumber'] = `$eq:${expId}`;
     }
     let params = {
-      ...this.params.getValue(),
+      ...this.params5.getValue(),
       ...this.columnFilters1,
     };
     this.detailProceedingsDevolutionService.getAll(params).subscribe({
@@ -612,7 +622,118 @@ if (id) {
     });
   }
 
-  closeExpedient() {}
+  closeExpedient() {
+    let existe = '';
+    let vban = true;
+    let vtmp_max = 0;
+
+    if (!this.proceedingDev[0].proceedingsCve) {
+      this.alert(
+        'warning',
+        'Ha Ocurrido un Error',
+        'No Existe Ningun Acta a Cerra'
+      );
+    }
+    if (!this.proceedingDev[0].universalFolio) {
+      this.alert(
+        'warning',
+        'Ha Ocurrido un Error',
+        'Indique El Folio de Escaneo'
+      );
+    } else {
+      this.serviceDocuments
+        .getByFolioUniversal(this.proceedingDev[0].universalFolio)
+        .subscribe({
+          next: data => {
+            if (data.data.length == 0) {
+              existe = 'N';
+              this.alert(
+                'warning',
+                'Ha Ocurrido un Error',
+                'No se ha realizado el escaneo...'
+              );
+            }
+            if (this.validateActCve()) {
+              this.alert(
+                'warning',
+                'Ha Ocurrido un Error',
+                'La Clave del Acta es inconsistente'
+              );
+            }
+            if (new Date(this.proceedingDev[0].elaborationDate) != new Date()) {
+              this.maximunClosingTimeService.getByTypeActa().subscribe({
+                next: data => {
+                  vtmp_max = data.data.maxTmp;
+                  if (vtmp_max > 0) {
+                  }
+                  if (
+                    new Date(this.proceedingDev[0].elaborationDate) < new Date()
+                  ) {
+                    this.alert(
+                      'warning',
+                      'Ha Ocurrido un Error',
+                      'El Acta No Tiene Ningun Bien Asignado, No Se Puede Cerrar.'
+                    );
+                  }
+                },
+                error: err => {},
+              });
+              console.log(data);
+            }
+
+            if (data.data.length > 0) {
+              if (
+                new Date(this.proceedingDev[0].elaborationDate) != new Date()
+              ) {
+                this.maximunClosingTimeService.getByTypeActa().subscribe({
+                  next: data => {
+                    vtmp_max = data.data.maxTmp;
+                    if (vtmp_max > 0) {
+                    }
+                  },
+                  error: err => {},
+                });
+                console.log(data);
+              } else {
+              }
+            } else {
+              existe = 'N';
+              this.alert(
+                'warning',
+                'Ha Ocurrido un Error',
+                'La Clave del Acta o el Numero de Folio Universal, No Fueron Encontrados'
+              );
+            }
+          },
+          error: err => {
+            console.log(err);
+          },
+        });
+    }
+
+    /*
+                console.log('NO cagamos');
+    }else{
+      this.alert(
+                    'warning',
+                    'Ha Ocurrido un Error',
+                    'La Clave del Acta o el Numero de Folio Universal, No Estan Registrados'
+                    );
+                console.log('cagamos');
+    }*/
+  }
+
+  validateActCve() {
+    this.proceedingDev[0].proceedingsCve;
+    let vret = false;
+    let number = this.proceedingDev[0].proceedingsCve.split('/');
+    if (number.length == 8) {
+      let vret = true;
+      return vret;
+    }
+    console.log(number);
+    return vret;
+  }
 
   viewPictures(event: any) {
     if (!this.noBienReadOnly) {

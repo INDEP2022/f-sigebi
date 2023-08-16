@@ -119,7 +119,5 @@ export class NewComerPaymentVirt extends BasePage implements OnInit {
   }
 
   //Generar nuevo
-  saveNew() {
-    const model = {};
-  }
+  saveNew() {}
 }

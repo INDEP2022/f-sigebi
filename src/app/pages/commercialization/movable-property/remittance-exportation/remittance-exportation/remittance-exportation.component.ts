@@ -4,7 +4,9 @@ import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { EventRelatedService } from 'src/app/core/services/ms-event-rel/event-rel.service';
+import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { secondFormatDate } from 'src/app/shared/utils/date';
@@ -39,7 +41,9 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private parameterBrandsService: ParameterBrandsService,
     private authService: AuthService,
-    private eventRelatedService: EventRelatedService
+    private eventRelatedService: EventRelatedService,
+    private eventAppService: EventAppService,
+    private comerEventService: ComerEventService
   ) {
     super();
     this.today = new Date();
@@ -294,5 +298,45 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
     const month = String(fecha.getMonth() + 1).padStart(2, '0');
     const day = String(fecha.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  Resumen(params: any) {
+    this.eventAppService.postResumen(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp Resumen-> ', resp);
+      }
+    });
+  }
+
+  DetResumen(params: any) {
+    this.eventAppService.postDetResumer(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp DetResumen=> ', resp);
+      }
+    });
+  }
+
+  DetRemesa(params: any) {
+    this.eventAppService.postDetRemesa(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp DetRemesa-> ', resp);
+      }
+    });
+  }
+
+  DetEvent(params: any) {
+    this.comerEventService.postDetEvento(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp DetEvent-> ', resp);
+      }
+    });
+  }
+
+  ResumenAdmvxr(params: any) {
+    this.comerEventService.postResumenAdmvxr(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp ResumenAdmvxr', resp);
+      }
+    });
   }
 }

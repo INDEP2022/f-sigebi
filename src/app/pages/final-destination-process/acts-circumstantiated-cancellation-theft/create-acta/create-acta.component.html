@@ -178,13 +178,16 @@
         <button
           [disabled]="!actaRecepttionForm.valid"
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary active btn-sm mr-3"
           (click)="agregarActa()">
           Guardar <i class="fas fa-save bx-sm float-icon"></i>
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="return()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active mr-3"
+          (click)="return()">
           Cancelar
         </button>
       </div>

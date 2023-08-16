@@ -133,54 +133,54 @@ export const LAYOUTS_COLUMNS4 = {
 };
 
 export const LAYOUTS_COLUMNS5 = {
-  // idLayout: {
-  //   title: 'Layout',
-  //   type: 'number',
-  //   sort: true,
-  //   valuePrepareFunction: (cell: any, row: any) => {
-  //     return row.idLayout.id;
-  //   },
-  // },
+  id: {
+    title: 'Id',
+    type: 'number',
+    sort: true,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.id;
+    // },
+  },
   descLayout: {
     title: 'Descripción',
     type: 'string',
     sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.descLayout;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.descLayout;
+    // },
   },
   screenKey: {
     title: 'Pantalla',
     type: 'string',
     sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.screenKey;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.screenKey;
+    // },
   },
   table: {
     title: 'Tabla o Vista',
     type: 'string',
     sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.table;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.table;
+    // },
   },
   criterion: {
     title: 'Filtro de Selección',
     type: 'string',
     sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.criterion;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.criterion;
+    // },
   },
-  registryNumber: {
-    title: 'Número de registro',
-    type: 'number',
-    sort: true,
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.registryNumber;
-    },
-  },
+  // registryNumber: {
+  //   title: 'Número de registro',
+  //   type: 'number',
+  //   sort: true,
+  //   valuePrepareFunction: (cell: any, row: any) => {
+  //     return row.idLayout.registryNumber;
+  //   },
+  // },
   indActive: {
     title: 'Activo',
     sort: true,
@@ -188,12 +188,14 @@ export const LAYOUTS_COLUMNS5 = {
     renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
+        console.log(data);
+
+        // data.row.to = data.toggle;
       });
     },
-    valuePrepareFunction: (cell: any, row: any) => {
-      return row.idLayout.indActive;
-    },
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.idLayout.indActive;
+    // },
   },
 };
 

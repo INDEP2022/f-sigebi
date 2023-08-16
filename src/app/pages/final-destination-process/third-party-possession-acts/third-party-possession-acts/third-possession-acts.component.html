@@ -15,19 +15,18 @@
     </div>
 
     <div *ngIf="response">
-      <div class="row pt-3">
-        <form [formGroup]="actForm" class="form-material">
-          <div class="row mt-5 justify-content-start justify-content-sm-end">
-            <div class="col-md-4">
-              <form-field
-                [control]="actForm.get('statusAct')"
-                label="Estatus &Aacute;cta">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="statusAct" />
-              </form-field>
-              <!--<div class="mb-3 pl-4 pr-4">
+      <form [formGroup]="actForm" class="form-material">
+        <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <div class="col-md-4">
+            <form-field
+              [control]="actForm.get('statusAct')"
+              label="Estatus &Aacute;cta">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="statusAct" />
+            </form-field>
+            <!--<div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('statusAct')"
                   label="Estatus &Aacute;cta">
@@ -37,10 +36,9 @@
                     formControlName="statusAct" />
                 </form-field>
               </div>-->
-            </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
 
       <div class="row pt-5">
         <form [formGroup]="formTable1" class="form-material">
@@ -118,13 +116,26 @@
         </form>
       </div>
 
-      <div class="row pt-4">
+      <!--<div class="row pt-4">
         <div class="ch-content">
           <button
             (click)="closeExpedient()"
             class="btn btn-primary btn-sm active mr-3">
             Cerrar
           </button>
+        </div>
+      </div>-->
+
+      <div class="row pt-4">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-primary active btn-sm"
+              (click)="closeExpedient()">
+              Cerrar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -428,6 +439,7 @@
               </div>
             </div>
           </div>
+
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="mb-1 pl-4 pr-4">
@@ -440,112 +452,117 @@
               </div>
             </div>
           </div>
-        </form>
-        <div class="row mt-5">
-          <div class="ch-content">
-            <button
-              class="btn btn-primary active btn-sm m-2"
-              (click)="openModalApplicant('nuevo')">
-              Guardar Folio
-            </button>
-            <button
-              class="btn btn-info active btn-sm"
-              (click)="openScannerPage()">
-              Escanear <i class="bx bx-file bx-sm float-icon"></i>
-            </button>
-            <button
-              class="btn btn-info active btn-sm"
-              (click)="validationAct()">
-              Validacion <i class="bx bx-file bx-sm float-icon"></i>
-            </button>
-            <button
-              class="btn btn-info active btn-sm"
-              (click)="viewPictures($event)">
-              Folio <i class="bx bx-file bx-sm float-icon"></i>
-            </button>
+
+          <div class="row pt-4">
+            <div class="col-md-12 d-flex justify-content-center">
+              <div>
+                <button
+                  class="btn btn-primary active btn-sm mr-3"
+                  (click)="openModalApplicant('nuevo')">
+                  Guardar Folio
+                </button>
+                <button
+                  class="btn btn-info active btn-sm mr-3"
+                  (click)="openScannerPage()">
+                  Escanear <i class="bx bx-file bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-info active btn-sm mr-3"
+                  (click)="validationAct()">
+                  Validacion <i class="bx bx-file bx-sm float-icon"></i>
+                </button>
+                <button
+                  class="btn btn-info active btn-sm"
+                  (click)="viewPictures($event)">
+                  Folio <i class="bx bx-file bx-sm float-icon"></i>
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="row mt-5">
-          <app-divider class=""></app-divider>
-        </div>
-        <div class="row">
+          <div class="row">
+            <app-divider class=""></app-divider>
+          </div>
+
           <div class="d-flex justify-content-end mt-5">
-            <app-columns-select
-              [(settings)]="settings"
-              class="row justify-content-end">
+            <app-columns-select [leftList]="true" [settings]="settings">
             </app-columns-select>
           </div>
-          <div [class]="loading ? 'table-loading' : ''">
-            <ng2-smart-table
-              [attr.class]="'table-bordered responsive'"
-              [settings]="settings"
-              [source]="data">
-            </ng2-smart-table>
-            <app-pagination [params]="params" [totalItems]="totalItems">
-            </app-pagination>
-          </div>
-        </div>
-        <div class="row">
-          <div class="d-flex align-items-center">
-            <div class="col-6 align-items-center">
-              <div class="mt-5">
-                <form
-                  class="form-material form-horizontal"
-                  [formGroup]="formTable1"
-                  (ngSubmit)="onSubmit()">
-                  <div
-                    class="row mt-5 justify-content-start justify-content-sm-end">
-                    <div class="mb-3 pl-4 pr-4">
-                      <form-field [control]="formTable1.get('detail')">
-                        <input
-                          type="text"
-                          class="form-control"
-                          formControlName="detail"
-                          readonly />
-                      </form-field>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <div class="col-6 align-items-center">
-              <div class="row">
-                <div class="col-6">
-                  <span class="text-success mr-5"
-                    ><i class="fa fa-square"></i> Disponibles</span
-                  >
-                </div>
-                <div class="col-6">
-                  <span class="text-danger"
-                    ><i class="fa fa-square"></i> No disponibles</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-5">
-          <app-divider></app-divider>
-        </div>
-        <div class="d-flex justify-content-end mt-5">
-          <app-columns-select
-            (settingsChange)="settingsChange($event, 2)"
-            [settings]="settings2">
-          </app-columns-select>
-        </div>
-        <ng-scrollbar
-          style="min-height: 300px; border: none"
-          class="mt-3"
-          track="all">
+
           <div class="row mt-3">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings2"
-              [source]="data2"></ng2-smart-table>
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered responsive'"
+                  [settings]="settings"
+                  [source]="data">
+                </ng2-smart-table>
+                <app-pagination [params]="params" [totalItems]="totalItems">
+                </app-pagination>
+              </div>
+            </div>
           </div>
-        </ng-scrollbar>
-        <app-pagination [params]="params5" [totalItems]="totalItems1">
-        </app-pagination>
+
+          <div class="row">
+            <div class="d-flex align-items-center">
+              <div class="col-6 align-items-center">
+                <div class="mt-5">
+                  <form
+                    class="form-material form-horizontal"
+                    [formGroup]="formTable1"
+                    (ngSubmit)="onSubmit()">
+                    <div
+                      class="row mt-5 justify-content-start justify-content-sm-end">
+                      <div class="mb-3 pl-4 pr-4">
+                        <form-field [control]="formTable1.get('detail')">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="detail"
+                            readonly />
+                        </form-field>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="col-6 align-items-center">
+                <div class="row">
+                  <div class="col-6">
+                    <span class="text-success mr-5"
+                      ><i class="fa fa-square"></i> Disponibles</span
+                    >
+                  </div>
+                  <div class="col-6">
+                    <span class="text-danger"
+                      ><i class="fa fa-square"></i> No disponibles</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-5">
+            <app-divider></app-divider>
+          </div>
+          <div class="d-flex justify-content-end mt-5">
+            <app-columns-select [leftList]="true" [settings]="settings2">
+            </app-columns-select>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered responsive'"
+                  [settings]="settings2"
+                  [source]="data2"></ng2-smart-table>
+                <app-pagination [params]="params5" [totalItems]="totalItems1">
+                </app-pagination>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>

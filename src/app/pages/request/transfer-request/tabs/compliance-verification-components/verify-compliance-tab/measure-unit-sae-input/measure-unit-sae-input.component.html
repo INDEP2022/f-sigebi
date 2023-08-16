@@ -1,0 +1,9 @@
+<select class="form-select" style="width: 20rem !important">
+  <option
+    *ngFor="let measureUnit of measureUnits"
+    [value]="measureUnit.uomCode">
+    {{ measureUnit.measureTlUnit }}
+
+    [(ngModel)]="value" (keyup)="onKeyUp($event)" [readOnly]="isreadOnly"
+  </option>
+</select>

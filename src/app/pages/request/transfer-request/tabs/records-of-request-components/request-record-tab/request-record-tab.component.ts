@@ -385,8 +385,8 @@ export class RequestRecordTabComponent
       ) {
         this.message(
           'warning',
-          'Campos Requeridos',
-          'Recuerde llenar los campos obligatorios'
+          'Fecha de Oficio',
+          'Es obligatorio ingresar una fecha'
         );
         this.requestForm.markAllAsTouched();
         return;

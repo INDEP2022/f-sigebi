@@ -28,6 +28,10 @@ export class UsersService extends HttpService {
     return this.get<IListResponse<any>>(UserEndpoints.SegUsers, _params);
   }
 
+  getAllSegUsers2(_params: _Params) {
+    return this.get<IListResponse<any>>(UserEndpoints.GetAllSegUser, _params);
+  }
+
   getAllDetailSegUsers(_params: _Params) {
     const route = `${UserEndpoints.SegUsers}/get-all`;
     return this.get<IListResponse<any>>(route, _params);
@@ -104,6 +108,13 @@ export class UsersService extends HttpService {
     return this.get(UserEndpoints.SegUsers);
   }
 
+  getText(text: string) {
+    return this.get(`${UserEndpoints.GetText}/${text}`);
+  }
+  getUserOt(text: string) {
+    return this.get(`${UserEndpoints.GetUserOt}/${text}`);
+  }
+
   getAllUsersAsigne(_params: _Params) {
     return this.get<IListResponse<any>>(UserEndpoints.UserAsigne, _params);
   }
@@ -117,6 +128,10 @@ export class UsersService extends HttpService {
 
   getAllIndicator(body: any) {
     return this.post<IListResponse<any>>(UserEndpoints.IndUserNoInd, body);
+  }
+
+  getAllFaVal(body: any) {
+    return this.post<IListResponse<any>>(UserEndpoints.FaValUserInd, body);
   }
 
   deleteAccessUsers(id: any) {

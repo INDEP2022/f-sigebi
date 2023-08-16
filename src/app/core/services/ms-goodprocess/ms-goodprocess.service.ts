@@ -225,4 +225,10 @@ export class GoodprocessService extends HttpService {
       body
     );
   }
+
+  AddReceptionBpm(idGood: number, goodId: number) {
+    return this.get(
+      `${GoodprocessEndpoints.ReceptionBpmBackup}/${idGood}/${goodId}`
+    );
+  }
 }

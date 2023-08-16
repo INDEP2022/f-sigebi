@@ -17,6 +17,7 @@ import {
   IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+import { IVJuridical } from '../../models/ms-goods-query/v-juridical.model';
 
 export class LocalListParamsTest {
   text?: string = '';
@@ -211,12 +212,16 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
-  getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
-    const route = `goodsquery/api/v1/views/cat-store-view`;
+  getCatStoresView(
+    _params: ListParams | string
+  ): Observable<IListResponse<any>> {
+    /*const route = `goodsquery/api/v1/views/cat-store-view`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<any>>(
       `${environment.API_URL}${route}?${params}`
-    );
+    );*/
+    const route = `views/cat-store-view`;
+    return this.get<IListResponse<any>>(`${route}`, _params);
   }
 
   getHistoryIndicatorsView(params: _Params) {
@@ -273,6 +278,13 @@ export class GoodsQueryService extends HttpService {
 
   getVIndProceedingsEntReception(params: ListParams) {
     return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
+  }
+
+  getVCatJur(params: _Params) {
+    return this.get<IListResponse<IVJuridical>>(
+      'application/get-all-v-cat-jur',
+      params
+    );
   }
 
   //

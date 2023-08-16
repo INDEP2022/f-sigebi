@@ -5,6 +5,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
+  FilterParams,
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
@@ -133,8 +134,8 @@ export class SignatureAuxiliaryCatalogsMainComponent
       columnTitle: 'Acciones',
       position: 'right',
       add: false,
-      edit: true,
-      delete: false,
+      edit: false,
+      delete: true,
     },
   };
   signatureSettings = {
@@ -808,18 +809,84 @@ export class SignatureAuxiliaryCatalogsMainComponent
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableAddresee();
+      this.loadingDataTableEvent();
     });
   }
 
-  editCommercializationEvent(event: any) {
+  deleteCommercializationEvent(event: any) {
     console.log(event);
     if (event) {
-      this.openModalCommercializationEvent({
-        data: event.data,
-        edit: true,
-      });
+      // this.openModalCommercializationEvent({
+      //   data: event.data,
+      //   edit: true,
+      // });
+      this.loadingEvent = true;
+      const params = new FilterParams();
+      params.addFilter('id_docums_xml', event.data.documentsXMLId);
+      this.svSignatureAuxiliaryCatalogsService
+        .getAllComerceDocumentsXmlTCatFelec(params.getParams())
+        .subscribe({
+          next: res => {
+            console.log('RESPONSE', res);
+            this.loadingEvent = false;
+            this.alert(
+              'warning',
+              'No es Posible Eliminar este Registro',
+              'Ya Existen Registros Asociados'
+            );
+          },
+          error: async error => {
+            console.log(error);
+            if (error.status == 400) {
+              let confirm = await this.alertQuestion(
+                'warning',
+                'Eliminar',
+                '¿Desea Eliminar este registro?'
+              );
+              if (confirm.isConfirmed) {
+                this.deleteEvent(event.data);
+              } else {
+                this.loadingEvent = false;
+              }
+            } else {
+              this.loadingEvent = false;
+              this.alert(
+                'error',
+                'Error',
+                'Ocurrió un Error al Validar si Existen Registros Relacionados'
+              );
+            }
+          },
+        });
     }
+  }
+
+  deleteEvent(data: ComerceDocumentsXmlH) {
+    console.log(data);
+    // return;
+    this.svSignatureAuxiliaryCatalogsService
+      .deleteComerceDocumentsXmlH(data.documentsXMLId)
+      .subscribe({
+        next: res => {
+          console.log('RESPONSE', res);
+          this.loadingEvent = false;
+          this.loadingDataTableEvent();
+          this.alert(
+            'success',
+            'Eliminar Registro',
+            'El Registro se Eliminó Correctamente'
+          );
+        },
+        error: error => {
+          console.log(error);
+          this.loadingEvent = false;
+          this.alert(
+            'error',
+            'Error',
+            'Ocurrió un Error al Eliminar Registros Relacionados'
+          );
+        },
+      });
   }
 
   openCommercializationSignature() {
@@ -832,7 +899,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
       return;
     }
     this.openModalCommercializationSignature({
-      data: { id_docums_xml: this.idDocumentsXml },
+      data: { idDocumentsxml: this.idDocumentsXml },
     });
   }
 

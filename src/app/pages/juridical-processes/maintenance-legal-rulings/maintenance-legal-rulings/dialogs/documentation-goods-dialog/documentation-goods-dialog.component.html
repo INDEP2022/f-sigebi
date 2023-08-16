@@ -21,7 +21,7 @@
               readonly
               type="number"
               class="form-control"
-              maxlength="15"
+              [max-length]="15"
               formControlName="officialNumber" />
           </form-field>
         </div>
@@ -34,7 +34,7 @@
               readonly
               type="text"
               class="form-control"
-              maxlength="15"
+              [max-length]="15"
               formControlName="typeDictum" />
           </form-field>
         </div>
@@ -67,9 +67,8 @@
             </ngx-select> -->
             <input
               required
-              type="number"
+              type="text"
               class="form-control"
-              maxlength="11"
               formControlName="expedientNumber" />
           </form-field>
         </div>
@@ -102,22 +101,17 @@
             </ngx-select> -->
             <input
               required
-              type="number"
+              type="text"
               class="form-control"
-              maxlength="11"
               formControlName="stateNumber" />
           </form-field>
         </div>
 
         <div class="col-md-6 mt-4">
           <form-field
-            label="Clave Documento"
+            label="Clave Documento "
             [control]="documentsDictumXStateMForm.get('key')">
-            <input
-              type="number"
-              class="form-control"
-              maxlength="8"
-              formControlName="key" />
+            <input type="text" class="form-control" formControlName="key" />
           </form-field>
         </div>
 
@@ -141,8 +135,8 @@
             label="Usuario Recibió"
             [control]="documentsDictumXStateMForm.get('userReceipt')">
             <input
+              type="text"
               class="form-control"
-              maxlength="11"
               formControlName="userReceipt" />
           </form-field>
         </div>
@@ -167,8 +161,9 @@
             label="Usuario Insertó"
             [control]="documentsDictumXStateMForm.get('userInsertion')">
             <input
+              type="text"
               class="form-control"
-              maxlength="30"
+              [max-length]="30"
               formControlName="userInsertion" />
           </form-field>
         </div>
@@ -190,11 +185,11 @@
 
         <div class="col-md-6 mt-4">
           <form-field
-            label="Aseg. Dev. Clave"
+            label="Aseg. Dev. Clave (Max. 3 caracteres)"
             [control]="documentsDictumXStateMForm.get('secureKey')">
             <input
+              type="text"
               class="form-control"
-              maxlength="3"
               formControlName="secureKey" />
           </form-field>
         </div>

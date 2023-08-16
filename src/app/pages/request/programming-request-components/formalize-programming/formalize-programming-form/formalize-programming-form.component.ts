@@ -29,6 +29,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -276,7 +277,8 @@ export class FormalizeProgrammingFormComponent
     private sanitizer: DomSanitizer,
     private taskService: TaskService,
     private authService: AuthService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private goodsProcessService: GoodprocessService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -355,7 +357,7 @@ export class FormalizeProgrammingFormComponent
         });
 
         this.receiptWarehouseData = infoWarehouse[0];
-        this.receipts.load(infoWarehouse);
+        this.receiptWarehouseGood.load(infoWarehouse);
         //this.receiptWarehouseGood = infoWarehouse[0];
         //this.receiptWarehouse.load(infoWarehouse);
 
@@ -368,9 +370,9 @@ export class FormalizeProgrammingFormComponent
           });
 
           this.receiptGuardData = infoGuard[0];
-          this.receipts.load(infoGuard);
+          //this.receipts.load(infoGuard);
           //this.receiptGuardGood = infoGuard[0];
-          //this.receiptGuards.load(infoGuard);
+          this.receiptGuardGood.load(infoGuard);
         }
       },
       error: error => {},
@@ -1350,17 +1352,97 @@ export class FormalizeProgrammingFormComponent
         body['ssubtype'] = 'ACCEPT';
 
         const closeTask = await this.closeTaskExecuteRecepcion(body);
+
         if (closeTask) {
-          this.alertInfo(
-            'success',
-            'Acción correcta',
-            'Se cerro la tarea formalizar entrega correctamente'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+          const deleteGoodsReprog = await this.deleteGoodReprog();
+          if (deleteGoodsReprog) {
+            const updateProgramming = await this.updateProgrammingInfo();
+            if (updateProgramming) {
+              const sendGoodInventary = await this.sendGoodsGuardInventary();
+              if (sendGoodInventary) {
+                this.alertInfo(
+                  'success',
+                  'Acción correcta',
+                  'Se cerro la tarea formalizar entrega correctamente'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+                  }
+                });
+              }
             }
-          });
+          }
         }
+      }
+    });
+  }
+
+  updateProgrammingInfo() {
+    return new Promise((resolve, reject) => {
+      const form = {
+        id: this.programming.id,
+        status: 'APROBADA',
+      };
+
+      this.programmingService
+        .updateProgramming(this.programming.id, form)
+        .subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(true);
+          },
+        });
+    });
+  }
+
+  sendGoodsGuardInventary() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          data.map((item: IGood) => {
+            this.goodsProcessService
+              .AddReceptionBpm(Number(item.id), Number(item.goodId))
+              .subscribe({
+                next: response => {
+                  console.log('se envio', response);
+                  resolve(true);
+                },
+                error: error => {
+                  resolve(true);
+                },
+              });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  deleteGoodReprog() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          const deleteGoodProg = {
+            programmingId: this.programming.id,
+            goodId: data.goodId,
+          };
+
+          this.programmingGoodService
+            .deleteGoodProgramming(deleteGoodProg)
+            .subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+        });
+      } else {
+        resolve(true);
       }
     });
   }

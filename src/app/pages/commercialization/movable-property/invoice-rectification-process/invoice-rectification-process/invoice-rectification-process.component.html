@@ -45,7 +45,8 @@
               class="form-control"
               bsDatepicker
               formControlName="expDate"
-              [bsConfig]="{ isAnimated: true }" />
+              [bsConfig]="{ isAnimated: true }"
+              (ngModelChange)="setYear($event)" />
           </form-field>
         </div>
         <div class="col-md-3 mt-3">
@@ -140,12 +141,7 @@
         </div>
         <div class="col-md-4 mt-3">
           <form-field [control]="form.get('hourAttention')" label="Hora">
-            <input
-              type="text"
-              class="form-control"
-              bsDatepicker
-              formControlName="hourAttention"
-              [bsConfig]="{
+            <!-- <input type="text" class="form-control" bsDatepicker formControlName="hourAttention" [bsConfig]="{
                 withTimepicker: true,
                 dateInputFormat: 'DD/MM/YYYY h:mm a',
                 keepDatepickerOpened: true

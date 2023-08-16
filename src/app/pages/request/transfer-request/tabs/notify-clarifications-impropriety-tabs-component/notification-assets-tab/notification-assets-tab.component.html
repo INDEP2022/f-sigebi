@@ -410,6 +410,13 @@
                 </button>
               </div>
               <div class="p-2">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="openRecipients()">
+                  Notificar <i class="bx bx-envelope"></i>
+                </button>
+              </div>
+              <div class="p-2">
                 <app-columns-select
                   [(settings)]="settings"></app-columns-select>
               </div>
@@ -463,17 +470,7 @@
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
                 </button>
               </div>
-              <div
-                class="p-2"
-                *ngIf="
-                  transferenceId === 903 && notification?.answered == 'NUEVA'
-                ">
-                <button
-                  class="btn btn-primary btn-sm active"
-                  (click)="openRecipients()">
-                  Notificar
-                </button>
-              </div>
+
               <div
                 *ngIf="
                   notification?.answered != 'ACLARADA' &&

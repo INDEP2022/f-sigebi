@@ -65,4 +65,9 @@ export class ParametersService extends HttpService {
     const route = `${ParameterGoodEndpoints.PupCalculaDevolucion}`;
     return this.post<IPupCalculateDevolutionResult>(route, body);
   }
+
+  GetDelegationGlobal(body: any, params: _Params) {
+    const route = `${ParameterGoodEndpoints.GetDelegationGlobal}`;
+    return this.post<IPupCalculateDevolutionResult>(route, body, params);
+  }
 }

@@ -16,9 +16,16 @@ export interface IOI_DTO {
 }
 
 export interface IOI {
-  OI: string;
-  MONTO: string;
-  TIPO: string;
-  DEVOLUCION: string;
-  CVMAN: string;
+  oi: string;
+  monto: string;
+  tipo: string;
+  devolucion: string;
+  mandato: string;
+}
+export interface IComerReldisDisp {
+  user: string;
+  inddistance: number;
+  indsirsae: number;
+  numberRecord: number;
+  indlibpg: number;
 }

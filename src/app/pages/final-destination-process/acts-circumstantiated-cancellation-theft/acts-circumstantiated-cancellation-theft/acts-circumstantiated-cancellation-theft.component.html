@@ -64,14 +64,14 @@
     <div class="row m-3">
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
-        <button
+        <!-- <button
           [disabled]="!actasDefault"
           (click)="actualizarActa()"
           type="button"
           class="btn btn-primary active btn-sm mr-3">
-          Guardar
+          Guardarr
           <i aria-hidden="true" class="fa fa-save"></i>
-        </button>
+        </button> -->
         <button
           (click)="agregarActa()"
           type="button"
@@ -432,6 +432,7 @@
                     tooltip="Generar Folio de Escaneo y Solicitud"
                     containerClass="tooltip-style">
                     <button
+                      [disabled]="!actasDefault"
                       (click)="createScannerFoil()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file-find"></i>
@@ -462,6 +463,17 @@
                       <div class="d-flex justify-content-center">
                         <div class="m-3">
                           <button
+                            [disabled]="!disabledBtnCerrar"
+                            type="button"
+                            class="btn btn-primary active btn-sm"
+                            (click)="cerrarActa()">
+                            Cerrar Acta
+                            <i class="fas fa-close bx-sm float-icon"></i>
+                          </button>
+                        </div>
+
+                        <div class="m-3">
+                          <button
                             (click)="replicate()"
                             type="button"
                             class="btn btn-primary btn-sm active">
@@ -477,11 +489,11 @@
                     tooltip="Imprimir Solicitud de Escaneo"
                     containerClass="tooltip-style">
                     <button
-                      [disabled]="true"
                       (click)="showMessageDigitalization()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file-find"></i>
                     </button>
+                    <!--  [disabled]="true"-->
                   </span>
                   <span
                     tooltip="Consulta de Imágenes Escaneadas"
@@ -524,24 +536,11 @@
   </div> -->
 
   <div footer>
-    <div
-      class="d-flex flex-row justify-content-center align-items-center"></div>
-    <div class="d-flex flex-row justify-content-center align-items-center">
-      <div class="m-3">
-        <button class="btn btn-primary active btn-sm">
-          Solicitud
-          <i class="bx bx-search bx-sm float-icon"></i>
-        </button>
-        <!--(click)="initSolicitud()" -->
-      </div>
-      <div class="m-3">
+    <!-- <div class="m-3">
         <button class="btn btn-info active btn-sm" (click)="Scanner()">
           Escanear
           <i class="bx bx-file bx-sm float-icon"></i>
         </button>
-      </div>
-      <div class="m-3">
-        <button class="btn btn-primary active btn-sm">Replicar Folio</button>
       </div>
       <div class="m-3">
         <button
@@ -557,20 +556,12 @@
           Ver
           <i class="fa fa-eye" aria-hidden="true"></i>
         </button>
-        <!--(click)="ViewActa() 
-        (click)="openview()"-->
-      </div>
-      <div class="m-3">
-        <button
-          [disabled]="!disabledBtnCerrar"
-          type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="cerrarActa()">
-          Cerrar Acta
-          <i class="fas fa-close bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="m-3">
+        (click)="ViewActa() 
+        (click)="openview()"
+      </div></div>-->
+
+    <div class="m-3">
+      <div class="col-md-12 text-end">
         <button
           class="btn btn-sm btn-success active"
           type="button"

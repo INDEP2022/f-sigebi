@@ -14,6 +14,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
@@ -49,6 +50,7 @@ export class SummaryComponent extends BasePage implements OnInit {
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
   @Output() emitSubdelegation = new EventEmitter<ISubdelegation>();
+  maxDate: Date = new Date();
   idDelegation: number = null;
   entidad = new DefaultSelect<IDelegationState>();
   select = new DefaultSelect<IDepartment>();
@@ -107,9 +109,8 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.flyersForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      federative: [null, [Validators.required]],
       PF_FECINI: [null, [Validators.required]],
-      PF_FECFIN: [null, [Validators.required]],
+      PF_FECFIN: [null, [Validators.required, maxDate(new Date())]],
       includeArea: [false],
       department: [null],
       delegdestino: [null],
@@ -122,7 +123,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
 
   activeFlag() {
-    console.log('flag ', this.flagA);
     if (this.flagA) {
       this.flagA = false;
     } else {
@@ -136,34 +136,30 @@ export class SummaryComponent extends BasePage implements OnInit {
       this.flyersForm.get('delegdestino').value != null &&
       this.flyersForm.get('subddestino').value != null
     ) {
-      console.log('bandera ', this.flagA);
       this.flagA = true;
     }
   }
 
   getDelegation(params?: ListParams) {
-    console.log(params);
     this.delegationService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
         this.selectedDelegation = new DefaultSelect(data.data, data.count);
-        console.log(this.selectedDelegation);
       },
       error: err => {
-        console.log(err);
         this.selectedDelegation = new DefaultSelect();
+        console.log(err);
       },
     });
   }
   getDepartament(params: ListParams) {
     this.departamentService.getAll(params).subscribe({
       next: data => {
-        console.log(data);
-        console.log(' selectDepartament');
         this.validateTotal();
         this.selectDepartament = new DefaultSelect(data.data, data.count);
       },
-      error: err => {},
+      error: err => {
+        console.log(err);
+      },
     });
   }
   save() {}
@@ -185,7 +181,6 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.start = this.datePipe.transform(start, 'dd/MM/yyyy');
     this.end = this.datePipe.transform(end, 'dd/MM/yyyy');
 
-    /// console.log(this.start);
     if (this.end < this.start) {
       this.onLoadToast(
         'error',
@@ -193,10 +188,6 @@ export class SummaryComponent extends BasePage implements OnInit {
       );
       return;
     }
-    console.log(
-      "this.flyersForm.get('includeArea').value != null ",
-      this.flyersForm.get('includeArea').value
-    );
 
     if (this.flyersForm.get('includeArea').value) {
       this.FGEROFPRESUMENDIAA();
@@ -209,11 +200,9 @@ export class SummaryComponent extends BasePage implements OnInit {
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-      PC_ENTFED: this.flyersForm.controls['federative'].value,
       PF_FECINI: this.start,
       PF_FECFIN: this.end,
     };
-    console.log('FGEROFPRESUMENDIA ', params);
     //RGEROFPRESUMENDIA
     this.siabService.fetchReport('blank', params).subscribe(response => {
       //  response= null;
@@ -249,18 +238,15 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
 
   FGEROFPRESUMENDIAA() {
-    console.log('FGEROFPRESUMENDIAA');
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
       PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
       PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
       PN_DEPARTAMENTO: this.flyersForm.controls['department'].value,
-      PC_ENTFED: this.flyersForm.controls['federative'].value,
       PF_FECINI: this.start,
       PF_FECFIN: this.end,
     };
-    console.log('FGEROFPRESUMENDIAA ', params);
     //RGEROFPRESUMENDIAA
     this.siabService.fetchReport('blank', params).subscribe(response => {
       //  response= null;
@@ -335,7 +321,6 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.printFlyersService.getSubdelegations2(paramsF.getParams()).subscribe({
       next: data => {
         this.selectedSubDelegation = new DefaultSelect(data.data, data.count);
-        console.log(this.selectedSubDelegation);
       },
       error: err => {
         let error = '';
@@ -358,7 +343,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
 
   onDepartmentsChange(type: any) {
-    console.log('seleccionado departamento');
     this.validateTotal();
   }
 
@@ -372,7 +356,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   }
   minDate: Date;
   onDateChange(event: any) {
-    console.log('onDateChange' + event);
     //change mindate #toDate
     this.minDate = event;
   }
@@ -380,7 +363,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   getEntfed(params: ListParams) {
     this.entFedService.getAll(params).subscribe({
       next: data => {
-        console.log(data.data);
         this.entfedSelect = new DefaultSelect(data.data, data.count);
       },
       error: error => {
