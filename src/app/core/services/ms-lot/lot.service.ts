@@ -350,11 +350,11 @@ export class LotService extends HttpService {
   }
 
   //get-lot-comer-ref-guarentee
-  getLotComerRefGuarentee(params?: string) {
-    return this.get('apps/get-lot-comer-ref-guarantee', params);
+  getLotComerRefGuarentee(params?: string){
+    return this.get('apps/get-lot-comer-ref-guarantee', params)
   }
 
-  pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
-    return this.post('apps/pup-valida-mandato-to-nfac', body);
+  pupValidaMandatoNfac(body: IPupValidateMandatoNfac){
+    return this.post('apps/pup-valida-mandato-to-nfac', body)
   }
 }

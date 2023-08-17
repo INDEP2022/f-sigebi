@@ -108,7 +108,7 @@ export class ComerEventosService extends HttpService {
   }
 
   //PUF GRACE DATE
-  pufGraceDate(body: IGraceDate) {
-    return this.post('application/puf-grace-date', body);
+  pufGraceDate(body: IGraceDate){
+    return this.post('application/puf-grace-date', body)
   }
 }

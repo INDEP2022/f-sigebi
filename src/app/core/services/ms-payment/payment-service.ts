@@ -8,6 +8,14 @@ export interface IComerPaymentsRefVir {
   numberRecord: number | string;
 }
 
+export interface IComerReldisDisp {
+  user: string,
+  inddistance: number,
+  indsirsae: number,
+  numberRecord: number,
+  indlibpg: number
+}
+
 export interface IOI_DTO {
   idEvento: string;
   idLote: string;
@@ -22,10 +30,4 @@ export interface IOI {
   devolucion: string;
   mandato: string;
 }
-export interface IComerReldisDisp {
-  user: string;
-  inddistance: number;
-  indsirsae: number;
-  numberRecord: number;
-  indlibpg: number;
-}
+
