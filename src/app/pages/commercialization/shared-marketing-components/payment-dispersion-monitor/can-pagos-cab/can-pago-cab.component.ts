@@ -41,7 +41,7 @@ export class CanPagosCabComponent extends BasePage implements OnInit {
     columns: COLUMNS_DETALLE,
   };
 
-  idEvent: any = null
+  idEvent: any = null;
 
   constructor(
     private comerInvoiceService: ComerInvoiceService,

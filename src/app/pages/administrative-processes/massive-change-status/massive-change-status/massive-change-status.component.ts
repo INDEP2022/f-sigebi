@@ -68,7 +68,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   newLimit = new FormControl(10);
   totalItems: number = 0;
 
-  arrayGoods: any[] = []
+  arrayGoods: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -284,7 +284,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
                   id: good.goodId,
                   reason: `Bien no disponible para actualización: `,
                 });
-                this.arrayGoods.push(good.goodId)
+                this.arrayGoods.push(good.goodId);
                 //Pintar la fila no_disponible
               } else if (count > 0) {
                 good.avalaible = true;
@@ -337,22 +337,21 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
             };
             this.historyStatusGoodService.create(modelHistory).subscribe(
               res => {
-                console.log(this.data['data'])
-                const newData = this.data['data'].map((e:any) => {
-                  console.log(e)
-                  console.log(good.goodId)
-                    if(e.goodId == good.goodId){
-                      return {
-                        ...e,
-                        status: model.status
-                      }
-                    }else{
-                      return e
-                    }
-                  
-                })
-                console.log(newData)
-                this.data.load(newData)
+                console.log(this.data['data']);
+                const newData = this.data['data'].map((e: any) => {
+                  console.log(e);
+                  console.log(good.goodId);
+                  if (e.goodId == good.goodId) {
+                    return {
+                      ...e,
+                      status: model.status,
+                    };
+                  } else {
+                    return e;
+                  }
+                });
+                console.log(newData);
+                this.data.load(newData);
                 this.idsUpdated.push(good);
                 this.data.refresh();
               },
