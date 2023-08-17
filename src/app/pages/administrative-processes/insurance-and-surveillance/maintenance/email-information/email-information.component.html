@@ -114,7 +114,7 @@
             label="Tipo"
             value="id"
             [showTooltip]="true"
-            (fetchItems)="convertEmailBody($event)"
+            (fetchItems)="getBody($event)"
             [control]="'type'"></ngx-select>
           <!-- <ng-custom-select (valueChange)="changeType($event)" [isLoadInOnInit]="true"
             [moreParams]="{ 'filter.status': '$eq:1' }" class="form-control" path="email/api/v1/vig-email-body"
