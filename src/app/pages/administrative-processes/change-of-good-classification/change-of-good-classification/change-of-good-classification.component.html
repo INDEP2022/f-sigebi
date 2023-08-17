@@ -12,7 +12,7 @@
       <div class="col-6">
         <h6>Actual Clasificación</h6>
       </div>
-      <div class="col-6 text-end">
+      <div class="col-6 text-end" *ngIf="origin && origin > 0">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
@@ -28,7 +28,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood" />
+              formControlName="numberGood"
+              [readonly]="readOnlyGood" />
           </form-field>
         </div>
         <div class="col-md-10 col-sm-12 col-xs-12">

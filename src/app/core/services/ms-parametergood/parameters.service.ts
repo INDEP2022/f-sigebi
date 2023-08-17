@@ -70,4 +70,9 @@ export class ParametersService extends HttpService {
     const route = `${ParameterGoodEndpoints.GetDelegationGlobal}`;
     return this.post<IPupCalculateDevolutionResult>(route, body, params);
   }
+
+  getCatMotivesrev(params: _Params) {
+    const route = `${ParameterGoodEndpoints.CatMotivesrev}`;
+    return this.get<IListResponse<any>>(route, params);
+  }
 }

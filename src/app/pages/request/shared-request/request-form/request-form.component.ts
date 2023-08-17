@@ -302,6 +302,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['sortBy'] = 'nameTransferent:ASC';
     params['filter.status'] = `$eq:${1}`;
     params['filter.typeTransferent'] = `$eq:NO`;
+
+    /// -------- Buscar por ID o por Texto -------///
     const isNumber = !isNaN(Number(params.text));
     if (params.text != '' && isNumber != true) {
       params['filter.nameTransferent'] = `$ilike:${params.text}`;
@@ -311,6 +313,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     const ptext = params.text;
     params.text = '';
     params['search'] = '';
+    /// ------------------------------
     this.transferentService.getAll(params).subscribe({
       next: data => {
         const text = this.replaceAccents(ptext);
