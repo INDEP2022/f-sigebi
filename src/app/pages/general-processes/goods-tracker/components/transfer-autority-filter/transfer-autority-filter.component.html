@@ -12,7 +12,19 @@
         label="Transferente"
         [data]="transfers"
         (fetchItems)="getTransfers($event)"
-        (change)="transferChange()"></ngx-select>
+        (change)="transferChange()"
+        [labelTemplate]="transferLabel"
+        [optionTemplate]="transferOption"></ngx-select>
+      <ng-template #transferLabel let-item="item"
+        ><span [title]="item.nameTransferent">{{
+          item.nameTransferent
+        }}</span></ng-template
+      >
+      <ng-template #transferOption let-item="item"
+        ><span [title]="item.nameTransferent">{{
+          item.nameTransferent
+        }}</span></ng-template
+      >
     </form-field>
     <form-field [control]="form.get('transmitters')" class="col-md-4">
       <ngx-select
@@ -25,7 +37,19 @@
         label="Emisora"
         [data]="transmitters"
         (fetchItems)="getTransmitters($event)"
-        (change)="transmitterChange()"></ngx-select>
+        (change)="transmitterChange()"
+        [labelTemplate]="transmitterLabel"
+        [optionTemplate]="transmitterOption"></ngx-select>
+      <ng-template #transmitterLabel let-item="item"
+        ><span [title]="item.stationName">{{
+          item.stationName
+        }}</span></ng-template
+      >
+      <ng-template #transmitterOption let-item="item"
+        ><span [title]="item.stationName">{{
+          item.stationName
+        }}</span></ng-template
+      >
     </form-field>
     <form-field [control]="form.get('autorities')" class="col-md-4">
       <ngx-select
@@ -37,7 +61,19 @@
         className="scroll-line"
         label="Autoridad"
         [data]="autorities"
-        (fetchItems)="getAutorities($event)"></ngx-select>
+        (fetchItems)="getAutorities($event)"
+        [labelTemplate]="autortityLabel"
+        [optionTemplate]="autortityOption"></ngx-select>
+      <ng-template #autortityLabel let-item="item"
+        ><span [title]="item.authorityName">{{
+          item.authorityName
+        }}</span></ng-template
+      >
+      <ng-template #autortityOption let-item="item"
+        ><span [title]="item.authorityName">{{
+          item.authorityName
+        }}</span></ng-template
+      >
     </form-field>
   </div>
   <div class="row pt-3">
