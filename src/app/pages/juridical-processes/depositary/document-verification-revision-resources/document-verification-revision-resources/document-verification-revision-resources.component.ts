@@ -347,8 +347,7 @@ export class DocumentVerificationRevisionResourcesComponent
         data.fec_inserto_sol = null;
       },
       error: () => {
-        // this.onLoadToast('error', 'No se pudo eliminar la solicitud');
-        this.loading = false;
+        this.onLoadToast('error', 'No se pudo eliminar la solicitud');
       },
     });
   }
@@ -482,7 +481,7 @@ export class DocumentVerificationRevisionResourcesComponent
     const filter = new FilterParams();
     filter.addFilter('proceedingsNumber', this.fileNumber, SearchFilter.EQ);
     filter.addFilter('goodNumber', goodId, SearchFilter.EQ);
-    filter.addFilter('typeDict', 'RECREVISION', SearchFilter.EQ);
+    filter.addFilter('typeDict', 'PROCEDENCIA', SearchFilter.EQ);
 
     this.dictaminationServ.getAllFilter(filter.getParams()).subscribe({
       next: resp => {
@@ -748,7 +747,7 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
-                this.createDocumentDicta();
+                // this.createDocumentDicta();
                 this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
@@ -944,7 +943,7 @@ export class DocumentVerificationRevisionResourcesComponent
     let existData: any = {};
     if (di_fec_dictaminacion) {
       this.form
-        .get('estatus_recurso_revision')
+        .get('descriptionStatus')
         .patchValue('DICTAMINADO RECURSO DE REVISION');
     }
 
@@ -952,7 +951,7 @@ export class DocumentVerificationRevisionResourcesComponent
       const filter = new FilterParams();
       filter.addFilter('proceedingsNumber', proceedingsNumber, SearchFilter.EQ);
       filter.addFilter('goodNumber', goodId, SearchFilter.EQ);
-      filter.addFilter('typeDict', 'RECREVISION', SearchFilter.EQ);
+      filter.addFilter('typeDict', 'PROCEDENCIA', SearchFilter.EQ);
       this.dictaminationServ.getAllFilter(filter.getParams()).subscribe({
         next: resp => {
           existData = resp.data[0];
