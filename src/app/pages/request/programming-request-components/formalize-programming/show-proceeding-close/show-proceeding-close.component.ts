@@ -60,6 +60,7 @@ export class ShowProceedingCloseComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.proceedingClose.load(response.data);
+          this.totalItemsProceeding = response.count;
         },
         error: error => {},
       });

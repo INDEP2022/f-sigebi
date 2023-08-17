@@ -64,14 +64,14 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       id: [this.proceeding.id],
       actId: [this.proceeding.actId],
       programmingId: [this.proceeding.programmingId],
-      nameDelivery: [null],
+      nameDelivery: [null, [Validators.required]],
       typeTransport: [null],
-      chargeDelivery: [null],
+      chargeDelivery: [null, [Validators.required]],
       plateNumber: [null],
       seal: [null],
-      nameReceipt: [null],
+      nameReceipt: [null, [Validators.required]],
       observation: [null],
-      chargeReceipt: [null, [Validators.maxLength(15)]],
+      chargeReceipt: [null, [Validators.maxLength(15), Validators.required]],
       electronicSignatureEnt: [null],
       electronicSignatureReceipt: [null],
     });
@@ -130,6 +130,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     };
     config.initialState = {
       proceeding: this.proceeding,
+      typeFirm: this.generateReceiptForm.get('electronicSignatureReceipt')
+        .value,
       callback: (next: boolean) => {
         if (next) {
           this.showReceiptWitness();

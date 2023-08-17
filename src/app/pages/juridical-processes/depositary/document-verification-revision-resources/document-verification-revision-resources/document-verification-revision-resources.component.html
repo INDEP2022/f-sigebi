@@ -202,15 +202,12 @@
             label="Fecha Acuerdo Inicial">
             <input
               class="form-control"
-              formControlName="agreementDate"
-              bsDatepicker
-              [readOnly]="form.get('di_disponible').value == 'N'"
-              [bsConfig]="{
-                dateInputFormat: 'DD-MM-YYYY'
-              }"
               [ngClass]="{
                 'bg-success text-white': form.get('di_disponible').value == 'S'
-              }" />
+              }"
+              formControlName="agreementDate"
+              [readOnly]="true"
+              oninput="if(this.value.length > 1000) this.value = this.value.slice(0, 1000)" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -219,6 +216,7 @@
               class="form-control"
               formControlName="status"
               [readOnly]="true"
+              (dblclick)="showHistory()"
               oninput="if(this.value.length > 3) this.value = this.value.slice(0, 3)"
               [ngClass]="{
                 'bg-success text-white': form.get('di_disponible').value == 'S'

@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-end mb-3">
       <div class="ml-auto" style="margin-top: -20px">
         <p class="font-weight-bold" style="border-bottom: 1px solid black">
-          {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
+          {{ dateNow | date: 'dd/MM/yyyy - HH:mm:ss' }}
         </p>
       </div>
     </div>
@@ -17,12 +17,16 @@
     <div>
       <form class="form-material" [formGroup]="form">
         <div class="row">
-          <!-- <div class="col-md-5">
-                    <form-field [control]="form.get('event')" label="Evento">
-                      <input type="text" class="form-control" formControlName="event" />
-                    </form-field>
-                  </div> -->
-          <div class="col-md-12">
+          <div class="col-md-5">
+            <form-field [control]="form.get('event')" label="Evento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="event"
+                [(ngModel)]="event" />
+            </form-field>
+          </div>
+          <div class="col-md-7">
             <form-field [control]="form.get('office')">
               <ngx-select
                 [searchOnInit]="true"
@@ -37,42 +41,55 @@
           </div>
         </div>
         <!--  -->
-        <div class="row d-flex justify-content-center mt-3">
-          <div class="col-md-4">
-            <div class="col-md-6">
-              <form-radio label="Oficio de Respuesta">
-                <input type="radio" value="cat" checked />
-              </form-radio>
-            </div>
-            <div class="col-md-6">
-              <form-radio label="Oficio de Cancelación">
-                <input type="radio" value="dog" checked />
-              </form-radio>
-            </div>
+        <div class="row mt-3" *ngIf="true">
+          <div class="col-md-3"></div>
+          <div class="col-md-4" style="margin-left: -20px">
+            <form-radio label="Oficio de Respuesta">
+              <input
+                type="radio"
+                value="cat"
+                [(ngModel)]="radioValueOne"
+                (change)="onRadioChange()"
+                [value]="true"
+                formControlName="radioOne" />
+            </form-radio>
           </div>
+          <div class="col-md-4 ml-auto">
+            <form-radio label="Oficio de Cancelación">
+              <input
+                type="radio"
+                value="dog"
+                formControlName="radioTwo"
+                [(ngModel)]="redioValueTwo"
+                (change)="onRadioChange()"
+                [value]="true" />
+            </form-radio>
+          </div>
+          <div class="col-md-2"></div>
         </div>
         <!--  -->
         <div class="row mt-3">
-          <div class="col-md-4">
-            <form-field [control]="form.get('fol')" label="Folio">
-              <input type="text" class="form-control" formControlName="fol" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <form-field [control]="form.get('key')" label="Clave">
               <input type="text" class="form-control" formControlName="key" />
             </form-field>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <form-field [control]="form.get('cityCi')" label="Ciudad">
-              <ng-select
-                addTagText="Agregar Elemento"
-                formControlName="cityCi"
-                class="form-control scroll-line"
-                bindValue="value"
-                bindLabel="label"
-                [items]="listCitys">
-              </ng-select>
+              <!-- <ngx-select
+                [searchOnInit]="true"
+                (fetchItems)="getCitiesList($event)"
+                [data]="cityList"
+                [form]="form"
+                value="idCity"
+                label="Ciudad"
+                bindLabel="legendOffice"
+                control="cityCi">
+              </ngx-select> -->
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cityCi" />
             </form-field>
           </div>
         </div>
@@ -103,23 +120,40 @@
         <div class="row mt-3">
           <div class="col-md-6">
             <form-field [control]="form.get('remi')" label="Remitente">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="remi"
-                bsDatepicker />
+              <input type="text" class="form-control" formControlName="remi" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field [control]="form.get('dest')" label="Destinatario">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="dest"
-                bsDatepicker />
+              <input type="text" class="form-control" formControlName="dest" />
             </form-field>
           </div>
         </div>
+        <!--  -->
+        <div class="row mt-5">
+          <div class="col-md-12">
+            <form-field [control]="form.get('ref')" label="Referencia">
+              <textarea class="form-control" formControlName="ref"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <form-field [control]="form.get('aten')" label="Atención">
+              <textarea class="form-control" formControlName="aten"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <form-field [control]="form.get('espe')" label="Especificaciones">
+              <textarea class="form-control" formControlName="espe"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <!--  -->
       </form>
     </div>
     <!--  -->
@@ -151,7 +185,7 @@
       <div>
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <div class="row">
+          <div class="row" *ngIf="pnlControles2">
             <div class="col-md-5">
               <form-field
                 [control]="formTwo.get('allGood')"
@@ -176,7 +210,7 @@
                 </ng-select>
               </form-field>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-2" *ngIf="btnMotCan">
               <button class="btn btn-primary btn-sm active mr-3">
                 Motivos de Cambio a REV
               </button>
@@ -197,56 +231,50 @@
             </div>
           </div>
           <!--  -->
-          <div class="row mt-5">
-            <div class="col-md-12">
-              <form-field [control]="formTwo.get('ref')" label="Referencia">
-                <textarea class="form-control" formControlName="ref"></textarea>
-              </form-field>
-            </div>
-          </div>
+          <!-- <div class="row mt-5">
+                    <div class="col-md-12">
+                      <form-field [control]="formTwo.get('ref')" label="Referencia">
+                        <textarea class="form-control" formControlName="ref"></textarea>
+                      </form-field>
+                    </div>
+                  </div> -->
           <!--  -->
-          <div class="row mt-2">
-            <div class="col-md-12">
-              <form-field [control]="formTwo.get('aten')" label="Atención">
-                <textarea
-                  class="form-control"
-                  formControlName="aten"></textarea>
-              </form-field>
-            </div>
-          </div>
+          <!-- <div class="row mt-2">
+                    <div class="col-md-12">
+                      <form-field [control]="formTwo.get('aten')" label="Atención">
+                        <textarea class="form-control" formControlName="aten"></textarea>
+                      </form-field>
+                    </div>
+                  </div> -->
           <!--  -->
-          <div class="row mt-2">
-            <div class="col-md-12">
-              <form-field
-                [control]="formTwo.get('espe')"
-                label="Especificaciones">
-                <textarea
-                  class="form-control"
-                  formControlName="espe"></textarea>
-              </form-field>
-            </div>
-          </div>
+          <!-- <div class="row mt-2">
+                    <div class="col-md-12">
+                      <form-field [control]="formTwo.get('espe')" label="Especificaciones">
+                        <textarea class="form-control" formControlName="espe"></textarea>
+                      </form-field>
+                    </div>
+                  </div> -->
           <!--  -->
           <div class="d-flex justify-content-center">
-            <div class="m-3">
+            <div class="m-3" *ngIf="btnModificar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Modificar Oficio
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
-            <div class="m-3">
+            <div class="m-3" *ngIf="btnVerOficio">
               <button type="button" class="btn btn-primary btn-sm active">
                 Visualizar Oficio
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
-            <div class="m-3">
+            <div class="m-3" *ngIf="btnGuardar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Guardar Oficio
                 <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
-            <div class="m-3">
+            <div class="m-3" *ngIf="btnEnviar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Enviar Oficio
                 <i aria-hidden="true" class="fa fa-save"></i>
@@ -291,7 +319,6 @@
               </div>
             </div>
           </div>
-
           <!--  -->
         </form>
       </div>
