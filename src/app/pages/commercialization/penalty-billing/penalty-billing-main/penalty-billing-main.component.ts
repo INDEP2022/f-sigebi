@@ -61,7 +61,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   displayCancel: boolean = false;
 
   refactureTemp: string = '';
-
+  isSearch: boolean = false;
+  loadingSearch: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -97,7 +98,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     // });
     this.prepareForm();
 
-    this.getComerFacturas();
+    // this.getComerFacturas();
   }
 
   //nuevo
@@ -296,6 +297,17 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     if (id_evento) {
       this.comerEventService.getDataTpEvents(Number(id_evento)).subscribe({
         next: resp => {
+          console.log(resp);
+
+          if (!resp.cve_proceso) {
+            this.alert(
+              'error',
+              'Error',
+              'Evento no existe, debe crear un evento antes de emitir una factura'
+            );
+            return;
+          }
+
           this.billingForm.get('processKey').patchValue(resp.cve_proceso ?? '');
           this.billingForm
             .get('tpprocessKey')
@@ -321,12 +333,11 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     }
   }
 
-  getComerFacturas(id: number = 3) {
-    const filter = new FilterParams();
-    filter.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
-    filter.addFilter('billId', id, SearchFilter.EQ);
+  getComerFacturas(filter: FilterParams) {
+    this.loadingSearch = true;
     this.comerInvoice.getAll(filter.getParams()).subscribe({
       next: resp => {
+        this.loadingSearch = false;
         const value = resp.data[0];
         value.eventDate = value.eventDate
           ? value.eventDate.split('-').reverse().join('/')
@@ -349,7 +360,14 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         params4.text = value.downloadcvman;
         this.getTransferentData(params4);
       },
-      error: () => {},
+      error: () => {
+        this.loadingSearch = false;
+        this.alert(
+          'error',
+          'Error',
+          'No se encontro facturació de penalización'
+        );
+      },
     });
   }
 
@@ -374,8 +392,27 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     if (!billId) {
       const idValue = await this.getIdMax(Number(eventId));
       this.billingForm.get('billId').patchValue(idValue);
-
       this.billingForm.get('factstatusId').patchValue('PREF');
+
+      const dataSend = this.billingForm.value;
+
+      if (dataSend.eventDate) {
+        if (typeof dataSend.eventDate == 'string') {
+          dataSend.eventDate = dataSend.eventDate
+            .split('/')
+            .reverse()
+            .join('-');
+        }
+      }
+
+      if (dataSend.impressionDate) {
+        if (typeof dataSend.impressionDate == 'string') {
+          dataSend.impressionDate = dataSend.impressionDate
+            .split('/')
+            .reverse()
+            .join('-');
+        }
+      }
 
       this.comerInvoice.create(this.billingForm.value).subscribe({
         next: () => {
@@ -518,9 +555,8 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     validaFol = await this.validateFoliosAvaliable(Number(eventId));
 
     if (validaFol == 1) {
+      await this.changeProcess('FL', 'PREF');
       await this.updateByEvent(Number(eventId));
-
-      this.changeProcess('FL', 'PREF');
 
       const dataUpdate = this.billingForm.value;
 
@@ -539,14 +575,26 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
       delete dataUpdate.descDelegation;
       delete dataUpdate.any;
 
-      this.comerInvoice.update(this.billingForm.value).subscribe({
+      this.comerInvoice.update(dataUpdate).subscribe({
         next: () => {
-          this.getComerFacturas(billId);
+          this.getComerFacturas(this.createFilter());
         },
         error: err => {
           this.alert('error', 'Error', err.error.message);
         },
       });
+
+      this.comerInvoice
+        .generateFolio({
+          pEvent: dataUpdate.eventId,
+          ptpevento: dataUpdate.tpevent,
+        })
+        .subscribe({
+          next: () => {
+            this.alert('success', 'Folios', 'Generado correctamente');
+          },
+          error: () => {},
+        });
     } else {
       this.alert('error', 'Error', 'No existen folios disponibles');
     }
@@ -621,7 +669,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
         this.comerInvoice.update(this.billingForm.value).subscribe({
           next: () => {
-            this.getComerFacturas(billId);
+            this.getComerFacturas(this.createFilter());
           },
           error: err => {
             this.alert('error', 'Error', err.error.message);
@@ -634,7 +682,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     });
   }
 
-  changeProcess(process: string, status: string) {
+  async changeProcess(process: string, status: string) {
     const { factstatusId } = this.billingForm.value;
     let aux_status: string;
     if (status == 'NULL') {
@@ -646,6 +694,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     if (factstatusId == aux_status) {
       this.billingForm.get('process').patchValue(process);
     }
+    return;
   }
 
   openPrevInvoice() {
@@ -874,5 +923,100 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     } else {
       this.refactureTemp = '';
     }
+  }
+
+  resetData() {
+    this.billingForm.reset();
+    this.billingForm.get('Type').patchValue(20);
+    this.billingForm.get('tpinvoiceId').patchValue('P');
+    this.isSearch = false;
+    this.getEventData(new ListParams());
+    this.getLoteByEvent(new ListParams());
+    this.getTransferentData(new ListParams());
+    this.getDelegation(new ListParams());
+    this.getComerClientsData(new ListParams());
+    this.getComerClientsData2(new ListParams());
+  }
+
+  searchData() {
+    this.getComerFacturas(this.createFilter());
+  }
+
+  createFilter(): FilterParams {
+    const filter = new FilterParams();
+
+    const {
+      eventId,
+      batchId,
+      eventDate,
+      series,
+      Invoice,
+      factstatusId,
+      vouchertype,
+      impressionDate,
+      cvman,
+      delegationNumber,
+      Iauthorize,
+      description,
+      customer,
+      street,
+      cologne,
+      rfc,
+      municipality,
+      state,
+      cop,
+      price,
+      vat,
+      total,
+    } = this.billingForm.value;
+
+    filter.addFilter('tpinvoiceId', 'P', SearchFilter.EQ);
+
+    if (eventId) filter.addFilter('eventId', eventId, SearchFilter.EQ);
+    if (batchId) filter.addFilter('batchId', batchId, SearchFilter.EQ);
+    if (Invoice) filter.addFilter('Invoice', Invoice, SearchFilter.EQ);
+    if (eventDate) {
+      let date = '';
+      if (typeof eventDate == 'string') {
+        date = eventDate.split('/').reverse().join('-');
+      } else {
+        date = this.datePipe.transform(eventDate, 'yyyy-MM-dd');
+      }
+      filter.addFilter('eventDate', date, SearchFilter.EQ);
+    }
+    if (series) filter.addFilter('series', series, SearchFilter.EQ);
+    if (factstatusId)
+      filter.addFilter('factstatusId', factstatusId, SearchFilter.ILIKE);
+    if (vouchertype)
+      filter.addFilter('vouchertype', vouchertype, SearchFilter.EQ);
+    if (customer) filter.addFilter('customer', customer, SearchFilter.EQ);
+    if (impressionDate) {
+      let date = '';
+      if (typeof impressionDate == 'string') {
+        date = impressionDate.split('/').reverse().join('-');
+      } else {
+        date = this.datePipe.transform(impressionDate, 'yyyy-MM-dd');
+      }
+      filter.addFilter('impressionDate', date, SearchFilter.EQ);
+    }
+    if (cvman) filter.addFilter('cvman', cvman, SearchFilter.EQ);
+    if (delegationNumber)
+      filter.addFilter('delegationNumber', delegationNumber, SearchFilter.EQ);
+    if (Iauthorize)
+      filter.addFilter('Iauthorize', Iauthorize, SearchFilter.ILIKE);
+    if (description)
+      filter.addFilter('description', description, SearchFilter.ILIKE);
+    if (street) filter.addFilter('street', street, SearchFilter.ILIKE);
+    if (cologne) filter.addFilter('cologne', cologne, SearchFilter.ILIKE);
+    if (rfc) filter.addFilter('rfc', rfc, SearchFilter.EQ);
+    if (municipality)
+      filter.addFilter('municipality', municipality, SearchFilter.ILIKE);
+    if (state) filter.addFilter('state', state, SearchFilter.ILIKE);
+    if (cop) filter.addFilter('cop', cop, SearchFilter.EQ);
+    if (price) filter.addFilter('price', price, SearchFilter.EQ);
+    if (vat) filter.addFilter('vat', vat, SearchFilter.EQ);
+    if (total) filter.addFilter('total', total, SearchFilter.EQ);
+
+    return filter;
   }
 }
