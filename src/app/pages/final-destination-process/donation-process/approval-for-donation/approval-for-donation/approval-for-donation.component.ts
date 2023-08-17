@@ -429,6 +429,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         `El Usuario`,
         'No tiene privilegios para esta pantalla'
       );
+      this.form.get('cveActa').disable();
+      this.validate = true;
       return;
     }
     const faVal: any = FaVal;
@@ -440,6 +442,8 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
         `El Usuario`,
         'No tiene privilegios para esta pantalla'
       );
+      this.form.get('cveActa').disable();
+      this.validate = true;
       return;
     } else if (level == 2) {
       const delegation: any = access;

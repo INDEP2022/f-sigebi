@@ -83,7 +83,9 @@ export class ExpenseCompositionComponent
   }
 
   get eventNumber() {
-    return this.form.get('eventNumber');
+    return this.form.get('eventNumber')
+      ? this.form.get('eventNumber').value
+      : null;
   }
 
   get expenseNumber() {
@@ -239,15 +241,15 @@ export class ExpenseCompositionComponent
       );
       return;
     }
-    if (this.eventNumber && this.eventNumber.value) {
-      // disperGastos
-    } else {
+    if (!this.eventNumber) {
       this.alert(
         'warning',
         'Dispersión de Gastos',
         'Debe capturar el evento, para utilizar esta opción'
       );
+      return;
     }
+    // divide mandatos
   }
 
   private async preProcessSolitud(selectedGoods = false) {
@@ -255,7 +257,7 @@ export class ExpenseCompositionComponent
       selectedGoods = await this.validateSelectedGoods();
     }
     if (selectedGoods) {
-      this.expenseCaptureDataService.processSolitud();
+      this.expenseCaptureDataService.PROCESA_SOLICITUD();
     } else {
       this.alert(
         'error',
@@ -265,27 +267,13 @@ export class ExpenseCompositionComponent
     }
   }
 
-  private async sendSolicitud(selectedGoods = false) {
-    await firstValueFrom(
-      this.expenseCaptureDataService.getParams({ id: this.conceptNumber.value })
-    );
-
-    if (
-      this.PCHATMORSINFLUJOPMSR !== 'S' &&
-      this.PCHATMORSINFLUJOPFSR !== 'S' &&
-      this.PCANVTA
-    ) {
-      this.preProcessSolitud(selectedGoods);
-    } else if (this.PVALIDADET === 'S') {
-      if (this.lotNumber && this.lotNumber.value) {
-        this.preProcessSolitud(selectedGoods);
-      } else {
-        this.alert('error', 'Para este concepto debe indicar el lote', '');
-      }
-    }
+  private async sendSolicitud(V_VALIDA_DET: boolean = null) {
+    this.expenseCaptureDataService.ENVIA_SOLICITUD(V_VALIDA_DET);
   }
 
-  private sendMotive() {}
+  private sendMotive() {
+    this.expenseCaptureDataService.ENVIA_MOTIVOS();
+  }
 
   private async validateSelectedGoods() {
     let dataContent = await this.dataPaginated.getAll();
@@ -325,7 +313,7 @@ export class ExpenseCompositionComponent
     ) {
       this.sendSolicitud();
     } else {
-      if (this.eventNumber && this.eventNumber.value) {
+      if (this.eventNumber) {
         if (
           this.expense.comerEven &&
           this.expense.comerEven.eventTpId === '10'
@@ -365,15 +353,29 @@ export class ExpenseCompositionComponent
       .subscribe({
         next: response => {
           if (response && response.data && response.data.length > 0) {
+            this.CARGA_BIENES_CSV_VALIDADOS();
           } else {
+            this.CARGA_BIENES_CSV();
           }
         },
       });
   }
 
-  private saveCSV_Validates() {}
+  private CARGA_BIENES_CSV_VALIDADOS() {
+    this.GRABA_TOTALES();
+  }
 
-  private saveCSV() {}
+  private CARGA_BIENES_CSV() {
+    this.GRABA_TOTALES();
+  }
+
+  private GRABA_TOTALES() {
+    this.expense.amount = this.amount + '';
+    this.expense.vat = this.vat + '';
+    this.expense.vatWithheld = this.vatWithholding + '';
+    this.expense.isrWithheld = this.isrWithholding + '';
+    this.expense.totDocument = this.total + '';
+  }
 
   applyTC() {
     this.dataTemp.forEach(row => {

@@ -12,4 +12,6 @@ export enum ParameterGoodEndpoints {
   IndicatorsParameter = '/indicators-parameter',
   CategorzacionAutomNumerario_ = 'categorization-autom-numerary',
   PupCalculaDevolucion = 'application/pup-calcula-devolucion',
+  GetDelegationGlobal = 'application/getDelegationGlobal',
+  CatMotivesrev = 'cat-motivesrev',
 }

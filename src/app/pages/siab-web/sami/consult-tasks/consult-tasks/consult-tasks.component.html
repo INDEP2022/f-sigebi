@@ -318,7 +318,7 @@
             </div>
             <!-- </div>
           <div class="row margin-input"> -->
-            <div class="col-md-4 pt-5">
+            <div class="col-md-3 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtNoProgramacion')"
                 label="No. de Programaci&oacute;n">
@@ -332,20 +332,19 @@
                   (keydown.enter)="onKeydown($event)" />
               </form-field>
             </div>
-            <div class="col-md-2 pt-5">
+            <div class="col-md-3 pt-5">
               <form-field
                 [control]="consultTasksForm.get('txtDaysAtrasos')"
-                label="Días de atraso">
+                label="Rango de Días de Atraso">
                 <ng-select
                   formControlName="txtDaysAtrasos"
                   [searchable]="false"
                   class="form-control"
                   [clearable]="false">
-                  <ng-option value="0,5">0-5</ng-option>
-                  <ng-option value="6,10">6-10</ng-option>
-                  <ng-option value="11,15">11-15</ng-option>
-                  <ng-option value="16,20">16-20</ng-option>
-                  <ng-option value="21,9999">Más de 21</ng-option>
+                  <ng-option value="1,5">Entre 1-5 días</ng-option>
+                  <ng-option value="6,30">Entre 5-30 días</ng-option>
+                  <ng-option value="31,60">Entre 30-60 días</ng-option>
+                  <ng-option value="61,99999">Mayor a 60 días</ng-option>
                 </ng-select>
                 <!-- <input
                   type="number"

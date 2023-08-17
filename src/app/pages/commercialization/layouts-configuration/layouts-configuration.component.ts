@@ -351,7 +351,7 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
       ...this.columnFiltersLayouts,
     };
     console.log('PARAMS ', params);
-    this.layoutsConfigService.getAllLayouts(params).subscribe({
+    this.layoutsConfigService.getAllLayoutsH(params).subscribe({
       next: res => {
         console.log('DATA Layouts', res);
         this.testDataLayouts = res.data;
@@ -372,6 +372,66 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   /**
    * FIN FILTROS DE TABLAS Y FUNCIONES PARA CARGAR DATA
    */
+
+  addLayouts() {
+    console.log('CREAR ');
+    this.openModalLayouts({});
+  }
+
+  editLayouts(event: any) {
+    console.log('EDITAR ', event);
+    if (event) {
+      this.openModalLayouts({
+        provider: event.data,
+        edit: true,
+      });
+    }
+  }
+
+  deleteLayouts(event: any) {
+    console.log('ELIMINAR ', event);
+    this.alertQuestion(
+      'warning',
+      'Eliminar Layout',
+      '¿Desea Eliminar este Layout?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loadingLayouts = true;
+        this.layoutsConfigService
+          .deletelayoutSH(event.data.id, event.data)
+          .subscribe({
+            next: data => {
+              this.loadingLayouts = false;
+              this.alert('success', 'Eliminado Correctamente', ``);
+              this.loadingDataTableLayouts();
+            },
+            error: error => {
+              this.loadingLayouts = false;
+              this.alert(
+                'error',
+                'Error al Actualizar',
+                'Ocurrió un Error al Actualizar el Layout'
+              );
+            },
+          });
+      }
+    });
+  }
+
+  openModalLayouts(context?: Partial<LayoutsConfigurationModalComponent>) {
+    const modalRef = this.modalService.show(
+      LayoutsConfigurationModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.onConfirm.subscribe(data => {
+      console.log(data);
+      this.loadingDataTableLayouts();
+    });
+  }
 
   settings1 = {
     ...TABLE_SETTINGS,
@@ -414,7 +474,13 @@ export class LayoutsConfigurationComponent extends BasePage implements OnInit {
   settings5 = {
     ...TABLE_SETTINGS,
     editable: true,
-    actions: false,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      add: false,
+      edit: true,
+      delete: true,
+    },
     columns: { ...LAYOUTS_COLUMNS5 },
     noDataMessage: 'No se encontrarón registros',
   };

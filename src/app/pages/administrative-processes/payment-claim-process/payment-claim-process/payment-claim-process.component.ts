@@ -274,7 +274,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             if (good.approved == true) {
               this.disabledImport = false;
               if (!this.form.value.justification) {
-                this.form.get('justification').setValue(good.causenumberchange);
+                // this.form.get('justification').setValue(good.causenumberchange);
               }
             }
           });
@@ -313,7 +313,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
             console.log('BINARY EXCEL', response);
 
             if (filter == 'si') {
-              this.alert('success', 'Archivo Subido Correctamente', '');
+              this.alert('success', 'Archivo Cargado Correctamente', '');
             }
 
             this.loading = false;
@@ -359,7 +359,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     });
   }
 
-  changeStatusGood() {
+  async changeStatusGood() {
     if (this.goods.length === 0) {
       this.alert('warning', 'Debe Cargar la Lista de Bienes', '');
       return;
@@ -375,48 +375,65 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.alert('warning', 'No hay Ningún Bien Válido Cargado', '');
         return;
       } else {
-        this.validStatusXScreen(this.good);
+        await this.change();
+        // this.validStatusXScreen(this.good);
       }
     }
   }
 
   async change() {
-    this.goods.forEach(async good => {
-      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
-      let obj: any = {
-        id: good.id,
-        goodId: good.id,
-        status: good.status,
-        causeNumberChange: this.form.value.justification,
-      };
-      this.goodServices.update(obj).subscribe({
-        next: response => {
-          console.log(response);
-        },
-        error: err => {
-          this.loading = false;
-          this.idsNotExist.push({ id: good.id, reason: err.error.message });
-        },
-      });
-    });
-    // this.onLoadToast(
-    //   'success',
-    //   'Actualizado',
-    //   'Se ha cambiado el status de los bienes seleccionados'
-    // );
-    this.addStatus();
-    this.showStatus = true;
-  }
-
-  async change2() {
-    this.goods.forEach(async good => {
-      // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
-      if (good.approved == true) {
+    this.loading = true;
+    let result = this.goods.map(async good => {
+      console.log('good', good);
+      if (good.approved) {
+        // good.status = ;
         let obj: any = {
           id: good.id,
           goodId: good.id,
-          status: good.status,
-          causeNumberChange: this.form.value.justification,
+          status: good.status == 'PRP' ? 'ADM' : 'PRP',
+          // causeNumberChange: this.form.value.justification,
+        };
+        const updateGoodsS = await this.updateGoodsS(obj);
+      }
+    });
+    Promise.all(result).then(resp => {
+      this.alert(
+        'success',
+        'Bienes Válidos Actualizados',
+        ''
+        // 'Se ha Actualizado el Estatus de los Bienes'
+      );
+      this.readExcel(this.test, 'no');
+      // this.addStatus();
+      this.showStatus = true;
+    });
+  }
+
+  async updateGoodsS(obj: any) {
+    return new Promise((resolve, reject) => {
+      this.goodServices.update(obj).subscribe({
+        next: response => {
+          console.log(response);
+          resolve(true);
+        },
+        error: err => {
+          // this.loading = false;
+          resolve(false);
+          // this.idsNotExist.push({ id: good.id, reason: err.error.message });
+        },
+      });
+    });
+  }
+
+  async change2() {
+    let result = this.goods.map(async good => {
+      if (good.approved == true) {
+        // good.status = good.status === 'PRP' ? 'ADM' : 'PRP';
+        let obj: any = {
+          id: good.id,
+          goodId: good.id,
+          status: good.status === 'PRP' ? 'ADM' : 'PRP',
+          // causeNumberChange: this.form.value.justification,
         };
         this.goodServices.update(obj).subscribe({
           next: response => {
@@ -434,13 +451,15 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     //   'Se ha actualizado el motivo de cambio de los bienes seleccionados',
     //   ''
     // );
-    this.addStatus();
-    this.showStatus = true;
+    Promise.all(result).then(resp => {
+      this.readExcel(this.test, 'no');
+    });
   }
 
   addStatus() {
-    this.data.load(this.goods);
-    this.data.refresh();
+    this.readExcel(this.test, 'no');
+    // this.data.load(this.goods);
+    // this.data.refresh();
   }
 
   async loadGood(data: any[]) {
@@ -504,13 +523,15 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   }
 
   clean(event: any) {
+    this.data.load([]);
+    this.data.refresh();
     this.paramsList.getValue().limit = 10;
     this.paramsList.getValue().page = 1;
     this.totalItems = 0;
     this.paginadoNG = false;
     this.form.disable();
     this.goods = [];
-    this.addStatus();
+    // this.addStatus();
     this.form.reset();
     this.ids = [];
     this.document = null;
@@ -519,6 +540,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.valDocument = false;
     this.dataA = 0;
     this.dataD = 0;
+    this.loading = false;
     this.cambiarValor();
   }
 
@@ -538,14 +560,15 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         next: response => {
           console.log('response', response);
           console.log(response.data[0].action, good.status);
-          if (response.data[0].action == good.status && this.document) {
-            this.question();
-          } else {
-            this.change();
-          }
+          // if (response.data[0].action == good.status && this.document) {
+          // this.question();
+          // } else {
+          this.change();
+          // }
         },
         error: err => {
-          this.question();
+          // this.question();
+          this.alert('warning', 'No se Encontró el Estatus Final', '');
           console.log(err);
         },
       });
@@ -558,8 +581,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
   question() {
     this.alertQuestion(
       'question',
-      '¿Quiere Continuar con el Proceso?',
-      'No Realizó la Actualización de Estatus, el Folio de Escaneo Generado se Eliminará'
+      'No se Realizó la Actualización de Estatus, el Folio de Escaneo Generado se Eliminará',
+      '¿Quiere Continuar con el Proceso?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -595,8 +618,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         this.document = null;
         this.alert(
           'success',
-          'Motivo de Cambio Actualizado y Folio Anterior Eliminado.',
-          ''
+          'Proceso Terminado Correctamente',
+          'Folio Anterior Eliminado.'
         );
       },
       error: err => {

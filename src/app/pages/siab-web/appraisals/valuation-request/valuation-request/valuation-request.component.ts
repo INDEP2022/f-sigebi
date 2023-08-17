@@ -18,6 +18,11 @@ import {
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
 
+export class OfficesSend {
+  eventId: number;
+  officeType: number;
+}
+
 @Component({
   selector: 'app-valuation-request',
   templateUrl: './valuation-request.component.html',
@@ -50,7 +55,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   idOficio: string;
   oficio_clave: string;
   num_armada: string;
-
   addUser: boolean = false;
   removeUser: boolean = false;
   searchChanges: boolean = false;
@@ -387,7 +391,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   async getText(acta: string) {
     return new Promise((res, rej) => {
-      //falta endpoit culpa del BACK
       this.usersService.getText(acta).subscribe({
         next: resp => {
           console.log(resp);
@@ -402,7 +405,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   }
   async getUserOt(idOficio: string) {
     return new Promise((res, rej) => {
-      //falta endpoit culpa del BACK
       this.usersService.getUserOt(idOficio).subscribe({
         next: resp => {
           console.log(resp);
@@ -533,9 +535,59 @@ export class valuationRequestComponent extends BasePage implements OnInit {
         console.log(mComer);
         this.m_comer = mComer;
         if (this.m_comer.cve_oficio != null) {
+          this.m_comer.id_evento = type;
+          this.m_comer.remitente = this.form.controls['sender'].value;
+          this.m_comer.destinatario = this.form.controls['addressee'].value;
+          this.m_comer.usuario_insert = this.user;
+          this.m_comer.ciudad = this.form.controls['Ciudad'].value;
+          this.m_comer.texto1 = this.form.controls['paragraph1'].value;
+          this.m_comer.texto2 = this.form.controls['paragraph2'].value;
+          this.m_comer.texto3 = this.form.controls['paragraph3'].value;
+          this.m_comer.cve_oficio = this.m_comer.cve_oficio;
+          this.m_comer.num_cv_armada = this.form.controls['folio'].value;
+          let rest: any = await this.officeManagement('A');
+          if (rest != 0) {
+            let mComer: any = await this.getTrade(this.event);
+            this.idOficio = mComer.id_oficio;
+            this.form.controls['cveService'].setValue(mComer.cve_oficio);
+          }
+          for (const values of this.lsbConCopiaList) {
+          }
         }
       }
     } catch (error) {}
+  }
+  async officeManagement(acction: string) {
+    return new Promise((res, rej) => {
+      //falta endpoit del PROCEDIMIENTO -	PA_GENERAR_O_AVALUADO
+      // this.usersService.getUserOt(acction).subscribe({
+      //   next: resp => {
+      //     console.log(resp);
+      //     res(resp);
+      //   },
+      //   error: eror => {
+      //     this.loader.load = false;
+      //     res(eror);
+      //   },
+      // });
+      res(0);
+    });
+  }
+  async postInsertUsuCopia(acction: string) {
+    return new Promise((res, rej) => {
+      //falta endpoit del PROCEDIMIENTO -	PA_GENERAR_O_AVALUADO
+      // this.usersService.getUserOt(acction).subscribe({
+      //   next: resp => {
+      //     console.log(resp);
+      //     res(resp);
+      //   },
+      //   error: eror => {
+      //     this.loader.load = false;
+      //     res(eror);
+      //   },
+      // });
+      res(0);
+    });
   }
   controlControls() {
     this.addUser = true;

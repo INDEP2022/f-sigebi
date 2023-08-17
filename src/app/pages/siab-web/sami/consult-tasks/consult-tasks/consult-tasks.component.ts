@@ -212,7 +212,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       next: data => {
         const text = this.replaceAccents(params.text);
         data.data.map(data => {
-          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          data.nameAndId = `${data.nameTransferent}`;
           return data;
         });
         this.transferents$ = new DefaultSelect(data.data, data.count);
@@ -231,7 +231,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           });
 
           copyData.map(x => {
-            x.nameAndId = `${x.id} - ${x.nameTransferent}`;
+            x.nameAndId = `${x.nameTransferent}`;
             return x;
           });
 
@@ -359,6 +359,18 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         .addFilter(
           'requestId',
           this.consultTasksForm.value.txtNoSolicitud,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtNoTransferente) {
+      console.log('Filtro de transferente activado');
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'idTransferee',
+          this.consultTasksForm.value.txtNoTransferente,
           SearchFilter.EQ
         );
     }
@@ -516,17 +528,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     }
-    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'idTransferee',
-          this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.EQ
-        );
-    }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
+      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()

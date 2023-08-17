@@ -1,16 +1,20 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { catchError, map, of, Subject, take } from 'rxjs';
+import { catchError, firstValueFrom, map, of, Subject, take } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
+import { IReadParameter } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
 import { IComerDetExpense } from 'src/app/core/models/ms-spent/comer-detexpense';
 import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { ComerDetexpensesService } from 'src/app/core/services/ms-spent/comer-detexpenses.service';
 import { ClassWidthAlert } from 'src/app/core/shared';
 import {
   NUMBERS_DASH_PATTERN,
   NUM_POSITIVE,
 } from 'src/app/core/shared/patterns';
+import { ExpenseLotService } from './expense-lot.service';
+import { ExpenseModalService } from './expense-modal.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +22,12 @@ import {
 export class ExpenseCaptureDataService extends ClassWidthAlert {
   form: FormGroup;
   data: IComerExpense;
-  dataCompositionExpenses: IComerDetExpense[];
+  address: string;
+  dataCompositionExpenses: IComerDetExpense[] = [];
   updateExpenseComposition = new Subject();
+  updateOI = new Subject();
+  updateFolio = new Subject();
+  P_PRUEBA: number;
   PMONTOXMAND: string;
   PDEVCLIENTE: string;
   PCAMBIAESTATUS: string;
@@ -45,9 +53,30 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
   totalMandatos = 0;
   constructor(
     private fb: FormBuilder,
-    private parameterService: ParametersConceptsService
+    private parameterService: ParametersConceptsService,
+    private comerEventService: ComerEventosService,
+    private expenseModalService: ExpenseModalService,
+    private lotService: ExpenseLotService,
+    private comerDetService: ComerDetexpensesService
   ) {
     super();
+    this.expenseModalService.selectedMotivesSubject.subscribe({
+      next: response => {
+        if (response) {
+          this.secondSendSolicitud();
+        }
+      },
+    });
+  }
+
+  private secondSendSolicitud() {
+    const VALIDA_DET = this.dataCompositionExpenses.filter(
+      row => row.changeStatus && row.changeStatus === true
+    );
+    if (VALIDA_DET.length === 0) {
+      this.ENVIA_SOLICITUD();
+      this.alert('success', 'Actualización Realizada', '');
+    }
   }
 
   resetParams() {
@@ -70,81 +99,39 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     this.PVALIDADET = 'N';
   }
 
-  fillParams(row: IParameterConcept) {
-    if (row.parameter === 'MONTOXMAND') {
-      this.PMONTOXMAND = row.value;
-    }
-    if (row.parameter === 'DEVXCLIENTE') {
-      this.PDEVCLIENTE = row.value;
-    }
-    if (row.parameter === 'ESTATUS_NOCOMER') {
-      this.PCAMBIAESTATUS = row.value;
-    }
-    if (row.parameter === 'CONDIVXMAND') {
-      this.PCONDIVXMAND = row.value;
-    }
-    if (row.parameter === 'CANVTA') {
-      this.PCANVTA = row.value;
-    }
-    if (row.parameter === 'MANDCONTXTIPO') {
-      this.P_MANDCONTIPO = row.value;
-    }
-    if (row.parameter === 'DEVPARCIAL') {
-      this.PDEVPARCIAL = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPM') {
-      this.PCHATMORSINFLUJOPM = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPF') {
-      this.PCHATMORSINFLUJOPF = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPFSR') {
-      this.PCHATMORSINFLUJOPFSR = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPMSR') {
-      this.PCHATMORSINFLUJOPMSR = row.value;
-    }
-    if (row.parameter === 'CANFACT') {
-      this.PCANFACT = row.value;
-    }
-    if (row.parameter === 'CREAFACT') {
-      this.PCREAFACT = row.value;
-    }
-    if (row.parameter === 'VALBIEVENSP') {
-      this.VALBIEVEND = row.value;
-    }
-    if (row.parameter === 'ENVIASIRSAEMAND') {
-      this.PNOENVIASIRSAE = row.value;
-    }
-    if (row.parameter === 'DEVPARCIALBIEN') {
-      this.PDEVPARCIALBIEN = row.value;
-    }
-    if (row.parameter === 'VALIDADET') {
-      this.PVALIDADET = row.value;
-    }
+  fillParams(row: IReadParameter) {
+    this.PMONTOXMAND = row.PMONTOXMAND;
+    this.PDEVCLIENTE = row.PDEVCLIENTE;
+    this.PCAMBIAESTATUS = row.PCAMBIAESTATUS;
+    this.PCONDIVXMAND = row.PCONDIVXMAND;
+    this.PCANVTA = row.PCANVTA;
+    this.P_MANDCONTIPO = row.P_MANDCONTIPO;
+    this.PDEVPARCIAL = row.PDEVPARCIAL;
+    this.PCHATMORSINFLUJOPM = row.PCHATMORSINFLUJOPM;
+    this.PCHATMORSINFLUJOPF = row.PCHATMORSINFLUJOPF;
+    this.PCHATMORSINFLUJOPFSR = row.PCHATMORSINFLUJOPFSR;
+    this.PCANFACT = row.PCANFACT;
+    this.PCREAFACT = row.PCREAFACT;
+    this.VALBIEVEND = row.VALBIEVEND;
+    this.PDEVPARCIALBIEN = row.PDEVPARCIALBIEN;
+    this.PVALIDADET = row.PVALIDADET;
   }
 
-  getParams(concept: { id: string }) {
-    const filterParams = new FilterParams();
-    filterParams.limit = 100000;
-    filterParams.addFilter('conceptId', concept.id);
-    return this.parameterService.getAll(filterParams.getParams()).pipe(
+  readParams(conceptId: string) {
+    return this.parameterService.readParameters(+conceptId, this.address).pipe(
       take(1),
       catchError(x => {
         this.alert('error', 'El concepto no está parametrizado', '');
+        this.resetParams();
         return of(null);
       }),
       map(response => {
-        if (response && response.data) {
-          if (response.count > 5 || concept.id === '324') {
-            this.resetParams();
-            response.data.forEach(row => {
-              this.fillParams(row);
-            });
-            return null;
-          }
+        console.log(response);
+        if (response) {
+          this.fillParams(response);
+        } else {
+          this.alert('error', 'El concepto no está parametrizado', '');
         }
-        this.alert('error', 'El concepto no está parametrizado', '');
         return null;
       })
     );
@@ -164,6 +151,142 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
 
   get requestedUser() {
     return this.form.get('requestedUser');
+  }
+
+  get conceptNumber() {
+    return this.form.get('conceptNumber');
+  }
+
+  get eventNumber() {
+    return this.form.get('eventNumber');
+  }
+
+  get lotNumber() {
+    return this.form.get('lotNumber');
+  }
+
+  get expenseNumber() {
+    return this.form.get('expenseNumber');
+  }
+
+  ENVIA_MOTIVOS() {
+    this.expenseModalService.openModalMotives();
+  }
+
+  private VALIDA_DET(V_VALIDA_DET: boolean = null) {
+    if (V_VALIDA_DET === null) {
+      const VALIDA_DET = this.dataCompositionExpenses.filter(
+        row => row.changeStatus && row.changeStatus === true
+      );
+      if (VALIDA_DET.length === 0) {
+        this.alert(
+          'error',
+          'Envia Solictud',
+          'Debe seleccionar un bien al menos'
+        );
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return V_VALIDA_DET;
+  }
+
+  private RECARGA_BIENES_LOTE() {
+    // this.comerDetService.remove()
+  }
+
+  async ENVIA_SOLICITUD(V_VALIDA_DET: boolean = null) {
+    const resultParams = await firstValueFrom(
+      this.readParams(this.conceptNumber.value)
+    );
+    if (
+      this.PCHATMORSINFLUJOPMSR !== 'S' &&
+      this.PCHATMORSINFLUJOPFSR !== 'S' &&
+      this.PCHATMORSINFLUJOPF !== 'S' &&
+      this.PCHATMORSINFLUJOPM !== 'S' &&
+      this.PDEVPARCIAL !== 'S' &&
+      this.PCANVTA
+    ) {
+      this.VALIDA_DET(V_VALIDA_DET);
+    } else if (this.PVALIDADET === 'S') {
+      if (this.lotNumber && this.lotNumber.value) {
+        // this.RECARGA_BIENES_LOTE();
+        if (this.VALIDA_DET(V_VALIDA_DET)) {
+          this.PROCESA_SOLICITUD();
+        }
+      } else {
+        this.alert(
+          'error',
+          'Envia Solictud',
+          'Para este concepto debe indicar el lote'
+        );
+      }
+    }
+  }
+
+  private async getLS_ESTATUS() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('conceptId', this.conceptNumber.value);
+    filterParams.addFilter('parameter', 'ESTATUS_NOCOMER');
+    return await firstValueFrom(
+      this.parameterService.getAll(filterParams.getParams()).pipe(
+        catchError(x => of(null)),
+        map(x => (x && x.data && x.data.length > 0 ? x.data[0].value : null))
+      )
+    );
+  }
+
+  private async getn_COUNT() {
+    const filterParams = new FilterParams();
+    filterParams.addFilter('id', this.eventNumber.value);
+    filterParams.addFilter('eventTpId', 10);
+    filterParams.addFilter('address', this.address);
+    return firstValueFrom(
+      this.comerEventService
+        .getAll(filterParams.getParams())
+        .pipe(catchError(x => of(null)))
+    );
+  }
+
+  async updateByGoods(sendToSIRSAE: boolean) {
+    console.log(this.dataCompositionExpenses);
+    // debugger;
+    if (sendToSIRSAE) {
+      const VALIDA_DET = this.dataCompositionExpenses.filter(
+        row => row.changeStatus && row.changeStatus === true
+      );
+      if (VALIDA_DET.length === 0) {
+        this.alert(
+          'error',
+          'Envio a Sirsae',
+          'Debe seleccionar un bien al menos'
+        );
+        return;
+      }
+    }
+    let LS_ESTATUS = await this.getLS_ESTATUS();
+    if (LS_ESTATUS) {
+      this.ENVIA_SOLICITUD();
+    } else {
+      if (!this.dataCompositionExpenses[0].goodNumber) {
+        this.ENVIA_SOLICITUD();
+      } else {
+        if (this.eventNumber.value) {
+          const n_COUN = await this.getn_COUNT();
+          if (n_COUN && n_COUN.data && n_COUN.data) {
+            if (n_COUN.data.length === 0) {
+              this.ENVIA_MOTIVOS();
+            } else {
+              this.secondSendSolicitud();
+            }
+          } else {
+            this.alert('error', 'Evento Equivocado', '');
+            this.eventNumber.setValue(null);
+          }
+        }
+      }
+    }
   }
 
   private eventoChatarra() {
@@ -191,15 +314,7 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return this.VALIDA_CHATARRA_MOR_SIN_FLUJO();
   }
 
-  private VALIDA_CHATARRA_MOR_SIN_FLUJO() {
-    if (this.isrWithholding <= 0) {
-      this.alert(
-        'error',
-        '',
-        'En este concepto se requiere capturar el importe de ISR retenido, no se puede tramitar el pago'
-      );
-      return false;
-    }
+  private MONTO_TOT_EVENTO() {
     if (this.data.comerLot && this.data.comerLot.finalPrice) {
       if (
         +this.data.comerLot.finalPrice !==
@@ -211,31 +326,45 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
           ''
         );
         return false;
+      } else {
+        return true;
       }
     } else {
       this.alert('error', 'No cuenta con precio Final por Lote', '');
       return false;
     }
-    if (!this.eventoChatarra()) {
+  }
+
+  private VALIDA_CHATARRA_MOR_SIN_FLUJO() {
+    if (this.isrWithholding <= 0) {
+      this.alert(
+        'error',
+        '',
+        'En este concepto se requiere capturar el importe de ISR retenido, no se puede tramitar el pago'
+      );
       return false;
     }
-    if (!this.payDay.value) {
-      this.alert('error', 'Debe tener Fecha de Pago', '');
-      return false;
-    }
-    if (!this.capturedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
-      return false;
-    }
-    if (!this.authorizedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
-      return false;
-    }
-    if (!this.requestedUser.value) {
-      this.alert('error', 'Debe tener el Usuario que Captura', '');
-      return false;
-    }
-    return true;
+    return this.MONTO_TOT_EVENTO();
+    // if (!this.eventoChatarra()) {
+    //   return false;
+    // }
+    // if (!this.payDay.value) {
+    //   this.alert('error', 'Debe tener Fecha de Pago', '');
+    //   return false;
+    // }
+    // if (!this.capturedUser.value) {
+    //   this.alert('error', 'Debe tener el Usuario que Captura', '');
+    //   return false;
+    // }
+    // if (!this.authorizedUser.value) {
+    //   this.alert('error', 'Debe tener el Usuario que Captura', '');
+    //   return false;
+    // }
+    // if (!this.requestedUser.value) {
+    //   this.alert('error', 'Debe tener el Usuario que Captura', '');
+    //   return false;
+    // }
+    // return true;
   }
 
   private processPay() {
@@ -336,23 +465,36 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     return true;
   }
 
+  private PUF_VALIDA_PAGOXEVENTO(p_fpago: string) {
+    return firstValueFrom(
+      this.lotService.PUF_VALIDA_PAGOXEVENTO({
+        p_fpago,
+        id_evento: this.eventNumber.value,
+        lotePub: this.lotNumber.value,
+      })
+    );
+  }
+
   private async normalSolicitud() {
     let aux = false;
     aux = await this.VALIDACIONES_SOLICITUD2();
-    // let AUX_INTERCAMBIO = this.PUF_VALIDA_PAGOXEVENTO(this.data.formPayment);
-    // if (aux) {
-    //   if (!AUX_INTERCAMBIO) {
-    //     this.alert(
-    //       'error',
-    //       'Lote ' + this.data.lotNumber,
-    //       'Debe tener un pago registrado para la forma de pago seleccionada'
-    //     );
-    //   } else {
-    //     // this.ENVIAR_SIRSAE();
-    //   }
-    // }
+    let AUX_INTERCAMBIO = await this.PUF_VALIDA_PAGOXEVENTO(
+      this.data.formPayment
+    );
+
+    if (aux) {
+      if (AUX_INTERCAMBIO === '0') {
+        this.alert(
+          'error',
+          'Lote ' + this.lotNumber.value,
+          'Debe tener un pago registrado para la forma de pago seleccionada'
+        );
+      } else {
+        // this.ENVIAR_SIRSAE();
+      }
+    }
     if (this.data.formPayment !== 'INTERCAMBIO') {
-      // this.VERIFICA_ACTUALIZACION_EST();
+      this.VERIFICA_ACTUALIZACION_EST();
     } else {
       // this.VALIDA_SUBTOTAL_PRECIO(
       //   this.data.expenseNumber,
@@ -362,7 +504,38 @@ export class ExpenseCaptureDataService extends ClassWidthAlert {
     }
   }
 
-  processSolitud() {
+  VALIDA_CAMBIO_ESTATUS() {
+    return firstValueFrom(
+      this.lotService
+        .VALIDA_CAMBIO_ESTATUS({
+          id_gasto: this.expenseNumber.value,
+          id_lote: this.lotNumber.value,
+        })
+        .pipe(catchError(x => of(1)))
+    );
+  }
+
+  async VERIFICA_ACTUALIZACION_EST() {
+    this.P_PRUEBA = 0;
+    if (this.PDEVPARCIAL === 'S') {
+      // this.DEVOLUCION_PARCIAL();
+    } else if (!this.PCANVTA) {
+      const CONTINUA = await this.VALIDA_CAMBIO_ESTATUS();
+      if (CONTINUA === 1) {
+        this.CANCELA_VTA_NORMAL();
+      } else {
+        // this.CANCELACION_PARCIAL();
+      }
+    }
+  }
+
+  private CANCELA_VTA_NORMAL() {
+    if (this.data.comerLot && this.data.comerLot.eventId) {
+      const LS_EVENTO = this.data.comerLot.eventId;
+    }
+  }
+
+  PROCESA_SOLICITUD() {
     if (this.PCHATMORSINFLUJOPM === 'S') {
       this.processPayChatarraPM();
     } else if (this.PCHATMORSINFLUJOPF === 'S') {

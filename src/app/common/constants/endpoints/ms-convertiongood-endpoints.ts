@@ -9,4 +9,5 @@ export enum ConvertiongoodEndpoints {
   AddActa = `aplication/getBlkbieDiActa`,
   MinuteConversions = `minute-conversions/get-all`,
   LisActas = `minute-conversions`,
+  SeqConversions = `conversions/get-seq-conversions/generate`,
 }
