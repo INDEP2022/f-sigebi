@@ -164,8 +164,8 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     };
 
     this.siabService
-      .fetchReport('RCONCOGVOLANTESRE', params)
-      //.fetchReportBlank('blank')
+      //.fetchReport('RCONCOGVOLANTESRE', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
@@ -330,5 +330,15 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.flyersForm.reset();
+  }
+
+  public onlyNumbers(event: any) {
+    var code = event.which ? event.which : event.keyCode;
+
+    if (code >= 48 && code <= 57) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -11,7 +11,84 @@
         <div class="col-sm-12 col-12 col-md-12">
           <h6>Informaci&oacute;n de Expediente</h6>
         </div>
-        <div class="col-sm-12 col-12 col-md-4">
+        <div
+          class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+          *ngIf="loadingExpedient">
+          <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center">
+              <div class="loader"></div>
+              <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+            </div>
+          </div>
+        </div>
+        <div class="row m-3">
+          <div class="col-4"></div>
+          <div class="col-md-8 text-end">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm mr-3"
+              (click)="searchExpedient()">
+              Buscar Expedientes
+              <i class="bx bx-search bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <!-- <div class="row m-3 flex-row justify-content-end">
+                    <div class="col-md-8 text-end">
+                      <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()">
+                        Buscar Expedientes<i class="bx bx-search bx-sm float-icon"></i>
+                      </button>
+                    </div>
+                  </div> -->
+                  <div class="card-body mt-4 mb-4">
+                    <div class="form-group row p-4">
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >No. Expediente:</label
+                        >
+                        <div>{{ fileNumber || '' }}</div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >Causa Penal:</label
+                        >
+                        <div>{{ causa || '' }}</div>
+                      </div>
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >Averiguación Previa:</label
+                        >
+                        <div>{{ aprevia || '' }}</div>
+                      </div>
+                    </div>
+                    <div class="form-group row p-4">
+                      <div class="col-md-3">
+                        <label for="" class="col-form-label"
+                          >No&#46; Amparo:</label
+                        >
+                        <div>{{ pKey || '' }}</div>
+                      </div>
+                      <div class="col-md-5">
+                        <label for="" class="col-form-label"
+                          >Fecha Presentaci&oacute;n Recurso
+                          Revisi&oacute;n:</label
+                        >
+                        <div>{{ dateToday || '00/00/0000' }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="col-sm-12 col-12 col-md-4">
           <app-expedient-shared
             expedientField="id"
             [form]="formExp"
@@ -67,6 +144,25 @@
               }"
               (ngModelChange)="validateItem($event)" />
           </form-field>
+        </div> -->
+      </div>
+      <div class="row m-3">
+        <div class="col-4"></div>
+        <div class="col-md-8 text-end">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm mr-3"
+            (click)="searchGoods()">
+            Buscar Bienes
+            <i class="bx bx-search bx-sm float-icon"></i>
+          </button>
+          <button
+            (click)="clean()"
+            type="button"
+            class="btn btn-danger active btn-sm mr-3">
+            Limpiar
+            <i class="fa fa-eraser" aria-hidden="true"></i>
+          </button>
         </div>
       </div>
     </form>
@@ -191,6 +287,20 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
+            [control]="form.get('estatus_recurso_revision')"
+            label="Estatus Recurso Revisi&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="estatus_recurso_revision"
+              [readOnly]="form.get('di_disponible').value == 'N'"
+              [ngClass]="{
+                'bg-success text-white': form.get('di_disponible').value == 'S'
+              }"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
             [control]="form.get('revRecCause')"
             label="Motivo Recurso Revisi&oacute;n">
             <textarea
@@ -217,6 +327,9 @@
               }"></textarea>
           </form-field>
         </div>
+        <!-- <div class="paginator" *ngIf="totalItems > 1">
+          <app-pagination [params]="params" [totalItems]="totalItems" [maxSize]="1"></app-pagination>
+        </div> -->
         <div class="col-sm-12 col-12 col-md-12 p-2 text-left">
           <div class="buttons">
             <button
@@ -299,10 +412,11 @@
           <ng2-smart-table
             id="table"
             [attr.class]="'table-bordered table-responsive'"
-            [settings]="tableSettings"
-            [source]="dataTable.data"></ng2-smart-table>
+            [settings]="tableSettingsDoc"
+            [source]="dataTableDocument.data"
+            (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
           <app-pagination
-            [totalItems]="dataTable.count"
+            [totalItems]="totalItemsDocument"
             [filterParams]="params"></app-pagination>
         </div>
       </div>
@@ -318,7 +432,9 @@
             type="button"
             class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="btnSeleccionarDocumentos()"
-            [disabled]="form.get('di_disponible').value == 'N'">
+            [disabled]="
+              selectedKey == null || form.get('di_disponible').value == 'N'
+            ">
             Seleccionar Documentos
           </button>
         </div>
@@ -353,12 +469,12 @@
               </div>
               <div class="col-sm-12 col-12 col-md-12 p-2">
                 <div class="form-group">
-                  <button
+                  <!-- <button
                     type="button"
                     class="btn btn-primary active btn-sm"
                     (click)="btnEjecutarInformes()">
                     Reporte <i class="fas fa-print bx-sm float-icon"></i>
-                  </button>
+                  </button> -->
                   <button
                     type="button"
                     class="btn btn-primary active ml-2 mr-2 btn-sm"
@@ -387,10 +503,10 @@
             <ng2-smart-table
               id="table"
               [attr.class]="'table-bordered table-responsive'"
-              [settings]="tableSettingsDoc"
-              [source]="dataTableDoc.data"></ng2-smart-table>
+              [settings]="tableSettings"
+              [source]="dataTable.data"></ng2-smart-table>
             <app-pagination
-              [totalItems]="dataTableDoc.count"
+              [totalItems]="totalItemsDic"
               [filterParams]="paramsDoc"></app-pagination>
           </div>
         </div>

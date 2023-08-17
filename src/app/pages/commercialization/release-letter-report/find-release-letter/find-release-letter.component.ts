@@ -9,6 +9,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { IComerLetter } from 'src/app/core/models/ms-parametercomer/comer-letter';
 import { ComerLetterService } from 'src/app/core/services/ms-parametercomer/comer-letter.service';
+import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RELEASE_REPORT_COLUMNS } from '../release-letter-collumn';
 
@@ -26,11 +27,14 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   selectedRow: any | null = null;
+  P_DIRECCION: string = 'M';
+  loteId: number = null;
   @Output() onSave = new EventEmitter<any>();
 
   constructor(
     private modalRef: BsModalRef,
-    private comerLetterService: ComerLetterService
+    private comerLetterService: ComerLetterService,
+    private comerEventService: ComerEventService
   ) {
     super();
     this.settings = {
@@ -57,7 +61,7 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
             filter.field == 'id' ||
-            filter.field == 'lotsId' ||
+            // filter.field == 'lotsId' ||
             filter.field == 'addressedTo' ||
             filter.field == 'position' ||
             filter.field == 'paragraph1' ||
@@ -88,10 +92,17 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
 
   getAllComerLetter() {
     this.loading = true;
+    // if (this.P_DIRECCION) {
+    //   this.columnFilters['address'] = `$eq:${this.P_DIRECCION}`;
+    // }
+    if (this.loteId) {
+      this.columnFilters['filter.lotsId'] = `$eq:${this.loteId}`;
+    }
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    // this.comerEventService.getAllEvent(params).subscribe({
     this.comerLetterService.getAll(params).subscribe({
       next: (data: any) => {
         this.loading = false;
@@ -103,6 +114,9 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
       error: () => {
         this.loading = false;
         console.error('error al filtrar cartas');
+        this.totalItems = 0;
+        this.dataFactLetter.load([]);
+        this.dataFactLetter.refresh();
       },
     });
   }
@@ -118,6 +132,10 @@ export class FindReleaseLetterComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
   handleSuccess(): void {
+    if (!this.selectedRow) {
+      this.alert('warning', 'Selecciona un Registro para Continuar', '');
+      return;
+    }
     this.loading = true;
     this.onSave.emit(this.selectedRow);
     this.loading = false;

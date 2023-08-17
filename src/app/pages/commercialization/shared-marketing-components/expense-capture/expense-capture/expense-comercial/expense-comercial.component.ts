@@ -1,12 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
-import { IParameterConcept } from 'src/app/core/models/ms-comer-concepts/parameter-concept';
-import { IComerExpense } from 'src/app/core/models/ms-spent/comer-expense';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError, firstValueFrom, of, takeUntil, tap } from 'rxjs';
 import { ParametersConceptsService } from 'src/app/core/services/ms-commer-concepts/parameters-concepts.service';
+import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { BasePage } from 'src/app/core/shared';
 import { secondFormatDateToDate } from 'src/app/shared/utils/date';
 import { ExpenseCaptureDataService } from '../../services/expense-capture-data.service';
+import { ExpenseScreenService } from '../../services/expense-screen.service';
+import { SpentIService } from '../../services/spentI.service';
+import { SpentMService } from '../../services/spentM.service';
+import { NotifyComponent } from '../notify/notify.component';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-expense-comercial',
@@ -16,34 +20,82 @@ import { ExpenseCaptureDataService } from '../../services/expense-capture-data.s
 export class ExpenseComercialComponent extends BasePage implements OnInit {
   // params
   @Input() address: string;
-  PMONTOXMAND: string;
-  PDEVCLIENTE: string;
-  PCAMBIAESTATUS: string;
-  PCONDIVXMAND: string;
-  PCANVTA: string;
-  P_MANDCONTIPO: string;
-  PDEVPARCIAL: string;
-  PCHATMORSINFLUJOPM: string;
-  PCHATMORSINFLUJOPF: string;
-  PCHATMORSINFLUJOPFSR: string;
-  PCHATMORSINFLUJOPMSR: string;
-  PCANFACT: string;
-  PCREAFACT: string;
-  VALBIEVEND: string;
-  PNOENVIASIRSAE: string;
-  PDEVPARCIALBIEN: string;
-  PVALIDADET: string;
+
   //
-  data: IComerExpense;
   toggleInformation = true;
   reloadLote = false;
   reloadConcepto = false;
+  ilikeFilters = [
+    'attachedDocumentation',
+    'comment',
+    'nomEmplAuthorizes',
+    'nomEmplRequest',
+    'nomEmplcapture',
+    'providerName',
+    'usu_captura_siab',
+  ];
+  dateFilters = [
+    'captureDate',
+    'invoiceRecDate',
+    'payDay',
+    'captureDate',
+    'fecha_contrarecibo',
+    'spDate',
+    'dateOfResolution',
+  ];
+  columns: any;
   constructor(
     private dataService: ExpenseCaptureDataService,
+    private spentMService: SpentMService,
+    private spentIService: SpentIService,
+    private comerEventService: ComerEventosService,
+    private screenService: ExpenseScreenService,
+    private modalService: BsModalService,
     private parameterService: ParametersConceptsService
   ) {
     super();
     this.prepareForm();
+  }
+
+  get spentService() {
+    return this.address
+      ? this.address === 'M'
+        ? this.spentMService
+        : this.spentIService
+      : null;
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['address'] && changes['address'].currentValue) {
+      const list = [{ value: 'C', title: 'GENERAL' }];
+      if (changes['address'].currentValue === 'M') {
+        list.push({ value: 'M', title: 'MUEBLES' });
+      }
+      if (changes['address'].currentValue === 'I') {
+        list.push({ value: 'I', title: 'INMUEBLES' });
+      }
+      this.columns = {
+        ...COLUMNS,
+        address: {
+          ...COLUMNS.address,
+          filter: {
+            type: 'list',
+            config: {
+              selectText: 'Seleccionar',
+              list,
+            },
+          },
+        },
+      };
+    }
+  }
+
+  get data() {
+    return this.dataService.data;
+  }
+
+  set data(value) {
+    this.dataService.data = value;
   }
 
   get form() {
@@ -93,128 +145,92 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
 
   ngOnInit() {}
 
-  private resetParams() {
-    this.PMONTOXMAND = 'N';
-    this.PDEVCLIENTE = 'N';
-    this.PCAMBIAESTATUS = 'N';
-    this.PCONDIVXMAND = 'N';
-    this.PCANVTA = 'N';
-    this.P_MANDCONTIPO = 'N';
-    this.PDEVPARCIAL = 'N';
-    this.PCHATMORSINFLUJOPM = 'N';
-    this.PCHATMORSINFLUJOPF = 'N';
-    this.PCHATMORSINFLUJOPFSR = 'N';
-    this.PCHATMORSINFLUJOPMSR = 'N';
-    this.PCANFACT = 'N';
-    this.PCREAFACT = 'N';
-    this.VALBIEVEND = 'N';
-    this.PNOENVIASIRSAE = 'N';
-    this.PDEVPARCIALBIEN = 'N';
-    this.PVALIDADET = 'N';
-  }
-
-  private fillParams(row: IParameterConcept) {
-    if (row.parameter === 'MONTOXMAND') {
-      this.PMONTOXMAND = row.value;
-    }
-    if (row.parameter === 'DEVXCLIENTE') {
-      this.PDEVCLIENTE = row.value;
-    }
-    if (row.parameter === 'ESTATUS_NOCOMER') {
-      this.PCAMBIAESTATUS = row.value;
-    }
-    if (row.parameter === 'CONDIVXMAND') {
-      this.PCONDIVXMAND = row.value;
-    }
-    if (row.parameter === 'CANVTA') {
-      this.PCANVTA = row.value;
-    }
-    if (row.parameter === 'MANDCONTXTIPO') {
-      this.P_MANDCONTIPO = row.value;
-    }
-    if (row.parameter === 'DEVPARCIAL') {
-      this.PDEVPARCIAL = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPM') {
-      this.PCHATMORSINFLUJOPM = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPF') {
-      this.PCHATMORSINFLUJOPF = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPFSR') {
-      this.PCHATMORSINFLUJOPFSR = row.value;
-    }
-    if (row.parameter === 'CHASINFLUJOPMSR') {
-      this.PCHATMORSINFLUJOPMSR = row.value;
-    }
-    if (row.parameter === 'CANFACT') {
-      this.PCANFACT = row.value;
-    }
-    if (row.parameter === 'CREAFACT') {
-      this.PCREAFACT = row.value;
-    }
-    if (row.parameter === 'VALBIEVENSP') {
-      this.VALBIEVEND = row.value;
-    }
-    if (row.parameter === 'ENVIASIRSAEMAND') {
-      this.PNOENVIASIRSAE = row.value;
-    }
-    if (row.parameter === 'DEVPARCIALBIEN') {
-      this.PDEVPARCIALBIEN = row.value;
-    }
-    if (row.parameter === 'VALIDADET') {
-      this.PVALIDADET = row.value;
-    }
-  }
-
-  getParams(concept: { id: string }) {
-    const filterParams = new FilterParams();
-    filterParams.limit = 100000;
-    filterParams.addFilter('conceptId', concept.id);
-    this.parameterService
-      .getAll(filterParams.getParams())
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe({
-        next: response => {
-          if (response && response.data) {
-            if (response.count > 5 || concept.id === '324') {
-              this.resetParams();
-              response.data.forEach(row => {
-                this.fillParams(row);
-              });
-              return;
-            }
-          }
-          this.alert('error', 'El concepto no está parametrizado', '');
-        },
-        error: err => {
-          this.alert('error', 'El concepto no está parametrizado', '');
-        },
-      });
-  }
-
   reloadLoteEvent(event: any) {
     console.log(event);
+    if (event)
+      this.comerEventService
+        .getMANDXEVENTO(event)
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe({
+          next: response => {
+            if (response && response.data) {
+              if (response.data.event > 0) {
+                this.eventNumber.setValue(null);
+                this.alert(
+                  'error',
+                  'Evento',
+                  'Contiene bienes de más de un mandato verifique'
+                );
+              }
+            }
+          },
+        });
     setTimeout(() => {
       this.reloadLote = !this.reloadLote;
     }, 500);
   }
 
-  fillForm(event: IComerExpense) {
+  getParams(id: string) {
+    return this.dataService.readParams(id);
+  }
+
+  notify() {
+    console.log('Notificar');
+    let config: ModalOptions = {
+      initialState: {
+        // message,
+        // action,
+        // proceeding: this.proceedingForm.value,
+        callback: (next: boolean) => {
+          if (next) {
+            // const id = this.controls.keysProceedings.value;
+            // this.findProceeding(id).subscribe();
+          }
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(NotifyComponent, config);
+  }
+
+  fillForm(event: any) {
     console.log(event);
     this.data = event;
     this.conceptNumber.setValue(event.conceptNumber);
-    if (event.conceptNumber) this.getParams({ id: event.conceptNumber });
+    if (event.conceptNumber) {
+      this.getParams(event.conceptNumber).subscribe({
+        next: response => {
+          this.dataService.updateOI.next(true);
+        },
+        error: err => {
+          this.dataService.updateOI.next(true);
+        },
+      });
+    }
+    if (event.eventNumber) {
+      this.eventNumber.setValue(event.eventNumber);
+    }
+    if (event.clkpv) {
+      this.clkpv.setValue(event.clkpv);
+    }
+    if (event.lotNumber) {
+      this.lotNumber.setValue(event.lotNumber);
+    }
+    if (event.descurcoord) {
+      this.descurcoord.setValue(event.descurcoord);
+    }
     this.paymentRequestNumber.setValue(event.paymentRequestNumber);
     this.idOrdinginter.setValue(event.idOrdinginter);
     this.folioAtnCustomer.setValue(event.folioAtnCustomer);
-
     this.dateOfResolution.setValue(
       event.dateOfResolution
         ? secondFormatDateToDate(event.dateOfResolution)
         : null
     );
     this.comment.setValue(event.comment);
+    this.dataService.updateExpenseComposition.next(true);
+    this.dataService.updateFolio.next(true);
     // this.reloadConcepto = !this.reloadConcepto;
   }
 
@@ -237,9 +253,10 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
   }
 
   get pathEvent() {
+    // return 'prepareevent/api/v1/comer-event/getProcess';
     return (
-      'prepareevent/api/v1/comer-event/getProcess' +
-      (this.address ? '?filter.id=' + this.address + ',C' : 'C')
+      'event/api/v1/comer-event?filter.eventTpId:$in:1,2,3,4,5,10' +
+      (this.address ? '&filter.address=$eq:' + this.address : '')
     );
   }
 
@@ -252,5 +269,79 @@ export class ExpenseComercialComponent extends BasePage implements OnInit {
     );
   }
 
-  sendToSIRSAE() {}
+  get pathProvider() {
+    return 'interfaceesirsae/api/v1/supplier?sortBy=clkPv:ASC';
+  }
+
+  get dataCompositionExpenses() {
+    return this.dataService.dataCompositionExpenses;
+  }
+
+  get conceptNumberValue() {
+    return this.conceptNumber ? this.conceptNumber.value : null;
+  }
+
+  async sendToSIRSAE() {
+    await this.dataService.updateByGoods(true);
+  }
+
+  updateClasif() {
+    const VALIDA_DET = this.dataCompositionExpenses.filter(
+      row => row.changeStatus && row.changeStatus === true && row.goodNumber
+    );
+
+    if (VALIDA_DET.length === 0) {
+      this.alert(
+        'error',
+        'Actualizar Clasificación a Reporte de Robo',
+        'No se han seleccionado los bienes para realizar el cambio de clasificador a Vehiculo con Reporte de Robo'
+      );
+    } else {
+      this.alertQuestion(
+        'question',
+        'Actualizar Clasificación',
+        '¿Desea cambiar el clasificador de los bienes a Vehiculo con Reporte de Robo?'
+      ).then(x => {
+        if (x.isConfirmed) {
+          let errors = [];
+          this.dataCompositionExpenses.forEach(async row => {
+            if (
+              row.changeStatus &&
+              row.changeStatus === true &&
+              row.goodNumber
+            ) {
+              const result = await firstValueFrom(
+                this.screenService
+                  .PUP_VAL_BIEN_ROBO({
+                    goodNumber: '524', //row.goodNumber,
+                    type: 'U',
+                    screenKey: 'FCOMER084',
+                    conceptNumber: this.conceptNumber.value,
+                  })
+                  .pipe(
+                    catchError(x => of(null)),
+                    tap(x => console.log(x))
+                  )
+              );
+              console.log(result);
+              if (!result) {
+                console.log('ERROR');
+                errors.push(row.goodNumber);
+              } else {
+                // if(result.message[0]){
+                // }
+              }
+            }
+          });
+          if (errors.length > 0) {
+            this.alert(
+              'error',
+              'Registros no encontrados por clave pantalla y número de concepto',
+              ''
+            );
+          }
+        }
+      });
+    }
+  }
 }

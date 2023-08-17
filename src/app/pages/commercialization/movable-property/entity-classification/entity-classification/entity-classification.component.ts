@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ITypeEntityGov } from 'src/app/core/models/ms-parametercomer/type-entity-gov.model';
 import { TypeEntityGovService } from 'src/app/core/services/ms-parametercomer/type-entity-gov.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -14,12 +19,23 @@ import { ENTITY_CLASS_COLUMNS } from './entity-classification-columns';
   styles: [],
 })
 export class EntityClassificationComponent extends BasePage implements OnInit {
-  params = new BehaviorSubject(new FilterParams());
+  //params = new BehaviorSubject(new FilterParams());
   data: ITypeEntityGov[] = [];
+  columnFilters: any = [];
   totalItems: number = 0;
+  origin: string = '';
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  paramsScreen: IParamsVault = {
+    PAR_MASIVO: '', // PAQUETE
+  };
+  @Input() PAR_MASIVO: string;
+  data2 = new LocalDataSource();
+  params = new BehaviorSubject(new ListParams());
 
   constructor(
     private typeEntityGovService: TypeEntityGovService,
+    private activatedRoute: ActivatedRoute,
     private modalService: BsModalService
   ) {
     super();
@@ -38,26 +54,130 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
+    /*  this.params.pipe(takeUntil(this.$unSubscribe)).subscribe({
       next: () => {
         this.getData();
       },
-    });
+    });*/
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params2: any) => {
+        console.log(params2);
+        console.log(this.paramsScreen);
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params2, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params2[key] ?? null;
+          }
+        }
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.getData();
+      } else {
+        console.log('SIN PARAMETROS');
+        console.log(this.origin);
+        if (!this.origin) {
+          console.log(this.origin);
+        }
+      }
+    }
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log('loooool');
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getData();
+        }
+      });
+
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
+
+    ///////////////////////////
   }
 
   getData() {
     this.loading = true;
-    const params = this.params.getValue().getParams();
-    this.typeEntityGovService.getAllFilter(params).subscribe({
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters,
+    };
+    //const params = this.params.getValue().getParams();
+    this.typeEntityGovService.getAllFilterv2(params).subscribe({
       next: response => {
         this.loading = false;
         this.data = response.data;
         this.totalItems = response.count;
+        console.log(this.data);
+        this.dataFactGen.load(response.data);
+        this.dataFactGen.refresh();
       },
       error: error => {
         this.loading = false;
       },
     });
+  }
+
+  changePagin() {
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filters.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getData();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
 
   edit(typeEntity?: ITypeEntityGov) {
@@ -68,7 +188,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea Eliminar Este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(typeEntity);
@@ -81,15 +201,16 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     this.typeEntityGovService.remove(id).subscribe({
       next: () => {
         this.loading = false;
-        this.onLoadToast('success', 'Registro eliminado', '');
+        this.onLoadToast('success', 'Entidad', ' Eliminada Correctamente');
         this.getData();
+        location.reload();
       },
       error: () => {
         this.loading = false;
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio un error al eliminar el registro'
+          'Ocurrio Un Error Al Eliminar La Entidad'
         );
       },
     });
@@ -107,6 +228,9 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
   }
 
   onSaveConfirm(event: any) {
-    this.onLoadToast('success', 'Elemento Actualizado', '');
+    this.onLoadToast('success', 'Entidad', ' Actualizada Correctamente');
   }
+}
+export interface IParamsVault {
+  PAR_MASIVO: string;
 }

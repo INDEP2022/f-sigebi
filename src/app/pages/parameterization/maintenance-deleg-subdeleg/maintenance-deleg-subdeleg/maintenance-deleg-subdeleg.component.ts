@@ -1,7 +1,10 @@
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MaintenanceDelegSubdelegModalComponent } from '../maintenance-deleg-subdeleg-modal/maintenance-deleg-subdeleg-modal.component';
 import {
@@ -12,6 +15,7 @@ import {
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 //services
+import { LocalDataSource } from 'ng2-smart-table';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
 import Swal from 'sweetalert2';
@@ -32,10 +36,16 @@ export class MaintenanceDelegSubdelegComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
+  data: LocalDataSource = new LocalDataSource();
+  data1: LocalDataSource = new LocalDataSource();
+
   delegationList: IDelegation[] = [];
   subDelegationList: ISubdelegation[] = [];
   delegations: IDelegation;
   dataId: any;
+
+  columnFilters: any = [];
+  columnFilters1: any = [];
 
   settings2;
 
@@ -64,7 +74,7 @@ export class MaintenanceDelegSubdelegComponent
 
     this.settings2 = {
       ...this.settings,
-      hideSubHeader: true,
+      hideSubHeader: false,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
@@ -77,6 +87,40 @@ export class MaintenanceDelegSubdelegComponent
   }
 
   ngOnInit(): void {
+    this.data
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getDelegationAll();
+        }
+      });
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getDelegationAll());
@@ -85,10 +129,14 @@ export class MaintenanceDelegSubdelegComponent
   //Trae lista de delegaciones
   getDelegationAll() {
     this.loading1 = true;
-
-    this.delegationService.getAll3(this.params.getValue()).subscribe({
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.delegationService.getAll2(params).subscribe({
       next: response => {
         this.delegationList = response.data;
+        this.data.load(response.data);
         this.totalItems = response.count;
         this.loading1 = false;
       },
@@ -140,33 +188,76 @@ export class MaintenanceDelegSubdelegComponent
     this.totalItems2 = 0;
     this.subDelegationList = [];
     this.delegations = event.data;
+
+    this.data1
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters1[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters1[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getSubDelegations(this.delegations);
+        }
+      });
     this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       this.getSubDelegations(this.delegations);
-      const btn = document.getElementById('new-sd');
-      this.r2.removeClass(btn, 'disabled');
-      this.dataId = this.delegations;
     });
   }
 
   //Con el id seleccionado de delegaciones se obtienen sus subdelegaciones
   getSubDelegations(delegation: IDelegation) {
-    this.loading2 = true;
-    this.subDelegationService
-      .getById(delegation.id, this.params2.getValue())
-      .subscribe({
-        next: response => {
-          if (response.data.length > 0) {
-            this.subDelegationList = response.data;
-            this.totalItems2 = response.count;
-            this.loading2 = false;
-          } else {
-            this.subDelegationList = [];
-            this.totalItems2 = 0;
-            this.loading2 = false;
-          }
-        },
-        error: error => (this.loading2 = false),
-      });
+    this.loading = true;
+    /*if (delegation) {
+      this.params2.getValue()['filter.delegationNumber'] = delegation.id;
+    }*/
+    let params1 = {
+      ...this.params2.getValue(),
+      ...this.columnFilters1,
+    };
+    this.subDelegationService.getById(delegation.id, params1).subscribe({
+      next: response => {
+        if (response.data.length > 0) {
+          this.subDelegationList = response.data;
+          this.data1.load(response.data);
+          this.data1.refresh();
+          this.totalItems2 = response.count;
+          this.loading = false;
+        } else {
+          this.subDelegationList = [];
+          this.totalItems2 = 0;
+          this.loading = false;
+        }
+      },
+      error: error => {
+        this.loading = false;
+        this.data1.load([]);
+        this.data1.refresh();
+        this.totalItems2 = 0;
+      },
+    });
   }
 
   //Abre formulario de subdelegaciones para actualizar
@@ -180,7 +271,7 @@ export class MaintenanceDelegSubdelegComponent
         delegation,
         idD,
         callback: (next: boolean) => {
-          if (next) this.getSubDelegations(this.dataId);
+          if (next) this.getSubDelegations(idD);
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -213,8 +304,8 @@ export class MaintenanceDelegSubdelegComponent
     console.log('datos a eliminar:', formData);
     this.subDelegationService.remove(formData).subscribe({
       next: () => {
-        this.getSubDelegations(this.dataId);
-        this.alert('success', 'Borrado', '');
+        this.getSubDelegations(idDelegation);
+        this.alert('success', 'Subdelegacion', 'Borrado Correctamente');
       },
       error: err =>
         this.alert(

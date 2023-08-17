@@ -9,7 +9,7 @@ export const STATION_COLUMS = {
     type: 'number',
     sort: false,
   },
-  transferent: {
+  transferentRe: {
     title: 'Transferencia',
     type: 'string',
     sort: false,
@@ -43,7 +43,7 @@ export const STATION_COLUMS = {
     sort: false,
   },
   version: {
-    title: 'Version',
+    title: 'Versión',
     type: 'string',
     sort: false,
   },

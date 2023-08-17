@@ -62,10 +62,13 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'status':
+              case 'active':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'version':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'type':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -99,7 +102,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
       response => {
         this.clarifications = response.data;
         this.totalItems = response.count || 0;
-        this.data.load(this.clarifications);
+        this.data.load(response.data);
         this.loading = false;
       },
       error => (this.loading = false)
@@ -133,11 +136,7 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     this.clarificationService.remove(id).subscribe({
       next: () => {
         this.getClarifications(),
-          this.alert(
-            'success',
-            'Registro de lista de aclaración',
-            'Borrado Correctamente'
-          );
+          this.alert('success', 'Aclaración', 'Borrado Correctamente');
       },
       error: error => {},
     });

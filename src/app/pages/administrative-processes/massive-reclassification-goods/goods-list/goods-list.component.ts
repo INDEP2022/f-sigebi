@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Ng2SmartTableComponent } from 'ng2-smart-table';
 import {
   catchError,
@@ -13,18 +14,27 @@ import {
   throttleTime,
 } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { take } from 'rxjs/operators';
+import { first, take } from 'rxjs/operators';
 import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { COLUMNS } from '../massive-reclassification-goods/columns';
 import { MassiveReclassificationGoodsService } from '../services/massive-reclassification-goods.service';
 
+interface NotData {
+  id: number;
+  reason: string;
+}
+interface IDs {
+  No_bien: number;
+}
 @Component({
   selector: 'app-goods-list',
   templateUrl: './goods-list.component.html',
@@ -38,7 +48,19 @@ export class GoodsListComponent
   pageSelecteds: number[] = [];
   subscription: Subscription = new Subscription();
   changeSettings: number = 0;
+  _changeDescription: string;
+  ids: IDs[];
+  availableToUpdate: any[] = [];
+  idsNotExist: NotData[] = [];
+  showError: boolean = false;
+  $trackedGoods = this.store.select(getTrackedGoods);
   @Input() changeDescription: string;
+  @Input() set files(files: any[]) {
+    if (files.length === 0) return;
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
   @Input()
   set changeMode(value: 'I' | 'E') {
     if (!value) return;
@@ -62,6 +84,8 @@ export class GoodsListComponent
   constructor(
     private massiveService: MassiveReclassificationGoodsService,
     private procedureManagement: ProcedureManagementService,
+    private excelService: ExcelService,
+    private store: Store,
     private readonly goodServices: GoodService
   ) {
     super();
@@ -90,6 +114,31 @@ export class GoodsListComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.data.load([]);
+      this.availableToUpdate = [];
+      this.idsNotExist = [];
+      this.showError = false;
+
+      this.ids = this.excelService.getData(binaryExcel);
+      if (this.ids[0].No_bien === undefined) {
+        this.alert(
+          'error',
+          'Ocurrio un error al leer el archivo',
+          'El archivo no cuenta con la estructura requerida'
+        );
+        return;
+      } else {
+        // this.loadGood(this.ids);
+        this.fillData(this.ids);
+        this.alert('success', 'Archivo subido', '');
+      }
+    } catch (error) {
+      this.alert('error', 'Ocurrio un error al leer el archivo', '');
+    }
   }
 
   private fillSelectedRows() {
@@ -245,6 +294,18 @@ export class GoodsListComponent
         }
       },
     });
+    this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response && response.length > 0) {
+          this.ids = response.map(x => {
+            return {
+              No_bien: +x.goodNumber,
+            };
+          });
+          this.fillData(this.ids);
+        }
+      },
+    });
     this.classificationOfGoods.valueChanges
       .pipe(
         distinctUntilChanged(),
@@ -253,9 +314,12 @@ export class GoodsListComponent
       )
       .subscribe(x => {
         if (!x) {
-          this.selectedGooods = [];
-          this.data.load([]);
-          this.data.refresh();
+          if (!this.ids) {
+            this.selectedGooods = [];
+            this.data.load([]);
+            this.data.refresh();
+            this.totalItems = 0;
+          }
         }
       });
     this.mode.valueChanges
@@ -270,7 +334,8 @@ export class GoodsListComponent
           this.totalItems > 0 &&
           x !== null &&
           x + ''.trim() !== '' &&
-          this.classificationOfGoods.value
+          this.classificationOfGoods.value &&
+          this.ids
         ) {
           this.selectedGooods = [];
           this.getData();
@@ -282,9 +347,9 @@ export class GoodsListComponent
     return obs ? (obs.length > 0 ? forkJoin(obs) : of([])) : of([]);
   }
 
-  override getData() {
+  private fillData(ids: IDs[] = null) {
     this.loading = true;
-    console.log(this.classificationOfGoods.value);
+    console.log(this.classificationOfGoods.value, this.goodStatus.value);
     const filterParams = new FilterParams();
     if (
       this.classificationOfGoods.value &&
@@ -299,7 +364,14 @@ export class GoodsListComponent
     if (this.goodStatus.value && (this.goodStatus.value + '').trim() !== '') {
       filterParams.addFilter(
         'status',
-        String(this.goodStatus.value.map((item: any) => item.status)),
+        String(this.goodStatus.value),
+        SearchFilter.IN
+      );
+    }
+    if (ids) {
+      filterParams.addFilter(
+        'id',
+        String(ids.map(row => row.No_bien)),
         SearchFilter.IN
       );
     }
@@ -385,5 +457,9 @@ export class GoodsListComponent
           this.loading = false;
         },
       });
+  }
+
+  override getData() {
+    this.fillData();
   }
 }

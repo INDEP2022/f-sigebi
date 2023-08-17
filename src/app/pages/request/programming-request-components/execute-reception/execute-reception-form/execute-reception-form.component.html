@@ -333,6 +333,13 @@
       <div class="row" *ngIf="formLoadingTrans" style="margin-bottom: 5rem">
         <form-loader *ngIf="formLoadingTrans"></form-loader>
       </div>
+
+      <!--<ng2-smart-table
+        [attr.class]="'table-bordered pt-3 table-responsive'"
+        [settings]="settingsTransGood"
+        [source]="goodsInfoTransportable">
+      </ng2-smart-table> -->
+
       <div class="row pt-3" *ngIf="!formLoadingTrans">
         <form [formGroup]="executeForm">
           <div class="table-responsive">
@@ -392,9 +399,14 @@
                       <th scope="row" class="align-baseline">
                         <input
                           type="checkbox"
-                          (click)="goodSelect(good.value)"
+                          (change)="goodSelect($event, good.value)"
                           class="form-control ng-pristine ng-valid ng-touched"
                           ng-reflect-model="true" />
+                        <!--<input
+                          type="checkbox"
+                          (change)="goodSelect($event)"
+                          class="form-control ng-pristine ng-valid ng-touched"
+                          ng-reflect-model="true" /> -->
                       </th>
                       <td scope="row" class="align-baseline">
                         {{ good.get('goodId')?.value }}
@@ -411,15 +423,20 @@
                       <td>
                         <form-field
                           [control]="executeForm.get('descriptionGoodSae')">
-                          <input
+                          <textarea
+                            id="w3review"
+                            name="w3review"
                             style="
                               width: 230px;
                               height: 50px;
                               font-size: 13px !important;
                             "
-                            type="text"
                             class="form-control"
-                            formControlName="descriptionGoodSae" />
+                            rows="4"
+                            maxlength="5000"
+                            formControlName="descriptionGoodSae"
+                            cols="50">
+                          </textarea>
                         </form-field>
                       </td>
                       <td class="text-left align-baseline">
@@ -435,13 +452,6 @@
                             maxlength="100"
                             formControlName="quantitySae" />
                         </form-field>
-                        <!--<form-field [control]="executeForm.get('quantitySae')">
-                          <input
-                            class="form-control"
-                            maxlength="50"
-                            
-                            formControlName="quantitySae" />
-                        </form-field> -->
                       </td>
                       <td class="text-left align-baseline">
                         {{ good.get('unitMeasure')?.value }}
@@ -506,7 +516,7 @@
                         {{ good.get('observations')?.value }}
                       </td>
                       <td class="text-center align-baseline"></td>
-                      <td class="text-center align-baseline">
+                      <td class="align-baseline">
                         {{ good.get('destiny').value }}
                       </td>
                       <td class="text-center align-baseline">
@@ -805,7 +815,9 @@
                                   <th scope="row" class="align-baseline">
                                     <input
                                       type="checkbox"
-                                      (click)="goodSelect(good.value)"
+                                      (change)="
+                                        goodSelectReceipt($event, good.value)
+                                      "
                                       class="form-control ng-pristine ng-valid ng-touched"
                                       ng-reflect-model="true" />
                                   </th>
@@ -826,11 +838,29 @@
                                       [control]="
                                         executeForm.get('descriptionGoodSae')
                                       ">
-                                      <input
-                                        type="text"
+                                      <textarea
+                                        id="w3review"
+                                        name="w3review"
+                                        style="
+                                          width: 230px;
+                                          height: 50px;
+                                          font-size: 13px !important;
+                                        "
                                         class="form-control"
+                                        rows="4"
                                         maxlength="5000"
-                                        formControlName="descriptionGoodSae" />
+                                        formControlName="descriptionGoodSae"
+                                        cols="50">
+                                      </textarea>
+                                      <!--<input
+                                        type="text"
+                                        style="
+                                          width: 230px;
+                                          height: 60px;
+                                          font-size: 13px !important;
+                                        "
+                                        class="form-control"
+                                         /> -->
                                     </form-field>
                                   </td>
                                   <td class="text-left align-baseline">
@@ -931,7 +961,7 @@
                                   <td class="text-center align-baseline">
                                     {{ good.get('destiny').value }}
                                   </td>
-                                  <td class="text-center align-baseline">
+                                  <td class="align-baseline">
                                     <select
                                       [value]="
                                         executeForm.get('transferentDestiny')
@@ -1191,6 +1221,9 @@
                           </th>
 
                           <th scope="col" class="text-nowrap">Observación</th>
+                          <th scope="col" class="text-nowrap">
+                            Destino Transferente
+                          </th>
                           <th scope="col" class="text-nowrap">Destino INDEP</th>
                           <th scope="col" class="text-nowrap text-center">
                             Acciones
@@ -1210,7 +1243,7 @@
                               <th scope="row" class="align-baseline">
                                 <input
                                   type="checkbox"
-                                  (click)="goodSelect(good.value)"
+                                  (change)="selectGuardGood($event, good.value)"
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
@@ -1231,16 +1264,20 @@
                                   [control]="
                                     executeForm.get('descriptionGoodSae')
                                   ">
-                                  <input
-                                    type="text"
-                                    class="form-control"
+                                  <textarea
+                                    id="w3review"
+                                    name="w3review"
                                     style="
                                       width: 230px;
                                       height: 50px;
                                       font-size: 13px !important;
                                     "
+                                    class="form-control"
+                                    rows="4"
                                     maxlength="5000"
-                                    formControlName="descriptionGoodSae" />
+                                    formControlName="descriptionGoodSae"
+                                    cols="50">
+                                  </textarea>
                                 </form-field>
                               </td>
                               <td class="text-left align-baseline">
@@ -1330,7 +1367,11 @@
                                 {{ good.get('observations')?.value }}
                               </td>
 
-                              <td class="text-center align-baseline">
+                              <td class="align-baseline">
+                                {{ good.get('destiny').value }}
+                              </td>
+
+                              <td class="align-baseline">
                                 <select
                                   [value]="
                                     executeForm.get('transferentDestiny').value
@@ -1617,6 +1658,9 @@
                             </th>
                             <th scope="col" class="text-nowrap">Observación</th>
                             <th scope="col" class="text-nowrap">
+                              Destino Transferente
+                            </th>
+                            <th scope="col" class="text-nowrap">
                               Destino INDEP
                             </th>
                             <th scope="col" class="text-nowrap text-center">
@@ -1637,7 +1681,9 @@
                                 <th scope="row" class="align-baseline">
                                   <input
                                     type="checkbox"
-                                    (click)="goodSelect(good.value)"
+                                    (change)="
+                                      goodSelectWarehouse($event, good.value)
+                                    "
                                     class="form-control ng-pristine ng-valid ng-touched"
                                     ng-reflect-model="true" />
                                 </th>
@@ -1660,16 +1706,20 @@
                                         'descriptionGoodSae'
                                       )
                                     ">
-                                    <input
-                                      type="text"
+                                    <textarea
+                                      id="w3review"
+                                      name="w3review"
                                       style="
                                         width: 230px;
                                         height: 50px;
                                         font-size: 13px !important;
                                       "
                                       class="form-control"
+                                      rows="4"
                                       maxlength="5000"
-                                      formControlName="descriptionGoodSae" />
+                                      formControlName="descriptionGoodSae"
+                                      cols="50">
+                                    </textarea>
                                   </form-field>
                                 </td>
                                 <td class="text-left align-baseline">
@@ -1760,10 +1810,13 @@
                                   </select>
                                 </td>
 
-                                <td class="text-center align-baseline">
+                                <td class="align-baseline">
                                   {{ good.get('observations')?.value }}
                                 </td>
-                                <td class="text-center align-baseline">
+                                <td class="align-baseline">
+                                  {{ good.get('destiny').value }}
+                                </td>
+                                <td class="align-baseline">
                                   <select
                                     [value]="
                                       executeForm.get('transferentDestiny')
@@ -2053,7 +2106,9 @@
                                 <th scope="row" class="align-baseline">
                                   <input
                                     type="checkbox"
-                                    (click)="goodSelect(good.value)"
+                                    (change)="
+                                      goodSelectReprog($event, good.value)
+                                    "
                                     class="form-control ng-pristine ng-valid ng-touched"
                                     ng-reflect-model="true" />
                                 </th>
@@ -2076,16 +2131,20 @@
                                         'descriptionGoodSae'
                                       )
                                     ">
-                                    <input
-                                      type="text"
-                                      class="form-control"
+                                    <textarea
+                                      id="w3review"
+                                      name="w3review"
                                       style="
                                         width: 230px;
                                         height: 50px;
                                         font-size: 13px !important;
                                       "
+                                      class="form-control"
+                                      rows="4"
                                       maxlength="5000"
-                                      formControlName="descriptionGoodSae" />
+                                      formControlName="descriptionGoodSae"
+                                      cols="50">
+                                    </textarea>
                                   </form-field>
                                 </td>
                                 <td class="text-left align-baseline">
@@ -2406,7 +2465,9 @@
                               <th scope="row" class="align-baseline">
                                 <input
                                   type="checkbox"
-                                  (click)="goodSelect(good.value)"
+                                  (change)="
+                                    goodSelectCancelation($event, good.value)
+                                  "
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
@@ -2427,16 +2488,20 @@
                                   [control]="
                                     goodsWarehouseForm.get('descriptionGoodSae')
                                   ">
-                                  <input
-                                    type="text"
-                                    class="form-control"
-                                    maxlength="5000"
+                                  <textarea
+                                    id="w3review"
+                                    name="w3review"
                                     style="
                                       width: 230px;
                                       height: 50px;
                                       font-size: 13px !important;
                                     "
-                                    formControlName="descriptionGoodSae" />
+                                    class="form-control"
+                                    rows="4"
+                                    maxlength="5000"
+                                    formControlName="descriptionGoodSae"
+                                    cols="50">
+                                  </textarea>
                                 </form-field>
                               </td>
                               <td class="text-left align-baseline">

@@ -67,4 +67,53 @@ export class ComerInvoiceService extends HttpService {
   }) {
     return this.post(ENDPOINT_INVOICE.ApplicationSQL, data);
   }
+
+  regXLote(data: { eventId: string; lotId: string }) {
+    return this.post(ENDPOINT_INVOICE.ComerLote, data);
+  }
+
+  dataCoord(data: { eventId: string; invoice: string }) {
+    return this.post(ENDPOINT_INVOICE.ComerCoord, data);
+  }
+
+  factBases(data: {
+    pEvent: string;
+    pLot: string;
+    pOption: number;
+    pInvoiceId: string;
+    genVat: number;
+    pDelegationIssues: number;
+  }) {
+    return this.post(ENDPOINT_INVOICE.FactBases, data);
+  }
+
+  validateFolio(data: { tpEvento: string; id_evento: string }) {
+    return this.post(ENDPOINT_INVOICE.ApplicationFolioDispo, data);
+  }
+
+  validateUSer(user: string) {
+    return this.get(`${ENDPOINT_INVOICE.ValidateUser}/${user}`);
+  }
+
+  preInvoiceGenerate(data: {
+    event: number;
+    eventId: number;
+    batch: number;
+    batchId: number;
+    ctrlEvent: number;
+    ctrlGenIva: number;
+    ctrlBatch: number;
+    toolbarNoDelegation: number;
+    toolbarUser: string;
+  }) {
+    return this.post(ENDPOINT_INVOICE.ControlProcedure, data);
+  }
+
+  VALIDA_PAGOS(params: any) {
+    return this.post(ENDPOINT_INVOICE.Fcomer112ICountHeader, params);
+  }
+
+  generateFolio(data: { pEvent: string; ptpevento: string }) {
+    return this.post(ENDPOINT_INVOICE.GenerateFolio, data);
+  }
 }

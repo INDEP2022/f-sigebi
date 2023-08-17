@@ -40,7 +40,14 @@ export class ConvertiongoodService extends HttpService {
     const route = `${ConvertiongoodEndpoints.Convertion}/${id}`;
     return this.put(route, good);
   }
-
+  createConvertionGood(good: IConvertiongood | any) {
+    const route = `${ConvertiongoodEndpoints.Convertion}`;
+    return this.post(route, good);
+  }
+  getSeqConversions() {
+    const route = `${ConvertiongoodEndpoints.SeqConversions}`;
+    return this.get<any>(route);
+  }
   remove(id: string | number) {
     const route = `${ConvertiongoodEndpoints.Convertion}/${id}`;
     return this.delete(route);
@@ -111,6 +118,9 @@ export class ConvertiongoodService extends HttpService {
   }
 
   createMinuteConversion(conversionActa: any) {
+    return this.post(ConvertiongoodEndpoints.LisActas, conversionActa);
+  }
+  putMinuteConversion(conversionActa: any) {
     return this.put(ConvertiongoodEndpoints.LisActas, conversionActa);
   }
 

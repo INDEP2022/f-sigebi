@@ -4,34 +4,38 @@
       <div class="col-12 col-sm-12 col-md-8">
         <h5 class="title">Cambio de Clasificación del Bien</h5>
       </div>
-      <div
-        class="col-12 col-sm-12 col-md-4 text-end"
-        *ngIf="origin && origin > 0">
+    </div>
+  </div>
+  <div body>
+    <form-loader *ngIf="loading"></form-loader>
+    <div class="row">
+      <div class="col-6">
+        <h6>Actual Clasificación</h6>
+      </div>
+      <div class="col-6 text-end" *ngIf="origin && origin > 0">
         <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
           Regresar
           <i class="fas fa-arrow-circle-left"></i>
         </button>
       </div>
     </div>
-  </div>
-  <div body>
-    <form-loader *ngIf="loading"></form-loader>
-    <h6>Actual Clasificación</h6>
+
     <br />
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberGood')" label="Número de Bien">
+          <form-field [control]="form.get('numberGood')" label="No. Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood" />
+              formControlName="numberGood"
+              [readonly]="readOnlyGood" />
           </form-field>
         </div>
         <div class="col-md-10 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionGood')"
-            label="Descripción del bien">
+            label="Descripción del Bien">
             <textarea
               formControlName="descriptionGood"
               class="form-control"
@@ -40,18 +44,20 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-2 col-sm-12 col-xs-12">
+      <div class="row">
+        <div
+          class="col-sm-12 col-xs-12 mt-3"
+          [class]="showExpedient ? 'col-md-10' : 'col-md-12'">
           <form-field
-            [control]="form.get('currentClasification')"
-            label="No. Clasif Bien">
+            [control]="form.get('clasification')"
+            label="No. Clasificación Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="currentClasification" />
+              formControlName="clasification" />
           </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionClasification')"
             label="Descripción">
@@ -60,8 +66,8 @@
               class="form-control"
               formControlName="descriptionClasification" />
           </form-field>
-        </div>
-        <div class="col-md-2 col-sm-12 col-xs-12">
+        </div> -->
+        <div class="col-md-2 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
           <form-field [control]="form.get('numberFile')" label="No. Expediente">
             <input
               type="text"
@@ -73,18 +79,35 @@
     </form>
     <hr />
     <h6>Nueva Clasificación</h6>
-    <form [formGroup]="formNew" class="form-material">
+    <form [formGroup]="formNew" class="form-material fixTopInput">
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <app-classification-of-goods-shared
+          <ng-custom-select-loading
             [form]="formNew"
-            [patchValue]="true"
-            (descriptionClasification)="
-              onChange($event)
-            "></app-classification-of-goods-shared>
+            [path]="pathClasification"
+            label="Clasificación del Bien"
+            formControlName="classificationOfGoods"
+            value="numClasifGoods"
+            bindLabel="description"
+            paramSearch="filter.description"
+            prefixSearch="$ilike"
+            seconParamSearch="filter.numClasifGoods"
+            [labelTemplate]="clasLabel"
+            [optionTemplate]="clasOption"
+            (valueChange)="onChange($event)"></ng-custom-select-loading>
+          <ng-template #clasLabel let-item="item">
+            {{ item.numClasifGoods }} - {{ item.description }}
+          </ng-template>
+          <ng-template #clasOption let-item="item">
+            <div [title]="item.numClasifGoods + '-' + item.description">
+              {{ item.numClasifGoods }} - {{ item.description }}
+            </div>
+          </ng-template>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-          <form-field [control]="formNew.get('unitXClassif')" label="Unidad">
+        <div
+          class="col-sm-12 col-xs-12 mt-3"
+          [class]="showExpedient ? 'col-md-3' : 'col-md-6'">
+          <form-field [control]="unitXClassif" label="Unidad">
             <ng-select class="form-control" formControlName="unitXClassif">
               <ng-option [value]="null">Seleccione un valor</ng-option>
               <ng-option *ngFor="let unit of units" [value]="unit.unit">
@@ -93,21 +116,20 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
           <form-field
             [control]="formNew.get('fileNumberNew')"
             label="Nuevo No. Expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="fileNumberNew"
-              readonly />
+              formControlName="fileNumberNew" />
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="formNew.get('destination')" label="Destino">
+          <form-field [control]="destination" label="Destino">
             <ng-select class="form-control" formControlName="destination">
               <ng-option [value]="null">Seleccione un valor</ng-option>
               <ng-option *ngFor="let dest of destinations" [value]="dest.id">
@@ -116,25 +138,23 @@
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <div class="d-flex">
-            <div>
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="disabledButton()"
-                (click)="showAlert()">
-                Guardar
-                <i aria-hidden="true" class="fa fa-save"></i>
-              </button>
-              <button
-                class="btn btn-danger btn-sm active ml-3"
-                type="button"
-                (click)="clear()">
-                Limpiar
-                <i class="fa fa-eraser"></i>
-              </button>
-            </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="disabledButton()"
+              (click)="showAlert()">
+              Guardar
+              <i aria-hidden="true" class="fa fa-save"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active ml-3"
+              type="button"
+              (click)="clear()">
+              Limpiar
+              <i class="fa fa-eraser"></i>
+            </button>
           </div>
         </div>
       </div>

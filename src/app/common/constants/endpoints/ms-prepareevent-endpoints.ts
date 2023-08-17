@@ -1,5 +1,7 @@
 export enum PrepareEventEndpoints {
   PreparaEvent = 'prepareevent',
+  DetEvent = 'comer-event/detEvent',
+  ResumenAdmvxr = 'comer-event/summaryAdmvxr',
   Encrypt = 'util-comer-v1//fbEncrypt',
   ApplicationPufSearchEvent = 'application/pufSearchEvent',
   ComerGoodXLote = 'comer-good-xlot',
@@ -11,4 +13,5 @@ export enum PrepareEventEndpoints {
   ApplicationTpEvent = 'application/get-data-eatevents-tpevents',
   SalePrices = 'util-comer-v1/priceVta',
   getFindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
+  FindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
 }

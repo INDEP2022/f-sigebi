@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICaptureHistoryIndicators } from 'src/app/core/models/ms-documents/documents';
@@ -8,8 +9,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { INDICATORS_HISTORY_DETAIL_COLUMNS } from './indicators-history-datail-columns';
 
 export class LocalViewIndicators {
-  proceedingsNum: number;
   flierNum: number;
+  proceedingsNum: number;
 }
 
 @Component({
@@ -17,22 +18,23 @@ export class LocalViewIndicators {
   templateUrl: './indicators-history-detail.component.html',
   styles: [],
 })
-export class IndicatorsHistoryDetailComponent
-  extends BasePage
-  implements OnChanges
-{
+export class IndicatorsHistoryDetailComponent extends BasePage {
   //
 
   @Input() noVolante: number;
   @Input() noExpediente: number;
   data: LocalDataSource = new LocalDataSource();
+  callback: any;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   columns: ICaptureHistoryIndicators[] = [];
 
   //
 
-  constructor(private serviceViewIndicators: HistoryIndicatorService) {
+  constructor(
+    private serviceViewIndicators: HistoryIndicatorService,
+    public modalRef: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -48,19 +50,18 @@ export class IndicatorsHistoryDetailComponent
     };
   }
 
-  ngOnChanges() {
-    if (this.noVolante != 0 || this.noExpediente != 0) {
-      this.getByFiltersViewHistIndicators();
-    }
+  ngOnInit() {
+    this.callback = this.modalRef.config.initialState;
+    this.data = new LocalDataSource();
+    this.getByFiltersViewHistIndicators();
   }
 
   //
 
   getByFiltersViewHistIndicators() {
-    this.loading = true;
     let local = new LocalViewIndicators();
-    local.proceedingsNum = this.noExpediente;
-    local.flierNum = this.noVolante;
+    local.flierNum = this.callback.data.flyerNumber;
+    local.proceedingsNum = this.callback.data.fileNumber;
     this.serviceViewIndicators
       .getHistoryIndicatorViewIndicators(local)
       .subscribe({
@@ -75,6 +76,10 @@ export class IndicatorsHistoryDetailComponent
           this.loading = false;
         },
       });
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
   //

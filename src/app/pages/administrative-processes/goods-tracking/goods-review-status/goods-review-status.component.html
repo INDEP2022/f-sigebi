@@ -32,7 +32,9 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Muebles">
                 <input
-                  [readonly]="!responsable"
+                  [disabled]="
+                    !responsable || loadingBtn || loading || loadingBtn2
+                  "
                   type="radio"
                   [(ngModel)]="selectedGender"
                   (change)="handleGenderChange()"
@@ -43,7 +45,9 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Inmuebles">
                 <input
-                  [readonly]="!responsable"
+                  [disabled]="
+                    !responsable || loadingBtn || loading || loadingBtn2
+                  "
                   [(ngModel)]="selectedGender"
                   (change)="handleGenderChange()"
                   type="radio"
@@ -54,7 +58,9 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-6">
               <form-radio label="Todos">
                 <input
-                  [readonly]="!responsable"
+                  [disabled]="
+                    !responsable || loadingBtn || loading || loadingBtn2
+                  "
                   [(ngModel)]="selectedGender"
                   (change)="handleGenderChange()"
                   type="radio"
@@ -69,7 +75,8 @@
           class="col-lg-7 col-md-12 col-sm-12 col-12 align-self-center mb-3 mt-3">
           <div class="col-lg-3 col-md-2 col-sm-4 col-12">
             <button
-              [disabled]="!responsable"
+              [ngClass]="{ loading: loadingBtn2 }"
+              [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
               (click)="attention()"
               class="btn btn-primary btn-sm active w-100">
               Atender
@@ -77,11 +84,13 @@
           </div>
           <div class="col-lg-5 col-md-5 col-sm-4 col-12">
             <button
-              [disabled]="!responsable"
-              class="btn btn-success btn-sm w-100"
+              [ngClass]="{ loading: loadingBtn }"
+              [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
+              class="btn btn-success btn-sm w-100 active"
               type="button"
               (click)="file.click()">
-              Atención Masiva <i class="bx bx-upload float-icon"></i>
+              Atención Masiva
+              <i *ngIf="!loadingBtn" class="bx bx-upload float-icon"></i>
             </button>
             <input
               type="file"
@@ -93,9 +102,9 @@
           </div>
           <div class="col-lg-4 col-md-5 col-sm-4 col-12">
             <button
-              [disabled]="!responsable"
-              (click)="exportar()"
-              class="btn btn-success btn-sm w-100">
+              [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
+              (click)="exportarExcel()"
+              class="btn btn-success btn-sm w-100 active">
               Exportar CSV <i class="bx bx-download float-icon"></i>
             </button>
           </div>
@@ -112,6 +121,19 @@
             (settingsChange)="settingsChange($event)"
             [settings]="settings"
             class="row justify-content-end"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-12">
+            <i class="fa fa-square" style="color: #686868"></i
+            ><span style="font-weight: 500">
+              Doble Clic en la Columna de Motivo para Consultar Pantalla
+              &nbsp;&nbsp;
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -146,6 +168,49 @@
               formControlName="responsable" />
           </form-field>
         </div> -->
+      </div>
+    </form>
+  </div>
+</app-card>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BÚSQUEDA POR BIEN</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form2">
+      <div class="col-md-2 mt-2">
+        <div>
+          <form-field [control]="form2.get('bien')" label="No. Bien">
+            <input type="text" class="form-control" formControlName="bien" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3 mt-2">
+        <div>
+          <form-field [control]="form2.get('responsable')" label="Responsable">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="responsable"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          (click)="search()"
+          class="btn btn-sm btn-block btn-primary active">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          (click)="clear()"
+          class="btn btn-sm btn-block btn-danger active">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
       </div>
     </form>
   </div>

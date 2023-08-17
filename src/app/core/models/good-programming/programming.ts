@@ -30,6 +30,10 @@ export interface Iprogramming {
   regSendSat: number;
   regionalDelegationNumber: any;
   regionalDelegationName: string;
+  stateKeyName: string;
+  transferentName: string;
+  relevantTypeName: string;
+  warehouseName: string;
   startDate: string;
   stateKey: number;
   stationId: number;
@@ -45,4 +49,9 @@ export interface Iprogramming {
   typeUser: string;
   validateGood: string;
   version: number;
+}
+
+export interface IprogrammingDate {
+  date: string;
+  total: number;
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -28,6 +29,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -75,6 +77,7 @@ export class FormalizeProgrammingFormComponent
   paramsStation = new BehaviorSubject<ListParams>(new ListParams());
   paramsReception = new BehaviorSubject<ListParams>(new ListParams());
   paramsGuard = new BehaviorSubject<ListParams>(new ListParams());
+  paramsReceiptsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   paramsGoodsWarehouse = new BehaviorSubject<ListParams>(new ListParams());
   paramsReprog = new BehaviorSubject<ListParams>(new ListParams());
   paramsCanc = new BehaviorSubject<ListParams>(new ListParams());
@@ -87,6 +90,7 @@ export class FormalizeProgrammingFormComponent
   totalItemsGuard: number = 0;
   totalItemsWarehouse: number = 0;
   totalItemsReceipt: number = 0;
+  totalItemsReceiptWarehouse: number = 0;
   totalItemsReprog: number = 0;
   totalItemsCanc: number = 0;
   totalItemsProceedings: number = 0;
@@ -117,6 +121,7 @@ export class FormalizeProgrammingFormComponent
   observation: string = '';
   proceedingData: IProceedings;
   task: ITask;
+
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -131,8 +136,15 @@ export class FormalizeProgrammingFormComponent
 
   settingsReceipt = {
     ...this.settings,
-    actions: false,
+    actions: {
+      columnTitle: 'Visualizar',
+      position: 'right',
+      delete: false,
+    },
     columns: RECEIPT_COLUMNS_FORMALIZE,
+    edit: {
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2"></i>',
+    },
   };
 
   settingsReprog = {
@@ -192,6 +204,8 @@ export class FormalizeProgrammingFormComponent
   search: FormControl = new FormControl({});
   programming: Iprogramming;
   stateName: string = '';
+  receiptGuardGood: LocalDataSource = new LocalDataSource();
+  receiptWarehouseGood: LocalDataSource = new LocalDataSource();
 
   settingsMinutes = { ...TABLE_SETTINGS };
   /*settingsMinutes = {
@@ -202,6 +216,32 @@ export class FormalizeProgrammingFormComponent
     
     //actions: { columnTitle: 'Generar / cerrar acta', position: 'right' }, 
   }; */
+
+  settingsReceiptClose = {
+    ...this.settings,
+    actions: {
+      columnTitle: 'Visualizar',
+      position: 'right',
+      delete: false,
+    },
+    columns: RECEIPT_GUARD_COLUMNS,
+    edit: {
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2"></i>',
+    },
+  };
+
+  settingsReceiptWarehouseClose = {
+    ...this.settings,
+    actions: {
+      columnTitle: 'Visualizar',
+      position: 'right',
+      delete: false,
+    },
+    columns: RECEIPT_GUARD_COLUMNS,
+    edit: {
+      editButtonContent: '<i class="fa fa-eye text-primary mx-2"></i>',
+    },
+  };
 
   settingsRecepGoods = {
     ...this.settings,
@@ -238,7 +278,8 @@ export class FormalizeProgrammingFormComponent
     private sanitizer: DomSanitizer,
     private taskService: TaskService,
     private authService: AuthService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private goodsProcessService: GoodprocessService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -252,11 +293,7 @@ export class FormalizeProgrammingFormComponent
     this.formLoading = true;
     this.getProgrammingData();
     this.prepareFormProceeding();
-    this.paramsReceipts
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getReceipts());
 
-    this.getReceiptsGuard();
     /*this.paramsReceipts
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => ); */
@@ -265,7 +302,6 @@ export class FormalizeProgrammingFormComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getProccedings());
 
-    this.getInfoGoodsProgramming();
     /*
     this.router.navigate(
       [
@@ -293,6 +329,9 @@ export class FormalizeProgrammingFormComponent
   getReceipts() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.actId'] = this.actId;
+    params.getValue()['filter.statusReceipt'] = 'CERRADO';
+
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
         this.receiptData = response.data[0];
@@ -304,9 +343,11 @@ export class FormalizeProgrammingFormComponent
     });
   }
 
-  getReceiptsGuard() {
+  getReceiptsGuardInfo() {
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
+    params.getValue()['filter.actId'] = this.actId;
+    params.getValue()['filter.statusReceiptGuard'] = 'CERRADO';
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
         //this.receiptGuardGood = response.data[0];
@@ -320,7 +361,7 @@ export class FormalizeProgrammingFormComponent
         });
 
         this.receiptWarehouseData = infoWarehouse[0];
-        this.receipts.load(infoWarehouse);
+        this.receiptWarehouseGood.load(infoWarehouse);
         //this.receiptWarehouseGood = infoWarehouse[0];
         //this.receiptWarehouse.load(infoWarehouse);
 
@@ -333,9 +374,9 @@ export class FormalizeProgrammingFormComponent
           });
 
           this.receiptGuardData = infoGuard[0];
-          this.receipts.load(infoGuard);
+          //this.receipts.load(infoGuard);
           //this.receiptGuardGood = infoGuard[0];
-          //this.receiptGuards.load(infoGuard);
+          this.receiptGuardGood.load(infoGuard);
         }
       },
       error: error => {},
@@ -362,7 +403,13 @@ export class FormalizeProgrammingFormComponent
           this.proceeding.push(form);
         });
         //this.proceedings.load(response.data);
-
+        this.getInfoGoodsProgramming();
+        this.getReceiptsGuard();
+        this.getReceiptsGuardWarehouse();
+        this.getReceiptsGuardInfo();
+        this.paramsReceipts
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.getReceipts());
         this.totalItemsProceedings = response.count;
       },
       error: error => {},
@@ -387,9 +434,9 @@ export class FormalizeProgrammingFormComponent
         this.getwarehouse();
         this.getTask();
         //this.getUsersProgramming();
-        this.params
+        /*this.params
           .pipe(takeUntil(this.$unSubscribe))
-          .subscribe(() => this.getInfoReceptionGood());
+          .subscribe(() => this.getInfoReceptionGood()); */
       });
   }
 
@@ -547,6 +594,8 @@ export class FormalizeProgrammingFormComponent
 
     this.params.getValue()['filter.programmingId'] = this.programmingId;
     this.params.getValue()['filter.status'] = 'EN_RECEPCION';
+    this.params.getValue()['filter.actaId'] = this.actId;
+
     this.programmingService
       .getGoodsProgramming(this.params.getValue())
       .subscribe(data => {
@@ -598,6 +647,7 @@ export class FormalizeProgrammingFormComponent
     const goodsInfoGuard: any[] = [];
     this.paramsGuard.getValue()['filter.programmingId'] = this.programmingId;
     this.paramsGuard.getValue()['filter.status'] = 'EN_RESGUARDO';
+    this.paramsGuard.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsGuard.getValue())
       .subscribe({
@@ -637,6 +687,7 @@ export class FormalizeProgrammingFormComponent
     this.paramsGoodsWarehouse.getValue()['filter.programmingId'] =
       this.programmingId;
     this.paramsGoodsWarehouse.getValue()['filter.status'] = 'EN_ALMACEN';
+    this.paramsGoodsWarehouse.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsGoodsWarehouse.getValue())
       .subscribe({
@@ -666,6 +717,7 @@ export class FormalizeProgrammingFormComponent
     const goodsInfoReprog: any[] = [];
     this.paramsReprog.getValue()['filter.programmingId'] = this.programmingId;
     this.paramsReprog.getValue()['filter.status'] = 'EN_PROGRAMACION';
+    this.paramsReprog.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsReprog.getValue())
       .subscribe({
@@ -695,6 +747,7 @@ export class FormalizeProgrammingFormComponent
     const goodsInfoCancel: any[] = [];
     this.paramsCanc.getValue()['filter.programmingId'] = this.programmingId;
     this.paramsCanc.getValue()['filter.status'] = 'CANCELADO';
+    this.paramsCanc.getValue()['filter.actaId'] = this.actId;
     this.programmingService
       .getGoodsProgramming(this.paramsCanc.getValue())
       .subscribe({
@@ -728,70 +781,150 @@ export class FormalizeProgrammingFormComponent
     */
   }
 
-  generateMinute(proceeding: IProceedings) {
+  async generateMinute(proceeding: IProceedings) {
     proceeding.programmingId = this.programmingId;
-    if (
-      this.receiptData?.statusReceipt == 'CERRADO' ||
-      this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
-      this.receiptWarehouseData?.statusReceiptGuard == 'CERRADO'
-    ) {
-      if (this.proceeding.value[0].observationProceedings) {
-        this.proceedingService.updateProceeding(proceeding).subscribe({
-          next: () => {
-            let config = {
-              ...MODAL_CONFIG,
-              class: 'modal-lg modal-dialog-centered',
-            };
+    const receiptCheck = await this.checkReceipt();
+    const receiptGuardCheck = await this.checkReceiptGuard();
+    const receiptWarehouseCheck = await this.checkReceiptWarehouse();
+    if (receiptCheck == true) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere cerrar todos los recibos de entrega'
+      );
+    } else if (receiptGuardCheck == true) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere cerrar todos los recibos de resguardo'
+      );
+    } else if (receiptWarehouseCheck == true) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere cerrar todos los recibos de almacén'
+      );
+    } else if (!receiptCheck && !receiptGuardCheck && !receiptWarehouseCheck) {
+      console.log('LISTE PARA CERRAR');
+      if (
+        this.receiptData?.statusReceipt == 'CERRADO' ||
+        this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
+        this.receiptWarehouseData?.statusReceiptGuard == 'CERRADO'
+      ) {
+        if (this.proceeding.value[0].observationProceedings) {
+          this.proceedingService.updateProceeding(proceeding).subscribe({
+            next: () => {
+              let config = {
+                ...MODAL_CONFIG,
+                class: 'modal-lg modal-dialog-centered',
+              };
 
-            config.initialState = {
-              proceeding,
-              programming: this.programming,
-              typeTransferent: this.typeTransferent,
-              callback: (
-                proceeding: IProceedings,
-                tranType: string,
-                typeFirm: string
-              ) => {
-                if (proceeding && tranType) {
-                  this.processInfoProceeding(proceeding, tranType, typeFirm);
-                  //this.getProccedings();
-                }
-              },
-            };
+              config.initialState = {
+                proceeding,
+                programming: this.programming,
+                typeTransferent: this.typeTransferent,
+                callback: (
+                  proceeding: IProceedings,
+                  tranType: string,
+                  typeFirm: string
+                ) => {
+                  if (proceeding && tranType) {
+                    this.processInfoProceeding(proceeding, tranType, typeFirm);
+                    //this.getProccedings();
+                  }
+                },
+              };
 
-            this.modalService.show(InformationRecordComponent, config);
-          },
-          error: error => {},
-        });
+              this.modalService.show(InformationRecordComponent, config);
+            },
+            error: error => {},
+          });
+        } else {
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+
+          config.initialState = {
+            proceeding,
+            programming: this.programming,
+            typeTransferent: this.typeTransferent,
+            callback: (
+              proceeding: IProceedings,
+              tranType: string,
+              typeFirm: string
+            ) => {
+              this.processInfoProceeding(proceeding, tranType, typeFirm);
+              //this.getProccedings();
+            },
+          };
+
+          this.modalService.show(InformationRecordComponent, config);
+        }
       } else {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
-        };
-
-        config.initialState = {
-          proceeding,
-          programming: this.programming,
-          typeTransferent: this.typeTransferent,
-          callback: (
-            proceeding: IProceedings,
-            tranType: string,
-            typeFirm: string
-          ) => {
-            this.processInfoProceeding(proceeding, tranType, typeFirm);
-            //this.getProccedings();
-          },
-        };
-
-        this.modalService.show(InformationRecordComponent, config);
+        this.alertInfo(
+          'warning',
+          'Acción Inválida',
+          'Se requiere tener los recibos cerrados'
+        ).then();
       }
-    } else {
-      this.alertInfo(
-        'info',
-        'Acción Inválida',
-        'Se requiere tener los recibos cerrados'
-      ).then();
     }
+  }
+
+  checkReceipt() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.actId'] = this.actId;
+      params.getValue()['filter.statusReceipt'] = 'ABIERTO';
+
+      this.receptionGoodService.getReceipt(params.getValue()).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  checkReceiptGuard() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.actId'] = this.actId;
+      params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
+      params.getValue()['filter.typeReceipt'] = 'RESGUARDO';
+      this.receptionGoodService.getReceptions(params.getValue()).subscribe({
+        next: response => {
+          console.log('RECIBO RESGUARDO ABIERTO');
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  checkReceiptWarehouse() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.actId'] = this.actId;
+      params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
+      params.getValue()['filter.typeReceipt'] = 'ALMACEN';
+      this.receptionGoodService.getReceptions(params.getValue()).subscribe({
+        next: response => {
+          console.log('RECIBO almacén ABIERTO');
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
   }
 
   saveInfoProceeding() {
@@ -1203,6 +1336,7 @@ export class FormalizeProgrammingFormComponent
           this.proceeding.clear();
           this.totalItemsProceedings = 0;
           this.sendEmail();
+          this.formLoading = false;
         }
       },
     };
@@ -1217,9 +1351,6 @@ export class FormalizeProgrammingFormComponent
     this.proceedingService.getProceedings(params.getValue()).subscribe({
       next: async response => {
         if (response.data.length > 0) {
-          const showBase64: any = await this.showBase64(
-            response.data[0].id_content
-          );
           const data = {
             //recipients: `gustavoangelsantosclemente@gmail.com, al221810743@gmail.com`,
             recipients: `${response.data[0].emailOic}, ${response.data[0].emailWorker1}, ${response.data[0].emailWorker2}, ${response.data[0].emailWitness1}, ${response.data[0].emailWitness2}, al221810743@gmail.com`,
@@ -1234,12 +1365,10 @@ export class FormalizeProgrammingFormComponent
             typeAtt: 'application/pdf;',
             //"urlAtt": "https://seguimiento.agoraparticipa.org/docs/PDF_TEXT-CA4Bn.pdf", //si cuentas con una url usas esto en ves del base64
             process: 'FORMALIZAR',
-            fileB64: showBase64,
+            wcontent: response.data[0].id_content,
           };
           this.emailService.createEmailNotify(data).subscribe({
-            next: response => {
-              console.log('correo enviado', response);
-            },
+            next: response => {},
           });
         }
       },
@@ -1307,17 +1436,97 @@ export class FormalizeProgrammingFormComponent
         body['ssubtype'] = 'ACCEPT';
 
         const closeTask = await this.closeTaskExecuteRecepcion(body);
+
         if (closeTask) {
-          this.alertInfo(
-            'success',
-            'Acción correcta',
-            'Se cerro la tarea formalizar entrega correctamente'
-          ).then(question => {
-            if (question.isConfirmed) {
-              this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+          const deleteGoodsReprog = await this.deleteGoodReprog();
+          if (deleteGoodsReprog) {
+            const updateProgramming = await this.updateProgrammingInfo();
+            if (updateProgramming) {
+              const sendGoodInventary = await this.sendGoodsGuardInventary();
+              if (sendGoodInventary) {
+                this.alertInfo(
+                  'success',
+                  'Acción correcta',
+                  'Se cerro la tarea formalizar entrega correctamente'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+                  }
+                });
+              }
             }
-          });
+          }
         }
+      }
+    });
+  }
+
+  updateProgrammingInfo() {
+    return new Promise((resolve, reject) => {
+      const form = {
+        id: this.programming.id,
+        status: 'APROBADA',
+      };
+
+      this.programmingService
+        .updateProgramming(this.programming.id, form)
+        .subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(true);
+          },
+        });
+    });
+  }
+
+  sendGoodsGuardInventary() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          data.map((item: IGood) => {
+            this.goodsProcessService
+              .AddReceptionBpm(Number(item.id), Number(item.goodId))
+              .subscribe({
+                next: response => {
+                  console.log('se envio', response);
+                  resolve(true);
+                },
+                error: error => {
+                  resolve(true);
+                },
+              });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
+  deleteGoodReprog() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          const deleteGoodProg = {
+            programmingId: this.programming.id,
+            goodId: data.goodId,
+          };
+
+          this.programmingGoodService
+            .deleteGoodProgramming(deleteGoodProg)
+            .subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+        });
+      } else {
+        resolve(true);
       }
     });
   }
@@ -1405,5 +1614,252 @@ export class FormalizeProgrammingFormComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(ShowProceedingCloseComponent, config);
+  }
+
+  showReceipt(receipt: IRecepitGuard) {
+    this.wcontentService.obtainFile(receipt.contentId).subscribe({
+      next: response => {
+        let blob = this.dataURItoBlob(response);
+        let file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        this.openPrevPdf(fileURL);
+      },
+      error: error => {},
+    });
+  }
+
+  getReceiptsGuard() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsReceipts.getValue()['filter.statusReceiptGuard'] = 'CERRADO';
+    this.paramsReceipts.getValue()['filter.actId'] = this.actId;
+    this.paramsReceipts.getValue()['filter.programmingId'] = this.programmingId;
+    this.receptionGoodService
+      .getReceptions(this.paramsReceipts.getValue())
+      .subscribe({
+        next: response => {
+          const filterWarehouse = response.data.map((item: any) => {
+            if (item.typeReceipt == 'RESGUARDO') return item;
+          });
+
+          const infoWarehouse = filterWarehouse.filter(
+            (item: IRecepitGuard) => {
+              return item;
+            }
+          );
+
+          //this.receiptWarehouseGood = infoWarehouse[0];
+
+          if (infoWarehouse.length > 0) {
+            const infoWarehouseFilter = infoWarehouse.map(
+              (receipt: IReceipt) => {
+                receipt.receiptDate = moment(receipt.receiptDate).format(
+                  'DD/MM/YYYY'
+                );
+
+                return receipt;
+              }
+            );
+            /*infoWarehouse[0].receiptDate = moment(
+              infoWarehouse[0]?.receiptDate
+            ).format('DD/MM/YYYY'); */
+
+            this.receiptGuardGood.load(infoWarehouseFilter);
+            this.totalItemsReceipt = this.receiptGuardGood.count();
+          }
+
+          /*const filterGuard = response.data.map((item: any) => {
+          if (item.typeReceipt == 'RESGUARDO') return item;
+        });
+        if (filterGuard) {
+          const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
+            return item;
+          });
+          this.receiptGuardGood = infoGuard[0];
+
+          if (infoGuard.length > 0) {
+            infoGuard[0].receiptDate = moment(infoGuard[0]?.receiptDate).format(
+              'DD/MM/YYYY'
+            );
+            this.receiptGuards.load(infoGuard);
+          }
+        } */
+        },
+        error: error => {},
+      });
+  }
+
+  getReceiptsGuardWarehouse() {
+    const params = new BehaviorSubject<ListParams>(new ListParams());
+    this.paramsReceiptsWarehouse.getValue()['filter.statusReceiptGuard'] =
+      'CERRADO';
+    this.paramsReceiptsWarehouse.getValue()['filter.actId'] = this.actId;
+    this.paramsReceiptsWarehouse.getValue()['filter.programmingId'] =
+      this.programmingId;
+    this.receptionGoodService
+      .getReceptions(this.paramsReceiptsWarehouse.getValue())
+      .subscribe({
+        next: response => {
+          const filterWarehouse = response.data.map((item: any) => {
+            if (item.typeReceipt == 'ALMACEN') return item;
+          });
+
+          const infoWarehouse = filterWarehouse.filter(
+            (item: IRecepitGuard) => {
+              return item;
+            }
+          );
+
+          //this.receiptWarehouseGood = infoWarehouse[0];
+
+          if (infoWarehouse.length > 0) {
+            const infoWarehouseFilter = infoWarehouse.map(
+              (receipt: IReceipt) => {
+                receipt.receiptDate = moment(receipt.receiptDate).format(
+                  'DD/MM/YYYY'
+                );
+
+                return receipt;
+              }
+            );
+            /*infoWarehouse[0].receiptDate = moment(
+              infoWarehouse[0]?.receiptDate
+            ).format('DD/MM/YYYY'); */
+
+            this.receiptWarehouseGood.load(infoWarehouseFilter);
+            this.totalItemsReceiptWarehouse = this.receiptWarehouseGood.count();
+          }
+
+          /*const filterGuard = response.data.map((item: any) => {
+          if (item.typeReceipt == 'RESGUARDO') return item;
+        });
+        if (filterGuard) {
+          const infoGuard = filterGuard.filter((item: IRecepitGuard) => {
+            return item;
+          });
+          this.receiptGuardGood = infoGuard[0];
+
+          if (infoGuard.length > 0) {
+            infoGuard[0].receiptDate = moment(infoGuard[0]?.receiptDate).format(
+              'DD/MM/YYYY'
+            );
+            this.receiptGuards.load(infoGuard);
+          }
+        } */
+        },
+        error: error => {},
+      });
+  }
+
+  receiptResGood(receipt: IReceipt) {
+    const goodsInfoRecep: any[] = [];
+    this.params.getValue()['filter.receiptId'] = receipt.id;
+    this.params.getValue()['filter.actId'] = receipt.actId;
+    this.params.getValue()['filter.programmationId'] = receipt.programmingId;
+    this.receptionGoodService.getReceiptGood(this.params.getValue()).subscribe({
+      next: response => {
+        response.data.map((item: any) => {
+          this.goodService.getGoodByIds(item.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              // queda pendiente mostrar el alías del almacén //
+
+              goodsInfoRecep.push(response);
+              this.goodsRecepcion.load(goodsInfoRecep);
+              this.totalItemsReception = this.goodsRecepcion.count();
+            },
+          });
+        });
+      },
+      error: error => {},
+    });
+    /*
+    this.receptionGoodService.getReceiptGoodByIds(formData).subscribe({
+      next: data => {
+        const info = [data];
+        info.map((item: any) => {
+          this.goodService.getGoodByIds(item.goodId).subscribe({
+            next: response => {
+              if (response.saePhysicalState == 1)
+                response.saePhysicalState = 'BUENO';
+              if (response.saePhysicalState == 2)
+                response.saePhysicalState = 'MALO';
+              if (response.decriptionGoodSae == null)
+                response.decriptionGoodSae = 'Sin descripción';
+              // queda pendiente mostrar el alías del almacén //
+
+              goodsInfoRecep.push(response);
+              this.goodsRecepcion.load(goodsInfoRecep);
+              this.totalItemsReception = this.goodsRecepcion.count();
+            },
+          });
+        });
+      },
+      error: error => {},
+    }); */
+  }
+
+  receiptGuardSelect(receiptGuard: IRecepitGuard) {
+    const goodsInfoGuard: any[] = [];
+    this.paramsGuard.getValue()['filter.receiptGuardId'] = receiptGuard.id;
+    this.receptionGoodService
+      .getReceptionGoods(this.paramsGuard.getValue())
+      .subscribe({
+        next: data => {
+          data.data.map((item: any) => {
+            this.goodService.getGoodByIds(item.idGood).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+
+                goodsInfoGuard.push(response);
+                this.goodsGuards.load(goodsInfoGuard);
+                this.totalItemsGuard = this.goodsGuards.count();
+                this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+              },
+            });
+          });
+        },
+        error: error => {},
+      });
+  }
+
+  receiptWarehouseSelect(receiptGuard: IRecepitGuard) {
+    const goodsInfoWarehouse: any[] = [];
+    this.paramsGuard.getValue()['filter.receiptGuardId'] = receiptGuard.id;
+    this.receptionGoodService
+      .getReceptionGoods(this.paramsGuard.getValue())
+      .subscribe({
+        next: data => {
+          data.data.map((item: any) => {
+            this.goodService.getGoodByIds(item.idGood).subscribe({
+              next: response => {
+                if (response.saePhysicalState == 1)
+                  response.saePhysicalState = 'BUENO';
+                if (response.saePhysicalState == 2)
+                  response.saePhysicalState = 'MALO';
+                if (response.decriptionGoodSae == null)
+                  response.decriptionGoodSae = 'Sin descripción';
+                // queda pendiente mostrar el alías del almacén //
+
+                goodsInfoWarehouse.push(response);
+                this.goodsWarehouse.load(goodsInfoWarehouse);
+                this.totalItemsWarehouse = this.goodsWarehouse.count();
+                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.count()})`;
+              },
+            });
+          });
+        },
+        error: error => {},
+      });
   }
 }

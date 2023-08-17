@@ -5,6 +5,7 @@ export enum UserEndpoints {
   GetUserName = `seg-access-x-areas/get-user-name`,
   VigSupervisionAccess = 'vig-supervision-access',
   UserAsigne = 'seg-users/user-assigned',
+  GetAllSegUser = 'seg-users/get-all-seg-user',
   DelegationUser = 'seg-access-x-areas/getDelegation',
 
   //consulta del form
@@ -14,4 +15,10 @@ export enum UserEndpoints {
   ProNameEmail = 'seg-access-x-areas/procNameEmail',
   ComerUsersAutXEvent = 'comer-usersautxevent',
   NameOtval = 'ind-user/get-name-otval-user',
+
+  IndUserNoInd = 'ind-user/noind',
+  FaValUserInd = 'seg-users/fa-val-user-ind',
+  GetText = 'seg-users/getText',
+  GetUserOt = 'seg-users/getuserOt',
+  SpInsertWithcopyOfficial = 'seg-users/sp-insert-withcopy-official',
 }

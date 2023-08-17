@@ -12,8 +12,10 @@
         [eventFormVisual]="eventFormVisual"
         *ngIf="canvas.main"
         [eventForm]="eventForm"
+        [isOpenEvent]="true"
         [parameters]="parameters"
-        [loggedUser]="loggedUser"></event-data-form>
+        [loggedUser]="loggedUser"
+        (onSuccessApply)="onApply()"></event-data-form>
     </div>
     <div class="row">
       <div class="md-tabs">

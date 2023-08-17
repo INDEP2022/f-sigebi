@@ -10,11 +10,9 @@ export const COLUMNS = {
   codigo: {
     title: 'Fracción',
     sort: false,
-    filter: false,
   },
   clasificador_siab: {
     title: 'Clasificador Siab',
     sort: false,
-    filter: false,
   },
 };

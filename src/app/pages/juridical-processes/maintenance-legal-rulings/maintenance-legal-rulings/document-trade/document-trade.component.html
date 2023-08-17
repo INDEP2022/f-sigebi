@@ -6,7 +6,7 @@
         label="No&#46; Dictaminaci&oacute;n">
         <input
           required
-          type="number"
+          type="text"
           class="form-control"
           formControlName="officialNumber" />
       </form-field>
@@ -16,7 +16,7 @@
         [control]="form.get('typeDict')"
         label="Tipo Dictaminaci&oacute;n">
         <input
-          maxlength="15"
+          type="text"
           required
           class="form-control"
           formControlName="typeDict" />
@@ -24,18 +24,18 @@
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('statusOf')" label="Estatus">
-        <input class="form-control" formControlName="statusOf" />
+        <input type="text" class="form-control" formControlName="statusOf" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('city')" label="Ciudad">
-        <input class="form-control" formControlName="city" />
+        <input type="text" class="form-control" formControlName="city" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('notaryNumber')" label="No. Notario">
         <input
-          type="number"
+          type="text"
           class="form-control"
           formControlName="notaryNumber" />
       </form-field>
@@ -43,12 +43,18 @@
 
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('text1')" label="P&aacute;rrafo Inicial">
-        <textarea class="form-control" formControlName="text1"></textarea>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="text1"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field [control]="form.get('text2')" label="P&aacute;rrafo Final">
-        <textarea class="form-control" formControlName="text2"></textarea>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="text2"></textarea>
       </form-field>
     </div>
 
@@ -56,26 +62,35 @@
       <form-field
         [control]="form.get('text2To')"
         label="M&aacute;s Informaci&oacute;n 1">
-        <textarea class="form-control" formControlName="text2To"></textarea>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="text2To"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-2">
       <form-field
         [control]="form.get('text3')"
         label="M&aacute;s Informaci&oacute;n 3">
-        <textarea class="form-control" formControlName="text3"></textarea>
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="text3"></textarea>
       </form-field>
     </div>
 
     <div class="col-sm-12 col-12 col-md-4 p-2">
       <form-field [control]="form.get('sender')" label="Remitente">
-        <input class="form-control" formControlName="sender" />
+        <input type="text" class="form-control" formControlName="sender" />
       </form-field>
     </div>
 
     <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('cveChargeRem')" label="Clave Cargo">
-        <input class="form-control" formControlName="cveChargeRem" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="cveChargeRem" />
       </form-field>
     </div>
 
@@ -83,13 +98,16 @@
       <form-field
         [control]="form.get('desSenderPa')"
         label="Destinatario Remitente">
-        <input class="form-control" formControlName="desSenderPa" />
+        <input type="text" class="form-control" formControlName="desSenderPa" />
       </form-field>
     </div>
 
     <div class="col-sm-12 col-12 col-md-3 p-2">
       <form-field [control]="form.get('recipient')" label="Destinatario">
-        <input class="form-control" formControlName="recipient" />
+        <input
+          [max-length]="20"
+          class="form-control"
+          formControlName="recipient" />
       </form-field>
     </div>
 
@@ -98,7 +116,7 @@
         [control]="form.get('delegacionRecipientNumber')"
         label="No&#46; Delegaci&oacute;n Destinatario">
         <input
-          type="number"
+          type="text"
           class="form-control"
           formControlName="delegacionRecipientNumber" />
       </form-field>
@@ -108,6 +126,7 @@
         [control]="form.get('recipientDepartmentNumber')"
         label="No&#46; Departamento Destinatario">
         <input
+          type="text"
           class="form-control"
           formControlName="recipientDepartmentNumber" />
       </form-field>
@@ -117,16 +136,20 @@
       <form-field
         [control]="form.get('recipientEsxt')"
         label="Destinatario ESXT">
-        <input class="form-control" formControlName="recipientEsxt" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="recipientEsxt" />
       </form-field>
     </div>
 
     <div class="col-sm-12 col-12 col-md-12 p-2">
       <button
-        class="btn btn-sm btn-primary active"
         type="submit"
+        class="btn btn-primary btn-sm active"
         [disabled]="form.invalid">
         Guardar
+        <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
   </div>

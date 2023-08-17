@@ -1,35 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component } from '@angular/core';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ActivatedRoute } from '@angular/router';
+import { ExpenseCaptureDataService } from '../services/expense-capture-data.service';
 
 @Component({
   selector: 'app-expense-capture',
   templateUrl: './expense-capture.component.html',
   styles: [],
 })
-export class ExpenseCaptureComponent extends BasePage implements OnInit {
-  settings1 = {
-    ...this.settings,
-    actions: false,
-  };
-  settings2 = {
-    ...this.settings,
-    actions: false,
-  };
-
-  list1: any;
-  list2: any;
-
-  form: FormGroup = new FormGroup({});
-  ngOnInit(): void {
-    this.prepareForm();
-  }
-
+export class ExpenseCaptureComponent extends BasePage {
   address: string;
-  constructor(private activateRoute: ActivatedRoute) {
+  constructor(
+    private activateRoute: ActivatedRoute,
+    private dataService: ExpenseCaptureDataService
+  ) {
     super();
     this.activateRoute.params.subscribe({
       next: param => {
@@ -40,41 +26,11 @@ export class ExpenseCaptureComponent extends BasePage implements OnInit {
     });
   }
 
-  private prepareForm() {
-    // this.form = this.fb.group({
-    //   idSpent: ['', [Validators.required]],
-    //   concept: ['', [Validators.required]],
-    //   paymentResquest: [
-    //     '',
-    //     [Validators.required, Validators.pattern(STRING_PATTERN)],
-    //   ],
-    //   exchange: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    //   idEvent: ['', [Validators.required]],
-    //   idAllotment: ['', [Validators.required]],
-    //   idCtmFolio: ['', [Validators.required]],
-    //   datResol: ['', [Validators.required]],
-    //   idSupplier: ['', [Validators.required]],
-    //   service: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    //   regCoor: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    //   noDoc: ['', [Validators.required]],
-    //   docDate: ['', [Validators.required]],
-    //   payDate: ['', [Validators.required]],
-    //   capDate: ['', [Validators.required]],
-    //   recDate: ['', [Validators.required]],
-    //   noVoucher: ['', [Validators.required]],
-    //   attDoc: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    //   month: ['', [Validators.required]],
-    //   tc: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    //   PayMeth: ['', [Validators.required]],
-    //   proofName: ['', [Validators.required]],
-    //   idCapture: ['', [Validators.required]],
-    //   idAuth: ['', [Validators.required]],
-    //   idSol: ['', [Validators.required]],
-    //   dateAdmon: ['', [Validators.required]],
-    //   scanFol: [
-    //     '',
-    //     [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-    //   ],
-    // });
+  get form() {
+    return this.dataService.form;
+  }
+
+  get conceptNumber() {
+    return this.form ? this.form.get('conceptNumber').value : null;
   }
 }

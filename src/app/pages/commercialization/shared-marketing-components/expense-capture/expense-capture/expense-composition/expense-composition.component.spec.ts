@@ -1,20 +1,20 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CopyParametersComponent } from './copyParameters.component';
+import { ExpenseCompositionComponent } from './expense-composition.component';
 
-describe('CopyParametersComponent', () => {
-  let component: CopyParametersComponent;
-  let fixture: ComponentFixture<CopyParametersComponent>;
+describe('ExpenseCompositionComponent', () => {
+  let component: ExpenseCompositionComponent;
+  let fixture: ComponentFixture<ExpenseCompositionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CopyParametersComponent],
+      declarations: [ExpenseCompositionComponent],
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CopyParametersComponent);
+    fixture = TestBed.createComponent(ExpenseCompositionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -185,7 +185,11 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.courtCityServ.deleteCity(this.idCourt, city.idCity).subscribe({
           next: () => {
-            this.alert('success', 'Registro de ciudad', 'Borrado');
+            this.alert(
+              'success',
+              'Registro de Ciudad',
+              'Borrado Correctamente'
+            );
             this.getCourtByCity();
           },
           error: err => {
@@ -205,16 +209,29 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
         this.courtServ.update(this.id, this.form.getRawValue()).subscribe({
           next: () => (
             this.alert('success', 'Juzgado', 'Actualizado Correctamente'),
-            this.onLoadToast('success', 'Juzgado', 'Se ha actualizado'),
             this.clean()
           ),
           error: err => this.onLoadToast('error', err.error.message, ''),
         });
       } else {
+        if (
+          this.form.controls['description'].value.trim() === '' ||
+          this.form.controls['manager'].value.trim() === '' ||
+          this.form.controls['street'].value.trim() === '' ||
+          this.form.controls['numExterior'].value.trim() === '' ||
+          this.form.controls['numInside'].value.trim() === '' ||
+          this.form.controls['cologne'].value.trim() === '' ||
+          this.form.controls['delegationMun'].value.trim() === ''
+        ) {
+          this.alert('warning', 'No se puede guardar campos vacíos', ``);
+          return; // Retorna temprano si el campo está vacío.
+        }
+        this.loading = true;
         this.courtServ.create(this.form.value).subscribe({
           next: data => {
+            console.log(data);
+
             this.alert('success', 'Juzgado', 'Guardado Correctamente');
-            this.onLoadToast('success', 'Juzgado', 'Se ha guardado');
             this.form.patchValue(data);
             this.form.get('id').disable();
             this.isPresent = true;
@@ -240,10 +257,17 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
             };
             this.dataCourtCity.data.push(descCity);
             const properties = city.city as ICity;
-            console.log(properties);
-            this.getEntidad(properties.state as any, index);
-            this.getDelegation(properties.noDelegation as any, index);
-            this.getSubDelegation(properties.noSubDelegation as any, index);
+            if (properties !== null) {
+              console.log(properties);
+              this.getEntidad(
+                properties.state !== null ? properties.state : (' ' as any),
+                index
+              );
+              this.getDelegation(properties.noDelegation as any, index);
+              this.getSubDelegation(properties.noSubDelegation as any, index);
+            } else {
+              return;
+            }
           });
           this.dataCourtCity.count = response.count;
           this.loading = false;

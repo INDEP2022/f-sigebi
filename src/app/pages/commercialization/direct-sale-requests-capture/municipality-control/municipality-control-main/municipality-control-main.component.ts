@@ -1,8 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IConfigvtadmun } from 'src/app/core/models/ms-parametercomer/configvtadmum.model';
+import { MsDirectawardService } from 'src/app/core/services/ms-directaward/ms-directaward.service';
 import { MunicipalityControlMainService } from 'src/app/core/services/ms-directsale/municipality-control-main.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ApplicantsModalComponent } from '../applicants-modal/applicants-modal.component';
@@ -23,9 +30,14 @@ export class MunicipalityControlMainComponent
 {
   applicantParams = new BehaviorSubject<ListParams>(new ListParams());
   assignedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
+  dataFactGen: LocalDataSource = new LocalDataSource();
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   applicantTotalItems: number = 0;
+  totalItems: number = 0;
   assignedGoodTotalItems: number = 0;
   applicantColumns: any[] = [];
+  data: IConfigvtadmun[] = [];
+  columnFilters: any = [];
   assignedGoodColumns: any[] = [];
   applicantSettings = {
     ...TABLE_SETTINGS,
@@ -47,10 +59,16 @@ export class MunicipalityControlMainComponent
       delete: true,
     },
   };
+  paramsScreen: IParamsVault = {
+    PAR_MASIVO: '', // PAQUETE
+  };
+  origin: string = '';
 
   constructor(
     private modalService: BsModalService,
-    private municipalityControlMainService: MunicipalityControlMainService
+    private municipalityControlMainService: MunicipalityControlMainService,
+    private activatedRoute: ActivatedRoute,
+    private msDirectawardService: MsDirectawardService
   ) {
     super();
     this.applicantSettings.hideSubHeader = false;
@@ -61,22 +79,121 @@ export class MunicipalityControlMainComponent
   }
 
   ngOnInit(): void {
-    this.getData();
+    //this.getData();
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params2: any) => {
+        console.log(params2);
+        console.log(this.paramsScreen);
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params2, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params2[key] ?? null;
+          }
+        }
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.PAR_MASIVO) {
+        this.getData();
+      } else {
+        console.log('SIN PARAMETROS');
+        console.log(this.origin);
+        if (!this.origin) {
+          console.log(this.origin);
+        }
+      }
+    }
+    this.dataFactGen
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log('loooool');
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'soladjinstgobId':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'applicant':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'applicationDate':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'award':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'municipality':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'phone':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'position':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'state':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.getData();
+        }
+      });
+
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getData());
   }
+
   getData() {
+    this.loading = true;
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters,
+    };
     this.assignedGoodColumns = [];
     this.assignedGoodTotalItems = 0;
-    this.municipalityControlMainService.getSolicitantes().subscribe(data => {
-      this.applicantColumns = data.data;
-      this.applicantTotalItems = this.applicantColumns.length;
-      console.log(this.applicantTotalItems);
-    });
-    this.municipalityControlMainService.getBienesAsignados().subscribe(data => {
-      this.assignedGoodColumns = data.data;
-      this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-      console.log(this.assignedGoodTotalItems);
+    this.municipalityControlMainService.getSolicitantes(params).subscribe({
+      next: response => {
+        this.loading = false;
+        this.data = response.data;
+        console.log(this.data);
+        this.totalItems = response.count;
+        this.dataFactGen.load(response.data);
+        this.dataFactGen.refresh();
+      },
+      error: error => (this.loading = false),
     });
   }
+  onClick(data: any) {
+    console.log(data);
+  }
+  getDataGoods(id: any) {
+    this.msDirectawardService.getGoodsByApplicant(id).subscribe(data => {
+      this.assignedGoodColumns = data.data;
+      this.assignedGoodTotalItems = this.assignedGoodColumns.length;
+      console.log(this.assignedGoodColumns);
+    });
+  }
+
   refreshGoods() {
     this.assignedGoodColumns = [...this.assignedGoodColumns];
     this.assignedGoodTotalItems = this.assignedGoodColumns.length;
@@ -85,7 +202,7 @@ export class MunicipalityControlMainComponent
     console.log(row, type);
     this.alertQuestion(
       'question',
-      '¿Desea eliminar este registro?',
+      '¿Desea Eliminar Este Registro?',
       '',
       'Eliminar'
     ).then(question => {
@@ -110,7 +227,7 @@ export class MunicipalityControlMainComponent
     };
     this.municipalityControlMainService.deleteSolicitante(body).subscribe({
       next: data => {
-        this.onLoadToast('success', 'Datos eliminados correctamente', '');
+        this.onLoadToast('success', 'Solicitante', 'Eliminado Correctamente');
         this.getData();
         // location.reload();
       },
@@ -118,7 +235,7 @@ export class MunicipalityControlMainComponent
         this.onLoadToast(
           'warning',
           'advertencia',
-          'Lo sentimos ha ocurrido un error'
+          'El Solicitante No Se Ha Eliminado Correctamente'
         );
       },
     });
@@ -130,7 +247,7 @@ export class MunicipalityControlMainComponent
       .deleteBienesAsignados(row.repvendcId)
       .subscribe({
         next: data => {
-          this.onLoadToast('success', 'Datos eliminados correctamente', '');
+          this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
           // location.reload();
           this.getData();
         },
@@ -138,13 +255,14 @@ export class MunicipalityControlMainComponent
           this.onLoadToast(
             'warning',
             'advertencia',
-            'Lo sentimos ha ocurrido un error'
+            'El Bien No Se Ha Eliminado Correctamente'
           );
         },
       });
   }
 
   openFormApplicant(applicant?: any) {
+    console.log(applicant);
     this.openModalApplicant({ applicant });
   }
 
@@ -174,4 +292,8 @@ export class MunicipalityControlMainComponent
       if (data) this.refreshGoods();
     });
   }
+}
+
+export interface IParamsVault {
+  PAR_MASIVO: string;
 }

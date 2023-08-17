@@ -4,7 +4,7 @@ import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endp
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IComerEvent } from './../../models/ms-event/event.model';
+import { IComerEvent, IGraceDate } from './../../models/ms-event/event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class ComerEventosService extends HttpService {
     return this.get<IListResponse<IComerEvent>>(EventEndpoints.ComerE, params);
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IComerEvent>> {
+  getAll(params?: _Params): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
   }
   getAllTypeEvent(params?: ListParams): Observable<IListResponse<IComerEvent>> {
@@ -101,5 +101,14 @@ export class ComerEventosService extends HttpService {
 
   getByIdComerTEvents(id: string | number) {
     return this.get<IListResponse<any>>(`${EventEndpoints.ComerTEvents}/${id}`);
+  }
+
+  getMANDXEVENTO(event: string) {
+    return this.get(EventEndpoints.MANDXEVENTO + '/' + event);
+  }
+
+  //PUF GRACE DATE
+  pufGraceDate(body: IGraceDate) {
+    return this.post('application/puf-grace-date', body);
   }
 }

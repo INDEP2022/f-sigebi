@@ -9,8 +9,10 @@ import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -44,7 +46,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   regionalDelegationUser: IRegionalDelegation;
   authorities: any[] = [];
   goodTypes: any[] = [];
-  origins: any[] = [];
+  origins = new DefaultSelect();
   @Output() onSearch = new EventEmitter<any>();
 
   constructor(
@@ -56,7 +58,9 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
     private stateService: DelegationStateService,
     private stationService: StationService,
     private authorityService: AuthorityService,
-    private goodTypeService: GoodTypeService
+    private goodTypeService: GoodTypeService,
+    private typeRelevanteService: TypeRelevantService,
+    private originService: OriginService
   ) {
     super();
     this.idRequest = Number(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -67,6 +71,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
     this.getRequestInfo();
     this.getRegionalDelegationSelect(new ListParams());
     this.getGoodType(new ListParams());
+    this.getOrigin(new ListParams());
   }
 
   getRequestInfo() {
@@ -102,8 +107,8 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   }
 
   regionalDelegationSelect(item: IRegionalDelegation) {
-    this.regionalDelegationUser = item;
-    this.delegationId = item.id;
+    this.regionalDelegationUser = item != undefined ? item : null;
+    this.delegationId = item != undefined ? item.id : null;
     this.searchForm.get('regionalDelegationId').setValue(this.delegationId);
     this.getStateSelect(new ListParams());
   }
@@ -125,22 +130,21 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.searchForm = this.fb.group({
-      manageNo: [null],
+      goodId: [null],
       regionalDelegation: [null],
       regionalDelegationId: [null],
       saeNo: [null],
-      key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      state: [null],
+      uniqueKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      stateKey: [null],
       warehouseCode: [null],
-      description: [null, [Validators.pattern(STRING_PATTERN)]],
-      station: [null],
+      goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      stationId: [null],
       origin: [null],
-      fileNo: [null],
-      authority: [null],
-      folio: [null],
-      transferee: [null, [Validators.pattern(STRING_PATTERN)]],
-      goodType: [null],
-      storeNumber: ['27398'],
+      fileNum: [null],
+      authorityId: [null],
+      folioAct: [null],
+      transferFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeRelevantId: [null],
     });
 
     const info = JSON.parse(localStorage.getItem('Task'));
@@ -251,14 +255,26 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   }
 
   getGoodType(params?: ListParams) {
-    this.goodTypeService.getAll(params).subscribe({
+    this.typeRelevanteService.getAll(params).subscribe({
+      next: response => {
+        this.goodsTypes = new DefaultSelect(response.data, response.count);
+      },
+    });
+    /*this.goodTypeService.getAll(params).subscribe({
       next: response => {
         this.goodsTypes = new DefaultSelect(response.data, response.count);
       },
       error: error => {},
-    });
+    });*/
   }
 
+  getOrigin(params?: ListParams) {
+    this.originService.getAll(params).subscribe({
+      next: resp => {
+        this.origins = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
   reset() {
     this.searchForm.reset();
   }

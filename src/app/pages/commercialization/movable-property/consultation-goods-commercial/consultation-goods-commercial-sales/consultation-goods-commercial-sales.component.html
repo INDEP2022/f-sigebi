@@ -147,11 +147,7 @@
       [control]="form.get('facture')"
       class="col-md-2"
       label="Factura">
-      <input
-        type="number"
-        [min]="0"
-        formControlName="facture"
-        class="form-control" />
+      <input type="text" formControlName="facture" class="form-control" />
     </form-field>
     <form-field
       [control]="form.get('reference')"
@@ -191,7 +187,7 @@
         type="button"
         class="btn btn-primary active btn-sm"
         [disabled]="loading"
-        (click)="executeConsult()">
+        (click)="executeConsult('search')">
         Ejecutar consulta
         <i class="bx bx-search-alt bx-sm float-icon"></i>
       </button>

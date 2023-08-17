@@ -171,7 +171,7 @@ export class SearchRequestSimilarGoodsComponent
                 this.loading = false;
                 Swal.fire({
                   title: `Se asoció la solicitud correctamente`,
-                  text: `La Solicitud ${requestAssociated.id} fue asociada al expediente ${requestAssociated.recordId}. Tiene que subir el reporte de la carátula INAI`,
+                  text: `La Solicitud ${requestAssociated.id} fue asociada al expediente ${requestAssociated.recordId}. Tiene que subir Solicitud de Transferencia `,
                   icon: 'success',
                   showDenyButton: false,
                   showCancelButton: false,
@@ -252,7 +252,7 @@ export class SearchRequestSimilarGoodsComponent
           this.onLoadToast(
             'error',
             'Error',
-            'No se puedo obtener la solicitud'
+            'No se puede obtener la solicitud'
           );
         },
       });

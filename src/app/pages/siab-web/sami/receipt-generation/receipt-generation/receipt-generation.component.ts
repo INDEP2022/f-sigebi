@@ -211,6 +211,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         DESTINO_TRASFERENTE: element.DESTINO_TRASFERENTE,
         DESTINO_SAE: element.DESTINO_SAE,
         ID_PROGRAMACION: element.ID_PROGRAMACION,
+        PARAMETRO_CHATARRA: element.PARAMETRO_CHATARRA,
+        FRACCION_ARANCELARIA: element.FRACCION_ARANCELARIA,
         OBSERVACIONES:
           element.OBSERVACIONES != undefined ? element.OBSERVACIONES : '',
       });
@@ -394,8 +396,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                   this.totalItems = this.goodsDownloadExcel.length;
                   this.alert(
                     'success',
-                    `Proceso terminado correctamente, ya puede descargar el resultado`,
-                    ''
+                    `Proceso Terminado`,
+                    'Puede descargar el Resultado'
                   );
                   this.downloadResultsGoods = false;
                   this.update++;
@@ -442,8 +444,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso terminado correctamente, ya puede descargar el resultado`,
-                        ''
+                        `Proceso Terminado`,
+                        'Puede descargar el Resultado'
                       );
                       this.downloadResultsGoods = false;
                       this.update++;
@@ -489,8 +491,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso terminado correctamente, ya puede descargar el resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
                     this.downloadResultsGoods = false;
                     this.update++;
@@ -536,8 +538,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                       this.totalItems = this.goodsDownloadExcel.length;
                       this.alert(
                         'success',
-                        `Proceso terminado correctamente, ya puede descargar el resultado`,
-                        ''
+                        `Proceso Terminado`,
+                        'Puede descargar el Resultado'
                       );
                       this.update++;
                     }, 1000);
@@ -572,8 +574,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso terminado correctamente, ya puede descargar el resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
                     this.update++;
                   }, 1000);
@@ -612,8 +614,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
                     this.totalItems = this.goodsDownloadExcel.length;
                     this.alert(
                       'success',
-                      `Proceso terminado correctamente, ya puede descargar el resultado`,
-                      ''
+                      `Proceso Terminado`,
+                      'Puede descargar el Resultado'
                     );
                     this.update++;
                   }, 1000);
@@ -857,6 +859,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       good.no_expediente = data.NO_EXPEDIENTE;
       good.descripcion_bien = data.DESCRIPCION_BIEN_TASFERENTE;
       good.descripcion_bien_sae = data.DESCRIPCION_BIEN_SAE;
+      good.codigo = data.FRACCION_ARANCELARIA;
+      good.val25 = data.PARAMETRO_CHATARRA;
       if (data.CANTIDAD_TRASFERENTE) {
         try {
           good.cantidad = Number(data.CANTIDAD_TRASFERENTE);
@@ -1099,6 +1103,8 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
         pStateConservationSae: good.estado_conservacion_sae,
         pStatePhysicalSae: good.estado_fisico_sae,
         pInitExtentSae: good.unidad_medida_sae,
+        pTariffFraction: good.codigo,
+        pParameterScrap: good.val25,
         pDescriptionGoodSae: good.descripcion_bien_sae,
         pIdGood: good.id_bien,
       };
@@ -1295,7 +1301,19 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       .subscribe({
         next: resp => {
           console.log(resp);
-          this.alert('success', `Bien agregado a ${operation}`, '');
+          let message: string = '';
+          if (operation == 'RECIBO') {
+            message = 'Recibo';
+          } else if (operation == 'RESGUARDO') {
+            message = 'Resguardo';
+          } else if (operation == 'ALMACEN') {
+            message = 'Almacén';
+          } else if (operation == 'REPROGRAMACION') {
+            message = 'Reprogramación';
+          } else if (operation == 'CANCELACION') {
+            message = 'Cancelación';
+          }
+          this.alert('success', `Bien agregado a ${message}`, '');
           this.cleanInsert();
           this.programmingGoodReceipt(new ListParams());
         },
@@ -1312,7 +1330,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
     if (this.indepForm.controls['cancellation'].value != null) {
       this.alertQuestion(
         'question',
-        'Se cancelará la programación',
+        'Se cancelará la Programación',
         '¿Desea continuar?',
         'Continuar'
       ).then(q => {
@@ -1346,7 +1364,7 @@ export class ReceiptGenerationComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Generación de Recibos',
-        'Debe seleccionar el motivo, de la cancelación'
+        'Debe seleccionar el motivo, de la Cancelación'
       );
       return;
     }

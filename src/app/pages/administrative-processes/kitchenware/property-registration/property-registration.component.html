@@ -49,7 +49,7 @@
 
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('causePenal')" label="Causa penal">
+          <form-field [control]="form.get('causePenal')" label="Causa Penal">
             <input
               type="text"
               class="form-control"
@@ -59,7 +59,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('preliminaryInquiry')"
-            label="Averiguación previa">
+            label="Averiguación Previa">
             <input
               type="text"
               class="form-control"
@@ -70,18 +70,27 @@
 
       <div class="row mt-5">
         <div class="col-12">
-          <form-field [control]="form.get('goodSelect')">
+          <form-field
+            [control]="form.get('goodSelect')"
+            label="Seleccione un Bien para ver sus Menajes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodSelect"
+              (click)="openSearchGoods()" />
+          </form-field>
+          <!-- <form-field [control]="form.get('goodSelect')">
             <ngx-select
               [data]="goods"
               [form]="form"
               value="id"
               bindLabel="description"
-              label="Seleccione un bien para ver sus menajes"
+              label="Seleccione un Bien para ver sus Menajes"
               [control]="'goodSelect'"
-              (fetchItems)="searchGoods(idExpedient, paramsSubject)"
+              (fetchItems)="searchGoods($event)"
               (change)="uploadTableMenaje($event)">
             </ngx-select>
-          </form-field>
+          </form-field> -->
         </div>
       </div>
 
@@ -91,38 +100,26 @@
             <div class="col-md-3 col-sm-12 col-xs-12">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
-                  <button
-                    [disabled]="enableAddgood"
-                    *ngIf="showButton && showSearchButton"
-                    type="button"
-                    class="btn btn-sm btn-primary active"
-                    (click)="showGoods()">
+                  <!-- <button [disabled]="enableAddgood" *ngIf="showButton && showSearchButton" type="button"
+                    class="btn btn-sm btn-primary active" (click)="showGoods()">
                     {{ textButton }}
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="row" *ngIf="addGood">
-            <ngx-select
-              [data]="goodsList"
-              [form]="formGood"
-              value="id"
-              bindLabel="description"
-              label="Menajes"
-              [control]="'goodsList'"
-              (fetchItems)="searchGood($event)"
-              (input)="goodsListChange($event.target)"
-              (change)="onSelect($event)">
+          <!-- <div class="row" *ngIf="addGood">
+            <ngx-select [data]="goodsList" [form]="formGood" value="id" bindLabel="goodDescription" label="Menajes"
+              [control]="'goodsList'" (fetchItems)="searchGood($event)" (change)="onSelect($event)">
             </ngx-select>
-          </div>
+          </div> -->
 
           <div class="row">
             <div class="col-md-12">
               <div class="m-3">
                 <span
-                  >Listado de menajes del bien No.
+                  >Listado de Menajes del Bien
                   <strong>{{ numberGoodSelect }}</strong></span
                 >
               </div>

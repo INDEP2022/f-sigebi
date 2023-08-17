@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SecurityEndpoints } from 'src/app/common/constants/endpoints/ms-security-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import {
   IListResponse,
@@ -73,6 +74,10 @@ export class SecurityService extends HttpService {
     return this.get(`tracking-access-screens`, params);
   }
 
+  getFilterAllUsersTrackerV2(params: ListParams) {
+    return this.get<IListResponse<any>>(`access-tracking-x-area`, params);
+  }
+
   getFilterAllUsersTracker(params: any) {
     return this.get<IListResponse<any>>(`access-tracking-x-area`, params);
   }
@@ -136,6 +141,12 @@ export class SecurityService extends HttpService {
   getUser(uName: string) {
     return this.get<IListResponse<IUsersTracking>>(
       `${SecurityEndpoints.UsersTracking}${this.uName}${uName}`
+    );
+  }
+
+  getValidScreens(params: _Params) {
+    return this.get<IListResponse<any>>(
+      `${SecurityEndpoints.TrackingValidScreens}`
     );
   }
 }

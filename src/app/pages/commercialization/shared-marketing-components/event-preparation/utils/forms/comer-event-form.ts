@@ -15,6 +15,7 @@ export class ComerEventForm {
     Validators.required,
     Validators.maxLength(300),
   ]);
+  vatApplies = new FormControl(null);
   eventDate = new FormControl<Date>(null, []);
   username = new FormControl<string>(null, []);
   delegationNumber = new FormControl<string | number>(null, []);

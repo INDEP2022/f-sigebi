@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
   BehaviorSubject,
   catchError,
@@ -21,7 +21,9 @@ import {
 } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { TokenInfoModel } from 'src/app/core/models/authentication/token-info.model';
 import { IComerLot } from 'src/app/core/models/ms-prepareevent/comer-lot.model';
+import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { UtilComerV1Service } from 'src/app/core/services/ms-prepareevent/util-comer-v1.service';
@@ -49,6 +51,7 @@ export class EventGoodsLotsListActionsComponent
   @Input() lotSelected: IComerLot;
   @Input() eventForm: FormGroup<ComerEventForm>;
   @Input() parameters: IEventPreparationParameters;
+  @Input() loggedUser: TokenInfoModel;
   @ViewChild('goodsLotifyInput', { static: true })
   goodsLotifyInput: ElementRef<HTMLInputElement>;
   @ViewChild('customersImportInput', { static: true })
@@ -82,7 +85,8 @@ export class EventGoodsLotsListActionsComponent
     private comerEventService: ComerEventService,
     private lotService: LotService,
     private modalService: BsModalService,
-    private utilComerV1Service: UtilComerV1Service
+    private utilComerV1Service: UtilComerV1Service,
+    private invoiceService: MsInvoiceService
   ) {
     super();
   }
@@ -406,6 +410,10 @@ export class EventGoodsLotsListActionsComponent
       );
       return;
     }
+    if (this.parameters.pDirection == 'I') {
+      await this.onLotifyCustomersI();
+      return;
+    }
     if (eventTpId.value == 2) {
       const checkLoadAsk = await this.alertQuestion(
         'question',
@@ -419,6 +427,65 @@ export class EventGoodsLotsListActionsComponent
     }
 
     this.customersImportInput.nativeElement.click();
+  }
+
+  async onLotifyCustomersI() {
+    const { statusVtaId, eventTpId } = this.controls;
+    const valid = this.consignment();
+    const alreadyPaid = true;
+    if (!alreadyPaid) {
+      this.alert(
+        'error',
+        'Error',
+        'Este tipo de evento ya no admite carga de clientes'
+      );
+      return;
+    }
+    const repFailure = false;
+    try {
+      const { aprolot, catlot, totlot } = await this.lotifyCountLot();
+      if (totlot != aprolot) {
+        if (totlot != catlot) {
+          this.alert(
+            'error',
+            'Error',
+            'El Evento ya tiene un proceso adicional al fallo'
+          );
+          return;
+        }
+        await this.lotifyCountInvoice();
+      }
+    } catch (error) {
+      this.alert('error', 'Error', UNEXPECTED_ERROR);
+    }
+  }
+
+  async lotifyCountInvoice() {
+    const { id } = this.controls;
+    return await firstValueFrom(
+      this.invoiceService.lotifyExcelCount(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.log(response);
+        })
+      )
+    );
+  }
+
+  async lotifyCountLot() {
+    const { id } = this.controls;
+    return await firstValueFrom(
+      this.lotService.lotifyExcelCount(id.value).pipe(
+        catchError(error => {
+          return throwError(() => error);
+        }),
+        tap(response => {
+          console.log(response);
+        })
+      )
+    );
   }
 
   /** REMESA */
@@ -523,10 +590,31 @@ export class EventGoodsLotsListActionsComponent
   }
 
   /**CARGA_DATOS_FACTURACION */
-  loadInvoiceData(publicLot: string | number) {
+  loadInvoiceData(publicLot: string | number, file: File) {
     console.log(publicLot ? `Para el lote ${publicLot}` : 'Para todo el vento');
-    // TODO: IMPLEMENTAR CUANDO SE TENGA
-    console.warn('CARGA_DATOS_FACTURACION');
+    const { id } = this.controls;
+    this.loader.load = true;
+    return this.lotService
+      .loadInvoiceData({
+        eventId: id.value,
+        lot: publicLot,
+        file: file,
+        pDirection: this.parameters.pDirection,
+      })
+      .pipe(
+        catchError(error => {
+          this.loader.load = false;
+          this.alert('error', 'Error', UNEXPECTED_ERROR);
+          return throwError(() => error);
+        }),
+        tap(response => {
+          this.loader.load = false;
+          this.alert('success', 'Proceso Terminado', '');
+          // this.refre
+          const params = new FilterParams();
+          this.params.next(params);
+        })
+      );
   }
 
   loadInvoiceDataChange(event: Event) {
@@ -535,7 +623,10 @@ export class EventGoodsLotsListActionsComponent
       return;
     }
 
-    this.loadInvoiceData(this.lotSelected?.publicLot ?? null);
+    this.loadInvoiceData(
+      this.lotSelected?.publicLot ?? null,
+      this.getFileFromEvent(event)
+    ).subscribe();
   }
 
   // ? Clientes desde Tabla Tercero
@@ -550,7 +641,7 @@ export class EventGoodsLotsListActionsComponent
     );
     const { isConfirmed, dismiss } = ask;
     if (isConfirmed) {
-      this.lotifyThirdTable();
+      this.lotifyThirdTable().subscribe();
       return;
     }
 
@@ -562,8 +653,29 @@ export class EventGoodsLotsListActionsComponent
 
   /**LOTIFICA_TABLATC */
   lotifyThirdTable() {
-    // TODO: IMPLEMTENTAR CUANDO SE TENGA
+    const { id, eventTpId } = this.controls;
     console.warn('LOTIFICA_TABLATC');
+    const body = {
+      event: id.value,
+      typeEvent: eventTpId.value,
+      address: this.parameters.pDirection,
+      user: this.loggedUser.preferred_username,
+      bank: this.parameters.pBank,
+    };
+    this.loader.load = true;
+    return this.lotService.lotifyThirdTable(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loader.load = false;
+        this.alert('success', 'Proceso Terminado', '');
+        const params = new FilterParams();
+        this.params.next(params);
+      })
+    );
   }
 
   /**CLIENTES_TC */
@@ -594,9 +706,20 @@ export class EventGoodsLotsListActionsComponent
     const ESTATUS = this.reverseType();
     const ID_EVENTO = eventTpId.value;
     const P_DIRECCION = this.parameters.pDirection;
-    this.modalService.show(GroundsStatusModalComponent, {
-      ...MODAL_CONFIG,
-    });
+    // this.modalService.show(GroundsStatusModalComponent, {
+    //   ...MODAL_CONFIG,
+    // });
+    let config: ModalOptions = {
+      initialState: {
+        ESTATUS,
+        ID_EVENTO,
+        P_DIRECCION,
+        callback: (next: any) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(GroundsStatusModalComponent, config);
   }
 
   /**TIPO_REVERSA */
@@ -797,14 +920,40 @@ export class EventGoodsLotsListActionsComponent
 
   loadCustomersBase(event: Event) {
     if (!this.isValidFile(event)) {
-      this.saleBasesControl.reset();
+      this.customersBasecontrol.reset();
       return;
     }
-    this.impBaseCustomers();
+    this.impBaseCustomers(event).subscribe();
   }
 
-  impBaseCustomers() {
+  impBaseCustomers(event: Event) {
     console.warn('PUP_IMP_EXCEL_BASES_CLIENTE');
+    this.loader.load = true;
+    const file = this.getFileFromEvent(event);
+    const { id } = this.controls;
+    const body: any = {
+      file,
+      eventId: id.value,
+      lot: null,
+      base: null,
+    };
+    return this.lotService.importCustomersBase(body).pipe(
+      catchError(error => {
+        this.loader.load = false;
+        this.customersBasecontrol.reset();
+        this.alert('error', 'Error', UNEXPECTED_ERROR);
+        return throwError(() => error);
+      }),
+      tap(response => {
+        this.loader.load = false;
+        this.customersBasecontrol.reset();
+        if (typeof response == 'string') {
+          this.alert('info', response, '');
+          return;
+        }
+        this.alert('success', 'Proceso Terminado', '');
+      })
+    );
   }
 
   // ? --------------- Carga Factura

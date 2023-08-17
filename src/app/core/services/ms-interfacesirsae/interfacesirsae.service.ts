@@ -3,7 +3,7 @@ import { InterfaceSirsaeEndpoints } from 'src/app/common/constants/endpoints/ms-
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ISirsaeStateAccountDetail } from '../../models/ms-interfacesirsae/interfacesirsae';
-import { ISendSirsae } from './interfacesirsae-model';
+import { ISendSirsae, ISendSirsaeLot } from './interfacesirsae-model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +29,23 @@ export class InterfacesirsaeService extends HttpService {
     );
   }
 
+  updateEventDomicile(body: { iIdEvento: string | number; cveActa: string }) {
+    return this.post('update-invitations/update-event-domicile', body);
+  }
+
   updateInvitations(body: { sRunCommand: string; cveCertificate: string }) {
     return this.post('update-invitations/program-cs-main', body);
   }
 
   sendSirsae(body: ISendSirsae) {
     return this.post('sirsae/send-sirsae', body);
+  }
+
+  sendSirsaeLot(body: ISendSirsaeLot) {
+    return this.post('sirsae/pup-send-sirsae-lots', body);
+  }
+
+  sendReadSirsae(body: any) {
+    return this.post('sirsae/sendReadSirsae', body);
   }
 }

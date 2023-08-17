@@ -1,18 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { HttpParams } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject } from 'rxjs';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+  BehaviorSubject,
+  filter,
+  Observable,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
+import { ExpedientService } from 'src/app/core/services/expedients/expedient.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { DetailProceeDelRecService } from 'src/app/core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
+import { ConfirmationDonationActsComponent } from './confirmation-donation-acts/confirmation-donation-acts.component';
+
+export class GoodsToReception {
+  numberProceedings: string;
+  numberGood: number;
+  amount: number;
+}
 
 @Component({
   selector: 'app-donation-acts',
@@ -20,95 +36,109 @@ import { COLUMNS2 } from './columns2';
   styles: [],
 })
 export class DonationActsComponent extends BasePage implements OnInit {
+  //
+
   actForm: FormGroup;
   formTable1: FormGroup;
+  form: FormGroup;
   settings2: any;
   response: boolean = false;
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  paramsOne = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
   bsValueFromYear: Date = new Date();
   minModeFromYear: BsDatepickerViewMode = 'year';
   bsConfigFromYear: Partial<BsDatepickerConfig>;
+  noExpe: string = '';
+  avPrevia: string = '';
+  caPenal: string = '';
+  noTranferente: string = '';
+  tiExpe: string = '';
+  columns: any[] = [];
+  columns2: any[] = [];
+  private numSubject: BehaviorSubject<number> = new BehaviorSubject<number>(
+    null
+  );
+  loadingOne: boolean = false;
+  loadingTwo: boolean = false;
+  num$: Observable<number> = this.numSubject.asObservable();
+  datas: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
+  varOne: string;
+  varTwo: string;
+  varThree: string;
+  varFour: string;
+  varFive: string;
+  varObjectFinal: any[] = [];
+  varCreateObject: any;
+  varDeleteObject: any;
 
-  data = EXAMPLE_DATA;
-  data2 = EXAMPLE_DATA2;
+  //
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private expedientService: ExpedientService,
+    private serviceGood: GoodService,
+    private serviceDetailProceeding: DetailProceeDelRecService,
+    private datePipe: DatePipe,
+    private cd: ChangeDetectorRef,
+    private modalService: BsModalService
+  ) {
     super();
-    this.settings = { ...this.settings, actions: false };
-    this.settings2 = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS1;
-    this.settings2.columns = COLUMNS2;
+    this.settings = {
+      ...this.settings,
+      hideSubHeader: false,
+      actions: false,
+      columns: COLUMNS1,
+    };
+    this.settings2 = { ...this.settings, actions: false, columns: COLUMNS2 };
   }
 
   ngOnInit(): void {
     this.initForm();
-    this.startCalendars();
+    // this.startCalendars();
+    this.paramsOne
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log('Aqui se manda a llamar cuando cambia de pagina');
+        this.getDataTableOne(params, `filter.fileNumber=${this.noExpe}`);
+      });
+    this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe((params: any) => {
+      this.getDataTableTwo(params);
+    });
   }
 
-  search(term: string | number) {
-    this.response = !this.response;
-  }
-
-  onSubmit() {}
+  //
 
   initForm() {
-    this.actForm = this.fb.group({
-      statusAct: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      preliminaryAscertainment: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      causePenal: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      actSelect: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      don: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      folio: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      year: [this.bsValueFromYear, [Validators.required]],
-      month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      address: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      elabDate: [null, [Validators.required]],
-      donationDate: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      deliveryName: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      receiverName: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      auditor: [null, [Validators.pattern(STRING_PATTERN)]],
-      comptrollerWitness: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      folioScan: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+    this.form = this.fb.group({
+      no_expediente: [],
+      no_transferente: [],
+      av_previa: [],
+      ca_penal: [],
+      ti_expediente: [],
     });
 
-    this.formTable1 = this.fb.group({
-      detail: [null, []],
+    this.actForm = this.fb.group({
+      actSelect: [],
+      status: [],
+      trans: [],
+      don: [],
+      es_acta: [],
+      cv_acta: [],
+      observations: [],
+      fec_elaboracion: [],
+      nom_entrega: [],
+      fec_don: [],
+      nom_rec: [],
+      dir: [],
+      audit: [],
+      fol_esc: [],
+      tes_con: [],
     });
   }
 
@@ -116,86 +146,342 @@ export class DonationActsComponent extends BasePage implements OnInit {
     op === 1 ? (this.settings = event) : (this.settings2 = event);
   }
 
-  startCalendars() {
-    this.bsConfigFromMonth = Object.assign(
-      {},
-      {
-        minMode: this.minModeFromMonth,
-        dateInputFormat: 'MM',
+  getAllBLKByFilters() {
+    if (this.noExpe == null || '') {
+      this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
+    } else {
+      if (this.noExpe == '' || undefined || null) {
+        this.form.reset();
       }
-    );
-    this.bsConfigFromYear = Object.assign(
-      {},
-      {
-        minMode: this.minModeFromYear,
-        dateInputFormat: 'YYYY',
+      let params = new HttpParams();
+      if (this.noExpe != null) {
+        params = params.append('filter.id', this.noExpe);
+        this.expedientService.getExpeidentByFilters(params).subscribe({
+          next: response => {
+            this.form.controls['av_previa'].setValue(
+              response.data[0].preliminaryInquiry
+            );
+            this.form.controls['no_transferente'].setValue(
+              response.data[0].transferNumber
+            );
+            this.form.controls['ca_penal'].setValue(
+              response.data[0].criminalCase
+            );
+            this.form.controls['ti_expediente'].setValue(
+              response.data[0].expedientType
+            );
+          },
+          error: error => {
+            if (error.status == 400) {
+              this.alert(
+                'warning',
+                'Advertencia',
+                `No se Encontraron Expedientes Asociados al Número -${this.noExpe}-`
+              );
+              this.form.reset();
+            } else {
+              this.alert('error', 'Error', 'Ha Ocurrido un Error');
+              this.form.reset();
+            }
+          },
+        });
+
+        let paramsGoodTwo = new HttpParams();
+        paramsGoodTwo = paramsGoodTwo.append('filter.fileNumber', this.noExpe);
+        this.getDataTableOne(paramsGoodTwo);
+
+        let paramsRecep = new HttpParams();
+        paramsRecep = paramsRecep.append('filter.numFile', this.noExpe);
+        this.serviceDetailProceeding
+          .getGoodsByProceeding(paramsRecep)
+          .subscribe({
+            next: response => {
+              this.varObjectFinal = response.data[0];
+              this.actForm.controls['actSelect'].setValue(
+                response.data[0].keysProceedings
+              );
+              this.actForm.controls['status'].setValue(response.data[0].id);
+              this.numSubject.next(response.data[0].id);
+              // this.actForm.controls['trans'].setValue(response.data[0].numTransfer);
+              this.actForm.controls['don'].setValue(
+                response.data[0].receiptKey
+              );
+              this.actForm.controls['es_acta'].setValue(
+                response.data[0].statusProceedings
+              );
+
+              this.varOne = response.data[0].keysProceedings;
+              this.varTwo = response.data[0].universalFolio;
+              this.varThree = response.data[0].comptrollerWitness;
+              this.varFour = response.data[0].statusProceedings;
+              this.varFive = response.data[0].id;
+
+              this.actForm.controls['cv_acta'].setValue(
+                response.data[0].keysProceedings
+              );
+              this.actForm.controls['observations'].setValue(
+                response.data[0].observations
+              );
+
+              let elaborationDate = new Date(response.data[0].elaborationDate);
+              let formattedDate = this.datePipe.transform(
+                elaborationDate,
+                'dd/MM/yyyy'
+              );
+              this.actForm.controls['fec_elaboracion'].setValue(formattedDate);
+              this.actForm.controls['nom_entrega'].setValue(
+                response.data[0].witness1
+              );
+
+              let elaborationDateTwo = new Date(
+                response.data[0].elaborationDate
+              );
+              let formattedDateTwo = this.datePipe.transform(
+                elaborationDateTwo,
+                'dd/MM/yyyy'
+              );
+              this.actForm.controls['fec_don'].setValue(formattedDateTwo);
+
+              this.actForm.controls['nom_rec'].setValue(
+                response.data[0].witness2
+              );
+              this.actForm.controls['dir'].setValue(response.data[0].address);
+              this.actForm.controls['audit'].setValue(
+                response.data[0].responsible
+              );
+              this.actForm.controls['fol_esc'].setValue(
+                response.data[0].universalFolio
+              );
+              this.actForm.controls['tes_con'].setValue(
+                response.data[0].comptrollerWitness
+              );
+            },
+            error: error => {
+              if (error.status == 400) {
+                this.alert(
+                  'warning',
+                  'Advertencia',
+                  `No se Encontraron Registros de Actas de Entrega Recepción`
+                );
+                this.alert(
+                  'warning',
+                  'Advertencia',
+                  `No se Encontraron Registros de Detalles Actas de Entrega Recepción`
+                );
+                this.data2.load([]);
+                this.actForm.reset();
+              } else {
+                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+                this.actForm.reset();
+                this.data2.load([]);
+              }
+            },
+          });
       }
-    );
+    }
   }
+
+  closeExp() {
+    if (this.noExpe == null || '') {
+      this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
+    } else {
+      if (this.varOne == null) {
+        this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
+      } else if (this.data2.count() === 0) {
+        // if (this.varTwo == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
+        // }
+        // if (this.varThree == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el Testigo de la Contraloría`);
+        // }
+        this.alert(
+          'warning',
+          'Advertencia',
+          `El Acta no Tiene Ningun Bien Asignado, no Se Puede Cerrar`
+        );
+      } else if (this.varFour == 'CERRADA') {
+        this.alert('warning', 'Advertencia', `El Acta ya Esta Cerrada`);
+      } else {
+        let data: any[] = this.varObjectFinal;
+        let config: ModalOptions = {
+          initialState: {
+            data,
+            callback: (next: boolean) => {
+              if (next) console.log('');
+            },
+          },
+          class: 'modal-sl modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        // console.log('Config: ', config);
+        this.modalService.show(ConfirmationDonationActsComponent, config);
+      }
+    }
+  }
+
+  rowSelectedOne(event: any) {
+    this.varCreateObject = event;
+    // console.log("Este es el objeto seleccionado: ", event);
+  }
+
+  rowSelectedTwo(event: any) {
+    this.varDeleteObject = event;
+    // console.log("Este es el objeto ELIMINADO: ", event);
+  }
+
+  createTableTwo() {
+    if (this.varCreateObject == null) {
+      this.alert(
+        'warning',
+        'Advertencia',
+        `Seleccione Primero el Bien a Asignar`
+      );
+    } else {
+      if (this.varOne == null) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          `No Existe un Acta, en la Cual Asignar el Bien. Capture Primero el Acta`
+        );
+      } else {
+        if (this.varFour == 'CERRADA') {
+          this.alert(
+            'warning',
+            'Advertencia',
+            `El Acta ya Esta Cerrada, no Puede Realizar Modificaciones a Esta`
+          );
+        } else {
+          let body: GoodsToReception = new GoodsToReception();
+          body.numberGood = this.varCreateObject.data?.id;
+          body.numberProceedings = this.varFive;
+          body.amount = this.varCreateObject.data?.quantity;
+          // console.log("El objeto antes de que se vaya: ", body, " - esto se recibe- ", this.varCreateObject);
+          this.serviceDetailProceeding.postRegister(body).subscribe({
+            next: response => {
+              this.varCreateObject = null;
+              this.alert('success', 'Registro Creado Correctamente', '');
+              this.getAllBLKByFilters();
+              this.getDataTableTwo();
+            },
+            error: error => {
+              if (error.status == 400) {
+                this.alert('warning', 'Advertencia', `El Registro ya Existe`);
+              } else {
+                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+              }
+            },
+          });
+        }
+      }
+    }
+  }
+
+  deleteTableTwo() {
+    if (this.varDeleteObject == null) {
+      this.alert('warning', 'Advertencia', `Debe Seleccionar un Detalle Acta`);
+    } else {
+      if (this.varDeleteObject.data.numberGood == null) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          `Debe Seleccionar un Bien que Forme Parte del Acta Primero`
+        );
+      } else {
+        if (this.varOne == null) {
+          this.alert(
+            'warning',
+            'Advertencia',
+            `Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta`
+          );
+        } else {
+          if (this.varFour == 'CERRADA') {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `El Acta ya Esta Cerrada, no Puede Realizar Modificaciones a Esta`
+            );
+          } else {
+            let body: GoodsToReception = new GoodsToReception();
+            body.numberGood = this.varDeleteObject.data?.numberGood;
+            body.numberProceedings =
+              this.varDeleteObject.data?.numberProceedings;
+            // console.log("El objeto antes de que se vaya: ", body, " - esto se recibe- ", this.varDeleteObject);
+            this.serviceDetailProceeding.deleteRegister(body).subscribe({
+              next: response => {
+                this.varDeleteObject = null;
+                this.alert('success', 'Registro Eliminado Correctamente', '');
+                this.getAllBLKByFilters();
+                if (this.data2.count() == 1 || 0) {
+                  this.data2.load([]);
+                }
+              },
+              error: error => {
+                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+              },
+            });
+          }
+        }
+      }
+    }
+  }
+
+  getDataTableOne(param?: HttpParams, filter?: any) {
+    if (this.noExpe != '') {
+      this.loadingOne = true;
+      this.serviceGood.getByFilter(param, filter).subscribe({
+        next: response => {
+          this.columns = response.data;
+          this.datas.load(this.columns);
+          this.totalItems = response.count | 0;
+          this.datas.refresh();
+          this.loadingOne = false;
+        },
+        error: error => {
+          if (error.status == 400) {
+            this.alert(
+              'warning',
+              'Advertencia',
+              `No se Encontraron Registros de Bienes`
+            );
+            this.datas.load([]);
+          } else {
+            this.alert('error', 'Error', 'Ha Ocurrido un Error');
+            this.datas.load([]);
+          }
+          this.loadingOne = false;
+        },
+      });
+    }
+  }
+
+  getDataTableTwo(params?: any) {
+    this.num$
+      .pipe(
+        filter(num => num !== null),
+        switchMap(num =>
+          this.serviceDetailProceeding.getGoodsByProceedings(num, params)
+        )
+      )
+      .subscribe({
+        next: response => {
+          this.varObjectFinal = response.data;
+          this.columns2 = response.data;
+          this.data2.load(this.columns2);
+          this.totalItems2 = response.count || 0;
+          this.data2.refresh();
+          this.loadingOne = false;
+        },
+        error: error => {
+          this.loadingOne = false;
+        },
+      });
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.actForm.reset();
+    this.datas.load([]);
+    this.data2.load([]);
+  }
+  //
 }
-
-const EXAMPLE_DATA = [
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    status: false,
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    unidad: 'UNIDAD',
-    status: false,
-  },
-];
-
-const EXAMPLE_DATA2 = [
-  {
-    noBien: 321,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    cantidad: 2,
-  },
-  {
-    noBien: 321,
-    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
-    cantidad: 2,
-  },
-];

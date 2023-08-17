@@ -117,8 +117,12 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
             this.loading = false;
           },
           error: error => {
+            //this.loading = false;
             this.loading = false;
-            this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
+            this.data.load([]);
+            this.data.refresh();
+            this.totalItems = 0;
+            //this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
           },
         });
     }
@@ -126,6 +130,7 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
 
   //Exportar Detalle de Eventos
   CaptureLines() {
+    console.log(this.capture);
     if (!this.capture) {
       this.alert(
         'warning',
@@ -144,4 +149,41 @@ export class CaptureLinesComponent extends BasePage implements OnInit {
       this.modalService.show(ExportCaptureLinesComponent, modalConfig);
     }
   }
+
+  /*getData() {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    if (this.capture) {
+      if (!this.capture.eventId) {
+        this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
+        return;
+      }
+      this.captureLinesId = this.capture.eventId;
+      this.loading = true;
+      this.data = new LocalDataSource();
+      this.capturelineService
+        .getAllDetCaptureLines(this.captureLinesId, params)
+        .subscribe({
+          next: response => {
+            this.captureLinesMain = response.data;
+            this.data.load(response.data);
+            this.data.refresh();
+            this.totalItems = response.count;
+            this.loading = false;
+          },
+          error: error => {
+            // this.loading = false;
+            // this.data = new LocalDataSource();
+            // this.totalItems = 0;
+            this.loading = false;
+            this.data.load([]);
+            this.data.refresh();
+            this.totalItems = 0;
+            this.alert('warning', 'Cliente no Tiene Detalle de Eventos', '');
+          },
+        });
+    }
+  }*/
 }

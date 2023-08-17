@@ -4,15 +4,45 @@
   </div>
   <div body>
     <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="d-flex justify-content-end">
+          <div class="m-3">
+            <button
+              [disabled]="!disabledImport"
+              class="btn btn-success btn-sm ml-2 active"
+              type="button"
+              (click)="file.click()">
+              Importar Archivo Excel / CSV
+              <i class="bi bi-file-earmark-excel-fill"></i>
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <form-loader *ngIf="loading"></form-loader>
       <div class="body">
-        <div [class]="loading ? 'table-loading' : ''">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
           <ng2-smart-table
             id="idTableTestHead"
-            [attr.class]="'table-bordered'"
+            [attr.class]="'table-responsive table-bordered'"
             [settings]="settings"
             [source]="data">
           </ng2-smart-table>
-        </div>
+        </ng-scrollbar>
+        <!-- <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table id="idTableTestHead" [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
+          </ng2-smart-table>
+        </div> -->
       </div>
       <app-pagination
         *ngIf="paginadoNG == true"
@@ -25,66 +55,23 @@
         <div class="col-md-full col-sm-12 col-xs-12">
           <app-justification-shared [form]="form"></app-justification-shared>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-8 mt-3 mb-3">
-          <div class="row pt-3 pb-3">
-            <div class="col-6">
-              <span style="color: #1e7e34; font-weight: 500"
-                >Número de registros cargados &nbsp;&nbsp;
-                <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
-                <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
-                  dataA
-                }}</strong>
-              </span>
-            </div>
-            <div class="col-6">
-              <span style="color: crimson; font-weight: 500"
-                >Número de registros NO cargados &nbsp;&nbsp;
-                <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
-                <strong *ngIf="dataD != 0" style="color: crimson">{{
-                  dataD
-                }}</strong>
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-beetwen">
-            <div class="m-3">
-              <button
-                [disabled]="!disabledImport"
-                class="btn btn-success btn-sm ml-2"
-                type="button"
-                (click)="file.click()">
-                Importar archivo Excel / CSV
-              </button>
-              <input
-                type="file"
-                name="file"
-                #file
-                class="d-none"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                (change)="onFileChange($event)" />
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-end">
-            <div class="mt-3 mb-3 mr-3">
+        <div class="col-md-2 mt-3 mb-3 mr-4">
+          <div class="d-flex justify-content-between">
+            <div>
               <button
                 [disabled]="!document"
                 type="button"
                 class="btn btn-primary btn-sm active"
                 (click)="changeStatusGood()">
-                Actualizar Estatus
+                Actualizar
+                <i class="fas fa-sync-alt"> </i>
               </button>
             </div>
           </div>
         </div>
-        <div class="col-md-1 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="mt-3 mb-3 mr-5">
+        <div class="col-md-1 mt-3 mb-3 mr-4">
+          <div class="d-flex justify-content-between">
+            <div>
               <button
                 type="button"
                 class="btn btn-danger btn-sm active"
@@ -95,7 +82,31 @@
             </div>
           </div>
         </div>
+        <div class="col-8 mt-3 mb-3 mr-4">
+          <div class="row pt-3 pb-3">
+            <div class="col-6 justify-content-end">
+              <span style="color: #1e7e34; font-weight: 500"
+                >Número de Registros Cargados &nbsp;&nbsp;
+                <strong *ngIf="dataA == 0" style="color: #1e7e34">0</strong>
+                <strong *ngIf="dataA != 0" style="color: #1e7e34">{{
+                  dataA
+                }}</strong>
+              </span>
+            </div>
+            <div class="col-6 justify-content-end">
+              <span style="color: crimson; font-weight: 500"
+                >Número de Registros NO Cargados &nbsp;&nbsp;
+                <strong *ngIf="dataD == 0" style="color: crimson">0</strong>
+                <strong *ngIf="dataD != 0" style="color: crimson">{{
+                  dataD
+                }}</strong>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <div class="row"></div>
     </form>
     <hr />
     <div class="row">

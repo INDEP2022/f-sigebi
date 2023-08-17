@@ -1,8 +1,16 @@
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LotEndpoints } from 'src/app/common/constants/endpoints/ms-lot-endpoint';
+import { InterceptorSkipHeader } from 'src/app/common/interceptors/http-errors.interceptor';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
+import { IPupProcSeldisp, IPupValidateMandatoNfac } from './models-lots';
 
+interface IValidateStatus {
+  val: string | number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -14,6 +22,14 @@ export class LotService extends HttpService {
   }
 
   getAllComerLotsFilter(params?: string) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLotsByFilter(params: HttpParams) {
+    return this.get('eat-lots', params);
+  }
+
+  getAllComerLot(params?: ListParams) {
     return this.get('eat-lots', params);
   }
 
@@ -46,6 +62,10 @@ export class LotService extends HttpService {
 
   eventValDesc(eventId: string | number) {
     return this.get('apps/comer-bases-valdesc-when-button-pressed/' + eventId);
+  }
+
+  lotApp(id: any, params: ListParams): Observable<IListResponse<any>> {
+    return this.get('apps/query-winners-report/' + id, params);
   }
 
   updateMandate(body: {
@@ -156,5 +176,185 @@ export class LotService extends HttpService {
 
   getFindAllRegistersTot(params?: _Params) {
     return this.get(LotEndpoints.FindAllRegistersTot, params);
+  }
+
+  getSumLotComerPayRef(body: {
+    dateComer: string;
+    clientId: string;
+    eventId: string;
+  }) {
+    return this.post('apps/get-lot-comer-pay-ref-count', body);
+  }
+
+  getSumAllComerPayRef(body: { clientId: string; eventId: string }) {
+    return this.post('apps/get-lot-comer-pay-ref-countAll', body);
+  }
+
+  applyBaseCost(body: {
+    cotobase: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post('apps/blk-ctr-main-l-pb-apply-when-button-pressed', body);
+  }
+
+  validateStatusCPV(eventId: string | number) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query1',
+      { eventId }
+    );
+  }
+
+  afterRemoveGoods(body: {
+    goodId: string | number;
+    lotId: string | number;
+    eventId: string | number;
+  }) {
+    return this.post<IListResponse<{ val: string | number }>>(
+      'apps/form-query2',
+      body
+    );
+  }
+
+  loadInvoiceData(body: {
+    eventId: string | number;
+    lot: string | number;
+    file: File;
+    pDirection: 'M' | 'I';
+  }) {
+    const { file, lot, eventId, pDirection } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    if (lot) {
+      formData.append('pLot', lot ? `${lot}` : null);
+      formData.append('lot', lot ? `${lot}` : null);
+    }
+
+    formData.append('pEvent', eventId ? `${eventId}` : null);
+
+    formData.append('pDirection', pDirection);
+    return this.post('apps/load-data-billing', formData);
+  }
+
+  validBaseColumns(body: {
+    file: File;
+    function: 'CLIENTES' | 'LOTES';
+    address: 'M' | 'I';
+  }) {
+    const formData = new FormData();
+    formData.append('file', body.file, body.file.name);
+    formData.append('function', body.function);
+    formData.append('address', body.address);
+    return this.post<IListResponse<{ ERROR?: string }>>(
+      'apps/valid-column-base',
+      formData
+    );
+  }
+
+  validateCSV(body: { file: File; tpeventId: string | number }) {
+    const { file, tpeventId } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('tpeventId', `${tpeventId}`);
+    const url = this.buildRoute('apps/pup-valcsv');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
+  }
+
+  validateCustomersCSV(file: File) {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    const url = this.buildRoute('apps/pup-valcsv-clients');
+    const headers = new HttpHeaders().set(InterceptorSkipHeader, '');
+    return this.httpClient.post<{ message: string[]; data: string[] }>(
+      url,
+      formData,
+      {
+        headers,
+      }
+    );
+  }
+
+  importCustomersBase(body: {
+    file: File;
+    eventId: string | number;
+    lot: string | number;
+    base: string | number;
+  }) {
+    const { file, eventId, lot, base } = body;
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('eventId', eventId ? `${eventId}` : null);
+    formData.append('lot', lot ? `${eventId}` : null);
+    formData.append('base', base ? `${eventId}` : null);
+    return this.post('apps/pup-imp-excel-bases-client', formData);
+  }
+
+  lotifyThirdTable(body: {
+    event: string | number;
+    typeEvent: string | number;
+    address: 'M' | 'I';
+    user: string;
+    bank: string;
+  }) {
+    return this.post('apps/lotifica-tabla-tc', body);
+  }
+
+  lotifyExcelCount(eventId: string | number) {
+    const url = `apps/lotifica-excel-count/event/${eventId}`;
+    return this.get<{ totlot: string; catlot: string; aprolot: string }>(url);
+  }
+
+  // ------------------------
+  PUP_ENTRA(body: any) {
+    // PUP_ENTRA
+    return this.post(LotEndpoints.PupEntra, body);
+  }
+
+  CARGA_PAGOSREFGENS(evento: any) {
+    return this.get(`${LotEndpoints.CargaPagosRefGens}/${evento}`);
+  }
+
+  CARGA_COMER_DETALLES(evento: any) {
+    return this.get(`${LotEndpoints.CargaComerDetalles}/${evento}`);
+  }
+
+  VALIDA_MANDATO(evento: any) {
+    return this.get(`${LotEndpoints.ValidaMandato}/${evento}`);
+  }
+
+  VALIDA_ESTATUS(evento: any) {
+    return this.get(`${LotEndpoints.ValidateStatus}/${evento}`);
+  }
+  VALIDA_LISTANEGRA(evento: any) {
+    return this.get(`${LotEndpoints.ValidaListaNegra}/${evento}`);
+  }
+
+  getReferenceList(reference: any, params: _Params) {
+    return this.get(
+      `${LotEndpoints.GetBankReference}?reference=${reference}`,
+      params
+    );
+  }
+
+  //pup-proc-seldisp
+  pupProcSeldisp(body: IPupProcSeldisp) {
+    return this.post<any>('apps/pup-proc-seldisp', body);
+  }
+
+  //get-lot-comer-ref-guarentee
+  getLotComerRefGuarentee(params?: string) {
+    return this.get('apps/get-lot-comer-ref-guarantee', params);
+  }
+
+  pupValidaMandatoNfac(body: IPupValidateMandatoNfac) {
+    return this.post('apps/pup-valida-mandato-to-nfac', body);
   }
 }

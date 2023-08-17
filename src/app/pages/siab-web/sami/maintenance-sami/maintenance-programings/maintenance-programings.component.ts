@@ -115,14 +115,14 @@ export class MaintenanceProgramingsComponent
     if (response) {
       this.alert(
         'success',
-        'Actualización de fechas de la PROGRAMACIÓN',
-        'Realizada correctamente'
+        'Actualización de fechas de la Programación',
+        'Realizada Correctamente'
       );
       this.clear();
     } else {
       this.alert(
         'error',
-        'Actualización de fechas de la PROGRAMACIÓN',
+        'Actualización de fechas de la Programación',
         'No realizada'
       );
     }
@@ -141,7 +141,7 @@ export class MaintenanceProgramingsComponent
           this.loader.load = false;
           this.alert(
             'error',
-            'Actualización de fechas de la PROGRAMACIÓN',
+            'Actualización de fechas de la Programación',
             'No realizada'
           );
         },
@@ -160,7 +160,7 @@ export class MaintenanceProgramingsComponent
           this.loader.load = false;
           this.alert(
             'error',
-            'Actualización de fechas de la PROGRAMACIÓN',
+            'Actualización de fechas de la Programación',
             'No realizada'
           );
         },
@@ -181,7 +181,7 @@ export class MaintenanceProgramingsComponent
     // return;
     this.alertQuestion(
       'question',
-      'Se actualizarán las fechas de la PROGRAMACIÓN',
+      'Se actualizarán las fechas de la Programación',
       '¿Desea continuar?',
       'Continuar'
     ).then(question => {

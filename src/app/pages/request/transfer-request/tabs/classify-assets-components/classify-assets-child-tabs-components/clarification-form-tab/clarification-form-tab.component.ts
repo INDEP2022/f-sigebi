@@ -32,7 +32,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class ClarificationFormTabComponent extends BasePage implements OnInit {
   public event: EventEmitter<any> = new EventEmitter();
   clarificationForm: ModelForm<ClarificationGoodRejectNotification>;
-  title: string = 'Aclaración';
+  title: string = 'Aclaración/Improcedencia';
   edit: boolean = false;
   // selectTypeClarification = new DefaultSelect<any>();
   clarificationTypes = ClarificationTypes;
@@ -72,6 +72,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
+    //info de la solicitud
+    console.log('Solicitud', this.request);
+
     //this.getGoodResDev(Number(this.goodTransfer.id));
     this.getGoodResDev(this.goodTransfer);
     this.loading = false;
@@ -83,7 +86,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
         //params.value.addFilter('type', type.id);
         //params.value.addFilter('type', Number(val));
         const filter = params.getValue().getParams();
-        this.getClarification(filter);
+        this.getClarification();
       },
     });
     //this.getClarification(new ListParams());
@@ -110,7 +113,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       let params = new BehaviorSubject<FilterParams>(new FilterParams());
       params.value.limit = 100;
       const filter = params.getValue().getParams();
-      this.getClarification(filter);
+      this.getClarification();
 
       //bloquear tipo de claracion cuando se edite
       this.clarificationForm.patchValue({
@@ -127,7 +130,14 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
 
   getTypeClarification(event: any): void {}
 
-  getClarification(params: ListParams | string): void {
+  getClarification(params?: ListParams): void {
+    //Mostrar individualización de bienes solo para los de Comercio Exterior
+    params['sortBy'] = `clarification:ASC`;
+
+    if (this.request.typeOfTransfer != 'SAT_SAE') {
+      params['filter.id'] = `$not:19`;
+    }
+
     this.clarificationService.getAll(params).subscribe({
       next: data => {
         this.selectClarification = new DefaultSelect(data.data, data.count);
@@ -491,8 +501,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
               if (this.docClarification === undefined) {
                 reject('Existe bienes con aclaracion');
                 this.onLoadToast(
-                  'info',
-                  'Algunos bienes tienen o tuvieron aclaración'
+                  'warning',
+                  'Algunos Bienes tienen o tuvieron aclaración'
                 );
               }
             }

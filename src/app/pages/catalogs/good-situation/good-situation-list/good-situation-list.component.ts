@@ -48,17 +48,21 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'situation' ||
-            filter.field == 'descSituation' ||
-            filter.field == 'status'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'situation':
+                searchFilter = SearchFilter.EQ;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
               delete this.columnFilters[field];
             }
           });
+          this.params = this.pageFilter(this.params);
           this.getExample();
         }
       });
@@ -117,7 +121,7 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
         next: response => {
           this.alert(
             'success',
-            'Tipo de situación bien',
+            'Tipo de Situación Bien',
             'Borrado Correctamente'
           ),
             this.getExample();

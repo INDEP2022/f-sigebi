@@ -90,7 +90,7 @@ export class PropertyAdjudicationNotificationReportComponent
           this.onSelectLote(instance),
       },
     },
-    noDataMessage: 'No se encontraron registros',
+    noDataMessage: 'No se Encontraron Registros',
   };
 
   ngOnInit(): void {
@@ -230,22 +230,19 @@ export class PropertyAdjudicationNotificationReportComponent
     if (end < start) {
       this.onLoadToast(
         'warning',
-        'advertencia',
-        'Fecha final no puede ser menor a fecha de inicio'
+        'Advertencia',
+        'La Fecha Final no Puede ser Menor a la Fecha de Inicio'
       );
       return;
     }
-
-    setTimeout(() => {
-      this.onLoadToast('success', 'procesando', '');
-    }, 1000);
     this.onSubmit();
     setTimeout(() => {
-      this.onLoadToast('success', 'Reporte generado', '');
+      this.onLoadToast('success', 'Reporte Generado', '');
     }, 2000);
 
-    this.loading = false;
-    this.cleanForm();
+    //this.loading = false;
+    //this.cleanForm();
+    //this.imprimir = false;
   }
 
   onSubmit() {
@@ -296,6 +293,8 @@ export class PropertyAdjudicationNotificationReportComponent
   cleanForm(): void {
     this.form.reset();
     this.data.load([]);
+    this.totalItems = 0;
+    this.imprimir = false;
   }
 
   getuser() {

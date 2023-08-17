@@ -6,15 +6,29 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AttribClassifGoodMethodsRepository } from 'src/app/common/repository/repositories/attrib-classif-good-repository';
 import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { FunctionCumplioIndicador } from 'src/app/pages/general-processes/indicators/indicators-history/indicators-history/indicators-history-columns';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IUnits } from '../../models/administrative-processes/siab-sami-interaction/measurement-units';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
-import { ICaptureDig } from '../../models/ms-documents/documents';
+import { ICaptureDigViewHistoryIndicators } from '../../models/ms-documents/documents';
 import {
   IAttribClassifGoods,
+  IindicatorsEntRecep,
   IUnityByClasif,
 } from '../../models/ms-goods-query/attributes-classification-good';
+import { IVJuridical } from '../../models/ms-goods-query/v-juridical.model';
+
+export class LocalListParamsTest {
+  text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
+  pageSize?: number = 10;
+  take?: number = 10;
+  // filter?: string = '';
+}
 
 @Injectable({
   providedIn: 'root',
@@ -23,22 +37,28 @@ import {
  * @deprecated Cambiar a la nueva forma
  */
 export class GoodsQueryService extends HttpService {
+  //
+
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private routeGoodsProg = GoodsQueryEndpoints.ProgrammingGood;
+  private routeindicators = GoodsQueryEndpoints.indicatorsEntRecep;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private catMeasureUnitsView: GoodsQueryEndpoints.MeasureUnitsView;
-
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
   );
 
+  //
+
   constructor() {
     super();
     this.microservice = 'goodsquery';
   }
+
+  //
 
   getFractions(body: any) {
     return this.httpClient.post(
@@ -72,6 +92,11 @@ export class GoodsQueryService extends HttpService {
       body,
       { params }
     );
+  }
+
+  postFunctionCumplioIndicador(body: FunctionCumplioIndicador) {
+    let url = `${environment.API_URL}parametergood/api/v1/application/f-cumplio-indicador`;
+    return this.httpClient.post<any>(url, body);
   }
 
   postGoodsProgramming(
@@ -137,6 +162,12 @@ export class GoodsQueryService extends HttpService {
     return this.get(`${this.attribClassifGoodRoute}?${params}`);
   }
 
+  getIndicatorsEntRecep(
+    params?: ListParams
+  ): Observable<IListResponse<IindicatorsEntRecep>> {
+    return this.get(`${this.routeindicators}?${params}`);
+  }
+
   create(model: IAttribClassifGoods): Observable<IAttribClassifGoods> {
     return this.attribClassifGoodMethodsRepository.create(
       this.attribClassifGoodRoute,
@@ -181,12 +212,16 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
-  getCatStoresView(_params: ListParams): Observable<IListResponse<any>> {
-    const route = `goodsquery/api/v1/views/cat-store-view`;
+  getCatStoresView(
+    _params: ListParams | string
+  ): Observable<IListResponse<any>> {
+    /*const route = `goodsquery/api/v1/views/cat-store-view`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<any>>(
       `${environment.API_URL}${route}?${params}`
-    );
+    );*/
+    const route = `views/cat-store-view`;
+    return this.get<IListResponse<any>>(`${route}`, _params);
   }
 
   getHistoryIndicatorsView(params: _Params) {
@@ -229,8 +264,9 @@ export class GoodsQueryService extends HttpService {
     return this.delete(`${GoodsQueryEndpoints.getUnits}/${numero}`);
   }
 
-  getViewIncRecDoc(params: ListParams) {
-    return this.get<IListResponse<ICaptureDig>>(
+  getViewIncRecDoc(params: LocalListParamsTest) {
+    console.log('El objeto: ', params);
+    return this.get<IListResponse<ICaptureDigViewHistoryIndicators>>(
       GoodsQueryEndpoints.getViewIndRecDoc,
       params
     );
@@ -243,4 +279,13 @@ export class GoodsQueryService extends HttpService {
   getVIndProceedingsEntReception(params: ListParams) {
     return this.get<IListResponse<any>>('v-ind-proceedings-ent-recep', params);
   }
+
+  getVCatJur(params: _Params) {
+    return this.get<IListResponse<IVJuridical>>(
+      'application/get-all-v-cat-jur',
+      params
+    );
+  }
+
+  //
 }

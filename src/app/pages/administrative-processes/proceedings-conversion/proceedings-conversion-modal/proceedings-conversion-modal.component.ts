@@ -60,23 +60,31 @@ export class ProceedingsConversionModalComponent
   }
   ngOnInit(): void {
     this.providerForm.patchValue(this.provider);
+
     this.dataFactGood
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(change => {
+        console.log('SI');
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            let field = ``;
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'idConversion' ||
-            filter.field == 'fileNumber' ||
-            filter.field == 'goodFatherNumber' ||
-            filter.field == 'witnessOic' ||
-            filter.field == 'cveActaConv'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              id: () => (searchFilter = SearchFilter.EQ),
+              fileNumber: () => (searchFilter = SearchFilter.EQ),
+              goodFatherNumber: () => (searchFilter = SearchFilter.EQ),
+              witnessOic: () => (searchFilter = SearchFilter.EQ),
+              cveActaConv: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -84,12 +92,45 @@ export class ProceedingsConversionModalComponent
             }
           });
           this.params = this.pageFilter(this.params);
+          //Su respectivo metodo de busqueda de datos
           this.getGoodByCOnversiones();
         }
       });
+
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoodByCOnversiones());
+
+    // this.dataFactGood
+    //   .onChanged()
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(change => {
+    //     if (change.action === 'filter') {
+    //       let filters = change.filter.filters;
+    //       filters.map((filter: any) => {
+    //         let field = ``;
+    //         let searchFilter = SearchFilter.ILIKE;
+    //         field = `filter.${filter.field}`;
+    //         filter.field == 'idConversion' ||
+    //         filter.field == 'fileNumber' ||
+    //         filter.field == 'goodFatherNumber' ||
+    //         filter.field == 'witnessOic' ||
+    //         filter.field == 'cveActaConv'
+    //           ? (searchFilter = SearchFilter.EQ)
+    //           : (searchFilter = SearchFilter.ILIKE);
+    //         if (filter.search !== '') {
+    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+    //         } else {
+    //           delete this.columnFilters[field];
+    //         }
+    //       });
+    //       this.params = this.pageFilter(this.params);
+    //       this.getGoodByCOnversiones();
+    //     }
+    //   });
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getGoodByCOnversiones());
   }
 
   return() {
@@ -110,7 +151,12 @@ export class ProceedingsConversionModalComponent
         this.totalItems2 = response.count | 0;
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.dataFactGood.load([]);
+        this.dataFactGood.refresh();
+        this.totalItems2 = 0;
+        this.loading = false;
+      },
     });
   }
   onUserRowSelect(row: any): void {
@@ -119,7 +165,6 @@ export class ProceedingsConversionModalComponent
     } else {
       this.selectedRow = null;
     }
-
     console.log(this.selectedRow);
   }
 

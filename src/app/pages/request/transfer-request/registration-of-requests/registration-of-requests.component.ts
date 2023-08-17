@@ -68,6 +68,7 @@ export class RegistrationOfRequestsComponent
   infoRequest: IRequest;
   typeDocument: string = '';
   process: string = '';
+  hideExpedient: boolean = false;
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -153,6 +154,7 @@ export class RegistrationOfRequestsComponent
     this.prepareForm();
     this.getRequest(id);
     this.associateExpedientListener();
+    this.hideExpedientTab(id);
     //this.dinamyCallFrom();
   }
 
@@ -310,6 +312,7 @@ export class RegistrationOfRequestsComponent
         null,
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(100)],
       ],
+      sender: [null],
     });
     this.registRequestForm.get('receptionDate').disable();
     this.registRequestForm.updateValueAndValidity();
@@ -364,12 +367,24 @@ export class RegistrationOfRequestsComponent
         },
         error: error => {
           this.formLoading = false;
-          this.onLoadToast('error', 'Error', 'No se encontro la solicitud');
+          this.onLoadToast('error', 'Error', 'No se encontró la solicitud');
           console.log(error.error.message);
         },
       });
   }
 
+  hideExpedientTab(id: number | string) {
+    const params = new ListParams();
+    params['filter.processStatus'] = `$eq:SOLICITAR_ACLARACION`;
+    params['filter.requestId'] = `$eq:${id}`;
+    this.goodService.getAll(params).subscribe({
+      next: resp => {
+        if (resp.count > 0) {
+          this.hideExpedient = true;
+        }
+      },
+    });
+  }
   verifyTransDelegaStatiAuthoExist(data: any) {
     if (
       !data.transferenceId ||
@@ -378,8 +393,8 @@ export class RegistrationOfRequestsComponent
       !data.authorityId
     ) {
       Swal.fire({
-        title: 'Error',
-        text: 'Sin los campos de transferente, emisora y autoridad no se podran realizar las documentaciones requeridas! ',
+        title: 'warning',
+        text: 'Sin los campos de transferente, emisora y autoridad, no se podrán realizar las operaciones requeridas',
         icon: 'error',
         width: 450,
         showCancelButton: false,
@@ -611,6 +626,33 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  //createdDateTask: string= '';
+  getOldTask() {
+    return new Promise((resolve, reject) => {
+      const params = new FilterParams();
+      params.addFilter('requestId', this.requestData.id);
+      const filter = params.getParams();
+      this.taskService.getAll(filter).subscribe({
+        next: resp => {
+          //console.log('Tarea antigua:', resp.data[1]);
+          //console.log('Fecha de creación', resp.data[1]?.createdDate);
+          //this.createdDateTask = resp.data[1].createdDate
+          const task = {
+            //
+            assignees: resp.data[1]?.assignees,
+            assigneesDisplayname: resp.data[1]?.assigneesDisplayname,
+            createdDate: resp.data[1]?.createdDate,
+          };
+          resolve(task);
+        },
+        error: error => {
+          this.message('error', 'error', 'Error al obtener la tarea antigua');
+          reject(error.error.message);
+        },
+      });
+    });
+  }
+
   async finishMethod() {
     const body: any = {};
     body['id'] = this.requestData.id;
@@ -641,7 +683,7 @@ export class RegistrationOfRequestsComponent
         this.msgGuardado(
           'success',
           'Solicitud Finalizada',
-          `Se finalizo la solicitud con el folio: ${this.requestData.id}`
+          `Se finalizó la solicitud con el folio: ${this.requestData.id}`
         );
       }
       // }
@@ -670,7 +712,7 @@ export class RegistrationOfRequestsComponent
           console.log('Hay bienes por aclarar');
           this.alertQuestion(
             'warning',
-            'Existe bienes sin aclarar',
+            'Existe Bienes sin aclarar',
             'Se creará una nueva tarea de Notificación'
           ).then(async question => {
             if (question.isConfirmed) {
@@ -715,7 +757,10 @@ export class RegistrationOfRequestsComponent
               this.updateGoodStatus('SOLICITAR_APROBACION');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
-                //si existe crea solo la Notificacion de aclaracion
+                console.log(
+                  'si existe crea solo la Notificacion de aclaracion'
+                );
+                this.createApprovalProcessOnly();
                 //await this.notifyClarificationsMethod();
               } else {
                 //si no existe crear una tarea de aprovar solicitud y la notificacion de aclaracion
@@ -748,31 +793,39 @@ export class RegistrationOfRequestsComponent
 
   //metodo que guarda la captura de solivitud
   public async confirmMethod() {
+    const task1: any = await this.getOldTask();
+    //
+    console.log('public async confirmMethod()');
     /* trae solicitudes actualizadas */
     const request: any = await this.getAsyncRequestById();
     if (request) {
       /* valida campos */
+      console.log(' /* valida campos */');
       const result = await this.registrationHelper.validateForm(request);
       if (result === true) {
         /* actualizamos el campo  fileNumber (expediente) de bienes*/
+        console.log(
+          ' /* actualizamos el campo  fileNumber (expediente) de bienes*/'
+        );
         const expUpdated = await this.registrationHelper.updateExpedient(
           request.id,
           request.recordId
         );
         if (expUpdated) {
           /* abre modal del elegir usuario */
-          this.cambiarTipoUsuario(this.requestData);
+          this.cambiarTipoUsuario(this.requestData, task1);
         }
       }
     }
   }
 
-  cambiarTipoUsuario(request: any) {
+  cambiarTipoUsuario(request: any, task1: any) {
     this.openModal(
       SelectTypeUserComponent,
       request,
       'commit-request',
-      this.task
+      this.task,
+      task1
     );
   }
   /* Fin guardar captura de solicitud */
@@ -964,9 +1017,14 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = this.requestData.recordId;
       task['idDelegationRegional'] = user.department;
       task['urlNb'] = 'pages/request/transfer-request/process-approval';
+      task['idstation'] = this.requestData?.stationId;
+      task['idTransferee'] = this.requestData?.transferenceId;
+      task['idAuthority'] = this.requestData?.authorityId;
+      task['idDelegationRegional'] = user.department;
 
       this.taskService.createTask(task).subscribe({
         next: resp => {
+          console.log('Se creó la tarea de aprobar');
           resolve(true);
         },
         error: error => {
@@ -975,7 +1033,7 @@ export class RegistrationOfRequestsComponent
           this.onLoadToast(
             'error',
             'Error',
-            'No se pudo crear la tarea de Aprovación de Solicitud'
+            'No se pudo crear la tarea de Aprobación de Solicitud'
           );
         },
       });
@@ -1030,14 +1088,14 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aún no se aclararon'
+        'Algunos Bienes aún no se aclararon'
       );
       return;
     }
 
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === true) {
-      this.onLoadToast('info', '', 'Ya se generó un dictamen');
+      this.onLoadToast('warning', '', 'Ya se generó un dictamen');
       return;
     }
 
@@ -1068,11 +1126,7 @@ export class RegistrationOfRequestsComponent
   /** Proceso de aprobacion */
   async approveRequest() {
     if (this.requestApproved == true) {
-      this.onLoadToast(
-        'error',
-        'Solicitud aprobada',
-        'No es posible rechazar la solicitud, ya fue firmada'
-      );
+      this.onLoadToast('warning', 'Atención', 'Esta solicitud ya fue aprobada');
       return;
     }
 
@@ -1081,7 +1135,7 @@ export class RegistrationOfRequestsComponent
       this.onLoadToast(
         'error',
         'Bienes no aclarados',
-        'Algunos bienes aún no se aclararon'
+        'Algunos Bienes aún no se aclararon'
       );
       return;
     }
@@ -1089,7 +1143,7 @@ export class RegistrationOfRequestsComponent
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
-        'info',
+        'warning',
         'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
@@ -1145,8 +1199,8 @@ export class RegistrationOfRequestsComponent
     if (this.requestApproved == true) {
       this.onLoadToast(
         'error',
-        'Solicitud aprovado',
-        'La solicitud ya fue aprovada'
+        'Solicitud Aprobada',
+        'La solicitud ya fue aprobada'
       );
       return;
     }
@@ -1165,7 +1219,7 @@ export class RegistrationOfRequestsComponent
       'Rechazar',
       '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
-      undefined,
+      'question',
       'refuse'
     );
   }
@@ -1193,7 +1247,7 @@ export class RegistrationOfRequestsComponent
       this.msgGuardado(
         'success',
         'Solicitud Rechazada',
-        `Se Rechazo la Solicitud con el Folio: ${this.requestData.id}`
+        `Se Rechazó la Solicitud con el Folio: ${this.requestData.id}`
       );
     }
   }
@@ -1249,6 +1303,9 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
@@ -1551,7 +1608,7 @@ export class RegistrationOfRequestsComponent
           console.log('Error al actualizar los estados ', error);
           this.onLoadToast(
             'error',
-            'Error al actualizar los estados de los bienes',
+            'Error al actualizar el estado de los Bienes',
             ''
           );
         },
@@ -1574,11 +1631,7 @@ export class RegistrationOfRequestsComponent
           this.loader.load = false;
           reject('error');
           console.log(error);
-          this.onLoadToast(
-            'error',
-            'Error en los bienes',
-            'Error al obtener los bienes'
-          );
+          this.onLoadToast('error', 'Error', 'No se pueden obtener los Bienes');
         },
       });
     });
@@ -1599,7 +1652,7 @@ export class RegistrationOfRequestsComponent
           this.onLoadToast(
             'error',
             'Error en la solicitud',
-            'Error al verificar si la solicitud ya fue aprobada'
+            'No se puede verificar si la solicitud ya fue aprobada'
           );
         }
       },
@@ -1649,13 +1702,15 @@ export class RegistrationOfRequestsComponent
     component: any,
     data?: any,
     typeAnnex?: String,
-    task?: number
+    task?: number,
+    task1?: any
   ): void {
     let config: ModalOptions = {
       initialState: {
         data: data,
         typeAnnex: typeAnnex,
         task: task,
+        task1: task1,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

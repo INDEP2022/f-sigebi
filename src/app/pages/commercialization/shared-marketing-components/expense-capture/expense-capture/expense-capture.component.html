@@ -6,6 +6,12 @@
   </div>
   <div body>
     <app-expense-comercial [address]="address"></app-expense-comercial>
+    <app-params-conceps-list
+      [address]="address"
+      [readonly]="true"
+      [conceptId]="conceptNumber"></app-params-conceps-list>
+    <app-entry-orders></app-entry-orders>
+    <app-expense-composition></app-expense-composition>
     <!-- <form class="form-material" [formGroup]="form">
       <div class="ch-content">
         <h5 class="title">Gastos del área comercial</h5>

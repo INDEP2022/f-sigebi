@@ -8,7 +8,14 @@ import { ChangeOfGoodCharacteristicService } from './services/change-of-good-cla
 @Component({
   selector: 'app-view-atribute-good-modal',
   templateUrl: './view-atribute-good-modal.component.html',
-  styles: [],
+  styles: [
+    `
+      .custom {
+        text-align: center; /* Centra horizontalmente */
+        vertical-align: middle; /* Centra verticalmente */
+      }
+    `,
+  ],
 })
 export class ViewAtributeGoodModalComponent extends BasePage implements OnInit {
   good: IGood;
@@ -22,7 +29,20 @@ export class ViewAtributeGoodModalComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: null,
       hideSubHeader: false,
-      columns: { ...ATRIBUT_ACT_COLUMNS },
+      columns: {
+        ...ATRIBUT_ACT_COLUMNS,
+        value: {
+          title: 'VALORES',
+          sort: false,
+          filter: true,
+          //editable: false,
+          width: '20%',
+          type: 'html', // Utiliza la propiedad type
+          valuePrepareFunction: (cell: any) => {
+            return `<div class="pl-3"> ${cell ? cell : ''} </div>`;
+          },
+        },
+      },
     };
   }
 

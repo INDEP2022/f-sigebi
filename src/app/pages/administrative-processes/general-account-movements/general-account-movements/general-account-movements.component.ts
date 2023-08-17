@@ -71,12 +71,12 @@ export class GeneralAccountMovementsComponent implements OnInit {
 
     let params = {
       PN_BIEN: this.form.controls['good'].value,
-      // PN_EXPE: this.form.controls['fileFrom'].value,
+      PN_EXPE: this.form.controls['fileFrom'].value,
       PC_MONEDA: this.form.controls['currency'].value,
-      // PC_BANCO: this.form.controls['bank'].value,
-      // PN_MOVIMI: this.form.controls['deposito'].value,
-      // PC_FEC_INI: this.fromF,
-      // PC_FEC_FIN: this.toT,
+      PC_BANCO: this.form.controls['bank'].value,
+      PN_MOVIMI: this.form.controls['deposito'].value,
+      PC_FEC_INI: this.fromF,
+      PC_FEC_FIN: this.toT,
     };
 
     console.log('params', params);

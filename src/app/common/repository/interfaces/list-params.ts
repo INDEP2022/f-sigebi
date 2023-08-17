@@ -53,6 +53,7 @@ export class FilterParams {
   getParams() {
     const paginationParams = this.getPaginationParams();
     const allParams = [...this.filters, ...paginationParams];
+    // console.log(allParams);
     return allParams.join('&');
   }
 
@@ -116,6 +117,7 @@ export enum SearchFilter {
   BTW = '$btw',
   OR = '$or',
   NOTIN = '$not:$in',
+  SD = '$sd',
 }
 
 export interface DynamicFilterLike {

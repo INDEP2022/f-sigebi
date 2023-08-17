@@ -42,6 +42,15 @@ export class DocumentsService extends HttpService {
       params
     );
   }
+  getByFolioUniversal(
+    flyerNumber: number,
+    params?: ListParams | string
+  ): Observable<IListResponse<IDocumentsViewerFlyerNumber>> {
+    return this.get<IListResponse<IDocumentsViewerFlyerNumber>>(
+      `${DocumentsEndpoints.Documents}?filter.id=$eq:${flyerNumber}&&filter.scanStatus=$ilike:ESCANEADO`,
+      params
+    );
+  }
 
   getAllFilter(params?: _Params): Observable<IListResponse<IDocuments>> {
     return this.get<IListResponse<IDocuments>>(
@@ -274,5 +283,15 @@ export class DocumentsService extends HttpService {
   }
   getDocCaptureFind(body: ICaptureDigFilter, params: ListParams) {
     return this.post(DocumentsEndpoints.IndicatorRec, body, params);
+  }
+
+  getMaxConsec(id_docums_xml: number) {
+    return this.get(
+      DocumentsEndpoints.ApplicationGetMaxConsec + '/' + id_docums_xml
+    );
+  }
+
+  getComerceDocumentsXmlT(params: _Params) {
+    return this.get(DocumentsEndpoints.ComerceDocumentsXmlT, params);
   }
 }

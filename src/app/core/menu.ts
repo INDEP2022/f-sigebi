@@ -91,6 +91,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/request/programming-request/schedule-reception',
           },
           {
+            label: 'Programaciones',
+            link: '/pages/request/programming-request/search-schedules',
+          },
+          {
             label: 'Muestreo Bienes',
             link: '/pages/request/sampling-assets',
           },

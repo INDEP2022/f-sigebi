@@ -19,6 +19,11 @@ export const GOODS_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  record: {
+    title: 'Acta',
+    type: 'string',
+    sort: false,
+  },
   appraisedValue: {
     title: 'Importe',
     type: 'number',

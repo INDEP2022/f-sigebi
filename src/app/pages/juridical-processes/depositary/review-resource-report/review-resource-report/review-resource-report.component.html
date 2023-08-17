@@ -92,7 +92,8 @@
               class="form-control"
               formControlName="startDate"
               bsDatepicker
-              (ngModelChange)="onStartDateChange($event)" />
+              (ngModelChange)="onStartDateChange($event)"
+              [maxDate]="maxDate" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
@@ -101,7 +102,8 @@
               class="form-control"
               formControlName="endDate"
               [minDate]="dateMinEnd"
-              bsDatepicker />
+              bsDatepicker
+              [maxDate]="maxDate" />
           </form-field>
           <div
             class="invalid-feedback animated fadeInUp"
@@ -121,7 +123,7 @@
             [disabled]="form.invalid"
             class="btn btn-primary active btn-sm"
             (click)="btnGenerarReporte()">
-            Generar reporte <i class="bx bx-printer bx-sm float-icon"></i>
+            Generar Reporte <i class="bx bx-printer bx-sm float-icon"></i>
           </button>
         </div>
         <div class="m-3">

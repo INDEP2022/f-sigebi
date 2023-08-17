@@ -23,6 +23,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   delegation: number = 0;
   typeTransportable: string = '';
   typeTrans: string = '';
+  idTransferent: number = 0;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -53,32 +54,35 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     if (this.typeTrans == 'massive') {
       params['filter.name'] = `$ilike:${params.text}`;
       params['filter.regionalDelegation'] = this.delegation;
-
+      params['filter.administratorName'] = this.idTransferent;
       this.goodsQueryService.getCatStoresView(params).subscribe({
         next: data => {
+          console.log('almacenes', data);
           this.warehouses = new DefaultSelect(data.data, data.count);
         },
         error: () => {
           this.alert(
-            'error',
-            'Error de Información',
-            'La Transferente no cuenta con Almacenes'
+            'warning',
+            'Advertencia',
+            'La transferente no cuenta con almacenes'
           );
         },
       });
     } else {
       params['filter.name'] = `$ilike:${params.text}`;
       params['filter.regionalDelegation'] = this.data[0].idDelegation;
+      params['filter.administratorName'] = this.data[0].idTransferent;
 
       this.goodsQueryService.getCatStoresView(params).subscribe({
         next: data => {
+          console.log('almacenes', data);
           this.warehouses = new DefaultSelect(data.data, data.count);
         },
         error: () => {
           this.alert(
-            'error',
-            'Error de Información',
-            'La Transferente no cuenta con Almacenes'
+            'warning',
+            'Advertencia',
+            'La transferente no cuenta con almacenes'
           );
         },
       });
@@ -90,6 +94,7 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
     params['filter.regionalDelegation'] = this.delegation;
     params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe(data => {
+      console.log('data', data);
       this.warehouses = new DefaultSelect(data.data, data.count);
     });
   }
@@ -97,9 +102,9 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   confirm() {
     if (this.typeTransportable == 'guard') {
       this.alertQuestion(
-        'warning',
-        'Advertencia',
-        '¿Desea asignar los Bienes al Almacén seleccionado?'
+        'question',
+        'Confirmación',
+        '¿Desea asignar los bienes al almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;
@@ -111,9 +116,9 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       });
     } else if (this.typeTransportable == 'warehouse') {
       this.alertQuestion(
-        'warning',
-        'Advertencia',
-        '¿Desea asignar los Bienes al Almacén seleccionado?'
+        'question',
+        'Confirmación',
+        '¿Desea asignar los bienes al almacén seleccionado?'
       ).then(question => {
         if (question.isConfirmed) {
           this.loading = true;

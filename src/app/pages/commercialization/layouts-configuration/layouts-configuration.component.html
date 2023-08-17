@@ -1,14 +1,14 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Configuracion Layouts</h5>
-    <div class="col-md-5 buttons">
+    <!-- <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings6"></app-columns-select>
-      <!-- <div>
+      <div>
         <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
           Nuevo
         </button>
-      </div> -->
-    </div>
+      </div>
+    </div> -->
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -129,7 +129,56 @@
 
       <div body>
         <div class="row">
-          <label for="">LAYOUTS</label>
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 col-sm-12 col-md-8">
+                    <h6>Layouts</h6>
+                  </div>
+                  <div
+                    class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                    <div>
+                      <button
+                        type="button"
+                        tooltip="Nuevo"
+                        (click)="addLayouts()"
+                        containerClass="tooltip-style"
+                        class="btn btn-info btn-sm active ml-2 mr-2">
+                        Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                      </button>
+                    </div>
+                    <app-columns-select
+                      [leftList]="true"
+                      [(settings)]="settings5"></app-columns-select>
+                  </div>
+                  <div
+                    class="col-sm-12 col-12 col-md-12 table-responsive p-5"
+                    style="max-height: 500px; overflow-y: scroll">
+                    <div [class]="loadingLayouts ? 'table-loading' : ''">
+                      <ng2-smart-table
+                        class="col-md-12"
+                        [attr.class]="'table-bordered'"
+                        [settings]="settings5"
+                        [source]="dataTableLayouts"
+                        (userRowSelect)="userRowSelect($event)"
+                        (edit)="editLayouts($event)"
+                        (delete)="deleteLayouts($event)"></ng2-smart-table>
+                    </div>
+                  </div>
+                  <div class="col-sm-12 col-12 col-md-12">
+                    <app-pagination
+                      [params]="dataTableParamsLayouts"
+                      [totalItems]="totalLayouts"></app-pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="row">
+          <label for="">Layouts</label>
         </div>
 
         <div class="row pt-2 scroll-table justify-content-center">
@@ -140,7 +189,8 @@
             [source]="layoutsList"
             (userRowSelect)="userRowSelect($event)"></ng2-smart-table>
         </div>
-        <br /><br /><br /><br />
+        <br /><br /><br /><br /> -->
+
         <!-- <div class="row mt-5 d-flex justify-content-center">
           <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
         </div> -->

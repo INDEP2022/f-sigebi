@@ -86,10 +86,10 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
             field = `filter.${filter.field}`;
 
             switch (filter.field) {
-              case 'year':
+              case 'yearEvaluates':
                 searchFilter = SearchFilter.EQ;
                 break;
-              case 'month':
+              case 'monthValues':
                 searchFilter = SearchFilter.EQ;
                 break;
               default:
@@ -120,8 +120,8 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
 
   selectFila(event: any) {
     console.log(event);
-    let anioSelect = event.data.year;
-    let mesOrigin = event.data.month;
+    let anioSelect = event.data.yearEvaluates;
+    let mesOrigin = event.data.monthValues;
     let mesSelect: string = mesOrigin.toString().padStart(2, '0');
     let lv_fec_inicial = `01${mesSelect}${anioSelect}`;
 
@@ -233,6 +233,8 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
 
   getFichasTecnicas() {
     this.loading = true;
+
+    console.log(this.form.value);
     const anioOriginal = this.form.value.year;
     const mesOriginal = this.form.value.month;
     const anio = new Date(anioOriginal);
@@ -243,8 +245,8 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
     const params = {
       ...this.params.getValue(),
       ...this.columnFilters,
-      'filter.anio_evalua': `$eq:${soloAnio}`,
-      'filter.mes_evalua': `$eq:${soloMes}`,
+      'filter.yearEvaluates': `$eq:${soloAnio}`,
+      'filter.monthValues': `$eq:${soloMes}`,
     };
     this.fichasTecnicas.getFichasTecnicas(params).subscribe({
       next: data => {
@@ -252,10 +254,10 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
         let dataCreada: any[] = [];
         for (let ficha of data.data) {
           let fichaObjeto: any = {};
-          fichaObjeto.year = ficha.anio_evalua;
-          fichaObjeto.month = ficha.mes_evalua;
-          fichaObjeto.usuario_revision = ficha.usuario_revision;
-          fichaObjeto.no_delegacion = ficha.no_delegacion;
+          fichaObjeto.yearEvaluates = ficha.yearEvaluates;
+          fichaObjeto.monthValues = ficha.monthValues;
+          fichaObjeto.userReview = ficha.userReview;
+          fichaObjeto.delegationNumber = ficha.delegationNumber;
           dataCreada.push(fichaObjeto);
         }
         this.dataTable.load(dataCreada);
@@ -263,7 +265,7 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => {
-        console.log(error);
+        this.dataTable.load([]);
         this.loading = false;
       },
     });

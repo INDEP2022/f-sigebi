@@ -146,8 +146,16 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
+      hideSubHeader: false,
       columns: {
         ...GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
+      },
+      rowClassFunction: (row: any) => {
+        if (row.data.cumplio == true) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
       },
       noDataMessage: 'No se encontraron registros',
     };
@@ -484,9 +492,9 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       return;
     }
     const filename: string = this.userName + '-CapturaYdigita';
-    // El type no es necesario ya que por defecto toma 'xlsx'
     this.loading = false;
     this.excelService.export(this.capturasDig, { filename });
+    this.alert('success', 'Datos Exportados', '');
   }
   updateSelectedIds(event: any) {
     if (this.formCapture && this.formCapture.get('cvCoors')) {

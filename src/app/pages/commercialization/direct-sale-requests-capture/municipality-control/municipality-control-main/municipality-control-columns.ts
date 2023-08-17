@@ -65,57 +65,57 @@ export const MUNICIPALITY_CONTROL_APPLICANT_COLUMNS = {
 };
 
 export const MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS = {
-  repvendcId: {
-    title: 'N° Bien',
+  detbienesadjId: {
+    title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  bill: {
+  worthappraisal: {
     title: 'Valor Avalúo',
     type: 'number',
     sort: false,
   },
-  labelsent: {
+  appraisalDate: {
     title: 'Fecha Avalúo',
     type: 'string',
     sort: false,
   },
-  addresssent: {
-    title: 'N° Sesión',
+  sessionNumber: {
+    title: 'No. Sesión',
     type: 'number',
     sort: false,
   },
-  labelBatch: {
+  ranksEstate: {
     title: 'Clasifica Bien',
     type: 'string',
     sort: false,
   },
-  paragraph1: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  ccp1: {
+  delegation: {
     title: 'Delegación',
     type: 'string',
     sort: false,
   },
-  ccp2: {
+  location: {
     title: 'Ubicación',
     type: 'string',
     sort: false,
   },
-  nbOrigin: {
+  mandate: {
     title: 'Mandato',
     type: 'string',
     sort: false,
   },
-  managed: {
+  rankssiab: {
     title: 'Clasifica SIAB',
     type: 'string',
     sort: false,
   },
-  sayDelivery: {
+  comments: {
     title: 'Comentarios',
     type: 'string',
     sort: false,

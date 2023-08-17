@@ -2,17 +2,16 @@ import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
   ListParams,
-  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IGood } from 'src/app/core/models/good/good.model';
@@ -27,6 +26,8 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SubDelegationService } from 'src/app/core/services/maintenance-delegations/subdelegation.service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerLetterService } from 'src/app/core/services/ms-parametercomer/comer-letter.service';
 import { ComerLotService } from 'src/app/core/services/ms-parametercomer/comer-lot.service';
 import { RespLetterService } from 'src/app/core/services/ms-parametercomer/resp-letter';
@@ -96,6 +97,10 @@ export class ResponsibilityLettersReportComponent
   screenKey = 'FCOMERCARTARESP_I';
   // params = new BehaviorSubject<ListParams>(new ListParams());
   dataUserLoggedTokenData: any;
+  selectDataEvent = new DefaultSelect();
+  selectDataLote = new DefaultSelect();
+  P_DIRECCION: string = 'M';
+  origin: string = '';
 
   get oficio() {
     return this.comerLibsForm.get('oficio');
@@ -176,12 +181,15 @@ export class ResponsibilityLettersReportComponent
     private respLetterService: RespLetterService,
     private authService: AuthService,
     private comerEventService: ComerEventService,
-    private router: Router
+    private msLotService: LotService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private msComerClientsService: ComerClientsService
   ) {
     super();
     this.settings = {
       ...TABLE_SETTINGS,
-      hideSubHeader: false,
+      hideSubHeader: true,
       actions: false,
       columns: {
         ...COMEMR_BIENES_COLUMNS,
@@ -192,11 +200,17 @@ export class ResponsibilityLettersReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.bienlotForm();
-    this.comerClientForm();
     this.dateFinal = this.datePipe.transform(this.maxDate, 'dd/MM/yyyy');
     const token = this.authService.decodeToken();
     this.dataUserLoggedTokenData = token;
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        this.origin = params['origin'] ?? null;
+        this.P_DIRECCION = params['P_DIRECCION'] ?? null;
+        console.log(params);
+      });
   }
 
   prepareForm() {
@@ -217,9 +231,13 @@ export class ResponsibilityLettersReportComponent
       adjudicatorio: [null, [Validators.pattern(STRING_PATTERN)]],
       factura: [
         null,
-        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(20)],
+        [
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(20),
+          Validators.required,
+        ],
       ],
-      fechaFactura: [null, [Validators.required]],
+      fechaFactura: [{ value: null, disabled: true }, [Validators.required]],
       fechaCarta: [null],
       fechaFallo: [null],
       cveProceso: [null],
@@ -229,9 +247,11 @@ export class ResponsibilityLettersReportComponent
       puestoCcp1: [null],
       nombreCcp2: [null],
       puestoCcp2: [null],
+      lote: [null],
+      evento: [null],
+      evento_descripcion: [null],
+      lote_descripcion: [null],
     });
-  }
-  bienlotForm() {
     this.bienesLotesForm = this.fb.group({
       lote: [null],
       evento: [null],
@@ -239,8 +259,6 @@ export class ResponsibilityLettersReportComponent
       description: [null],
       cveProceso: [null],
     });
-  }
-  comerClientForm() {
     this.clientForm = this.fb.group({
       rfc: [null],
       calle: [null],
@@ -250,8 +268,6 @@ export class ResponsibilityLettersReportComponent
       estado: [null],
       cp: [null],
     });
-  }
-  comerRespForm() {
     this.respForm = this.fb.group({
       id: [null],
       paragraph1: [null],
@@ -260,6 +276,10 @@ export class ResponsibilityLettersReportComponent
     });
   }
   confirm(): void {
+    if (this.letterDefault == null) {
+      this.alert('warning', 'Realiza una Consulta para Continuar', '');
+      return;
+    }
     this.loading = true;
     // console.log(this.comerLibsForm.value);
     this.carta = this.datePipe.transform(this.letter.invoiceDate, 'dd/MM/yyyy');
@@ -268,19 +288,19 @@ export class ResponsibilityLettersReportComponent
       DESTYPE: this.bienesLotesForm.value.description,
       ID_LOTE: this.bienesLotesForm.controls['lote'].value,
       OFICIO_CARTALIB: this.comerLibsForm.value.oficio,
-      DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
-      PUESTO: this.comerLibsForm.controls['puesto'].value,
-      PARRAFO1: this.comerLibsForm.controls['paragraph1'].value,
+      // DIRIGIDO_A: this.comerLibsForm.controls['diridoA'].value,
+      // PUESTO: this.comerLibsForm.controls['puesto'].value,
+      PARRAFO1: this.respForm.controls['paragraph1'].value,
       ADJUDICATARIO: this.comerLibsForm.controls['adjudicatorio'].value,
       NO_FACTURA: this.comerLibsForm.controls['factura'].value,
       FECHA_FACTURA: this.start,
-      PARRAFO2: this.comerLibsForm.controls['paragraph2'].value,
-      FIRMANTE: this.comerLibsForm.controls['firmante'].value,
-      PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
-      CCP1: this.comerLibsForm.controls['ccp1'].value,
-      CCP2: this.comerLibsForm.controls['ccp1'].value,
-      PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
-      PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
+      PARRAFO2: this.respForm.controls['paragraph2'].value,
+      // FIRMANTE: this.comerLibsForm.controls['firmante'].value,
+      // PUESTOFIRMA: this.comerLibsForm.controls['puestoFirma'].value,
+      // CCP1: this.comerLibsForm.controls['ccp1'].value,
+      // CCP2: this.comerLibsForm.controls['ccp1'].value,
+      // PUESTOCCP1: this.comerLibsForm.controls['puestoCcp1'].value,
+      // PUESTOCCP2: this.comerLibsForm.controls['puestoCcp2'].value,
       FECHA_CARTA: this.carta,
     };
 
@@ -327,8 +347,10 @@ export class ResponsibilityLettersReportComponent
     this.loading = true;
     this.comerLetterService.getById(id).subscribe({
       next: data => {
-        this.loading = false;
+        this.clientForm.reset();
+        // this.loading = false;
         this.letter = data;
+        console.log(data, this.letter);
         this.carta = this.datePipe.transform(
           this.letter.invoiceDate,
           'dd/MM/yyyy'
@@ -338,28 +360,45 @@ export class ResponsibilityLettersReportComponent
           'dd/MM/yyyy'
         );
         this.comerLibsForm.get('oficio').setValue(this.letter.id);
-        this.comerLibsForm.get('fechaCarta').setValue(this.carta);
+        // this.comerLibsForm.get('fechaCarta').setValue(this.carta);
         // this.comerLibsForm.get('fechaFallo').setValue(this.carta);
         this.comerLibsForm.get('adjudicatorio').setValue(this.letter.signatory);
         this.comerLibsForm.get('factura').setValue(this.letter.invoiceNumber);
-        // this.comerLibsForm.get('fechaFactura').setValue(this.start);
+        this.comerLibsForm.get('fechaFactura').setValue(this.start);
         this.getComerLotes(this.letter.lotsId);
         this.getComerRespById(this.letter.id);
         this.comerBienesLetter(this.letter.lotsId, this.params.getValue());
-        this.comerLibsForm.value.paragraph1 =
-          'Derivado de la ' +
-          this.bienesLotesForm.get('description').value +
-          ' para la enajenación de vehiculos y/o bienes diversos ' +
-          this.bienesLotesForm.get('cveProceso').value +
-          ' celebrada el dia ' +
-          this.carta;
-        '' +
-          '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
-        this.comerLibsForm
-          .get('paragraph1')
-          .setValue(this.comerLibsForm.value.paragraph1);
+        // this.comerLibsForm.value.paragraph1 =
+        //   'Derivado de la ' +
+        //   this.bienesLotesForm.get('description').value +
+        //   ' para la enajenación de vehiculos y/o bienes diversos ' +
+        //   this.bienesLotesForm.get('cveProceso').value +
+        //   ' celebrada el dia ' +
+        //   this.carta;
+        // '' +
+        //   '. Solicito a usted sea entegada(s) la siguente(s) mercancias que a continuación se describe.';
+        // this.comerLibsForm
+        //   .get('paragraph1')
+        //   .setValue(this.comerLibsForm.value.paragraph1);
+        this.comerLetterService
+          .getByIdResponsability(this.letter.id) // 1 EL UNO ES PARA PROBAR
+          .subscribe({
+            next: data => {
+              console.log('DATA DE RESPONSABILIDAD ', data);
+
+              this.loading = false;
+              this.respForm.get('paragraph1').setValue(data.paragraph1);
+              this.respForm.get('paragraph2').setValue(data.paragraph2);
+              this.respForm.get('paragraph3').setValue(data.paragraph3);
+            },
+            error: () => {
+              this.loading = false;
+              console.log('error');
+            },
+          });
       },
       error: () => {
+        this.loading = false;
         console.log('error');
       },
     });
@@ -382,16 +421,51 @@ export class ResponsibilityLettersReportComponent
     });
   }
 
+  getDataCustomers(idLote: number) {
+    this.loading = true;
+    this.msComerClientsService.getDataCustomersByLote(idLote).subscribe({
+      next: data => {
+        this.loading = false;
+        console.log(data);
+        this.clientForm.patchValue(data.data[0]);
+      },
+      error: () => {
+        this.loading = false;
+        console.log('error');
+      },
+    });
+  }
+
   searchComer(provider?: IComerLetter) {
+    if (!this.comerLibsForm.get('lote').value) {
+      this.alert('warning', 'Selecciona un Lote para Continuar', '');
+      return;
+    }
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       provider,
+      P_DIRECCION: this.P_DIRECCION,
+      loteId: this.comerLibsForm.get('lote').value,
     };
-
+    // Reset on search
+    this.comerLibsForm.get('oficio').reset();
+    this.comerLibsForm.get('factura').reset();
+    this.comerLibsForm.get('fechaFactura').reset();
+    this.comerLibsForm.get('adjudicatorio').reset();
+    this.bienesLotesForm.reset();
+    this.dataTableGood.load([]);
+    this.dataTableGood.refresh();
+    this.totalItems = 0;
+    this.respForm.reset();
     let modalRef = this.modalService.show(FindRespLetterComponent, modalConfig);
     modalRef.content.onSave.subscribe((next: any) => {
       this.letterDefault = next;
-      console.log(next.id);
+      console.log(next);
+      this.comerLibsForm.controls['adjudicatorio'].setValue(
+        this.letterDefault.signatory
+      );
+      this.idLot = next.lotsId;
+      this.idEvent = next.idEvent;
       this.getComerLetterById(next.id);
     });
   }
@@ -541,6 +615,7 @@ export class ResponsibilityLettersReportComponent
   getComerLotes(id: number) {
     this.comerLotService.getByIdLot(id).subscribe({
       next: data => {
+        console.log('DATA PRUEBA COMER', data);
         this.comerLots = data;
         this.bienesLotesForm.get('lote').setValue(data.idLot);
         this.bienesLotesForm.get('description').setValue(data.description);
@@ -557,6 +632,7 @@ export class ResponsibilityLettersReportComponent
   getComerEvent(id: string) {
     this.comerEventService.geEventId(id).subscribe({
       next: data => {
+        console.log('DATA PRUEBA', data);
         this.event = data;
         this.carta = this.datePipe.transform(
           this.event.failedDate,
@@ -564,7 +640,7 @@ export class ResponsibilityLettersReportComponent
         );
         // this.bienesLotesForm.get('descEvento').setValue(this.event.descEvento);
         this.comerLibsForm.get('fechaCarta').setValue(this.carta);
-        this.comerLibsForm.get('adjudicatario').setValue(this.event.signatory);
+        // this.comerLibsForm.get('adjudicatorio').setValue(this.event.signatory);
         this.bienesLotesForm.get('cveProceso').setValue(this.event.processKey);
         // const year = this.datePipe.transform(this.letter.dateFail, 'yyyy');
         console.log(this.event);
@@ -580,6 +656,8 @@ export class ResponsibilityLettersReportComponent
     this.bienesLotesForm.reset();
     this.dataTableGood.load([]);
     this.dataTableGood.refresh();
+    this.totalItems = 0;
+    this.respForm.reset();
   }
   goBack() {}
 
@@ -599,29 +677,145 @@ export class ResponsibilityLettersReportComponent
 
   // }
 
-  comerBienesLetter(lotId: number, params: ListParams) {
-    this.bienesLoading = true;
-    this.filterParams.getValue().removeAllFilters();
-    this.filterParams.getValue().page = params.page;
-    this.filterParams.getValue().search = params.text;
-    this.filterParams
-      .getValue()
-      .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
-    this.comerEventService
-      .getAllFilterLetter(lotId, this.params.getValue())
-      .subscribe({
-        next: data => {
-          this.bienesLoading = false;
-          this.bienes = data.data;
+  comerBienesLetter(lotId: number, params1: ListParams) {
+    // this.bienesLoading = true;
+    // this.filterParams.getValue().removeAllFilters();
+    // this.filterParams.getValue().page = params.page;
+    // this.filterParams.getValue().search = params.text;
+    // this.filterParams
+    //   .getValue()
+    //   .addFilter('lotId', this.letter.lotsId, SearchFilter.EQ);
+    const params: any = new FilterParams();
+    params['filter.lotId'] = '$eq:' + this.letter.lotsId;
+    // params.addFilter('lotId', this.letter.lotsId);
+    params.page = this.paramsBienes.value.page;
+    params.limit = this.paramsBienes.value.limit;
+    delete params['search'];
+    delete params['sortBy'];
+    console.log(params);
+    this.comerEventService.getFindAllComerGoodXlotTotal(params).subscribe({
+      next: (data: any) => {
+        this.bienesLoading = false;
+        if (data) {
+          this.bienes = data.items.map((i: any) => {
+            i['description'] = i.good ? i.good.description : '';
+            return i;
+          });
+          console.log(this.bienes);
           this.dataTableGood.load(this.bienes);
           this.dataTableGood.refresh();
           this.totalItems = data.count;
-        },
-        error: () => {
-          this.bienesLoading = false;
-          console.error('error al filtrar bienes');
-        },
-      });
+        }
+      },
+      error: () => {
+        this.dataTableGood.load([]);
+        this.dataTableGood.refresh();
+        this.totalItems = 0;
+        console.error('error al filtrar bienes');
+      },
+    });
   }
   searchEvent() {}
+
+  changeEvent(event: any) {
+    console.log(event);
+    this.comerLibsForm.get('lote').reset();
+    this.comerLibsForm
+      .get('evento_descripcion') //.reset();
+      .setValue(event ? event.observations : null);
+    this.comerLibsForm.get('lote_descripcion').reset();
+    this.getLoteData(new ListParams());
+  }
+
+  getEventData(paramsData: ListParams, getByValue: boolean = false) {
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    if (getByValue) {
+      paramsData['filter.id'] = '$eq:' + this.comerLibsForm.get('evento').value;
+    }
+    // paramsData['filter.observations'] = '$ilike:' + paramsData['search'];
+    paramsData['filter.id'] = '$eq:' + paramsData['search'];
+    if (this.P_DIRECCION) {
+      paramsData['filter.address'] = `$eq:${this.P_DIRECCION}`;
+    }
+    paramsData['sortBy'] = 'observations:ASC';
+    delete paramsData['search'];
+    delete paramsData['text'];
+    console.log('DATA SELECT ', paramsData);
+    '$eq:' + this.comerLibsForm.get('evento').value;
+    this.comerEventService.getAllEvent(paramsData).subscribe({
+      next: data => {
+        console.log('DATA SELECT ', data.data);
+        this.selectDataEvent = new DefaultSelect(
+          // data.data.map((i: any) => {
+          //   i['description_data'] = i.id + ' --- ' + i.observations;
+          //   return i;
+          // }),
+          data.data,
+          data.count
+        );
+        console.log(data, this.selectDataEvent);
+      },
+      error: error => {
+        this.selectDataEvent = new DefaultSelect();
+      },
+    });
+  }
+
+  changeLote(event: any) {
+    console.log(event);
+    this.comerLibsForm
+      .get('lote_descripcion')
+      .setValue(event ? event.description : null);
+    if (event) {
+      this.getDataCustomers(event.idLot);
+    } else {
+      this.clientForm.reset();
+    }
+  }
+
+  getLoteData(paramsData: ListParams, getByValue: boolean = false) {
+    if (paramsData['search'] == undefined || paramsData['search'] == null) {
+      paramsData['search'] = '';
+    }
+    if (!this.comerLibsForm.get('evento').value) {
+      if (paramsData['search'] != '') {
+        this.alert(
+          'warning',
+          'Seleccionar un Evento Primero para Búscar un Lote',
+          ''
+        );
+      }
+      this.selectDataLote = new DefaultSelect();
+      return;
+    }
+    const params = new FilterParams();
+    params.addFilter('idEvent', this.comerLibsForm.get('evento').value);
+    // params.addFilter('description', paramsData['search'], SearchFilter.ILIKE);
+    if (paramsData['search']) {
+      params.addFilter('idLot', paramsData['search']);
+    }
+    params['sortBy'] = 'description:ASC';
+    delete paramsData['search'];
+    delete paramsData['text'];
+    console.log('DATA SELECT ', paramsData, params);
+    this.msLotService.getAllComerLotsFilter(params.getParams()).subscribe({
+      next: data => {
+        console.log('DATA SELECT ', data.data);
+        this.selectDataLote = new DefaultSelect(
+          // data.data.map((i: any) => {
+          //   i['description_data'] = i.idLot + ' --- ' + i.description;
+          //   return i;
+          // }),
+          data.data,
+          data.count
+        );
+        console.log(data, this.selectDataLote);
+      },
+      error: error => {
+        this.selectDataLote = new DefaultSelect();
+      },
+    });
+  }
 }

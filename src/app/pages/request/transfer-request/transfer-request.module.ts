@@ -25,6 +25,8 @@ import { ClassificationAssetsTabComponent } from './tabs/classify-assets-compone
 import { RequestDetailTabComponent } from './tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
 import { CheckboxComponent } from './tabs/compliance-verification-components/verify-compliance-tab/checkbox/checkbox.component';
 import { FulfillmentComponent } from './tabs/compliance-verification-components/verify-compliance-tab/fulfillment/fulfillment.component';
+import { MeasureUnitSaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/measure-unit-sae-input/measure-unit-sae-input.component';
+import { QuantitySaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/quantity-sae-input/quantity-sae-input.component';
 import { SaeInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { SelectInputComponent } from './tabs/compliance-verification-components/verify-compliance-tab/select-input/select-input.component';
 import { VerifyComplianceTabComponent } from './tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
@@ -37,6 +39,7 @@ import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-imp
 import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
 import { PrintReportModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 import { PrintSatAnswerComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-sat-answer/print-sat-answer.component';
+import { RecipientsEmailComponent } from './tabs/notify-clarifications-impropriety-tabs-component/recipients-email/recipients-email.component';
 import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/refuse-clarification-modal/refuse-clarification-modal.component';
 import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
@@ -95,6 +98,9 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     InappropriatenessPgrSatFormComponent,
     InappropriatenessFormComponent,
     MotiveRefuseModalComponent,
+    RecipientsEmailComponent,
+    QuantitySaeInputComponent,
+    MeasureUnitSaeInputComponent,
   ],
   imports: [
     CommonModule,

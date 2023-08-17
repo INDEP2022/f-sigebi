@@ -148,6 +148,8 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
         },
         err => {
           console.log(err);
+          this.detailData.load([]);
+          this.totalItems2 = 0;
         }
       );
     }
@@ -182,7 +184,7 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
 
   newProposalFn() {
     this.loading = true;
-
+    console.log(this.id);
     const model: IRequesNum = {
       deposit: this.form.get('deposit').value,
       relayTesofDate: null,
@@ -214,34 +216,60 @@ export class NumerarySolicitudeComponent extends BasePage implements OnInit {
   }
 
   newDetailFn() {
-    const model: IRequesNumMov = {
-      applicationId: parseInt(this.id),
-      motionNumber: this.form2.get('movement').value,
-      amountAssign: this.form.get('deposit').value,
-    };
+    console.log('Sí entra');
+    console.log(this.id);
 
-    this.numeraryService.createRequestNumMov(model).subscribe(
-      res => {
-        const paramsF = new FilterParams();
-        paramsF.addFilter('applicationId', this.id);
-        this.numeraryService.getAllRequestNumMov(paramsF.getParams()).subscribe(
-          res => {
-            console.log(res);
-            this.loading = false;
-            this.detailData.load(res.data);
-            this.totalItems2 = res.count;
-            this.newDetail = false;
-            this.alert('success', 'Detalle creado', '');
-          },
-          err => {
-            console.log(err);
+    if (this.id != null) {
+      const model: IRequesNumMov = {
+        applicationId: parseInt(this.id),
+        motionNumber: this.form2.get('movement').value,
+        amountAssign: this.form2.get('deposit').value,
+      };
+
+      this.numeraryService.createRequestNumMov(model).subscribe(
+        res => {
+          const paramsF = new FilterParams();
+          paramsF.addFilter('applicationId', this.id);
+          this.numeraryService
+            .getAllRequestNumMov(paramsF.getParams())
+            .subscribe(
+              res => {
+                console.log(res);
+                this.loading = false;
+                this.detailData.load(res.data);
+                this.totalItems2 = res.count;
+                this.form2.get('movement').reset();
+                this.form2.get('deposit').reset();
+                this.newDetail = false;
+                this.alert('success', 'Detalle creado', '');
+              },
+              err => {
+                console.log(err);
+              }
+            );
+        },
+        err => {
+          this.loading = false;
+          console.log(err);
+          console.log(err.error.message);
+          if (
+            err.error.message ==
+            'duplicate key value violates unique constraint "nume_solicitud_movi_pk"'
+          ) {
+            this.alert(
+              'error',
+              `El Movimiento ${
+                this.form2.get('movement').value
+              } ya ha sido Registrado`,
+              ''
+            );
+          } else {
+            this.alert('error', 'Se presentó un error inesperado', '');
           }
-        );
-      },
-      err => {
-        this.loading = false;
-        this.alert('error', 'Se presentó un error inesperado', '');
-      }
-    );
+        }
+      );
+    } else {
+      this.alert('warning', 'No selecccionó Propuesta', '');
+    }
   }
 }

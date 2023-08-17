@@ -64,14 +64,14 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       id: [this.proceeding.id],
       actId: [this.proceeding.actId],
       programmingId: [this.proceeding.programmingId],
-      nameDelivery: [null],
+      nameDelivery: [null, [Validators.required]],
       typeTransport: [null],
-      chargeDelivery: [null],
+      chargeDelivery: [null, [Validators.required]],
       plateNumber: [null],
       seal: [null],
-      nameReceipt: [null],
+      nameReceipt: [null, [Validators.required]],
       observation: [null],
-      chargeReceipt: [null, [Validators.maxLength(15)]],
+      chargeReceipt: [null, [Validators.maxLength(15), Validators.required]],
       electronicSignatureEnt: [null],
       electronicSignatureReceipt: [null],
     });
@@ -130,6 +130,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     };
     config.initialState = {
       proceeding: this.proceeding,
+      typeFirm: this.generateReceiptForm.get('electronicSignatureReceipt')
+        .value,
       callback: (next: boolean) => {
         if (next) {
           this.showReceiptWitness();
@@ -171,7 +173,6 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    console.log('this.generateReceiptForm', this.generateReceiptForm);
     const electronicSignatureEnt = this.generateReceiptForm.get(
       'electronicSignatureEnt'
     ).value;
@@ -204,7 +205,7 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         .subscribe({
           next: async () => {
             const Signatures: any = await this.checkSign();
-            console.log('Signatures', Signatures);
+
             if (Signatures) {
               this.formInfoSignature(Signatures);
             }
@@ -259,7 +260,6 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       params.getValue()['filter.statusReceipt'] = 'ABIERTO';
       this.receptionGoodService.getReceipt(params.getValue()).subscribe({
         next: response => {
-          console.log('response', response);
           const firmEnt = response.data[0].electronicSignatureEnt;
           const firmReceip = response.data[0].electronicSignatureReceipt;
           const Signatures = response.data[0];
@@ -470,5 +470,29 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
     });
   }
 
-  electricOption(event: any) {}
+  electronicSignatureEntSelect() {
+    const electronicSignatureEnt = this.generateReceiptForm.get(
+      'electronicSignatureEnt'
+    ).value;
+
+    if (electronicSignatureEnt) {
+      this.generateReceiptForm.get('electronicSignatureReceipt').setValue(true);
+    } else if (!electronicSignatureEnt) {
+      this.generateReceiptForm
+        .get('electronicSignatureReceipt')
+        .setValue(false);
+    }
+  }
+
+  electronicSignatureReceiptSelect() {
+    const electronicSignatureReceipt = this.generateReceiptForm.get(
+      'electronicSignatureReceipt'
+    ).value;
+
+    if (electronicSignatureReceipt) {
+      this.generateReceiptForm.get('electronicSignatureEnt').setValue(true);
+    } else if (!electronicSignatureReceipt) {
+      this.generateReceiptForm.get('electronicSignatureEnt').setValue(false);
+    }
+  }
 }

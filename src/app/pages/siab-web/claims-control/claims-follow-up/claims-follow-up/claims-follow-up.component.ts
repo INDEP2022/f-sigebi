@@ -406,15 +406,15 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.seraLogService.postDateExport(data).subscribe(
         response => {
           console.log(response);
-          this.convertAndDownloadExcel(
+          this._downloadExcelFromBase64(
             response,
             `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
           );
-          this.alert(
-            'success',
-            'Siniestros Seguimiento',
-            'Se genero el archivo excel'
-          );
+          // this.alert(
+          //   'success',
+          //   'Siniestros Seguimiento',
+          //   'Se genero el archivo excel'
+          // );
         },
         error => {
           this.alert(
@@ -436,15 +436,15 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.seraLogService.postExport(data).subscribe(
       response => {
         console.log(response);
-        this.convertAndDownloadExcel(
+        this._downloadExcelFromBase64(
           response,
           `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
         );
-        this.alert(
-          'success',
-          'Siniestros Seguimiento',
-          'Se genero el archivo excel'
-        );
+        // this.alert(
+        //   'success',
+        //   'Siniestros Seguimiento',
+        //   'Se genero el archivo excel'
+        // );
       },
       error => {
         this.alert(

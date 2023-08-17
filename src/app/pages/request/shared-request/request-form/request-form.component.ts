@@ -208,7 +208,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
     // agregar nuevo campos al formulario para solicitudes de documentacion complementaria
     // Cambia el nombre al campo de Entidad a Estado
     this.keyStateName = 'Estado';
-    form.addControl('affair', this.fb.control('', []));
+    //form.addControl('affair', this.fb.control('', [Validators.required]));
+    this.requestForm.controls['affair'].addValidators([Validators.required]);
+    this.requestForm.updateValueAndValidity();
   }
 
   getRegionalDelegationId() {
@@ -300,16 +302,28 @@ export class RequestFormComponent extends BasePage implements OnInit {
     params['sortBy'] = 'nameTransferent:ASC';
     params['filter.status'] = `$eq:${1}`;
     params['filter.typeTransferent'] = `$eq:NO`;
+
+    /// -------- Buscar por ID o por Texto -------///
+    const isNumber = !isNaN(Number(params.text));
+    if (params.text != '' && isNumber != true) {
+      params['filter.nameTransferent'] = `$ilike:${params.text}`;
+    } else if (params.text != '' && isNumber == true) {
+      params['filter.id'] = `$ilike:${params.text}`;
+    }
+    const ptext = params.text;
+    params.text = '';
+    params['search'] = '';
+    /// ------------------------------
     this.transferentService.getAll(params).subscribe({
       next: data => {
-        const text = this.replaceAccents(params.text);
+        const text = this.replaceAccents(ptext);
         data.data.map(data => {
           data.nameAndId = `${data.id} - ${data.nameTransferent}`;
           return data;
         });
         this.transferents$ = new DefaultSelect(data.data, data.count);
 
-        if (params.text) {
+        if (ptext) {
           let copyData = [...data.data];
           copyData.map(data => {
             data.nameAndId = this.replaceAccents(data.nameAndId);
@@ -336,6 +350,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
         this.transferents$ = new DefaultSelect();
       },
     });
+  }
+
+  changeTransf(event: any) {
+    if (event == undefined) {
+      this.transferents$ = new DefaultSelect();
+      this.requestForm.controls['transferenceId'].setValue(null);
+      this.getTransferent(new ListParams());
+    }
   }
 
   getState(event: any): void {}
@@ -448,7 +470,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question) {
         if (this.op == 2) {
-          this.getRegionalDeleg(new ListParams());
+          /*this.getRegionalDeleg(new ListParams());
           const createTask = await this.generateFirstTask();
           if (createTask) {
             this.msgModal(
@@ -457,11 +479,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 .concat(` al usuario ${this.userName}`),
               'Solicitud Creada',
               'success'
-            );
-            //debugger;
-            //crea tareas de prueba se puede eliminar
-            this.turnRequestTest();
-          }
+            );*/
+          //debugger;
+          //crea tareas de prueba se puede eliminar
+          this.turnRequestOp2();
+          /*  } */
         } else {
           if (this.requestForm.controls['targetUser'].value === null) {
             this.alert(
@@ -506,6 +528,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
                   'pages/request/transfer-request/registration-request';
                 task['processName'] = 'SolicitudTransferencia';
                 task['idDelegationRegional'] = actualUser.department;
+                task['idstation'] = form.stationId;
+                task['idTransferee'] = form.transferenceId;
+                task['idAuthority'] = form.authorityId;
+
                 body['task'] = task;
 
                 let orderservice: any = {};
@@ -521,9 +547,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
                 if (taskResult) {
                   this.loadingTurn = false;
                   this.msgModal(
-                    'Se turna la solicitud con el Folio Nº '
+                    'Se turnó la solicitud con el Folio Nº '
                       .concat(`<strong>${idRequest}</strong>`)
-                      .concat(` al usuario ${this.userName}`),
+                      .concat(` al usuario <strong>${this.userName}</strong>`),
                     'Solicitud Creada',
                     'success'
                   );
@@ -742,20 +768,28 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  async turnRequestTest() {
+  idTransferente: number = 0;
+  idEmisora: number = 0;
+  idAuthoridad: number = 0;
+
+  async turnRequestOp2() {
     this.getRegionalDeleg(new ListParams());
     const createTask = await this.generateFirstTask();
-
     if (createTask) {
       this.loadingTurn = true;
       const form = this.requestForm.getRawValue();
+      //Estableciendo valores a transferente, emisora y autoridad
+      this.idTransferente = form.transferenceId;
+      this.idEmisora = form.stationId;
+      this.idAuthoridad = form.authorityId;
       form.id = this.requestId;
       const idRequest = form.id;
-      const title =
+      const { title, urlNb, processName } = this.getValuesForTurn();
+      /*  const title =
         'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud: ' +
         idRequest;
       const urlNb = 'pages/request/request-comp-doc';
-      const processName = 'similar-good-register-documentation';
+      const processName = 'similar-good-register-documentation'; */
 
       const requestResult: any = await this.updateTurnedRequest(form);
       if (requestResult) {
@@ -781,6 +815,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['expedientId'] = 0;
         task['urlNb'] = urlNb;
         task['processName'] = processName;
+        task['idstation'] = this.idEmisora;
+        task['idTransferee'] = this.idTransferente;
+        task['idAuthority'] = this.idAuthoridad;
         task['idDelegationRegional'] = actualUser.department;
         body['task'] = task;
 
@@ -797,15 +834,34 @@ export class RequestFormComponent extends BasePage implements OnInit {
         if (taskResult) {
           this.loadingTurn = false;
           this.msgModal(
-            'Se turna la solicitud con el Folio Nº '
+            'Se turnó la solicitud con el Folio Nº'
               .concat(`<strong>${idRequest}</strong>`)
-              .concat(` al usuario ${this.userName}`),
+              .concat(` al usuario <strong>${this.userName}</strong>`),
             'Solicitud Creada',
             'success'
           );
           this.router.navigate(['/pages/siab-web/sami/consult-tasks']);
         }
       }
+    }
+  }
+
+  getValuesForTurn(): any {
+    const affair = +this.requestForm.controls['affair'].value;
+    let title = '';
+    let url = '';
+    let process = '';
+    switch (affair) {
+      case 33: //RESARCIMIENTO EN ESPECIA
+        title =
+          'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud:';
+        url = 'pages/request/request-comp-doc';
+        process = 'SRegistroSolicitudes';
+        return { title: title, urlNb: url, processName: process };
+        break;
+
+      default:
+        break;
     }
   }
 }

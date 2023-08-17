@@ -1608,11 +1608,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.massiveGoodService.pubExport(iPackage).subscribe(
       response => {
         this.convertAndDownloadExcel(response.base64File, response.fileName);
-        this.alert('success', 'Exportación Excel', 'Generada correctamente');
+        this.alert('success', 'Exportación Excel', 'Generada Correctamente');
         // Swal.fire('Exito', 'Se genero el archivo excel', 'success');
       },
       error => {
-        this.alert('error', 'Error al generar el archivo excel', '');
+        this.alert('error', 'Error al Generar el Archivo Excel', '');
         // Swal.fire('Error', 'Error Al generar el archivo excel', 'error');
       }
     );
@@ -1752,7 +1752,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.loading = true;
     let params: any = {};
     params['NO_PAQUETE'] = this.form.get('noPackage').value.numberPackage;
-
+    params['PCLAVE'] = this.form.get('cvePackage').value.cvePackage;
+    params['PDESTINO'] = this.form.get('packageType').value.packageType;
+    console.log('params....', params);
     this.loadingText = 'Generando reporte ...';
     this.siabService.fetchReport('RGENACTACONVUNIDAD', params).subscribe({
       next: (response: BlobPart) => {

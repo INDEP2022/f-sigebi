@@ -100,60 +100,45 @@ export class NotifyAssetsImproprietyFormComponent
       addresseeName: [
         //Nombre Destinatario - Titular de la solicitud
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+        [Validators.pattern(STRING_PATTERN)],
       ],
 
       positionAddressee: [
         //Cargo Destinatario - Titular de la solicitud
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+        [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderName: [
         //Nombre Remitente - DELEGADO
         this.infoRequest?.nameOfOwner || null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+        [Validators.pattern(STRING_PATTERN)],
       ],
 
       senderCharge: [
         //Cargo Remitente - DELEGADO
         this.infoRequest?.holderCharge || null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+        [Validators.pattern(STRING_PATTERN)],
       ],
 
-      consistentIn: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
+      consistentIn: [null, [Validators.pattern(STRING_PATTERN)]],
 
-      paragraphInitial: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
-      paragraphFinal: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
+      paragraphInitial: [null, [Validators.pattern(STRING_PATTERN)]],
+      paragraphFinal: [null, [Validators.pattern(STRING_PATTERN)]],
 
-      clarification: [
-        null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1000)],
-      ],
+      clarification: [null, [Validators.pattern(STRING_PATTERN)]],
 
       observations: [
         this.dataClarifications2?.observations || null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(400)],
+        [Validators.pattern(STRING_PATTERN)],
       ],
 
       userAreaCaptures: [
         this.dataClarifications2?.chatClarification?.areaUserCapture || null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(60)],
+        [Validators.pattern(STRING_PATTERN)],
       ],
 
-      webMail: [
-        null,
-        [Validators.pattern(EMAIL_PATTERN), Validators.maxLength(30)],
-      ],
+      webMail: [null, [Validators.pattern(EMAIL_PATTERN)]],
     });
   }
 

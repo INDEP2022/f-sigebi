@@ -9,6 +9,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { addDays } from 'date-fns';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
@@ -65,7 +66,8 @@ export class RequestRecordTabComponent
     private genericsService: GenericService,
     private requestService: RequestService,
     private minPub: MinPubService,
-    private transferenteService: TransferenteService
+    private transferenteService: TransferenteService,
+    private authService: AuthService
   ) {
     super();
     this.minDate = addDays(new Date(), 1);
@@ -76,7 +78,11 @@ export class RequestRecordTabComponent
     });*/
   }
 
+  siglasNivel1: string = '';
+
   ngOnInit(): void {
+    const token = this.authService.decodeToken();
+    this.siglasNivel1 = token.siglasnivel1;
     //const min = addDays(new Date(), 1);
     console.log('Activando tab: request-record-tab');
     this.getOriginInfo(new ListParams());
@@ -365,8 +371,8 @@ export class RequestRecordTabComponent
         this.requestForm.get('circumstantialRecord').value === ''
       ) {
         this.message(
-          'info',
-          'Campos requeridos',
+          'warning',
+          'Campos Requeridos',
           'Recuerde llenar los campos obligatorios'
         );
         this.requestForm.markAllAsTouched();
@@ -378,9 +384,9 @@ export class RequestRecordTabComponent
         this.requestForm.get('paperDate').value === ''
       ) {
         this.message(
-          'info',
-          'Campos requeridos',
-          'Recuerde llenar los campos obligatorios'
+          'warning',
+          'Fecha de Oficio',
+          'Es obligatorio ingresar una fecha'
         );
         this.requestForm.markAllAsTouched();
         return;
@@ -400,6 +406,10 @@ export class RequestRecordTabComponent
     request.transferEntNotes = request.transferEntNotes
       ? request.transferEntNotes
       : null;
+
+    //copia el contenido de nameOfOwner a sender
+    request.sender = request.nameOfOwner;
+
     //request.court = request.court ? request.court : null;
     this.formLoading = true;
     const requestResult = await this.updateRequest(request);

@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 //Components
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import {
   FilterParams,
@@ -51,6 +52,7 @@ export class RequestCompDocTasksComponent
   selectGoodForEyeVisit: boolean = false;
   validateGoodForEyeVisit: boolean = false;
   resultEyeVisitReport: boolean = false;
+  makeResultPaperReport: boolean = false;
   resultVisits: boolean = false;
   createReportDictum: boolean = false;
   listGoodSelectedTitle: string = 'Listado de Bienes';
@@ -75,6 +77,11 @@ export class RequestCompDocTasksComponent
   displayExpedient: boolean = false;
   complementaryDoc: boolean = false;
   typeVisit: string = '';
+  affair: number = null;
+  /**
+   * email del usuairo
+   */
+  emailForm: FormGroup = new FormGroup({});
 
   /* INJECTIONS
   ============== */
@@ -90,7 +97,8 @@ export class RequestCompDocTasksComponent
     private location: Location,
     private route: ActivatedRoute,
     private router: Router,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private fb: FormBuilder
   ) {
     super();
     this.screenWidth =
@@ -106,6 +114,9 @@ export class RequestCompDocTasksComponent
       this.getRequestInfo(this.requestId);
     }
     this.expedientEventTrigger();
+    this.emailForm = this.fb.group({
+      emailUser: [null],
+    });
   }
 
   @HostListener('window:resize', ['$event'])
@@ -121,7 +132,9 @@ export class RequestCompDocTasksComponent
     this.requestService.getAll(filter).subscribe({
       next: resp => {
         this.requestInfo = resp.data[0];
+        this.affair = resp.data[0].affair;
         //this.requestId = resp.data[0].id;
+        console.log(this.process, this.affair);
         this.mapTask(this.process, resp.data[0].affair);
         this.titleView(resp.data[0].affair, this.process);
         this.getAffair(resp.data[0].affair);
@@ -188,7 +201,7 @@ export class RequestCompDocTasksComponent
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
         } else if (this.process == 'BSRegistroSolicitudes') {
-          this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+          this.setEmailNotificationTask();
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSVisitaOcular') {
@@ -279,6 +292,38 @@ export class RequestCompDocTasksComponent
       } //this.getCities();
     });
   }
+
+  /* METODO PARA TURNAR REGISTRO DE DOCUMENTACION */
+  //seleccionBienesBean.java muestraConfirmacion()
+  turnRegistrationTask() {
+    if (this.processDetonate == 'RES_ESPECIE') {
+      //obtener los bienesinventarios que tengan el campo naturalidad == INVENTARIOS
+      const email = this.emailForm.controls['emailUser'].value;
+      const haveInventaryGood = true;
+      if (haveInventaryGood != true) {
+        if (email != null) {
+          this.onLoadToast(
+            'info',
+            'Es necesario ingresar al menos un correo electrónico'
+          );
+        } else {
+          //popupTurnar
+        }
+      } else {
+        //popupTurnar
+      }
+    } else if (
+      this.processDetonate == 'RES_NUMERARIO' ||
+      this.processDetonate == 'RES_PAGO_ESPECIE'
+    ) {
+      //popupTurnar
+    } else if (this.processDetonate == 'DEVOLUCION') {
+      //popupTurnar
+    } else {
+      //popupTurnar
+    }
+  }
+  /* FIN */
 
   /* METODO QUE ITERA LOS BIENES PARA TURNAR VISITA PROGRAMACION OCULAR */
   async turnEyeVisitor() {
@@ -420,8 +465,9 @@ export class RequestCompDocTasksComponent
     };
     this.bsModalRef = this.modalService.show(MailFieldModalComponent, config);
     this.bsModalRef.content.event.subscribe((value: any) => {
-      console.log(value);
-      this.turnNotificationTask(value.email);
+      if (this.process == 'BSNotificarTransferente') {
+        this.turnNotificationTask(value.email);
+      }
     });
   }
   /* FIN METODO PARA TURNAR NOTIFICACIONES */

@@ -61,6 +61,7 @@ export class ReviewResourceReportComponent
   phaseEdo: number;
   patchValue: boolean = false;
   dateMinEnd: Date = null;
+  maxDate: Date = null;
 
   get startDate(): AbstractControl {
     return this.form.get('startDate');
@@ -96,6 +97,7 @@ export class ReviewResourceReportComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.maxDate = new Date();
     this.loading = true;
   }
 
@@ -124,13 +126,8 @@ export class ReviewResourceReportComponent
         this.delegations = new DefaultSelect(data.data, data.count);
       },
       err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.delegations = new DefaultSelect();
+        this.loading = false;
       },
       () => {}
     );
@@ -170,13 +167,7 @@ export class ReviewResourceReportComponent
         this.subdelegations = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
+        this.subdelegations = new DefaultSelect();
       },
     });
   }
@@ -197,14 +188,7 @@ export class ReviewResourceReportComponent
         this.good = new DefaultSelect(data.data, data.count);
       },
       error: err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-
-        this.onLoadToast('error', 'Error', error);
+        this.good = new DefaultSelect();
       },
     });
   }
@@ -282,8 +266,8 @@ export class ReviewResourceReportComponent
     };
 
     this.siabService
-      .fetchReport('RGERJURRECDEREV', params)
-      // .fetchReportBlank('blank')
+      //.fetchReport('RGERJURRECDEREV', params)
+      .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });

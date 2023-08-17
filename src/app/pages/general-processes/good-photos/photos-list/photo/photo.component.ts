@@ -30,7 +30,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
+    // console.log(changes);
     if (changes['filename']) {
       this.filenameChange();
     }
@@ -38,7 +38,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
 
   private filenameChange() {
     this.loading = true;
-    console.log(this.filename);
+    // console.log(this.filename);
     let index = this.filename.indexOf('F');
     let finish = this.filename.indexOf('.');
     // console.log(index);
@@ -75,7 +75,7 @@ export class PhotoComponent extends PhotoClassComponent implements OnInit {
         multiple: false,
         info: `Haz clic para seleccionar la imágen o arrástrala
       aquí`,
-        titleFinishUpload: 'Imagen cargada correctamente',
+        titleFinishUpload: 'Imagen Cargada Correctamente',
         questionFinishUpload: '¿Desea seguir editando?',
         identificator: this.goodNumber + '',
         callback: (refresh: boolean) => {

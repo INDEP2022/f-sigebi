@@ -33,6 +33,7 @@ export class ClassificationOfGoodsSharedComponent
   @Input() label: string = 'Clasificación de Bien';
   @Input() showClasification: boolean = true;
   @Output() descriptionClasification = new EventEmitter<string>();
+  @Output() clasificationEmit = new EventEmitter<any>();
   @Input() patchValue: boolean = false;
   data: IClasifi[] = [];
   sssubtypes = new DefaultSelect<IGoodSsubType>();
@@ -68,7 +69,9 @@ export class ClassificationOfGoodsSharedComponent
   }
 
   onPackagesChange(type: any) {
-    this.descriptionClasification.emit(type.description);
+    if (type) {
+      this.descriptionClasification.emit(type.description);
+    }
     this.form.updateValueAndValidity();
   }
 

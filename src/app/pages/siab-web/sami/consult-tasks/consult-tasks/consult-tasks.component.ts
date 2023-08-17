@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { saveAs } from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -10,12 +11,16 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TaskService } from 'src/app/core/services/ms-task/task.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/consult-tasks/consult-tasks-columns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-consult-tasks',
   templateUrl: './consult-tasks.component.html',
@@ -24,7 +29,7 @@ import { REQUEST_LIST_COLUMNS } from 'src/app/pages/siab-web/sami/consult-tasks/
 export class ConsultTasksComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
-
+  filter: any;
   totalItems: number = 0;
   //tasks: IRequestTask[] = [];
   tasks = new LocalDataSource();
@@ -34,6 +39,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
   consultTasksForm: FormGroup;
   department = '';
   delegation: string = null;
+  excelLoading = this.loading;
+  transferents$ = new DefaultSelect<ITransferente>();
+
+  get txtFecAsigDesde() {
+    return this.consultTasksForm.get('txtFecAsigDesde');
+  }
+
+  get txtFechaFinDesde() {
+    return this.consultTasksForm.get('txtFechaFinDesde');
+  }
 
   constructor(
     private taskService: TaskService,
@@ -41,10 +56,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     public router: Router,
     private fb: FormBuilder,
-    private regionalDelegacionService: RegionalDelegationService
+    private regionalDelegacionService: RegionalDelegationService,
+    private transferentService: TransferenteService
   ) {
     super();
-    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: '',
+      hideSubHeader: true,
+    };
     this.settings.columns = REQUEST_LIST_COLUMNS;
   }
 
@@ -76,15 +97,16 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoProgramacionEntrega: ['', Validators.pattern(NUMBERS_PATTERN)],
+      txtNoProgramacionRecepcion: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNombreActividad: [
         '',
         [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ],
       txtNoOrdenServicio: ['', Validators.pattern(NUMBERS_PATTERN)],
-      // txtAsignado: [
-      //   '',
-      //   [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
-      // ],
+      txtAsignado: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       txtNoOrdenPago: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtAprobador: [
         '',
@@ -111,8 +133,9 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       txtNoSolicitud: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoTransferente: ['', Validators.pattern(NUMBERS_PATTERN)],
       txtNoProgramacion: ['', Validators.pattern(NUMBERS_PATTERN)],
-      State: ['null'],
+      State: ['PROCESO'],
       typeOfTrasnfer: [null],
+      txtDaysAtrasos: [null],
     });
 
     this.params
@@ -123,7 +146,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       .subscribe();
   }
   searchTasks() {
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
+    //this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
@@ -131,17 +154,155 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       )
       .subscribe();
   }
-  exportToExcel() {
-    const filename: string = this.userName + '-Tasks';
-    // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(this.tasks['data'], { filename });
+
+  donwloadReport() {
+    const obj: Object = {
+      idDelegationRegional: this.consultTasksForm.value.txtNoDelegacionRegional,
+      idTransferee: Number(this.consultTasksForm.value.txtNoTransferente),
+    };
+
+    console.log('Objeto', obj);
+
+    this.taskService.downloadReport(obj).subscribe({
+      next: resp => {
+        const data = resp.base64File;
+        console.log('Base64: ', data);
+        if (data != '') {
+          const base64String = data;
+          const binaryData = atob(base64String);
+          const bytes = new Uint8Array(binaryData.length);
+          for (let i = 0; i < binaryData.length; i++) {
+            bytes[i] = binaryData.charCodeAt(i);
+          }
+
+          const workbook = XLSX.read(bytes, { type: 'array' });
+          const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+          });
+
+          const blob = new Blob([excelBuffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+          const filename = 'reporteAtrasos.xlsx';
+          saveAs(blob, filename);
+        } else if (data === '') {
+          this.alert(
+            'warning',
+            'Sin información',
+            'No hay reporte disponible para la transferente seleccionada'
+          );
+        }
+      },
+      error: error => {
+        this.alert('error', 'Error', 'Hubo un problema al generar el reporte');
+      },
+    });
   }
 
-  private getTasks() {
+  replaceAccents(text: string) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  getTransferent(params?: ListParams) {
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    //params['filter.typeTransferent'] = `$eq:NO`;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        const text = this.replaceAccents(params.text);
+        data.data.map(data => {
+          data.nameAndId = `${data.nameTransferent}`;
+          return data;
+        });
+        this.transferents$ = new DefaultSelect(data.data, data.count);
+
+        if (params.text) {
+          let copyData = [...data.data];
+          copyData.map(data => {
+            data.nameAndId = this.replaceAccents(data.nameAndId);
+            return data;
+          });
+
+          copyData = copyData.filter(item => {
+            return text.toUpperCase() === ''
+              ? item
+              : item.nameAndId.toUpperCase().includes(text.toUpperCase());
+          });
+
+          copyData.map(x => {
+            x.nameAndId = `${x.nameTransferent}`;
+            return x;
+          });
+
+          if (copyData.length > 0) {
+            this.transferents$ = new DefaultSelect(copyData, copyData.length);
+          }
+        }
+      },
+      error: () => {
+        this.transferents$ = new DefaultSelect();
+      },
+    });
+  }
+
+  async exportToExcel() {
+    this.excelLoading = true;
+    const filename: string = this.userName + '-Tasks';
+    // El type no es necesario ya que por defecto toma 'xlsx'
+    let filter = this.filter;
+    filter.getValue().limit = 99999999;
+    console.log(filter.getValue());
+    const response: any = await this.getData(filter.getValue());
+    if (response) {
+      const data: any[] = response.data.map((item: any) => {
+        return {
+          'Titulo de la Tarea': item.title,
+          Salida: '',
+          'Nombre de la Actividad': item.activitydescription,
+          'Asignado a': item.assignees,
+          Aprobador: item.approvers,
+          'Nombre de la Aplicación': item.applicationdescription,
+          'Nombre del Proceso': item.processdescription,
+          'Nombre Tarea BPM': '',
+          Estatus: item.State,
+          'Porcentaje Completado': item.percentageComplete,
+          Secuencia: '',
+          'Fecha Asignación': item.assignedDate,
+          'Fecha Finalización': item.endDate,
+          'Duración tiempo (min)': '',
+          'Duración tiempo (Días)': '',
+          'No. Solicitud': item.requestId,
+          'No. Programación': item.programmingId,
+          'No. Programación Entrega': '',
+          'No. Orden Servicio': '',
+          'No. Muestreo': '',
+          'No. Muestreo Orden': '',
+          'No. Orden Ingreso': '',
+          'No. Orden Pago': '',
+          'No. Delegación Regional': item.idDelegationRegional,
+          'No. Transferente': item.idTransferee,
+        };
+      });
+      this.excelService.export(data, { filename });
+      this.excelLoading = false;
+    } else {
+      this.alert('warning', 'No se encontraron datos para exportar', '');
+      this.excelLoading = false;
+    }
+  }
+
+  async getTasks(limitExport?: number) {
     let isfilterUsed = false;
+    this.loading = true;
     const params = this.params.getValue();
     this.filterParams.getValue().removeAllFilters();
     this.filterParams.getValue().page = params.page;
+    if (limitExport) {
+      this.filterParams.getValue().limit = limitExport;
+    } else {
+      this.filterParams.getValue().limit = params.limit;
+    }
     const user = this.authService.decodeToken() as any;
 
     this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue(
@@ -157,16 +318,20 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     if (filterStatus) {
       isfilterUsed = true;
       if (filterStatus === 'null') {
+        //Cambiar filtro a PROCESO, cuando esten abiertas
         this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
         this.getDelegationRegional(user.department);
       } else if (filterStatus === 'FINALIZADA') {
-        this.filterParams.getValue().addFilter('FINALIZADA', filterStatus);
+        this.filterParams.getValue().addFilter('State', filterStatus);
+        this.getDelegationRegional(user.department);
+      } else if (filterStatus === 'PROCESO') {
+        this.filterParams.getValue().addFilter('State', filterStatus);
         this.getDelegationRegional(user.department);
       }
-      if (filterStatus === 'TODOS') {
-        this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
-        this.delegation = '';
-      }
+      // if (filterStatus === 'TODOS') {
+      //   this.consultTasksForm.controls['txtNoDelegacionRegional'].setValue('');
+      //   this.delegation = '';
+      // }
     }
 
     if (this.consultTasksForm.value.typeOfTrasnfer) {
@@ -185,6 +350,40 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           .getValue()
           .addFilter('request.typeOfTransfer', value, SearchFilter.EQ);
       }
+    }
+
+    if (this.consultTasksForm.value.txtNoSolicitud) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'requestId',
+          this.consultTasksForm.value.txtNoSolicitud,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtNoTransferente) {
+      console.log('Filtro de transferente activado');
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'idTransferee',
+          this.consultTasksForm.value.txtNoTransferente,
+          SearchFilter.EQ
+        );
+    }
+
+    if (this.consultTasksForm.value.txtDaysAtrasos) {
+      isfilterUsed = true;
+      this.filterParams
+        .getValue()
+        .addFilter(
+          'backwardness',
+          this.consultTasksForm.value.txtDaysAtrasos,
+          SearchFilter.BTW
+        );
     }
 
     if (this.consultTasksForm.value.txtTituloTarea) {
@@ -227,16 +426,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           SearchFilter.ILIKE
         );
     }
-    // if (this.consultTasksForm.value.txtAsignado || this.userName) {
-    //   // isfilterUsed = true;
-    //   this.filterParams
-    //     .getValue()
-    //     .addFilter(
-    //       'assignees',
-    //       this.consultTasksForm.value.txtAsignado || this.userName,
-    //       SearchFilter.ILIKE
-    //     );
-    // }
+
     if (this.consultTasksForm.value.txtNoOrdenPago) {
       isfilterUsed = true;
       this.filterParams
@@ -300,7 +490,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
 
       this.filterParams
         .getValue()
-        .addFilter('assignedDate', inicio + ',' + final, SearchFilter.BTW);
+        .addFilter('createdDate', inicio + ',' + final, SearchFilter.BTW);
     }
     if (this.consultTasksForm.value.txtNoMuestreoOrden) {
       isfilterUsed = true;
@@ -338,27 +528,8 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
         SearchFilter.EQ
       );
     }
-    if (this.consultTasksForm.value.txtNoSolicitud) {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          '-NoSolicitud',
-          this.consultTasksForm.value.txtNoSolicitud,
-          SearchFilter.ILIKE
-        );
-    }
-    if (typeof this.consultTasksForm.value.txtNoTransferente == 'number') {
-      isfilterUsed = true;
-      this.filterParams
-        .getValue()
-        .addFilter(
-          'request.transferenceId',
-          this.consultTasksForm.value.txtNoTransferente,
-          SearchFilter.EQ
-        );
-    }
     if (typeof this.consultTasksForm.value.txtNoProgramacion == 'number') {
+      console.log('txtNoProgramacion');
       isfilterUsed = true;
       this.filterParams
         .getValue()
@@ -381,37 +552,40 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
     // if (!isfilterUsed) {
     //   this.filterParams.getValue().addFilter('State', '', SearchFilter.NULL);
     // }
+    this.filter = this.filterParams;
     let filter = this.filterParams
       .getValue()
       .getParams()
       .concat('&sortBy=id:DESC');
 
-    this.taskService.getTasksByUser(filter).subscribe({
-      next: response => {
-        this.loading = false;
+    const response: any = await this.getData(filter);
+    if (response) {
+      this.tasks.load(response.data);
+      this.tasks.refresh();
+      this.totalItems = response.count;
+    } else {
+      this.tasks.load([]);
+      this.tasks.refresh();
+    }
+  }
 
-        /*  if (isfilterUsed) {
-            this.tasks = response.data.filter(
-              (record: { State: string }) => record.State != 'FINALIZADA'
-            );
-            this.totalItems = this.tasks.length;
-          } else {
-            this.tasks = response.data;
-            this.totalItems = response.count;
-          } */
-        response.data.map((item: any) => {
-          item.taskNumber = item.id;
-          item.requestId =
-            item.requestId != null ? item.requestId : item.programmingId;
-        });
-
-        //this.tasks = response.data;
-        this.tasks.load(response.data);
-        this.totalItems = response.count;
-      },
-      error: () => (
-        (this.tasks = new LocalDataSource()), (this.loading = false)
-      ),
+  getData(filter: any) {
+    return new Promise((resolve, _reject) => {
+      this.taskService.getTasksByUser(filter).subscribe({
+        next: response => {
+          this.loading = false;
+          response.data.map((item: any) => {
+            item.taskNumber = item.id;
+            item.requestId =
+              item.requestId != null ? item.requestId : item.programmingId;
+          });
+          resolve(response);
+        },
+        error: () => {
+          resolve(null);
+          this.loading = false;
+        },
+      });
     });
   }
 

@@ -227,26 +227,52 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
           },
         });
       } else {
-        const filterReceipt = this.receipts.filter(item => {
-          return item.actId == filterProceedingOpen[0].id;
-        });
-        const receiptForm: Object = {
-          id: filterReceipt.length + 1,
-          actId: filterProceedingOpen[0].id,
-          programmingId: this.programming.id,
-          statusReceipt: 'ABIERTO',
-        };
+        if (this.receipts[0]?.statusReceipt == 'CERRADO') {
+          const filterReceipt = this.receipts.filter(item => {
+            return item.actId == filterProceedingOpen[0].id;
+          });
+          const receiptForm: Object = {
+            id: filterReceipt.length + 1,
+            actId: filterProceedingOpen[0].id,
+            programmingId: this.programming.id,
+            statusReceipt: 'ABIERTO',
+          };
 
-        this.receptionGoodService.createReceipt(receiptForm).subscribe({
-          next: async response => {
-            const folioReceipt = await this.createKeyReceipt(response);
-            if (folioReceipt) {
-              this.getReceipts();
-              this.loadingCreateReceipt = false;
-            }
-          },
-          error: error => {},
-        });
+          this.receptionGoodService.createReceipt(receiptForm).subscribe({
+            next: async response => {
+              const folioReceipt = await this.createKeyReceipt(response);
+              if (folioReceipt) {
+                this.getReceipts();
+                this.loadingCreateReceipt = false;
+              }
+            },
+            error: error => {},
+          });
+        } else if (this.receipts) {
+          console.log('Crea recibo pero ya se tiene un acta');
+          const receiptForm: Object = {
+            id: 1,
+            actId: filterProceedingOpen[0].id,
+            programmingId: this.programming.id,
+            statusReceipt: 'ABIERTO',
+          };
+
+          this.receptionGoodService.createReceipt(receiptForm).subscribe({
+            next: async response => {
+              const folioReceipt = await this.createKeyReceipt(response);
+              if (folioReceipt) {
+                this.getReceipts();
+                this.loadingCreateReceipt = false;
+              }
+            },
+            error: error => {},
+          });
+          /*this.alert(
+            'warning',
+            'Acción Invalida',
+            'Ya se encuentra un recibo abierto'
+          ); */
+        }
       }
     } else {
       this.loadingCreateReceipt = true;

@@ -10,13 +10,13 @@
           <div class="col-12">
             <i class="fa fa-square" style="color: #e2c103"></i
             ><span style="font-weight: 500">
-              Movimientos Con Bienes Conciliados &nbsp;&nbsp;
+              Movimientos con Bienes Conciliados &nbsp;&nbsp;
             </span>
           </div>
           <div class="col-12">
             <i class="fa fa-square" style="color: #686868"></i
             ><span style="font-weight: 500">
-              Doble Click en la Columna de Depósito para Conciliar &nbsp;&nbsp;
+              Doble Clic en la Columna de Depósito para Conciliar &nbsp;&nbsp;
             </span>
           </div>
         </div>
@@ -257,7 +257,7 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('balanceOf')" label="Saldo De">
+                <form-field [control]="form.get('balanceOf')" label="Saldo de">
                   <input
                     [(ngModel)]="dateMovemInicio"
                     (ngModelChange)="dateMovementInicio($event)"
@@ -285,7 +285,7 @@
               <div class="col-md-12 mt-3">
                 <form-field
                   [control]="form.get('accountType')"
-                  label="Tipo De Cuenta">
+                  label="Tipo de Cuenta">
                   <input
                     readonly
                     type="text"
@@ -294,7 +294,7 @@
                 </form-field>
               </div>
               <div class="col-md-12 mt-3">
-                <form-field [control]="form.get('balanceAt')" label="Saldo Al">
+                <form-field [control]="form.get('balanceAt')" label="Saldo al">
                   <input
                     [(ngModel)]="dateMovemFin"
                     [minDate]="dateMovemInicio"

@@ -79,14 +79,14 @@
           </form-field>
         </div>
 
-        <div class="col-md-6 mt-2">
+        <!-- <div class="col-md-6 mt-2">
           <form-field [control]="form.get('appliedTo')" label="Aplicado a">
             <ng-select formControlName="appliedTo" class="form-control pt-1">
               <ng-option value="D">Devolución</ng-option>
               <ng-option value="P">Penalización</ng-option>
             </ng-select>
           </form-field>
-        </div>
+        </div> -->
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('validSistem')" label="Válido">
             <ng-select formControlName="validSistem" class="form-control pt-1">
@@ -152,7 +152,7 @@
             <input bsDatepicker maxlength="11" type="text" class="form-control" formControlName="recordDate" />
           </form-field>
         </div> -->
-        <div class="col-md-6 mt-2">
+        <div #scrollContainer class="col-md-6 mt-2">
           <form-field [control]="form.get('typeSatId')">
             <ngx-select
               [searchOnInit]="true"

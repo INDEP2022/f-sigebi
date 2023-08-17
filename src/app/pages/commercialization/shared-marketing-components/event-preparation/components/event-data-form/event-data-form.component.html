@@ -113,6 +113,7 @@
         </div>
         <div class="col-md-2">
           <button
+            (click)="onApply()"
             type="button"
             *ngIf="eventFormVisual.applyButton"
             class="btn btn-primary btn-sm active mr-3">
@@ -124,7 +125,7 @@
         <div class="col-md-4">
           <form-field
             [control]="eventForm.get('observations')"
-            label="Observaciones">
+            label="Descripción">
             <input
               type="text"
               [max-length]="300"
@@ -132,7 +133,30 @@
               formControlName="observations" />
           </form-field>
         </div>
-        <div class="col-md-4" *ngIf="eventFormVisual.thirdId">
+        <div class="col-md-4" *ngIf="parameters.pDirection == 'I'">
+          <form-field [control]="eventForm.get('vatApplies')">
+            <ngx-select
+              [searchOnInit]="true"
+              [form]="eventForm"
+              [data]="ivaMod"
+              control="vatApplies"
+              value="value"
+              bindLabel="description"
+              label="Aplica IVA"
+              [labelTemplate]="ivaLabel"
+              [optionTemplate]="ivaOption">
+            </ngx-select>
+            <ng-template #ivaLabel let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+            <ng-template #ivaOption let-item="item"
+              >{{ item.value }} - {{ item.description }}</ng-template
+            >
+          </form-field>
+        </div>
+        <div
+          class="col-md-4"
+          *ngIf="eventFormVisual.thirdId && parameters.pDirection == 'M'">
           <form-field [control]="eventForm.get('thirdId')">
             <ngx-select
               [searchOnInit]="true"
@@ -161,7 +185,7 @@
               [data]="modParameters"
               control="tpsolavalId"
               value="value"
-              bindLabel="descCondition"
+              bindLabel="description"
               label="Tipo Solicitud Avalúo"
               [labelTemplate]="modLabel"
               [optionTemplate]="modOption">

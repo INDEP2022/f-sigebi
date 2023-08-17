@@ -11,52 +11,53 @@
               [control]="form.get('forfeitureKey')"
               label="Clave Decomiso">
               <input
-                type="number"
-                min="0"
+                type="text"
                 class="form-control"
-                formControlName="forfeitureKey"
-                oninput="if(this.value.length > 20) this.value = this.value.slice(0, 20);" />
+                formControlName="forfeitureKey" />
             </form-field>
           </div>
-          <div class="col-md-2">
-            <form-radio label="M.N">
-              <input type="radio" formControlName="check" value="PESOS" />
-            </form-radio>
-            <form-radio label="U.S.DLLS.">
-              <input type="radio" formControlName="check" value="DOLARES" />
-            </form-radio>
-            <form-radio label="CONV_NUM">
-              <input type="radio" formControlName="check" value="CONV_NUM" />
-            </form-radio>
+          <div class="col-md-4">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm m-1"
+              (click)="openFile()">
+              Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button
+              type="button"
+              tooltip="Genera reporte de relación de decomiso."
+              class="btn btn-primary active btn-sm m-2"
+              (click)="callReport()">
+              Imprimir<i class="bx bx-printer bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active m-1"
+              (click)="cleanFilter()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
           </div>
-          <div class="col-md-7">
+
+          <div>
             <div class="row">
-              <div class="col-2">
-                <button
-                  type="button"
-                  tooltip="Genera reporte de relación de decomiso."
-                  class="btn btn-primary active btn-sm"
-                  (click)="callReport()">
-                  Imprimir<i class="bx bx-printer bx-sm float-icon"></i>
-                </button>
-              </div>
-              <div class="col-2">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('import')" label="Importe">
                   <input
                     type="number"
                     class="form-control"
                     formControlName="import"
                     min="0"
-                    oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);" />
+                    oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"
+                    readonly />
                 </form-field>
               </div>
-              <div class="col-6">
+              <div class="col-6 mt-4">
                 <form-field [control]="form.get('pgr')" label="PGR">
                   <input
                     type="number"
                     class="form-control"
                     formControlName="pgr"
-                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
                 </form-field>
               </div>
               <div class="col-6 mt-4">
@@ -65,7 +66,8 @@
                     type="number"
                     class="form-control"
                     formControlName="ssa"
-                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
                 </form-field>
               </div>
               <div class="col-6 mt-4">
@@ -74,15 +76,30 @@
                     type="number"
                     class="form-control"
                     formControlName="pjf"
-                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);" />
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
+                </form-field>
+              </div>
+              <div class="col-6 mt-4">
+                <form-field
+                  [control]="form.get('totalAmount')"
+                  label="Importe Total">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="totalAmount"
+                    oninput="if(this.value.length > 17) this.value = this.value.slice(0, 17);"
+                    readonly />
                 </form-field>
               </div>
             </div>
           </div>
         </div>
       </form>
-      <form action="" class="form-material" [formGroup]="file">
-        <div class="row mt-4">
+      <br />
+      <hr />
+      <form class="form-material" [formGroup]="file">
+        <div class="row container">
           <!--<div class="col-md-2">
             <button class="btn btn-secondary btn-sm active">
               Abrir archivo de texto
@@ -95,25 +112,39 @@
               class="form-control"
               formControlName="recordRead" />
           </div>-->
-          <div class="col-md-4">
-            <input
-              id="uploadfile"
-              style="display: none"
-              type="file"
-              (change)="onCsvSelected($event)" />
+          <div class="col-md-5 mt-4">
             <button
-              _ngcontent-odc-c183=""
-              type="submit"
-              class="btn btn-primary active">
-              Subir Archivo
-              <i
-                _ngcontent-odc-c183=""
-                aria-hidden="true"
-                class="fa fa-upload"
-                (click)="openFile()"></i>
+              type="button"
+              class="btn btn-sm btn-success active"
+              (click)="filee.click()">
+              Importar Excel <i class="bi bi-file-earmark-excel-fill"></i>
+            </button>
+            <input
+              type="file"
+              name="filee"
+              #filee
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
+            <button
+              class="btn btn-primary btn-sm active m-1"
+              (click)="aprove()">
+              Aprobar <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-danger btn-sm active m-1" (click)="clean()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+            <button
+              tooltip="Formato de Ejemplo"
+              containerClass="tooltip-style"
+              type="button"
+              class="btn btn-info btn-sm active m-1 pointer"
+              (click)="exportCsv()">
+              <i class="bi bi-question-circle"></i>
             </button>
           </div>
-          <div class="col-md-2">
+
+          <div class="col-xs-2 mt-4">
             <form-field
               [control]="file.get('recordRead')"
               label="Registros Leídos:">
@@ -121,10 +152,10 @@
                 type="number"
                 class="form-control"
                 formControlName="recordRead"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-xs-2 mt-4">
             <form-field
               [control]="file.get('recordsProcessed')"
               label="Registros Procesados:">
@@ -132,152 +163,42 @@
                 type="number"
                 class="form-control"
                 formControlName="recordsProcessed"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-xs-2 mt-4">
             <form-field [control]="file.get('processed')" label="Procesados:">
               <input
                 type="number"
                 class="form-control"
                 formControlName="processed"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
-          <div class="col-md-2">
-            <form-field [control]="file.get('wrong')" label="Erroneos:">
+          <div class="col-xs-1 mt-4">
+            <form-field [control]="file.get('wrong')" label="Erróneos:">
               <input
                 type="number"
                 class="form-control"
                 formControlName="wrong"
-                oninput="if(this.value.length > 10) this.value = this.value.slice(0, 10);" />
+                readonly />
             </form-field>
           </div>
         </div>
       </form>
-
-      <div class="row pt-5" *ngFor="let d of data">
-        <form action="" class="form-material" [formGroup]="d">
-          <div class="row mt-4 pt-4">
-            <div class="col-md-3">
-              <form-field [control]="d.get('noGood')" label="No. Bien">
-                <!-- <ngx-select (fetchItems)="getGood($event)" label="No. Bien" [data]="goods" [form]="d" value="goodId"
-                  bindLabel="goodDescription" [control]="'noGood'" (change)="(null)" [searchOnInit]="true"
-                  [showTooltip]="true">
-                </ngx-select> -->
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="noGood" />
-              </form-field>
+      <div class="row mt-4">
+        <div class="col-md-12">
+          <ng-scrollbar
+            [track]="'all'"
+            [ngStyle]="{ height: loading ? '0px' : '300px' }">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered table-responsive'"
+                [settings]="settings"
+                [source]="source"></ng2-smart-table>
             </div>
-            <div class="col-md-2">
-              <form-field [control]="d.get('criminalCase')" label="Causa Penal">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="criminalCase" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="d.get('preliminaryInvestigation')"
-                label="Averiguación Previa">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="preliminaryInvestigation" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field [control]="d.get('dateTesofe')" label="Fecha Tesofe">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="dateTesofe" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="d.get('jobTesofe')"
-                label="Oficio a Tesofe">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="jobTesofe" />
-              </form-field>
-            </div>
-          </div>
-          <div class="row mt-4">
-            <div class="col-md-2">
-              <form-field [control]="d.get('authority')" label="Autoridad">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="authority" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="d.get('dateTreasury')"
-                label="Fecha Tesorería">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="dateTreasury" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="d.get('dateJudgment')"
-                label="Fecha Sentencia">
-                <input
-                  type="date"
-                  class="form-control"
-                  formControlName="dateJudgment" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field
-                [control]="d.get('appraisalValue')"
-                label="Valor Avalúo">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="appraisalValue" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field [control]="d.get('interests')" label="Intereses">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="interests" />
-              </form-field>
-            </div>
-            <div class="col-md-2">
-              <form-field [control]="d.get('results')" label="Resultado">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="results" />
-              </form-field>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-8"></div>
-            <div class="col-md-4">
-              <form-field
-                [control]="d.get('totalSeizures')"
-                label="Total en Decomisos:">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="totalSeizures" />
-              </form-field>
-            </div>
-          </div>
-        </form>
+          </ng-scrollbar>
+        </div>
       </div>
     </div>
   </div>

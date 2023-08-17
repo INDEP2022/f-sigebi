@@ -264,19 +264,11 @@ export class ClassifyAssetsTabComponent
       ],
       axesNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(POSITVE_NUMBERS_PATTERN),
-          Validators.maxLength(5),
-        ],
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.maxLength(5)],
       ],
       engineNumber: [
         null,
-        [
-          Validators.required,
-          Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(40),
-        ],
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
       ], //numero motor
       tuition: [
         null,
@@ -431,6 +423,7 @@ export class ClassifyAssetsTabComponent
       duplicatedGood: [null],
       admissionDate: [null],
       federalEntity: [null],
+      val25: [null],
     });
 
     if (this.goodObject != null) {
@@ -438,9 +431,9 @@ export class ClassifyAssetsTabComponent
         this.getSection(new ListParams(), this.good.ligieSection);
       } else {
         this.onLoadToast(
-          'info',
+          'warning',
           'Clasificación del bien',
-          'El bien no cuenta con la fracción arancelaria'
+          'El Bien no cuenta con la fracción arancelaria'
         );
       }
       this.classiGoodsForm.patchValue(this.good);
@@ -454,6 +447,14 @@ export class ClassifyAssetsTabComponent
         this.classiGoodsForm.controls['fitCircular'].setValue('N');
       }
     }
+
+    this.classiGoodsForm.controls['goodTypeId'].valueChanges.subscribe(data => {
+      if (data != 2) {
+        this.classiGoodsForm.controls['axesNumber'].setValidators([]);
+        this.classiGoodsForm.controls['engineNumber'].setValidators([]);
+      }
+      this.classiGoodsForm.updateValueAndValidity();
+    });
   }
 
   loadingForm() {
@@ -877,18 +878,18 @@ export class ClassifyAssetsTabComponent
     const goods = this.classiGoodsForm.getRawValue();
     if (goods.addressId === null) {
       this.message(
-        'error',
-        'Domicilio requerido',
-        'Es requerido el domicilio del bien'
+        'warning',
+        'Domicilio Requerido:',
+        'Es requerido el domicilio del Bien'
       );
       return;
     }
 
     if (this.fractionCode.length < 8) {
       this.message(
-        'error',
-        'Código de fracción',
-        'Todos los bienes deben tener una fracción de 8 números'
+        'warning',
+        'Código de Fracción:',
+        'Todos los Bienes deben tener una fracción de 8 números'
       );
       return;
     }
@@ -909,6 +910,81 @@ export class ClassifyAssetsTabComponent
       goods.processStatus = 'CLASIFICAR_BIEN';
     } else {
       goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+    }
+
+    //Verificar que la cantidad transferente para los tipos de bienes
+
+    //no sea vacío
+    if (goods.quantity == null) {
+      this.onLoadToast(
+        'warning',
+        'Cantidad de Transferente',
+        'No puede estar vacío'
+      );
+      return;
+    }
+
+    //no sean mayor a 1
+    if (
+      goods.goodTypeId == 1 ||
+      goods.goodTypeId == 4 ||
+      goods.goodTypeId == 2 ||
+      goods.goodTypeId == 3
+    ) {
+      if (goods.quantity > 1) {
+        this.onLoadToast(
+          'warning',
+          'Cantidad de Transferente',
+          'El Bien no puede tener cantidad de transferente mayor a 1'
+        );
+        return;
+      }
+
+      //Verifica que la cantidad de Transferente para los tienes diferentes acepte fracciones
+      if (goods.quantity % 1 != 0) {
+        console.log('Entra validacion de decimales');
+        this.onLoadToast(
+          'warning',
+          'Cantidad de Transferente',
+          'El Bien no se puede guardar con cantidad de transferente con decimales'
+        );
+        return;
+      }
+    }
+
+    //Verifica que la cantidad de Transferente para los tienes diferentes acepte fracciones
+    if (
+      (goods.unitMeasure == 'PZ' ||
+        goods.unitMeasure == 'BAR' ||
+        goods.unitMeasure == 'PAR' ||
+        goods.unitMeasure == 'PZ' ||
+        goods.unitMeasure == 'CZA') &&
+      goods.quantity % 1 != 0
+    ) {
+      console.log('Entra validacion de decimales');
+      this.onLoadToast(
+        'warning',
+        'No permitido',
+        'La unidad de medida no permite guardar cantidades en decimal'
+      );
+      return;
+    }
+
+    //Revisa si va vacio Unidad de Medida de Transferente
+    if (goods.unitMeasure == null) {
+      this.onLoadToast(
+        'warning',
+        'Debe ingresar unidad de medida transferente'
+      );
+      return;
+    }
+
+    //Establece el campo val25 si es apto o no
+    if (goods.val25 == null && goods.goodTypeId == 2) {
+      goods.val25 =
+        goods.fitCircular == 'Y'
+          ? 'APTO PARA CIRCULAR'
+          : 'NO APTO PARA CIRCULAR';
     }
 
     let goodResult: any = null;
@@ -956,7 +1032,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrió un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el Bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -990,7 +1066,7 @@ export class ClassifyAssetsTabComponent
             this.onLoadToast(
               'error',
               'Bien no creado',
-              `Ocurrió un error al guardar el bien ${error.error.message}`
+              `Ocurrió un error al guardar el Bien ${error.error.message}`
             );
             console.log(error);
           },
@@ -1270,6 +1346,7 @@ export class ClassifyAssetsTabComponent
   setNoClasifyGood(fraction: any) {
     if (fraction.fractionCode != null) {
       if (fraction.fractionCode.length === 8) {
+        debugger;
         if (fraction.clasificationId) {
           this.classiGoodsForm.controls['goodClassNumber'].setValue(
             fraction.clasificationId
@@ -1277,9 +1354,9 @@ export class ClassifyAssetsTabComponent
         } else {
           this.classiGoodsForm.controls['goodClassNumber'].setValue(null);
           this.message(
-            'info',
-            'clasificación de bien nula',
-            'El bien seleccionado no tiene número de clasificación de bien'
+            'warning',
+            'Clasificación de Bien nula',
+            'El Bien seleccionado no tiene número de clasificación'
           );
         }
       }
@@ -1318,7 +1395,7 @@ export class ClassifyAssetsTabComponent
                 );
               } else {
                 this.message(
-                  'info',
+                  'warning',
                   'clasificación de bien nula',
                   'el bien seleccionado no tiene numero de clasificación de bien'
                 );

@@ -23,7 +23,7 @@ export class AttributesRegLogicalTablesModalComponent
 {
   tdescAtribForm: ModelForm<ITdescAtrib>;
   tdescAtrib: ITdescAtrib;
-  title: string = 'Registro de atributos para tablas lógicas';
+  title: string = 'Registro de Atributo para Tabla Lógica';
   edit: boolean = false;
 
   tables = new DefaultSelect();
@@ -48,7 +48,11 @@ export class AttributesRegLogicalTablesModalComponent
       idNmTable: [null, []],
       descriptionAtrib: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(100),
+        ],
       ],
       swFormat: [null, [Validators.pattern(STRING_PATTERN)]],
       longMax: [
@@ -73,6 +77,7 @@ export class AttributesRegLogicalTablesModalComponent
       this.edit = true;
       console.log(this.tdescAtrib);
       this.tdescAtribForm.patchValue(this.tdescAtrib);
+      this.tdescAtribForm.controls['keyAtrib'].disable();
     } else {
       this.edit = false;
       this.tdescAtribForm.controls['idNmTable'].setValue(this._id);
@@ -89,31 +94,55 @@ export class AttributesRegLogicalTablesModalComponent
     ) {
       this.edit ? this.update() : this.create();
     } else {
-      this.alertQuestion(
+      this.alert('warning', 'Campo Invalido', ``);
+      /*this.alertQuestion(
         'warning',
-        'La longitud máxima no puede ser menor a longitud mínima',
+        'Campo Invalido',
         'Favor de corregir'
       ).then(question => {
         if (question.isConfirmed) {
         }
-      });
+      });*/
     }
   }
 
   create() {
-    this.loading = true;
-    this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.tdescAtribForm.controls['descriptionAtrib'].value.trim() == '') {
+      this.alert('warning', 'No se puede guardar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.tdesAtribService
+        .create(this.tdescAtribForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => {
+            this.loading = false;
+            this.alert(
+              'warning',
+              'El campo No. Atributo ya está resgistrado',
+              ``
+            );
+          },
+        });
+    }
   }
 
   update() {
-    this.loading = true;
-    this.tdesAtribService.update(this.tdescAtribForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    if (this.tdescAtribForm.controls['descriptionAtrib'].value.trim() == '') {
+      this.alert('warning', 'No se puede actualizar campos vacíos', ``);
+      this.loading = false;
+      return;
+    } else {
+      this.loading = true;
+      this.tdesAtribService
+        .update(this.tdescAtribForm.getRawValue())
+        .subscribe({
+          next: data => this.handleSuccess(),
+          error: error => (this.loading = false),
+        });
+    }
   }
 
   handleSuccess() {

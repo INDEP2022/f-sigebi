@@ -77,23 +77,27 @@
         </button>
       </div>
       <div class="row pt-4">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="data"
-            (userRowSelect)="onUserRowSelect($event)">
-          </ng2-smart-table>
-          <app-pagination
-            [params]="params"
-            [totalItems]="totalItems"></app-pagination>
+        <div class="col-md-12 table-responsive">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="onUserRowSelect($event)">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </div>
         </div>
       </div>
       <div class="row pt-4" *ngIf="searching">
         <div class="d-flex">
           <div class="p-2">
-            <button class="btn btn-success btn-sm active" (click)="accept()">
-              <i class="bx bx-check"></i> Aceptar
+            <button
+              (click)="accept()"
+              class="btn btn-primary btn-sm active mr-3">
+              Aceptar
             </button>
           </div>
         </div>

@@ -215,4 +215,33 @@ export class MsDepositaryService extends HttpService {
       params
     );
   }
+
+  // ---------------------------------------------------------------------------------------- //
+  VALIDA_PAGOSREF_PREP_OI_BASES_CA(body: any) {
+    return this.post(`${DepositaryEndPoints.PaymentRefPrepOiBaseCa}`, body);
+  }
+
+  VALIDA_ESTATUS(body: any) {
+    return this.post(`${DepositaryEndPoints.ValidateStatus}`, body);
+  }
+
+  VALIDA_PAGOSREF_VALIDA_COMER(body: any) {
+    return this.post(`${DepositaryEndPoints.PaymentRefValidComer}`, body);
+  }
+
+  VALIDA_PAGOSREF_PREP_OI(body: any) {
+    return this.post(`${DepositaryEndPoints.PrepOiBaseCa}`, body);
+  }
+
+  VALIDA_PAGOSREF_VENTA_SBM(body: any) {
+    return this.post(`${DepositaryEndPoints.PaymentRefVentaSbm}`, body);
+  }
+
+  MODIFICA_ESTATUS_BASES_ANT(body: any) {
+    return this.put(`${DepositaryEndPoints.UpdateStatusBase}/${body}`);
+  }
+
+  MODIFICA_ESTATUS_ANT(body: any) {
+    return this.put(`${DepositaryEndPoints.UpdateGeneralStatus}`, body);
+  }
 }

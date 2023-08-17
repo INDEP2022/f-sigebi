@@ -22,7 +22,10 @@ export class EmailService extends HttpService {
   }
 
   getVigEmailBody(params: _Params) {
-    return this.get<IListResponse<IVigEmailBody>>(EmailEndPoint.VigEmailBody);
+    return this.get<IListResponse<IVigEmailBody>>(
+      EmailEndPoint.VigEmailBody,
+      params
+    );
   }
 
   getVigEmailSend(params: _Params) {
@@ -91,5 +94,10 @@ export class EmailService extends HttpService {
 
   getIniEmailCentral(data: Object) {
     return this.post(EmailEndPoint.IniEmailCentral, data);
+  }
+
+  createEmailDocs(data: any) {
+    //formData.append('files', documentProgramming);
+    return this.post(`${EmailEndPoint.EmailProgrammingDocs}`, data);
   }
 }

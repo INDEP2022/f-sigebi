@@ -1,0 +1,184 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BÚSQUEDA DE PROGRAMACIONES</h5>
+  </div>
+  <div body>
+    <form [formGroup]="performForm" class="form-material">
+      <div class="row pt-2">
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('startDate')"
+            label="Fecha Inicio Operativo">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              (ngModelChange)="checkValidateDate()"
+              [daysDisabled]="[6, 0]"
+              [bsConfig]="{
+                rangeInputFormat: 'DD/MM/YYYY',
+                dateInputFormat: 'DD/MM/YYYY'
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('endDate')"
+            label="Fecha Fin Operativo">
+            <input
+              class="form-control"
+              formControlName="endDate"
+              [daysDisabled]="[6, 0]"
+              (ngModelChange)="checkValidateEndDate()"
+              [bsConfig]="{
+                rangeInputFormat: 'DD/MM/YYYY',
+                dateInputFormat: 'DD/MM/YYYY'
+              }"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('regionalDelegationNumber')">
+            <ngx-select
+              [form]="performForm"
+              control="regionalDelegationNumber"
+              [data]="regionalsDelegations"
+              value="description"
+              bindLabel="description"
+              label="Delegaci&oacute;n Regional"
+              (change)="regionalDelegationSelect($event)"
+              (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('status')"
+            label="Estatus Programación">
+            <ng-select class="form-control" formControlName="status">
+              <ng-option value="EN_PROGRAMACION">EN PROGRAMACIÓN</ng-option>
+              <ng-option value="APROBADA">APROBADA</ng-option>
+              <ng-option value="CANCELADA">CANCELADA</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+
+    <div class="row pt-5">
+      <div class="justify-content-end btn-toolbar">
+        <confirm-button
+          [disabled]="!performForm.valid"
+          [loading]="loading"
+          [text]="'Buscar'"
+          [icon]="'fa fa-search'"
+          [btnSmall]="true"
+          class="mr-2"
+          (confirm)="searchProgramming()"></confirm-button>
+
+        <button (click)="cleanForm()" class="btn btn-danger btn-sm active">
+          Limpiar <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="justify-content-start">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settings"
+            [source]="programmings">
+          </ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [params]="paramsProgramming"
+          [totalItems]="totalItemProgramming"></app-pagination>
+      </div>
+    </div>
+
+    <div class="row pt-5">
+      <h5 class="title">Bienes</h5>
+      <form [formGroup]="performGoodForm" class="form-material">
+        <div class="row pt-3">
+          <div class="col-md-2">
+            <form-field
+              [control]="performGoodForm.get('goodId')"
+              label="No. Bien">
+              <input
+                type="text"
+                class="form-control"
+                maxlength="200"
+                formControlName="goodId" />
+            </form-field>
+          </div>
+
+          <div class="col-md-10">
+            <div class="col-md-2">
+              <form-radio label="Apto para circular">
+                <input
+                  type="radio"
+                  formControlName="aptoCilcular"
+                  value="Y"
+                  id="te" />
+              </form-radio>
+            </div>
+            <div class="col-md-2">
+              <form-radio label="No apto para circular">
+                <input
+                  type="radio"
+                  formControlName="aptoCilcular"
+                  value="N"
+                  id="sae" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="row pt-5">
+        <div class="justify-content-end btn-toolbar">
+          <confirm-button
+            [disabled]="!performForm.valid"
+            [loading]="loading"
+            [text]="'Buscar'"
+            [icon]="'fa fa-search'"
+            [btnSmall]="true"
+            class="mr-2"
+            (confirm)="searchGood()"></confirm-button>
+
+          <button
+            (click)="cleanFormGood()"
+            class="btn btn-danger btn-sm active">
+            Limpiar <i class="fa fa-eraser"></i>
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loadingGoods ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive pt-3'"
+              [settings]="settingsGoods"
+              [source]="goods">
+            </ng2-smart-table>
+          </div>
+
+          <app-pagination
+            [params]="paramsGoods"
+            [totalItems]="totalItemGoods"></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

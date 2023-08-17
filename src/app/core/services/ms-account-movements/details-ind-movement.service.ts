@@ -12,21 +12,18 @@ export class DetailsIndMovementService extends HttpService {
     super();
     this.microservice = AccountmvmntEndpoint.BasePath;
   }
-  getAll(
-    params: _Params,
-    body: { goodNumber: string; expedientNumber: number }
-  ) {
-    return this.post<IListResponse<IAccountDetailInd>>(
+  getAll(params: _Params) {
+    return this.get<IListResponse<IAccountDetailInd>>(
       AccountmvmntEndpoint.getDetailsInd,
-      body,
+      // + '?filter.accountnumberorigindeposit=$not:$null'
       params
     );
   }
 
   getAllFilterSelf(self?: DetailsIndMovementService, params?: _Params) {
-    return self.post<IListResponse<IAccountDetailInd>>(
-      AccountmvmntEndpoint.getDetailsInd,
-      {},
+    return self.get<IListResponse<IAccountDetailInd>>(
+      AccountmvmntEndpoint.getDetailsInd +
+        '?filter.accountnumberorigindeposit=$not:$null',
       params
     );
   }

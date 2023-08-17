@@ -1,0 +1,24 @@
+<div class="row m-0">
+  <div class="row docs-scroll">
+    <div class="col-md-12 p-0">
+      <h6 class="text-center" *ngIf="files.length === 0">
+        No hay fotos cargadas
+      </h6>
+      <div
+        class="col-md-4 col-sm-6 grid-square"
+        *ngFor="let image of files; let i = index">
+        <div class="w-100 m-1 img-container">
+          <div class="row">
+            <div class="col-md-12">
+              <app-photo-commercial
+                (refreshFiles)="refresh($event)"
+                [typedblClickAction]="typedblClickAction"
+                [filename]="image"
+                [goodNumber]="goodNumber + ''"></app-photo-commercial>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

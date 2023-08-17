@@ -55,8 +55,8 @@ export class DataReceiptComponent implements OnInit {
   }
   listPayments = ['TRANSFERENCIA', 'CHEQUE', 'INTERCAMBIO'];
   listComproaf = [
-    { id: 1, value: 'SAE' },
-    { id: 2, value: 'MANDATO' },
+    { id: '1', value: 'SAE' },
+    { id: '2', value: 'MANDATO' },
   ];
   constructor(private dataService: ExpenseCaptureDataService) {}
 

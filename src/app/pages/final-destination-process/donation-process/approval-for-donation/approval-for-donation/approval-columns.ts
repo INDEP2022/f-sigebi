@@ -28,9 +28,17 @@ export const APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noDelegation1: {
-    title: 'Coord. Regional',
-    type: 'string',
+};
+
+export const GOOD_COLUMNS = {
+  goodId: {
+    title: 'No. Bien',
+    type: 'number',
+    sort: false,
+  },
+  amount: {
+    title: 'Cantidad',
+    type: 'number',
     sort: false,
   },
 };

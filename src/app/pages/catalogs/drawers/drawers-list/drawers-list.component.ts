@@ -48,12 +48,21 @@ export class DrawersListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'noDrawer' ||
-            filter.field == 'noBobeda' ||
-            filter.field == 'status' ||
-            filter.field == 'noRegistration'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'noDrawer':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'safeDetails':
+                field = `filter.${filter.field}.description`;
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
             } else {
@@ -83,7 +92,12 @@ export class DrawersListComponent extends BasePage implements OnInit {
         this.data.refresh();
         this.loading = false;
       },
-      error: error => (this.loading = false),
+      error: error => {
+        this.loading = false;
+        this.data.load([]);
+        this.data.refresh();
+        this.totalItems = 0;
+      },
     });
   }
 

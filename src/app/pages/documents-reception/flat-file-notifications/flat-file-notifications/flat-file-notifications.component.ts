@@ -17,6 +17,8 @@ import { FlatFileNotificationsService } from '../flat-file-notifications.service
 export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   notificationsForm: FormGroup;
   invalidDate = false;
+  maxDate: Date = new Date();
+
   get startDate(): AbstractControl {
     return this.notificationsForm.get('startDate');
   }
@@ -42,12 +44,16 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
         startDate: [null, [Validators.required]],
         endDate: [null, [Validators.required]],
         file: [null],
-        name: [null, [Validators.required]],
+        name: [
+          null,
+          [Validators.required, Validators.pattern('^[a-zA-Z0-9]+$')],
+        ],
       },
       { validator: dateRangeValidator() }
     );
   }
   getEndDateErrorMessage(fin: any, ini: any) {
+    console.log(fin, ini);
     const stard = new Date(ini.value).getTime();
     const end = new Date(fin.value).getTime();
     if (fin && ini) {
@@ -82,8 +88,8 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
           } else {
             this.onLoadToast(
               'warning',
-              'advertencia',
-              'Sin datos para los rangos de fechas suministrados'
+              'Advertencia',
+              'Sin Datos Para los Rangos de Fechas Suministrados'
             );
           }
           return;
@@ -98,7 +104,11 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
-    this.onLoadToast('success', '', 'Archivo generado');
+    this.onLoadToast(
+      'success',
+      'Archivo de Notificaciones',
+      'Generado Correctamente'
+    );
   }
 
   cleanForm() {

@@ -330,6 +330,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'NotContribuyenteResEspecie',
   },
+  //Verificacion Incumplimiento
+  {
+    title: 'Muestreo Bienes: Verificacion Incumplimiento 539',
+    noRequest: 539,
+    numTask: 3405,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'MBVerificacionIncumpliento',
+  },
 ];
 
 //AP_Amparo
@@ -655,6 +664,11 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
 
+      case 'MBVerificacionIncumpliento':
+        this.router.navigate([
+          'pages/request/generate-monitoring-sampling/verify-noncompliance',
+        ]);
+        break;
       default:
         break;
     }

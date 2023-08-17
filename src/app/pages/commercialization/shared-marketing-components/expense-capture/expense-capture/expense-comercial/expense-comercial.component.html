@@ -16,8 +16,26 @@
       <div body>
         <form class="form-material" [formGroup]="form">
           <div class="row mt-4 ml-0">
-            <div class="col-md-2 col-6 p-0">
-              <ng-custom-select-loading
+            <div class="col-md-4 col-6 p-0">
+              <app-select-modal-table-shared
+                *ngIf="address"
+                [form]="form"
+                [maxlengthInput]="12"
+                [disabled]="false"
+                [widthDescription]="false"
+                [haveSelectColumns]="true"
+                [haveColumnFilters]="true"
+                [ilikeFilters]="ilikeFilters"
+                [dateFilters]="dateFilters"
+                label="Id"
+                formField="expenseNumber"
+                [service]="spentService"
+                [columnsType]="columns"
+                id="expenseNumber"
+                title="Gastos del Área Comercial"
+                (selectRow)="fillForm($event)"></app-select-modal-table-shared>
+
+              <!-- <ng-custom-select-loading
                 [form]="form"
                 formControlName="expenseNumber"
                 label="Id"
@@ -27,7 +45,7 @@
                 paramSearch="filter.expenseNumber"
                 prefixSearch="$eq"
                 (valueChange)="fillForm($event)">
-              </ng-custom-select-loading>
+              </ng-custom-select-loading> -->
 
               <!-- <form-field [control]="expenseNumber" label="Id">
                 <input
@@ -46,12 +64,12 @@
               [path]="pathConcept"
               value="id"
               bindLabel="description"
-              paramSearch="filter.id"
-              prefixSearch="$eq"
-              [updateValues]="true"
+              paramSearch="filter.description"
+              prefixSearch="$ilike"
+              paramExternalSearch="filter.id"
+              [externalSearch]="conceptNumber.value"
               [labelTemplate]="conceptLabel"
-              [optionTemplate]="conceptOption"
-              (valueChange)="getParams($event)">
+              [optionTemplate]="conceptOption">
             </ng-custom-select-loading>
             <ng-template #conceptLabel let-item="item">
               {{ item.id }} - {{ item.description }}
@@ -96,20 +114,22 @@
               formControlName="eventNumber"
               label="Evento"
               [path]="pathEvent"
-              value="id_evento"
-              bindLabel="cve_proceso"
-              paramSearch="filter.cve_proceso"
+              value="id"
+              bindLabel="processKey"
+              paramSearch="filter.processKey"
               prefixSearch="$ilike"
+              paramExternalSearch="filter.id"
+              [externalSearch]="eventNumber.value"
               [labelTemplate]="eventLabel"
               [optionTemplate]="eventOption"
               (valueChange)="reloadLoteEvent($event)">
             </ng-custom-select-loading>
             <ng-template #eventLabel let-item="item">
-              {{ item.id_evento }} - {{ item.cve_proceso }}
+              {{ item.id }} - {{ item.processKey }}
             </ng-template>
             <ng-template #eventOption let-item="item">
-              <div [title]="item.id_evento + '-' + item.cve_proceso">
-                {{ item.id_evento }} - {{ item.cve_proceso }}
+              <div [title]="item.id + '-' + item.processKey">
+                {{ item.id }} - {{ item.processKey }}
               </div>
             </ng-template>
           </div>
@@ -121,9 +141,10 @@
               [path]="pathLote"
               value="idLot"
               bindLabel="description"
-              paramSearch="filter.idLot"
-              prefixSearch="$eq"
-              [load]="reloadLote"
+              paramSearch="filter.description"
+              prefixSearch="$ilike"
+              paramExternalSearch="filter.idLot"
+              [externalSearch]="lotNumber.value"
               [labelTemplate]="lotLabel"
               [optionTemplate]="lotOption">
             </ng-custom-select-loading>
@@ -153,10 +174,10 @@
                 [control]="dateOfResolution"
                 label="Fecha de Resolución">
                 <input
-                  type="text"
                   class="form-control"
-                  formControlName="dateOfResolution"
-                  maxlength="12" />
+                  ngModel
+                  bsDatepicker
+                  formControlName="dateOfResolution" />
               </form-field>
             </div>
           </div>
@@ -167,24 +188,52 @@
           <div class="row mt-4 ml-0">
             <ng-custom-select-loading
               [form]="form"
-              formControlName="lotNumber"
-              label="Lote"
-              [path]="pathLote"
-              value="idLot"
-              bindLabel="description"
-              paramSearch="filter.idLot"
-              prefixSearch="$eq"
-              [labelTemplate]="lotLabel"
-              [optionTemplate]="lotOption">
+              formControlName="clkpv"
+              label="Proveedor"
+              [path]="pathProvider"
+              value="clkPv"
+              bindLabel="pvName"
+              paramSearch="filter.pvName"
+              prefixSearch="$ilike"
+              paramExternalSearch="filter.clkPv"
+              [externalSearch]="clkpv.value"
+              [labelTemplate]="providerLabel"
+              [optionTemplate]="providerOption">
             </ng-custom-select-loading>
-            <ng-template #lotLabel let-item="item">
-              {{ item.idLot }} - {{ item.description }}
+            <!-- <ng-custom-select-loading
+              [form]="form"
+              formControlName="clkpv"
+              label="Proveedor"
+              [path]="pathProvider"
+              value="clkPv"
+              bindLabel="pvName"
+              paramSearch="filter.pvName"
+              paramExternalSearch="filter.clkPv"
+              [externalSearch]="clkpv.value"
+              prefixSearch="$ilike"
+              [labelTemplate]="providerLabel"
+              [optionTemplate]="providerOption">
+            </ng-custom-select-loading> -->
+            <ng-template #providerLabel let-item="item">
+              {{ item.clkPv }} - {{ item.pvName }}
             </ng-template>
-            <ng-template #lotOption let-item="item">
-              <div [title]="item.idLot + '-' + item.description">
-                {{ item.idLot }} - {{ item.description }}
+            <ng-template #providerOption let-item="item">
+              <div [title]="item.clkPv + '-' + item.pvName">
+                {{ item.clkPv }} - {{ item.pvName }}
               </div>
             </ng-template>
+          </div>
+          <div class="row mt-4 ml-0">
+            <ng-custom-select-loading
+              [form]="form"
+              formControlName="descurcoord"
+              label="Delegación"
+              path="catalog/api/v1/delegation/get-all"
+              value="description"
+              bindLabel="description"
+              paramSearch="filter.description"
+              [limit]="1000">
+            </ng-custom-select-loading>
           </div>
           <div class="row mt-4">
             <div class="col-12">
@@ -198,12 +247,37 @@
           </div>
           <br />
           <app-data-receipt [expense]="data"></app-data-receipt>
-          <button
-            type="button"
-            class="btn btn-primary active"
-            (click)="sendToSIRSAE()">
-            Envíar Solicitud de pago a SIRSAE
-          </button>
+          <tr>
+            <td colspan="5" align="center">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="sendToSIRSAE()">
+                Envíar Solicitud de pago a SIRSAE
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="notify()">
+                Notificar A:
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm btn-primary mr-2 mt-2 active"
+                [disabled]="
+                  !conceptNumberValue || dataCompositionExpenses.length === 0
+                "
+                (click)="updateClasif()">
+                Actualizar Clasificación
+              </button>
+            </td>
+          </tr>
         </form>
       </div>
     </app-card>

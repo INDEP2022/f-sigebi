@@ -18,6 +18,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsReview } from 'src/app/core/services/ms-good/goods-review.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
@@ -61,7 +62,8 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     private dynamicCatalogsService: DynamicCatalogsService,
     private revisionReasonService: RevisionReasonService,
     private router: Router,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private parametersService: ParametersService
   ) {
     super();
   }
@@ -149,11 +151,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     if (getCatMotivosRev_ === null) {
       V_PANTALLA = null;
       V_RESPONSABLE = null;
-      this.alert(
-        'warning',
-        `${this.selectedRow.goodNumber} no es un motivo válido`,
-        ''
-      );
+      this.alert('warning', `${this.value} no es un Motivo Válido`, '');
       return;
     } else {
       V_PANTALLA = getCatMotivosRev_.screen;
@@ -171,7 +169,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
       LV_FEC_INSERT = getGood_.insertRegDate;
     }
 
-    if (V_RESPONSABLE.includes(this.responsable)) {
+    if (V_RESPONSABLE == this.responsable) {
       V_RESPONSABLE = this.responsable;
     }
 
@@ -212,8 +210,8 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     if (this.responsable == 'REGIONALES') {
       this.alertQuestion(
         'question',
-        `El bien es administrado por: ${LV_DESC} , y ${LV_DESC1} como responsable.`,
-        '¿Desea atender el bien?'
+        `El Bien es Administrado por: ${LV_DESC} , y ${LV_DESC1} como Responsable.`,
+        '¿Desea Atender el Bien?'
       ).then(async question => {
         if (question.isConfirmed) {
           if (this.delegationNumber == 0 || this.responsable == 'REGIONALES') {
@@ -228,7 +226,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se encontró la pantalla', '');
+              this.alert('warning', 'No se Encontró la Pantalla', '');
               return;
             }
           } else if (
@@ -246,7 +244,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
                 );
               }
             } else {
-              this.alert('warning', 'No se encontró la pantalla', '');
+              this.alert('warning', 'No se Encontró la Pantalla', '');
               return;
             }
           }
@@ -264,13 +262,13 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
           );
         }
       } else {
-        this.alert('warning', 'No se encontró la pantalla', '');
+        this.alert('warning', 'No se Encontró la Pantalla', '');
         return;
       }
     } else {
       this.alert(
         'warning',
-        `No puede atender este bien, ya que usted no corresponde al área responsable: ${V_RESPONSABLE}`,
+        `No Puede Atender este Bien, ya que Usted no Corresponde al Área Responsable: ${V_RESPONSABLE}`,
         ''
       );
       return;
@@ -394,7 +392,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
         }
       );
     } else {
-      this.alert('warning', 'No se localizó la URL de la forma', '');
+      this.alert('warning', 'No se Localizó la URL de la Forma', '');
       return;
     }
   }
@@ -405,12 +403,12 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     // params.page = lparams.page;
     // params.limit = lparams.limit;
 
-    params.addFilter('descriptionCause', this.value, SearchFilter.ILIKE);
+    params.addFilter('descriptionReason', this.value, SearchFilter.ILIKE);
     params.addFilter('initialStatus', this.selectedRow.status, SearchFilter.EQ);
     params.addFilter('goodType', this.selectedRow.goodType, SearchFilter.EQ);
 
     return new Promise((resolve, reject) => {
-      this.revisionReasonService.getAll2(params.getParams()).subscribe({
+      this.parametersService.getCatMotivesrev(params.getParams()).subscribe({
         next: (response: any) => {
           resolve(response.data[0]);
         },

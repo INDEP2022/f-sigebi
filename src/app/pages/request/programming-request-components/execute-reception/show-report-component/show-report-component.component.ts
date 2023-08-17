@@ -100,8 +100,8 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('this.idTypeDoc', this.idTypeDoc);
     console.log('this.typeFirm', this.typeFirm);
+    console.log('this.typeFirm', this.idTypeDoc);
     if (this.showTDR) {
       this.title = 'ETIQUETA';
     } else {
@@ -159,7 +159,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         this.formLoading = false;
       } else {
         let linkDoc: string = `${this.urlBaseReport}Etiqueta_TDR.jasper&idSolicitud=${this.programming.id}`;
-        console.log('linkDoc', linkDoc);
+
         this.src = linkDoc;
         this.formLoading = false;
       }
@@ -266,7 +266,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
     }
 
     if (
-      this.idTypeDoc == 221 ||
+      (this.idTypeDoc == 221 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
       (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
@@ -574,7 +574,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
           (this.idTypeDoc == 106 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 103 && this.typeFirm == 'electronica') ||
           (this.idTypeDoc == 210 && this.typeFirm == 'electronica') ||
-          this.idTypeDoc == 221
+          (this.idTypeDoc == 221 && this.typeFirm == 'electronica')
         ) {
           this.validAttachDoc();
         }
@@ -600,7 +600,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
   }
 
   validAttachDoc() {
-    if (this.typeFirm != 'electronica') {
+    if (this.idTypeDoc == 221 && this.typeFirm == 'electronica') {
       let token = this.authService.decodeToken();
       const extension = '.pdf';
       const nombreDoc = `Oficio Programación Recepción${extension}`;
@@ -723,7 +723,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       } else if (this.idTypeDoc == 107 && this.typeFirm == 'electronica') {
         const idProg = this.programming.id;
-        console.log('proceedingInfo', this.proceedingInfo);
+
         //const idReceipt = this.
         const formData = {
           keyDoc:
@@ -779,7 +779,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       } else if (this.idTypeDoc == 210 && this.typeFirm == 'electronica') {
         const idProg = this.programming.id;
-        console.log('proceedingInfo', this.proceedingInfo);
+
         //const idReceipt = this.
         const formData = {
           keyDoc:
@@ -835,7 +835,7 @@ export class ShowReportComponentComponent extends BasePage implements OnInit {
         });
       } else if (this.idTypeDoc == 106 && this.typeFirm == 'electronica') {
         const idProg = this.programming.id;
-        console.log('proceedingInfo', this.proceedingInfo);
+
         //const idReceipt = this.
         const formData = {
           keyDoc:

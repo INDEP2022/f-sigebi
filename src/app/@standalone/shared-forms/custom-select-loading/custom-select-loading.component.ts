@@ -65,8 +65,10 @@ export class CustomSelectWidthLoading
   @Input() value: string = 'id';
   @Input() bindLabel: string = '';
   @Input() paramSearch: string = 'search';
+  @Input() paramExternalSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
+  @Input() seconParamSearch: string = '';
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
   @Input() limit: number = 10;
@@ -83,12 +85,12 @@ export class CustomSelectWidthLoading
   valueChange = new EventEmitter<any>();
   @Output() getObject = new EventEmitter<any>();
   input$ = new Subject<string>();
-  inputLoad$ = new Subject<string>();
   items: any[] = [];
   totalItems: number = 0;
   inputAttrs: Attr = {
     maxLength: '',
   };
+  firstLoad = true;
   title: string = '';
   page: number = 1;
   isLoading: boolean = false;
@@ -135,43 +137,16 @@ export class CustomSelectWidthLoading
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     if (changes['externalSearch'] && changes['externalSearch'].currentValue) {
-      this.input$.next(changes['externalSearch'].currentValue);
+      // this.input$.next(changes['externalSearch'].currentValue);
+      this.loadData(changes['externalSearch'].currentValue, false);
     }
     if (changes['load']) {
       console.log('Entro a recargar');
       this.page = 1;
       this.isLoading = true;
-      this.getItemsObservable('')
-        .pipe(
-          take(1),
-          map((resp: any) => {
-            if (!resp) {
-              return [];
-            }
-            return this.getDataForPath(resp);
-          })
-        )
-        .subscribe({
-          next: (resp: any[]) => {
-            console.log(resp);
-            this.isLoading = false;
-            if (resp) {
-              this.items = resp;
-
-              if (resp.length === 1) {
-                this.getObject.emit(resp[0]);
-              }
-            } else {
-              this.isLoading = false;
-              this.items = [];
-            }
-          },
-          error: err => {
-            this.isLoading = false;
-            this.items = [];
-          },
-        });
+      this.loadData('');
       // this.input$.next('');
     }
   }
@@ -216,19 +191,69 @@ export class CustomSelectWidthLoading
     this.input$.next('');
   }
 
-  getItemsObservable(text: string = '') {
-    const params: any = {
+  private fillParams2(
+    prefixSearch: string,
+    paramSearch: string,
+    params: any,
+    text: string = '',
+    normalSearch = true
+  ) {
+    if (normalSearch) {
+      if (prefixSearch) {
+        text = `${prefixSearch}:${text}`;
+      }
+      params[paramSearch] = text;
+    } else {
+      if (prefixSearch) {
+        text = `$eq:${text}`;
+      }
+      params[this.paramPageName] = 1;
+      params[this.paramExternalSearch] = text;
+    }
+    return params;
+  }
+
+  private fillParams(text: string = '', normalSearch = true) {
+    let params: any = {
       [this.paramPageName]: this.page,
       [this.paramLimitName]: this.limit || 10,
     };
     if (text) {
-      if (this.prefixSearch) {
-        text = `${this.prefixSearch}:${text}`;
+      if (this.seconParamSearch) {
+        if (isNaN(+text)) {
+          return this.fillParams2(
+            this.prefixSearch,
+            this.paramSearch,
+            params,
+            text
+          );
+        } else {
+          return this.fillParams2(
+            '$eq',
+            this.seconParamSearch,
+            params,
+            text,
+            normalSearch
+          );
+        }
+      } else {
+        return this.fillParams2(
+          this.prefixSearch,
+          this.paramSearch,
+          params,
+          text,
+          normalSearch
+        );
       }
-      params[this.paramSearch] = text;
     }
+    return params;
+  }
+
+  getItemsObservable(text: string = '', normalSearch = true) {
+    let params: any = this.fillParams(text, normalSearch);
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
+    // console.log(params, mParams);
     return this.http
       .get(`${this.url}${this.path}` + mParams, {
         params,
@@ -289,6 +314,38 @@ export class CustomSelectWidthLoading
     }
   }
 
+  private loadData(input: string, normalSearch = true) {
+    this.getItemsObservable(input, normalSearch)
+      .pipe(
+        take(1),
+        map((resp: any) => {
+          if (!resp) {
+            return [];
+          }
+          return this.getDataForPath(resp);
+        })
+      )
+      .subscribe({
+        next: (resp: any[]) => {
+          console.log(resp);
+          this.isLoading = false;
+          if (resp) {
+            this.items = resp;
+            if (resp.length === 1) {
+              this.getObject.emit(resp[0]);
+            }
+          } else {
+            this.isLoading = false;
+            this.items = [];
+          }
+        },
+        error: err => {
+          this.isLoading = false;
+          this.items = [];
+        },
+      });
+  }
+
   onSearch() {
     this.input$
       .pipe(
@@ -297,9 +354,10 @@ export class CustomSelectWidthLoading
         distinctUntilChanged(),
         switchMap((text: string) => {
           // console.log(this.items);
-          if (text === null) {
+          if (text === null || (!this.firstLoad && text.length < 3)) {
             return of(null);
           }
+          this.firstLoad = false;
           this.page = 1;
           this.isLoading = true;
           return this.getItemsObservable(text);

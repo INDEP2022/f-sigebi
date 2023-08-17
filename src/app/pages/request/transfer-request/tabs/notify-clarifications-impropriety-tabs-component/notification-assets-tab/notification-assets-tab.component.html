@@ -410,6 +410,13 @@
                 </button>
               </div>
               <div class="p-2">
+                <button
+                  class="btn btn-primary btn-sm active"
+                  (click)="openRecipients()">
+                  Notificar <i class="bx bx-envelope"></i>
+                </button>
+              </div>
+              <div class="p-2">
                 <app-columns-select
                   [(settings)]="settings"></app-columns-select>
               </div>
@@ -420,6 +427,7 @@
               <div class="table-responsive">
                 <div [class]="loadingGoods ? 'table-loading' : ''">
                   <ng2-smart-table
+                    #table
                     [attr.class]="'table-bordered table-responsive'"
                     [settings]="settings"
                     [source]="data"
@@ -454,6 +462,7 @@
                   Simular Respuesta
                 </button>
               </div> -->
+
               <div class="p-2" *ngIf="notification?.answered == 'NUEVA'">
                 <button
                   class="btn btn-success btn-sm active"
@@ -461,6 +470,7 @@
                   Aceptar Aclaraci&oacute;n&#47;Improcedencia
                 </button>
               </div>
+
               <div
                 *ngIf="
                   notification?.answered != 'ACLARADA' &&

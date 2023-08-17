@@ -143,7 +143,13 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         this.endProcess = true;
       },
       error: error => {
-        this.alert('error', 'Error', 'Este bien no existe');
+        this.alert('warning', 'El Bien no Existe', '');
+        this.loading = false;
+        this.descriptionGood.reset();
+        this.currentStatus.reset();
+        this.descriptionStatus.reset();
+        this.processesGood.reset();
+        this.endProcess = false;
       },
     });
   }
@@ -179,8 +185,8 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
 
     this.alertQuestion(
       'question',
-      `¿Desea actualizar?`,
-      `Se va a actualizar el estatus ${
+      `¿Desea Actualizar?`,
+      `Se va a Actualizar el Estatus ${
         this.extDomProcess.value != null ? 'y proceso' : ''
       }`
     ).then(q => {
@@ -191,7 +197,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
           status:
             this.goodStatus.value === null
               ? this.good.status
-              : this.goodStatus.value.status,
+              : this.goodStatus.value,
           extDomProcess:
             this.extDomProcess.value === null
               ? this.good.extDomProcess
@@ -217,11 +223,16 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     });
   }
 
+  correctDate(date: string) {
+    const dateUtc = new Date(date);
+    return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+  }
+
   postHistoryGood() {
     const historyGood: IHistoryGood = {
       propertyNum: this.numberGood.value,
-      status: this.goodStatus.value.status,
-      changeDate: new Date(),
+      status: this.goodStatus.value,
+      changeDate: this.correctDate(new Date().toISOString()),
       userChange: this.token.decodeToken().preferred_username,
       statusChangeProgram: 'CAMMUEESTATUS',
       reasonForChange: this.description.value,
@@ -249,6 +260,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       },
       error: error => {
         this.loading = false;
+        this.alert('error', 'Error', 'Error al Registrar en Histórico');
       },
     });
   }

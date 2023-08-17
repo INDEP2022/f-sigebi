@@ -66,7 +66,7 @@
             <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
-        <div class="mx-1" *ngIf="resultEyeVisitReport">
+        <div class="mx-1" *ngIf="resultEyeVisitReport || makeResultPaperReport">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -187,6 +187,31 @@
   <div body>
     <app-request-information-similar-goods
       [request]="requestInfo"></app-request-information-similar-goods>
+
+    <div
+      *ngIf="
+        processDetonate == 'RES_ESPECIE' && process == 'BSRegistroSolicitudes'
+      ">
+      <app-card [header]="false" class="p-10">
+        <div body>
+          <form [formGroup]="emailForm" class="form-material">
+            <div class="row">
+              <div class="col-md-3">
+                <form-field
+                  [control]="emailForm.get('emailUser')"
+                  label="Correo Usuario">
+                  <input
+                    type="email"
+                    id="email"
+                    class="form-control"
+                    formControlName="emailUser" />
+                </form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+      </app-card>
+    </div>
 
     <div>
       <tabset class="md-tabs" #staticTabs>

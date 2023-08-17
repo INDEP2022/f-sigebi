@@ -1,10 +1,14 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 // import { CheckboxElementRecordAccountStatementsComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element-record-account-statements';
 import { formatDate } from '@angular/common';
-import { CustomDateDayFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-mounth-custom/custom-date-day-filter';
 
 export let goodCheck: any[] = [];
 export let goodCheck2: any[] = [];
+
+function correctDate(date: string) {
+  const dateUtc = new Date(date);
+  return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+}
 
 export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
   select: {
@@ -38,6 +42,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.no_expediente': {
     title: 'Expediente',
@@ -49,6 +56,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       } else {
         return null;
       }
+    },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
     },
   },
   'RSPTAQUERY.val4': {
@@ -62,6 +72,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.val6': {
     title: 'Cuenta Bancaria',
@@ -73,6 +86,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
       } else {
         return null;
       }
+    },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
     },
   },
   'RSPTAQUERY.val1': {
@@ -86,6 +102,9 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.val2': {
     title: 'Depósito',
@@ -98,14 +117,19 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
         return null;
       }
     },
+    filterFunction: (cell?: any, search?: any) => {
+      return true;
+    },
   },
   'RSPTAQUERY.val5': {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (cell: any, row: any) => {
       if (row.RSPTAQUERY && row.RSPTAQUERY.val5) {
-        return row.RSPTAQUERY.val5;
+        const formatDate = row.RSPTAQUERY.val5;
+        return formatDate;
       } else {
         return null;
       }
@@ -115,6 +139,7 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS = {
     title: 'Fec. Tesofe',
     type: 'string',
     sort: false,
+    filter: false,
   },
 };
 
@@ -182,28 +207,22 @@ export const NUMERARY_MASSIVE_CONCILIATION_COLUMNS2 = {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (date: any) => {
       // Formatear la fecha utilizando la función formatDate
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
       return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
     },
   },
   interestCalculationDate: {
     title: 'Fec. Depósito',
     type: 'string',
     sort: false,
+    filter: false,
     valuePrepareFunction: (date: any) => {
       // Formatear la fecha utilizando la función formatDate
       const formattedDate = formatDate(date, 'dd/MM/yyyy', 'en');
       return formattedDate;
-    },
-    filter: {
-      type: 'custom',
-      component: CustomDateDayFilterComponent,
     },
   },
 };

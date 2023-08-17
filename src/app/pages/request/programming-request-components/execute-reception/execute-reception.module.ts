@@ -10,6 +10,7 @@ import { CancelationGoodFormComponent } from './cancelation-good-form/cancelatio
 import { DocumentsListComponent } from './documents-list/documents-list.component';
 import { EditGoodFormComponent } from './edit-good-form/edit-good-form.component';
 import { ExecuteReceptionFormComponent } from './execute-reception-form/execute-reception-form.component';
+import { SelectInputComponent } from './execute-reception-form/select-input/select-input.component';
 import { ExecuteReceptionRoutingModule } from './execute-reception-routing.module';
 import { ReschedulingFormComponent } from './rescheduling-form/rescheduling-form.component';
 import { ShowReceiptCloseComponent } from './show-receipt-close/show-receipt-close.component';
@@ -28,6 +29,7 @@ import { UploadReportReceiptComponent } from './upload-report-receipt/upload-rep
     UploadReportReceiptComponent,
     ShowReceiptCloseComponent,
     ShowReceiptGuardCloseComponent,
+    SelectInputComponent,
   ],
   imports: [
     CommonModule,

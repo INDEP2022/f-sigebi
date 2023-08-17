@@ -34,6 +34,13 @@ export class AccountMovementService extends HttpService {
     );
   }
 
+  getAllFilterSelf(self?: AccountMovementService, params?: _Params) {
+    return self.get<IListResponse<IAccountMovement>>(
+      'account-movements',
+      params
+    );
+  }
+
   getBeneficiarios() {
     return this.get<IListResponse<{ beneficiario_cheque: string }>>(
       AccountmvmntEndpoint.getBeneficiarios
@@ -48,6 +55,14 @@ export class AccountMovementService extends HttpService {
 
   getAllUsersChecks(params: _Params) {
     return this.get<IListResponse<IUserChecks>>('user-checks', params);
+  }
+
+  updateUserChecks(id: number, body: any) {
+    return this.put('user-checks/' + id, body);
+  }
+
+  createUserChecks(body: IUserChecks) {
+    return this.post('user-checks', body);
   }
 
   update(movement: any) {

@@ -7,17 +7,6 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <button
-            id="search-goods-expedient"
-            class="btn btn-primary active btn-sm"
-            (click)="getGoodsByExpedient()">
-            Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
-          </button>
-        </div>
-      </div>
-      <br />
-      <div class="row">
-        <div class="col-md-2">
           <form-field [control]="form.get('expediente')" label="Expediente">
             <input
               (ngModelChange)="
@@ -39,13 +28,21 @@
               formControlName="fechaFe" />
           </form-field>
         </div>
+        <div class="col-md-1">
+          <button
+            id="search-goods-expedient"
+            class="btn btn-primary active btn-sm"
+            (click)="getGoodsByExpedient()">
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
 
       <div class="row">
         <span *ngIf="dataGoods['data'].length != 0" class="fw-bold mb-3">{{
           goodSelected
         }}</span>
-        <div class="col-md-4">
+        <div class="col-md-5">
           <div class="scroll-table mb-3">
             <ng2-smart-table
               class="col-md-12"
@@ -68,7 +65,7 @@
           <span>{{ goodStatus }}</span>
         </div>
 
-        <div class="col-md-8 md-tabs">
+        <div class="col-md-7 md-tabs">
           <tabset id="tabset-id">
             <tab heading="General">
               <div class="row">
@@ -219,6 +216,7 @@
                         [class]="!this.isEnableGood ? 'disabled' : ''"
                         label="Instituci&oacute;n Valuadora"
                         control="institucion"
+                        id="institucion"
                         [form]="form"
                         [data]="institutionSelect"></ngx-select>
                     </form-field>

@@ -12,9 +12,12 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
+import { MsInvoiceService } from 'src/app/core/services/ms-invoice/ms-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -29,6 +32,26 @@ import { NewAndUpdateComponent } from './new-and-update/new-and-update.component
     `
       .bg-gray {
         background-color: white !important;
+      }
+
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
       }
     `,
   ],
@@ -139,6 +162,8 @@ export class ConciliationExecutionMainComponent
   lotes = new DefaultSelect();
   data: LocalDataSource = new LocalDataSource();
   loadingBtn: boolean = false;
+  loadingBtn2: boolean = false;
+  loadingBtn3: boolean = false;
   acordionOpen: boolean = false;
   disabledBtnCerrar: boolean = false;
 
@@ -151,7 +176,10 @@ export class ConciliationExecutionMainComponent
     private modalService: BsModalService,
     private comerEventosService: ComerEventosService,
     private lotService: LotService,
-    private comerDetailsService: ComerDetailsService
+    private comerDetailsService: ComerDetailsService,
+    private token: AuthService,
+    private msDepositaryService: MsDepositaryService,
+    private msInvoiceService: MsInvoiceService
   ) {
     super();
     this.settings = {
@@ -255,10 +283,12 @@ export class ConciliationExecutionMainComponent
   }
 
   mostrarLotes: boolean = false;
+  dataEvent: any = null;
   async selectEvent(event: any) {
     console.log(event);
     this.selectedEvent = event;
     if (event) {
+      await this.geEventId(event.id_evento);
       const V_PROCESO_FASE = await this.getType(event.id_evento);
       if (!V_PROCESO_FASE) {
         return this.alert(
@@ -266,71 +296,35 @@ export class ConciliationExecutionMainComponent
           `El Evento ${event.id_evento} no está Asociado al tipo de Proceso, verifique`,
           ''
         );
+        this.conciliationForm.get('description').setValue(event.cve_proceso);
       } else {
         if (V_PROCESO_FASE == 1) {
+          this.selectedBatch = null;
           this.mostrarLotes = false;
+          this.conciliationForm.get('description').setValue(event.cve_proceso);
         } else if (V_PROCESO_FASE == 2) {
           this.mostrarLotes = true;
           this.conciliationForm.get('description').setValue(event.cve_proceso);
           this.getLotes(new ListParams(), 'si');
         }
       }
+    } else {
+      this.selectedBatch = null;
+      this.dataEvent = null;
     }
   }
 
-  selectBatch(batch: any) {
-    console.log('aaa', batch);
-    this.selectedBatch = batch;
-  }
-
-  selectClients(rows: any[]) {
-    this.clientRows = rows;
-  }
-
-  execute() {
-    if (!this.selectedEvent)
-      return this.alert(
-        'warning',
-        'Es Necesario Especificar un Evento para Ejecutar',
-        ''
-      );
-  }
-
-  modify() {
-    if (!this.selectedEvent)
-      return this.alert(
-        'warning',
-        'Es Necesario Especificar un Evento para Modificar',
-        ''
-      );
-  }
-
-  async cancel() {
-    if (!this.selectedEvent)
-      return this.alert(
-        'warning',
-        'Es Necesario Especificar un Evento para Deshacer',
-        ''
-      );
-    let obj = {};
-    await this.eliminar(obj);
-  }
-
-  async eliminar(body: any) {
-    return new Promise((resolve, reject) => {
-      this.comerDetailsService.getFcomer612Get1(body).subscribe({
-        next: response => {
-          resolve(true);
-        },
-        error: err => {
-          resolve(false);
-          console.log('ERR', err);
-        },
-      });
+  async geEventId(idEvent: any) {
+    this.comerEventService.geEventId(idEvent).subscribe({
+      next: data => {
+        this.dataEvent = data;
+      },
+      error: err => {
+        this.dataEvent = null;
+      },
     });
   }
 
-  // ----------------------- WILMER ----------------------- //
   getComerEvents(lparams: ListParams) {
     const params = new FilterParams();
 
@@ -339,10 +333,6 @@ export class ConciliationExecutionMainComponent
 
     if (lparams.text)
       params.addFilter('id_evento', lparams.text, SearchFilter.EQ);
-
-    // params.addFilter('address', `M`, SearchFilter.EQ);
-    // params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
-    // params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
 
     this.comerEventosService
       .getSelectComerEvent(params.getParams(), this.layout)
@@ -361,6 +351,579 @@ export class ConciliationExecutionMainComponent
         },
       });
   }
+
+  selectBatch(batch: any) {
+    console.log('aaa', batch);
+    this.selectedBatch = batch;
+  }
+
+  selectClients(rows: any[]) {
+    this.clientRows = rows;
+  }
+  GLOBALV_CL: string = '';
+  async execute() {
+    if (!this.selectedEvent)
+      return this.alert(
+        'warning',
+        'Es Necesario Especificar un Evento para Ejecutar',
+        ''
+      );
+
+    const eventProcess: any = await this.getA(this.selectedEvent.id_evento);
+
+    if (!eventProcess)
+      return this.alert(
+        'warning',
+        `El Evento ${this.selectedEvent.id_evento} no está Asociado al tipo de Proceso, Verifique`,
+        ''
+      );
+    this.loadingBtn = true;
+    if (eventProcess.phase == 1) {
+      if (this.dataEvent.eventTpId == 11) {
+        // CARGA_PAGOSREFGENS;
+        await this.CARGA_PAGOSREFGENS();
+        await this.CARGA_COMER_DETALLES();
+        await this.VALIDA_PAGOSREF_PREP_OI_BASES_CA(
+          this.selectedEvent.id_evento,
+          this.selectedEvent.cve_proceso
+        );
+      } else {
+        let L_PARAME: any = await this.VALIDA_PAGOSREF_OBT_PARAMETROS(
+          this.selectedEvent.id_evento,
+          this.layout
+        );
+
+        if (L_PARAME != 'OK') {
+          this.alert('warning', L_PARAME, '');
+          this.loadingBtn = false;
+          return;
+        }
+
+        let L_VALEST: any = await this.VALIDA_ESTATUS();
+        // L_VALEST.AUX_EXISTE
+
+        if (L_VALEST.AUX_PROCESA > 0) {
+          this.alert(
+            'warning',
+            `Se Encontraron Bienes con Estatus Inválidos, Verifique`,
+            ''
+          );
+          this.loadingBtn = false;
+          return;
+        }
+
+        let L_VALMAN: any = await this.VALIDA_MANDATO();
+        if (L_VALMAN > 0) {
+          this.alert(
+            'warning',
+            `El Lote ${L_VALMAN} no Tiene Mandato Válido, Verifique`,
+            'Ejecute el Botón Act. Mand. en Preparación de Eventos'
+          );
+          this.loadingBtn = false;
+          return;
+        }
+
+        let L_LISTAN: any = await this.VALIDA_LISTANEGRA();
+        if (L_LISTAN > 0) {
+          this.alert(
+            'warning',
+            `El Cliente ${L_LISTAN} se Encuentra en la Lista Negra no se Puede Procesar`,
+            'No lo Seleccione en los Clientes'
+          );
+          this.loadingBtn = false;
+          return;
+        }
+
+        if (this.dataEvent.eventTpId == 1 || this.dataEvent.eventTpId == 3) {
+          await this.VALIDA_PAGOSREF_VALIDA_COMER(
+            this.selectedEvent.id_evento,
+            this.conciliationForm.value.date
+          );
+          await this.VALIDA_PAGOSREF_PREP_OI(
+            this.selectedEvent.id_evento,
+            this.selectedEvent.cve_proceso
+          );
+        } else if (eventProcess.id.eventTpId == 4) {
+          await this.VALIDA_PAGOSREF_VENTA_SBM(
+            this.selectedEvent.id_evento,
+            this.conciliationForm.value.date
+          );
+          await this.VALIDA_PAGOSREF_PREP_OI(
+            this.selectedEvent.id_evento,
+            this.selectedEvent.cve_proceso
+          );
+        }
+      }
+      await this.getComerClientsXEvent('no');
+      this.alert('success', 'Proceso Terminado Correctamente', '');
+      this.loadingBtn = false;
+    } else if (eventProcess.phase == 2) {
+      if (!this.selectedBatch) {
+        this.GLOBALV_CL = 'B';
+      } else {
+        this.GLOBALV_CL = 'A';
+      }
+      let obj: any = {
+        fase: this.conciliationForm.get('phase').value,
+        fases: this.globalFASES,
+        v_cl: this.GLOBALV_CL,
+        evento: this.selectedEvent.id_evento,
+        lote: this.selectedBatch ? this.selectedBatch.idLot : null,
+        lotePublico: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        fecha: this.conciliationForm.value.date,
+        descripcion: this.selectedEvent.cve_proceso,
+      };
+      const endpointEjecutar: any = await this.PUP_ENTRA(obj); //PUP_ENTRA
+      if (endpointEjecutar.status == 200) {
+        this.loadingBtn = false;
+        await this.getComerClientsXEvent('no');
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+      } else {
+        this.loadingBtn = false;
+        this.alert('error', endpointEjecutar.message, '');
+      }
+    }
+  }
+
+  async CARGA_PAGOSREFGENS() {
+    return new Promise((resolve, reject) => {
+      this.lotService
+        .CARGA_PAGOSREFGENS(this.selectedEvent.id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(err.message[0]);
+          },
+        });
+    });
+  }
+
+  async CARGA_COMER_DETALLES() {
+    return new Promise((resolve, reject) => {
+      this.lotService
+        .CARGA_COMER_DETALLES(this.selectedEvent.id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(err.message[0]);
+          },
+        });
+    });
+  }
+
+  async VALIDA_PAGOSREF_PREP_OI_BASES_CA(id_evento: any, cve_proceso: any) {
+    let obj = {
+      event: id_evento,
+      descrption: cve_proceso,
+      user: this.token.decodeToken().preferred_username,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_PREP_OI_BASES_CA(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento: any, layout: any) {
+    return new Promise((resolve, reject) => {
+      this.msInvoiceService
+        .VALIDA_PAGOSREF_OBT_PARAMETROS(id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data.result);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  async VALIDA_ESTATUS() {
+    return new Promise((resolve, reject) => {
+      this.lotService.VALIDA_ESTATUS(this.selectedEvent.id_evento).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async VALIDA_MANDATO() {
+    return new Promise((resolve, reject) => {
+      this.lotService.VALIDA_MANDATO(this.selectedEvent.id_evento).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err);
+        },
+      });
+    });
+  }
+
+  async VALIDA_LISTANEGRA() {
+    // no_nombramiento
+    return new Promise((resolve, reject) => {
+      this.lotService
+        .VALIDA_LISTANEGRA(this.selectedEvent.id_evento)
+        .subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            resolve(null);
+          },
+        });
+    });
+  }
+
+  async VALIDA_PAGOSREF_VALIDA_COMER(id_evento: any, date: any) {
+    let obj = {
+      event: id_evento,
+      date: date,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_VALIDA_COMER(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_VENTA_SBM(id_evento: any, date: any) {
+    let obj = {
+      event: id_evento,
+      date: date,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_VENTA_SBM(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  async VALIDA_PAGOSREF_PREP_OI(id_evento: any, cve_proceso: any) {
+    let obj = {
+      name: id_evento,
+      description: cve_proceso,
+    };
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.VALIDA_PAGOSREF_PREP_OI(obj).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(err.message[0]);
+        },
+      });
+    });
+  }
+
+  // PUP_ENTRA
+  PUP_ENTRA(body: any) {
+    return new Promise((resolve, reject) => {
+      this.lotService.PUP_ENTRA(body).subscribe({
+        next: data => {
+          let obj = {
+            status: 200,
+            message: 'OK',
+          };
+          resolve(obj);
+        },
+        error: err => {
+          console.log(err);
+          let obj = {
+            status: err.status,
+            message: err.error.message,
+          };
+          resolve(obj);
+        },
+      });
+    });
+  }
+
+  getA(id: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.getByIdComerTEvents(id).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async modify() {
+    if (!this.selectedEvent)
+      return this.alert(
+        'warning',
+        'Es Necesario Especificar un Evento para Modificar',
+        ''
+      );
+
+    const eventProcess: any = await this.getA(this.selectedEvent.id_evento);
+
+    if (!eventProcess)
+      return this.alert(
+        'warning',
+        `El Evento ${this.selectedEvent.id_evento} no está Asociado al tipo de Proceso, Verifique`,
+        ''
+      );
+    this.loadingBtn2 = true;
+    if (eventProcess.phase == 1) {
+      if (this.dataEvent.eventTpId == 11) {
+        // MODIFICA_ESTATUS_BASES_ANT;
+        await this.MODIFICA_ESTATUS_BASES_ANT(this.selectedEvent.id_evento);
+      } else {
+        // MODIFICA_ESTATUS_ANT;
+        let obj = {
+          user: this.token.decodeToken().preferred_username,
+          event: this.selectedEvent.id_evento,
+        };
+        const MODIFICA_ESTATUS_ANT_: any = await this.MODIFICA_ESTATUS_ANT(obj);
+        if (!MODIFICA_ESTATUS_ANT_) {
+          this.loadingBtn2 = false;
+          return this.alert('error', 'Ocurrió un Error al Modificar', '');
+        }
+        // CAMBIAR_ESTATUS_ANT;
+        const CAMBIAR_ESTATUS_ANT_: any = await this.CAMBIAR_ESTATUS_ANT(
+          this.selectedEvent.id_evento
+        );
+        if (!CAMBIAR_ESTATUS_ANT_) {
+          this.loadingBtn2 = false;
+          return this.alert('error', 'Ocurrió un Error al Modificar', '');
+        }
+      }
+      this.loadingBtn2 = false;
+      await this.getComerClientsXEvent('no');
+      this.alert('success', 'Proceso Terminado Correctamente', '');
+    } else if (eventProcess.phase == 2) {
+      const fase = this.conciliationForm.get('phase').value;
+      if (!fase) {
+        this.alert('warning', 'Es Necesario Indicar la Fase', '');
+        this.loadingBtn2 = false;
+        return;
+      } else {
+        if (!this.selectedBatch) {
+          this.alertQuestion(
+            'question',
+            `Se va a Ejecutar el Proceso de Cambio de Estatus del Evento ${this.selectedEvent.id_evento} de Todos los Lotes`,
+            '¿Está de Acuerdo?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              //   MODIFICA_ESTATUS;
+              let obj: any = {
+                event: this.selectedEvent.id_evento,
+                publicLot: null,
+                phase: fase,
+                user: this.token.decodeToken().preferred_username,
+              };
+              const MODIFICA_ESTATUS: any = await this.MODIFICA_ESTATUS(obj);
+              if (MODIFICA_ESTATUS.status != 200) {
+                this.alert('error', 'Ha Ocurrido un Error al Modificar', '');
+                this.loadingBtn2 = false;
+                return;
+              } else {
+                this.loadingBtn2 = false;
+                await this.getComerClientsXEvent('no');
+                this.alert('success', 'Proceso Terminado Correctamente', '');
+              }
+            } else {
+              this.loadingBtn2 = false;
+              this.alert(
+                'warning',
+                'Favor de Verificar los Parámetros y/o Modificarlos',
+                ''
+              );
+              return;
+            }
+          });
+        } else {
+          this.alertQuestion(
+            'question',
+            `Se va a Ejecutar el Proceso de Cambio de Estatus del Evento ${this.selectedEvent.id_evento} del Lote ${this.selectedBatch.lotPublic}`,
+            '¿Está de Acuerdo?'
+          ).then(async question => {
+            if (question.isConfirmed) {
+              //   MODIFICA_ESTATUS;
+              let obj = {
+                event: this.selectedEvent.id_evento,
+                publicLot: this.selectedBatch.lotPublic,
+                phase: eventProcess.phase,
+                user: this.token.decodeToken().preferred_username,
+              };
+              const MODIFICA_ESTATUS: any = await this.MODIFICA_ESTATUS(obj);
+              if (MODIFICA_ESTATUS.status != 200) {
+                this.alert('error', 'Ha Ocurrido un Error al Modificar', '');
+                this.loadingBtn2 = false;
+                return;
+              } else {
+                this.loadingBtn2 = false;
+                await this.getComerClientsXEvent('no');
+                this.alert('success', 'Proceso Terminado Correctamente', '');
+              }
+            } else {
+              this.loadingBtn2 = false;
+              this.alert(
+                'warning',
+                'Favor de Verificar los Parámetros y/o Modificarlos',
+                ''
+              );
+              return;
+            }
+          });
+        }
+      }
+    }
+
+    // this.dataEvent.eventTpId
+    // let obj = {
+    //   event: this.selectedEvent.id_evento,
+    //   publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+    //   phase: 1,
+    //   lifMessage: 'TEST',
+    //   user: this.token.decodeToken().preferred_username,
+    // };
+    // await this.modificar(obj);
+  }
+  // MODIFICA_ESTATUS_BASES_ANT
+  MODIFICA_ESTATUS_BASES_ANT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.MODIFICA_ESTATUS_BASES_ANT(body).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  // MODIFICA_ESTATUS_ANT
+  MODIFICA_ESTATUS_ANT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.msDepositaryService.MODIFICA_ESTATUS_ANT(body).subscribe({
+        next: data => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  // CAMBIAR_ESTATUS_ANT
+  CAMBIAR_ESTATUS_ANT(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.CAMBIAR_ESTATUS_ANT(body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(null);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+  // MODIFICA_ESTATUS;
+  async MODIFICA_ESTATUS(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.MODIFICA_ESTATUS(body).subscribe({
+        next: response => {
+          let obj = {
+            status: 200,
+            data: response.data,
+          };
+          resolve(obj);
+        },
+        error: err => {
+          let obj: any = {
+            status: err.status,
+            data: null,
+          };
+          resolve(obj);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  async modificar(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.reverseEverything(body).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: err => {
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  async cancel() {
+    if (!this.selectedEvent)
+      return this.alert(
+        'warning',
+        'Es Necesario Especificar un Evento para Deshacer',
+        ''
+      );
+    let obj = {
+      event: this.selectedEvent.id_evento,
+      lot: this.selectedBatch ? this.selectedBatch.idLot : null,
+      publicLot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+    };
+    this.loadingBtn3 = true;
+    await this.eliminar(obj);
+  }
+
+  async eliminar(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerDetailsService.reverseEverything(body).subscribe({
+        next: response => {
+          this.loadingBtn3 = false;
+          this.getComerClientsXEvent('no');
+          this.alert('success', 'Proceso Terminado Correctamente', '');
+          resolve(true);
+        },
+        error: err => {
+          this.loadingBtn3 = false;
+          this.alert('error', 'Ocurrió un Error al Intentar Deshacer', '');
+          resolve(false);
+          console.log('ERR', err);
+        },
+      });
+    });
+  }
+
+  // ----------------------- WILMER ----------------------- //
 
   async getComerClientsXEvent(filter: any) {
     this.loading = true;
@@ -676,7 +1239,7 @@ export class ConciliationExecutionMainComponent
     if (lparams.text)
       if (!isNaN(parseInt(lparams?.text))) {
         console.log('SI');
-        params.addFilter('idLot', lparams.text, SearchFilter.EQ);
+        params.addFilter('lotPublic', lparams.text, SearchFilter.EQ);
         // params.addFilter('no_cuenta', lparams.text);
       } else {
         console.log('NO');
@@ -692,7 +1255,7 @@ export class ConciliationExecutionMainComponent
       next: data => {
         console.log('EVENT', data);
         let result = data.data.map(async (item: any) => {
-          item['idAndDesc'] = item.idLot + ' - ' + item.description;
+          item['idAndDesc'] = item.lotPublic + ' - ' + item.description;
         });
 
         Promise.all(result).then(resp => {
@@ -701,8 +1264,9 @@ export class ConciliationExecutionMainComponent
       },
       error: err => {
         if (filter == 'si') {
-          this.alert('warning', 'No hay Lotes Asociados a este Evento', '');
+          this.alert('warning', 'No hay Lotes Disponibles al Evento', '');
         }
+        this.conciliationForm.get('batch').setValue(null);
         this.lotes = new DefaultSelect([], 0);
       },
     });

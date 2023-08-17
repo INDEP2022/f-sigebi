@@ -511,6 +511,9 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
         next: () => {
           resolve(true);
         },
+        error: error => {
+          resolve(true);
+        },
       });
     });
   }
@@ -518,6 +521,7 @@ export class UploadReportReceiptComponent extends BasePage implements OnInit {
   updateProgrammingGood() {
     return new Promise((resolve, reject) => {
       const goodsReception = this.guardReception.value;
+
       goodsReception.map((item: IGood) => {
         const formData: Object = {
           programmingId: this.programming.id,
