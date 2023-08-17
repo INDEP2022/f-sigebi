@@ -61,4 +61,8 @@ export class SignatoriesService extends HttpService {
       body
     );
   }
+
+  ssf3FirmaEelecDocs(model: any) {
+    return this.post(ElectronicFirmEndpoint.SSF3FirmaEelecDocs, model);
+  }
 }
