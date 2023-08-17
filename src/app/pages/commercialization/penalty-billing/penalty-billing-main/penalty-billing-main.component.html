@@ -44,7 +44,7 @@
                   (fetchItems)="getLoteByEvent($event)"
                   [data]="dataLote"
                   [form]="billingForm"
-                  value="idLot"
+                  value="lotPublic"
                   bindLabel="description"
                   label="Lote"
                   [control]="'batchId'"
@@ -339,11 +339,24 @@
               <div class="d-flex justify-content-center">
                 <div class="d-inline">
                   <confirm-button
-                    [className]="'btn-primary mb-3'"
+                    [className]="'btn-primary mr-2'"
                     [disabled]="!billingForm.valid"
                     [btnSmall]="true"
                     [loading]="loading"
                     (confirm)="saveData()"></confirm-button>
+                  <confirm-button
+                    [className]="'btn-primary mr-2'"
+                    [icon]="'bx bx-search-alt'"
+                    [loadingText]="'Buscando'"
+                    text="Buscar"
+                    [btnSmall]="true"
+                    [loading]="loadingSearch"
+                    (confirm)="searchData()"></confirm-button>
+                  <button
+                    class="btn btn-danger btn-sm active mr-2"
+                    (click)="resetData()">
+                    Limpiar <i class="fas fa-eraser"> </i>
+                  </button>
                 </div>
               </div>
             </div>

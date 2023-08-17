@@ -6,7 +6,6 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   IComerEvent,
   IFindAllComerGoodXlotTotal,
-  IGraceDate,
 } from '../../models/ms-event/event.model';
 
 @Injectable({

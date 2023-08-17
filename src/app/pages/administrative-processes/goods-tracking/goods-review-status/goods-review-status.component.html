@@ -103,7 +103,7 @@
           <div class="col-lg-4 col-md-5 col-sm-4 col-12">
             <button
               [disabled]="!responsable || loadingBtn || loading || loadingBtn2"
-              (click)="exportar()"
+              (click)="exportarExcel()"
               class="btn btn-success btn-sm w-100 active">
               Exportar CSV <i class="bx bx-download float-icon"></i>
             </button>
@@ -168,6 +168,50 @@
               formControlName="responsable" />
           </form-field>
         </div> -->
+      </div>
+    </form>
+  </div>
+</app-card>
+<app-card
+  *ngIf="responsable == 'REGIONALES' && delegationNumber == 0"
+  [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BÚSQUEDA POR BIEN</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form2">
+      <div class="col-md-2 mt-2">
+        <div>
+          <form-field [control]="form2.get('bien')" label="No. Bien">
+            <input type="text" class="form-control" formControlName="bien" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3 mt-2">
+        <div>
+          <form-field [control]="form2.get('responsable')" label="Responsable">
+            <input
+              readonly
+              type="text"
+              class="form-control"
+              formControlName="responsable"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          (click)="search()"
+          class="btn btn-sm btn-block btn-primary active">
+          Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div class="col-sm-2 col-md-2 col-xl-2 mt-2">
+        <button
+          (click)="clear()"
+          class="btn btn-sm btn-block btn-danger active">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
       </div>
     </form>
   </div>

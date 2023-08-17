@@ -16,6 +16,7 @@ export class CommercializationDestinationModalComponent
 {
   data: any;
   edit: boolean = false;
+  idDocumentsXml: number;
   formGroup: FormGroup = new FormGroup({});
   @Output() onConfirm = new EventEmitter<boolean>();
 
@@ -73,6 +74,19 @@ export class CommercializationDestinationModalComponent
       return;
     }
     if (this.edit == false) {
+      // let params = new ListParams();
+      // params['filter.id_docums_xml'] = `$eq:${this.idDocumentsXml}`;
+      // this.svSignatureAuxiliaryCatalogsService
+      //   .getAllComerceDocumentsXmlTCatFelec(params)
+      //   .subscribe({
+      //     next: res => {
+      //       console.log('DATA SIGNATURE', res);
+      //     },
+      //     error: error => {
+      //       console.log(error);
+      //     },
+      //   });
+
       this.svSignatureAuxiliaryCatalogsService
         .createComerDestXML(this.formGroup.value)
         .subscribe({

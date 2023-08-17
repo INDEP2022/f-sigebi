@@ -133,7 +133,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     };
     this.dictationService.getSigned(params).subscribe({
       next: resp => {
-        console.log(resp);
+        console.log('Respuesta: ', resp.data);
         //this.data1 = resp.data;
         this.data.load(resp.data);
         this.data.refresh();
@@ -148,7 +148,18 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
     });
   }
 
+  dictaNumber: number = 0;
+  sender: string = '';
+  typeruling: string = '';
+  armedtradekey: string = '';
+
   change(event: IGetSigned) {
+    console.log('Registro seleccionado: ', event);
+    console.log('clave armada: ', event?.armedtradekey);
+    this.dictaNumber = Number(event?.dictanumber);
+    this.sender = event?.sender;
+    this.typeruling = event?.typeruling;
+    this.armedtradekey = event?.armedtradekey;
     this.enableSend = false;
     this.dictaminationSelect = event;
     this.electronicSignatureForm
@@ -162,7 +173,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
   async print() {
     if (this.dictaminationSelect === undefined) {
       this.alert(
-        'info',
+        'warning',
         'Firma electrónica dictamen de procedencia',
         'Debe seleccionar un registro de la tabla'
       );
@@ -172,6 +183,8 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       this.dictaminationSelect.dictanumber,
       this.dictaminationSelect.typeruling
     );
+    console.log('Count: ', n_COUNT);
+
     if (n_COUNT > 0) {
       this.PUP_CONSULTA_PDF_BD_SSF3();
     } else if (n_COUNT === 0) {
@@ -179,6 +192,7 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
         this.dictaminationSelect.dictanumber,
         this.dictaminationSelect.statusof
       );
+
       if (n_COUNT > 0) {
         /// mandar a llamar al reporte R_FIRMA_DICTAMASIV
         this.downloadReport('blank', null);
@@ -222,9 +236,13 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       params['filter.natureDocument'] = `$eq:${natureDocument}`;
       this.ssf3SignatureElecDocsService.getAllFiltered(params).subscribe({
         next: resp => {
+          console.log('Count1: ', resp.count);
           res(resp.count);
         },
-        error: err => res(0),
+        error: err => {
+          console.log('Count1: ', err);
+          res(0);
+        },
       });
     });
   }
@@ -237,6 +255,19 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       };
       this.dictationService.blkControlPrintWhenButtonPressed(model).subscribe({
         next: resp => {
+          console.log(
+            'console.log("Number(resp.data[0].count", Number(resp.data[0].count)',
+            Number(resp.data[0].count)
+          );
+
+          if (Number(resp.data[0].count) === 0) {
+            this.alert(
+              'warning',
+              'El Dictamen no ha sido enviado',
+              'No es posible firmarlo'
+            );
+          }
+
           res(Number(resp.data[0].count));
         },
         error: err => res(0),
@@ -378,6 +409,10 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
           numberDictation: '773', //this.dictaminationSelect.no_of_dicta.toString(),
           typeDocumentDictation: 'ENVIADO', //this.dictaminationSelect.estatus_of,
           fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+          dictamenNumber: this.dictaNumber,
+          sender: this.sender,
+          typeruling: this.typeruling,
+          armedtradekey: this.armedtradekey,
         });
       },
       error: error => {
@@ -412,6 +447,10 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
             numberDictation: '773', //this.dictaminationSelect.no_of_dicta.toString(),
             typeDocumentDictation: 'ENVIADO', //this.dictaminationSelect.estatus_of,
             fileDocumentDictation: formData.get('file'), // DOCUMENTO XML GENERADO
+            dictamenNumber: this.dictaNumber,
+            sender: this.sender,
+            typeruling: this.typeruling,
+            armedtradekey: this.armedtradekey,
           });
         } else {
           this.alert(
@@ -437,17 +476,12 @@ export class ElectronicSignatureComponent extends BasePage implements OnInit {
       }
     );
     modalRef.content.responseFirm.subscribe(async (next: any) => {
-      /* 
-      
-SELECT COUNT(0)
-        INTO v_COUNT
-        FROM SSF3_FIRMA_ELEC_DOCS
-       WHERE NATURALEZA_DOC = :DICTAMINACIONES.TIPO_DICTAMINACION
-         AND NO_DOCUMENTO   = :DICTAMINACIONES.NO_OF_DICTA
-         AND TIPO_DOCUMENTO = :DICTAMINACIONES.ESTATUS_OF;      */
+      if (next) {
+        this.getDictamen();
+      }
     });
     modalRef.content.errorFirm.subscribe((next: any) => {
-      console.log(next);
+      console.log('Nexto modal', next);
     });
   }
 
