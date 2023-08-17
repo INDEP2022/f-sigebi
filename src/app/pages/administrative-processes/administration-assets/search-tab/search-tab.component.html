@@ -30,12 +30,20 @@
                       [data]="goods"
                       [form]="searchTabForm"
                       value="id"
-                      bindLabel="info"
+                      bindLabel="description"
                       label="Bien"
                       control="noBien"
-                      (change)="onChangeGood($event)">
+                      (change)="onChangeGood($event)"
+                      [labelTemplate]="userLabel"
+                      [optionTemplate]="userOption">
                     </ngx-select>
                   </form-field>
+                  <ng-template #userLabel let-item="item"
+                    >{{ item.id }} - {{ item.description }}</ng-template
+                  >
+                  <ng-template #userOption let-item="item"
+                    >{{ item.id }} - {{ item.description }}</ng-template
+                  >
                   <!-- <goods-filter-shared [reloadGood]="reloadGood" [clean]="cleanGood" [form]="searchTabForm"
                     goodField="noBien" [classifGood]="classifGood" (good)="onChangeGood($event)"></goods-filter-shared> -->
                 </div>

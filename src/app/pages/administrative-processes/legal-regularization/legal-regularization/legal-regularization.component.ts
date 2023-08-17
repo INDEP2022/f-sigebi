@@ -105,7 +105,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     //5457725
     console.log('XXXXXXXXXXXXXXXXX');
     if (this.numberGood.value === null || this.numberGood.value === '') {
-      this.alert('warning', 'Regularización jurídica', 'Ingrese No. de Bien');
+      this.alert('warning', 'Ingrese No. de Bien', '');
       return;
     }
     this.goodServices.getById(this.numberGood.value).subscribe({
@@ -124,11 +124,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             this.numberFile = this.good.fileNumber;
             this.setGood();
             if (!this.redicrectScan) {
-              this.alert(
-                'success',
-                'Regularización Jurídica',
-                'Bien cargado correctamente'
-              );
+              this.alert('success', 'Bien Cargado Correctamente', '');
             }
             this.form
               .get('justifier')
@@ -140,7 +136,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           } else {
             this.alert(
               'warning',
-              'Regularización Jurídica',
+              'Atención',
               `El expediente ${response.data[0].fileNumber} que esta asociado a este Bien no existe.`
             );
           }
@@ -148,8 +144,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
           if (!this.redicrectScan) {
             this.alert(
               'warning',
-              'Regularización Jurídica',
-              `El estatus del bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.`
+              'Atención',
+              `El estatus del Bien ${this.numberGood.value} es incorrecto. Los estatus validos son  ADM o REJ.`
             );
           }
         }
@@ -177,7 +173,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
     ) {
       this.alert(
         'warning',
-        'Regularización Jurídica',
+        'Atención',
         `No puede cambiar el estatus al Bien ${this.good.id} por que aún no se ha generado un folio`
       );
       return;
@@ -223,7 +219,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
             res(valid);
             this.alert(
               'warning',
-              'Regularización Jurídica',
+              'Atención',
               `No puede cambiar el estatus al Bien ${this.good.id} por que aún no tiene documentos escaneados`
             );
           },
@@ -247,8 +243,8 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       next: response => {
         this.alert(
           'success',
-          'Regularización Jurídica',
-          `Justificación de la Regularización Jurídica del Bien ${this.good.id} actualizada correctamente.`
+          'Actualizado',
+          `La Justificación de la Regularización Jurídica del Bien ${this.good.id} se actualizó`
         );
         //this.clean();
         this.loadGood();

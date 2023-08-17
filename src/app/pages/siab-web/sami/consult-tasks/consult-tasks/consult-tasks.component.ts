@@ -212,7 +212,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       next: data => {
         const text = this.replaceAccents(params.text);
         data.data.map(data => {
-          data.nameAndId = `${data.id} - ${data.nameTransferent}`;
+          data.nameAndId = `${data.nameTransferent}`;
           return data;
         });
         this.transferents$ = new DefaultSelect(data.data, data.count);
@@ -231,7 +231,7 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           });
 
           copyData.map(x => {
-            x.nameAndId = `${x.id} - ${x.nameTransferent}`;
+            x.nameAndId = `${x.nameTransferent}`;
             return x;
           });
 
