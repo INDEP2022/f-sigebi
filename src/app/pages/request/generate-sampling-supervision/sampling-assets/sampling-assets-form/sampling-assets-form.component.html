@@ -41,6 +41,21 @@
             </form-field>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-md-4 mt-5">
+            <ngx-select
+              [form]="dateForm"
+              control="transferent"
+              (fetchItems)="getTransferent($event)"
+              [data]="selectTransferent"
+              bindLabel="nameTransferent"
+              [searchable]="false"
+              label="Transferente"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-4"></div>
+        </div>
       </form>
     </div>
     <div class="row pt-6">
@@ -136,7 +151,7 @@
     <div class="row pt-4" style="margin-top: 2%" *ngIf="displaySearchAssetsBtn">
       <div class="d-flex justify-content-end">
         <div class="m-3">
-          <button class="btn btn-primary btn-sm active">
+          <button class="btn btn-primary btn-sm active" (click)="goodSearch()">
             <i class="bx bx-search-alt-2"></i> B&uacute;squeda Bienes
           </button>
         </div>

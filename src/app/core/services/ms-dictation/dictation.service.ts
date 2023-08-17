@@ -86,6 +86,7 @@ export class DictationService extends HttpService {
     id: string | number;
     typeDict?: string | number;
   }): Observable<IDictation> {
+    console.log('body', body);
     return this.post(this.route.FindByIds, body);
   }
   getCount4(body: any) {
@@ -170,11 +171,8 @@ export class DictationService extends HttpService {
     return this.post(route, body);
   }
 
-  postFindGoodDictGood1(body: {
-    NO_OF_DICTA: any;
-    TIPO_DICTAMINACION: string;
-  }) {
-    const route = `${DictationEndpoints.FindGoodDictGood1}`;
+  postFindGoodDictGood1(body: { id: any; typeDict: string }) {
+    const route = `${DictationEndpoints.FindIdsDictationXGood1}`;
     return this.post(route, body);
   }
 
@@ -405,6 +403,11 @@ export class DictationService extends HttpService {
     return this.get<IListResponse<any>>(
       DictationEndpoints.TmpExpDesahogoB,
       listParams
+    );
+  }
+  getTmpExpDesahogoByExpedient(id: any) {
+    return this.get<IListResponse<any>>(
+      `${DictationEndpoints.TmpExpDesahogoB}?filter.numberProceedings=$eq:${id}`
     );
   }
 
