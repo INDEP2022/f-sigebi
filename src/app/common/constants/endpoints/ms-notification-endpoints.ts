@@ -9,7 +9,7 @@ export enum NotificationEndpoints {
   //put
   NotificationxPropertyPut = `notification-x-property/property`,
   //post
-  ValidateGoodStatus = `validate-good-status`,
+  ValidateGoodStatus = `application/post-pup-valida-estatus-bien`,
   //post
   NotifyRatification = `notify-ratification`,
   //post
