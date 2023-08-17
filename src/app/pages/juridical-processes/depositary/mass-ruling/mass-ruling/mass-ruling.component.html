@@ -8,22 +8,30 @@
       <div class="form-material row align-items-start">
         <div class="col-md-12">
           <div class="col-md-4">
-            <form-field [control]="form.get('id')" label="No&#46; Oficio">
-              <input class="form-control" formControlName="id" />
+            <form-field
+              [control]="form.get('id')"
+              label="No&#46; Dictaminaci&oacute;n">
+              <input class="form-control" formControlName="id" maxlength="7" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="form.get('wheelNumber')"
               label="No&#46; Volante">
-              <input class="form-control" formControlName="wheelNumber" />
+              <input
+                class="form-control"
+                formControlName="wheelNumber"
+                maxlength="7" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field
               [control]="form.get('expedientNumber')"
               label="No&#46; Expediente">
-              <input class="form-control" formControlName="expedientNumber" />
+              <input
+                class="form-control"
+                formControlName="expedientNumber"
+                maxlength="7" />
             </form-field>
           </div>
         </div>
@@ -34,8 +42,8 @@
           <button
             type="submit"
             [disabled]="
-              !form.value.expedientNumber &&
-              !form.value.wheelNumber &&
+              !form.value.expedientNumber ||
+              !form.value.wheelNumber ||
               !form.value.id
             "
             class="btn btn-primary active btn-sm text-wrap ml-2"
@@ -61,34 +69,51 @@
             <form-field
               [control]="form.get('typeDict')"
               label="Tipo Dictaminaci&oacute;n">
-              <input class="form-control" formControlName="typeDict" />
+              <input
+                class="form-control"
+                formControlName="typeDict"
+                maxlength="40" />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('dictDate')" label="Fecha">
+            <form-field
+              [control]="form.get('dictDate')"
+              label="Fecha Dictaminaci&oacute;n">
               <input
                 class="form-control"
                 formControlName="dictDate"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('statusDict')" label="Estatus">
-              <input class="form-control" formControlName="statusDict" />
+            <form-field
+              [control]="form.get('statusDict')"
+              label="Estatus Dictaminaci&oacute;n">
+              <input
+                class="form-control"
+                formControlName="statusDict"
+                maxlength="40" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
               [control]="form.get('passOfficeArmy')"
               label="Clave Oficio Armada">
-              <input class="form-control" formControlName="passOfficeArmy" />
+              <input
+                class="form-control"
+                formControlName="passOfficeArmy"
+                maxlength="200" />
             </form-field>
           </div>
           <div class="col-md-6">
             <form-field
               [control]="form.get('userDict')"
               label="Usuario Dictamina">
-              <input class="form-control" formControlName="userDict" />
+              <input
+                class="form-control"
+                formControlName="userDict"
+                maxlength="40" />
             </form-field>
           </div>
           <div class="col-md-6">
@@ -98,7 +123,8 @@
               <input
                 class="form-control"
                 formControlName="instructorDate"
-                bsDatepicker />
+                bsDatepicker
+                [maxDate]="maxDate" />
             </form-field>
           </div>
           <div>
@@ -117,7 +143,12 @@
                 <div class="form-group mr-2">
                   <button
                     type="button"
-                    [disabled]="!form.value.delete"
+                    [disabled]="
+                      !form.value.expedientNumber ||
+                      !form.value.id ||
+                      !form.value.typeDict ||
+                      !form.value.delete
+                    "
                     class="btn btn-primary active btn-sm text-wrap"
                     (click)="onClickGoodDictation()">
                     Bienes del Dictamen
@@ -127,7 +158,13 @@
               <div class="m-3">
                 <div class="form-group ml-2 mr-2">
                   <button
-                    [disabled]="!form.value.passOfficeArmy"
+                    [disabled]="
+                      !form.value.expedientNumber ||
+                      !form.value.id ||
+                      !form.value.typeDict ||
+                      !form.value.delete ||
+                      !form.value.passOfficeArmy
+                    "
                     type="button"
                     class="btn btn-primary active btn-sm text-wrap"
                     (click)="onClickDictation()">
@@ -170,43 +207,31 @@
           </form-field>
         </div>
       </form>
-      <div class="d-flex justify-content-center">
-        <div class="md-3">
-          <div class="form-group m-1 ml-2 mr-2">
-            <button
-              [disabled]="formCargaMasiva.invalid"
-              type="button"
-              (click)="onClickLoadByIdentifier()"
-              class="btn btn-primary active btn-sm">
+      <!-- <div class="d-flex justify-content-center">
+                <div class="md-3">
+                    <div class="form-group m-1 ml-2 mr-2">
+                        <button [disabled]="formCargaMasiva.invalid" type="button" (click)="onClickLoadByIdentifier()" class="btn btn-primary active btn-sm">
               Cargar de Identificador
             </button>
-          </div>
-        </div>
-        <div class="md-3">
-          <div class="form-group m-1 ml-2 mr-2">
-            <button
-              [disabled]="formCargaMasiva.invalid"
-              type="button"
-              (click)="onClickLoadFile($event)"
-              class="btn btn-primary active btn-sm">
+                    </div>
+                </div>
+                <div class="md-3">
+                    <div class="form-group m-1 ml-2 mr-2">
+                        <button [disabled]="formCargaMasiva.invalid" type="button" (click)="onClickLoadFile($event)" class="btn btn-primary active btn-sm">
               Cargar de Expedientes csv
             </button>
-          </div>
-        </div>
-        <div class="md-3">
-          <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
-            <div class="form-group m-1 ml-2 mr-2">
-              <button
-                type="button"
-                [disabled]="isDisableCreateDictation"
-                (click)="onClickCreatedDictation()"
-                class="btn btn-primary active btn-sm">
+                    </div>
+                </div>
+                <div class="md-3">
+                    <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+                        <div class="form-group m-1 ml-2 mr-2">
+                            <button type="button" [disabled]="isDisableCreateDictation" (click)="onClickCreatedDictation()" class="btn btn-primary active btn-sm">
                 Crear Dict&aacute;menes
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
     </div>
     <div class="col-md-12">
       <br />
@@ -227,13 +252,25 @@
               class="dropdown-menu dropdown-menu-right"
               role="menu"
               aria-labelledby="button-alignment">
+              <!---  <li role="menuitem">
+                                <a class="dropdown-item" style="color: green" #fileExpedient (click)="fileExpedient.click()">
+                                    <i class="bx bx-import"></i> Cargar Expediente
+                                </a>
+                            </li>-->
               <li role="menuitem">
                 <a
                   class="dropdown-item"
-                  style="color: green"
-                  #fileExpedient
-                  (click)="fileExpedient.click()">
-                  <i class="bx bx-import"></i> Cargar Expediente
+                  style="color: blue"
+                  (click)="onClickLoadByIdentifier()">
+                  <i class="bx bx-layer"></i> Cargar de Identificador
+                </a>
+              </li>
+              <li role="menuitem">
+                <a
+                  class="dropdown-item"
+                  style="color: blue"
+                  (click)="onClickCreatedDictation()">
+                  <i class="bx bx-layer"></i> Crear Dict&aacute;men
                 </a>
               </li>
               <li role="menuitem">
