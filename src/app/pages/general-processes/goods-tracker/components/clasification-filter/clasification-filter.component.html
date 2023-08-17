@@ -76,7 +76,23 @@
         bindLabel="nameGoodType"
         className="scroll-line"
         (fetchItems)="getTypes($event)"
-        (change)="typesChange($event)"></ngx-select>
+        (change)="typesChange($event)"
+        [labelTemplate]="typeLabel"
+        [optionTemplate]="typeOption"></ngx-select>
+
+      <ng-template #typeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.nameGoodType">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.nameGoodType }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #typeOption let-item="item">
+        <div [title]="item.id + '-' + item.nameGoodType">
+          {{ item.id }} - {{ item.nameGoodType }}
+        </div>
+      </ng-template>
     </form-field>
 
     <form-field [control]="form.get('subtypes')" class="col-md-6">
@@ -90,7 +106,22 @@
         bindLabel="nameSubtypeGood"
         className="scroll-line"
         (fetchItems)="getSubtypes($event)"
-        (change)="subtypesChange($event)"></ngx-select>
+        (change)="subtypesChange($event)"
+        [labelTemplate]="subtypeLabel"
+        [optionTemplate]="subtypeOption"></ngx-select>
+      <ng-template #subtypeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.nameSubtypeGood">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.nameSubtypeGood }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #subtypeOption let-item="item">
+        <div [title]="item.id + '-' + item.nameSubtypeGood">
+          {{ item.id }} - {{ item.nameSubtypeGood }}
+        </div>
+      </ng-template>
     </form-field>
   </div>
 
@@ -106,7 +137,23 @@
         bindLabel="description"
         className="scroll-line"
         (fetchItems)="getSsubtypes($event)"
-        (change)="ssubtypesChange($event)"></ngx-select>
+        (change)="ssubtypesChange($event)"
+        [labelTemplate]="ssubtypeLabel"
+        [optionTemplate]="ssubtypeOption"></ngx-select>
+
+      <ng-template #ssubtypeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.description">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.description }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #ssubtypeOption let-item="item">
+        <div [title]="item.id + '-' + item.description">
+          {{ item.id }} - {{ item.description }}
+        </div>
+      </ng-template>
     </form-field>
 
     <form-field [control]="form.get('sssubtypes')" class="col-md-6">
@@ -121,7 +168,22 @@
         className="scroll-line"
         bindLabel="description"
         (fetchItems)="getSssubtypes($event)"
-        (change)="sssubtypesChange($event)"></ngx-select>
+        (change)="sssubtypesChange($event)"
+        [labelTemplate]="sssubtypeLabel"
+        [optionTemplate]="sssubtypeOption"></ngx-select>
+      <ng-template #sssubtypeLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.id + '-' + item.description">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.id }} - {{ item.description }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #sssubtypeOption let-item="item">
+        <div [title]="item.id + '-' + item.description">
+          {{ item.id }} - {{ item.description }}
+        </div>
+      </ng-template>
     </form-field>
   </div>
 
