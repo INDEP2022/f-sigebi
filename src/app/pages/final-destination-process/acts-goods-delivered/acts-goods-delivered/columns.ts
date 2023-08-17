@@ -20,7 +20,7 @@ export const COLUMNS = {
     sort: false,
   },
   status: {
-    title: 'Unidad',
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
