@@ -13,6 +13,17 @@ export const VALUATION_REQUEST_COLUMNS = {
   },
 };
 
+export const VALUATION_REQUEST_COLUMNS_VALIDATED = {
+  bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+};
+
 export const VALUATION_REQUEST_COLUMNS_TWO = {
   noBien: {
     title: 'No. Bien',
