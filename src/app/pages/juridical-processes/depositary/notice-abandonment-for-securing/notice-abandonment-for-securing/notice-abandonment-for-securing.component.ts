@@ -15,6 +15,7 @@ import { COLUMNS } from './columns';
 
 import { Router } from '@angular/router';
 import { IGood } from 'src/app/core/models/good/good.model';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 
 @Component({
   selector: 'app-notice-of-abandonment-by-return',
@@ -38,6 +39,9 @@ export class NoticeAbandonmentForSecuringComponent
   selectedRows: any;
   selectedRow: any;
   selectedGood: IGood;
+  username: string = '';
+
+  dataArray: any = [];
 
   get goodId() {
     return this.form.get('goodId');
@@ -63,7 +67,8 @@ export class NoticeAbandonmentForSecuringComponent
     private goodService: GoodService,
     private notificationService: NotificationService,
     private goodTypesService: GoodTypeService,
-    private router: Router
+    private router: Router,
+    private programmingRequestService: ProgrammingRequestService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -72,6 +77,7 @@ export class NoticeAbandonmentForSecuringComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getUserInfo();
   }
 
   /**
@@ -144,12 +150,12 @@ export class NoticeAbandonmentForSecuringComponent
         ? (paramDinamyc = `filter.goodId=$eq:${lparams.text}`)
         : (paramDinamyc = `filter.description=$ilike:${lparams.text}`);
     }
-    //     this.goodId.value
-    // console.log('entre al filtro ', this.goodId.value , lparams);
 
     this.goodService.getAll(`${params.getParams()}&${paramDinamyc}`).subscribe({
       next: data => {
+        console.log(data);
         this.good = new DefaultSelect(data.data, data.count);
+        this.quantity.setValue(data.data[0].quantity);
       },
       error: err => {
         let error = '';
@@ -168,6 +174,7 @@ export class NoticeAbandonmentForSecuringComponent
     this.goodService.getAll(param).subscribe({
       next: data => {
         console.log('data filter', data.data[0].quantity);
+        this.quantity.setValue(data.data[0].quantity);
         this.executeCamps(data.data[0]);
       },
       error: err => {
@@ -210,6 +217,7 @@ export class NoticeAbandonmentForSecuringComponent
     this.form.reset();
     this.searching = false;
     this.data = [];
+    this.totalItems = 0;
   }
 
   search() {
@@ -227,68 +235,85 @@ export class NoticeAbandonmentForSecuringComponent
       this.selectedRow = event.selected[0];
     }
   }
+
+  formatDate(dateString: string) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
   accept() {
-    /*console.log(this.selectedGood.status);
-    let validateParams = {
-      status: this.selectedGood.status,
-      notifyDate: this.selectedRow.notificationDate,
-      complianceLeaveDate: this.selectedRow.periodEndDate,
-      judicialDate: this.selectedRow.abandonmentExpirationDate,
-      goodsID: this.selectedGood.id,
-      user: getUser(),
-      screen: 'FACTJURNOTABANASE',
+    let fecha1 = this.formatDate(this.data[0].notificationDate);
+    let fecha2 = this.formatDate(this.data[0].periodEndDate);
+    let fecha3 = this.formatDate(this.data[0].editPublicationDate);
+
+    let body = {
+      estatus: 'VXP',
+      fec_notificacion: fecha1 || '',
+      fec_termino_periodo: fecha2 || '',
+      fec_vencimiento_abandono: fecha3 || '',
+      no_bien: Number(this.form.value.goodId),
+      usuario: this.username,
+      vc_pantalla: 'FACTREFACTAENTREC',
+      changeStatusProgram: 'FACTREFACTAERCIER',
     };
-    console.log('validateParams: ', validateParams);
-    //count AE status of data
-    let count = 0;
-    for (let i = 0; i < this.data.length; i++) {
-      if (this.data[i].statusNotified == 'AE') {
-        count++;
-      }
-    }
-    if (count == 3) {
-      this.notificationService.validateGoodStatus(this.data).subscribe({
+
+    const validacionStatus = this.dataArray.every((item: any) => {
+      item.statusNotified === 'DE';
+    });
+
+    console.log('Body a enviar: ', body);
+
+    if (this.data.length < 1) {
+      this.onLoadToast(
+        'error',
+        'Error',
+        'Deben haber 3 notificaciones de aseguramiento para ir a Confirmación de Abandonos'
+      );
+      this.clean();
+    } else {
+      console.log('Body a enviar: ', body);
+      this.notificationService.validateGoodStatus(body).subscribe({
         next: response => {
           console.log('response: ', response);
-          //redireccion
-          if (
-            this.selectedRow.definitiveSuspension == '0' &&
-            this.selectedRow.statusNotified == 'AE'
-          ) {
-            this.onLoadToast(
-              'success',
-              'Exito',
-              'Se ha validado correctamente.'
-            );
-            this.router.navigate([
-              'pages',
-              'juridical',
-              'depositary',
-              'abandonment-monitor-for-securing',
-            ]);
-          } else if (this.selectedRow.definitiveSuspension == '1') {
-            this.onLoadToast(
-              'error',
-              'Error',
-              'El Proceso ha sido Suspendido Temporalmente, favor de verificar.'
-            );
-          }
+
+          this.onLoadToast(
+            'success',
+            'Guardado',
+            'Registros actualizados exitosamente'
+          );
+          this.clean();
         },
         error: err => {
           console.log('err: ', err);
-          this.onLoadToast('error', 'Error', err.message);
+          this.onLoadToast(
+            'error',
+            'Error',
+            'Hubo un error actualizando la base de datos'
+          );
+
+          this.clean();
         },
       });
-    } else if (count < 3) {
-      this.message(
-        'info',
-        'Error',
-        'Deben haber 3 notificaciones de aseguramiento para ir a Confirmación de Abandonos.'
-      );
-    }*/
+    }
   }
 
   onSelectedGood(event: any) {
     this.selectedGood = event;
+  }
+
+  getUserInfo() {
+    return this.programmingRequestService.getUserInfo().subscribe({
+      next: (data: any) => {
+        console.log(data);
+        this.username = data.username;
+      },
+      error: error => {
+        error;
+      },
+    });
   }
 }
