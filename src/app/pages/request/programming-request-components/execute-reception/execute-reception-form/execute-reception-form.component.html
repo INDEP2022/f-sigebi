@@ -77,7 +77,7 @@
             <label class="text-right mr-2">Fecha Inicio Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.startDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+              {{ programming?.startDate | date: 'dd/MM/yyyy HH:mm:ss' }}
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@
             <label class="text-right mr-2">Fecha Fin Operativo&#58;</label>
 
             <span class="fs-4">
-              {{ programming?.endDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span
+              {{ programming?.endDate | date: 'dd/MM/yyyy HH:mm:ss' }}</span
             >
           </div>
         </div>
@@ -815,7 +815,9 @@
                                   <th scope="row" class="align-baseline">
                                     <input
                                       type="checkbox"
-                                      (change)="goodSelect($event, good.value)"
+                                      (change)="
+                                        goodSelectReceipt($event, good.value)
+                                      "
                                       class="form-control ng-pristine ng-valid ng-touched"
                                       ng-reflect-model="true" />
                                   </th>
@@ -1241,7 +1243,7 @@
                               <th scope="row" class="align-baseline">
                                 <input
                                   type="checkbox"
-                                  (change)="goodSelect($event, good.value)"
+                                  (change)="selectGuardGood($event, good.value)"
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>
@@ -1679,7 +1681,9 @@
                                 <th scope="row" class="align-baseline">
                                   <input
                                     type="checkbox"
-                                    (change)="goodSelect($event, good.value)"
+                                    (change)="
+                                      goodSelectWarehouse($event, good.value)
+                                    "
                                     class="form-control ng-pristine ng-valid ng-touched"
                                     ng-reflect-model="true" />
                                 </th>
@@ -2102,7 +2106,9 @@
                                 <th scope="row" class="align-baseline">
                                   <input
                                     type="checkbox"
-                                    (change)="goodSelect($event, good.value)"
+                                    (change)="
+                                      goodSelectReprog($event, good.value)
+                                    "
                                     class="form-control ng-pristine ng-valid ng-touched"
                                     ng-reflect-model="true" />
                                 </th>
@@ -2459,7 +2465,9 @@
                               <th scope="row" class="align-baseline">
                                 <input
                                   type="checkbox"
-                                  (change)="goodSelect($event, good.value)"
+                                  (change)="
+                                    goodSelectCancelation($event, good.value)
+                                  "
                                   class="form-control ng-pristine ng-valid ng-touched"
                                   ng-reflect-model="true" />
                               </th>

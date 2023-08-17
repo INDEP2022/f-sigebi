@@ -62,6 +62,7 @@ export class ChangeOfGoodClassificationComponent
   endProcess: boolean = false;
   destinations: ILabelOKey[] = [];
   loadingGood = false;
+  readOnlyGood = false;
   old: any;
   // listAtributAct: any[] = [];
   // listAtributNew: IAttribClassifGoods[] = [];
@@ -149,6 +150,8 @@ export class ChangeOfGoodClassificationComponent
     private router: Router
   ) {
     super();
+    this.buildForm();
+    this.buildFormNew();
     this.atributActSettings = {
       ...this.settings,
       actions: null,
@@ -168,9 +171,6 @@ export class ChangeOfGoodClassificationComponent
         add: false,
         edit: true,
         delete: false,
-      },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
       },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
@@ -242,6 +242,7 @@ export class ChangeOfGoodClassificationComponent
       next: param => {
         if (param['numberGood']) {
           console.log(param);
+          this.readOnlyGood = true;
           this.numberGood.setValue(param['numberGood']);
           if (this.previousRouteService.getHistory().length > 1) {
             this.origin = 1;
@@ -255,8 +256,6 @@ export class ChangeOfGoodClassificationComponent
       },
     });
 
-    this.buildForm();
-    this.buildFormNew();
     this.initializeForm();
     this.numberGood.valueChanges
       .pipe(
@@ -377,11 +376,11 @@ export class ChangeOfGoodClassificationComponent
     // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
     this.loadingGood = true;
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: { numberGood: this.numberGood.value },
-      queryParamsHandling: 'merge', // remove to replace all query params by provided
-    });
+    // this.router.navigate([], {
+    //   relativeTo: this.activatedRoute,
+    //   queryParams: { numberGood: this.numberGood.value },
+    //   queryParamsHandling: 'merge', // remove to replace all query params by provided
+    // });
 
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
