@@ -37,7 +37,9 @@
           </div>
         </div>
         <!--  -->
-        <div class="row d-flex justify-content-center mt-3">
+        <div
+          class="row d-flex justify-content-center mt-3"
+          *ngIf="pnlControles">
           <div class="col-md-4">
             <div class="col-md-6">
               <form-radio label="Oficio de Respuesta">
@@ -59,8 +61,8 @@
             </form-field>
           </div>
           <div class="col-md-6">
-            <form-field [control]="form.get('cityCi')">
-              <ngx-select
+            <form-field [control]="form.get('cityCi')" label="Ciudad">
+              <!-- <ngx-select
                 [searchOnInit]="true"
                 (fetchItems)="getCitiesList($event)"
                 [data]="cityList"
@@ -69,7 +71,11 @@
                 label="Ciudad"
                 bindLabel="legendOffice"
                 control="cityCi">
-              </ngx-select>
+              </ngx-select> -->
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cityCi" />
             </form-field>
           </div>
         </div>
@@ -165,7 +171,7 @@
       <div>
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <div class="row">
+          <div class="row" *ngIf="pnlControles2">
             <div class="col-md-5">
               <form-field
                 [control]="formTwo.get('allGood')"

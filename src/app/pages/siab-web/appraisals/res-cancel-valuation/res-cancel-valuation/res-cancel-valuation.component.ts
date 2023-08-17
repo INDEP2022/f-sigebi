@@ -38,6 +38,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   settingsTwo: any;
   subscribeDelete: Subscription;
   city: any;
+  pnlControles: boolean = true;
+  pnlControles2: boolean = true;
 
   //
 
@@ -94,18 +96,20 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     });
   }
 
-  getCityById(id: any) {
-    let data: any;
-    this.cityService.getId(id).subscribe({
-      next: response => {
-        this.city = response;
-        console.log('La respuesta pero sin asignar aun: ', response);
-        console.log('Response de la ciudad que se busca: ', this.city);
-      },
-      error: error => {
-        this.loader.load = false;
-        this.cityList = new DefaultSelect([], 0, true);
-      },
+  getCityById(id: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.cityService.getId(id).subscribe({
+        next: response => {
+          this.city = response;
+          console.log('Response de la ciudad que se busca: ', this.city);
+          resolve(this.city);
+        },
+        error: error => {
+          this.loader.load = false;
+          this.cityList = new DefaultSelect([], 0, true);
+          reject(error);
+        },
+      });
     });
   }
 
@@ -128,6 +132,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.serviceJobs.postByFilters(body).subscribe({
       next: response => {
         this.arrayResponseOffice = response.data;
+        this.iterableAssign(this.arrayResponseOffice);
       },
       error: error => {},
     });
@@ -137,23 +142,38 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.dateNow = new Date();
   }
 
-  iterableAssign(array: any[]) {
+  async iterableAssign(array: any[]) {
     for (const i of array) {
-      this.form.patchValue({
-        dest: i?.destinatario,
-        key: i?.cve_oficio,
-        remi: i?.remitente,
-        cityCi: this.city,
-        ref: i?.texto1,
-        aten: i?.texto2,
-        espe: i?.texto3,
-        fol: i?.num_cv_armada,
-      });
-      console.log('El objeto completo en cada busqueda: ', i);
-      console.log(
-        'Aqui ya se esta trabajando con la ciudad que se obtuvo: ',
-        this.city
-      );
+      this.validateViewRadioButtonOne(i?.estatus_of);
+      try {
+        await this.getCityById(i?.ciudad);
+        if (this.city) {
+          this.form.patchValue({
+            dest: i?.destinatario,
+            key: i?.cve_oficio,
+            remi: i?.remitente,
+            cityCi: this.city.legendOffice,
+            ref: i?.texto1,
+            aten: i?.texto2,
+            espe: i?.texto3,
+            fol: i?.num_cv_armada,
+          });
+        }
+        console.log('El objeto completo en cada busqueda: ', i);
+        console.log(
+          'Aqui ya se esta trabajando con la ciudad que se obtuvo: ',
+          this.city
+        );
+      } catch (error) {
+        console.error('Error al obtener la ciudad: ', error);
+      }
+    }
+  }
+
+  validateViewRadioButtonOne(status: any) {
+    if (status == 'ENVIADO') {
+      this.pnlControles = false;
+      this.pnlControles2 = false;
     }
   }
 
