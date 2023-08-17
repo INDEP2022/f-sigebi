@@ -117,6 +117,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.noScreenId();
       return;
     }
+    const helpScreens = [
+      'FINDICA_0042',
+      'FINDICA_0002',
+      'FINDICA_0006',
+      'FINDICA_0035_1',
+      'FINDICA_0001',
+      'FINDICA_0035_3',
+      'FINDICA_0035_2',
+      'FINDICA_0007',
+    ];
+    if (helpScreens.includes(this.currentScreen)) {
+      this.router.navigate(['/pages/general-processes/help-screen'], {
+        queryParams: { screen: this.currentScreen },
+      });
+      return;
+    }
     this.router.navigate([HELP_SCREEN], {
       queryParams: { screen: this.currentScreen },
     });
@@ -128,7 +144,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([BINNACLE_ROUTE], {
-      queryParams: { screen: this.currentScreen },
+      queryParams: { origin: this.currentScreen },
     });
   }
 

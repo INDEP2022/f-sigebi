@@ -44,9 +44,6 @@ export class GoodTableValsComponent extends BasePage {
         edit: true,
         delete: false,
       },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
-      },
       hideSubHeader: false,
       columns: {
         attribute: {

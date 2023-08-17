@@ -22,7 +22,10 @@ export class EmailService extends HttpService {
   }
 
   getVigEmailBody(params: _Params) {
-    return this.get<IListResponse<IVigEmailBody>>(EmailEndPoint.VigEmailBody);
+    return this.get<IListResponse<IVigEmailBody>>(
+      EmailEndPoint.VigEmailBody,
+      params
+    );
   }
 
   getVigEmailSend(params: _Params) {

@@ -20,4 +20,5 @@ export enum ENDPOINT_INVOICE {
   ControlProcedure = 'procedure-sera/ctrl-generate-preinvoices',
   GetGegraficaFacturas = 'application/get-getGraficaFacturas',
   Fcomer112ICountHeader = 'application/fcomer112ICountHeader',
+  GenerateFolio = 'ctrl-invoice/generate-folios',
 }

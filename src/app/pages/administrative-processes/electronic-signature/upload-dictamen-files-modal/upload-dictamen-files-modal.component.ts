@@ -8,7 +8,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -29,6 +32,10 @@ export class UploadDictamenElectronicModalComponent
   @Input() natureDocumentDictation: string = ''; // TIPO DE DICTAMEN
   @Input() numberDictation: string = null; // NUMERO DEL DICTAMEN
   @Input() typeDocumentDictation: string = ''; // ESTATUS DEL OFICIO
+  @Input() dictamenNumber: number = 0; // Dictamen número
+  @Input() sender: string = ''; // Quien elabora
+  @Input() typeruling: string = ''; //departamento
+  @Input() armedtradekey: string = ''; //clave armada
 
   hide: boolean = true;
   certiFile: File | null = null;
@@ -51,13 +58,20 @@ export class UploadDictamenElectronicModalComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private msSignatoriesService: SignatoriesService
+    private msSignatoriesService: SignatoriesService,
+    private sanitizer: DomSanitizer,
+    private siabService: SiabService,
+    private modalService: BsModalService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.initForm();
+    console.log('no Dictamen', this.dictamenNumber);
+    console.log('no crea', this.sender);
+    console.log('no deparment', this.typeruling);
+    console.log('Clave armanda', this.armedtradekey);
   }
 
   initForm() {
@@ -180,11 +194,15 @@ export class UploadDictamenElectronicModalComponent
     //     }
     //   }
     // } //GUARDAR LA FIRMA EN LA TABLA CORRESPONDIENTE
+    console.log('formData: ', formData);
     this.msSignatoriesService
       .signerServiceForOfficeDictation(formData)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
+          console.log(
+            'respuestamsSignatoriesService.signerServiceForOfficeDictation',
+            data
+          );
           this.alertInfo(
             'success',
             'Se realizó el proceso de firmar el dictamen correctamente',
@@ -193,7 +211,9 @@ export class UploadDictamenElectronicModalComponent
             this.fileForm.controls['signature'] = data.signature;
             this.fileForm.controls['fileData'] = data.fileData;
             this.downloadFile(data.fileData, this.nameFileDictation);
-            this.close(true, data);
+
+            //Convertir base64 a xml
+            this.converterToXml(data, formData);
           });
         },
         error: error => {
@@ -205,6 +225,92 @@ export class UploadDictamenElectronicModalComponent
           );
         },
       });
+  }
+
+  xmlData: string = '';
+
+  converterToXml(data: any, formData: any) {
+    console.log('base64 del xml', data.fileData);
+    const binaryData = atob(data.fileData);
+
+    // Convertir datos binarios a cadena de texto
+    const textData = new TextDecoder().decode(
+      new Uint8Array([...binaryData].map(char => char.charCodeAt(0)))
+    );
+
+    // Parsear cadena de texto como XML
+    const parser = new DOMParser();
+    const xmlDocument = parser.parseFromString(textData, 'application/xml');
+
+    // Serializar el objeto XML nuevamente a cadena de texto
+    const serializer = new XMLSerializer();
+    this.xmlData = serializer.serializeToString(xmlDocument);
+    console.log('XML Convertido', this.xmlData);
+
+    // Esto es opcional, pero se puede utilizar para mostrar el contenido XML en un iframe seguro
+    //this.sanitizedXmlData = this.sanitizer.bypassSecurityTrustResourceUrl(`data:text/xml;charset=utf-8,${encodeURIComponent(this.xmlData)}`);
+    this.createElectdoc(data, this.xmlData, formData);
+  }
+
+  createElectdoc(data: any, xml: string, formData: any) {
+    console.log('Para mandar a crear: ', data);
+    console.log('XML: ', xml);
+
+    const obj: object = {
+      natureDocument: 'PROCEDENCIA',
+      documentNumber: this.dictamenNumber,
+      documentType: this.fileForm.controls['TIPO_DOCUMENTO'].value,
+      xml: null,
+      signature: data.signature,
+      recordNumber: null,
+      nbOrigin: null,
+    };
+
+    console.log('Objeto que se enviará: ', obj);
+
+    this.msSignatoriesService.ssf3FirmaEelecDocs(obj).subscribe({
+      next: resp => {
+        console.log('Se creo el registro: ', resp);
+
+        this.callReport();
+        this.close(true);
+      },
+      error: error => {
+        console.log('Error: ', error);
+      },
+    });
+  }
+
+  loadingText: string = 'Reporte';
+  //loading: boolean = false;
+  callReport() {
+    let params: any = {
+      // PARAMFORM: 'NO',
+      PELABORO_DICTA: this.sender, // PENDIENTE DE RESOLVER
+      PDEPARTAMENTO: 'PROCEDENCIAS',
+      POFICIO: this.dictamenNumber,
+      PDICTAMEN: 'PROCEDENCIA',
+      PESTADODICT: this.typeDocumentDictation,
+    };
+
+    this.siabService.fetchReport('RGENADBDICTAMASIV', params).subscribe({
+      next: response => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        let config = {
+          initialState: {
+            documento: {
+              urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+              type: 'pdf',
+            },
+          },
+          class: 'modal-lg modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        this.modalService.show(PreviewDocumentsComponent, config);
+      },
+    });
+    this.onLoadToast('success', 'Reporte Generado', '');
   }
 
   downloadFile(base64: any, fileName: any) {
