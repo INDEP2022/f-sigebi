@@ -18,4 +18,5 @@ export enum ExpedientEndpoints {
   //Select
   SelectExpedient = 'expedient/expedient',
   DeleteActaConversions = 'application/delete-record-teacher',
+  SelectNoTransfer = 'application/get-no-transf',
 }

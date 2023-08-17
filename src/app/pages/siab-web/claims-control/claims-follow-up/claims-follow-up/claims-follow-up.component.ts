@@ -99,7 +99,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         polizaafectada: {
-          title: 'Poliza Afectada',
+          title: 'Póliza Afectada',
           type: 'string',
           sort: false,
         },
@@ -284,7 +284,16 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.modalService.show(ClaimsFollowUpDetailComponent, config);
   }
   edit(siniester: any) {
-    this.openForm(siniester);
+    console.log(siniester);
+    if (siniester.estatus == 'ABIERTO') {
+      this.openForm(siniester);
+    } else {
+      this.alert(
+        'warning',
+        'El siniestro se encuentra cerrada, no se puede actualizar',
+        ''
+      );
+    }
   }
 
   delete(bank: any) {

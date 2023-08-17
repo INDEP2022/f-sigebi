@@ -481,7 +481,7 @@ export class DocumentVerificationRevisionResourcesComponent
     const filter = new FilterParams();
     filter.addFilter('proceedingsNumber', this.fileNumber, SearchFilter.EQ);
     filter.addFilter('goodNumber', goodId, SearchFilter.EQ);
-    filter.addFilter('typeDict', 'RECREVISION', SearchFilter.EQ);
+    filter.addFilter('typeDict', 'PROCEDENCIA', SearchFilter.EQ);
 
     this.dictaminationServ.getAllFilter(filter.getParams()).subscribe({
       next: resp => {
@@ -518,7 +518,7 @@ export class DocumentVerificationRevisionResourcesComponent
 
   getDocuments() {
     const filter = new FilterParams();
-    filter.addFilter('typeDictum', 'RECREVISION');
+    filter.addFilter('typeDictum', 'PROCEDENCIA');
     filter.addFilter('goodNumber', this.form.get('goodId').value);
     filter.sortBy = 'key:ASC';
     this.loading = true;
@@ -538,7 +538,7 @@ export class DocumentVerificationRevisionResourcesComponent
   }
   getDocumentsRevision() {
     const filter = new FilterParams();
-    // filter.addFilter('typeDictum', 'RECREVISION');
+    filter.addFilter('key', 'RCV');
     // filter.addFilter('goodNumber', this.form.get('goodId').value);
     filter.sortBy = 'key:ASC';
     this.loading = true;
@@ -670,6 +670,7 @@ export class DocumentVerificationRevisionResourcesComponent
       } else {
         // this.alert('success', 'Operación realizada dictámen autorizado', '');
         this.alert('success', 'Operación Realizada', 'Dictamen Autorizado');
+        this.alert('success', 'Operación Realizada', 'Dictamen Autorizado');
         this.form.get('di_fec_dictaminacion').patchValue(this.dateToday);
         this.form.get('di_situacion_bien').patchValue('DICTAMINADO');
       }
@@ -747,7 +748,7 @@ export class DocumentVerificationRevisionResourcesComponent
                 di_situacion_bien != 'DICTAMINADO'
               ) {
                 this.activeBlocDoc = true;
-                this.createDocumentDicta();
+                // this.createDocumentDicta();
                 this.getDataWihtVquery(vquery.join(', '));
               } else {
                 this.activeBlocDoc = true;
@@ -943,7 +944,7 @@ export class DocumentVerificationRevisionResourcesComponent
     let existData: any = {};
     if (di_fec_dictaminacion) {
       this.form
-        .get('estatus_recurso_revision')
+        .get('descriptionStatus')
         .patchValue('DICTAMINADO RECURSO DE REVISION');
     }
 
@@ -951,7 +952,7 @@ export class DocumentVerificationRevisionResourcesComponent
       const filter = new FilterParams();
       filter.addFilter('proceedingsNumber', proceedingsNumber, SearchFilter.EQ);
       filter.addFilter('goodNumber', goodId, SearchFilter.EQ);
-      filter.addFilter('typeDict', 'RECREVISION', SearchFilter.EQ);
+      filter.addFilter('typeDict', 'PROCEDENCIA', SearchFilter.EQ);
       this.dictaminationServ.getAllFilter(filter.getParams()).subscribe({
         next: resp => {
           existData = resp.data[0];
@@ -975,7 +976,7 @@ export class DocumentVerificationRevisionResourcesComponent
       const data = {
         proceedingsNumber: proceedingsNumber,
         goodNumber: goodId,
-        typeDict: 'RECREVISION',
+        typeDict: 'PROCEDENCIA',
         statusDict: di_situacion_bien,
         dateDict: di_fec_dictaminacion,
         userDict: user.name.toUpperCase(),
@@ -1096,8 +1097,8 @@ export class DocumentVerificationRevisionResourcesComponent
             .join('-') as any;
         }
 
-        if (good.notifyDate) {
-          good.notifyDate = good.notifyDate
+        if (good.revRecRemedyDate) {
+          good.revRecRemedyDate = good.revRecRemedyDate
             .toString()
             .split('-')
             .reverse()
@@ -1109,7 +1110,7 @@ export class DocumentVerificationRevisionResourcesComponent
         this.form.patchValue(good);
         this.form
           .get('descriptionStatus')
-          .patchValue(good.estatus ? good.estatus : 'RECREVISION');
+          .patchValue(this.form.get('status').value);
         this.form
           .get('observations')
           .patchValue(good.revRecObservations ? good.revRecObservations : '');
@@ -1132,6 +1133,7 @@ export class DocumentVerificationRevisionResourcesComponent
         //   .patchValue(good.notifyRevRecDate ? good.notifyRevRecDate : '');
 
         this.getDateAndStatus();
+        this.getDocumentsRevision();
         this.getDocumentsRevision();
         this.getDocuments();
         // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
@@ -1182,7 +1184,6 @@ export class DocumentVerificationRevisionResourcesComponent
       revRecCause: this.form.get('revRecCause').value,
       admissionAgreementDate: this.form.get('agreementDate').value,
       initialAgreement: this.form.get('initialAgreement').value,
-      notifyRevRecDate: this.form.get('notifyRevRecDate').value,
     };
 
     this.goodService.update(this.goodUpdate).subscribe({
@@ -1204,41 +1205,45 @@ export class DocumentVerificationRevisionResourcesComponent
   }
 
   createDocumentDicta() {
-    try {
-      const obj: IDocumentsDictumXState = {
-        recordNumber: this.good.fileNumber,
-        goodNumber: this.form.get('goodId').value,
-        typeDictum: 'RECREVISION',
-        dateReceipt: this.form.get('agreementDate').value,
-        userReceipt: this.user.decodeToken().username,
-        insertionDate: this.form.get('agreementDate').value,
-        userInsertion: this.user.decodeToken().username,
-        numRegister: '',
-        officialNumber: '',
-        key: 'RCV',
-        keyDocument: this.selectedKey,
-      };
-      this.documents.createDocsRevi(obj).subscribe({
-        next: data => {
-          console.log('documento agregado', data);
-        },
-        error: () => {},
-      });
-    } catch (error) {
-      console.log(error);
-      this.loading = false;
-      this.alert('error', 'ERROR', 'Ha ocurrido un error al crear dictamen');
-    }
+    const obj: IDocumentsDictumXState = {
+      recordNumber: this.fileNumber.toString(),
+      goodNumber: this.form.get('goodId').value,
+      // key: 'RCV',
+      key: 'RCV',
+      typeDictum: 'PROCEDENCIA',
+      dateReceipt: this.form.get('agreementDate').value,
+      userReceipt: this.user.decodeToken().username,
+      insertionDate: new Date(),
+      userInsertion: this.user.decodeToken().username,
+      numRegister: '',
+      officialNumber: '',
+    };
+    this.documents.createDocsRevi(obj).subscribe({
+      next: data => {
+        console.log('documento agregado', data);
+        this.getDocuments();
+      },
+      error: () => {
+        this.loading = false;
+        // this.alert('error', 'ERROR', 'Ha ocurrido un error al crear dictamen');
+      },
+    });
   }
+
+  // async userRowSelect(event: { data: KeyDocument; selected: any }) {
+  //   this.selectedRow = event.data;
+  //   this.keyStatus = this.selectedRow.key;
+  //   console.log(this.selectedRow.key);
+  //   const selectedFiles = event.selected;
+  //   for (const file of selectedFiles) {
+  //     this.selectedKey.push(file);
+  //   }
+  //   this.changeDetectorRef.detectChanges();
+  // }
 
   async userRowSelect(event: { data: KeyDocument; selected: any }) {
     this.selectedRow = event.data;
-    this.keyStatus = this.selectedRow.key;
-    console.log(this.selectedRow.key);
-    const selectedFiles = event.selected;
-    for (const file of selectedFiles) {
-      this.selectedKey.push(file);
-    }
+    this.selectedKey = event.selected;
     this.changeDetectorRef.detectChanges();
   }
 }
@@ -1254,5 +1259,4 @@ export interface IGoodRevision {
   revRecCause: string;
   admissionAgreementDate: string;
   initialAgreement: string;
-  notifyRevRecDate: string;
 }
