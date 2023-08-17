@@ -56,6 +56,9 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
     this.loading = true;
     // Llamar servicio para agregar caratula
     this.loading = false;
+    //const ableQuantity = this.good.quantity
+    //const reservedQuantity = this.reserveForm.controls['reserve'].value;
+
     let availableAmount: number =
       parseInt(String(this.good.quantity)) -
       parseInt(this.reserveForm.controls['reserve'].value);
