@@ -259,7 +259,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       // console.log("this.document1", this.document)
       // this.cambiarValor()
       // console.log('SU');
-      this.form.get('justification').setValue('');
+      // this.form.get('justification').setValue('');
       this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
         (response: any) => {
           console.log('filter', filter);
