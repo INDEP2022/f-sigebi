@@ -126,4 +126,9 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.procedingActa}/${id}`;
     return this.get(route);
   }
+
+  putActaStatus(id: number, params: any) {
+    const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
+    return this.put(route, params);
+  }
 }

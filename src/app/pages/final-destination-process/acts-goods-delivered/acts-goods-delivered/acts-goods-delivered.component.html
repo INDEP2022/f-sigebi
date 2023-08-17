@@ -35,6 +35,13 @@
             <i class="bx bx-search-alt bx-sm float-icon"></i>
           </button>
         </div>
+        <div class="col-md-1" *ngIf="yData">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearall()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
       </div>
       <br />
       <br />
@@ -46,7 +53,8 @@
             <input
               formControlName="noTransfer"
               class="form-control"
-              type="text" />
+              type="text"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -56,7 +64,8 @@
             <input
               formControlName="noExpedient"
               class="form-control"
-              type="text" />
+              type="text"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -98,7 +107,8 @@
             <textarea
               rows="5"
               formControlName="textarea"
-              class="form-control"></textarea>
+              class="form-control"
+              [readonly]="!closeActa"></textarea>
           </form-field>
         </div>
         <div class="col-md-3" style="margin-top: 3.5%">
@@ -109,7 +119,7 @@
               formControlName="dateCapture"
               class="form-control"
               type="text"
-              bsDatepicker />
+              readonly />
           </form-field>
         </div>
         <div class="col-md-3" style="margin-top: 3.5%">
@@ -119,8 +129,8 @@
             <input
               type="text"
               class="form-control"
-              bsDatepicker
-              formControlName="closingDate" />
+              formControlName="closingDate"
+              readonly />
           </form-field>
         </div>
         <div
@@ -129,7 +139,7 @@
           (click)="getclose()">
           <button
             class="btn btn-primary btn-sm active mr-3"
-            [disabled]="!goods || !fool">
+            [disabled]="!goods || !fool || !closeActa || !statusScan">
             Cerrar &Aacute;cta
           </button>
         </div>
@@ -144,7 +154,7 @@
               containerClass="tooltip-style"
               class="btn btn-secondary btn-sm active m-1"
               (click)="initSolicitud()"
-              [disabled]="!goods">
+              [disabled]="!goods || !closeActa">
               <i class="bx bxs-file-find"></i>
             </button>
             <button
@@ -152,7 +162,7 @@
               containerClass="tooltip-style"
               class="btn btn-secondary btn-sm active m-1"
               (click)="openScannerPage()"
-              [disabled]="!goods || !fool">
+              [disabled]="!goods || !fool || !closeActa">
               <i class="bx bxs-file"></i>
             </button>
           </div>
@@ -178,14 +188,15 @@
               class="btn btn-secondary btn-sm active m-1"
               (click)="getReport()"
               [disabled]="!goods || !fool">
-              <i class="bx bxs-file-find"></i>
+              <i class="bx bxs-printer"></i>
             </button>
             <button
               tooltip="Consulta de Imágenes Escaneadas"
               containerClass="tooltip-style"
               class="btn btn-secondary btn-sm active m-1"
-              [disabled]="!goods || !fool || !scan">
-              <i class="bx bxs-file"></i>
+              [disabled]="!goods || !fool || !scan"
+              (click)="openScannerPageView()">
+              <i class="bx bxs-file-find"></i>
             </button>
           </div>
           <!-- (click)="getReportViewActa()" -->

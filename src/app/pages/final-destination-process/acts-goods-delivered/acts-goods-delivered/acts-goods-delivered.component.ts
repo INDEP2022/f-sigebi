@@ -56,7 +56,12 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   goods: boolean = false;
   fool: boolean = false;
   scan: boolean = false;
+  closeActa: boolean = false;
+  yData: boolean = false;
   cveActa: any;
+  acta: any;
+  idActa: any;
+  statusScan: boolean = false;
   documentsService = inject(DocumentsService);
 
   constructor(
@@ -76,16 +81,26 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     private activatedRoute: ActivatedRoute
   ) {
     super();
+    this.initForm();
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.fileNumber = params['expediente']
-          ? Number(params['expediente'])
-          : null;
         this.folioScan = params['folio'] ? Number(params['folio']) : null;
-        this.cveActa = params['cveActa'] ? Number(params['cveActa']) : null;
+        this.cveActa = params['cveActa'] ? String(params['cveActa']) : null;
+        console.log('Folio ', this.folioScan);
+        console.log('cveActa: ', this.cveActa);
         if (this.folioScan != null) {
           this.scan = true;
+          this.formAct.patchValue({
+            cveRecord: this.cveActa,
+          });
+          console.log('folio ', this.folioScan);
+          this.form.patchValue({
+            scanningFoli: this.folioScan,
+          });
+          this.ConsultAER();
+          this.goods = true;
+          this.fool = true;
         }
       });
     this.settings = { ...this.settings, actions: false };
@@ -99,7 +114,6 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initForm();
     this.getuser();
   }
 
@@ -109,24 +123,12 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
       noTransfer: [null],
       noExpedient: [null],
       statusRecord: [null],
-      closingDate: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      dateCapture: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      textarea: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      closingDate: [null],
+      dateCapture: [null],
+      textarea: [null],
     })),
       (this.form = this.fb.group({
-        scanningFoli: [
-          null,
-          [Validators.required, Validators.pattern(STRING_PATTERN)],
-        ],
+        scanningFoli: [null, [Validators.pattern(STRING_PATTERN)]],
       }));
   }
 
@@ -134,9 +136,28 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     this.settings = event;
   }
 
-  onSubmit() {}
+  statusActa() {
+    if (this.folioScan != null) {
+      this.documentsForDictumService.getByFolio(this.folioScan).subscribe({
+        next: response => {
+          console.log('Response By Folio ', response);
+          let statusFile = response.data[0].scanStatus;
+          this.LNU_NO_EXPEDIENTE = response.data[0].numberProceedings;
+          if (statusFile == 'ESCANEADO') {
+            this.statusScan = true;
+          } else {
+            this.statusScan = false;
+          }
+        },
+      });
+    }
+  }
 
   ConsultAER() {
+    this.form.reset();
+    this.form.patchValue({
+      scanningFoli: this.folioScan,
+    });
     this.keyActa = undefined;
     this.keyActa = this.formAct.get('cveRecord').value;
     console.log('Keys: ', this.keyActa);
@@ -176,6 +197,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
 
         console.log('Date Close: ', this.formattedfecclose);
         console.log('Date Capture: ', this.formattedfecCapture);
+        this.idActa = response.data[0].id;
         let paramsForm = {
           cveRecord: response.data[0].keysProceedings,
           noTransfer: response.data[0].numTransfer.id,
@@ -187,12 +209,25 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
         };
         this.formAct.patchValue(paramsForm);
         this.goods = true;
+        this.yData = true;
         let id = response.data[0].id;
+        if (response.data[0].statusProceedings == 'ABIERTA') {
+          this.closeActa = true;
+        } else {
+          this.closeActa = false;
+        }
+        if (this.folioScan == null && response.data[0].universalFolio != null) {
+          console.log('Entra a la validacion del folioScan');
+          let formActParams = {
+            scanningFoli: response.data[0].universalFolio,
+          };
+          this.folioScan = response.data[0].universalFolio;
+          this.form.patchValue(formActParams);
+          this.fool = true;
+          this.scan = true;
+        }
+        this.statusActa();
         this.getDetailProceedingDevolution(id);
-        let formActParams = {
-          scanningFoli: response.data[0].universalFolio,
-        };
-        this.form.patchValue(formActParams);
       },
     });
   }
@@ -205,10 +240,13 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   }
 
   getDetailProceedingDevolution(id: number) {
-    this.localStorage.load([]);
+    this.datatable = [];
+    this.localStorage.load(this.datatable);
+    console.log('getDetailProceedingDevolution');
     this.detailProceeDelRecService.getProceedingbyId(id).subscribe({
       next: response => {
         console.log('response: ', response);
+        console.log('entra');
         let params = {
           color: 'S',
           goodNumb: response.data[0].good.id,
@@ -217,9 +255,13 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
           process: response.data[0].good.extDomProcess,
           status: response.data[0].good.status,
         };
+        console.log('Push ', params);
         this.totalItems = response.data.length;
         this.datatable.push(params);
         this.localStorage.load(this.datatable);
+      },
+      error: err => {
+        console.log('getDetailProceedingDevolution Error');
       },
     });
   }
@@ -329,7 +371,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
                 //   this.totalItems = response.data.length;
                 //   this.datatable.push(params);
                 //   this.localStorage.load(this.datatable);
-                // }
+                // }}
               },
             });
         }
@@ -426,6 +468,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
                         };
                         console.log('scanningFoli: ', formparams);
                         this.form.patchValue(formparams);
+                        this.getReport();
                         //this.getReport();
                       },
                     });
@@ -486,7 +529,9 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   }
 
   openScannerPage() {
-    if (this.form.get('scanningFoli').value != null) {
+    console.log('Scaneo ', this.form.get('scanningFoli').value);
+    let folio = this.form.get('scanningFoli').value;
+    if (folio != null) {
       this.alertQuestion(
         'info',
         'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Dictamen. ¿Deseas continuar?',
@@ -514,29 +559,91 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
     }
   }
 
-  getclose() {
+  openScannerPageView() {
     this.documentsForDictumService.getByFolio(this.folioScan).subscribe({
       next: response => {
         console.log('Response By Folio ', response);
-        //this.statusFile = response.data[0].scanStatus;
+        let statusFile = response.data[0].scanStatus;
         this.LNU_NO_EXPEDIENTE = response.data[0].numberProceedings;
-        if (this.statusFile == 'ESCANEADO') {
-          this.closeAct();
+        if (statusFile == 'ESCANEADO') {
+          console.log('Scaneo ', this.form.get('scanningFoli').value);
+          let folio = this.form.get('scanningFoli').value;
+          if (folio != null) {
+            this.alertQuestion(
+              'info',
+              'Se Abrirá la Pantalla de Escaneo para Visualizar las Imagenes. ¿Deseas continuar?',
+              '',
+              'Aceptar',
+              'Cancelar'
+            ).then(res => {
+              console.log(res);
+              if (res.isConfirmed) {
+                this.router.navigate(
+                  [`/pages/general-processes/scan-documents`],
+                  {
+                    queryParams: {
+                      origin: 'FACTREFACTAENTEST',
+                      folio: this.folioScan,
+                      cveActa: this.keyActa,
+                    },
+                  }
+                );
+              }
+            });
+          } else {
+            this.alertInfo(
+              'warning',
+              'No Tiene Folio de Escaneo para Continuar a la Pantalla de Escaneo',
+              ''
+            );
+          }
+        } else {
+          this.alertInfo('warning', 'El Folio no se encuentra Escaneado', '');
         }
       },
     });
   }
 
+  getclose() {
+    this.alertQuestion(
+      'info',
+      'Se Cerrará el Acta. ¿Deseas continuar?',
+      '',
+      'Aceptar',
+      'Cancelar'
+    ).then(res => {
+      console.log(res);
+      if (res.isConfirmed) {
+        this.documentsForDictumService.getByFolio(this.folioScan).subscribe({
+          next: response => {
+            console.log('Response By Folio ', response);
+            this.statusFile = response.data[0].scanStatus;
+            this.LNU_NO_EXPEDIENTE = response.data[0].numberProceedings;
+            if (this.statusFile == 'ESCANEADO') {
+              console.log('entra a scaneado');
+              this.closeAct();
+            }
+          },
+        });
+      }
+    });
+  }
+
   closeAct() {
     if (this.formAct.get('statusRecord').value != 'CERRADA') {
-      if (!this.datatable) {
+      console.log('primer if ');
+      console.log('data table ', this.datatable);
+      if (this.datatable.length > 0) {
+        console.log('segundo if ');
         console.log('datatable ', this.datatable);
         for (let i = 0; i < this.datatable.length; i++) {
           if (this.datatable[i].color == 'S') {
+            console.log('tercer if ');
             this.detailProceeDelRecService
               .getProceedingByNoGood(this.datatable[i].goodNumb)
               .subscribe({
                 next: response => {
+                  console.log('respuesta getProceedingByNoGood ', response);
                   let params = {
                     curForm: 'FACTREFACTAENTEST',
                     no_bien: this.datatable[i].goodNumb,
@@ -544,9 +651,47 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
                   };
                   this.screenStatusService.getStatusV(params).subscribe({
                     next: respo => {
-                      console.log('Respuesta STATUS V: ', respo);
-                      this.VESTATUS = respo.data[0].status;
-                      this.updateStatus(this.datatable[i].goodNumb);
+                      //
+                      // Suponiendo que closeDate es una instancia de Date
+                      var closeDate = new Date();
+
+                      // Obtener el día, mes y año
+                      var day = closeDate.getDate();
+                      var month = closeDate.getMonth() + 1; // Los meses en JavaScript son base 0, por lo que se suma 1
+                      var year = closeDate.getFullYear();
+
+                      // Formatear para que siempre tenga 2 dígitos
+                      var formattedDay = day < 10 ? '0' + day : day;
+                      var formattedMonth = month < 10 ? '0' + month : month;
+
+                      // Crear la cadena con el formato deseado
+                      var formattedDate =
+                        formattedDay + '/' + formattedMonth + '/' + year;
+
+                      console.log(formattedDate);
+                      //
+                      this.formAct.patchValue({
+                        closingDate: formattedDate,
+                        statusRecord: 'CERRADA',
+                      });
+                      this.VESTATUS = respo.data[0].estatus_final;
+                      console.log('Respuesta STATUS V: ', this.VESTATUS);
+                      let params = {
+                        observations: this.formAct.get('textarea').value,
+                        universalFolio: this.form.get('scanningFoli').value,
+                        statusProceedings: 'CERRADA',
+                        closeDate: new Date(),
+                      };
+                      console.log('this.ActaID ', this.idActa);
+                      console.log('params PUT ', params);
+                      this.detailProceeDelRecService
+                        .putActaStatus(this.idActa, params)
+                        .subscribe({
+                          next: resp => {
+                            console.log('response de Put ', resp);
+                            this.updateStatus(this.datatable[i].goodNumb);
+                          },
+                        });
                     },
                   });
                 },
@@ -579,6 +724,7 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
       vestatus: this.VESTATUS,
       no_bien: good,
     };
+    console.log('params changeStatus ', params);
     this.documentsForDictumService.changeStatus(params).subscribe({
       next: response => {
         console.log('Put Status: ', response);
@@ -588,9 +734,11 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
           usuario: this.user,
           curForm: 'FACTREFACTAENTEST',
         };
+        console.log('param postDocument Hist ', param);
         this.documentsForDictumService.postDocumentHist(param).subscribe({
           next: resp => {
             console.log('Pos Document Hist ', resp);
+            this.ConsultAER();
             this.alertInfo(
               'warning',
               'Se Realizó el Cambio de Estatus de los Bienes y el Acta se Encuentra CERRADA.',
@@ -603,9 +751,14 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
   }
 
   clearall() {
+    this.form.reset();
+    this.formAct.reset();
     this.keyActa = undefined;
     this.localStorage.load([]);
     this.goods = false;
     this.fool = false;
+    this.totalItems = 0;
+    this.close = false;
+    this.yData = false;
   }
 }
