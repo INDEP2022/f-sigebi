@@ -434,12 +434,24 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   printDetailMovi() {
     this.isLoadingDetailMovi = true;
     const params = {
+      // this.idProcess.value
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.formatDateToDdMmYyyy(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    console.log('params111', params);
+    this.downloadReport('RCONBIENESPROC', params, () => {
       this.isLoadingDetailMovi = false;
     });
+  }
+
+  formatDateToDdMmYyyy(date: any) {
+    if (!date) return '';
+
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript están basados en cero.
+    const year = date.getFullYear();
+
+    return `${year}-${month}-${day}`;
   }
 
   isLoadingProrraComission = false;
@@ -447,7 +459,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === 'P') {
       const params = {
         P_PROCNUM: this.idProcess.value,
-        P_FEC_PROCNUM: new Date(this.date.value),
+        P_FEC_PROCNUM: this.formatDateToDdMmYyyy(this.date.value),
+        // P_FEC_PROCNUM: new Date(this.date.value),
       };
       this.downloadReport('blank', params, () => {
         this.isLoadingProrraComission = false;
@@ -463,6 +476,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   downloadReport(reportName: string, params: any, cb: () => void = null) {
     //this.loadingText = 'Generando reporte ...';
+    console.log('params', params);
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
         this.loading = false;

@@ -151,7 +151,10 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     if (getCatMotivosRev_ === null) {
       V_PANTALLA = null;
       V_RESPONSABLE = null;
-      this.alert('warning', `${this.value} no es un Motivo Válido`, '');
+
+      const textoOriginal = this.value;
+      const textoConvertido = this.convertirTexto(textoOriginal);
+      this.alert('warning', `"${textoConvertido}" no es un Motivo Válido`, '');
       return;
     } else {
       V_PANTALLA = getCatMotivosRev_.screen;
@@ -424,5 +427,20 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
   ejecutarFuncion() {
     console.log('AQUI2');
     this.funcionEjecutada.emit();
+  }
+
+  convertirTexto(texto: any) {
+    // Dividir el texto en palabras
+    const palabras = texto.toLowerCase().split(' ');
+
+    // Convertir la primera letra de cada palabra a mayúsculas
+    for (let i = 0; i < palabras.length; i++) {
+      palabras[i] = palabras[i].charAt(0).toUpperCase() + palabras[i].slice(1);
+    }
+
+    // Unir las palabras para formar el texto final
+    const textoConvertido = palabras.join(' ');
+
+    return textoConvertido;
   }
 }
