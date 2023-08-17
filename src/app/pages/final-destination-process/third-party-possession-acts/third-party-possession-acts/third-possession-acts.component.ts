@@ -308,10 +308,14 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   openModalApplicant(context?: any) {
     console.log(context);
     console.log(this.authService.decodeToken().preferred_username);
-    console.log(this.authService.decodeToken());
+    console.log(
+      this.proceedingDev[0].proceedingStatus,
+      this.proceedingDev[0].proceedingStatus,
+      this.proceedingDev[0].proceedingsCve
+    );
     let lnu_no_volante: any;
     if (
-      (this.proceedingDev[0].proceedingStatus != 'CERRADA' &&
+      (this.proceedingDev[0].proceedingStatus != 'CERRDA' &&
         this.proceedingDev[0].proceedingStatus != null) ||
       this.proceedingDev[0].proceedingsCve == null
     ) {
@@ -345,12 +349,12 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     keyTypeDocument: ['DEVOL', [Validators.required]],
                     natureDocument: ['ORIGINAL'],
                     descriptionDocument: ['ACTA'],
-                    significantDate: ['2023'],
+                    significantDate: [new Date()],
                     scanStatus: ['SOLICITADO'],
                     userRequestsScan: [
                       this.authService.decodeToken().preferred_username,
                     ],
-                    dateRegistrationScan: ['2023'],
+                    dateRegistrationScan: [new Date()],
                     numberDelegationRequested: [
                       this.proceedingDev[0].delegationNumber.id,
                     ],
@@ -363,7 +367,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                   });
                   console.log(this.documentForm);
                   this.document = this.documentForm.value;
-                  console.log(this.document);
+                  console.log(JSON.stringify(this.document));
                   this.documentsService.create(this.document).subscribe({
                     next: data => {
                       console.log(data);
@@ -375,16 +379,28 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     },
                     error: erro => {
                       console.log(erro);
+                      this.alert(
+                        'warning',
+                        'Ha Ocurrido un Error',
+                        'Al Guardar Los Datos En el Documento'
+                      );
                     },
                   });
                 },
                 error: err => {
                   console.log(err);
+                  this.alert(
+                    'warning',
+                    'Ha Ocurrido un Error',
+                    'Al Solicitar el Volante'
+                  );
                 },
               });
           }
         }
       });
+    } else {
+      this.alert('warning', 'El Acta', 'Ya Ha Sido Registrada');
     }
   }
 
@@ -552,30 +568,29 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   openScannerPage() {
     this.boolScan = false;
     if (
-      (this.proceedingDev[0].proceedingStatus != 'CERRADA' &&
+      (this.proceedingDev[0].proceedingStatus != 'CERADA' &&
         this.proceedingDev[0].proceedingStatus != null) ||
       this.proceedingDev[0].proceedingsCve == null
     ) {
+      console.log(this.actForm.get('folioScan').value);
       if (this.actForm.get('folioScan').value) {
         this.alertQuestion(
           'info',
-          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
           '',
+          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
           'Aceptar',
           'Cancelar'
         ).then(res => {
           console.log(res);
           if (res.isConfirmed) {
-            this.router.navigate(
-              [`/pages/final-destination-process/third-possession-acts`],
-              {
-                queryParams: {
-                  origin: 'FACTREFACTAPOSTER',
-                  folio: this.actForm.value.folioScan,
-                },
-              }
-            );
+            this.router.navigate([`/pages/general-processes/scan-documents`], {
+              queryParams: {
+                origin: 'FACTREFACTAPOSTER',
+                folio: this.actForm.value.folioScan,
+              },
+            });
           }
+          //////////////////////////////////////////////////////////////////////////folio escaneado correctamente
         });
       } else {
         this.alert(
@@ -658,6 +673,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     let vtmp_max = 0;
     const milisegundosPorDia = 24 * 60 * 60 * 1000;
     let body = '';
+    let body2 = '';
 
     if (!this.proceedingDev[0].proceedingsCve) {
       this.alert(
@@ -781,37 +797,58 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
                       console.log(body);
 
-                      /*  this.historyGoodService.create(JSON.parse(body)).subscribe({
-                      next: data=>{
-                        console.log('melooooosoooo',data);
-                      },error:err =>{
-                      console.log(err);
-                      this.alert(
-                          'warning',
-                          'Ha Ocurrido un Error',
-                          'Error Insertar En el Historico el Bien:'+ this.data['data'][i].goodId
-                          );
-                      }
-                    });
-                    console.log('ya casi mi hermano');
-                    let v_NO_ACTA =this.proceedingDev[0].id;
-                    this.actForm.controls['statusAct'].setValue(this.proceedingDev[0].proceedingStatus= 'CEA');
-                    this.actForm.controls['status'].setValue(this.proceedingDev[0].proceedingStatus= 'CEA');
-                    this.proceedingDev[0].elaborationDate= new Date();
-                    var formatted = new DatePipe('en-EN').transform(
-                    this.proceedingDev[0].elaborationDate,
-                    'dd/MM/yyyy',
-                    'UTC'
-                    );
-                    this.actForm.controls['elabDate'].setValue(formatted);
-
-                    this.procedureManagementService.update(this.expedient[0].id,JSON.parse('DV5')).subscribe({
-                      next:data=>{
-                        console.log('avanzamos otro poquito profesor');
-                    }, error:err=>{
-                        console.log(err);
-
-                    }});*/
+                      this.historyGoodService
+                        .create(JSON.parse(body))
+                        .subscribe({
+                          next: data => {
+                            console.log('melooooosoooo', data);
+                          },
+                          error: err => {
+                            console.log(err);
+                            this.alert(
+                              'warning',
+                              'Ha Ocurrido un Error',
+                              'Error Insertar En el Historico el Bien:' +
+                                this.data['data'][i].goodId
+                            );
+                          },
+                        });
+                      console.log('ya casi mi hermano');
+                      let v_NO_ACTA = this.proceedingDev[0].id;
+                      this.actForm.controls['statusAct'].setValue(
+                        (this.proceedingDev[0].proceedingStatus = 'CEA')
+                      );
+                      this.actForm.controls['status'].setValue(
+                        (this.proceedingDev[0].proceedingStatus = 'CEA')
+                      );
+                      this.proceedingDev[0].elaborationDate = new Date();
+                      var formatted = new DatePipe('en-EN').transform(
+                        this.proceedingDev[0].elaborationDate,
+                        'dd/MM/yyyy',
+                        'UTC'
+                      );
+                      this.actForm.controls['elabDate'].setValue(formatted);
+                      body2 = `{
+                      "tiKeyNewPerson": "DV5"
+                    }`;
+                      this.procedureManagementService
+                        .update(this.expedient[0].id, JSON.parse(body2))
+                        .subscribe({
+                          next: data => {
+                            this.onLoadToast(
+                              'success',
+                              'Expediente',
+                              'Cerrado Correctamente'
+                            );
+                          },
+                          error: err => {
+                            this.alert(
+                              'warning',
+                              'Ha Ocurrido un Error',
+                              'Al Gestionar el Tramite'
+                            );
+                          },
+                        });
                     }
                   }
                 });
