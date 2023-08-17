@@ -26,7 +26,7 @@ export class MassiveReclassificationGoodsComponent
   contador = 0;
 
   get pathClasification() {
-    return 'catalog/api/v1/good-sssubtype';
+    return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
   }
 
   get selectedGooods() {
