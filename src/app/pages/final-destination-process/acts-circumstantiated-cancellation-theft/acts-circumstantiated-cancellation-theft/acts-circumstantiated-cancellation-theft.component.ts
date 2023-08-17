@@ -856,7 +856,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo3: next.parrafo3,
       });
 
-
       // Se mapea el campo autoridad
       //this.expedient.authorityNumber;
       // Pasar clave a esta función
@@ -1146,7 +1145,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.selectedRow = event.data;
     console.log('select RRR', this.selectedRow);
 
-
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -1210,15 +1208,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
             //this.actasDefault = null;
           });
         }
-
       }
     }
   }
 
-
   //Quitar uno
   removeSelect() {
-
     if (this.statusCanc == 'CERRADA') {
       this.alert(
         'warning',
@@ -1226,9 +1221,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
       return;
-    }
-    else {
-      console.log("this.actasDefault ", this.actasDefault);
+    } else {
+      console.log('this.actasDefault ', this.actasDefault);
       if (this.actasDefault == null) {
         this.alert(
           'warning',
@@ -1243,9 +1237,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           'Debe Capturar un Acta.'
         );
         return;
-      }
-
-      else {
+      } else {
         this.loading2 = true;
         if (this.selectedGooodsValid.length > 0) {
           // this.goods = this.goods.concat(this.selectedGooodsValid);
@@ -1274,7 +1266,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     }
-    console.log("selectedGooodsValid--", this.selectedGooodsValid);
+    console.log('selectedGooodsValid--', this.selectedGooodsValid);
   }
 
   //Quitar todos
@@ -1295,7 +1287,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
         return;
       } else {
-        console.log("DataRecepcion", this.dataRecepcion);
+        console.log('DataRecepcion', this.dataRecepcion);
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
             console.log('this.dataRecepcion', this.dataRecepcion);
@@ -1471,10 +1463,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-      console.log('AUTORITHY --', this.authorityNumber)
-      this.actaRecepttionForm
-        .get('claveTrans')
-        .setValue(this.authorityNumber);
+      console.log('AUTORITHY --', this.authorityNumber);
+      this.actaRecepttionForm.get('claveTrans').setValue(this.authorityNumber);
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
       //   'MM/yyyy'
@@ -1634,7 +1624,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.excelService.export(this.dataRecepcion, { filename });
     this.alert('success', 'Datos Exportados', '');
   }
-
 
   viewPictures(event: any) {
     console.log(event);
@@ -1839,7 +1828,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
           this.disabledBtnReplicar = true;
-
         }),
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
@@ -2075,14 +2063,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
           this.disabledBtnEscaneo = true;
           await this.confirmScanRequest();
-
-
         },
         error: error => {
           this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
           // this.loading = false
         },
-
       });
   }
 
