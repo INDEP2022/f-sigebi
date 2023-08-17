@@ -281,6 +281,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   getGoods(filters: ListParams) {
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
     const filter = params.getValue();*/
+    //delete this.jsonBody.regionalDelegationId
     let page = filters.page;
     let limit = filters.limit;
     this.loading = true;
