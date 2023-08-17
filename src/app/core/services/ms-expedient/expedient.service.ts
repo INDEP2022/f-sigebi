@@ -78,4 +78,9 @@ export class ExpedientService extends HttpService {
   getExpedienteById(id: number | string) {
     return this.get(`${ExpedientEndpoints.FindIdentificator}/${id}`);
   }
+
+  postExpedient(params: any) {
+    const route = `${ExpedientEndpoints.SelectNoTransfer}`;
+    return this.post(route, params);
+  }
 }
