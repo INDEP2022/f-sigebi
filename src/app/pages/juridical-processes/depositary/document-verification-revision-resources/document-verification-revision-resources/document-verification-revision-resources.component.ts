@@ -61,7 +61,6 @@ export class DocumentVerificationRevisionResourcesComponent
   causa: string = '';
   totalItems = 0;
   selectedRow: KeyDocument;
-  selectedRow: KeyDocument;
   totalItemsDic = 0;
   createDicta: IDocumentsDictumXState;
   dateAgreementAssurance: Date;
@@ -70,7 +69,6 @@ export class DocumentVerificationRevisionResourcesComponent
   idGood: number | string = 0;
   pKey: string = '';
   time = new Date();
-  keyStatus: string = '';
   keyStatus: string = '';
   statusGood_: any;
   exp: boolean = false;
@@ -226,7 +224,6 @@ export class DocumentVerificationRevisionResourcesComponent
   public activeBlocDoc: boolean = false;
   constructor(
     private fb: FormBuilder,
-    private changeDetectorRef: ChangeDetectorRef,
     private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
     private readonly goodService: GoodService,
@@ -1247,17 +1244,6 @@ export class DocumentVerificationRevisionResourcesComponent
   async userRowSelect(event: { data: KeyDocument; selected: any }) {
     this.selectedRow = event.data;
     this.selectedKey = event.selected;
-    this.changeDetectorRef.detectChanges();
-  }
-
-  async userRowSelect(event: { data: KeyDocument; selected: any }) {
-    this.selectedRow = event.data;
-    this.keyStatus = this.selectedRow.key;
-    console.log(this.selectedRow.key);
-    const selectedFiles = event.selected;
-    for (const file of selectedFiles) {
-      this.selectedKey.push(file);
-    }
     this.changeDetectorRef.detectChanges();
   }
 }
