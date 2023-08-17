@@ -3,4 +3,6 @@ export interface ISendSirsae {
   eventId: number | string;
 }
 
-export interface ISendSirsaeLot {}
+export interface ISendSirsaeLot {
+  
+}

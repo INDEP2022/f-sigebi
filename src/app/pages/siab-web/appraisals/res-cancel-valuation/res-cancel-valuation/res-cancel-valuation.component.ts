@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { LocalDataSource } from 'ng2-smart-table';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { OfficesSend } from '../../valuation-request/valuation-request/valuation-request.component';
@@ -26,6 +27,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   dataTwo: LocalDataSource = new LocalDataSource();
   offices = new DefaultSelect();
+  cityList = new DefaultSelect();
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -35,10 +37,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   listKeyOffice: any;
   settingsTwo: any;
   subscribeDelete: Subscription;
+  city: any;
+  pnlControles: boolean = true;
+  pnlControles2: boolean = true;
 
   //
 
-  constructor(private fb: FormBuilder, private serviceJobs: JobsService) {
+  constructor(
+    private fb: FormBuilder,
+    private serviceJobs: JobsService,
+    private cityService: CityService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -73,6 +82,37 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       },
     });
   }
+
+  getCitiesList(params: ListParams) {
+    this.cityService.getAllCitysTwo(params).subscribe({
+      next: resp => {
+        console.log('Por aqui esta pasando: ', resp);
+        this.cityList = new DefaultSelect(resp.data, resp.count);
+      },
+      error: eror => {
+        this.loader.load = false;
+        this.cityList = new DefaultSelect([], 0, true);
+      },
+    });
+  }
+
+  getCityById(id: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.cityService.getId(id).subscribe({
+        next: response => {
+          this.city = response;
+          console.log('Response de la ciudad que se busca: ', this.city);
+          resolve(this.city);
+        },
+        error: error => {
+          this.loader.load = false;
+          this.cityList = new DefaultSelect([], 0, true);
+          reject(error);
+        },
+      });
+    });
+  }
+
   async getsContent() {
     // this.loader.load = true;
     // if (this.event == 0) {
@@ -102,9 +142,38 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.dateNow = new Date();
   }
 
-  iterableAssign(array: any[]) {
+  async iterableAssign(array: any[]) {
     for (const i of array) {
-      console.log('Iterando la mamada esta: ', i?.cargo_destina);
+      this.validateViewRadioButtonOne(i?.estatus_of);
+      try {
+        await this.getCityById(i?.ciudad);
+        if (this.city) {
+          this.form.patchValue({
+            dest: i?.destinatario,
+            key: i?.cve_oficio,
+            remi: i?.remitente,
+            cityCi: this.city.legendOffice,
+            ref: i?.texto1,
+            aten: i?.texto2,
+            espe: i?.texto3,
+            fol: i?.num_cv_armada,
+          });
+        }
+        console.log('El objeto completo en cada busqueda: ', i);
+        console.log(
+          'Aqui ya se esta trabajando con la ciudad que se obtuvo: ',
+          this.city
+        );
+      } catch (error) {
+        console.error('Error al obtener la ciudad: ', error);
+      }
+    }
+  }
+
+  validateViewRadioButtonOne(status: any) {
+    if (status == 'ENVIADO') {
+      this.pnlControles = false;
+      this.pnlControles2 = false;
     }
   }
 
@@ -120,13 +189,13 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       remi: [null],
       dest: [null],
       office: [null],
+      ref: [null],
+      aten: [null],
+      espe: [null],
     });
     this.formTwo = this.fb.group({
       allGood: [null],
       selectedGood: [null],
-      ref: [null],
-      aten: [null],
-      espe: [null],
     });
     this.formDialogOne = this.fb.group({
       noti: [null],
