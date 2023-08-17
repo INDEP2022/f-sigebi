@@ -129,9 +129,15 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   totalItemsReception: number = 0;
   totalItemsTransportableGoods: number = 0;
   selectGood: IGood[] = [];
+  selectGoodReceipt: IGood[] = [];
+  selectInfoGoodGuard: IGood[] = [];
+  selectInfoGoodWarehouse: IGood[] = [];
+  selectInfoGoodReprog: IGood[] = [];
+  selectInfoGoodCancelation: IGood[] = [];
   infoGood: IGood[] = [];
   selectGoodGuard: IGood[] = [];
   goodIdSelect: any;
+  goodIdSelectReceipt: any;
   goodIdSelectGuard: string | number;
   programmingId: number = 0;
   idTransferent: any;
@@ -882,7 +888,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       transferentDestiny: [item?.saeDestiny],
                       observations: [item?.observations],
                     });
-                    console.log('form', form.value);
+
                     this.goodsTransportable.push(form);
                     this.formLoadingTrans = false;
                     this.showTransportable = true;
@@ -1047,7 +1053,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                   } else if (item.transferentDestiny == 4) {
                     item.transferentDestinyName = 'ADMINISTRACIÓN';
                   }
-                  console.log('datasfd', item.transferentDestinyName);
+
                   this.goodData = item;
                   const form = this.fb.group({
                     id: [item?.id],
@@ -1725,10 +1731,66 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
     if (event.target.checked == true) {
       this.goodIdSelect = good.id;
       this.selectGood.push(good);
-      console.log('selectGood', this.selectGood);
     } else {
       this.selectGood = [];
-      console.log('good delete', this.selectGood);
+    }
+  }
+
+  //Seleccionable de recibos//
+  goodSelectReceipt(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectGoodReceipt.push(good);
+    } else {
+      this.selectGoodReceipt = [];
+    }
+  }
+  //Seleccionable de recibos resguardo
+  selectGuardGood(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectInfoGoodGuard.push(good);
+    } else {
+      this.selectInfoGoodGuard = [];
+    }
+  }
+
+  //Seleccionable de recibos almacén
+  goodSelectWarehouse(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectInfoGoodWarehouse.push(good);
+    } else {
+      this.selectInfoGoodWarehouse = [];
+    }
+  }
+
+  //Seleccionable de recibos reprogramación
+  goodSelectReprog(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectInfoGoodReprog.push(good);
+    } else {
+      this.selectInfoGoodReprog = [];
+    }
+  }
+
+  //Seleccionable de recibos cancelación//
+  goodSelectCancelation(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectInfoGoodCancelation.push(good);
+    } else {
+      this.selectInfoGoodCancelation = [];
+    }
+  }
+
+  showGoodReceipt(event: any, good: IGood) {
+    if (event.target.checked == true) {
+      this.goodIdSelect = good.id;
+      this.selectGood.push(good);
+    } else {
+      this.selectGood = [];
     }
   }
 
@@ -1930,9 +1992,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   //Asignar acta a los bienes seleccionados//
   assingMinute() {
-    if (this.selectGood.length > 0) {
+    if (this.selectInfoGoodGuard.length > 0) {
       this.count = 0;
-      this.selectGood.map((good: IGood) => {
+      this.selectInfoGoodGuard.map((good: IGood) => {
         this.count = this.count + 1;
         if (
           Number(good.quantity) < Number(this.goodsGuards.value[0].quantitySae)
@@ -2196,9 +2258,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   assingMinuteCancelation() {
-    if (this.selectGood.length > 0) {
+    if (this.selectInfoGoodCancelation.length > 0) {
       this.count = 0;
-      this.selectGood.map((good: IGood) => {
+      this.selectInfoGoodCancelation.map((good: IGood) => {
         this.count = this.count + 1;
         if (
           Number(good.quantity) <
@@ -2336,7 +2398,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
-        this.selectGood.map(item => {
+        this.selectInfoGoodReprog.map(item => {
           const formData: Object = {
             id: item.id,
             goodId: item.goodId,
@@ -2357,7 +2419,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .updateGoodProgramming(formData)
                 .subscribe({
                   next: response => {
-                    this.selectGood = [];
+                    this.selectInfoGoodReprog = [];
                     this.goodsReprog.clear();
 
                     this.totalItemsReprog = 0;
@@ -2374,7 +2436,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           });
         });
       } else {
-        this.selectGood.map(item => {
+        this.selectInfoGoodReprog.map(item => {
           const formData: Object = {
             id: item.id,
             goodId: item.goodId,
@@ -2395,7 +2457,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .updateGoodProgramming(formData)
                 .subscribe({
                   next: response => {
-                    this.selectGood = [];
+                    this.selectInfoGoodReprog = [];
                     this.goodsReprog.clear();
                     this.paramsReprogGoods
                       .pipe(takeUntil(this.$unSubscribe))
@@ -2458,7 +2520,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           },
           error: error => {},
         });
-        this.selectGood.map(item => {
+        this.selectInfoGoodCancelation.map(item => {
           const formData: Object = {
             id: item.id,
             goodId: item.goodId,
@@ -2480,7 +2542,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                 .subscribe({
                   next: response => {
                     this.goodsCancelation.clear();
-                    this.selectGood = [];
+                    this.selectInfoGoodCancelation = [];
                     this.paramsCancelGoods
                       .pipe(takeUntil(this.$unSubscribe))
                       .subscribe(() => this.getInfoCancel());
@@ -2495,7 +2557,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           });
         });
       } else {
-        this.selectGood.map(item => {
+        this.selectInfoGoodCancelation.map(item => {
           const formData: Object = {
             id: item.id,
             goodId: item.goodId,
@@ -2520,7 +2582,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     this.paramsCancelGoods
                       .pipe(takeUntil(this.$unSubscribe))
                       .subscribe(() => this.getInfoCancel());
-                    this.selectGood = [];
+                    this.selectInfoGoodCancelation = [];
                     this.headingCancelation = `Cancelación(${this.goodsCancelation.length})`;
                   },
                   error: error => {},
@@ -2534,10 +2596,10 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   assingMinuteWarehouse() {
-    if (this.selectGood.length > 0) {
+    if (this.selectInfoGoodWarehouse.length > 0) {
       this.count = 0;
       this.goodId = '';
-      this.selectGood.map((good: IGood) => {
+      this.selectInfoGoodWarehouse.map((good: IGood) => {
         this.count = this.count + 1;
         this.goodId += good.id + ', ';
         if (
@@ -2681,7 +2743,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                       .pipe(takeUntil(this.$unSubscribe))
                       .subscribe(() => this.getInfoGoodsGuard());
                     this.getOpenProceeding();
-                    this.selectGood = [];
+                    this.selectInfoGoodGuard = [];
                     this.formLoadingGuard = false;
                   }
                 }
@@ -2691,33 +2753,43 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
-        const createReceiptGood: any = await this.createReceiptGuard(
-          this.proceedingOpen[0]
-        );
-
-        if (createReceiptGood) {
-          const createReceiptGoodGuard = await this.createReceiptGoodGuard(
-            createReceiptGood
-          );
-          if (createReceiptGoodGuard) {
-            const updateProgrammingGood = await this.updateProgGoodGuard(
+        this.receiptGuards.getElements().then(async data => {
+          if (data[0]?.statusReceiptGuard == 'ABIERTO') {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'Se encuentra un recibo resguardo abierto'
+            );
+          } else {
+            const createReceiptGood: any = await this.createReceiptGuard(
               this.proceedingOpen[0]
             );
-            if (updateProgrammingGood) {
-              const updateGood = await this.updateGoodGuard();
-              if (updateGood) {
-                this.goodsGuards.clear();
-                this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
-                this.getReceiptsGuard();
-                this.paramsGuardGoods
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getInfoGoodsGuard());
-                this.selectGood = [];
-                this.formLoadingGuard = false;
+
+            if (createReceiptGood) {
+              const createReceiptGoodGuard = await this.createReceiptGoodGuard(
+                createReceiptGood
+              );
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood = await this.updateProgGoodGuard(
+                  this.proceedingOpen[0]
+                );
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodGuard();
+                  if (updateGood) {
+                    this.goodsGuards.clear();
+                    this.headingGuard = `Resguardo(${this.goodsGuard.length})`;
+                    this.getReceiptsGuard();
+                    this.paramsGuardGoods
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoGoodsGuard());
+                    this.selectGood = [];
+                    this.formLoadingGuard = false;
+                  }
+                }
               }
             }
           }
-        }
+        });
       }
     } else if (type == 'almacen') {
       if (this.proceedingOpen.length == 0) {
@@ -2744,7 +2816,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
                     this.goodsWarehouse.clear();
                     this.totalItemsWarehouse = 0;
                     this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                    this.selectGood = [];
+                    this.selectInfoGoodWarehouse = [];
                     this.paramsGoodsWarehouse
                       .pipe(takeUntil(this.$unSubscribe))
                       .subscribe(() => this.getInfoWarehouse());
@@ -2758,33 +2830,41 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           error: error => {},
         });
       } else {
-        const createReceiptGood: any = await this.createReceiptWarehouse(
-          this.proceedingOpen[0]
-        );
-
-        if (createReceiptGood) {
-          const createReceiptGoodGuard = await this.createReceiptGoodWarehouse(
-            createReceiptGood
-          );
-          if (createReceiptGoodGuard) {
-            const updateProgrammingGood = await this.updateProgGoodWarehouse(
+        this.receiptWarehouse.getElements().then(async data => {
+          if (data[0]?.statusReceiptGuard == 'ABIERTO') {
+            this.alert(
+              'warning',
+              'Acción Invalida',
+              'Se encuentra un recibo almacén abierto'
+            );
+          } else {
+            const createReceiptGood: any = await this.createReceiptWarehouse(
               this.proceedingOpen[0]
             );
-            if (updateProgrammingGood) {
-              const updateGood = await this.updateGoodWarehouse();
-              if (updateGood) {
-                this.goodsWarehouse.clear();
-                this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
-                this.selectGood = [];
-                this.paramsGoodsWarehouse
-                  .pipe(takeUntil(this.$unSubscribe))
-                  .subscribe(() => this.getInfoWarehouse());
 
-                this.getReceiptsGuard();
+            if (createReceiptGood) {
+              const createReceiptGoodGuard =
+                await this.createReceiptGoodWarehouse(createReceiptGood);
+              if (createReceiptGoodGuard) {
+                const updateProgrammingGood =
+                  await this.updateProgGoodWarehouse(this.proceedingOpen[0]);
+                if (updateProgrammingGood) {
+                  const updateGood = await this.updateGoodWarehouse();
+                  if (updateGood) {
+                    this.goodsWarehouse.clear();
+                    this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
+                    this.selectGood = [];
+                    this.paramsGoodsWarehouse
+                      .pipe(takeUntil(this.$unSubscribe))
+                      .subscribe(() => this.getInfoWarehouse());
+
+                    this.getReceiptsGuard();
+                  }
+                }
               }
             }
           }
-        }
+        });
       }
       /* console.log('this.receipts', this.receipts);
       if (this.receipts.count() > 0) {
@@ -2969,7 +3049,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   createReceiptGoodGuard(receiptGuard: any) {
     return new Promise((resolve, reject) => {
-      this.selectGood.map(item => {
+      this.selectInfoGoodGuard.map(item => {
         const formData = {
           receiptGuardId: receiptGuard.id,
           idGood: item.goodId,
@@ -2990,7 +3070,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   createReceiptGoodWarehouse(receiptGuard: any) {
     return new Promise((resolve, reject) => {
-      this.selectGood.map(item => {
+      this.selectInfoGoodWarehouse.map(item => {
         const formData = {
           receiptGuardId: receiptGuard.id,
           idGood: item.goodId,
@@ -3010,7 +3090,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   updateProgGoodGuard(proceeding: IProceedings) {
     return new Promise((resolve, reject) => {
-      this.selectGood.map(item => {
+      this.selectInfoGoodGuard.map(item => {
         const formData: Object = {
           programmingId: this.programming.id,
           actaId: proceeding.id,
@@ -3054,7 +3134,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   updateProgGoodWarehouse(proceeding: IProceedings) {
     return new Promise((resolve, reject) => {
-      this.selectGood.map(item => {
+      this.selectInfoGoodWarehouse.map(item => {
         const formData: Object = {
           programmingId: this.programming.id,
           actaId: proceeding.id,
@@ -3097,7 +3177,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   updateGoodGuard() {
     return new Promise((resolve, reject) => {
-      this.selectGood.map(item => {
+      this.selectInfoGoodGuard.map(item => {
         const formData: Object = {
           id: item.id,
           goodId: item.goodId,
@@ -3118,7 +3198,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   updateGoodWarehouse() {
     return new Promise((resolve, reject) => {
-      this.selectGood.map(item => {
+      this.selectInfoGoodWarehouse.map(item => {
         const formData: Object = {
           id: item.id,
           goodId: item.goodId,
@@ -3566,7 +3646,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   changeStatusGoodReceipt() {
     return new Promise(async (resolve, reject) => {
       this.goodsReception.clear();
-      this.selectGood.map((item: any) => {
+      this.selectGoodReceipt.map((item: any) => {
         const formData: Object = {
           id: Number(item.id),
           goodId: Number(item.goodId),
@@ -3581,8 +3661,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       if (showGoods) {
         this.showDataProgramming();
         this.goodIdSelect = null;
-        this.selectGood = [];
-        this.selectGood = [];
+        this.selectGoodReceipt = [];
         resolve(true);
       }
     });
@@ -3591,7 +3670,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   changeStatusGoodTran(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsGuards.clear();
-      this.selectGood.map((item: any) => {
+      this.selectInfoGoodGuard.map((item: any) => {
         const formData: Object = {
           id: Number(item.id),
           goodId: Number(item.goodId),
@@ -3606,7 +3685,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       if (showGoods) {
         this.showDataProgramming();
         this.goodIdSelect = null;
-        this.selectGood = [];
+        this.selectInfoGoodGuard = [];
         this.headingGuard = `Resguardo(${this.goodsGuards.length})`;
       }
     });
@@ -3679,7 +3758,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   changeStatusGoodProg(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsReprog.clear();
-      this.selectGood.map((item: any) => {
+      this.selectInfoGoodReprog.map((item: any) => {
         const formData: Object = {
           id: Number(item.id),
           goodId: Number(item.goodId),
@@ -3695,7 +3774,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       if (showGoods) {
         this.showDataProgramming();
         this.goodIdSelect = null;
-        this.selectGood = [];
+        this.selectInfoGoodReprog = [];
         this.headingReprogramation = `Reprogramación(${this.goodsReprog.length})`;
       }
     });
@@ -3710,7 +3789,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   changeStatusGoodWarehouse(good: IGood) {
     return new Promise(async (resolve, reject) => {
       this.goodsWarehouse.clear();
-      this.selectGood.map((item: any) => {
+      this.selectInfoGoodWarehouse.map((item: any) => {
         const formData: Object = {
           id: Number(item.id),
           goodId: Number(item.goodId),
@@ -3725,7 +3804,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       if (showGoods) {
         this.showDataProgramming();
         this.goodIdSelect = null;
-        this.selectGood = [];
+        this.selectInfoGoodWarehouse = [];
         this.headingWarehouse = `Almacén INDEP(${this.goodsWarehouse.length})`;
       }
     });
@@ -3822,24 +3901,16 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       '¿Desea eliminar el recibo?'
     ).then(question => {
       if (question.isConfirmed) {
-        const formProce = {
-          id: receipt.actId,
+        const formData: Object = {
+          id: receipt.id,
+          actId: receipt.actId,
+          programmingId: receipt.programmingId,
         };
-
-        this.proceedingService.deleteProceeding(formProce).subscribe({
+        this.receptionGoodService.deleteReceipt(formData).subscribe({
           next: response => {
-            const formData: Object = {
-              id: receipt.id,
-              actId: receipt.actId,
-              programmingId: receipt.programmingId,
-            };
-            this.receptionGoodService.deleteReceipt(formData).subscribe({
-              next: response => {
-                this.getReceipts();
-              },
-              error: error => {},
-            });
+            this.getReceipts();
           },
+          error: error => {},
         });
       }
     });
@@ -3847,7 +3918,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   deleteGoodGuard() {
     if (this.goodIdSelect > 0) {
-      this.selectGood.map((item: any) => {
+      this.selectInfoGoodGuard.map((item: any) => {
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -3870,8 +3941,9 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   deleteGoodReceipt() {
+    const deleteReceipt = this.deleteReceipt();
     if (this.goodIdSelect > 0) {
-      this.selectGood.map((item: any) => {
+      this.selectGoodReceipt.map((item: any) => {
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -3880,10 +3952,12 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
         };
         this.programmingGoodService.updateGoodProgramming(formData).subscribe({
           next: async response => {
-            await this.changeStatusGoodReceipt();
-            await this.deleteReceipt();
-            this.selectGood = [];
-            this.goodIdSelect = null;
+            const changeStatusGoodReceipt =
+              await this.changeStatusGoodReceipt();
+            if (changeStatusGoodReceipt) {
+              this.selectGoodReceipt = [];
+              this.goodIdSelect = null;
+            }
           },
           error: error => {},
         });
@@ -3898,13 +3972,14 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   }
 
   deleteReceipt() {
-    this.selectGood.map((item: any) => {
+    this.selectGoodReceipt.map((item: any) => {
       const data = {
         programmationId: this.programmingId,
         goodId: item.goodId,
       };
       this.receptionGoodService.getReceiptGoodByIds(data).subscribe({
         next: response => {
+          console.log('data a eliminar', response);
           const deleteObject = {
             receiptId: response.receiptId,
             goodId: response.goodId,
@@ -3913,30 +3988,21 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
           };
 
           this.receptionGoodService.deleteReceiptGood(deleteObject).subscribe({
-            next: response => {},
+            next: response => {
+              console.log('eliminado el bien de recibo', response);
+            },
+            error: error => {
+              console.log('error', error);
+            },
           });
         },
       });
     });
-
-    /*
-    if (this.goodIdSelect > 0) {
-      this.selectGood.map((item: any) => {
-        console.log('item', item);
-        const formData = {
-          receiptId: item.id,
-          goodId: item.goodId,
-          programmationId: 8450,
-          actId: 112,
-        };
-        //this.receptionGoodService.deleteReceipt()
-      });
-    } */
   }
 
   deleteGoodRep() {
     if (this.goodIdSelect > 0) {
-      this.selectGood.map((item: any) => {
+      this.selectInfoGoodReprog.map((item: any) => {
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,
@@ -3960,7 +4026,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
 
   deleteGoodWarehouse() {
     if (this.goodIdSelect > 0) {
-      this.selectGood.map((item: any) => {
+      this.selectInfoGoodWarehouse.map((item: any) => {
         const formData: Object = {
           programmingId: this.programmingId,
           goodId: item.id,

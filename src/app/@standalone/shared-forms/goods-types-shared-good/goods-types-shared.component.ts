@@ -190,11 +190,13 @@ export class GoodsTypesSharedGoodComponent extends BasePage implements OnInit {
   }
   getTypes(params: ListParams, id: any = null) {
     const _params: any = params;
+
     if (id) {
-      params['filter.id'] = id;
+      _params['filter.id'] = id;
     } else {
       _params['filter.nameGoodType'] = `$ilike:${params.text}`;
     }
+    _params['sortBy'] = 'id:ASC';
     delete _params.search;
     delete _params.text;
     this.service.search(_params).subscribe({

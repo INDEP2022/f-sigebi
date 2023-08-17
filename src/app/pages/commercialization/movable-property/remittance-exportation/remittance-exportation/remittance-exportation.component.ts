@@ -339,4 +339,12 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  ResumenRemesa(params: any) {
+    this.eventAppService.postResumenRemesa(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp ResumenReme-> ', resp);
+      }
+    });
+  }
 }

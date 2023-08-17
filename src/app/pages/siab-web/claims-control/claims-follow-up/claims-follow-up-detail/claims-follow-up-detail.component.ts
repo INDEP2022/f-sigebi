@@ -76,7 +76,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       description: [null, [Validators.required]],
       fecRepCabiIn: [null],
       fecRepAseguradoraIn: [null],
-      fecSinisterIn: [null],
+      fecSinisterIn: [null, [Validators.required]],
       typeSinisterIn: [null, [Validators.required]],
       docOfficeMailIn: [null],
       sinisterIn: [null],
@@ -246,6 +246,13 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
     if (id) {
       params['filter.id'] = `$eq:${id}`;
     }
+    if (params.text) {
+      params['filter.description'] = `$ilike:${params.text}`;
+      delete params.text;
+      delete params['search'];
+    }
+    console.log(params);
+
     this.typeSinisterService.getAll(params).subscribe({
       next: response => {
         this.typeSiniester = new DefaultSelect(response.data, response.count);
