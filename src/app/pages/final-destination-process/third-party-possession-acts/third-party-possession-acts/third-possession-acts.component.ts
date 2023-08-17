@@ -603,14 +603,10 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
-        array.push(response.data[0]);
-        array.push(response.data[0]);
-        array.push(response.data[0]);
-        console.log(array);
-        this.data.load(array);
-        console.log('bien', this.data['data']);
+        this.data.load(response.data);
         this.totalItems = response.count || 0;
         this.data.refresh();
+        this.totalItems = response.count;
         //this.params.value.page = 1;
         this.loading = false;
       },
@@ -627,11 +623,11 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   getDetailProcedings(expId: string | number) {
     this.loading = true;
     if (expId) {
-      this.params.getValue()['numGoodProceedingsId'] = `$eq:650`;
-      //this.params.getValue()['numGoodProceedingsId'] = `$eq:${expId}`;
+      //this.params.getValue()['numGoodProceedingsId'] = `$eq:650`;
+      this.params.getValue()['numGoodProceedingsId'] = `$eq:${expId}`;
     }
     let params = {
-      ...this.params.getValue(),
+      ...this.params5.getValue(),
       ...this.columnFilters1,
     };
     console.log('hoooooolaaaaaaa', params);

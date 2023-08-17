@@ -89,4 +89,23 @@ export class LayoutsConfigService extends HttpService {
     //   body: params,
     // });
   }
+
+  updatelayoutSH(
+    id: number,
+    body: Partial<IComerLayoutsW>
+  ): Observable<IListResponse<any>> {
+    return this.put<IListResponse<any>>(
+      ParameterComerEndpoints.layoutSH + '/' + id,
+      body
+    );
+  }
+  deletelayoutSH(
+    id: number,
+    body: Partial<IComerLayoutsW>
+  ): Observable<IListResponse<any>> {
+    return this.delete<IListResponse<any>>(
+      ParameterComerEndpoints.layoutSH + '/' + id,
+      body
+    );
+  }
 }

@@ -17,10 +17,10 @@
               <span class="ml-3 mr-3" style="display: initial !important">
                 {{ statusConv || '-----' }}
               </span> -->
-          <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          <!-- <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
             Regresar
             <i class="fas fa-arrow-circle-left"></i>
-          </button>
+          </button> -->
         </div>
       </div>
       <div class="col-md-12">
@@ -33,16 +33,19 @@
               </h5>
             </div>
             <form [formGroup]="proceedingsConversionForm" class="form-material">
-              <!-- <div class="float-right pl-3">
-                <button (click)="searchProcs()" class="btn btn-primary btn-sm active m-1" tooltip="Conversiones"
+              <div class="float-right pl-3">
+                <button
+                  (click)="searchProcs()"
+                  class="btn btn-primary btn-sm active m-1"
+                  tooltip="Conversiones"
                   containerClass="tooltip-style">
                   <i class="bx bx-list-plus bx-sm float-icon"></i>
                 </button>
-              </div> -->
+              </div>
 
               <div class="form-material">
                 <!-- apppcatd **************************************************************-->
-                <app-card [header]="false" [footer]="true">
+                <app-card [header]="false" [footer]="false">
                   <div body>
                     <div class="row">
                       <div class="col-md-12">
@@ -140,6 +143,7 @@
                           <i aria-hidden="true" class="fa fa-save"></i>
                         </button>
                         <button
+                          [disabled]="!conversion"
                           (click)="agregarActa()"
                           type="button"
                           class="btn btn-info active btn-sm mr-3">
@@ -147,6 +151,7 @@
                           <i class="bx bx-plus bx-sm float-icon"></i>
                         </button>
                         <button
+                          [disabled]="!conversion"
                           type="button"
                           class="btn btn-primary active btn-sm mr-3"
                           (click)="searchActas()">
@@ -357,36 +362,44 @@
                     </form>
                     <div class="row"></div>
                     <div class="row p-3">
+                      <div class="justify-content-end d-flex mb-2">
+                        <app-columns-select
+                          [defaultColumns]="5"
+                          [(settings)]="settings"></app-columns-select>
+                      </div>
                       <div class="col-md-3"></div>
-                      <form [formGroup]="actaGoodForm" class="form-material">
-                        <div class="row mt-12 d-flex justify-content-center">
-                          <div class="col-md-12 justify-content-center">
-                            <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
 
-                            <div class="row">
-                              <form-loader *ngIf="loading"></form-loader>
-                              <div class="col-md-12">
-                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-                                <ng-scrollbar
-                                  [track]="'all'"
-                                  [ngStyle]="{
-                                    height: loading ? '0px' : '400px'
-                                  }">
-                                  <ng2-smart-table
-                                    [attr.class]="
-                                      'table-bordered table-responsive'
-                                    "
-                                    [settings]="settings"
-                                    [source]="dataTableGood"
-                                    (userRowSelect)="selectData($event)">
-                                  </ng2-smart-table>
-                                </ng-scrollbar>
-                                <!-- </div> -->
-                              </div>
+                      <div class="row mt-12 d-flex justify-content-center">
+                        <div class="col-md-12 justify-content-center">
+                          <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
 
-                              <app-pagination
-                                [params]="paramsList"
-                                [totalItems]="totalItems"></app-pagination>
+                          <div class="row">
+                            <form-loader *ngIf="loading"></form-loader>
+                            <div class="col-md-12">
+                              <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                              <ng-scrollbar
+                                [track]="'all'"
+                                [ngStyle]="{
+                                  height: loading ? '0px' : '400px'
+                                }">
+                                <ng2-smart-table
+                                  [attr.class]="
+                                    'table-bordered table-responsive'
+                                  "
+                                  [settings]="settings"
+                                  [source]="dataTableGood"
+                                  (userRowSelect)="selectData($event)">
+                                </ng2-smart-table>
+                              </ng-scrollbar>
+                              <!-- </div> -->
+                            </div>
+
+                            <app-pagination
+                              [params]="paramsList"
+                              [totalItems]="totalItems"></app-pagination>
+                            <form
+                              [formGroup]="actaGoodForm"
+                              class="form-material">
                               <div class="row">
                                 <div class="col-6 mt-4">
                                   <form-field
@@ -401,52 +414,46 @@
                                   </form-field>
                                 </div>
                               </div>
-                            </div>
-
-                            <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
-                              <div [class]="loading ? 'table-loading' : ''" class="overflow-auto">
-                                
-                                
-                              </div>
-                            </ng-scrollbar> -->
+                            </form>
                           </div>
-                          <div class="row pt-2">
-                            <div class="col-md-12 text-center mt-4 mb-4">
-                              <button
-                                tooltip="Agregar Bien al Acta"
-                                containerClass="tooltip-style"
-                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                                type="button"
-                                (click)="addSelect()">
-                                <!-- Mover uno -->
-                                <i class="bx bx-chevron-down bx-md"></i>
-                              </button>
-                              <button
-                                tooltip="Agregar Bienes al Acta"
-                                containerClass="tooltip-style"
-                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                                type="button"
-                                (click)="addAll()">
-                                <!-- Mover todos -->
-                                <i class="bx bx-chevrons-down bx-md"></i>
-                              </button>
-                              <!-- <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
+                        </div>
+                        <div class="row pt-2">
+                          <div class="col-md-12 text-center mt-4 mb-4">
+                            <button
+                              tooltip="Agregar Bien al Acta"
+                              containerClass="tooltip-style"
+                              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                              type="button"
+                              (click)="addSelect()">
+                              <!-- Mover uno -->
+                              <i class="bx bx-chevron-down bx-md"></i>
+                            </button>
+                            <button
+                              tooltip="Agregar Bienes al Acta"
+                              containerClass="tooltip-style"
+                              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                              type="button"
+                              (click)="addAll()">
+                              <!-- Mover todos -->
+                              <i class="bx bx-chevrons-down bx-md"></i>
+                            </button>
+                            <!-- <button class="btn btn-secondary btn-sm active m-3 p-1 pointer" type="button"
                                 (click)="removeAll()">
                                 
                                 <i class="bx bx-chevrons-up bx-md"></i>
                               </button> -->
-                              <button
-                                tooltip="Quitar Bien del Acta"
-                                containerClass="tooltip-style"
-                                class="btn btn-secondary btn-sm active m-3 p-1 pointer"
-                                type="button"
-                                (click)="removeSelect()">
-                                <!-- Quitar uno -->
-                                <i class="bx bx-chevron-up bx-md"></i>
-                              </button>
-                            </div>
+                            <button
+                              tooltip="Quitar Bien del Acta"
+                              containerClass="tooltip-style"
+                              class="btn btn-secondary btn-sm active m-3 p-1 pointer"
+                              type="button"
+                              (click)="removeSelect()">
+                              <!-- Quitar uno -->
+                              <i class="bx bx-chevron-up bx-md"></i>
+                            </button>
                           </div>
-                          <!-- <div class="d-flex justify-content-center">
+                        </div>
+                        <!-- <div class="d-flex justify-content-center">
                             <div class="text-center">
                               <button (click)="addSelect()" class="btn btn-success btn-sm active" type="button">
                                 Agregar <i class="fa fa-plus float-icon"></i>
@@ -462,34 +469,34 @@
                                                       </button>
                             </div>
                           </div> -->
-                          <div class="col-md-12">
-                            <h6>BIENES RELACIONADOS CON EL ACTA</h6>
-                            <div class="row">
-                              <form-loader *ngIf="loading2"></form-loader>
-                              <div class="col-md-12">
-                                <!-- <div [class]="loading ? 'table-loading' : ''"> -->
-                                <ng-scrollbar
-                                  [track]="'all'"
-                                  [ngStyle]="{
-                                    height: loading2 ? '0px' : '400px'
-                                  }">
-                                  <ng2-smart-table
-                                    class="table-responsive"
-                                    [attr.class]="
-                                      'table-bordered table-responsive'
-                                    "
-                                    [settings]="settings2"
-                                    (userRowSelect)="rowsSelected($event)"
-                                    [source]="dataRecepcionGood">
-                                  </ng2-smart-table>
-                                </ng-scrollbar>
-                                <!-- </div> -->
-                              </div>
-                              <app-pagination
-                                [params]="paramsList2"
-                                [totalItems]="totalItems2"></app-pagination>
+                        <div class="col-md-12">
+                          <h6>BIENES RELACIONADOS CON EL ACTA</h6>
+                          <div class="row">
+                            <form-loader *ngIf="loading2"></form-loader>
+                            <div class="col-md-12">
+                              <!-- <div [class]="loading ? 'table-loading' : ''"> -->
+                              <ng-scrollbar
+                                [track]="'all'"
+                                [ngStyle]="{
+                                  height: loading2 ? '0px' : '400px'
+                                }">
+                                <ng2-smart-table
+                                  class="table-responsive"
+                                  [attr.class]="
+                                    'table-bordered table-responsive'
+                                  "
+                                  [settings]="settings2"
+                                  (userRowSelect)="rowsSelected($event)"
+                                  [source]="dataRecepcionGood">
+                                </ng2-smart-table>
+                              </ng-scrollbar>
+                              <!-- </div> -->
                             </div>
-                            <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
+                            <app-pagination
+                              [params]="paramsList2"
+                              [totalItems]="totalItems2"></app-pagination>
+                          </div>
+                          <!-- <ng-scrollbar track="horizontal" [autoHeightDisabled]="false">
                               <div [class]="loading2 ? 'table-loading' : ''" class="overflow-auto">
                                 <ng2-smart-table [attr.class]="'table-bordered my-table'" [settings]="settings2"
                                   (userRowSelect)="rowsSelected($event)" [source]="dataRecepcion">
@@ -498,9 +505,49 @@
                                   [totalItems]="totalItems2"></app-pagination>
                               </div>
                             </ng-scrollbar> -->
-                          </div>
                         </div>
-                      </form>
+                      </div>
+                    </div>
+                    <div
+                      class="d-flex mt-3 flex-row justify-content-center align-items-center">
+                      <!-- <div class="m-3">
+                                      <button type="button" class="btn btn-primary active btn-sm" (click)="getDetail()">
+                                        Detalle de Acta
+                                        <i class="fas fa-edit bx-sm float-icon"></i>
+                                      </button>
+                                    </div> -->
+                      <!-- <div class="m-3">
+                                      <button *ngIf="dataTableGoodsConvertion" type="button" class="btn btn-primary btn-sm active"
+                                        (click)="savActa()">
+                                        Guardar
+                                        <i aria-hidden="true" class="fa fa-save"></i>
+                                      </button>
+                                    </div> -->
+                      <!-- <div class="m-3">
+                                      <button class="btn btn-secondary btn-sm active" type="button" (click)="cargueMasive()">
+                                        Carga Masiva
+                                        <i class="fa fa-upload bx-sm float-icon"></i>
+                                      </button>
+                                    </div> -->
+                      <div class="m-3">
+                        <button
+                          type="button"
+                          class="btn btn-primary active btn-sm"
+                          (click)="Generar()">
+                          Imprimir
+                          <i class="bx bx-printer bx-sm float-icon"></i>
+                        </button>
+                      </div>
+                      <div class="m-3">
+                        <button
+                          [disabled]="!disabledBtnCerrar"
+                          type="button"
+                          class="btn btn-primary active btn-sm"
+                          (click)="cerrarActa(goodFatherNumber)">
+                          Cerrar Acta
+                          <i class="fas fa-close bx-sm float-icon"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </app-card>
@@ -524,34 +571,25 @@
                     <i aria-hidden="true" class="fa fa-save"></i>
                   </button>
                 </div> -->
-                <div class="m-3">
-                  <button
-                    class="btn btn-secondary btn-sm active"
-                    type="button"
-                    (click)="cargueMasive()">
+                <!-- <div class="m-3">
+                  <button class="btn btn-secondary btn-sm active" type="button" (click)="cargueMasive()">
                     Carga Masiva
                     <i class="fa fa-upload bx-sm float-icon"></i>
                   </button>
-                </div>
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-primary active btn-sm"
-                    (click)="Generar()">
+                </div> -->
+                <!-- <div class="m-3">
+                  <button type="button" class="btn btn-primary active btn-sm" (click)="Generar()">
                     Imprimir
                     <i class="bx bx-printer bx-sm float-icon"></i>
                   </button>
                 </div>
                 <div class="m-3">
-                  <button
-                    [disabled]="!disabledBtnCerrar"
-                    type="button"
-                    class="btn btn-primary active btn-sm"
+                  <button [disabled]="!disabledBtnCerrar" type="button" class="btn btn-primary active btn-sm"
                     (click)="cerrarActa(goodFatherNumber)">
                     Cerrar Acta
                     <i class="fas fa-close bx-sm float-icon"></i>
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
           </accordion-group>

@@ -15,7 +15,7 @@ export class MassiveReclassificationGoodsService {
   buildForm() {
     this.form = this.fb.group({
       mode: [null, [Validators.required]],
-      classificationOfGoods: [null, [Validators.required]],
+      classificationOfGoods: [null],
       goodStatus: [null],
       classificationGoodAlterning: [null],
     });

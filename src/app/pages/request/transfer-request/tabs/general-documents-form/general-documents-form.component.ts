@@ -400,7 +400,7 @@ export class GeneralDocumentsFormComponent
         '¿Está seguro de querer asociar la solicitud actual con el expediente Nº ' +
         request.recordId +
         '?',
-      icon: 'info',
+      icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#9D2449',
       cancelButtonColor: '#B38E5D',
@@ -413,7 +413,7 @@ export class GeneralDocumentsFormComponent
           next: resp => {
             Swal.fire({
               title: `Se asoció la solicitud correctamente`,
-              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de la carátula INAI`,
+              text: `La Solicitud ${request.id} fue asociada al expediente ${request.recordId}. Tiene que subir el reporte de Solicitud de Transferencia`,
               icon: 'success',
               showDenyButton: false,
               showCancelButton: false,

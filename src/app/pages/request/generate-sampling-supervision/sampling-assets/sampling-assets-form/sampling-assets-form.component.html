@@ -41,6 +41,21 @@
             </form-field>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-md-4 mt-5">
+            <ngx-select
+              [form]="dateForm"
+              control="transferent"
+              (fetchItems)="getTransferent($event)"
+              [data]="selectTransferent"
+              bindLabel="nameTransferent"
+              [searchable]="false"
+              label="Transferente"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-4"></div>
+        </div>
       </form>
     </div>
     <div class="row pt-6">
@@ -136,7 +151,7 @@
     <div class="row pt-4" style="margin-top: 2%" *ngIf="displaySearchAssetsBtn">
       <div class="d-flex justify-content-end">
         <div class="m-3">
-          <button class="btn btn-primary btn-sm active">
+          <button class="btn btn-primary btn-sm active" (click)="goodSearch()">
             <i class="bx bx-search-alt-2"></i> B&uacute;squeda Bienes
           </button>
         </div>
@@ -171,6 +186,8 @@
     </div>
     <div class="row pt-4">
       <ng2-smart-table
+        #table2
+        id="table2"
         [attr.class]="'table-bordered'"
         [settings]="settings2"
         [source]="paragraphs2"
@@ -264,7 +281,20 @@
         </tab>
         <tab heading="Deductivas">
           <div class="row pt-2">
-            <table class="table table-bordered">
+            <div class="col-md-12">
+              <div [class]="loading ? 'table-loading' : ''">
+                <!-- <ng-scrollbar
+                  track="all"
+                  style="min-height: 200px; border: none"> -->
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings4"
+                  [source]="paragraphsDeductivas">
+                </ng2-smart-table>
+                <!--  </ng-scrollbar> -->
+              </div>
+            </div>
+            <!-- <table class="table table-bordered">
               <thead>
                 <tr style="text-align: center">
                   <th scope="col">Descripci&oacute;n deductiva</th>
@@ -283,7 +313,7 @@
                   </td>
                 </tr>
               </tbody>
-            </table>
+            </table> -->
           </div>
         </tab>
       </tabset>

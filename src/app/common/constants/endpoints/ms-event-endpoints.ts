@@ -15,6 +15,9 @@ export enum EventEndpoints {
   EventXSerie = 'comer-tpeventxserie',
   Application = 'application',
   AppGetfComer = 'application/get-f-comer',
+  Resumen = 'application/resumen',
   DetResumen = 'application/det-resumen',
+  DetRemesa = 'application/det-consignment',
+  ResumenRemesa = 'application/resumen-remesa',
   MANDXEVENTO = 'application/valid-mand-x-event',
 }

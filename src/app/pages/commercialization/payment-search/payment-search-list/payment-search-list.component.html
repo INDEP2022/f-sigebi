@@ -7,37 +7,26 @@
       <form class="form-material mb-0" [formGroup]="searchForm">
         <div class="row">
           <div class="col-sm-6 col-md-3">
-            <form-field [control]="searchForm.get('event')">
-              <ngx-select
-                [form]="searchForm"
-                [data]="eventItems"
-                label="Evento"
-                value="id"
-                bindLabel="id"
-                (fetchItems)="getEvents($event)"
-                control="event">
-              </ngx-select>
+            <form-field [control]="searchForm.get('event')" label="Evento">
+              <input type="text" formControlName="event" class="form-control" />
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
             <form-field [control]="searchForm.get('batch')" label="Lote">
-              <input
-                type="number"
-                formControlName="batch"
-                class="form-control" />
+              <input type="text" formControlName="batch" class="form-control" />
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
-            <form-field [control]="searchForm.get('bank')">
-              <ngx-select
-                [form]="searchForm"
-                [data]="bankItems"
-                label="Banco"
-                value="id"
-                bindLabel="description"
-                (fetchItems)="getBanks($event)"
-                control="bank">
-              </ngx-select>
+            <form-field [control]="searchForm.get('bank')" label="Banco">
+              <ng-custom-select
+                formControlName="bank"
+                class="form-control"
+                path="interfacesirsae/api/v1/banks-sirsae"
+                paramSearch="filter.name_bank"
+                prefixSearch="$ilike"
+                value="name_bank">
+                <ng-template let-item>{{ item.name_bank }}</ng-template>
+              </ng-custom-select>
             </form-field>
           </div>
           <div class="col-sm-6 col-md-3">
@@ -105,25 +94,80 @@
             </form-field>
           </div>
         </div>
-        <div class="row justify-content-center">
-          <div class="col-12 col-sm-12 col-md-4">
-            <div class="col-md-4">
-              <button
-                class="btn btn-primary active btn-sm m-3"
-                (click)="search()"
-                [disabled]="!searchForm.valid">
-                Ejecutar
-              </button>
-            </div>
-            <div class="col-md-4">
-              <button
-                class="btn btn-red btn-sm active m-3"
-                (click)="cleanSearch()"
-                [disabled]="paymentColumns.length == 0">
-                Eliminar B&uacute;squeda
-                <i class="fa fa-trash" aria-hidden="true"></i>
-              </button>
-            </div>
+        <div class="row mb-4">
+          <div class="col-md-12-col-sm12 col-xs-12 text-center">
+            <button
+              class="btn btn-primary active btn-sm m-3"
+              (click)="search()"
+              [disabled]="!searchForm.valid">
+              Ejecutar
+            </button>
+            <button
+              class="btn btn-red btn-sm active m-3"
+              (click)="cleanSearch()"
+              [disabled]="paymentColumns.length == 0">
+              Eliminar B&uacute;squeda
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <br />
+    <div class="row">
+      <form class="form-material mb-0" [formGroup]="searchForm">
+        <div class="col-md-12-col-sm12">
+          <div class="col-md-3">
+            <form-field
+              [control]="searchForm.get('processType')"
+              label="Tipo de Proceso">
+              <ng-select
+                formControlName="processType"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="0">Normales</ng-option>
+                <ng-option value="1">Duplicados</ng-option>
+                <ng-option value="2">No Referenciados</ng-option>
+                <ng-option value="3">Efectivo</ng-option>
+                <ng-option value="4">Inconsistencia</ng-option>
+                <ng-option value="5">Carga de Archivo CSV</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="searchForm.get('action')" label="Acción">
+              <ng-select
+                formControlName="action"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="1">Cancelar</ng-option>
+                <ng-option value="2">Actualizar</ng-option>
+                <ng-option value="3">Registrar</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn btn-sm btn-info active m-3">
+              <i class="bx bx-file text-light float-icon"></i>
+              Aplica
+            </button>
+            <button
+              class="btn btn-sm btn-success active m-3"
+              (click)="loadCSV.click()">
+              <i class="bi bi-file-earmark-excel-fill"></i>
+              Carga de CSV<input
+                #loadCSV
+                hidden
+                type="file"
+                accept=".csv"
+                (change)="getCsv($event)" />
+            </button>
+            <button type="button" class="btn btn-sm btn-info active m-3">
+              <i class="bx bx-file text-light float-icon"></i>
+              Cambio de Proceso
+            </button>
           </div>
         </div>
       </form>
@@ -134,146 +178,27 @@
           <search-bar [params]="params"></search-bar>
         </div>
       </div>
+      <br />
+      <div class="row mb-4">
+        <div class="col-md-12-col-sm12 col-xs-12 text-center">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="loadBatch.click()">
+            <i class="fas fa-sync-alt"></i>
+            Cambiar Lotes<input
+              #loadBatch
+              hidden
+              type="file"
+              accept=".csv"
+              (change)="getCsv($event)" />
+          </button>
+        </div>
+      </div>
       <div class="col-sm-12 col-md-12">
         <div class="d-flex flex-row-reverse my-3">
           <div class="">
             <app-columns-select
               [(settings)]="paymentSettings"></app-columns-select>
-          </div>
-          <div>
-            <button
-              class="btn btn-sm btn-danger active me-2 font-size-14"
-              (click)="loadCSV.click()">
-              <i class="bx bx-save text-light float-icon"></i>
-              Carga de Archivos CSV<input
-                #loadCSV
-                hidden
-                type="file"
-                accept=".csv"
-                (change)="getCsv($event)" />
-            </button>
-          </div>
-          <div>
-            <div
-              class="btn-group d-block me-2"
-              dropdown
-              [isDisabled]="selectedRows.length == 0">
-              <button
-                #actionsBtn
-                dropdownToggle
-                type="button"
-                class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
-                aria-controls="dropdown-actions">
-                <i class="bx bx-file text-light float-icon"></i>
-                Acci&oacute;n <span class="caret"></span>
-              </button>
-              <ul
-                id="dropdown-actions"
-                *dropdownMenu
-                class="dropdown-menu"
-                role="menu"
-                aria-labelledby="processBtn">
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-primary text-light"
-                    (click)="actions('CANCELAR')"
-                    >Cancelar</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-primary text-light"
-                    (click)="actions('ACTUALIZAR')"
-                    >Actualizar</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-primary text-light"
-                    (click)="actions('REGISTRAR')"
-                    >Registrar</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div>
-            <div
-              class="btn-group d-block me-2"
-              dropdown
-              [isDisabled]="selectedRows.length == 0">
-              <button
-                #processBtn
-                dropdownToggle
-                type="button"
-                class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
-                aria-controls="dropdown-batch">
-                <i class="bx bx-file text-light float-icon"></i>
-                Cambio de Proceso <span class="caret"></span>
-              </button>
-              <ul
-                id="dropdown-batch"
-                *dropdownMenu
-                class="dropdown-menu"
-                role="menu"
-                aria-labelledby="processBtn">
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-info text-light"
-                    (click)="changeProcess('NORMALES')"
-                    >Normales</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-info text-light"
-                    (click)="changeProcess('DUPLICADOS')"
-                    >Duplicados</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-info text-light"
-                    (click)="changeProcess('NO REFERENCIADOS')"
-                    >No Referenciados</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-info text-light"
-                    (click)="changeProcess('EFECTIVO')"
-                    >Efectivo</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-info text-light"
-                    (click)="changeProcess('INCONSISTENCIA')"
-                    >Inconsistencia</a
-                  >
-                </li>
-                <li role="menuitem">
-                  <a
-                    class="dropdown-item bg-info text-light"
-                    (click)="changeProcess('CARGA DE ARCHIVO CSV')"
-                    >Carga de Archivo CSV</a
-                  >
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div>
-            <button
-              class="btn btn-sm btn-secondary active me-2 font-size-14"
-              (click)="loadBatch.click()">
-              <i class="bx bx-save text-light float-icon"></i>
-              Cambiar Lotes<input
-                #loadBatch
-                hidden
-                type="file"
-                accept=".csv"
-                (change)="getCsv($event)" />
-            </button>
           </div>
           <div>
             <button

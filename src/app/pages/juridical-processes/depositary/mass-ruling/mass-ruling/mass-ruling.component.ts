@@ -261,21 +261,23 @@ export class MassRulingComponent
   async onClickGoodDictation() {
     console.log(this.dictaminacion);
     let bodyDelete: any = {};
-    this.dictationService.getTmpExpDesahogoByExpedient(793877).subscribe({
-      next: data => {
-        console.log(data);
-        bodyDelete['officialNumber'] = this.dictaminacion.expedientNumber;
-        bodyDelete['typeDictum'] = this.dictaminacion.typeDict;
-        console.log(bodyDelete);
-      },
-      error: err => {
-        this.onLoadToast(
-          'warning',
-          '',
-          'No Se Han encontrado Bienes Relacionados'
-        );
-      },
-    });
+    this.dictationService
+      .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
+      .subscribe({
+        next: data => {
+          console.log(data);
+          bodyDelete['officialNumber'] = this.dictaminacion.expedientNumber;
+          bodyDelete['typeDictum'] = this.dictaminacion.typeDict;
+          console.log(bodyDelete);
+        },
+        error: err => {
+          this.onLoadToast(
+            'warning',
+            '',
+            'No Se Han encontrado Bienes Relacionados'
+          );
+        },
+      });
 
     if (this.dataTable.length < 1) {
       this.onLoadToast(
@@ -349,22 +351,24 @@ export class MassRulingComponent
   async onClickDictation() {
     console.log(this.dictaminacion);
     let bodyDelete: any = {};
-    this.dictationService.getTmpExpDesahogoByExpedient(793877).subscribe({
-      next: data => {
-        console.log(data);
-        bodyDelete['ofDictNumber'] = this.dictaminacion.id;
-        bodyDelete['id'] = data.data[0].goodNumber;
-        bodyDelete['typeDict'] = this.dictaminacion.typeDict;
-        console.log(bodyDelete);
-      },
-      error: err => {
-        this.onLoadToast(
-          'warning',
-          '',
-          'No Se Han encontrado Bienes Relacionados'
-        );
-      },
-    });
+    this.dictationService
+      .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
+      .subscribe({
+        next: data => {
+          console.log(data);
+          bodyDelete['ofDictNumber'] = this.dictaminacion.id;
+          bodyDelete['id'] = data.data[0].goodNumber;
+          bodyDelete['typeDict'] = this.dictaminacion.typeDict;
+          console.log(bodyDelete);
+        },
+        error: err => {
+          this.onLoadToast(
+            'warning',
+            '',
+            'No Se Han encontrado Bienes Relacionados'
+          );
+        },
+      });
 
     const armyOfficeKey = this.form.get('passOfficeArmy').value;
     console.log(armyOfficeKey);

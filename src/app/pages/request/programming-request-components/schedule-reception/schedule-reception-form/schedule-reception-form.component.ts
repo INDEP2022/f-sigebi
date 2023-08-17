@@ -79,6 +79,7 @@ export class ScheduleReceptionFormComponent extends BasePage implements OnInit {
       const programmingData: IGoodProgramming = {
         typeUser: this.typeUserLog,
         regionalDelegationNumber: this.regionalDelegationNum,
+        status: 'EN_PROGRAMACION',
       };
       this.programmingGoodService.createProgramming(programmingData).subscribe({
         next: async (response: IGoodProgramming) => {

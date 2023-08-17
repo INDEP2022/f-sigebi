@@ -101,12 +101,30 @@ export class RegistrationHelper extends BasePage {
     return new Promise((resolve, reject) => {
       let body: any = {};
       body['xidSolicitud'] = id;
-      body['xtipoDocumento'] = 90;
+      //body['xTipoDocumento'] = 90;
       this.wcontentService.getDocumentos(body).subscribe({
         next: (resp: any) => {
           //console.log(resp);
           const length = resp.data.length;
           resolve(length);
+        },
+        error: error => {
+          resolve(0);
+        },
+      });
+    });
+  }
+
+  getDocSolTrans(id: string) {
+    return new Promise((resolve, reject) => {
+      let body: any = {};
+      body['xidSolicitud'] = id;
+      body['xTipoDocumento'] = 90;
+      this.wcontentService.getDocumentos(body).subscribe({
+        next: (resp: any) => {
+          console.log('Documento Sol Trans: ', resp.data[0]);
+          const solTrans = resp.data[0]?.xtipoDocumento;
+          resolve(solTrans);
         },
         error: error => {
           resolve(0);
@@ -135,21 +153,39 @@ export class RegistrationHelper extends BasePage {
     const priorityDate = request.priorityDate;
 
     const lisDocument: any = await this.getDocument(idRequest);
+
+    //Revisa si tiene caráctula inai
+    const solTrans: any = await this.getDocSolTrans(idRequest);
+    console.log(solTrans);
     //Todo: verificar y obtener documentos de la solicitud
     if (request.recordId === null) {
       //Verifica si hay expediente
       this.message('warning', 'La solicitud no tiene expediente asociado', ''); //Henry
       validoOk = false;
-    } else if (!lisDocument || lisDocument < 2) {
+    } else if (solTrans != 90) {
+      console.log('No tiene Sol. Trans');
       this.message(
         'warning',
-        'Se debe adjuntar un documento a la solicitud para continuar',
-        ''
+        'Falta Documento: Solicitud de Transferencia',
+        'Se requiere subir el documento'
+      );
+      //validoOk = false;
+    } else if (!lisDocument || lisDocument < 1) {
+      this.message(
+        'warning',
+        'Falta Documento relacionado a la solicitud',
+        'Se requiere subir documento(s)'
       );
       validoOk = false;
     } else if (urgentPriority === 'Y' && priorityDate === null) {
       //TODO: Si lista de documentos es < 1 -> Se debe asociar un archivo a la solicitud
-      this.message('warning', 'Atención', 'Debe seleccionar una fecha');
+      this.message(
+        'warning',
+        'Atención',
+        'Debe seleccionar una fecha de prioridad'
+      );
+      validoOk = false;
+    } else if (idTrandference === 1) {
       if (paperNumber === '' || paperDate == null) {
         this.message(
           'error',
@@ -174,13 +210,12 @@ export class RegistrationHelper extends BasePage {
           'Atención',
           'El No. Oficio no puede ser vacío'
         );
-        /*this.message(
-          'error',
-
+      } else if (lawsuit === '' && protectNumber === '' && tocaPenal === '') {
+        this.message(
           'warning',
-
-          'Para la transferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal'
-        );*/
+          'Para la trasnferente PJF se debe tener al menos Causa Penal o No. Amparo o Toca Penal',
+          ''
+        );
       } else {
         validoOk = true;
       }
@@ -248,6 +283,7 @@ export class RegistrationHelper extends BasePage {
         let sinDescripcionT: boolean = false;
         let codigoFraccion: any = null;
         let faltaClasificacion: boolean = false;
+        let sinNoClasificador: boolean = false;
         // variables para validaci�n de atributos por tipo de bien LIRH 06/02/2021
         let tipoRelVehiculo: boolean = false;
         let tipoRelAeronave: boolean = false;
@@ -268,6 +304,16 @@ export class RegistrationHelper extends BasePage {
               'Todos los Bienes deben tener asociada una dirección o deben ser menajes'
             );
             break;
+          } else if (
+            good.goodClassNumber == 0 ||
+            good.goodClassNumber == null
+          ) {
+            sinNoClasificador = true;
+            this.message(
+              'warning',
+              `No se puede guardar el Bien #${good.id}: ${good.goodDescription}`,
+              'No se ha guardado la clasificación del bien'
+            );
           } else if (good.goodTypeId == null) {
             sinTipoRelevante = true;
             this.message(
@@ -739,6 +785,7 @@ export class RegistrationHelper extends BasePage {
           faltaClasificacion === false &&
           sinDireccion === false &&
           sinTipoRelevante === false &&
+          sinNoClasificador === false &&
           sinCantidad === false &&
           sinDestinoT === false &&
           sinUnidadM === false &&

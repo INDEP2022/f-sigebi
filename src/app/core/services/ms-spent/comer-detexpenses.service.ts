@@ -21,4 +21,8 @@ export class ComerDetexpensesService extends HttpService {
       params
     );
   }
+
+  remove(id: string) {
+    return this.delete(SpentEndpoints.ExpenseComerDet + '/' + id);
+  }
 }

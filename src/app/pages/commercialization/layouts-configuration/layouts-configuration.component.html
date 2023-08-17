@@ -1,14 +1,14 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Configuracion Layouts</h5>
-    <div class="col-md-5 buttons">
+    <!-- <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings6"></app-columns-select>
-      <!-- <div>
+      <div>
         <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
           Nuevo
         </button>
-      </div> -->
-    </div>
+      </div>
+    </div> -->
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -138,6 +138,16 @@
                   </div>
                   <div
                     class="col-12 col-sm-12 col-md-4 text-end d-flex flex-row-reverse">
+                    <div>
+                      <button
+                        type="button"
+                        tooltip="Nuevo"
+                        (click)="addLayouts()"
+                        containerClass="tooltip-style"
+                        class="btn btn-info btn-sm active ml-2 mr-2">
+                        Nuevo <i class="bx bx-plus bx-sm float-icon"></i>
+                      </button>
+                    </div>
                     <app-columns-select
                       [leftList]="true"
                       [(settings)]="settings5"></app-columns-select>
@@ -151,9 +161,9 @@
                         [attr.class]="'table-bordered'"
                         [settings]="settings5"
                         [source]="dataTableLayouts"
-                        (userRowSelect)="
-                          userRowSelect($event)
-                        "></ng2-smart-table>
+                        (userRowSelect)="userRowSelect($event)"
+                        (edit)="editLayouts($event)"
+                        (delete)="deleteLayouts($event)"></ng2-smart-table>
                     </div>
                   </div>
                   <div class="col-sm-12 col-12 col-md-12">

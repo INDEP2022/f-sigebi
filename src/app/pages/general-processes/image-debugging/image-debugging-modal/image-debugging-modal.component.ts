@@ -135,7 +135,7 @@ export class ImageDebuggingModalComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/*',
+        accept: 'image/jpg,image/png',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',

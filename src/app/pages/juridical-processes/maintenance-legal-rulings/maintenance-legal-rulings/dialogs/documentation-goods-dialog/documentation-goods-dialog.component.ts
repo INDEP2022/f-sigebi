@@ -9,6 +9,7 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -73,15 +74,43 @@ export class DocumentationGoodsDialogComponent
     this.documentsDictumXStateMForm = this.fb.group({
       officialNumber: [null],
       typeDictum: ['', Validators.required],
-      expedientNumber: [null, Validators.required],
-      stateNumber: [null, Validators.required],
-      key: ['', Validators.required],
-      dateReceipt: [null],
-      userReceipt: [''],
-      insertionDate: [null],
-      userInsertion: [''],
-      notificationDate: [null],
-      secureKey: [null],
+      expedientNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(15),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      stateNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(11),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      key: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      dateReceipt: [null, [Validators.required]],
+      userReceipt: ['', [Validators.required, Validators.maxLength(15)]],
+      insertionDate: [null, [Validators.required]],
+      userInsertion: ['', [Validators.required, Validators.maxLength(30)]],
+      notificationDate: [null, [Validators.required]],
+      secureKey: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
     });
 
     if (this.dataCreate) {
@@ -129,8 +158,8 @@ export class DocumentationGoodsDialogComponent
           this.loading = false;
           this.onLoadToast(
             'error',
-            'Error',
-            `Verifique los datos ingresados en el formulario`
+            ' Los Datos Ingresados son Incorrectos.',
+            `Por favor de Verificar`
           );
           this.close();
         },

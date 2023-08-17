@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nuevo usuario de distribución</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mb-3 mt-3">
+        <form-field [control]="form.get('user')" class="col">
+          <ngx-select
+            (fetchItems)="getDataUser($event)"
+            label="Usuario"
+            control="user"
+            bindLabel="labelData"
+            [form]="form"
+            [data]="dataUser">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="row mb-3 mt-3">
+        <form-field [control]="form.get('indDis')" class="col-md-6">
+          <label class="form-check-label pr-5 pl-5">
+            Envío Correo de Distribución
+          </label>
+          <input
+            type="checkbox"
+            formControlName="indDis"
+            class="form-check-input" />
+        </form-field>
+        <form-field [control]="form.get('indSirsae')" class="col-md-6">
+          <label class="form-check-label pr-5 pl-5"> No. Envío a SIRSAE </label>
+          <input
+            type="checkbox"
+            formControlName="indSirsae"
+            class="form-check-input" />
+        </form-field>
+      </div>
+    </form>
+
+    <div class="row text-center mb-3 mt-3">
+      <div class="col">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active mr-3"
+          (click)="saveNew()">
+          Guardar
+          <i aria-hidden="true" class="fa fa-save"></i>
+        </button>
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

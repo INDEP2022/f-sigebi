@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GoodProcessPoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 
@@ -33,5 +34,8 @@ export class FIndicaService extends HttpService {
       `${environment.API_URL}goodprocess/api/v1/findica/getFile`,
       data
     );
+  }
+  postGetListGood(body: Object, params: ListParams) {
+    return this.post('update-good-status/getListGood', body, params);
   }
 }

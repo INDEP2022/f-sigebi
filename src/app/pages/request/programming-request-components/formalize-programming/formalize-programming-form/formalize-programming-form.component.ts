@@ -29,6 +29,7 @@ import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.servi
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { SignatoriesService } from 'src/app/core/services/ms-electronicfirm/signatories.service';
 import { EmailService } from 'src/app/core/services/ms-email/email.service';
+import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
@@ -120,6 +121,7 @@ export class FormalizeProgrammingFormComponent
   observation: string = '';
   proceedingData: IProceedings;
   task: ITask;
+
   settingsGuardGoods = {
     ...this.settings,
     actions: false,
@@ -276,7 +278,8 @@ export class FormalizeProgrammingFormComponent
     private sanitizer: DomSanitizer,
     private taskService: TaskService,
     private authService: AuthService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private goodsProcessService: GoodprocessService
   ) {
     super();
     this.settings.columns = TRANSPORTABLE_GOODS_FORMALIZE;
@@ -327,6 +330,8 @@ export class FormalizeProgrammingFormComponent
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
     params.getValue()['filter.actId'] = this.actId;
+    params.getValue()['filter.statusReceipt'] = 'CERRADO';
+
     this.receptionGoodService.getReceipt(params.getValue()).subscribe({
       next: response => {
         this.receiptData = response.data[0];
@@ -342,6 +347,7 @@ export class FormalizeProgrammingFormComponent
     const params = new BehaviorSubject<ListParams>(new ListParams());
     params.getValue()['filter.programmingId'] = this.programmingId;
     params.getValue()['filter.actId'] = this.actId;
+    params.getValue()['filter.statusReceiptGuard'] = 'CERRADO';
     this.receptionGoodService.getReceptions(params.getValue()).subscribe({
       next: response => {
         //this.receiptGuardGood = response.data[0];
@@ -775,70 +781,150 @@ export class FormalizeProgrammingFormComponent
     */
   }
 
-  generateMinute(proceeding: IProceedings) {
+  async generateMinute(proceeding: IProceedings) {
     proceeding.programmingId = this.programmingId;
-    if (
-      this.receiptData?.statusReceipt == 'CERRADO' ||
-      this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
-      this.receiptWarehouseData?.statusReceiptGuard == 'CERRADO'
-    ) {
-      if (this.proceeding.value[0].observationProceedings) {
-        this.proceedingService.updateProceeding(proceeding).subscribe({
-          next: () => {
-            let config = {
-              ...MODAL_CONFIG,
-              class: 'modal-lg modal-dialog-centered',
-            };
-
-            config.initialState = {
-              proceeding,
-              programming: this.programming,
-              typeTransferent: this.typeTransferent,
-              callback: (
-                proceeding: IProceedings,
-                tranType: string,
-                typeFirm: string
-              ) => {
-                if (proceeding && tranType) {
-                  this.processInfoProceeding(proceeding, tranType, typeFirm);
-                  //this.getProccedings();
-                }
-              },
-            };
-
-            this.modalService.show(InformationRecordComponent, config);
-          },
-          error: error => {},
-        });
-      } else {
-        let config = {
-          ...MODAL_CONFIG,
-          class: 'modal-lg modal-dialog-centered',
-        };
-
-        config.initialState = {
-          proceeding,
-          programming: this.programming,
-          typeTransferent: this.typeTransferent,
-          callback: (
-            proceeding: IProceedings,
-            tranType: string,
-            typeFirm: string
-          ) => {
-            this.processInfoProceeding(proceeding, tranType, typeFirm);
-            //this.getProccedings();
-          },
-        };
-
-        this.modalService.show(InformationRecordComponent, config);
-      }
-    } else {
-      this.alertInfo(
+    const receiptCheck = await this.checkReceipt();
+    const receiptGuardCheck = await this.checkReceiptGuard();
+    const receiptWarehouseCheck = await this.checkReceiptWarehouse();
+    if (receiptCheck == true) {
+      this.alert(
         'warning',
-        'Acción Inválida',
-        'Se requiere tener los recibos cerrados'
-      ).then();
+        'Acción Invalida',
+        'Se requiere cerrar todos los recibos de entrega'
+      );
+    } else if (receiptGuardCheck == true) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere cerrar todos los recibos de resguardo'
+      );
+    } else if (receiptWarehouseCheck == true) {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'Se requiere cerrar todos los recibos de almacén'
+      );
+    } else if (!receiptCheck && !receiptGuardCheck && !receiptWarehouseCheck) {
+      console.log('LISTE PARA CERRAR');
+      if (
+        this.receiptData?.statusReceipt == 'CERRADO' ||
+        this.receiptGuardData?.statusReceiptGuard == 'CERRADO' ||
+        this.receiptWarehouseData?.statusReceiptGuard == 'CERRADO'
+      ) {
+        if (this.proceeding.value[0].observationProceedings) {
+          this.proceedingService.updateProceeding(proceeding).subscribe({
+            next: () => {
+              let config = {
+                ...MODAL_CONFIG,
+                class: 'modal-lg modal-dialog-centered',
+              };
+
+              config.initialState = {
+                proceeding,
+                programming: this.programming,
+                typeTransferent: this.typeTransferent,
+                callback: (
+                  proceeding: IProceedings,
+                  tranType: string,
+                  typeFirm: string
+                ) => {
+                  if (proceeding && tranType) {
+                    this.processInfoProceeding(proceeding, tranType, typeFirm);
+                    //this.getProccedings();
+                  }
+                },
+              };
+
+              this.modalService.show(InformationRecordComponent, config);
+            },
+            error: error => {},
+          });
+        } else {
+          let config = {
+            ...MODAL_CONFIG,
+            class: 'modal-lg modal-dialog-centered',
+          };
+
+          config.initialState = {
+            proceeding,
+            programming: this.programming,
+            typeTransferent: this.typeTransferent,
+            callback: (
+              proceeding: IProceedings,
+              tranType: string,
+              typeFirm: string
+            ) => {
+              this.processInfoProceeding(proceeding, tranType, typeFirm);
+              //this.getProccedings();
+            },
+          };
+
+          this.modalService.show(InformationRecordComponent, config);
+        }
+      } else {
+        this.alertInfo(
+          'warning',
+          'Acción Inválida',
+          'Se requiere tener los recibos cerrados'
+        ).then();
+      }
     }
+  }
+
+  checkReceipt() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.actId'] = this.actId;
+      params.getValue()['filter.statusReceipt'] = 'ABIERTO';
+
+      this.receptionGoodService.getReceipt(params.getValue()).subscribe({
+        next: response => {
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  checkReceiptGuard() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.actId'] = this.actId;
+      params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
+      params.getValue()['filter.typeReceipt'] = 'RESGUARDO';
+      this.receptionGoodService.getReceptions(params.getValue()).subscribe({
+        next: response => {
+          console.log('RECIBO RESGUARDO ABIERTO');
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
+  }
+
+  checkReceiptWarehouse() {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.programmingId'] = this.programmingId;
+      params.getValue()['filter.actId'] = this.actId;
+      params.getValue()['filter.statusReceiptGuard'] = 'ABIERTO';
+      params.getValue()['filter.typeReceipt'] = 'ALMACEN';
+      this.receptionGoodService.getReceptions(params.getValue()).subscribe({
+        next: response => {
+          console.log('RECIBO almacén ABIERTO');
+          resolve(true);
+        },
+        error: error => {
+          resolve(false);
+        },
+      });
+    });
   }
 
   saveInfoProceeding() {
@@ -1354,40 +1440,94 @@ export class FormalizeProgrammingFormComponent
         if (closeTask) {
           const deleteGoodsReprog = await this.deleteGoodReprog();
           if (deleteGoodsReprog) {
-            this.alertInfo(
-              'success',
-              'Acción correcta',
-              'Se cerro la tarea formalizar entrega correctamente'
-            ).then(question => {
-              if (question.isConfirmed) {
-                this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+            const updateProgramming = await this.updateProgrammingInfo();
+            if (updateProgramming) {
+              const sendGoodInventary = await this.sendGoodsGuardInventary();
+              if (sendGoodInventary) {
+                this.alertInfo(
+                  'success',
+                  'Acción correcta',
+                  'Se cerro la tarea formalizar entrega correctamente'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.router.navigate(['pages/siab-web/sami/consult-tasks']);
+                  }
+                });
               }
-            });
+            }
           }
         }
       }
     });
   }
 
+  updateProgrammingInfo() {
+    return new Promise((resolve, reject) => {
+      const form = {
+        id: this.programming.id,
+        status: 'APROBADA',
+      };
+
+      this.programmingService
+        .updateProgramming(this.programming.id, form)
+        .subscribe({
+          next: response => {
+            resolve(true);
+          },
+          error: error => {
+            resolve(true);
+          },
+        });
+    });
+  }
+
+  sendGoodsGuardInventary() {
+    return new Promise((resolve, reject) => {
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          data.map((item: IGood) => {
+            this.goodsProcessService
+              .AddReceptionBpm(Number(item.id), Number(item.goodId))
+              .subscribe({
+                next: response => {
+                  console.log('se envio', response);
+                  resolve(true);
+                },
+                error: error => {
+                  resolve(true);
+                },
+              });
+          });
+        });
+      } else {
+        resolve(true);
+      }
+    });
+  }
+
   deleteGoodReprog() {
     return new Promise((resolve, reject) => {
-      this.goodsGuards.getElements().then(data => {
-        const deleteGoodProg = {
-          programmingId: this.programming.id,
-          goodId: data.goodId,
-        };
+      if (this.goodsGuards.count() > 0) {
+        this.goodsGuards.getElements().then(data => {
+          const deleteGoodProg = {
+            programmingId: this.programming.id,
+            goodId: data.goodId,
+          };
 
-        this.programmingGoodService
-          .deleteGoodProgramming(deleteGoodProg)
-          .subscribe({
-            next: response => {
-              resolve(true);
-            },
-            error: error => {
-              resolve(true);
-            },
-          });
-      });
+          this.programmingGoodService
+            .deleteGoodProgramming(deleteGoodProg)
+            .subscribe({
+              next: response => {
+                resolve(true);
+              },
+              error: error => {
+                resolve(true);
+              },
+            });
+        });
+      } else {
+        resolve(true);
+      }
     });
   }
 

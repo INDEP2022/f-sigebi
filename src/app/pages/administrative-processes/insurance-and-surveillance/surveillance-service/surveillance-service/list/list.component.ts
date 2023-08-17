@@ -102,6 +102,7 @@ export class ListComponent extends BasePage implements OnInit {
     if (this.data.typeDelegation) {
       params['filter.delegationType'] = `$eq:${this.data.typeDelegation}`;
     }
+    params['sortBy'] = 'recordId:ASC';
     this.survillanceService.getVigSupervisionTmp(params).subscribe({
       next: async (response: any) => {
         console.log('GET DATA', response);

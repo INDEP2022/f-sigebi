@@ -41,6 +41,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
   responsable: any;
   testigoTwo: any;
   years: number[] = [];
+  foolio: number;
+  mes: any;
   currentYear: number = new Date().getFullYear();
   months = [
     { value: 1, label: 'Enero' },
@@ -71,7 +73,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.expedient);
+    console.log('expedient--', this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
     for (let i = 1900; i <= this.currentYear; i++) {
@@ -85,7 +87,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       type: [null, Validators.required],
       claveTrans: [null, Validators.required],
       administra: [null, Validators.required],
-      cveReceived: [null, Validators.required],
+      //cveReceived: [null, Validators.required],
       consec: [null, Validators.required],
       // ejecuta: [null],
       anio: [null, [Validators.required]],
@@ -155,29 +157,32 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
 
-    this.rNomenclaService.getAll(params.getParams()).subscribe({
-      next: (data: any) => {
-        console.log('data', data);
-        let result = data.data.map(async (item: any) => {
-          item['cveReceived'] =
-            item.numberDelegation2 + ' - ' + item.delegation;
-        });
+    // this.rNomenclaService.getAll(params.getParams()).subscribe({
+    //   next: (data: any) => {
+    //     console.log('data', data);
+    //     let result = data.data.map(async (item: any) => {
+    //       item['cveReceived'] =
+    //         item.numberDelegation2 + ' - ' + item.delegation;
+    //     });
 
-        Promise.all(result).then(resp => {
-          this.dele = new DefaultSelect(data.data, data.count);
-        });
-      },
-      error: error => {
-        this.dele = new DefaultSelect([], 0);
-      },
-    });
+    //     Promise.all(result).then(resp => {
+    //       this.dele = new DefaultSelect(data.data, data.count);
+    //     });
+    //   },
+    //   error: error => {
+    //     this.dele = new DefaultSelect([], 0);
+    //   },
+    // });
   }
 
   consultREG_TRANSFERENTES(lparams: ListParams) {
+    console.log('LPARAMS - ', lparams);
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
       expedientType: this.expedient.expedientType,
     };
+
+    console.log('ObJ --', obj);
 
     const params = new FilterParams();
 
@@ -216,7 +221,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const acta = this.actaRecepttionForm.value.acta;
     const type = this.actaRecepttionForm.value.type;
     const claveTrans = this.actaRecepttionForm.value.claveTrans;
-    const cveReceived = this.actaRecepttionForm.value.cveReceived;
+    //const cveReceived = this.actaRecepttionForm.value.cveReceived;
     const administra = this.actaRecepttionForm.value.administra;
     const consec = this.actaRecepttionForm.value.consec;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
@@ -226,15 +231,23 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
 
+    localStorage.setItem('anio', anio);
+    console.log('AÑO', anio);
+    localStorage.setItem('mes', mes.label);
+
     let consec_ = consec.toString().padStart(4, '0');
+    this.foolio = consec;
+    console.log('MES', mes);
+    console.log('numeraryFolio - >', consec);
     if (consec_.length > 4) {
       consec_ = consec_.toString().slice(0, 4);
     }
 
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
+    //const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
+    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${consec_}/${miSubcadena
       .toString()
       .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
-    console.log(cveActa);
+    console.log('cveActa -->', cveActa);
 
     if (cveActa) {
       const params = new ListParams();
@@ -258,6 +271,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       });
     }
   }
+
   newRegister: any;
   guardarRegistro(cveActa: any) {
     let obj: any = {
@@ -271,7 +285,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       witness1: this.testigoTwo,
       witness2: this.testigoTree,
       typeProceedings: 'ROBO',
-      dateElaborationReceipt: null,
+      dateElaborationReceipt: this.mes,
       dateDeliveryGood: null,
       responsible: this.responsable,
       destructionMethod: null,
@@ -286,7 +300,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       identifier: null,
       label: null,
       universalFolio: null,
-      numeraryFolio: null,
+      numeraryFolio: this.foolio,
       numTransfer: null,
       idTypeProceedings: null,
       receiptKey: null,

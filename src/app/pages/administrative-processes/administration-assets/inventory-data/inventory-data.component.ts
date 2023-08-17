@@ -118,9 +118,6 @@ export class InventoryDataComponent
         edit: true,
         delete: false,
       },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
-      },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
         value: {

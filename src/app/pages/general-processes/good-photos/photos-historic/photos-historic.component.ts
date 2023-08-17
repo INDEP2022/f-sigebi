@@ -1,4 +1,5 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { take } from 'rxjs';
 import {
   FilePhotoService,
   IHistoricalPhoto,
@@ -61,13 +62,16 @@ export class PhotosHistoricComponent implements OnInit {
 
   private getData() {
     if (this.goodNumber) {
-      this.service.getAllHistoric(this.goodNumber).subscribe({
-        next: response => {
-          if (response) {
-            this.files = [...response];
-          }
-        },
-      });
+      this.service
+        .getAllHistoric(this.goodNumber)
+        .pipe(take(1))
+        .subscribe({
+          next: response => {
+            if (response) {
+              this.files = [...response];
+            }
+          },
+        });
     }
   }
 

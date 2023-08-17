@@ -108,4 +108,12 @@ export class ComerInvoiceService extends HttpService {
   }) {
     return this.post(ENDPOINT_INVOICE.ControlProcedure, data);
   }
+
+  VALIDA_PAGOS(params: any) {
+    return this.post(ENDPOINT_INVOICE.Fcomer112ICountHeader, params);
+  }
+
+  generateFolio(data: { pEvent: string; ptpevento: string }) {
+    return this.post(ENDPOINT_INVOICE.GenerateFolio, data);
+  }
 }
