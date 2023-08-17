@@ -13,7 +13,12 @@ import { PaymentDispersionMonitorRoutingModule } from './payment-dispersion-moni
 //@Standalone Components
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 //Components
+import { CanLcsWarrantyComponent } from './can-lcs-warranty/can-lcs-warranty.component';
+import { CanPagosCabComponent } from './can-pagos-cab/can-pago-cab.component';
+import { CanRelusuComponent } from './can-relusu/can-relusu.component';
+import { NewCanRelusuComponent } from './can-relusu/new-can-relusu/new-can-relusu.component';
 import { CanTimesComponent } from './can-times/can-times.component';
+import { CanUsuSirsaeComponent } from './can-usu-sirsae/can-usu-sirsae.component';
 import { ComerPaymentVirtComponent } from './comer-payment-virt/comer-payment-virt.component';
 import { AudienceSirsaePaymentsComponent } from './dispersion-payment-details/audience-sirsae-payments/audience-sirsae-payments.component';
 import { BatchPaymentsComponent } from './dispersion-payment-details/batch-payments/batch-payments.component';
@@ -27,11 +32,6 @@ import { OrderWOBillingComponent } from './dispersion-payment-details/order-w-o-
 import { SirsaePaymentsComponent } from './dispersion-payment-details/sirsae-payments/sirsae-payments.component';
 import { DispersionPaymentComponent } from './dispersion-payment/dispersion-payment.component';
 import { NewComerPaymentVirt } from './new-comer-payment-virt/new-comer-payment-virt.component';
-import { CanUsuSirsaeComponent } from './can-usu-sirsae/can-usu-sirsae.component';
-import { CanPagosCabComponent } from './can-pagos-cab/can-pago-cab.component'
-import { CanLcsWarrantyComponent } from './can-lcs-warranty/can-lcs-warranty.component'
-import { CanRelusuComponent } from './can-relusu/can-relusu.component';
-import { NewCanRelusuComponent } from './can-relusu/new-can-relusu/new-can-relusu.component';
 
 @NgModule({
   declarations: [

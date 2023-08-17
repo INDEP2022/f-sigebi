@@ -5,7 +5,10 @@ import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods'
 import { Repository } from 'src/app/common/repository/repository';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { BankAccount } from 'src/app/pages/administrative-processes/numerary/tesofe-movements/list-banks/bank';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import {
   IBankAccount,
   IProReconcilesGood,
@@ -35,6 +38,14 @@ export class BankAccountService
   getAll(params: Params) {
     return this.repository.getAllPaginated(
       `${this.microservice}/${this.api}`,
+      params
+    );
+  }
+
+  getAllFilterSelf(self?: BankAccountService, params?: _Params) {
+    return self.get<IListResponseMessage<IBankAccount>>(
+      `${self.api}?filter.accountType=$eq:CONCENTRADORA`,
+      //+ '?filter.accountnumberorigindeposit=$not:$null'
       params
     );
   }

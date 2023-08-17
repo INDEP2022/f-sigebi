@@ -512,7 +512,6 @@ export class FormalGoodsEstateComponent
         icon: 'warning',
         title: 'ID DEL LOTE',
         message: 'ID del Lote Vacío',
-
       };
       this.handleSuccess(obj);
     }

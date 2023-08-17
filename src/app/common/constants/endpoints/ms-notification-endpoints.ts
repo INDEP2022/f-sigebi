@@ -34,4 +34,6 @@ export enum NotificationEndpoints {
   NotificationxPropertyFilter2 = `notification-x-property/filter`,
 
   byFileNumber = `notification/maxCFlyer`,
+
+  confirmStatus = `application/post-pup-valida-estatus-bien`,
 }

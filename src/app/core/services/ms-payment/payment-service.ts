@@ -15,3 +15,19 @@ export interface IComerReldisDisp {
   numberRecord: number,
   indlibpg: number
 }
+
+export interface IOI_DTO {
+  idEvento: string;
+  idLote: string;
+  pTipo: string;
+  clkpv: string;
+}
+
+export interface IOI {
+  oi: string;
+  monto: string;
+  tipo: string;
+  devolucion: string;
+  mandato: string;
+}
+

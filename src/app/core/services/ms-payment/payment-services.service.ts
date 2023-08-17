@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
 import { PaymentEndPoints } from 'src/app/common/constants/endpoints/ms-payment';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
-import { IComerPaymentsRefVir, IComerReldisDisp } from './payment-service';
+import { IListResponseMessage } from '../../interfaces/list-response.interface';
+import {
+  IComerPaymentsRefVir,
+  IComerReldisDisp,
+  IOI,
+  IOI_DTO,
+} from './payment-service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +17,10 @@ export class PaymentService extends HttpService {
   constructor() {
     super();
     this.microservice = PaymentEndPoints.BasePath;
+  }
+
+  getOI(body: IOI_DTO) {
+    return this.post<IListResponseMessage<IOI>>(PaymentEndPoints.getOI, body);
   }
 
   getComerPaymentRef(params: _Params) {
@@ -117,4 +127,11 @@ export class PaymentService extends HttpService {
   // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
   //   return this.post('comer-payments-ref-virt', body);
   // }
+
+  getBusquedaMae(params: string) {
+    return this.get(
+      PaymentEndPoints.BusquedaPagosMae,
+      `&filter.tsearchId=$eq:${params}`
+    );
+  }
 }
