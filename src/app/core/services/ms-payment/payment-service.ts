@@ -9,11 +9,11 @@ export interface IComerPaymentsRefVir {
 }
 
 export interface IComerReldisDisp {
-  user: string,
-  inddistance: number,
-  indsirsae: number,
-  numberRecord: number,
-  indlibpg: number
+  user: string;
+  inddistance: number;
+  indsirsae: number;
+  numberRecord: number;
+  indlibpg: number;
 }
 
 export interface IOI_DTO {
@@ -30,4 +30,3 @@ export interface IOI {
   devolucion: string;
   mandato: string;
 }
-

@@ -90,6 +90,7 @@ export class CustomSelectWidthLoading
   inputAttrs: Attr = {
     maxLength: '',
   };
+  firstLoad = true;
   title: string = '';
   page: number = 1;
   isLoading: boolean = false;
@@ -353,9 +354,10 @@ export class CustomSelectWidthLoading
         distinctUntilChanged(),
         switchMap((text: string) => {
           // console.log(this.items);
-          if (text === null) {
+          if (text === null || (!this.firstLoad && text.length < 3)) {
             return of(null);
           }
+          this.firstLoad = false;
           this.page = 1;
           this.isLoading = true;
           return this.getItemsObservable(text);
