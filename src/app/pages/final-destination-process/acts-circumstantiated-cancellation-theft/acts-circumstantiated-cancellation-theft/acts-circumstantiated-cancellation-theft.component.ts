@@ -102,8 +102,7 @@ import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scannin
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -613,7 +612,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() {}
+  onSubmit() { }
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -855,8 +854,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-
-
       // Se mapea el campo autoridad
       //this.expedient.authorityNumber;
       // Pasar clave a esta función
@@ -1214,8 +1211,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
     }
   }
-
-
   //Quitar uno
   removeSelect() {
 
@@ -1229,6 +1224,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
     else {
       console.log("this.actasDefault ", this.actasDefault);
+
       if (this.actasDefault == null) {
         this.alert(
           'warning',
@@ -1275,6 +1271,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
     }
     console.log("selectedGooodsValid--", this.selectedGooodsValid);
+
   }
 
   //Quitar todos
@@ -1296,6 +1293,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         return;
       } else {
         console.log("DataRecepcion", this.dataRecepcion);
+
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
             console.log('this.dataRecepcion', this.dataRecepcion);
@@ -1381,8 +1379,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() {}
-  sendOffice() {}
+  btnDetail() { }
+  sendOffice() { }
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1475,6 +1473,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.actaRecepttionForm
         .get('claveTrans')
         .setValue(this.authorityNumber);
+
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
       //   'MM/yyyy'
@@ -1637,6 +1636,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
 
   viewPictures(event: any) {
+
+    let foliouniversal = this.formScan.get('scanningFoli').value;
+    console.log('FOLIO PARA IMA -->', foliouniversal);
+    if (foliouniversal == null) {
+      this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar', '');
+      return;
+    }
     console.log(event);
     if (!this.wheelNumber) {
       this.onLoadToast('error', 'Error', 'ésta acta no tiene volante asignado');
@@ -1646,7 +1652,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   }
 
   getDocumentsByFlyer(flyerNum: string | number) {
-    const title = 'Folios relacionados al Volante';
+    const title = 'Folios relacionados con el expediente';
     const modalRef = this.openDocumentsModal(flyerNum, title);
     modalRef.content.selected
       .pipe(takeUntil(this.$unSubscribe))
@@ -1784,7 +1790,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       'Aviso',
       'Se Generará un Nuevo Folio de Escaneo para el Acta Abierta. ¿Deseas continuar?'
     );
-
     if (!response.isConfirmed) {
       return;
     }
@@ -1795,9 +1800,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        flyerNumber +
+        ' y Expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -1839,11 +1844,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
           this.disabledBtnReplicar = true;
-
         }),
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
             this.formScan.get('scanningFoli').value;
+          this.showMessageDigitalization();    // se llama el reporte 
+
+          console.log('this.actasDefault.universalFolio -->>', this.dataRecepcion.universalFolio);
           return Observable.create(() => {
             _document;
           });
@@ -1886,7 +1893,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1972,7 +1979,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => {},
+                  callback: (data: any) => { },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
@@ -2055,6 +2062,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
   }
   async createScannerFoil() {
+
+    // validación
+    let foliouniversal = this.formScan.get('scanningFoli').value;
+    if (foliouniversal != null) {
+      this.alert('warning', 'El Acta ya Tiene Folio de Escaneo', '');
+      return;
+    }
     if (!this.actasDefault) {
       this.alertInfo('warning', 'Debe Seleccionar un Acta', '');
       return;
@@ -2063,7 +2077,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
       return;
     }
-
     this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
     delete this.actasDefault.numDelegation1Description;
     delete this.actasDefault.numDelegation2Description;
@@ -2075,15 +2088,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
           this.disabledBtnEscaneo = true;
           await this.confirmScanRequest();
-
-
         },
         error: error => {
           this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
           // this.loading = false
         },
-
       });
+
   }
 
   saveNewUniversalFolio_Replicate() {

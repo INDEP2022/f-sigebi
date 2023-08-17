@@ -67,4 +67,20 @@ export class DocumentsForDictumService
   postDocuemntFolio2(params: any) {
     return this.post(ENDPOINT_LINKS.insertDocumentFol, params);
   }
+
+  postDocuemnt(params: any) {
+    return this.post(ENDPOINT_LINKS.insertDocument, params);
+  }
+
+  getByFolio(folio: number) {
+    return this.get(`${ENDPOINT_LINKS.documentFolio}/${folio}`);
+  }
+
+  changeStatus(params: any) {
+    return this.put(ENDPOINT_LINKS.setStatus, params);
+  }
+
+  postDocumentHist(params: any) {
+    return this.post(ENDPOINT_LINKS.documentHist, params);
+  }
 }

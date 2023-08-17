@@ -101,8 +101,8 @@ export class EffectiveNumeraryReconciliationComponent
     console.log('params', params);
 
     this.siabService
-      // .fetchReport('RGERADBCONCNUMEFE', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RGERADBCONCNUMEFE', params)
+      // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
