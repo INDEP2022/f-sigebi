@@ -236,10 +236,11 @@ export interface IFindAllComerGoodXlotTotal_Items {
 }
 
 export interface IGraceDate {
-  param: string;
-  typeEvent: string;
-  address: string;
-  closeEventDate: string;
-  faildDate: string;
-  notificationDate: string | Date;
+  param: string,
+  typeEvent: string,
+  address: string,
+  closeEventDate: string,
+  faildDate: string,
+  notificationDate: string | Date
 }
+
