@@ -5,6 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -12,6 +13,7 @@ import {
   POSITVE_NUMBERS_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import {
@@ -89,12 +91,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphsDeductivas: any[] = [{}];
 
   delegationId: string = '';
+  storeSelected: any = {};
+
+  selectTransferent = new DefaultSelect();
 
   //private domicilieService = inject(DomicileService);
   private domicilieService = inject(GoodDomiciliesService);
   private goodsqueryService = inject(GoodsQueryService);
   private authService = inject(AuthService);
   private goodService = inject(GoodService);
+  private transferentService = inject(TransferenteService);
 
   constructor(
     private fb: FormBuilder,
@@ -131,6 +137,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       onComponentInitFunction: this.deductiveSelected.bind(this),
     };
 
+    this.getTransferent(new ListParams());
     this.paragraphsDeductivas = data;
   }
 
@@ -138,6 +145,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.dateForm = this.fb.group({
       initialDate: [null, [Validators.required]],
       finalDate: [null, [Validators.required]],
+      transferent: [null],
     });
     //this.paragraphs = data;
     //this.paragraphs2 = data2;
@@ -153,23 +161,27 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   }
 
   selectWarehouse(event: any): any {
+    this.displaySearchAssetsBtn = event.isSelected ? true : false;
+    console.log(event);
+    this.storeSelected = event;
+  }
+
+  goodSearch() {
     const dates = this.dateForm.value;
-    const initDate = moment(dates.initialDate).format('YYYY-MM-DD');
-    const endDate = moment(dates.finalDate).format('YYYY-MM-DD');
-
-    this.params
-      .getValue()
-      .addFilter('creationDate', `${initDate},${endDate}`, SearchFilter.BTW);
-
-    if (initDate == null && endDate == null) {
+    if (!dates.initialDate && !dates.finalDate) {
       this.onLoadToast(
         'info',
         'Debe capturar los campos requeridos para el muestreo'
       );
       return;
     }
-    this.displaySearchAssetsBtn = event.isSelected ? true : false;
-    console.log(event);
+    const initDate = moment(dates.initialDate).format('YYYY-MM-DD');
+    const endDate = moment(dates.finalDate).format('YYYY-MM-DD');
+
+    this.params2
+      .getValue()
+      .addFilter('creationDate', `${initDate},${endDate}`, SearchFilter.BTW);
+    console.log(this.storeSelected);
 
     //this.params2.getValue().addFilter('requestId', event.data.requestId.id);
     /*this.params2.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
@@ -516,5 +528,16 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   deductivesObservations(event: any) {
     console.log(event);
+  }
+
+  getTransferent(params: ListParams) {
+    params['sortBy'] = 'nameTransferent:ASC';
+    params['filter.status'] = `$eq:${1}`;
+    params['filter.typeTransferent'] = `$eq:NO`;
+    this.transferentService.getAll(params).subscribe({
+      next: data => {
+        this.selectTransferent = new DefaultSelect(data.data, data.count);
+      },
+    });
   }
 }
