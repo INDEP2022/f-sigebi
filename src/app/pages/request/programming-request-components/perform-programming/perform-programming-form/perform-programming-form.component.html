@@ -329,7 +329,7 @@
             </div>
 
             <div class="col-md-4">
-              <!-- <form-field
+              <form-field
                 [control]="performForm.get('startDate')"
                 label="Fecha Inicio Operativo">
                 <input
@@ -345,19 +345,27 @@
                   }"
                   [minDate]="minDateFecElab"
                   bsDatepicker />
-              </form-field> -->
+              </form-field>
             </div>
 
             <div class="col-md-4">
-              <!-- <form-field [control]="performForm.get('endDate')" label="Fecha Fin Operativo">
-                <input type="datetime" class="form-control" formControlName="endDate" [daysDisabled]="[6, 0]"
+              <form-field
+                [control]="performForm.get('endDate')"
+                label="Fecha Fin Operativo">
+                <input
+                  type="datetime"
+                  class="form-control"
+                  formControlName="endDate"
+                  [daysDisabled]="[6, 0]"
                   [bsConfig]="{
                     withTimepicker: true,
                     rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
                     dateInputFormat: 'DD/MM/YYYY HH:mm:ss',
                     keepDatepickerOpened: true
-                  }" [minDate]="minDateFecElab" bsDatepicker />
-              </form-field> -->
+                  }"
+                  [minDate]="minDateFecElab"
+                  bsDatepicker />
+              </form-field>
             </div>
           </div>
 

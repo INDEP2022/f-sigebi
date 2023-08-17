@@ -4,6 +4,34 @@
       <h5 class="title">Reclasificación Masiva de bienes</h5>
     </div>
     <div body>
+      <div class="row mb-5">
+        <div class="col-md-12-col-sm12 col-xs-12 text-center">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active mr-3"
+            (click)="goToRastreador()">
+            Cargar Rastreador
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+          <button
+            type="button"
+            class="btn btn-success btn-sm active mr-3"
+            (click)="file.click()">
+            Cargar Excel/CSV
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+          <button class="btn btn-danger btn-sm active" (click)="clearFilter()">
+            Limpiar <i class="fa fa-eraser" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
       <div class="row">
         <div class="col-md-2 col-sm-12 col-xs-12">
           <div class="col-md-full col-sm-12 col-xs-12">
@@ -29,22 +57,43 @@
         <div class="col-md-10 col-sm-12 col-xs-12">
           <div class="row">
             <div class="col-md-full col-sm-12 col-xs-12">
-              <app-classification-of-goods-shared
+              <ng-custom-select-loading
+                [form]="form"
+                [path]="pathClasification"
+                label="Clasificación del Bien"
+                formControlName="classificationOfGoods"
+                value="numClasifGoods"
+                bindLabel="description"
+                paramSearch="filter.description"
+                prefixSearch="$ilike"
+                seconParamSearch="filter.numClasifGoods"
+                [labelTemplate]="clasLabel"
+                [optionTemplate]="clasOption"
+                (valueChange)="onChange($event)"></ng-custom-select-loading>
+              <ng-template #clasLabel let-item="item">
+                {{ item.numClasifGoods }} - {{ item.description }}
+              </ng-template>
+              <ng-template #clasOption let-item="item">
+                <div [title]="item.numClasifGoods + '-' + item.description">
+                  {{ item.numClasifGoods }} - {{ item.description }}
+                </div>
+              </ng-template>
+              <!-- <app-classification-of-goods-shared
                 [form]="form"
                 [patchValue]="true"
                 (descriptionClasification)="
                   onChage($event)
-                "></app-classification-of-goods-shared>
+                "></app-classification-of-goods-shared> -->
             </div>
           </div>
           <div class="row mt-5">
-            <div class="col-md-7 col-sm-12 col-xs-12">
+            <div class="col-md-9 col-sm-12 col-xs-12">
               <app-goods-status-shared
                 [form]="form"
                 [labelStatus]="'Filtro por Estatus'"
                 [multiple]="true"></app-goods-status-shared>
             </div>
-            <div class="col-md-2 col-sm-6 col-xs-6">
+            <div class="col-md-3 col-sm-6 col-xs-6">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
                   <button
@@ -55,26 +104,6 @@
                     Buscar
                     <i class="bx bx-search-alt bx-sm float-icon"></i>
                   </button>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-6">
-              <div class="d-flex justify-content-center">
-                <div class="m-3">
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-sm active"
-                    (click)="clearFilter()">
-                    Limpiar
-                    <i class="fa fa-eraser"></i>
-                  </button>
-                  <!-- <button
-                    [disabled]="true"
-                    type="button"
-                    class="btn btn-primary btn-sm active"
-                    (click)="goGoodRastrer()">
-                    Rastrear bienes
-                  </button> -->
                 </div>
               </div>
             </div>
@@ -98,15 +127,15 @@
           <p *ngIf="mode.value === 'E'">
             Se listan los Bienes que posiblemente deberían estar clasificados
             con el No. de Clasificación de Bien indicado, y tienen otro número
-            de clasificación. Al presionar "Reclasificar", los bienes palomeados
-            serán reclasificados con el No. de Clasificación de Bien indicado
-            arriba.
+            de clasificación. Al presionar "Reclasificar", los bienes
+            seleccionados serán reclasificados con el No. de Clasificación de
+            Bien indicado arriba.
           </p>
           <p *ngIf="mode.value === 'I'">
             Se listan los Bienes que están clasificados con el No. de
             Clasificación de Bien indicado. Al presionar "Reclasificar", los
-            bienes palomeados serán reclasificados con el No. de Clasificación
-            de Bien Alterna.
+            bienes seleccionados serán reclasificados con el No. de
+            Clasificación de Bien Alterna.
           </p>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
@@ -129,4 +158,5 @@
 
 <app-goods-list
   [changeMode]="mode.value"
+  [files]="files"
   [changeDescription]="changeDescription"></app-goods-list>
