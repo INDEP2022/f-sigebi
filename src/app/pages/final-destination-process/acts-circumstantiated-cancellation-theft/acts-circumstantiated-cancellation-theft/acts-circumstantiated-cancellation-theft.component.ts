@@ -854,8 +854,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-
-
       // Se mapea el campo autoridad
       //this.expedient.authorityNumber;
       // Pasar clave a esta función
@@ -1213,8 +1211,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
     }
   }
-
-
   //Quitar uno
   removeSelect() {
 
@@ -1228,6 +1224,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
     else {
       console.log("this.actasDefault ", this.actasDefault);
+
       if (this.actasDefault == null) {
         this.alert(
           'warning',
@@ -1274,6 +1271,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
     }
     console.log("selectedGooodsValid--", this.selectedGooodsValid);
+
   }
 
   //Quitar todos
@@ -1295,6 +1293,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         return;
       } else {
         console.log("DataRecepcion", this.dataRecepcion);
+
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
             console.log('this.dataRecepcion', this.dataRecepcion);
@@ -1474,6 +1473,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.actaRecepttionForm
         .get('claveTrans')
         .setValue(this.authorityNumber);
+
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
       //   'MM/yyyy'
@@ -1844,7 +1844,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
           this.disabledBtnReplicar = true;
-
         }),
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
@@ -2078,8 +2077,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
       return;
     }
-
-
     this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
     delete this.actasDefault.numDelegation1Description;
     delete this.actasDefault.numDelegation2Description;

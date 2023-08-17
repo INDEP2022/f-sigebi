@@ -14,4 +14,5 @@ export enum MassiveGoodEndpoints {
   PupCargaCsv = `application/pup-carga-csv`,
   MassiveProgGood = `application/massivegoodload`,
   GoodsShedules = 'application/get-goods-schedules-csv',
+  GetAllGoodsMotivesRevExcel = 'application/getAllGoodsMotivesRevExcel',
 }

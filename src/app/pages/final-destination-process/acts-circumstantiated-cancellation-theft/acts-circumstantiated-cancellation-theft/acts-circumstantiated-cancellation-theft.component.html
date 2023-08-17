@@ -369,12 +369,12 @@
               <!-- Mover todos -->
               <i class="bx bx-chevrons-down bx-md"></i>
             </button>
-            
             <button
               class="btn btn-secondary btn-sm active m-3 p-1 pointer"
               type="button"
               (click)="removeAll()">
                <!-- Quitar todos -->
+
               <i class="bx bx-chevrons-up bx-md"></i>
             </button>
             <button
@@ -472,6 +472,7 @@
                         <div class="m-3">
                           <button
                           [disabled]="!disabledBtnReplicar"
+
                             (click)="replicate()"
                             type="button"
                             class="btn btn-primary btn-sm active">
@@ -488,6 +489,7 @@
                     containerClass="tooltip-style">
                     <button
                      [disabled]="!disabledBtnImprimir"
+
                       (click)="showMessageDigitalization()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-printer"></i>
@@ -529,6 +531,7 @@
         </button>
        <button
        [disabled]="!Exportdate"
+
           class="btn btn-sm btn-success active"
           type="button"
           (click)="exportToExcel()">
