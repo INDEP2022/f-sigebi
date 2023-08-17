@@ -1,44 +1,50 @@
 <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-        <h5 class="title">
-            &Aacute;ctas Circunstanciadas de Cancelaci&oacute;n de Entrega por Robo
-        </h5>
+  <div class="ch-content" header>
+    <h5 class="title">
+      &Aacute;ctas Circunstanciadas de Cancelaci&oacute;n de Entrega por Robo
+    </h5>
+  </div>
+
+  <div body>
+    <div
+      class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+      *ngIf="loadingExpedient">
+      <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center">
+          <div class="loader"></div>
+          <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+        </div>
+      </div>
     </div>
 
-    <div body>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5" *ngIf="loadingExpedient">
-            <div class="d-flex justify-content-center">
-                <div class="d-flex justify-content-center">
-                    <div class="loader"></div>
-                    <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
-                </div>
-            </div>
-        </div>
-
+    <div class="row">
+      <div class="col-md-12">
         <div class="row">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="row m-3 flex-row justify-content-end">
-                                <div class="col-md-8 text-end">
-                                    <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="row m-3 flex-row justify-content-end">
+                <div class="col-md-8 text-end">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="searchExpedient()">
                     <i class="bx bx-list-plus bx-sm float-icon"></i>
                   </button>
-                                </div>
-                            </div>
-                            <div class="card-body mt-4 mb-4">
-                                <div class="form-group row p-4">
-                                    <div class="col-md-3">
-                                        <label for="" class="col-form-label">No. Expediente:</label>
-                                        <div>{{ fileNumber || '' }}</div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="" class="col-form-label">Causa Penal:</label>
-                                        <div>{{ causa || '' }}</div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="" class="col-form-label">Averiguación Previa:</label
+                </div>
+              </div>
+              <div class="card-body mt-4 mb-4">
+                <div class="form-group row p-4">
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label">No. Expediente:</label>
+                    <div>{{ fileNumber || '' }}</div>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label">Causa Penal:</label>
+                    <div>{{ causa || '' }}</div>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label"
+                      >Averiguación Previa:</label
                     >
                     <div>{{ aprevia || '' }}</div>
                   </div>
@@ -373,7 +379,7 @@
               class="btn btn-secondary btn-sm active m-3 p-1 pointer"
               type="button"
               (click)="removeAll()">
-               <!-- Quitar todos -->
+              <!-- Quitar todos -->
 
               <i class="bx bx-chevrons-up bx-md"></i>
             </button>
@@ -436,7 +442,7 @@
                   </span>
                   <span title="Escanear" containerClass="tooltip-style">
                     <button
-                    [disabled]="!disabledBtnEscaneo"
+                      [disabled]="!disabledBtnEscaneo"
                       (click)="openScannerPage()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file"></i>
@@ -471,8 +477,7 @@
 
                         <div class="m-3">
                           <button
-                          [disabled]="!disabledBtnReplicar"
-
+                            [disabled]="!disabledBtnReplicar"
                             (click)="replicate()"
                             type="button"
                             class="btn btn-primary btn-sm active">
@@ -488,8 +493,7 @@
                     title="imprimir Solicitud de Escaneo"
                     containerClass="tooltip-style">
                     <button
-                     [disabled]="!disabledBtnImprimir"
-
+                      [disabled]="!disabledBtnImprimir"
                       (click)="showMessageDigitalization()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-printer"></i>
@@ -500,8 +504,8 @@
                     title="Consulta de Imágenes Escaneadas"
                     containerClass="tooltip-style">
                     <button
-                    [disabled]="!disabledBtnImage"
-                      (click)="viewPictures($event)" 
+                      [disabled]="!disabledBtnImage"
+                      (click)="viewPictures($event)"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file-find"></i>
                     </button>
@@ -529,9 +533,8 @@
           Cerrar Acta
           <i class="fas fa-close bx-sm float-icon"></i>
         </button>
-       <button
-       [disabled]="!Exportdate"
-
+        <button
+          [disabled]="!Exportdate"
           class="btn btn-sm btn-success active"
           type="button"
           (click)="exportToExcel()">
