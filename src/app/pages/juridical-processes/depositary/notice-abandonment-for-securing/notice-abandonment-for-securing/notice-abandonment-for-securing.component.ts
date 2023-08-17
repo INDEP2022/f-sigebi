@@ -267,11 +267,11 @@ export class NoticeAbandonmentForSecuringComponent
 
     console.log('Body a enviar: ', body);
 
-    if (this.data.length < 1) {
+    if (this.data.length < 3) {
       this.onLoadToast(
         'error',
         'Error',
-        'Deben haber 3 notificaciones de aseguramiento para ir a Confirmación de Abandonos'
+        'Deben haber 3 notificaciones de aseguramiento para confirmar'
       );
       this.clean();
     } else {
