@@ -278,7 +278,8 @@ export class EmailInformationComponent extends BasePage {
     params.limit = lparams.limit;
 
     params.addFilter('status', 1, SearchFilter.EQ);
-
+    params.addFilter('id', `1,2,3`, SearchFilter.IN);
+    params.sortBy = `id:ASC`;
     if (lparams.text)
       // params.search = lparams.text;
       params.addFilter('bodyEmail', lparams.text, SearchFilter.ILIKE);
