@@ -90,7 +90,7 @@ export class EffectiveNumeraryReconciliationComponent
       PN_DELEGACION: this.form.controls['delegation'].value,
       PN_SUBDELEGACION: this.form.controls['subdelegation'].value,
       PC_MONEDA: this.form.controls['currency'].value,
-      PC_BANCO: this.form.controls['bank'].value,
+      // PC_BANCO: this.form.controls['bank'].value,
       PN_EXP_INI: this.form.controls['fileFrom'].value,
       PN_EXP_FIN: this.form.controls['fileTo'].value,
       PC_FEC_INI: this.fromF,

@@ -463,6 +463,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   async turnRequest() {
+    console.log('this.op ', this.op);
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
