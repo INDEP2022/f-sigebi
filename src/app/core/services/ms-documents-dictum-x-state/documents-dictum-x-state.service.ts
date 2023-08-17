@@ -50,4 +50,10 @@ export class DocumentsDictumXStateService extends HttpService {
       revision
     );
   }
+  update(revision: IDocumentsDictumXState) {
+    return this.put<IListResponse<IDocumentsDictumXState>>(
+      DocumentsEndpoints.DocumentsDictuXState,
+      revision
+    );
+  }
 }

@@ -164,4 +164,7 @@ export class MassiveGoodService extends HttpService {
   createProgGoodMassive(data: Object) {
     return this.post(this.route.MassiveProgGood, data);
   }
+  GetAllGoodsMotivesRevExcel(params: _Params) {
+    return this.get(this.route.GetAllGoodsMotivesRevExcel, params);
+  }
 }

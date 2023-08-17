@@ -345,10 +345,10 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     const isNormal = this.disabled || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
-        title: 'los tipos de situaciones para el Bien',
+        title: 'los valores para',
         columnsType: {
           otvalor: {
-            title: 'Situación',
+            title: row.attribute,
             type: 'string',
             sort: false,
           },
