@@ -1,6 +1,7 @@
 /** BASE IMPORT */
 import { DatePipe } from '@angular/common';
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
@@ -59,7 +60,7 @@ export class DocumentVerificationRevisionResourcesComponent
   aprevia: string = '';
   causa: string = '';
   totalItems = 0;
-
+  selectedRow: KeyDocument;
   totalItemsDic = 0;
   createDicta: IDocumentsDictumXState;
   dateAgreementAssurance: Date;
@@ -68,6 +69,7 @@ export class DocumentVerificationRevisionResourcesComponent
   idGood: number | string = 0;
   pKey: string = '';
   time = new Date();
+  keyStatus: string = '';
   statusGood_: any;
   exp: boolean = false;
   good: IGood;
@@ -77,7 +79,7 @@ export class DocumentVerificationRevisionResourcesComponent
   loadingGood: boolean = false;
   goodChange: number = 0;
   documentDicta: KeyDocument[] = [];
-  selectedKey: KeyDocument;
+  selectedKey: KeyDocument[] = [];
   expedient: IExpedient;
   loadingBienes: boolean = false;
   goodUpdate: IGoodRevision;
@@ -97,14 +99,8 @@ export class DocumentVerificationRevisionResourcesComponent
       key: {
         title: 'Cve. Documento',
       },
-      description: {
-        title: 'Descripción',
-      },
       typeDictum: {
-        title: 'Tipo de Dictaminación',
-      },
-      goodNumber: {
-        title: 'No. Bien',
+        title: 'Descripción',
       },
 
       solicitarDocumentacion: {
@@ -228,6 +224,7 @@ export class DocumentVerificationRevisionResourcesComponent
   public activeBlocDoc: boolean = false;
   constructor(
     private fb: FormBuilder,
+    private changeDetectorRef: ChangeDetectorRef,
     private statusGoodService: StatusGoodService,
     private readonly goodService: GoodService,
     private readonly dictaminationServ: DictationXGoodService,
@@ -672,7 +669,7 @@ export class DocumentVerificationRevisionResourcesComponent
         });
       } else {
         // this.alert('success', 'Operación realizada dictámen autorizado', '');
-        this.alert('success', 'Operación realizada', 'Dictamen Autorizado');
+        this.alert('success', 'Operación Realizada', 'Dictamen Autorizado');
         this.form.get('di_fec_dictaminacion').patchValue(this.dateToday);
         this.form.get('di_situacion_bien').patchValue('DICTAMINADO');
       }
@@ -1135,6 +1132,7 @@ export class DocumentVerificationRevisionResourcesComponent
         //   .patchValue(good.notifyRevRecDate ? good.notifyRevRecDate : '');
 
         this.getDateAndStatus();
+        this.getDocumentsRevision();
         this.getDocuments();
         // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
         // this.formExp.get('criminalCase').setValue(this.causa);
@@ -1206,29 +1204,42 @@ export class DocumentVerificationRevisionResourcesComponent
   }
 
   createDocumentDicta() {
-    const obj: IDocumentsDictumXState = {
-      recordNumber: this.good.fileNumber,
-      goodNumber: this.form.get('goodId').value,
-      typeDictum: 'RECREVISION',
-      dateReceipt: this.dateToday,
-      userReceipt: this.user.decodeToken().username,
-      insertionDate: this.form.get('agreementDate').value,
-      userInsertion: this.user.decodeToken().username,
-      numRegister: '',
-      officialNumber: '',
-      key: this.documentDicta.toString(),
-      keyDocument: this.documentDicta,
-    };
-    this.documents.createDocsRevi(obj).subscribe({
-      next: data => {
-        console.log('documento agregado', data);
-      },
-      error: () => {},
-    });
+    try {
+      const obj: IDocumentsDictumXState = {
+        recordNumber: this.good.fileNumber,
+        goodNumber: this.form.get('goodId').value,
+        typeDictum: 'RECREVISION',
+        dateReceipt: this.form.get('agreementDate').value,
+        userReceipt: this.user.decodeToken().username,
+        insertionDate: this.form.get('agreementDate').value,
+        userInsertion: this.user.decodeToken().username,
+        numRegister: '',
+        officialNumber: '',
+        key: 'RCV',
+        keyDocument: this.selectedKey,
+      };
+      this.documents.createDocsRevi(obj).subscribe({
+        next: data => {
+          console.log('documento agregado', data);
+        },
+        error: () => {},
+      });
+    } catch (error) {
+      console.log(error);
+      this.loading = false;
+      this.alert('error', 'ERROR', 'Ha ocurrido un error al crear dictamen');
+    }
   }
-  userRowSelect(event: any) {
-    this.selectedKey = event;
-    console.log(event);
+
+  async userRowSelect(event: { data: KeyDocument; selected: any }) {
+    this.selectedRow = event.data;
+    this.keyStatus = this.selectedRow.key;
+    console.log(this.selectedRow.key);
+    const selectedFiles = event.selected;
+    for (const file of selectedFiles) {
+      this.selectedKey.push(file);
+    }
+    this.changeDetectorRef.detectChanges();
   }
 }
 

@@ -41,10 +41,10 @@ export class InterfacesirsaeService extends HttpService {
     return this.post('sirsae/send-sirsae', body);
   }
 
-  sendSirsaeLot(body: ISendSirsaeLot) {
-    return this.post('sirsae/pup-send-sirsae-lots', body);
+  sendSirsaeLot(body: ISendSirsaeLot){
+    return this.post('sirsae/pup-send-sirsae-lots', body)
   }
-
+  
   sendReadSirsae(body: any) {
     return this.post('sirsae/sendReadSirsae', body);
   }

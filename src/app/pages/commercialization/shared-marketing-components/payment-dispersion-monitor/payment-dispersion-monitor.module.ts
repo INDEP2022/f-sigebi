@@ -53,7 +53,7 @@ import { NewComerPaymentVirt } from './new-comer-payment-virt/new-comer-payment-
     CanPagosCabComponent,
     CanLcsWarrantyComponent,
     CanRelusuComponent,
-    NewCanRelusuComponent,
+    NewCanRelusuComponent
   ],
   imports: [
     CommonModule,
