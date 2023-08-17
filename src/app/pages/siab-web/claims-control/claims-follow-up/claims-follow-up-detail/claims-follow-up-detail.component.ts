@@ -273,6 +273,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       delete params.text;
       delete params['search'];
     }
+    params['sortBy'] = 'descripcion:ASC';
     this.seraLogService.getObtnObtenUnidadesResp(params).subscribe({
       next: response => {
         this.unitAdminUser = new DefaultSelect(response.data, response.count);
