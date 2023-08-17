@@ -23,6 +23,7 @@ import {
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
+
 const datagood: any = [
   {
     amount: 1,
@@ -218,8 +219,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
@@ -229,11 +228,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'EXT_DOMINIO'
     ) {
       if (this.requestInfo.regionalDelegationId != 13) {
-        /*  params.getValue()['filter.regionalDelegationId'] =
-          this.requestInfo.regionalDelegationId; */
+        this.params.getValue()[
+          'filter.regionalDelegationId'
+        ] = `$eq:${this.requestInfo.regionalDelegationId}`;
 
-        this.jsonBody.regionalDelegationId =
-          this.requestInfo.regionalDelegationId;
+        /*this.jsonBody.regionalDelegationId =
+          this.requestInfo.regionalDelegationId; */
       }
     }
 
@@ -279,8 +279,19 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getGoods(filters: ListParams) {
+    this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.goodColumns.load(response.data);
+        this.goodTotalItems = response.data.length;
+        this.loading = false;
+      },
+      error: error => {
+        console.log('response', error);
+      },
+    });
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    const filter = params.getValue();*/
+    const filter = params.getValue();
     //delete this.jsonBody.regionalDelegationId
     let page = filters.page;
     let limit = filters.limit;
@@ -290,15 +301,15 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.goodColumns.load(response.data);
         this.goodTotalItems = response.data.length;
         this.loading = false;
-        /*const info = response.data.map(item => {
+        const info = response.data.map(item => {
           return item.good;
-        });*/
+        });
       },
       error: error => {
         this.loading = false;
         console.log(error);
       },
-    });
+    }); */
   }
 
   destinyInfo(idDestiny: number) {
