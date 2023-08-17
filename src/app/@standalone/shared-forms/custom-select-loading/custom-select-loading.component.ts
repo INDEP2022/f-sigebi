@@ -68,6 +68,7 @@ export class CustomSelectWidthLoading
   @Input() paramExternalSearch: string = 'search';
   @Input() placeholder: string = '';
   @Input() prefixSearch: string = '';
+  @Input() seconParamSearch: string = '';
   @Input() paramPageName: string = 'page';
   @Input() paramLimitName: string = 'limit';
   @Input() limit: number = 10;
@@ -89,6 +90,7 @@ export class CustomSelectWidthLoading
   inputAttrs: Attr = {
     maxLength: '',
   };
+  firstLoad = true;
   title: string = '';
   page: number = 1;
   isLoading: boolean = false;
@@ -189,25 +191,66 @@ export class CustomSelectWidthLoading
     this.input$.next('');
   }
 
-  getItemsObservable(text: string = '', normalSearch = true) {
+  private fillParams2(
+    prefixSearch: string,
+    paramSearch: string,
+    params: any,
+    text: string = '',
+    normalSearch = true
+  ) {
+    if (normalSearch) {
+      if (prefixSearch) {
+        text = `${prefixSearch}:${text}`;
+      }
+      params[paramSearch] = text;
+    } else {
+      if (prefixSearch) {
+        text = `$eq:${text}`;
+      }
+      params[this.paramPageName] = 1;
+      params[this.paramExternalSearch] = text;
+    }
+    return params;
+  }
+
+  private fillParams(text: string = '', normalSearch = true) {
     let params: any = {
       [this.paramPageName]: this.page,
       [this.paramLimitName]: this.limit || 10,
     };
     if (text) {
-      if (normalSearch) {
-        if (this.prefixSearch) {
-          text = `${this.prefixSearch}:${text}`;
+      if (this.seconParamSearch) {
+        if (isNaN(+text)) {
+          return this.fillParams2(
+            this.prefixSearch,
+            this.paramSearch,
+            params,
+            text
+          );
+        } else {
+          return this.fillParams2(
+            '$eq',
+            this.seconParamSearch,
+            params,
+            text,
+            normalSearch
+          );
         }
-        params[this.paramSearch] = text;
       } else {
-        if (this.prefixSearch) {
-          text = `$eq:${text}`;
-        }
-        params[this.paramPageName] = 1;
-        params[this.paramExternalSearch] = text;
+        return this.fillParams2(
+          this.prefixSearch,
+          this.paramSearch,
+          params,
+          text,
+          normalSearch
+        );
       }
     }
+    return params;
+  }
+
+  getItemsObservable(text: string = '', normalSearch = true) {
+    let params: any = this.fillParams(text, normalSearch);
     const mParams =
       this.moreParams.length > 0 ? '?' + this.moreParams.join('&') : '';
     // console.log(params, mParams);
@@ -311,9 +354,10 @@ export class CustomSelectWidthLoading
         distinctUntilChanged(),
         switchMap((text: string) => {
           // console.log(this.items);
-          if (text === null) {
+          if (text === null || (!this.firstLoad && text.length < 3)) {
             return of(null);
           }
+          this.firstLoad = false;
           this.page = 1;
           this.isLoading = true;
           return this.getItemsObservable(text);

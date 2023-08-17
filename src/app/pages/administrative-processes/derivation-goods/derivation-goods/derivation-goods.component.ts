@@ -160,9 +160,6 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         edit: true,
         delete: false,
       },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
-      },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
         value: {
@@ -235,9 +232,10 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
               this.searchGoodSon(data.goodFatherNumber);
               this.searchSituation(data.goodFatherNumber);
               this.searchGoodRelDocuments(data.goodFatherNumber);
-              if (data.typeConv == 2) {
-                this.getAllGoodChild(data.goodFatherNumber);
-              }
+              this.getAllGoodChild(data.goodFatherNumber);
+              // if (data.typeConv == 2) {
+              //   this.getAllGoodChild(data.goodFatherNumber);
+              // }
             }
           }
         },
@@ -765,7 +763,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         good.delegationNumber = this.good.delegationNumber.id;
         good.expediente = this.good.expediente.id;
         good.subDelegationNumber = this.good.subDelegationNumber.id;
-        good.lotNumber = this.good.lotNumber.id;
+        good.lotNumber =
+          this.good.lotNumber != null ? this.good.lotNumber.id : null;
         console.log(good);
         this.serviceGood.crateGood(good).subscribe(
           res => {

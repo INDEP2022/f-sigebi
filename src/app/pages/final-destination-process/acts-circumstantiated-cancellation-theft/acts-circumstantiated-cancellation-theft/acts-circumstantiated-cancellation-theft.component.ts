@@ -102,7 +102,8 @@ import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scannin
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -218,8 +219,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     private usersService: UsersService,
     private notificationService: NotificationService,
     private documentsForDictumService: DocumentsForDictumService,
-    private activatedRoute: ActivatedRoute,
-
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     // this.settings = { ...this.settings, actions: false };
@@ -229,15 +229,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
-        this.consec = params['folioScan']
-          ? Number(params['folioScan'])
-          : null;
+        this.consec = params['folioScan'] ? Number(params['folioScan']) : null;
         this.fileNumber = params['expedient']
           ? Number(params['expedient'])
           : null;
-        this.type = params['acta']
-          ? Number(params['acta'])
-          : null;
+        this.type = params['acta'] ? Number(params['acta']) : null;
       });
     this.validPermisos = !this.validPermisos;
     this.settings = {
@@ -428,8 +424,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.formFolio();
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
 
-
-
     // const claveActa = "RFP/D/AEROBANOBRAS/CCB/TIJ/0066/98/02"; // Año 2019, Mes Febrero
     // const resultado = this.generarDatosDesdeUltimosCincoDigitos(claveActa);
 
@@ -441,7 +435,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     // }
   }
 
-  generarDatosDesdeUltimosCincoDigitos(claveActa: string): { anio: number, mes: string } | null {
+  generarDatosDesdeUltimosCincoDigitos(
+    claveActa: string
+  ): { anio: number; mes: string } | null {
     // Verificar que la longitud de la clave sea la esperada
     if (claveActa.length < 5) {
       return null; // Clave no válida
@@ -455,13 +451,29 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const mesNumero = parseInt(ultimosCincoDigitos.substring(3, 5), 10);
 
     // Validar los valores obtenidos
-    if (isNaN(anio) || isNaN(mesNumero) || anio < 0 || mesNumero < 1 || mesNumero > 12) {
+    if (
+      isNaN(anio) ||
+      isNaN(mesNumero) ||
+      anio < 0 ||
+      mesNumero < 1 ||
+      mesNumero > 12
+    ) {
       return null; // Valores no válidos
     }
 
     const mesesTexto = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
 
     const mesTexto = mesesTexto[mesNumero - 1]; // Restamos 1 porque los meses en el array comienzan desde 0
@@ -477,7 +489,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
 
     return { anio: anioCompleto, mes: mesTexto };
-
   }
 
   // LLAMAR DATOS DESPUES DE ESCANEAR
@@ -488,7 +499,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.actaRecepttionForm.patchValue({
       type: this.type,
     });
-
   }
 
   initForm() {
@@ -603,7 +613,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -629,7 +639,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.causa = this.expedient.criminalCase;
         this.transfer = this.expedient.transferNumber;
 
-        console.log("this.expedient ", this.expedient);
+        console.log('this.expedient ', this.expedient);
 
         // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
 
@@ -654,7 +664,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           .get('testigoTree')
           .setValue(this.expedient.indicatedName);
 
-        this.actaRecepttionForm
+        this.actaRecepttionForm;
 
         this.getGoodsByStatus(this.fileNumber);
       },
@@ -764,7 +774,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.loadingExpedient = false;
     });
     modalRef.content.onSave.subscribe((next: any) => {
-      console.log("recibido de modal ", next);
+      console.log('recibido de modal ', next);
       this.getExpedient(next.id);
     });
   }
@@ -821,10 +831,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.disabledBtnCerrar = true;
       }
 
-
-
-      // MAPEAR DATOS 
-      console.log("acta NEXT ", next);
+      // MAPEAR DATOS
+      console.log('acta NEXT ', next);
       this.actaRecepttionForm.patchValue({
         administra: next.approvedXAdmon,
         testigoOIC: next.comptrollerWitness,
@@ -1136,7 +1144,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   async selectData(event: { data: IGood; selected: any }) {
     this.selectedRow = event.data;
-    console.log("select RRR", this.selectedRow);
+    console.log('select RRR', this.selectedRow);
 
 
     await this.getStatusGoodService(this.selectedRow.status);
@@ -1373,8 +1381,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1432,7 +1440,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
       }
 
-      console.log("data modal next ", next);
+      console.log('data modal next ', next);
       this.totalItems2 = 0;
       this.actasDefault = next;
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
@@ -1535,56 +1543,49 @@ export class ActsCircumstantiatedCancellationTheftComponent
       ) {
         null;
       } else {
-        this.alertQuestion('question', '¿Seguro que Desea Realizar el Cierre de esta Acta?', '').then(
-          async question => {
-            if (question.isConfirmed) {
-              // await this.createDET();
-              this.actasDefault.statusProceedings = 'CERRADA';
-              delete this.actasDefault.numDelegation1Description;
-              delete this.actasDefault.numDelegation2Description;
-              delete this.actasDefault.numTransfer_;
-              this.proceedingsDeliveryReceptionService
-                .editProceeding(this.actasDefault.id, this.actasDefault)
-                .subscribe({
-                  next: async data => {
-                    this.loading = false;
-                    console.log(data);
-                    let obj = {
-                      pActaNumber: this.actasDefault.id,
-                      pStatusActa: 'CERRADA',
-                      pVcScreen: 'FACTCIRCUNR_0001',
-                      pUser:
-                        this.authService.decodeToken().preferred_username,
-                    };
+        this.alertQuestion(
+          'question',
+          '¿Seguro que Desea Realizar el Cierre de esta Acta?',
+          ''
+        ).then(async question => {
+          if (question.isConfirmed) {
+            // await this.createDET();
+            this.actasDefault.statusProceedings = 'CERRADA';
+            delete this.actasDefault.numDelegation1Description;
+            delete this.actasDefault.numDelegation2Description;
+            delete this.actasDefault.numTransfer_;
+            this.proceedingsDeliveryReceptionService
+              .editProceeding(this.actasDefault.id, this.actasDefault)
+              .subscribe({
+                next: async data => {
+                  this.loading = false;
+                  console.log(data);
+                  let obj = {
+                    pActaNumber: this.actasDefault.id,
+                    pStatusActa: 'CERRADA',
+                    pVcScreen: 'FACTCIRCUNR_0001',
+                    pUser: this.authService.decodeToken().preferred_username,
+                  };
 
-                    await this.updateGoodEInsertHistoric(obj);
+                  await this.updateGoodEInsertHistoric(obj);
 
-                    this.alertInfo(
-                      'success',
-                      'El Acta Ha Sido Cerrada',
-                      ''
-                    );
-                    this.alert('success', 'Acta Cerrada', '');
-                    this.disabledBtnCerrar = false;
-                    this.disabledBtnActas = false;
-                    this.getGoodsByStatus(this.fileNumber);
-                    await this.getDetailProceedingsDevollution(
-                      this.actasDefault.id
-                    );
-                    // this.initForm();
-                  },
-                  error: error => {
-                    this.alert(
-                      'error',
-                      'Ocurrió un Error al Cerrar el Acta',
-                      ''
-                    );
-                    // this.loading = false
-                  },
-                });
-            }
+                  this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
+                  this.alert('success', 'Acta Cerrada', '');
+                  this.disabledBtnCerrar = false;
+                  this.disabledBtnActas = false;
+                  this.getGoodsByStatus(this.fileNumber);
+                  await this.getDetailProceedingsDevollution(
+                    this.actasDefault.id
+                  );
+                  // this.initForm();
+                },
+                error: error => {
+                  this.alert('error', 'Ocurrió un Error al Cerrar el Acta', '');
+                  // this.loading = false
+                },
+              });
           }
-        );
+        });
       }
     } else {
       this.alert(
@@ -1794,9 +1795,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -1885,7 +1886,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1895,7 +1896,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
   }
   showScannerFoil() {
-
     if (!this.dataRecepcion) {
       return;
     }
@@ -1909,7 +1909,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
     }
   }
-
 
   //ESCANEAR
   openScannerPage() {
@@ -1973,7 +1972,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,

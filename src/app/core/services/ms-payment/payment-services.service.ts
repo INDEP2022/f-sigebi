@@ -127,4 +127,11 @@ export class PaymentService extends HttpService {
   // postComerPagoRefVirt(body: IComerPaymentsRefVir) {
   //   return this.post('comer-payments-ref-virt', body);
   // }
+
+  getBusquedaMae(params: string) {
+    return this.get(
+      PaymentEndPoints.BusquedaPagosMae,
+      `&filter.tsearchId=$eq:${params}`
+    );
+  }
 }
