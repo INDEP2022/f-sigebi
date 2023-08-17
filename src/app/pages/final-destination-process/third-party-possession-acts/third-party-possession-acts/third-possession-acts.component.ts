@@ -17,8 +17,10 @@ import {
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { IDepositaryAppointments_custom } from 'src/app/core/models/ms-depositary/ms-depositary.interface';
 import { IDocuments } from 'src/app/core/models/ms-documents/documents';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
@@ -26,6 +28,7 @@ import { DocumentsService } from 'src/app/core/services/ms-documents/documents.s
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { RNomenclaService } from 'src/app/core/services/ms-parametergood/r-nomencla.service';
 import { MaximunClosingTimeService } from 'src/app/core/services/ms-proceedings';
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
@@ -39,7 +42,6 @@ import { RELATED_FOLIO_COLUMNS } from 'src/app/pages/juridical-processes/deposit
 import { ModalScanningFoilAppointmentTableComponent } from 'src/app/pages/juridical-processes/depositary/appointments/modal-scanning-foil/modal-scanning-foil.component';
 import { DetailDelegationsComponent } from '../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
-import { DocumentFormModalComponent } from '../document-form-modal/document-form-modal/document-form-modal.component';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -68,6 +70,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   params3 = new BehaviorSubject<ListParams>(new ListParams());
   params4 = new BehaviorSubject<ListParams>(new ListParams());
   params5 = new BehaviorSubject<ListParams>(new ListParams());
+  documentForm: FormGroup;
+  document: any;
 
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
@@ -93,6 +97,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private rNomenclaService: RNomenclaService,
     private router: Router,
+    private authService: AuthService,
     private procedureManagementService: ProcedureManagementService,
     //Transferente
     private documentsService: DocumentsService,
@@ -108,8 +113,11 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private affairService: AffairService,
     //document
     private serviceDocuments: DocumentsService,
+
     // maximun-closing-time
-    private maximunClosingTimeService: MaximunClosingTimeService
+    private maximunClosingTimeService: MaximunClosingTimeService,
+    //
+    private notificationService: NotificationService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
@@ -175,12 +183,12 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         }
       });
 
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGood());*/
-    /*const noTransfer = 1;
-    const type = 'P'
-    this.getCveTransferent(noTransfer,type);*/
+      .subscribe(() => this.getGood());
+    const noTransfer = 1;
+    const type = 'P';
+    this.getCveTransferent(noTransfer, type);
   }
 
   initForm() {
@@ -299,56 +307,86 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   openModalApplicant(context?: any) {
     console.log(context);
-    const modalRef = this.modalService.show(DocumentFormModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.initForm();
-    });
-  }
-  /* getActDevoluciones(id?: number | string){
-if (id) {
-      this.params4.getValue()['filter.id'] = `$eq:${id}`;
+    console.log(this.authService.decodeToken().preferred_username);
+    console.log(this.authService.decodeToken());
+    let lnu_no_volante: any;
+    if (
+      (this.proceedingDev[0].proceedingStatus != 'CERRADA' &&
+        this.proceedingDev[0].proceedingStatus != null) ||
+      this.proceedingDev[0].proceedingsCve == null
+    ) {
+      this.alertQuestion(
+        'question',
+        '',
+        'Se Generará Un Nuevo Folio de Escaneo Para el Acta Abierta. ¿Deseas Continuar?',
+        'Continuar',
+        'Cancelar'
+      ).then(question => {
+        if (question.isConfirmed) {
+          if (this.proceedingDev[0].universalFolio != null) {
+            this.alert('warning', '', 'El Acta Ya Tiene Folio de Escaneo');
+          } else {
+            this.notificationService
+              .getMaxFlyerByExpedient(this.expedient[0].id, 'MAX')
+              .subscribe({
+                next: data => {
+                  lnu_no_volante = data.no_volante;
+                  // hay un problema con la base de datos con el tama;o de los dates//////////////////////////////////////////////////////////
+                  this.documentForm = this.fb.group({
+                    goodNumber: [
+                      this.proceedingDev[0].universalFolio,
+                      [Validators.required],
+                    ],
+                    numberProceedings: [
+                      this.expedient[0].id,
+                      [Validators.required],
+                    ],
+                    keySeparator: ['60'],
+                    keyTypeDocument: ['DEVOL', [Validators.required]],
+                    natureDocument: ['ORIGINAL'],
+                    descriptionDocument: ['ACTA'],
+                    significantDate: ['2023'],
+                    scanStatus: ['SOLICITADO'],
+                    userRequestsScan: [
+                      this.authService.decodeToken().preferred_username,
+                    ],
+                    dateRegistrationScan: ['2023'],
+                    numberDelegationRequested: [
+                      this.proceedingDev[0].delegationNumber.id,
+                    ],
+                    numberSubdelegationRequests: [2],
+                    numberDepartmentRequest: [
+                      this.authService.decodeToken().department,
+                    ],
+                    associateUniversalFolio: [null],
+                    flyerNumber: [lnu_no_volante],
+                  });
+                  console.log(this.documentForm);
+                  this.document = this.documentForm.value;
+                  console.log(this.document);
+                  this.documentsService.create(this.document).subscribe({
+                    next: data => {
+                      console.log(data);
+                      this.onLoadToast(
+                        'success',
+                        'Acta',
+                        'Guardada Correctamente'
+                      );
+                    },
+                    error: erro => {
+                      console.log(erro);
+                    },
+                  });
+                },
+                error: err => {
+                  console.log(err);
+                },
+              });
+          }
+        }
+      });
     }
-    let params = {
-      ...this.params4.getValue(),
-    };
-    console.log('params',params);
-    this.detailProceedingsDevolutionService.getAllProceedingsDevolution(params).subscribe({
-      next: response => {
-        this.expedient = response.data;
-        this.actForm.controls['id'].setValue(this.expedient[0].id);
-        this.actForm.controls['preliminaryInquiry'].setValue(
-          this.expedient[0].preliminaryInquiry
-        );
-        this.actForm.controls['criminalCase'].setValue(
-          this.expedient[0].criminalCase
-        );
-        this.actForm.controls['crimeKey'].setValue(
-          this.expedient[0].crimeKey
-        );
-        this.actForm.controls['expTransferNumber'].setValue(
-          this.expedient[0].expTransferNumber
-        );
-        this.actForm.controls['expedientType'].setValue(
-          this.expedient[0].expedientType
-        );
-        console.log(response.data);
-        this.response = !this.response;
-        this.getCrime(this.actForm.controls['crimeKey'].value);
-        this.getProceedingsDevolution(this.actForm.controls['id'].value);
-      },
-      error: err => {
-        this.onLoadToast(
-          'warning',
-          'No se Encontro el Expediente',
-          `Intente con Otro`
-        );
-      },
-    });
-  }*/
+  }
 
   getExpedient(id?: number | string) {
     if (id) {
@@ -385,10 +423,10 @@ if (id) {
         this.getGood(this.formTable1.controls['id'].value);
       },
       error: err => {
-        this.onLoadToast(
+        this.alert(
           'warning',
-          'No se Encontro el Expediente',
-          `Intente con Otro`
+          '',
+          'No Se Encontro el Expediente Intente Con Otro'
         );
       },
     });
@@ -406,10 +444,6 @@ if (id) {
       .getAllProceedingsDevolution(params)
       .subscribe({
         next: response => {
-          console.log('response', response.data[0].id);
-          console.log('response', response.data[0].auditor);
-          console.log('response', response.data[0].authorityOrder);
-          console.log('response', response.data[0].beneficiaryOwner);
           this.proceedingDev = response.data;
           console.log('proceedingDev', this.proceedingDev);
           this.actForm.controls['actSelect'].setValue(
@@ -457,28 +491,8 @@ if (id) {
           this.actForm.controls['statusAct'].setValue(
             this.proceedingDev[0].proceedingStatus
           );
-
+          console.log('aquiiiiiiiiiiiiiii', this.proceedingDev[0]);
           this.getDetailProcedings(this.proceedingDev[0].id);
-          /*proceedingsTypeId
-        receiptCve
-        elaborationDate
-        closingDate
-        authorityOrder
-        witnessOne
-        witnessTwo
-        observations
-        beneficiaryOwner
-        auditor
-        proceedingStatus
-        elaborated
-        id
-        proceedingsType
-        delegationNumberOne
-        delegationNumberTwo
-        numRegister
-
-        transferNumber
-        proceedingsCve*/
         },
         error: err => {
           console.log('ups');
@@ -537,38 +551,47 @@ if (id) {
 
   openScannerPage() {
     this.boolScan = false;
-    if (this.actForm.get('folioScan').value) {
-      this.alertQuestion(
-        'info',
-        'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
-        '',
-        'Aceptar',
-        'Cancelar'
-      ).then(res => {
-        console.log(res);
-        if (res.isConfirmed) {
-          this.router.navigate(
-            [`/pages/final-destination-process/third-possession-acts`],
-            {
-              queryParams: {
-                origin: 'FACTREFACTAPOSTER',
-                folio: this.actForm.value.folioScan,
-              },
-            }
-          );
-        }
-      });
+    if (
+      (this.proceedingDev[0].proceedingStatus != 'CERRADA' &&
+        this.proceedingDev[0].proceedingStatus != null) ||
+      this.proceedingDev[0].proceedingsCve == null
+    ) {
+      if (this.actForm.get('folioScan').value) {
+        this.alertQuestion(
+          'info',
+          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+          '',
+          'Aceptar',
+          'Cancelar'
+        ).then(res => {
+          console.log(res);
+          if (res.isConfirmed) {
+            this.router.navigate(
+              [`/pages/final-destination-process/third-possession-acts`],
+              {
+                queryParams: {
+                  origin: 'FACTREFACTAPOSTER',
+                  folio: this.actForm.value.folioScan,
+                },
+              }
+            );
+          }
+        });
+      } else {
+        this.alert(
+          'warning',
+          '',
+          'No Tiene Folio de Escaneo Para Continuar a la Pantalla de Escaneo'
+        );
+      }
     } else {
-      this.alertInfo(
-        'warning',
-        'No tiene Folio de Escaneo para continuar a la pantalla de Escaneo',
-        ''
-      );
+      this.alert('warning', '', 'No Se Puede Escanear Para Un Acta Cerrada');
     }
   }
 
   getGood(expId?: string | number) {
     this.loading = true;
+    let array: IGood[] = [];
     if (expId) {
       this.params.getValue()['filter.fileNumber'] = `$eq:${expId}`;
     }
@@ -576,11 +599,12 @@ if (id) {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    console.log(expId);
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
-
         this.data.load(response.data);
+        this.totalItems = response.count || 0;
         this.data.refresh();
         this.totalItems = response.count;
         //this.params.value.page = 1;
@@ -589,6 +613,7 @@ if (id) {
       error: error => {
         this.loading = false;
         this.data.load([]);
+        console.log('bien', this.data);
         this.data.refresh();
         this.totalItems = 0;
       },
@@ -598,34 +623,41 @@ if (id) {
   getDetailProcedings(expId: string | number) {
     this.loading = true;
     if (expId) {
-      this.params5.getValue()['filter.good.fileNumber'] = `$eq:${expId}`;
+      //this.params.getValue()['numGoodProceedingsId'] = `$eq:650`;
+      this.params.getValue()['numGoodProceedingsId'] = `$eq:${expId}`;
     }
     let params = {
       ...this.params5.getValue(),
       ...this.columnFilters1,
     };
-    this.detailProceedingsDevolutionService.getAll(params).subscribe({
-      next: response => {
-        //this.comerEvent = response.data;
-        this.data2.load(response.data);
-        this.totalItems1 = response.count || 0;
-        this.data2.refresh();
-        //this.params.value.page = 1;
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        this.data2.load([]);
-        this.data2.refresh();
-        this.totalItems1 = 0;
-      },
-    });
+    console.log('hoooooolaaaaaaa', params);
+    this.detailProceedingsDevolutionService
+      .getAllByActNumber(params)
+      .subscribe({
+        next: response => {
+          //this.comerEvent = response.data;
+          this.data2.load(response.data);
+          console.log('hoooooolaaaaaaa', this.data2);
+          this.totalItems1 = response.count || 0;
+          this.data2.refresh();
+          //this.params.value.page = 1;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          this.data2.load([]);
+          this.data2.refresh();
+          this.totalItems1 = 0;
+        },
+      });
   }
 
   closeExpedient() {
     let existe = '';
-    let vban = true;
+    let vban: Boolean;
     let vtmp_max = 0;
+    const milisegundosPorDia = 24 * 60 * 60 * 1000;
+    let body = '';
 
     if (!this.proceedingDev[0].proceedingsCve) {
       this.alert(
@@ -653,13 +685,14 @@ if (id) {
                 'No se ha realizado el escaneo...'
               );
             }
-            if (this.validateActCve()) {
+            if (!this.validateActCve()) {
               this.alert(
                 'warning',
                 'Ha Ocurrido un Error',
-                'La Clave del Acta es inconsistente'
+                'La Clave del Acta Es Inconsistente'
               );
             }
+            vban = true;
             if (new Date(this.proceedingDev[0].elaborationDate) != new Date()) {
               this.maximunClosingTimeService.getByTypeActa().subscribe({
                 next: data => {
@@ -667,12 +700,14 @@ if (id) {
                   if (vtmp_max > 0) {
                   }
                   if (
-                    new Date(this.proceedingDev[0].elaborationDate) < new Date()
+                    new Date(this.proceedingDev[0].elaborationDate).getTime() +
+                      vtmp_max * milisegundosPorDia <
+                    new Date().getTime()
                   ) {
                     this.alert(
                       'warning',
                       'Ha Ocurrido un Error',
-                      'El Acta No Tiene Ningun Bien Asignado, No Se Puede Cerrar.'
+                      'Está Fuera de Tiempo Para Cerrar el Acta'
                     );
                   }
                 },
@@ -681,28 +716,106 @@ if (id) {
               console.log(data);
             }
 
-            if (data.data.length > 0) {
-              if (
-                new Date(this.proceedingDev[0].elaborationDate) != new Date()
-              ) {
-                this.maximunClosingTimeService.getByTypeActa().subscribe({
-                  next: data => {
-                    vtmp_max = data.data.maxTmp;
-                    if (vtmp_max > 0) {
-                    }
-                  },
-                  error: err => {},
-                });
-                console.log(data);
-              } else {
-              }
-            } else {
-              existe = 'N';
+            if (this.data['data'].length == 0) {
               this.alert(
                 'warning',
                 'Ha Ocurrido un Error',
-                'La Clave del Acta o el Numero de Folio Universal, No Fueron Encontrados'
+                'El Acta No Tiene Ningun Bien Asignado, No Se Puede Cerrar.'
               );
+              console.log('cagamos');
+            } else {
+              if (this.proceedingDev[0].proceedingStatus == 'CERADA') {
+                this.alert(
+                  'warning',
+                  'Ha Ocurrido un Error',
+                  'El Acta Ya Esta Cerrada.'
+                );
+              } else {
+                this.alertQuestion(
+                  'question',
+                  '',
+                  '¿Esta Seguro Que Desea Cerrar el Acta?',
+                  'Cerrar',
+                  'Cancelar'
+                ).then(question => {
+                  if (question.isConfirmed) {
+                    this.proceedingDev[0].proceedingStatus == 'CERRADA';
+                    const lst_est_dev_pxr = 'AAA';
+                    console.log(this.data['data'][0]);
+                    for (let i = 0; i < this.data['data'].length; i++) {
+                      console.log(this.data['data'][i].goodId);
+                      this.goodService
+                        .updateStatus(
+                          this.data['data'][i].goodId,
+                          lst_est_dev_pxr
+                        )
+                        .subscribe({
+                          next: data => {
+                            this.onLoadToast(
+                              'success',
+                              'Bien',
+                              'Estatus del Bien Actualizado Correctamente'
+                            );
+                          },
+                          error: err => {
+                            this.alert(
+                              'warning',
+                              'Ha Ocurrido un Error',
+                              'Error al cambiar estatus del bien:' +
+                                this.data['data'][i].goodId
+                            );
+                            console.log(err);
+                          },
+                        });
+
+                      body = `{
+                        "propertyNum": "${this.data['data'][i].goodId}",
+                        "status": "${lst_est_dev_pxr}",
+                        "changeDate": "${new Date().toString()}",
+                        "userChange": "${
+                          this.authService.decodeToken().preferred_username
+                        }",
+                        "reasonForChange": "Automatico",
+                        "statusChangeProgram": "3"
+                      }`;
+
+                      console.log(body);
+
+                      /*  this.historyGoodService.create(JSON.parse(body)).subscribe({
+                      next: data=>{
+                        console.log('melooooosoooo',data);
+                      },error:err =>{
+                      console.log(err);
+                      this.alert(
+                          'warning',
+                          'Ha Ocurrido un Error',
+                          'Error Insertar En el Historico el Bien:'+ this.data['data'][i].goodId
+                          );
+                      }
+                    });
+                    console.log('ya casi mi hermano');
+                    let v_NO_ACTA =this.proceedingDev[0].id;
+                    this.actForm.controls['statusAct'].setValue(this.proceedingDev[0].proceedingStatus= 'CEA');
+                    this.actForm.controls['status'].setValue(this.proceedingDev[0].proceedingStatus= 'CEA');
+                    this.proceedingDev[0].elaborationDate= new Date();
+                    var formatted = new DatePipe('en-EN').transform(
+                    this.proceedingDev[0].elaborationDate,
+                    'dd/MM/yyyy',
+                    'UTC'
+                    );
+                    this.actForm.controls['elabDate'].setValue(formatted);
+
+                    this.procedureManagementService.update(this.expedient[0].id,JSON.parse('DV5')).subscribe({
+                      next:data=>{
+                        console.log('avanzamos otro poquito profesor');
+                    }, error:err=>{
+                        console.log(err);
+
+                    }});*/
+                    }
+                  }
+                });
+              }
             }
           },
           error: err => {
@@ -710,22 +823,12 @@ if (id) {
           },
         });
     }
-
-    /*
-                console.log('NO cagamos');
-    }else{
-      this.alert(
-                    'warning',
-                    'Ha Ocurrido un Error',
-                    'La Clave del Acta o el Numero de Folio Universal, No Estan Registrados'
-                    );
-                console.log('cagamos');
-    }*/
   }
 
   validateActCve() {
     this.proceedingDev[0].proceedingsCve;
     let vret = false;
+    console.log(this.proceedingDev[0].proceedingsCve);
     let number = this.proceedingDev[0].proceedingsCve.split('/');
     if (number.length == 8) {
       let vret = true;
@@ -853,66 +956,8 @@ if (id) {
   }
   validationAct() {
     console.log(this.proceedingDev[0].proceedingsCve);
-    if (
-      this.proceedingDev[0].proceedingsCve ==
-      this.proceedingDev[0].proceedingsCve
-    ) {
+    if (!this.actForm.get('folioScan').value) {
+      this.alert('warning', '', 'No Tiene Folio De Escaneo Para Imprimir');
     }
-    //if(this.actForm.value.){
-
-    //}
   }
 }
-const EXAMPLE_DATA = [
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    importe: '1',
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    importe: '1',
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    importe: '1',
-  },
-  {
-    noBien: 123,
-    description: 'INMUEBLE UBICADO EN CALLE',
-    cantidad: 1,
-    importe: '1',
-  },
-];
-
-const EXAMPLE_DATA2 = [
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    cantidad: 3,
-    importe: 5,
-  },
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    cantidad: 3,
-    importe: 5,
-  },
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    cantidad: 3,
-    importe: 5,
-  },
-  {
-    noBien: 543,
-    description: 'INMUEBLE UBICADO EN LA CIUDAD',
-    cantidad: 3,
-    importe: 5,
-  },
-];
