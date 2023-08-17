@@ -4,127 +4,205 @@
   </div>
 
   <div body>
-    <div class="row mt-5 justify-content-end">
-      <div class="col-md-4 text-center text-md-right">
-        <button class="btn btn-secondary btn-sm active">Cargar Bienes</button>
+    <form class="form-material" [formGroup]="formAct">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <!-- <form-field [control]="formAct.get('cveRecord')" label="Cve. Acta">
+            <input formControlName="cveRecord" class="form-control" type="text" />
+          </form-field> -->
+          <form-field
+            class="form-group"
+            [control]="formAct.get('cveRecord')"
+            label="Cve. Acta">
+            <ng-custom-select
+              formControlName="cveRecord"
+              class="form-control"
+              path="proceeding/api/v1/proceedings-delivery-reception/get-all-acta-reception-type-actas"
+              [isLoadInOnInit]="true"
+              paramSearch="filter.keysProceedings"
+              prefixSearch="$ilike"
+              value="keysProceedings">
+              <ng-template let-item> {{ item.keysProceedings }}</ng-template>
+            </ng-custom-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-primary active btn-sm"
+            (click)="ConsultAER()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+        <div class="col-md-1" *ngIf="yData">
+          <button
+            class="btn btn-danger btn-sm active mr-3"
+            (click)="clearall()">
+            Limpiar <i class="fas fa-eraser"> </i>
+          </button>
+        </div>
       </div>
-      <div class="col-md-4 text-center text-md-right mt-3 mt-md-0">
+      <br />
+      <br />
+      <div class="row justify-content-center">
+        <div class="col-md-3">
+          <form-field
+            [control]="formAct.get('noTransfer')"
+            label="No. Transferente">
+            <input
+              formControlName="noTransfer"
+              class="form-control"
+              type="text"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="formAct.get('noExpedient')"
+            label="No. Expediente">
+            <input
+              formControlName="noExpedient"
+              class="form-control"
+              type="text"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="formAct.get('statusRecord')"
+            label="Estado del Acta">
+            <input
+              formControlName="statusRecord"
+              class="form-control"
+              type="text"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2" style="margin-top: 0.6%">
+          <button
+            class="btn btn-primary btn-sm active"
+            [disabled]="!close"
+            (click)="file.click()">
+            Cargar Bienes <i class="fa fa-upload"></i>
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            (change)="onFileChange($event)" />
+        </div>
+        <!-- <div class="col-md-4 text-center text-md-right mt-3 mt-md-0">
         <button class="btn btn-secondary btn-sm active">
           Cerrar &Aacute;cta
         </button>
+      </div> -->
       </div>
-    </div>
-
-    <div class="pt-5">
-      <form
-        class="form-material form-horizontal"
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()">
-        <div class="row mt-5 justify-content-start justify-content-sm-end">
-          <div class="col-6">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
-                [control]="form.get('statusAct')"
-                label="Estatus &Aacute;cta">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="statusAct" />
-              </form-field>
-            </div>
-          </div>
+      <br />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="formAct.get('textarea')" label="Observaciones">
+            <textarea
+              rows="5"
+              formControlName="textarea"
+              class="form-control"
+              [readonly]="!closeActa"></textarea>
+          </form-field>
         </div>
-        <div class="row mt-5">
-          <div class="col-12 col-md-4">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
-                [control]="form.get('keyAct')"
-                label="Cve &Aacute;cta">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="keyAct" />
-              </form-field>
-            </div>
+        <div class="col-md-3" style="margin-top: 3.5%">
+          <form-field
+            [control]="formAct.get('dateCapture')"
+            label="Fecha Captura">
+            <input
+              formControlName="dateCapture"
+              class="form-control"
+              type="text"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3" style="margin-top: 3.5%">
+          <form-field
+            [control]="formAct.get('closingDate')"
+            label="Fecha Cierre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="closingDate"
+              readonly />
+          </form-field>
+        </div>
+        <div
+          class="col-md-2"
+          style="margin-top: 4.2%; margin-right: -10px"
+          (click)="getclose()">
+          <button
+            class="btn btn-primary btn-sm active mr-3"
+            [disabled]="!goods || !fool || !closeActa || !statusScan">
+            Cerrar &Aacute;cta
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="pt-5">
+      <form class="form-material" [formGroup]="form">
+        <div class="row">
+          <div class="col-sm-12 col-12 col-md-3 text-center">
+            <button
+              tooltip="Generar Folio de Escaneo y Solicitud"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1"
+              (click)="initSolicitud()"
+              [disabled]="!goods || !closeActa">
+              <i class="bx bxs-file-find"></i>
+            </button>
+            <button
+              tooltip="Escanear"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1"
+              (click)="openScannerPage()"
+              [disabled]="!goods || !fool || !closeActa">
+              <i class="bx bxs-file"></i>
+            </button>
           </div>
-          <div class="col-12 col-md-4 mt-3 mt-md-0">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
-                [control]="form.get('proceedings')"
-                label="No. Expediente">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="proceedings" />
-              </form-field>
-            </div>
-          </div>
-          <div class="col-12 col-md-4 mt-3 mt-md-0">
-            <div class="mb-3 pl-4 pr-4">
-              <div class="mb-3 pl-4 pr-4">
+          <div class="col-sm-12 col-12 col-md-6 w-100 p-0">
+            <div class="col-md-12 col-sm-12 col-12 p-0">
+              <div class="col-md-12 col-sm-12 col-xs-12 p-1">
                 <form-field
-                  [control]="form.get('observations')"
-                  label="Observaciones">
-                  <textarea
+                  label="Folio De Escaneo"
+                  [control]="form.get('scanningFoli')">
+                  <input
+                    type="text"
                     class="form-control"
-                    formControlName="observations"></textarea>
+                    formControlName="scanningFoli"
+                    readonly />
                 </form-field>
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="row mt-4">
-          <div class="col-12 col-md-6">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
-                [control]="form.get('captureDate')"
-                label="Fecha Captura">
-                <input
-                  type="text"
-                  class="form-control"
-                  bsDatepicker
-                  formControlName="captureDate" />
-              </form-field>
-            </div>
-          </div>
-          <div class="col-12 col-md-6">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
-                [control]="form.get('closingDate')"
-                label="Fecha Cierre">
-                <input
-                  type="text"
-                  class="form-control"
-                  bsDatepicker
-                  formControlName="closingDate" />
-              </form-field>
-            </div>
-          </div>
-        </div>
-
-        <div class="row mt-4">
-          <div class="col-12 col-md-6">
-            <div class="mb-3 pl-4 pr-4">
-              <form-field
-                [control]="form.get('universalFolio')"
-                label="Folio Universal">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="universalFolio" />
-              </form-field>
-            </div>
-          </div>
-          <div class="col-12 col-md-6 text-center text-md-right">
-            <button class="btn btn-secondary btn-sm active">
-              Replicar Folio
+          <div class="col-sm-12 col-12 col-md-3 text-center">
+            <button
+              tooltip="Imprimir Solicitud de Escaneo"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1"
+              (click)="getReport()"
+              [disabled]="!goods || !fool">
+              <i class="bx bxs-printer"></i>
+            </button>
+            <button
+              tooltip="Consulta de Imágenes Escaneadas"
+              containerClass="tooltip-style"
+              class="btn btn-secondary btn-sm active m-1"
+              [disabled]="!goods || !fool || !scan"
+              (click)="openScannerPageView()">
+              <i class="bx bxs-file-find"></i>
             </button>
           </div>
+          <!-- (click)="getReportViewActa()" -->
         </div>
       </form>
-
-      <app-divider></app-divider>
+      <hr />
       <div class="row mt-5 justify-content-end mt-3">
         <div class="col-md-5 buttons pt-3 text-right">
           <app-columns-select
@@ -138,7 +216,7 @@
           class="col-md-12"
           [attr.class]="'table-bordered'"
           [settings]="settings"
-          [source]="data">
+          [source]="localStorage">
         </ng2-smart-table>
       </div>
       <div class="mt-5 col-6 align-items-center">
@@ -149,7 +227,7 @@
             >
           </div>
           <div class="col-6">
-            <span class="text-danger"
+            <span class="text-black"
               ><i class="fa fa-square"></i> No disponibles</span
             >
           </div>

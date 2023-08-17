@@ -349,12 +349,12 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     keyTypeDocument: ['DEVOL', [Validators.required]],
                     natureDocument: ['ORIGINAL'],
                     descriptionDocument: ['ACTA'],
-                    significantDate: [new Date()],
+                    significantDate: ['2023'],
                     scanStatus: ['SOLICITADO'],
                     userRequestsScan: [
                       this.authService.decodeToken().preferred_username,
                     ],
-                    dateRegistrationScan: [new Date()],
+                    dateRegistrationScan: ['2023'],
                     numberDelegationRequested: [
                       this.proceedingDev[0].delegationNumber.id,
                     ],
@@ -367,7 +367,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                   });
                   console.log(this.documentForm);
                   this.document = this.documentForm.value;
-                  console.log(JSON.stringify(this.document));
+                  console.log(this.document);
                   this.documentsService.create(this.document).subscribe({
                     next: data => {
                       console.log(data);

@@ -196,6 +196,15 @@ export class ProcedureManagementService extends HttpService {
       body
     );
   }
+  updateByEx(
+    id: number,
+    body: Partial<IProceduremanagement>
+  ): Observable<IProceduremanagement> {
+    return this.put<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`,
+      body
+    );
+  }
 
   create(body: IProceduremanagement): Observable<IProceduremanagement> {
     return this.post<IProceduremanagement>(
