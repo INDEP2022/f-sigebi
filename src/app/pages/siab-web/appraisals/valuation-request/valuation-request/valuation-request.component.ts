@@ -55,7 +55,6 @@ export class valuationRequestComponent extends BasePage implements OnInit {
   idOficio: string;
   oficio_clave: string;
   num_armada: string;
-
   addUser: boolean = false;
   removeUser: boolean = false;
   searchChanges: boolean = false;

@@ -432,7 +432,9 @@
             type="button"
             class="btn btn-primary btn-sm active ml-2 mr-2"
             (click)="btnSeleccionarDocumentos()"
-            [disabled]="form.get('di_disponible').value == 'N'">
+            [disabled]="
+              selectedKey == null || form.get('di_disponible').value == 'N'
+            ">
             Seleccionar Documentos
           </button>
         </div>

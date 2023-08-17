@@ -1735,6 +1735,7 @@ export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
       this.selectGood = [];
     }
   }
+
   //Seleccionable de recibos//
   goodSelectReceipt(event: any, good: IGood) {
     if (event.target.checked == true) {
