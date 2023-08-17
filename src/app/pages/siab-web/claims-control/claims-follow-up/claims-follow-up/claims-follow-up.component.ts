@@ -99,7 +99,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         polizaafectada: {
-          title: 'Poliza Afectada',
+          title: 'Póliza Afectada',
           type: 'string',
           sort: false,
         },
