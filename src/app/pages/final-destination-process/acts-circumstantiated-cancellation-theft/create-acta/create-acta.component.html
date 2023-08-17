@@ -49,18 +49,28 @@
                             </form-field>
                         </div>
                     </div>
-                    <div class="col-md-3 mt-2">
-                        <div>
-                            <form-field [control]="actaRecepttionForm.get('cveReceived')">
-                                <ngx-select [form]="actaRecepttionForm" [data]="dele" (fetchItems)="consulREG_DEL_DESTR($event)" bindLabel="cveReceived" value="delegation" control="cveReceived" label="Admin" [searchOnInit]="true" [showTooltip]="true" termMaxLength="30">
-                                </ngx-select>
-                            </form-field>
-                        </div>
-                    </div>
+                    <!-- <div class="col-md-3 mt-2">
+            <div>
+              <form-field [control]="actaRecepttionForm.get('cveReceived')">
+                <ngx-select
+                  [form]="actaRecepttionForm"
+                  [data]="dele"
+                  (fetchItems)="consulREG_DEL_DESTR($event)"
+                  bindLabel="cveReceived"
+                  value="delegation"
+                  control="cveReceived"
+                  label="Admin"
+                  [searchOnInit]="true"
+                  [showTooltip]="true"
+                  termMaxLength="30">
+                </ngx-select>
+              </form-field>
+            </div>
+          </div> -->
                     <div class="col-md-3 mt-2">
                         <div>
                             <form-field [control]="actaRecepttionForm.get('consec')" label="Folio">
-                                <input [max-length]="4" pattern="^[0-9]+" type="number" class="form-control pt-1" formControlName="consec" />
+                                <input pattern="^[0-9]+" type="number" class="form-control pt-1" formControlName="consec" />
                             </form-field>
                         </div>
                     </div>

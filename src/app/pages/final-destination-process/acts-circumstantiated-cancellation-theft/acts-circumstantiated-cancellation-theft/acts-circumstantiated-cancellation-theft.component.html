@@ -1,44 +1,50 @@
 <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-        <h5 class="title">
-            &Aacute;ctas Circunstanciadas de Cancelaci&oacute;n de Entrega por Robo
-        </h5>
+  <div class="ch-content" header>
+    <h5 class="title">
+      &Aacute;ctas Circunstanciadas de Cancelaci&oacute;n de Entrega por Robo
+    </h5>
+  </div>
+
+  <div body>
+    <div
+      class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
+      *ngIf="loadingExpedient">
+      <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-center">
+          <div class="loader"></div>
+          <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
+        </div>
+      </div>
     </div>
 
-    <div body>
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5" *ngIf="loadingExpedient">
-            <div class="d-flex justify-content-center">
-                <div class="d-flex justify-content-center">
-                    <div class="loader"></div>
-                    <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
-                </div>
-            </div>
-        </div>
-
+    <div class="row">
+      <div class="col-md-12">
         <div class="row">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="row m-3 flex-row justify-content-end">
-                                <div class="col-md-8 text-end">
-                                    <button type="button" class="btn btn-primary btn-sm active" (click)="searchExpedient()">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="row m-3 flex-row justify-content-end">
+                <div class="col-md-8 text-end">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="searchExpedient()">
                     <i class="bx bx-list-plus bx-sm float-icon"></i>
                   </button>
-                                </div>
-                            </div>
-                            <div class="card-body mt-4 mb-4">
-                                <div class="form-group row p-4">
-                                    <div class="col-md-3">
-                                        <label for="" class="col-form-label">No. Expediente:</label>
-                                        <div>{{ fileNumber || '' }}</div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="" class="col-form-label">Causa Penal:</label>
-                                        <div>{{ causa || '' }}</div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="" class="col-form-label">Averiguación Previa:</label
+                </div>
+              </div>
+              <div class="card-body mt-4 mb-4">
+                <div class="form-group row p-4">
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label">No. Expediente:</label>
+                    <div>{{ fileNumber || '' }}</div>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label">Causa Penal:</label>
+                    <div>{{ causa || '' }}</div>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="" class="col-form-label"
+                      >Averiguación Previa:</label
                     >
                     <div>{{ aprevia || '' }}</div>
                   </div>
@@ -369,10 +375,12 @@
               <!-- Mover todos -->
               <i class="bx bx-chevrons-down bx-md"></i>
             </button>
+            
             <button
               class="btn btn-secondary btn-sm active m-3 p-1 pointer"
               type="button"
               (click)="removeAll()">
+               <!-- Quitar todos -->
               <i class="bx bx-chevrons-up bx-md"></i>
             </button>
             <button
@@ -423,17 +431,18 @@
               <div class="row">
                 <div class="col-sm-12 col-12 col-md-3 text-center">
                   <span
-                    tooltip="Generar Folio de Escaneo y Solicitud"
+                    title="Generar Folio de Escaneo y Solicitud"
                     containerClass="tooltip-style">
                     <button
-                    [disabled]="!actasDefault"
+                      [disabled]="!actasDefault"
                       (click)="createScannerFoil()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file-find"></i>
                     </button>
                   </span>
-                  <span tooltip="Escanear" containerClass="tooltip-style">
+                  <span title="Escanear" containerClass="tooltip-style">
                     <button
+                    [disabled]="!disabledBtnEscaneo"
                       (click)="openScannerPage()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file"></i>
@@ -455,7 +464,7 @@
                     </div>
                     <div class="col-md-12 col-sm-12 col-12">
                       <div class="d-flex justify-content-center">
-                        <div class="m-3">
+                        <!-- <div class="m-3">
                           <button
                             [disabled]="!disabledBtnCerrar"
                             type="button"
@@ -464,10 +473,11 @@
                             Cerrar Acta
                             <i class="fas fa-close bx-sm float-icon"></i>
                           </button>
-                        </div>
+                        </div> -->
 
                         <div class="m-3">
                           <button
+                          [disabled]="!disabledBtnReplicar"
                             (click)="replicate()"
                             type="button"
                             class="btn btn-primary btn-sm active">
@@ -480,23 +490,26 @@
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 text-center">
                   <span
-                    tooltip="Imprimir Solicitud de Escaneo"
+                    title="imprimir Solicitud de Escaneo"
                     containerClass="tooltip-style">
                     <button
+                     [disabled]="!disabledBtnImprimir"
                       (click)="showMessageDigitalization()"
                       class="btn btn-secondary btn-sm active m-1">
-                      <i class="bx bxs-file-find"></i>
+                      <i class="bx bxs-printer"></i>
                     </button>
                     <!--  [disabled]="true"-->
                   </span>
                   <span
-                    tooltip="Consulta de Imágenes Escaneadas"
+                    title="Consulta de Imágenes Escaneadas"
                     containerClass="tooltip-style">
                     <button
-                      (click)="showScannerFoil()"
+                    [disabled]="!disabledBtnImage"
+                      (click)="viewPictures($event)" 
                       class="btn btn-secondary btn-sm active m-1">
-                      <i class="bx bxs-file"></i>
+                      <i class="bx bxs-file-find"></i>
                     </button>
+                    <!-- "showScannerFoil()"  -->
                   </span>
                 </div>
               </div>
@@ -507,56 +520,20 @@
     </div>
   </div>
 
-  <!-- <div class="row" *ngIf="showScanForm">
-    <div class="col-12 col-sm-12 col-md-9">
-      <div class="card">
-        <div class="card-body">
-          <app-scanning-foil [formScan]="formScan" [dataRecepcion]="dataRecepcion" [paramsScreen]="paramsScreen"
-            [fileNumber]="fileNumber" [wheelNumber]="wheelNumber" [dataUserLogged]="dataUserLogged"></app-scanning-foil>
-        </div>
-      </div>
-    </div>
-    <div class="col-12 col-sm-12 col-md-3">
-      <button name="imp" data-toggle="tooltip" tooltip="Imprimir" containerClass="tooltip-style" (click)="btnDetail()"
-        class="btn btn-secondary btn-sm active ml-2 mr-2">
-        <i class="bx bxs-printer"></i>
-      </button>
-
-      <button name="env" data-toggle="tooltip" containerClass="tooltip-style" tooltip="Enviar" (click)="sendOffice()"
-        class="btn btn-danger btn-sm active ml-2 mr-2">
-        <i class="bx bx-send"></i>
-      </button>
-    </div>
-  </div> -->
-
   <div footer>
-    <!-- <div class="m-3">
-        <button class="btn btn-info active btn-sm" (click)="Scanner()">
-          Escanear
-          <i class="bx bx-file bx-sm float-icon"></i>
-        </button>
-      </div>
-      <div class="m-3">
+    <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="col-md-8 text-end">
         <button
+          [disabled]="!disabledBtnCerrar"
           type="button"
-          class="btn btn-primary active btn-sm"
-          (click)="Generar()">
-          Imprimir
-          <i class="bx bx-printer bx-sm float-icon"></i>
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="cerrarActa()">
+          Cerrar Acta
+          <i class="fas fa-close bx-sm float-icon"></i>
         </button>
-      </div>
-      <div class="m-3">
-        <button type="button" class="btn btn-primary btn-sm active">
-          Ver
-          <i class="fa fa-eye" aria-hidden="true"></i>
-        </button>
-        (click)="ViewActa() 
-        (click)="openview()"
-      </div></div>-->
-
-    <div class="m-3">
-      <div class="col-md-12 text-end">
-        <button
+       <button
+       [disabled]="!Exportdate"
           class="btn btn-sm btn-success active"
           type="button"
           (click)="exportToExcel()">
@@ -565,5 +542,28 @@
         </button>
       </div>
     </div>
+
+    <!-- 
+    <div class="m-6">
+      <div class="col-md-12 text-end">
+      <button
+        [disabled]="!disabledBtnCerrar"
+        type="button"
+        class="btn btn-primary active btn-sm"
+        (click)="cerrarActa()">
+        Cerrar Acta
+        <i class="fas fa-close bx-sm float-icon"></i>
+        </button>
+
+
+        <button
+          class="btn btn-sm btn-success active"
+          type="button"
+          (click)="exportToExcel()">
+          Exportar Datos
+          <i class="bx bx-download float-icon"></i>
+        </button>
+      </div>
+    </div> -->
   </div>
 </app-card>

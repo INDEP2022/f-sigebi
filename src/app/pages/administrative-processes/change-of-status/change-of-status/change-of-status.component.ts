@@ -143,7 +143,13 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         this.endProcess = true;
       },
       error: error => {
-        this.alert('error', 'Error', 'Este bien no existe');
+        this.alert('warning', 'El Bien no Existe', '');
+        this.loading = false;
+        this.descriptionGood.reset();
+        this.currentStatus.reset();
+        this.descriptionStatus.reset();
+        this.processesGood.reset();
+        this.endProcess = false;
       },
     });
   }

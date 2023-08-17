@@ -10,30 +10,31 @@
           <form-field
             [control]="form.get('no_expediente')"
             label="No. Expediente"
-            class="col-md-1">
+            class="col-md-5">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="no_expediente"
               [(ngModel)]="noExpe"
-              (blur)="getAllBLKByFilters()" />
+              maxlength="10" />
           </form-field>
 
           <form-field
             [control]="form.get('av_previa')"
             label="Averiguaci&oacute;n Previa"
-            class="col-md-5">
+            class="col-md-7">
             <input
               type="text"
               class="form-control"
               formControlName="av_previa"
               readonly />
           </form-field>
-
+        </div>
+        <div class="row pt-3">
           <form-field
             [control]="form.get('ca_penal')"
             label="Causa Penal"
-            class="col-md-2">
+            class="col-md-4">
             <input
               type="text"
               class="form-control"
@@ -43,7 +44,7 @@
 
           <form-field
             [control]="form.get('no_transferente')"
-            class="col-md-2"
+            class="col-md-4"
             label="No. Exp. Transferente">
             <input
               type="text"
@@ -54,7 +55,7 @@
 
           <form-field
             [control]="form.get('ti_expediente')"
-            class="col-md-2"
+            class="col-md-4"
             label="Ti. Expediente">
             <input
               type="text"
@@ -67,6 +68,21 @@
     </div>
 
     <div class="d-flex">
+      <div>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="getAllBLKByFilters()">
+          Consultar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div>
+        <button
+          class="btn btn-danger btn-sm active ml-3 mr-3"
+          (click)="resetForm()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
       <div class="ml-auto">
         <button class="btn btn-primary btn-sm active" (click)="closeExp()">
           Cerrar
@@ -82,7 +98,7 @@
           <form-field
             [control]="actForm.get('status')"
             label="Estado:"
-            class="col-md-1">
+            class="col-md-2">
             <input
               type="text"
               class="form-control"
@@ -93,12 +109,12 @@
           <form-field
             [control]="actForm.get('actSelect')"
             label="&Aacute;cta:"
-            class="col-md-5">
-            <input
+            class="col-md-4">
+            <textarea
               type="text"
               class="form-control"
               formControlName="actSelect"
-              readonly />
+              readonly></textarea>
           </form-field>
 
           <!-- <form-field [control]="actForm.get('trans')" label="Trans:" class="col-md-1">
@@ -133,11 +149,11 @@
             [control]="actForm.get('cv_acta')"
             label="&Aacute;cta:"
             class="col-md-6">
-            <input
+            <textarea
               type="text"
               class="form-control"
               formControlName="cv_acta"
-              readonly />
+              readonly></textarea>
           </form-field>
 
           <form-field
@@ -155,7 +171,7 @@
         <div class="row pt-3">
           <form-field
             [control]="actForm.get('fec_elaboracion')"
-            label="Fec. Elaborac&oacute;n:"
+            label="Fec. Elaboraci&oacute;n:"
             class="col-md-6">
             <input
               type="text"
@@ -254,17 +270,9 @@
     <div>
       <form [formGroup]="actForm" class="form-materia"></form>
 
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select
-          [(settings)]="settings"
-          class="row justify-content-end">
-        </app-columns-select>
-      </div>
-      <ng-scrollbar
-        style="min-height: 300px; border: none"
-        class="mt-3"
-        track="all">
-        <div class="row mt-3 pt-2">
+      <div class="d-flex justify-content-end mt-5"></div>
+      <div class="row mt-3 pt-2" [class.table-loading]="loadingOne">
+        <div>
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
@@ -272,20 +280,21 @@
             (userRowSelect)="rowSelectedOne($event)">
           </ng2-smart-table>
         </div>
-      </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
+        <app-pagination [params]="paramsOne" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
 
       <div class="col-md-12 text-center mt-4 mb-4">
         <button
-          class="btn btn-primary btn-sm active m-3"
           type="button"
+          tooltip="Agregar"
+          containerClass="tooltip-style"
+          class="btn btn-info btn-sm active ml-2 mr-2"
           (click)="createTableTwo()">
-          Agregar <i class="fa fa-check" aria-hidden="true"></i>
+          Agregar <i class="bx bx-plus bx-sm float-icon"></i>
         </button>
         <button
           class="btn btn-red btn-sm active m-3"
-          type="button"
           (click)="deleteTableTwo()">
           Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
@@ -293,26 +302,18 @@
 
       <!-- BLoque DAD (Detalle Acta)-->
 
-      <div class="d-flex justify-content-end mt-5">
-        <app-columns-select
-          (settingsChange)="settingsChange($event, 2)"
-          [settings]="settings2">
-        </app-columns-select>
-      </div>
-      <ng-scrollbar
-        style="min-height: 300px; border: none"
-        class="mt-3"
-        track="all">
-        <div class="row mt-3">
+      <div class="d-flex justify-content-end mt-5"></div>
+      <div class="row mt-3 pt-2" [class.table-loading]="loadingOne">
+        <div>
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings2"
             [source]="data2"
             (userRowSelect)="rowSelectedTwo($event)"></ng2-smart-table>
         </div>
-      </ng-scrollbar>
-      <app-pagination [params]="params2" [totalItems]="totalItems2">
-      </app-pagination>
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
+        </app-pagination>
+      </div>
       <div class="row">
         <div class="d-flex align-items-center">
           <div class="col-6 align-items-center">

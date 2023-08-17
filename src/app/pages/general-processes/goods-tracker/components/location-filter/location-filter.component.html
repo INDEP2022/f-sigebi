@@ -11,7 +11,19 @@
         bindLabel="description"
         label="Almacén"
         [data]="warehouses"
-        (fetchItems)="getWarehouses($event)"></ngx-select>
+        (fetchItems)="getWarehouses($event)"
+        [labelTemplate]="warehouseLabel"
+        [optionTemplate]="warehouseOption"></ngx-select>
+      <ng-template #warehouseLabel let-item="item"
+        ><span [title]="item.description">{{
+          item.description
+        }}</span></ng-template
+      >
+      <ng-template #warehouseOption let-item="item"
+        ><span [title]="item.description">{{
+          item.description
+        }}</span></ng-template
+      >
     </form-field>
     <form-field [control]="form.get('cordination')" class="col-md-4">
       <ngx-select
@@ -24,7 +36,19 @@
         bindLabel="description"
         label="Coordinación Regional"
         [data]="delegations"
-        (fetchItems)="getDelegations($event)"></ngx-select>
+        (fetchItems)="getDelegations($event)"
+        [labelTemplate]="cordinationLabel"
+        [optionTemplate]="cordinationOption"></ngx-select>
+      <ng-template #cordinationLabel let-item="item"
+        ><span [title]="item.description">{{
+          item.description
+        }}</span></ng-template
+      >
+      <ng-template #cordinationOption let-item="item"
+        ><span [title]="item.description">{{
+          item.description
+        }}</span></ng-template
+      >
     </form-field>
     <form-field [control]="form.get('autorityState')" class="col-md-4">
       <ngx-select
@@ -37,7 +61,19 @@
         bindLabel="descCondition"
         label="Estado Donde Radica la Autoridad"
         [data]="autorityStates"
-        (fetchItems)="getAutorityStates($event)"></ngx-select>
+        (fetchItems)="getAutorityStates($event)"
+        [labelTemplate]="authLabel"
+        [optionTemplate]="authOption"></ngx-select>
+      <ng-template #authLabel let-item="item"
+        ><span [title]="item.descCondition">{{
+          item.descCondition
+        }}</span></ng-template
+      >
+      <ng-template #authOption let-item="item"
+        ><span [title]="item.descCondition">{{
+          item.descCondition
+        }}</span></ng-template
+      >
     </form-field>
   </div>
   <div class="row pt-3">
@@ -52,7 +88,19 @@
         bindLabel="descCondition"
         label="Estado Donde Radica el Bien"
         [data]="goodStates"
-        (fetchItems)="getGoodStates($event)"></ngx-select>
+        (fetchItems)="getGoodStates($event)"
+        [labelTemplate]="stateLabel"
+        [optionTemplate]="stateOption"></ngx-select>
+      <ng-template #stateLabel let-item="item"
+        ><span [title]="item.descCondition">{{
+          item.descCondition
+        }}</span></ng-template
+      >
+      <ng-template #stateOption let-item="item"
+        ><span [title]="item.descCondition">{{
+          item.descCondition
+        }}</span></ng-template
+      >
     </form-field>
   </div>
   <div class="row pt-3">

@@ -9,7 +9,7 @@ export enum NotificationEndpoints {
   //put
   NotificationxPropertyPut = `notification-x-property/property`,
   //post
-  ValidateGoodStatus = `validate-good-status`,
+  ValidateGoodStatus = `application/post-pup-valida-estatus-bien`,
   //post
   NotifyRatification = `notify-ratification`,
   //post
@@ -34,4 +34,6 @@ export enum NotificationEndpoints {
   NotificationxPropertyFilter2 = `notification-x-property/filter`,
 
   byFileNumber = `notification/maxCFlyer`,
+
+  confirmStatus = `application/post-pup-valida-estatus-bien`,
 }

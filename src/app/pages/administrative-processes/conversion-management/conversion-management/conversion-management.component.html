@@ -6,16 +6,13 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <!--Date Form-->
-      <div class="row">
+      <!-- <div class="row">
         <div class="justify-content-start">
-          <button
-            type="button"
-            class="btn btn-sm btn-primary active mr-3"
-            (click)="searchConversion()">
+          <button type="button" class="btn btn-sm btn-primary active mr-3" (click)="searchConversion()">
             Buscar Conversión <i class="fas fa-search"></i>
           </button>
         </div>
-      </div>
+      </div> -->
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
@@ -79,7 +76,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('actaConversion')"
-            label="Cve Acta Conversión">
+            label="Clave Acta Conversión">
             <input
               type="text"
               class="form-control"
@@ -108,7 +105,7 @@
             <div class="col-md-5 col-sm-12 col-xs-12">
               <form-field
                 [control]="form.get('desStatus')"
-                label="Desc. Estatus">
+                label="Descripción Estatus">
                 <input
                   type="text"
                   class="form-control"
@@ -154,6 +151,7 @@
         </div>
       </app-card>
       <div class="row">
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-1"></div>
         <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
           <div class="d-flex justify-content-center">
             <div class="m-3">
@@ -162,25 +160,12 @@
                 class="btn btn-sm btn-primary active"
                 (click)="generatePaswword()"
                 [disabled]="saved">
-                Generar PW
+                Generar Contraseña
               </button>
             </div>
           </div>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12 mt-1">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <!-- [disabled]="!isFormModified" -->
-
-              <button
-                type="button"
-                class="btn btn-sm btn-primary active"
-                (click)="save()">
-                Guardar <i class="fas fa-save"></i>
-              </button>
-            </div>
-          </div>
-        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-1"></div>
       </div>
 
       <!--       <div class="row mt-5" *ngIf="generarPass">
