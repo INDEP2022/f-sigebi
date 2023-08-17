@@ -131,6 +131,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
     origin: '',
     NO_EXP: '',
   };
+  disabledBtnImage: boolean = false;
+  disabledBtnImprimir: boolean = false;
+  disabledBtnEscaneo: boolean = false;
+  disabledBtnReplicar: boolean = false;
   disabledBtnCerrar: boolean = true;
   showScanForm: boolean = true;
   ocultarPaginado: boolean = false;
@@ -187,6 +191,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   userdelegacion: any;
   userDepartament: any;
   folioBoool: boolean = false;
+  authorityNumber: any;
+  Exportdate: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -423,6 +429,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
 
 
+
     // const claveActa = "RFP/D/AEROBANOBRAS/CCB/TIJ/0066/98/02"; // Año 2019, Mes Febrero
     // const resultado = this.generarDatosDesdeUltimosCincoDigitos(claveActa);
 
@@ -626,6 +633,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
         // this.actaRecepttionForm.get('elabDate').setValue(this.expedient.insertDate);
 
+        this.authorityNumber = this.expedient.authorityNumber;
         // Mapeo de datos
         this.actaRecepttionForm
           .get('fechaCaptura')
@@ -825,7 +833,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // ejecuta: next.ejecuta,
         consec: next.numeraryFolio,
         type: next.id,
-        claveTrans: next.authorityNumber,
         cveActa: next.keysProceedings,
         mes: next.dateElaborationReceipt,
         cveReceived: next.receiptKey,
@@ -841,6 +848,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo3: next.parrafo3,
       });
 
+
+      // Se mapea el campo autoridad
+      //this.expedient.authorityNumber;
       // Pasar clave a esta función
       this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
@@ -876,6 +886,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
               this.totalItems2 = data.count;
               console.log('data', data);
               this.loading2 = false;
+              this.Exportdate = true;
+              this.disabledBtnEscaneo = true;
+              this.disabledBtnImprimir = true;
+              this.disabledBtnImage = true;
             });
           },
           error: error => {
@@ -986,6 +1000,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 let indexGood = this.dataTableGood_.findIndex(
                   _good => _good.id == good.id
                 );
+
+                this.Exportdate = true;
+
                 console.log('indexGood', indexGood);
                 // if (indexGood != -1)
                 // this.dataTableGood_[indexGood].di_disponible = 'N';
@@ -1002,6 +1019,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             this.getGoodsByStatus(this.fileNumber);
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
+          //this.actasDefault = null;
         }
       }
     } else {
@@ -1041,6 +1059,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         next: data => {
           // this.alert('success', 'Bien agregado correctamente', '');
           resolve(true);
+          this.Exportdate = true;
         },
         error: error => {
           // this.authorityName = '';
@@ -1119,6 +1138,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.selectedRow = event.data;
     console.log("select RRR", this.selectedRow);
 
+
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -1168,6 +1188,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 (goodV: any) => goodV.numberGood == _g.id
               );
 
+              this.Exportdate = true;
               console.log('valid', valid);
               await this.createDET(_g);
               if (!valid) {
@@ -1175,20 +1196,21 @@ export class ActsCircumstantiatedCancellationTheftComponent
               }
             }
           });
-
           Promise.all(result).then(async item => {
             this.getGoodsByStatus(Number(this.fileNumber));
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
+            //this.actasDefault = null;
           });
         }
+
       }
     }
   }
 
+
+  //Quitar uno
   removeSelect() {
-    if (this.dataRecepcion.length == 0) {
-      return;
-    }
+
     if (this.statusCanc == 'CERRADA') {
       this.alert(
         'warning',
@@ -1196,12 +1218,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
       return;
-    } else {
+    }
+    else {
+      console.log("this.actasDefault ", this.actasDefault);
       if (this.actasDefault == null) {
         this.alert(
           'warning',
-          'No Existe un Acta en la cual Asignar el Bien.',
-          'Debe Capturar un Acta.'
+          'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
+          ''
         );
         return;
       } else if (this.selectedGooodsValid.length == 0) {
@@ -1211,7 +1235,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
           'Debe Capturar un Acta.'
         );
         return;
-      } else {
+      }
+
+      else {
         this.loading2 = true;
         if (this.selectedGooodsValid.length > 0) {
           // this.goods = this.goods.concat(this.selectedGooodsValid);
@@ -1225,7 +1251,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             );
             // if (index != -1) {
             //   this.dataTableGood_[index].di_disponible = 'S';
-            //   this.dataTableGood_[index].acta = null;
+            //         //   this.dataTableGood_[index].acta = null;
             // }
             await this.deleteDET(good);
             // this.selectedGooods = [];
@@ -1235,17 +1261,20 @@ export class ActsCircumstantiatedCancellationTheftComponent
             this.getGoodsByStatus(Number(this.fileNumber));
             await this.getDetailProceedingsDevollution(this.actasDefault.id);
           });
+          this.Exportdate = false;
           this.selectedGooodsValid = [];
         }
       }
     }
+    console.log("selectedGooodsValid--", this.selectedGooodsValid);
   }
 
+  //Quitar todos
   removeAll() {
     if (this.actasDefault == null) {
       this.alert(
         'warning',
-        'No Existe un Acta en la cual Asignar el Bien.',
+        'Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta.',
         'Debe Capturar un Acta.'
       );
       return;
@@ -1258,6 +1287,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
         return;
       } else {
+        console.log("DataRecepcion", this.dataRecepcion);
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
             console.log('this.dataRecepcion', this.dataRecepcion);
@@ -1265,6 +1295,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
               (_good: any) => _good.id != good.id
             );
             let index = this.dataTableGood_.findIndex(g => g.id === good.id);
+            this.dataRecepcion = [];
+            this.dataRecepcionGood.load(this.dataRecepcion);
+            this.Exportdate = false;
             // if (index != -1) {
             //   if (this.dataTableGood_[index].est_disponible) {
             //     this.dataTableGood_[index].est_disponible = 'S';
@@ -1321,6 +1354,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.formScan.reset();
     this.dataTableGood.load([]);
     this.dataRecepcionGood.load([]);
+    this.actasDefault = null;
+    this.statusCanc = null;
+    this.selectedGooods = [];
   }
   cargueMasive() {
     const workSheet = XLSX.utils.json_to_sheet(this.dataDelivery, {
@@ -1427,7 +1463,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-      this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
+      console.log('AUTORITHY --', this.authorityNumber)
+      this.actaRecepttionForm
+        .get('claveTrans')
+        .setValue(this.authorityNumber);
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
       //   'MM/yyyy'
@@ -1594,6 +1633,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.excelService.export(this.dataRecepcion, { filename });
     this.alert('success', 'Datos Exportados', '');
   }
+
 
   viewPictures(event: any) {
     console.log(event);
@@ -1797,6 +1837,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .pipe(
         tap(_document => {
           this.formScan.get('scanningFoli').setValue(_document.id);
+          this.disabledBtnReplicar = true;
+
         }),
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
@@ -1862,7 +1904,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     } else {
       this.alertInfo(
         'warning',
-        'No tiene folio de Escaneo para visualizar',
+        'No tiene Folio de Escaneo para visualizar',
         ''
       );
     }
@@ -1952,6 +1994,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
     }
   }
+
   async replicate() {
     if (!this.dataRecepcion) {
       return;
@@ -2021,6 +2064,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.alertInfo('warning', 'No puede Actualizar un Acta Cerrada', '');
       return;
     }
+
     this.actasDefault.address = this.actaRecepttionForm.get('direccion').value;
     delete this.actasDefault.numDelegation1Description;
     delete this.actasDefault.numDelegation2Description;
@@ -2030,12 +2074,16 @@ export class ActsCircumstantiatedCancellationTheftComponent
       .subscribe({
         next: async data => {
           this.alertInfo('success', 'Se Actualizó el Acta Correctamente', '');
+          this.disabledBtnEscaneo = true;
           await this.confirmScanRequest();
+
+
         },
         error: error => {
           this.alert('error', 'Ocurrió un Error al Actualizar el Acta', '');
           // this.loading = false
         },
+
       });
   }
 
