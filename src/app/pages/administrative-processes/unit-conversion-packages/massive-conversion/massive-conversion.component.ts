@@ -7,6 +7,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import {
   KEYGENERATION_PATTERN,
@@ -56,6 +57,7 @@ import { MassiveConversionErrorsModalComponent } from '../massive-conversion-err
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 
 interface ValidaButton {
   PB_VALIDA: boolean;
@@ -84,6 +86,15 @@ interface DataUser {
   styles: [],
 })
 export class MassiveConversionComponent extends BasePage implements OnInit {
+  //Data para busqueda
+  dataDelegation = new DefaultSelect();
+  dataGoodClass = new DefaultSelect();
+  dataTransferent = new DefaultSelect();
+  dataWarehouse = new DefaultSelect();
+  dataUnit = new DefaultSelect();
+  dataTag = new DefaultSelect()
+  dataGoodStatus = new DefaultSelect()
+
   modalRef: BsModalRef;
   loadingText: string = '';
   widthErrors = false;
@@ -195,7 +206,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     //Para las descripciones
     private goodSssubtypeService: GoodSssubtypeService,
     private tagService: LabelOkeyService,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private unitMessureService: StrategyServiceService
   ) {
     super();
 
@@ -225,6 +237,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.getTagDescription();
     //Busquéda de datos del bien Padre
     this.searchFatherGood();
+    //Cargar Catalogos
+    this.initCatalogs();
   }
 
   searchFatherGood() {
@@ -524,7 +538,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   getTagDescription() {
     this.targetTag.valueChanges.subscribe(res => {
       if (this.targetTag.value != null) {
-        this.tagService.getById(this.targetTag.value).subscribe(
+        this.tagService.getById(this.targetTag.value.id).subscribe(
           res => {
             console.log(res);
             this.descLabel = res.description;
@@ -540,7 +554,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   getWarehouseDescription() {
     this.warehouse.valueChanges.subscribe(res => {
       if (this.warehouse.value != null) {
-        let params = { text: `filter.idWarehouse=${this.warehouse.value}` };
+        let params = { text: `filter.idWarehouse=${this.warehouse.value.idWarehouse}` };
         this.warehouseService.getAll(params.text).subscribe(
           res => {
             console.log(res);
@@ -602,11 +616,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.fecCancelado.setValue(res.dateCancelled);
         this.userCancelado.setValue(res.useCancelled);
         //Setep de la tercera parte
-        this.delegation.setValue(res.numberDelegation);
-        this.form.get('goodClassification').setValue(res.numberClassifyGood);
-        this.targetTag.setValue(res.numberLabel);
-        this.transferent.setValue(res.numbertrainemiaut);
-        this.warehouse.setValue(res.numberStore);
+        this.getCatalogDelegation({text: res.numberDelegation}, true);
+        this.getCatalogClassGood({text: res.numberClassifyGood}, true)
+        this.getCatalogTag({text: res.numberLabel}, true)
+        this.getCatalogTransferent({text: res.numbertrainemiaut}, true)
+        this.getCatalogWareHouse({text: res.numberStore}, true)
         //Parrafos
         this.paragraph1.setValue(res.paragraph1);
         this.paragraph2.setValue(res.paragraph2);
@@ -618,7 +632,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
         this.measurementUnit.setValue(res.unit);
-        this.goodStatus.setValue(res.status);
+        this.getCatalogClassGood({text: res.status}, true)
         // this.status2.setValue(res.numberGoodFather);
 
         if (
@@ -1104,13 +1118,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           let closeData = {
             packageNumber: this.noPackage.value.numberPackage,
             packageUnit: this.measurementUnit.value,
-            packageStatus: this.goodStatus.value,
+            packageStatus: this.goodStatus.value.status,
             packageType: this.packageType.value,
             user: localStorage.getItem('username').toUpperCase(), // 'sigebiadmon',
             screenKey: 'FMTOPAQUETE',
             amount: this.amountKg.value,
             goodNumberArray: goods,
-            goodClasifNumber: this.goodClassification.value,
+            goodClasifNumber: this.goodClassification.value.id,
           };
 
           this.goodProcessService.packageClose(closeData).subscribe(
@@ -1562,12 +1576,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   pubValidaGoods(val24: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       let IpackageValidGoods: IpackageValidGood = {
-        pAlmacenNumber: this.warehouse.value,
+        pAlmacenNumber: this.warehouse.value.idWarehouse,
         pDelegationNumber: this.delegation.value,
         pGoodClasifNumber: this.goodClassification.value,
-        pEtiquetaNumber: this.targetTag.value,
+        pEtiquetaNumber: this.targetTag.value.id,
         pPaqueteNumber: this.noPackage.value.numberPackage,
-        pStatus: this.goodStatus.value,
+        pStatus: this.goodStatus.value.status,
         pTypePaquete: this.packageType.value,
         pValidVal24: val24.toString(),
       };
@@ -1599,7 +1613,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       goodFatherNumber: this.numberGoodFather.value,
       delegationNumber: this.delegation.value,
       descGood: this.descriptionPackage.value,
-      statusGood: this.goodStatus.value,
+      statusGood: this.goodStatus.value.status,
       packageNumber: this.noPackage.value.numberPackage,
       proceedingNumber: this.record.value,
       unitGood: this.measurementUnit.value,
@@ -1831,7 +1845,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
     } else if (this.form.get('packageType').value != 3) {
-      if (this.warehouse.value == null) {
+      if (this.warehouse.value.idWarehouse == null) {
         this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
       } else {
@@ -1871,7 +1885,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     console.log(this.delegation.value);
 
     const paramsF = new FilterParams();
-    paramsF.addFilter('id', this.transferent.value);
+    paramsF.addFilter('id', this.transferent.value.id);
     this.transferCatalogService.getAllWithFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -1889,7 +1903,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             let edo = JSON.parse(JSON.stringify(res));
             console.log(edo);
             const paramsF2 = new FilterParams();
-            paramsF2.addFilter('numberDelegation2', this.delegation.value);
+            paramsF2.addFilter('numberDelegation2', this.delegation.value.id);
             paramsF2.addFilter('stageedo', edo.stagecreated);
             this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
               res => {
@@ -1996,13 +2010,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       dateCapture: format(new Date(), 'yyyy-MM-dd'),
       dateCaptureHc: null,
       statuspack: 'P',
-      numberClassifyGood: this.goodClassification.value,
-      numberLabel: this.targetTag.value,
+      numberClassifyGood: this.goodClassification.value.numClasifGoods,
+      numberLabel: this.targetTag.value.id,
       unit: this.measurementUnit.value,
-      numberStore: this.warehouse.value,
+      numberStore: this.warehouse.value.idWarehouse,
       numberRecord: null,
-      status: this.goodStatus.value,
-      numbertrainemiaut: this.transferent.value,
+      status: this.goodStatus.value.status,
+      numbertrainemiaut: this.transferent.value.id,
       dateValid: null,
       dateauthorize: null,
       dateClosed: null,
@@ -2013,7 +2027,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       paragraph1: null,
       paragraph2: null,
       paragraph3: null,
-      numberDelegation: this.delegation.value,
+      numberDelegation: this.delegation.value.id,
       useElaboration: user,
       useValid: null,
       useauthorize: null,
@@ -2284,6 +2298,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   addNewPack() {
     this.clear();
     this.newDataFilled = true;
+    this.getCatalogGoodStatus({text: 'ADM'}, true)
   }
 
   updatePackage() {
@@ -2309,5 +2324,247 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           console.log(err);
         }
       );
+  }
+
+  //Funciones para los catalogos
+  initCatalogs() {
+    this.getCatalogDelegation();
+    this.getCatalogClassGood();
+    this.getCatalogTransferent();
+    this.getCatalogWareHouse();
+    this.getCatalogUnit();
+    this.getCatalogTag()
+    this.getCatalogGoodStatus({text: 'ADM'}, true)
+  }
+
+  getCatalogDelegation(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text != '') {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('id', e.text);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.delegationService.getAll(e ? paramsF.getParams() : '').subscribe(
+      res => {
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            labelValue: `${e.id} - ${e.description}`,
+          };
+        });
+        this.dataDelegation = new DefaultSelect(newData, res.count);
+        research ? this.delegation.setValue(newData[0]) : '';
+      },
+      err => {
+        console.log(err);
+        this.dataDelegation = new DefaultSelect();
+      }
+    );
+  }
+
+  getCatalogClassGood(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text != '') {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('numClasifGoods', e.text);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.goodSssubtypeService
+      .getAllSssubtype(e ? paramsF.getParams() : '')
+      .subscribe(
+        res => {
+          const newData = res.data.map((e: any) => {
+            return {
+              ...e,
+              labelValue: `${e.numClasifGoods} - ${e.description}`,
+            };
+          });
+          this.dataGoodClass = new DefaultSelect(newData, res.count);
+          research ? this.goodClassification.setValue(newData[0]) : '';
+        },
+        err => {
+          console.log(err);
+          this.dataGoodClass = new DefaultSelect();
+        }
+      );
+  }
+
+  getCatalogTransferent(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text != '') {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('nameTransferent', e.text, SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('id', e.text);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.transferCatalogService.getAll(e ? paramsF.getParams() : '').subscribe(
+      res => {
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            labelValue: `${e.id} - ${e.nameTransferent}`,
+          };
+        });
+        this.dataTransferent = new DefaultSelect(newData, res.count);
+          research ? this.transferent.setValue(newData[0]) : '';
+      },
+      err => {
+        console.log(err);
+        this.dataTransferent = new DefaultSelect();
+      }
+    );
+  }
+
+  getCatalogWareHouse(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text != '') {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('idWarehouse', e.text);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.warehouseService.getAll(e ? paramsF.getParams() : '').subscribe(
+      res => {
+        console.log(res);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            labelValue: `${e.idWarehouse} - ${e.description}`,
+          };
+        });
+        this.dataWarehouse = new DefaultSelect(newData, res.count);
+        research ? this.warehouse.setValue(newData[0]) : '';
+      },
+      err => {
+        console.log(err);
+        this.dataWarehouse = new DefaultSelect();
+      }
+    );
+  }
+
+  getCatalogUnit(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text != '') {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('idWarehouse', e.text);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.unitMessureService.getMedUnits(e ? paramsF.getParams() : '').subscribe(
+      res => {
+        console.log(res);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            labelValue: `${e.idWarehouse} - ${e.description}`,
+          };
+        });
+        this.dataUnit = new DefaultSelect(newData, res.count);
+      },
+      err => {
+        console.log(err);
+        this.dataUnit = new DefaultSelect();
+      }
+    );
+  }
+
+  getCatalogTag(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text != '') {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('id', e.text);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.tagService.getAll(e ? paramsF.getParams() : '').subscribe(
+      res => {
+        console.log(res);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            labelValue: `${e.id} - ${e.description}`,
+          };
+        });
+        this.dataTag = new DefaultSelect(newData, res.count)
+        research ? this.targetTag.setValue(newData[0]) : '';
+      },
+      err => {
+        this.dataTag = new DefaultSelect()
+        console.log(err);
+        
+      }
+    );
+  }
+
+  getCatalogGoodStatus(e?: ListParams, research?: boolean) {
+    const paramsF = new FilterParams();
+    if (e) {
+      if (e.text.length < 4) {
+        if (isNaN(parseInt(e.text))) {
+          paramsF.addFilter('status', e.text.toUpperCase() , SearchFilter.ILIKE);
+        } else {
+          paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
+        }
+      } else {
+        paramsF.page = e.page;
+      }
+    }
+
+    this.goodService.getStatusAll(e ? paramsF.getParams() : '').subscribe(
+      res => {
+        console.log(res);
+        const newData = res.data.map((e: any) => {
+          return {
+            ...e,
+            labelValue: `${e.status} - ${e.description}`,
+          };
+        });
+        this.dataGoodStatus = new DefaultSelect(newData, res.count)
+        research ? this.goodStatus.setValue(newData[0]) : '';
+      },
+      err => {
+        this.dataGoodStatus = new DefaultSelect()
+        console.log(err);
+        
+      }
+    );
   }
 }

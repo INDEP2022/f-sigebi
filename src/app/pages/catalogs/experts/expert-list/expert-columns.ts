@@ -15,7 +15,7 @@ export const EXPERT_COLUMNS = {
     sort: false,
   },
   registryNumber: {
-    title: 'Numero Registro',
+    title: 'No. Registro',
     type: 'number',
     sort: false,
   },
