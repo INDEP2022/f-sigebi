@@ -163,35 +163,35 @@
               <td>
                 <form-field [control]="form.get('fecElab')">
                   <span>{{
-                    form.get('fecElab').value | date : 'dd-MM-yyyy'
+                    form.get('fecElab').value | date: 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecValida')">
                   <span>{{
-                    form.get('fecValida').value | date : 'dd-MM-yyyy'
+                    form.get('fecValida').value | date: 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecAutoriza')">
                   <span>{{
-                    form.get('fecAutoriza').value | date : 'dd-MM-yyyy'
+                    form.get('fecAutoriza').value | date: 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCerrado')">
                   <span>{{
-                    form.get('fecCerrado').value | date : 'dd-MM-yyyy'
+                    form.get('fecCerrado').value | date: 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
               <td>
                 <form-field [control]="form.get('fecCancelado')">
                   <span>{{
-                    form.get('fecCancelado').value | date : 'dd-MM-yyyy'
+                    form.get('fecCancelado').value | date: 'dd-MM-yyyy'
                   }}</span>
                 </form-field>
               </td>
@@ -280,7 +280,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <form-field [control]="form.get('goodStatus')">
             <ngx-select
-            (fetchItems)="getCatalogGoodStatus($event)"
+              (fetchItems)="getCatalogGoodStatus($event)"
               control="goodStatus"
               label="Estatus Bienes"
               bindLabel="labelValue"
