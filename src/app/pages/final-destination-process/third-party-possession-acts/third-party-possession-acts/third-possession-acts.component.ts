@@ -659,8 +659,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
+
         this.data.load(response.data);
-        this.totalItems = response.count || 0;
         this.data.refresh();
         this.totalItems = response.count;
         //this.params.value.page = 1;
