@@ -870,11 +870,11 @@ export class MassiveConversionSelectGoodComponent
     }
 
     if (whereNoGoods.length > 0) {
-      generalParams.addFilter(
+     /*  generalParams.addFilter(
         'goodNumber',
         whereNoGoods.toString(),
         SearchFilter.NOTIN
-      );
+      ); */
     }
 
     this.trackerGoodService
