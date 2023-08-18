@@ -4,6 +4,20 @@
   *ngIf="process < typeGabinetProcess.Liberado">
   <div class="row">
     <div class="col-md-10 align-self-baseline">
+      <div class="row mb-2">
+        <form-field [control]="form.get('process')" label="Proceso Siguiente">
+          <ng-select
+            formControlName="process"
+            class="form-control"
+            [clearable]="false"
+            [searchable]="false">
+            <ng-option *ngFor="let option of options" [value]="option.value">
+              {{ option.label }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+      </div>
+
       <div class="row justify-content-between">
         <div class="col-12 mb-3 excuse" *ngIf="cantByProcess(process) > 0">
           <form-field [control]="form.get('excuse')" label="Justificación">

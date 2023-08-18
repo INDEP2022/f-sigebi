@@ -74,6 +74,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     filterParams.limit = 120;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
+    filterParams.addFilter3('sortBy', 'attribute:ASC');
     const good = this.good as any;
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())

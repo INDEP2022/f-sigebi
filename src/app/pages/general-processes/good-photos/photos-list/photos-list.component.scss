@@ -21,6 +21,7 @@
 .disabledDelete {
   opacity: 0.6;
   cursor: default;
+  pointer-events: none;
 }
 
 .action-buttons {
