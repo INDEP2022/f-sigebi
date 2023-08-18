@@ -240,39 +240,89 @@
       <div class="row mt-3">
         <!--Delegation Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-delegation-shared
-            [form]="form"
-            (emitDelegation)="emitDelegation($event)"
-            labelDelegation="Coordinación"
-            [showSubdelegation]="false"></app-delegation-shared>
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              (fetchItems)="getCatalogDelegation($event)"
+              control="delegation"
+              label="Coordinación"
+              bindLabel="labelValue"
+              [data]="dataDelegation"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Goods Classification Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-classification-shared
-            [form]="form"></app-goods-classification-shared>
+          <form-field [control]="form.get('goodClassification')">
+            <ngx-select
+              (fetchItems)="getCatalogClassGood($event)"
+              control="goodClassification"
+              label="Clasificación de Bienes"
+              bindLabel="labelValue"
+              [data]="dataGoodClass"
+              [form]="form"></ngx-select>
+          </form-field>
+          <!-- <app-goods-classification-shared
+            [form]="form"></app-goods-classification-shared> -->
         </div>
         <!--Target Tags Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-target-tags-shared [form]="form"></app-target-tags-shared>
+          <form-field [control]="form.get('targetTag')">
+            <ngx-select
+              (fetchItems)="getCatalogTag($event)"
+              control="targetTag"
+              label="Etiqueta de Destino"
+              bindLabel="labelValue"
+              [data]="dataTag"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Goods Status Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+          <form-field [control]="form.get('goodStatus')">
+            <ngx-select
+            (fetchItems)="getCatalogGoodStatus($event)"
+              control="goodStatus"
+              label="Estatus Bienes"
+              bindLabel="labelValue"
+              [data]="dataGoodStatus"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Measurement Units Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-measurement-units-shared
-            [form]="form"></app-measurement-units-shared>
+          <form-field [control]="form.get('measurementUnit')">
+            <ngx-select
+              (fetchItems)="getCatalogUnit($event)"
+              control="measurementUnit"
+              label="Unidad de medida"
+              bindLabel="description"
+              [data]="dataUnit"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--Transference Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-transferente-shared [form]="form"></app-transferente-shared>
+          <form-field [control]="form.get('transferent')">
+            <ngx-select
+              (fetchItems)="getCatalogTransferent($event)"
+              control="transferent"
+              label="Transferente"
+              bindLabel="labelValue"
+              [data]="dataTransferent"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
         <!--warehouse Component-->
         <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
-          <app-warehouse-shared
-            [form]="form"
-            [showWarehouseType]="false"></app-warehouse-shared>
+          <form-field [control]="form.get('warehouse')">
+            <ngx-select
+              (fetchItems)="getCatalogWareHouse($event)"
+              control="warehouse"
+              label="Almacén"
+              bindLabel="labelValue"
+              [data]="dataWarehouse"
+              [form]="form"></ngx-select>
+          </form-field>
         </div>
       </div>
     </form>

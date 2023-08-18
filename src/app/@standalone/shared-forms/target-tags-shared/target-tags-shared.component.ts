@@ -39,8 +39,10 @@ export class TargetTagsSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   getTargetTags(params: ListParams) {
+    console.log(params)
     this.service.getAll(params).subscribe(
       async data => {
+        
         const newData = await Promise.all(
           data['data'].map((e: any) => {
             return {

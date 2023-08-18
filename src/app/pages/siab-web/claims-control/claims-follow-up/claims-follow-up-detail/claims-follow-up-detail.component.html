@@ -6,10 +6,10 @@
   </div>
   <div body>
     <form [formGroup]="claimsFollowUpDetailForm" class="form-material">
-      <div class="row margin-input">
+      <div class="row">
         <div class="col-md-3">
           <form-field
-            label="N&uacute;mero de Bien"
+            label="No. Bien"
             [control]="claimsFollowUpDetailForm.get('numberInGood')">
             <input
               class="form-control"
@@ -29,7 +29,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
             [control]="claimsFollowUpDetailForm.get('fecRepCabiIn')"
@@ -53,8 +53,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
-        <div class="col-md-6">
+      <div class="row pt-4">
+        <div class="col-md-4">
           <form-field
             [control]="claimsFollowUpDetailForm.get('fecSinisterIn')"
             label="Fecha de Siniestro">
@@ -65,7 +65,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field
             [control]="claimsFollowUpDetailForm.get('typeSinisterIn')">
             <ngx-select
@@ -79,8 +79,6 @@
             </ngx-select>
           </form-field>
         </div>
-      </div>
-      <div class="row margin-input">
         <div class="col-md-4">
           <form-field
             label="N&uacute;mero de Siniestro"
@@ -91,7 +89,25 @@
               type="number" />
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row">
+        <div class="col-md-7">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Oficio/Correo (pdf)</label
+          >
+          <form-field
+            label=""
+            [control]="claimsFollowUpDetailForm.get('docOfficeMailIn')">
+            <input
+              type="file"
+              accept="application/pdf"
+              formControlName="docOfficeMailIn"
+              (change)="chargeFileDocOfficeMailIn($event)" />
+          </form-field>
+        </div>
+        <div class="col-md-5 margin-input">
           <form-field
             label="P&oacute;liza Afectada"
             [control]="claimsFollowUpDetailForm.get('policyAffectedIn')">
@@ -101,18 +117,8 @@
               type="text" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            label="Monto Indemnizado"
-            [control]="claimsFollowUpDetailForm.get('amountIndemnizedIn')">
-            <input
-              class="form-control"
-              formControlName="amountIndemnizedIn"
-              type="number" />
-          </form-field>
-        </div>
       </div>
-      <div class="row margin-input">
+      <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="claimsFollowUpDetailForm.get('unitAdminUserIn')">
@@ -128,7 +134,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
+      <div class="row pt-4">
         <div class="col-md-12">
           <form-field
             label="Detalle del Bien o las Partes Afectadas"
@@ -139,7 +145,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
+      <hr />
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
             label="Monto Reclamo Segun Carta de Reclamación"
@@ -161,7 +168,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
+      <div class="row pt-4">
         <div class="col-md-6">
           <form-field
             label="Deducible"
@@ -183,93 +190,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row margin-input">
-        <div class="col-md-6">
-          <form-field
-            label="Orden de Ingreso"
-            [control]="claimsFollowUpDetailForm.get('orderOfEntryIn')">
-            <input
-              class="form-control"
-              formControlName="orderOfEntryIn"
-              type="text" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('firstSecondLaterIn')">
-            <ngx-select
-              [searchable]="false"
-              [data]="tipeFirstSecondLater"
-              [form]="claimsFollowUpDetailForm"
-              value="value"
-              bindLabel="description"
-              label="1er Capa/2da Capa"
-              control="firstSecondLaterIn"></ngx-select>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row margin-input">
-        <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('shapeConclusionIn')">
-            <ngx-select
-              (fetchItems)="getshapeConclusion($event)"
-              [data]="shapeConclusion"
-              [form]="claimsFollowUpDetailForm"
-              value="id_conclusion_siniestros"
-              bindLabel="descripcion"
-              label="Forma de Conclución"
-              control="shapeConclusionIn">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <div class="row">
-            <form-field
-              [control]="claimsFollowUpDetailForm.get('dateIndemnizationIn')"
-              label="Fecha Indemnización">
-              <input
-                type="text"
-                formControlName="dateIndemnizationIn"
-                class="form-control"
-                bsDatepicker />
-            </form-field>
-          </div>
-        </div>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-6">
-          <form-field
-            [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
-            label="Fecha Carta Reclamación">
-            <input
-              type="text"
-              formControlName="letterClaimIn"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field [control]="claimsFollowUpDetailForm.get('statusIn')">
-            <ngx-select
-              [data]="status"
-              [searchable]="false"
-              [form]="claimsFollowUpDetailForm"
-              value="value"
-              bindLabel="description"
-              label="Estado"
-              control="statusIn"></ngx-select>
-            <!-- <select class="form-control" formControlName="statusIn">
-              <option [value]="null">Seleccione</option>
-              <option [value]="1">ABIERTO</option>
-              <option [value]="2">CERRADO</option>
-            </select> -->
-          </form-field>
-        </div>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-7">
           <label
             for=""
             style="font-size: 10px; font-weight: 600; color: #74788d"
@@ -284,9 +206,19 @@
               (change)="chargeFileLetterClaimIn($event)" />
           </form-field>
         </div>
+        <div class="col-md-5 pt-4">
+          <form-field
+            label="Monto Indemnizado"
+            [control]="claimsFollowUpDetailForm.get('amountIndemnizedIn')">
+            <input
+              class="form-control"
+              formControlName="amountIndemnizedIn"
+              type="number" />
+          </form-field>
+        </div>
       </div>
-      <div class="row margin-input">
-        <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-7">
           <label
             for=""
             style="font-size: 10px; font-weight: 600; color: #74788d"
@@ -301,26 +233,89 @@
               (change)="chargeFileDocOfficeMinConcluIn($event)" />
           </form-field>
         </div>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-12">
-          <label
-            for=""
-            style="font-size: 10px; font-weight: 600; color: #74788d"
-            >Oficio/Correo (pdf)</label
-          >
+        <div class="col-md-5 pt-4">
           <form-field
-            label=""
-            [control]="claimsFollowUpDetailForm.get('docOfficeMailIn')">
+            label="Orden de Ingreso"
+            [control]="claimsFollowUpDetailForm.get('orderOfEntryIn')">
             <input
-              type="file"
-              accept="application/pdf"
-              formControlName="docOfficeMailIn"
-              (change)="chargeFileDocOfficeMailIn($event)" />
+              class="form-control"
+              formControlName="orderOfEntryIn"
+              type="text" />
           </form-field>
         </div>
       </div>
-      <!-- <div class="row margin-input">
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="claimsFollowUpDetailForm.get('statusIn')">
+            <ngx-select
+              (fetchItems)="getStatusSinister($event)"
+              [data]="status"
+              [form]="claimsFollowUpDetailForm"
+              value="id_estatus_siniestro"
+              bindLabel="descripcion"
+              label="Estatus"
+              control="statusIn"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('firstSecondLaterIn')">
+            <ngx-select
+              [searchable]="false"
+              [data]="tipeFirstSecondLater"
+              [form]="claimsFollowUpDetailForm"
+              value="value"
+              bindLabel="description"
+              label="1er Capa/2da Capa"
+              control="firstSecondLaterIn"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('shapeConclusionIn')">
+            <ngx-select
+              (fetchItems)="getshapeConclusion($event)"
+              [data]="shapeConclusion"
+              [form]="claimsFollowUpDetailForm"
+              value="id_conclusion_siniestros"
+              bindLabel="descripcion"
+              label="Forma de Conclusión"
+              control="shapeConclusionIn">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <div class="row">
+            <form-field
+              [control]="claimsFollowUpDetailForm.get('dateIndemnizationIn')"
+              label="Fecha Indemnización">
+              <input
+                type="text"
+                formControlName="dateIndemnizationIn"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('letterClaimIn')"
+            label="Fecha Carta Reclamación">
+            <input
+              type="text"
+              formControlName="letterClaimIn"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row"></div>
+      <div class="row"></div>
+
+      <!-- <div class="row">
         <div class="col-md-12">
           <form-field
             label="Monto indemnizado (pdf)"

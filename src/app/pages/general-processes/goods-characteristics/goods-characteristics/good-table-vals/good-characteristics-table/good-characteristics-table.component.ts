@@ -74,6 +74,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     filterParams.limit = 120;
     filterParams.addFilter('classifGoodNumber', this.clasification);
     filterParams.addFilter('columnNumber', '51', SearchFilter.NOTIN);
+    filterParams.addFilter3('sortBy', 'attribute:ASC');
     const good = this.good as any;
     this.goodsqueryService
       .getAtribuXClasif(filterParams.getParams())
@@ -345,10 +346,10 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     const isNormal = this.disabled || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
-        title: 'los tipos de situaciones para el Bien',
+        title: 'los valores para',
         columnsType: {
           otvalor: {
-            title: 'Situación',
+            title: row.attribute,
             type: 'string',
             sort: false,
           },

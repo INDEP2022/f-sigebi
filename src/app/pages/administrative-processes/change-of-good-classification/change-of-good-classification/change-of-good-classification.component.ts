@@ -27,6 +27,7 @@ import { LabelGoodService } from 'src/app/core/services/catalogs/label-good.serv
 import { DynamicCatalogsService } from 'src/app/core/services/dynamic-catalogs/dynamiccatalog.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { ClassifyGoodService } from 'src/app/core/services/ms-classifygood/ms-classifygood.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusXScreenService } from 'src/app/core/services/ms-screen-status/statusxscreen.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
@@ -62,6 +63,7 @@ export class ChangeOfGoodClassificationComponent
   endProcess: boolean = false;
   destinations: ILabelOKey[] = [];
   loadingGood = false;
+  readOnlyGood = false;
   old: any;
   // listAtributAct: any[] = [];
   // listAtributNew: IAttribClassifGoods[] = [];
@@ -140,6 +142,7 @@ export class ChangeOfGoodClassificationComponent
     private readonly goodServices: GoodService,
     private readonly classifyGoodServices: ClassifyGoodService,
     private readonly labeGoodServices: LabelGoodService,
+    private goodFinderService: GoodFinderService,
     private readonly goodsQueryServices: GoodsQueryService,
     private readonly dynamicCatalogsService: DynamicCatalogsService,
     private readonly goodSssubtypeService: GoodSssubtypeService,
@@ -149,6 +152,8 @@ export class ChangeOfGoodClassificationComponent
     private router: Router
   ) {
     super();
+    this.buildForm();
+    this.buildFormNew();
     this.atributActSettings = {
       ...this.settings,
       actions: null,
@@ -168,9 +173,6 @@ export class ChangeOfGoodClassificationComponent
         add: false,
         edit: true,
         delete: false,
-      },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
       },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
@@ -242,6 +244,7 @@ export class ChangeOfGoodClassificationComponent
       next: param => {
         if (param['numberGood']) {
           console.log(param);
+          this.readOnlyGood = true;
           this.numberGood.setValue(param['numberGood']);
           if (this.previousRouteService.getHistory().length > 1) {
             this.origin = 1;
@@ -255,8 +258,6 @@ export class ChangeOfGoodClassificationComponent
       },
     });
 
-    this.buildForm();
-    this.buildFormNew();
     this.initializeForm();
     this.numberGood.valueChanges
       .pipe(
@@ -377,17 +378,17 @@ export class ChangeOfGoodClassificationComponent
     // this.listAtributAct = [];
     // this.refreshTableAct(this.listAtributAct);
     this.loadingGood = true;
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: { numberGood: this.numberGood.value },
-      queryParamsHandling: 'merge', // remove to replace all query params by provided
-    });
+    // this.router.navigate([], {
+    //   relativeTo: this.activatedRoute,
+    //   queryParams: { numberGood: this.numberGood.value },
+    //   queryParamsHandling: 'merge', // remove to replace all query params by provided
+    // });
 
     const filterParams = new FilterParams();
     filterParams.addFilter('id', this.numberGood.value);
     const response = await firstValueFrom(
-      this.goodServices
-        .getAll(filterParams.getParams())
+      this.goodFinderService
+        .goodFinder(filterParams.getParams())
         .pipe(catchError(x => of({ data: [] })))
     );
     if (response.data && response.data.length > 0) {
@@ -472,7 +473,7 @@ export class ChangeOfGoodClassificationComponent
   }
 
   get pathClasification() {
-    return 'catalog/api/v1/good-sssubtype';
+    return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
   }
 
   onChange(event: IGoodSssubtype) {
@@ -513,6 +514,7 @@ export class ChangeOfGoodClassificationComponent
       this.classificationOfGoods.value,
       SearchFilter.EQ
     );
+    params.addFilter3('sortBy', 'unit:ASC');
     this.classifyGoodServices
       .getUnitiXClasif(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -533,6 +535,7 @@ export class ChangeOfGoodClassificationComponent
       this.classificationOfGoods.value,
       SearchFilter.EQ
     );
+    params.addFilter3('sortBy', 'unit:ASC');
     this.classifyGoodServices
       .getEtiqXClasif(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))
@@ -547,7 +550,7 @@ export class ChangeOfGoodClassificationComponent
           this.onLoadToast(
             'error',
             'ERROR',
-            'Error al cargar los numeros de etiquetas para el destino'
+            'Error al Cargar los Números de Etiquetas para el Destino'
           );
         },
       });
@@ -556,6 +559,7 @@ export class ChangeOfGoodClassificationComponent
   getDestination() {
     let params = new FilterParams();
     params.addFilter('id', `${this.noEtiqs}`, SearchFilter.IN);
+    params.addFilter3('sortBy', 'description:ASC');
     this.labeGoodServices
       .getEtiqXClasif(params.getParams())
       .pipe(takeUntil(this.$unSubscribe))

@@ -74,6 +74,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   varFour: string;
   varFive: string;
   varObjectFinal: any[] = [];
+  varObjectFinalModal: any[] = [];
   varCreateObject: any;
   varDeleteObject: any;
 
@@ -147,157 +148,197 @@ export class DonationActsComponent extends BasePage implements OnInit {
   }
 
   getAllBLKByFilters() {
-    if (this.noExpe == '' || undefined || null) {
-      this.form.reset();
-    }
-    let params = new HttpParams();
-    if (this.noExpe != null) {
-      params = params.append('filter.id', this.noExpe);
-      this.expedientService.getExpeidentByFilters(params).subscribe({
-        next: response => {
-          this.form.controls['av_previa'].setValue(
-            response.data[0].preliminaryInquiry
-          );
-          this.form.controls['no_transferente'].setValue(
-            response.data[0].transferNumber
-          );
-          this.form.controls['ca_penal'].setValue(
-            response.data[0].criminalCase
-          );
-          this.form.controls['ti_expediente'].setValue(
-            response.data[0].expedientType
-          );
-        },
-        error: error => {
-          if (error.status == 400) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `No se encontraron expedientes asociados al número -${this.noExpe}-`
+    this.resetFormTwo();
+    if (this.noExpe == null || '') {
+      this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
+    } else {
+      if (this.noExpe == '' || undefined || null) {
+        this.form.reset();
+      }
+      let params = new HttpParams();
+      if (this.noExpe != null) {
+        params = params.append('filter.id', this.noExpe);
+        this.expedientService.getExpeidentByFilters(params).subscribe({
+          next: response => {
+            this.form.controls['av_previa'].setValue(
+              response.data[0].preliminaryInquiry
             );
-            this.form.reset();
-          } else {
-            this.alert('error', 'Error', 'Ha ocurrido un error');
-            this.form.reset();
-          }
-        },
-      });
-
-      let paramsGoodTwo = new HttpParams();
-      paramsGoodTwo = paramsGoodTwo.append('filter.fileNumber', this.noExpe);
-      this.getDataTableOne(paramsGoodTwo);
-
-      let paramsRecep = new HttpParams();
-      paramsRecep = paramsRecep.append('filter.numFile', this.noExpe);
-      this.serviceDetailProceeding.getGoodsByProceeding(paramsRecep).subscribe({
-        next: response => {
-          this.varObjectFinal = response.data[0];
-          this.actForm.controls['actSelect'].setValue(
-            response.data[0].keysProceedings
-          );
-          this.actForm.controls['status'].setValue(response.data[0].id);
-          this.numSubject.next(response.data[0].id);
-          // this.actForm.controls['trans'].setValue(response.data[0].numTransfer);
-          this.actForm.controls['don'].setValue(response.data[0].receiptKey);
-          this.actForm.controls['es_acta'].setValue(
-            response.data[0].statusProceedings
-          );
-
-          this.varOne = response.data[0].keysProceedings;
-          this.varTwo = response.data[0].universalFolio;
-          this.varThree = response.data[0].comptrollerWitness;
-          this.varFour = response.data[0].statusProceedings;
-          this.varFive = response.data[0].id;
-
-          this.actForm.controls['cv_acta'].setValue(
-            response.data[0].keysProceedings
-          );
-          this.actForm.controls['observations'].setValue(
-            response.data[0].observations
-          );
-
-          let elaborationDate = new Date(response.data[0].elaborationDate);
-          let formattedDate = this.datePipe.transform(
-            elaborationDate,
-            'dd/MM/yyyy'
-          );
-          this.actForm.controls['fec_elaboracion'].setValue(formattedDate);
-          this.actForm.controls['nom_entrega'].setValue(
-            response.data[0].witness1
-          );
-
-          let elaborationDateTwo = new Date(response.data[0].elaborationDate);
-          let formattedDateTwo = this.datePipe.transform(
-            elaborationDateTwo,
-            'dd/MM/yyyy'
-          );
-          this.actForm.controls['fec_don'].setValue(formattedDateTwo);
-
-          this.actForm.controls['nom_rec'].setValue(response.data[0].witness2);
-          this.actForm.controls['dir'].setValue(response.data[0].address);
-          this.actForm.controls['audit'].setValue(response.data[0].responsible);
-          this.actForm.controls['fol_esc'].setValue(
-            response.data[0].universalFolio
-          );
-          this.actForm.controls['tes_con'].setValue(
-            response.data[0].comptrollerWitness
-          );
-        },
-        error: error => {
-          if (error.status == 400) {
-            this.alert(
-              'warning',
-              'Advertencia',
-              `No se encontraron registros de actas de entrega recepcion`
+            this.form.controls['no_transferente'].setValue(
+              response.data[0].transferNumber
             );
-            this.alert(
-              'warning',
-              'Advertencia',
-              `No se encontraron registros de detalles actas de entrega recepcion`
+            this.form.controls['ca_penal'].setValue(
+              response.data[0].criminalCase
             );
-            this.data2.load([]);
-            this.actForm.reset();
-          } else {
-            this.alert('error', 'Error', 'Ha ocurrido un error');
-            this.actForm.reset();
-            this.data2.load([]);
-          }
-        },
-      });
+            this.form.controls['ti_expediente'].setValue(
+              response.data[0].expedientType
+            );
+          },
+          error: error => {
+            if (error.status == 400) {
+              this.alert(
+                'warning',
+                'Advertencia',
+                `No se Encontraron Expedientes Asociados al Número -${this.noExpe}-`
+              );
+              this.form.reset();
+            } else {
+              this.alert('error', 'Error', 'Ha Ocurrido un Error');
+              this.form.reset();
+            }
+          },
+        });
+
+        let paramsGoodTwo = new HttpParams();
+        paramsGoodTwo = paramsGoodTwo.append('filter.fileNumber', this.noExpe);
+        this.getDataTableOne(paramsGoodTwo);
+
+        let paramsRecep = new HttpParams();
+        paramsRecep = paramsRecep.append('filter.numFile', this.noExpe);
+        this.serviceDetailProceeding
+          .getGoodsByProceeding(paramsRecep)
+          .subscribe({
+            next: response => {
+              console.log('Aqui va todo el arreglo inicial: ', response.data);
+              this.varObjectFinalModal = response.data;
+              this.varObjectFinal = response.data[0];
+              this.actForm.controls['actSelect'].setValue(
+                response.data[0].keysProceedings
+              );
+              this.actForm.controls['status'].setValue(response.data[0].id);
+              this.numSubject.next(response.data[0].id);
+              // this.actForm.controls['trans'].setValue(response.data[0].numTransfer);
+              this.actForm.controls['don'].setValue(
+                response.data[0].receiptKey
+              );
+              this.actForm.controls['es_acta'].setValue(
+                response.data[0].statusProceedings
+              );
+
+              this.varOne = response.data[0].keysProceedings;
+              this.varTwo = response.data[0].universalFolio;
+              this.varThree = response.data[0].comptrollerWitness;
+              this.varFour = response.data[0].statusProceedings;
+              this.varFive = response.data[0].id;
+
+              this.actForm.controls['cv_acta'].setValue(
+                response.data[0].keysProceedings
+              );
+              this.actForm.controls['observations'].setValue(
+                response.data[0].observations
+              );
+
+              let elaborationDate = new Date(response.data[0].elaborationDate);
+              let formattedDate = this.datePipe.transform(
+                elaborationDate,
+                'dd/MM/yyyy'
+              );
+              this.actForm.controls['fec_elaboracion'].setValue(formattedDate);
+              this.actForm.controls['nom_entrega'].setValue(
+                response.data[0].witness1
+              );
+
+              let elaborationDateTwo = new Date(
+                response.data[0].elaborationDate
+              );
+              let formattedDateTwo = this.datePipe.transform(
+                elaborationDateTwo,
+                'dd/MM/yyyy'
+              );
+              this.actForm.controls['fec_don'].setValue(formattedDateTwo);
+
+              this.actForm.controls['nom_rec'].setValue(
+                response.data[0].witness2
+              );
+              this.actForm.controls['dir'].setValue(response.data[0].address);
+              this.actForm.controls['audit'].setValue(
+                response.data[0].responsible
+              );
+              this.actForm.controls['fol_esc'].setValue(
+                response.data[0].universalFolio
+              );
+              this.actForm.controls['tes_con'].setValue(
+                response.data[0].comptrollerWitness
+              );
+            },
+            error: error => {
+              if (error.status == 400) {
+                this.alert(
+                  'warning',
+                  'Advertencia',
+                  `No se Encontraron Registros de Actas de Entrega Recepción`
+                );
+                this.alert(
+                  'warning',
+                  'Advertencia',
+                  `No se Encontraron Registros de Detalles Actas de Entrega Recepción`
+                );
+                this.data2.load([]);
+                this.actForm.reset();
+              } else {
+                this.alert('error', 'Error', 'Ha Ocurrido un Error');
+                this.actForm.reset();
+                this.data2.load([]);
+              }
+            },
+          });
+      }
     }
   }
 
   closeExp() {
-    if (this.varOne == null) {
-      this.alert('warning', 'Advertencia', `No existe acta para cerrar`);
-    } else if (this.data2.count() === 0) {
-      // if (this.varTwo == null) {
-      //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
-      // }
-      // if (this.varThree == null) {
-      //   this.alert('warning', 'Advertencia', `Indique el Testigo de la Contraloría`);
-      // }
-      this.alert(
-        'warning',
-        'Advertencia',
-        `El acta no tiene ningun bien asignado, no se puede cerrar`
-      );
-    } else if (this.varFour == 'CERRADA') {
-      this.alert('warning', 'Advertencia', `El acta ya esta cerrada`);
+    if (this.noExpe == null || '') {
+      this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
     } else {
-      let data: any[] = this.varObjectFinal;
-      let config: ModalOptions = {
-        initialState: {
-          data,
-          callback: (next: boolean) => {
-            if (next) console.log('');
+      if (this.varOne == null) {
+        this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
+      } else if (
+        this.actForm.controls['actSelect'].value == null ||
+        undefined ||
+        ''
+      ) {
+        // if (this.varTwo == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
+        // }
+        // if (this.varThree == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el Testigo de la Contraloría`);
+        // }
+
+        this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
+      } else if (this.data2.count() === 0) {
+        // if (this.varTwo == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
+        // }
+        // if (this.varThree == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el Testigo de la Contraloría`);
+        // }
+        this.alert(
+          'warning',
+          'Advertencia',
+          `El Acta no Tiene Ningun Bien Asignado, no Se Puede Cerrar`
+        );
+      } else if (this.varFour == 'CERRADA') {
+        this.alert('warning', 'Advertencia', `El Acta ya Esta Cerrada`);
+      } else {
+        let data: any[] = this.varObjectFinalModal;
+        let config: ModalOptions = {
+          initialState: {
+            data,
+            callback: (next: boolean) => {
+              if (next) console.log('');
+            },
           },
-        },
-        class: 'modal-sl modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      // console.log('Config: ', config);
-      this.modalService.show(ConfirmationDonationActsComponent, config);
+          class: 'modal-sl modal-dialog-centered',
+          ignoreBackdropClick: true,
+        };
+        // console.log('Config: ', config);
+        const modalRef = this.modalService.show(
+          ConfirmationDonationActsComponent,
+          config
+        );
+        modalRef.onHidden.subscribe(() => {
+          this.getAllBLKByFilters();
+        });
+      }
     }
   }
 
@@ -316,21 +357,21 @@ export class DonationActsComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Advertencia',
-        `Seleccione primero el bien a asignar`
+        `Seleccione Primero el Bien a Asignar`
       );
     } else {
       if (this.varOne == null) {
         this.alert(
           'warning',
           'Advertencia',
-          `No existe un acta, en la cual asignar el bien. Capture primero el acta`
+          `No Existe un Acta, en la Cual Asignar el Bien. Capture Primero el Acta`
         );
       } else {
         if (this.varFour == 'CERRADA') {
           this.alert(
             'warning',
             'Advertencia',
-            `El acta ya esta cerrada, no puede realizar modificaciones a esta`
+            `El Acta ya Esta Cerrada, no Puede Realizar Modificaciones a Esta`
           );
         } else {
           let body: GoodsToReception = new GoodsToReception();
@@ -341,15 +382,15 @@ export class DonationActsComponent extends BasePage implements OnInit {
           this.serviceDetailProceeding.postRegister(body).subscribe({
             next: response => {
               this.varCreateObject = null;
-              this.alert('success', 'Registro creado correctamente', '');
+              this.alert('success', 'Registro Creado Correctamente', '');
               this.getAllBLKByFilters();
               this.getDataTableTwo();
             },
             error: error => {
               if (error.status == 400) {
-                this.alert('warning', 'Advertencia', `El registro ya existe`);
+                this.alert('warning', 'Advertencia', `El Registro ya Existe`);
               } else {
-                this.alert('error', 'Error', 'Ha ocurrido un error');
+                this.alert('error', 'Error', 'Ha Ocurrido un Error');
               }
             },
           });
@@ -360,27 +401,27 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   deleteTableTwo() {
     if (this.varDeleteObject == null) {
-      this.alert('warning', 'Advertencia', `Debe seleccionar un detalle acta`);
+      this.alert('warning', 'Advertencia', `Debe Seleccionar un Detalle Acta`);
     } else {
       if (this.varDeleteObject.data.numberGood == null) {
         this.alert(
           'warning',
           'Advertencia',
-          `Debe seleccionar un bien que forme parte del acta primero`
+          `Debe Seleccionar un Bien que Forme Parte del Acta Primero`
         );
       } else {
         if (this.varOne == null) {
           this.alert(
             'warning',
             'Advertencia',
-            `Debe especificar/buscar el acta para despues eliminar el bien de esta`
+            `Debe Especificar/Buscar el Acta para Despues Eliminar el Bien de Esta`
           );
         } else {
           if (this.varFour == 'CERRADA') {
             this.alert(
               'warning',
               'Advertencia',
-              `El acta ya esta cerrada, no puede realizar modificaciones a esta`
+              `El Acta ya Esta Cerrada, no Puede Realizar Modificaciones a Esta`
             );
           } else {
             let body: GoodsToReception = new GoodsToReception();
@@ -391,14 +432,14 @@ export class DonationActsComponent extends BasePage implements OnInit {
             this.serviceDetailProceeding.deleteRegister(body).subscribe({
               next: response => {
                 this.varDeleteObject = null;
-                this.alert('success', 'Registro eliminado correctamente', '');
+                this.alert('success', 'Registro Eliminado Correctamente', '');
                 this.getAllBLKByFilters();
                 if (this.data2.count() == 1 || 0) {
                   this.data2.load([]);
                 }
               },
               error: error => {
-                this.alert('error', 'Error', 'Ha ocurrido un error');
+                this.alert('error', 'Error', 'Ha Ocurrido un Error');
               },
             });
           }
@@ -408,7 +449,6 @@ export class DonationActsComponent extends BasePage implements OnInit {
   }
 
   getDataTableOne(param?: HttpParams, filter?: any) {
-    console.log('El valor de la variable: ', this.noExpe);
     if (this.noExpe != '') {
       this.loadingOne = true;
       this.serviceGood.getByFilter(param, filter).subscribe({
@@ -424,11 +464,11 @@ export class DonationActsComponent extends BasePage implements OnInit {
             this.alert(
               'warning',
               'Advertencia',
-              `No se encontraron registros de bienes`
+              `No se Encontraron Registros de Bienes`
             );
             this.datas.load([]);
           } else {
-            this.alert('error', 'Error', 'Ha ocurrido un error');
+            this.alert('error', 'Error', 'Ha Ocurrido un Error');
             this.datas.load([]);
           }
           this.loadingOne = false;
@@ -452,13 +492,25 @@ export class DonationActsComponent extends BasePage implements OnInit {
           this.data2.load(this.columns2);
           this.totalItems2 = response.count || 0;
           this.data2.refresh();
-          this.loading = false;
+          this.loadingOne = false;
         },
         error: error => {
-          console.log('');
-          this.loading = false;
+          this.loadingOne = false;
         },
       });
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.actForm.reset();
+    this.datas.load([]);
+    this.data2.load([]);
+  }
+
+  resetFormTwo() {
+    this.actForm.reset();
+    this.datas.load([]);
+    this.data2.load([]);
   }
   //
 }

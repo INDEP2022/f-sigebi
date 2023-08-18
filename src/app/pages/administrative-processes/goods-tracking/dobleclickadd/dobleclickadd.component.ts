@@ -18,6 +18,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsReview } from 'src/app/core/services/ms-good/goods-review.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared';
@@ -61,7 +62,8 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     private dynamicCatalogsService: DynamicCatalogsService,
     private revisionReasonService: RevisionReasonService,
     private router: Router,
-    private securityService: SecurityService
+    private securityService: SecurityService,
+    private parametersService: ParametersService
   ) {
     super();
   }
@@ -149,11 +151,10 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     if (getCatMotivosRev_ === null) {
       V_PANTALLA = null;
       V_RESPONSABLE = null;
-      this.alert(
-        'warning',
-        `${this.selectedRow.goodNumber} no es un Motivo Válido`,
-        ''
-      );
+
+      const textoOriginal = this.value;
+      const textoConvertido = this.convertirTexto(textoOriginal);
+      this.alert('warning', `"${textoConvertido}" no es un Motivo Válido`, '');
       return;
     } else {
       V_PANTALLA = getCatMotivosRev_.screen;
@@ -171,7 +172,7 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
       LV_FEC_INSERT = getGood_.insertRegDate;
     }
 
-    if (V_RESPONSABLE.includes(this.responsable)) {
+    if (V_RESPONSABLE == this.responsable) {
       V_RESPONSABLE = this.responsable;
     }
 
@@ -405,12 +406,12 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
     // params.page = lparams.page;
     // params.limit = lparams.limit;
 
-    params.addFilter('descriptionCause', this.value, SearchFilter.ILIKE);
+    params.addFilter('descriptionReason', this.value, SearchFilter.ILIKE);
     params.addFilter('initialStatus', this.selectedRow.status, SearchFilter.EQ);
     params.addFilter('goodType', this.selectedRow.goodType, SearchFilter.EQ);
 
     return new Promise((resolve, reject) => {
-      this.revisionReasonService.getAll2(params.getParams()).subscribe({
+      this.parametersService.getCatMotivesrev(params.getParams()).subscribe({
         next: (response: any) => {
           resolve(response.data[0]);
         },
@@ -426,5 +427,20 @@ export class DobleclickaddComponent extends BasePage implements OnInit {
   ejecutarFuncion() {
     console.log('AQUI2');
     this.funcionEjecutada.emit();
+  }
+
+  convertirTexto(texto: any) {
+    // Dividir el texto en palabras
+    const palabras = texto.toLowerCase().split(' ');
+
+    // Convertir la primera letra de cada palabra a mayúsculas
+    for (let i = 0; i < palabras.length; i++) {
+      palabras[i] = palabras[i].charAt(0).toUpperCase() + palabras[i].slice(1);
+    }
+
+    // Unir las palabras para formar el texto final
+    const textoConvertido = palabras.join(' ');
+
+    return textoConvertido;
   }
 }

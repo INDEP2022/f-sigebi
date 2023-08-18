@@ -63,8 +63,8 @@ export class LayoutsConfigService extends HttpService {
   //   const route = `${this.endpoint}`;
   //   return this.put(route, layout);
   // }
-  update(layout: IComerLayouts) {
-    const route = `${this.endpoint}`;
+  update(idLayout: number, layout: IComerLayouts) {
+    const route = `${this.endpoint}/id/${idLayout}`;
     return this.put(route, layout);
   }
 
