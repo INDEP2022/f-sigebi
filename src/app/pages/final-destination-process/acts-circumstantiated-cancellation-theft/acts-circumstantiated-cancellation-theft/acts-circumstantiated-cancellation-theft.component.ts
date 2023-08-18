@@ -135,7 +135,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   disabledBtnImprimir: boolean = false;
   disabledBtnEscaneo: boolean = false;
   disabledBtnReplicar: boolean = false;
-  disabledBtnCerrar: boolean = true;
+  //disabledBtnCerrar: boolean = true;
   showScanForm: boolean = true;
   ocultarPaginado: boolean = false;
   transfer: number = 0;
@@ -193,6 +193,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   folioBoool: boolean = false;
   authorityNumber: any;
   Exportdate: boolean = false;
+
+  contador: number = 0;
+  vTotalB: string = '';
+
 
   constructor(
     private fb: FormBuilder,
@@ -823,11 +827,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       this.statusCanc = next.statusProceedings;
       if (this.statusCanc == 'CERRADA') {
-        this.disabledBtnCerrar = false;
+        //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
-        this.disabledBtnCerrar = true;
+        //this.disabledBtnCerrar = true;
       }
 
       // MAPEAR DATOS
@@ -1444,11 +1448,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
       this.statusCanc = next.statusProceedings;
       if (this.statusCanc == 'CERRADA') {
-        this.disabledBtnCerrar = false;
+        //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
-        this.disabledBtnCerrar = true;
+        //this.disabledBtnCerrar = true;
       }
       console.log('NEXT', next);
       this.actaRecepttionForm.patchValue({
@@ -1517,7 +1521,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.alert('warning', 'No Existe Acta para Cerrar', '');
         return;
       }
-
+      if (this.actasDefault.statusProceedings == 'CERRADA') {
+        this.alertInfo('warning', 'El Acta ya se Encuentra Cerrada', '');
+        return;
+      }
       if (this.dataRecepcionGood.count() == 0) {
         this.alertInfo(
           'warning',
@@ -1570,7 +1577,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
                   this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
                   this.alert('success', 'Acta Cerrada', '');
-                  this.disabledBtnCerrar = false;
+                  //this.disabledBtnCerrar = false;
                   this.disabledBtnActas = false;
                   this.getGoodsByStatus(this.fileNumber);
                   await this.getDetailProceedingsDevollution(
@@ -2182,6 +2189,42 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // })
     );
   }
+
+  ValidGoods(): void {
+
+    if (this.bienes.length === 0) {
+      this.alertInfo('warning', 'No Hay Ningún Bien a Comprar', '');
+      return;
+    }
+
+    this.contador = 0;
+    this.vTotalB = '';
+
+    for (const bien of this.bienes) {
+      if (bien.goodId >= 1) {
+        this.contador++;
+
+        if (this.contador === 1) {
+          this.vTotalB = bien.goodId.toString();
+        } else {
+          this.vTotalB = bien.goodId + ',' + this.vTotalB;
+        }
+      }
+    }
+
+    if (this.contador > 0) {
+
+      this.onLoadToast(
+        'success',
+        'Se Encontraton ' + this.contador + ' Bienes', 'Que Son: ' + this.vTotalB
+      );
+      console.log('SE ENCONTRARON:', this.contador, 'QUE SON:', this.vTotalB);
+    } else {
+      this.alertInfo('warning', 'No Hay Ningún Bien a Comprar', '')
+    }
+
+  }
+
 }
 
 export interface IParamsActaC {
