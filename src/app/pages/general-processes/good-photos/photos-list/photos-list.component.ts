@@ -43,6 +43,10 @@ export class PhotosListComponent extends BasePage implements OnInit {
     }
   }
   private _goodNumber: string | number;
+  options = [
+    { value: 1, label: 'Visualizar' },
+    { value: 2, label: 'Editar' },
+  ];
   errorMessage: string = '';
   // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
@@ -103,7 +107,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async pufValidaUsuario() {
     const filterParams = new FilterParams();
-    filterParams.addFilter('typeNumber', 'CARBIEN');
+    filterParams.addFilter('typeNumber', 'ELIMFOTOS');
     // filterParams.addFilter('user', 'DR_SIGEBI');
     filterParams.addFilter(
       'user',
@@ -135,8 +139,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
   private validRastrer() {
     if (localStorage.getItem('username').toUpperCase() !== 'SERA') {
       // this.userPermisions = false;
-      this.errorMessage =
-        'Solo el usuario SERA tiene permisos de escritura desde el rastreador';
+      this.errorMessage = 'No tiene permisos para eliminar las fotos';
     }
   }
 
@@ -184,25 +187,26 @@ export class PhotosListComponent extends BasePage implements OnInit {
       .subscribe({
         next: async response => {
           if (response) {
-            console.log(response);
-            // debugger;
+            // console.log(response);
+            debugger;
             if (response) {
               this.files = [...response];
-              // const index = last.indexOf('F');
-              // this.lastConsecutive += +last.substring(index + 1, index + 5);
-              const pufValidaUsuario = await this.pufValidaUsuario();
-              if (pufValidaUsuario === 1) {
-                this.errorMessage = null;
-              } else {
-                const noActa = await this.pufValidaProcesoBien();
-                if (noActa) {
-                  this.errorMessage =
-                    'No tiene permisos de escritura debio a que el bien ya fue recibido por el acta ' +
-                    noActa +
-                    ' y esta se encuentra cerrada';
-                  console.log(this.errorMessage);
-                } else {
+              // this.errorMessage = null;
+              if (!this.errorMessage) {
+                const pufValidaUsuario = await this.pufValidaUsuario();
+                if (pufValidaUsuario === 1) {
                   this.errorMessage = null;
+                } else {
+                  const noActa = await this.pufValidaProcesoBien();
+                  if (noActa) {
+                    this.errorMessage =
+                      'No tiene permisos de eliminación y edición debido a que el bien ya fue recibido por el acta ' +
+                      noActa +
+                      ' y esta se encuentra cerrada';
+                    // console.log(this.errorMessage);
+                  } else {
+                    this.errorMessage = null;
+                  }
                 }
               }
             }
@@ -214,7 +218,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
   async confirmDelete(all = false) {
     // if (this.disabledDeletePhotos()) return;
     if (all) {
+      if (this.disabledDeleteAllPhotos()) {
+        return;
+      }
       this.filesToDelete = [...this.files];
+    }
+    if (this.disabledDeletePhotos()) {
+      return;
     }
     if (this.filesToDelete.length < 1) {
       this.alert(
@@ -258,8 +268,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           'Fotos Eliminadas',
-          'pero no se puediero eliminar las siguientes fotos ' +
-            this.errorImages.toString()
+          'Pero no se puedieron eliminar todas las fotos'
         );
       } else {
         this.alert(
@@ -314,12 +323,13 @@ export class PhotosListComponent extends BasePage implements OnInit {
       .deletePhoto(this.goodNumber + '', consecNumber)
       .pipe(
         catchError(error => {
+          console.log(error);
           // this.alert(
           //   'error',
           //   'Error',
           //   'Ocurrió un error al eliminar la imagen'
           // );
-          this.errorImages.push(filename);
+          this.errorImages.push(error.error.message);
           return of(null);
         })
       );
@@ -330,14 +340,15 @@ export class PhotosListComponent extends BasePage implements OnInit {
     const config = {
       ...MODAL_CONFIG,
       initialState: {
-        accept: 'image/*',
+        accept:
+          'image/jpg, image/jpeg, image/png, image/gif, image/tiff, image/tif, image/raw,  image/webm, image/bmp, image/svg',
         uploadFiles: false,
         service: this.filePhotoService,
         identificator: this.goodNumber + '',
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          console.log(refresh);
+          // console.log(refresh);
           this.fileUploaderClose(refresh);
         },
       },
@@ -357,7 +368,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          console.log(refresh);
+          // console.log(refresh);
           this.fileUploaderClose(refresh);
         },
       },

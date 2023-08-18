@@ -1,4 +1,30 @@
-export const RES_CANCEL_VALUATION_COLUMS = {
+export const VALUATION_REQUEST_COLUMNS = {
+  bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus',
+    sort: false,
+  },
+};
+
+export const VALUATION_REQUEST_COLUMNS_VALIDATED = {
+  bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+};
+
+export const VALUATION_REQUEST_COLUMNS_TWO = {
   noBien: {
     title: 'No. Bien',
     sort: false,
@@ -8,11 +34,11 @@ export const RES_CANCEL_VALUATION_COLUMS = {
     sort: false,
   },
   status: {
-    title: 'Estado',
+    title: 'Estatus',
     sort: false,
   },
-  motive: {
-    title: 'Motivos',
+  motivo: {
+    title: 'Motivo(s)',
     sort: false,
   },
 };

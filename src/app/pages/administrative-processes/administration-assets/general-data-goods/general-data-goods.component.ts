@@ -69,9 +69,6 @@ export class GeneralDataGoodsComponent
         edit: true,
         delete: false,
       },
-      edit: {
-        editButtonContent: '<span class="fa fa-eye text-success mx-2"></span>',
-      },
       columns: {
         ...ATRIBUT_ACT_COLUMNS,
         value: {
@@ -155,7 +152,7 @@ export class GeneralDataGoodsComponent
         this.viewAct = !this.viewAct;
         this.disableUpdate = !this.disableUpdate;
         this.good = resp;
-        this.alert('success', 'Datos del Bien Actualizados', '');
+        this.alert('success', 'Datos generales, actualizados con éxito.', '');
         setTimeout(() => {
           this.goodChange++;
         }, 100);

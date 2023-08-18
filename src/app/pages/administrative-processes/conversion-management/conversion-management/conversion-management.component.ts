@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IAssetConversion } from 'src/app/core/models/ms-convertiongood/asset-conversion';
 import { IConvertiongood } from 'src/app/core/models/ms-convertiongood/convertiongood';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -96,6 +97,9 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     this.actaER.disable();
     this.desStatus.disable();
     this.actaConversion.disable();
+    this.idConversion.disable();
+    this.date.disable();
+    this.noExpediente.disable();
     /* this.form.valueChanges.subscribe(() => {
       if (this.conversion !== undefined) {
         this.isFormModified = true;
@@ -111,11 +115,11 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
    */
   private buildForm() {
     this.form = this.fb.group({
-      idConversion: [
+      idConversion: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      noBien: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
-      noBien: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       date: [null],
       tipo: [null, [Validators.required]],
       noExpediente: [null, [Validators.pattern(NUMBERS_PATTERN)]],
@@ -129,47 +133,49 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   }
 
   async save() {
-    if (this.tipo.value === null) {
-      this.alert(
-        'warning',
-        'Administración de Conversión de Bienes',
-        'El Campo Tipo es Requerido'
-      );
-      return;
-    }
     console.log(this.idConversion.value);
-    if (this.idConversion.value !== null) {
-      const response: any = await this.updateConversion('');
-      this.date.setValue(new Date());
-      this.createObj();
-      this.conversiongoodServices
-        .createAssetConversions(this.assetConversion)
-        .subscribe({
-          next: response => {
-            console.log(response);
-            this.alert(
-              'success',
-              'Administración de Conversión de Bienes',
-              'Se ha Guardado Correctamente la Conversión'
-            );
-            this.saved = false;
-          },
-          error: err => {
-            this.alert(
-              'warning',
-              'Administración de Conversión de Bienes',
-              'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
-            );
-            console.log(err);
-          },
-        });
-    } else {
-      this.alert(
-        'warning',
-        'Administración de Conversión de Bienes',
-        'Se debe Cargar Primero una Conversión'
-      );
-    }
+    // if (this.idConversion.value !== null) {
+    // const response: any = await this.updateConversion('');
+    // this.date.setValue(new Date());
+    this.createObj();
+    console.log(this.assetConversion);
+    this.conversiongoodServices
+      .createAssetConversions(this.assetConversion)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          // this.alert(
+          //   'success',
+          //   'Administración de Conversión de Bienes',
+          //   'Se ha Guardado Correctamente la Conversión'
+          // );
+          this.alert(
+            'success',
+            `Id Conversión: ${this.conversion.id} , Password: ${this.password}`,
+            'Se ha Generado y Aplicado la Contraseña a la Conversión'
+          );
+          this.loader.load = false;
+          this.saved = true;
+        },
+        error: err => {
+          this.loader.load = false;
+          this.saved = false;
+          // this.alert(
+          //   'warning',
+          //   'Administración de Conversión de Bienes',
+          //   'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
+          // );
+
+          console.log(err);
+        },
+      });
+    // } else {
+    //   this.alert(
+    //     'warning',
+    //     'Administración de Conversión de Bienes',
+    //     'Se debe Cargar Primero una Conversión'
+    //   );
+    // }
   }
 
   onChangeGood() {
@@ -189,11 +195,13 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     console.log(idGood);
     this.goodServices.getById(idGood).subscribe({
       next: (response: any) => {
+        this.form.get('tipo').markAsTouched();
         console.log(response.data[0]);
         this.good = response.data[0];
         this.loadActER(this.good.id);
         this.loadDescriptionStatus(this.good.id);
         this.setGood(this.good);
+        this.getConversion(this.good.id);
       },
       error: err => {
         this.alert(
@@ -216,10 +224,12 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   loadDescriptionStatus(idGood: number | string) {
     this.goodServices.getStatusByGood(idGood).subscribe({
       next: response => {
+        console.log(response);
         this.desStatus.setValue(response.status_descripcion);
         this.enable = true;
       },
       error: error => {
+        console.log(error);
         this.desStatus.setValue('');
         this.loading = false;
         this.enable = true;
@@ -251,8 +261,44 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       },
     });
   }
-
+  getConversion(idGood: number | string) {
+    const params = new ListParams();
+    params['filter.goodFatherNumber'] = `$eq:${idGood}`;
+    console.log(idGood);
+    this.conversiongoodServices.getAllGoods(params).subscribe({
+      next: response => {
+        console.log(response);
+        this.conversion = response.data[0];
+        console.log(this.conversion);
+        this.idConversion.setValue(Number(response.data[0].id));
+        if (response.data[0].fCreate != null) {
+          this.date.setValue(this.formatDate(response.data[0].fCreate));
+        }
+        this.tipo.setValue(response.data[0].typeConv);
+        this.actaConversion.setValue(response.data[0].cveActaConv);
+        this.saved = true;
+      },
+      error: error => {
+        this.loading = false;
+        this.saved = false;
+      },
+    });
+  }
+  // this.alert(
+  //   'warning',
+  //   'Administración de Conversión de Bienes',
+  //   'No se puede realizar la operación ya que este bien ya está asignado a esta conversión'
+  // );
   async generatePaswword() {
+    if (this.tipo.value === null) {
+      this.alert(
+        'warning',
+        'Administración de Conversión de Bienes',
+        'El Campo Tipo es Requerido'
+      );
+      return;
+    }
+
     this.generarPass = true;
     let pass = '';
     let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -262,18 +308,21 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
     }
     this.password = pass;
     console.log(this.password);
-    const response: any = await this.updateConversion(this.password, true);
-    if (response.statusCode === 200) {
-      this.alert(
-        'success',
-        `Password: ${this.password}`,
-        'Se ha Generado y Aplicado la Contraseña a la Conversión'
-      );
-      this.form.reset();
+    const id: any = await this.seqConvesions();
+    console.log(id);
+    const response: any = await this.updateConversion(this.password, true, id);
+    console.log(response);
+    this.idConversion.setValue(id);
+    if (response) {
       this.saved = true;
-      this.conversion = null;
       this.isFormModified = false;
+      this.conversion = response;
+      this.save();
+      if (response.fCreate != null) {
+        this.date.setValue(this.formatDate(response.fCreate));
+      }
     } else {
+      this.loader.load = false;
       this.alert(
         'error',
         'Ha Ocurrido un Error',
@@ -318,12 +367,14 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       },
     });
   }
-  updateConversion(pwAccess: string, isPwAccess: boolean = false) {
+  updateConversion(pwAccess: string, isPwAccess: boolean = false, id: string) {
     return new Promise((res, rej) => {
-      this.conversion.id = Number(this.conversion.id);
-      this.conversion.fileNumber = Number(this.conversion.fileNumber);
+      console.log(id);
+      this.conversion = {};
+      this.conversion.id = Number(id);
+      this.conversion.fileNumber = Number(this.good.fileNumber);
       this.conversion.goodFatherNumber = Number(this.good.id);
-      this.conversion.statusConv = Number(this.conversion.statusConv);
+      this.conversion.statusConv = 1;
       this.conversion.typeConv = Number(this.tipo.value);
       if (isPwAccess) {
         this.conversion.pwAccess = pwAccess;
@@ -331,7 +382,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
       console.log('AQUIIII', this.conversion);
 
       this.conversiongoodServices
-        .update(this.conversion.id, this.conversion)
+        .createConvertionGood(this.conversion)
         .subscribe({
           next: response => {
             res(response);
@@ -339,13 +390,29 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
           },
           error: err => {
             console.log(err);
+            this.loader.load = false;
             res(err.error);
           },
         });
     });
   }
+  seqConvesions() {
+    return new Promise((res, rej) => {
+      this.loader.load = true;
+      this.conversiongoodServices.getSeqConversions().subscribe({
+        next: response => {
+          res(response.data[0].seqVal);
+        },
+        error: err => {
+          console.log(err);
+          this.loader.load = false;
+          res(err.error);
+        },
+      });
+    });
+  }
   createObj() {
-    console.log(this.good.id);
+    console.log(this.conversion);
     this.assetConversion = {
       goodId: Number(this.good.id),
       conversionId: Number(this.conversion.id),
@@ -420,6 +487,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
 
   clean() {
     this.form.reset();
+    this.saved = true;
     // this.form.markAllAsTouched();
   }
   formatDate(fecha: string) {

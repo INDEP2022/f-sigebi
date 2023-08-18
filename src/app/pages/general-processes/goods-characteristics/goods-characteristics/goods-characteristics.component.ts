@@ -205,6 +205,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     return this.form.get('sssubtype');
   }
 
+  get status() {
+    return this.form.get('status');
+  }
+
   get descripcion() {
     return this.form.get('descripcion');
   }
@@ -417,6 +421,19 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
+  get pathClasification() {
+    return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
+  }
+
+  get pathUnit() {
+    return (
+      'classifygood/api/v1/unit-x-classif?sortBy=unit:ASC' +
+      (this.numberClassification && this.numberClassification.value
+        ? '&filter.classifyGoodNumber:$eq:' + this.numberClassification.value
+        : '')
+    );
+  }
+
   updateDelegation(event: any) {
     console.log(event);
     this.delegacion = event.id;
@@ -437,7 +454,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.data.forEach(row => {
       if (row.required && !row.value) {
         this.alert(
-          'error',
+          'warning',
           'Características del Bien ' + this.numberGood.value,
           'Complete el atributo ' + row.attribute
         );
@@ -618,6 +635,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.errorMessage = null;
     await this.postRecord(true);
     this.loading = false;
+    this.loader.load = false;
     setTimeout(() => {
       this.goodChange++;
     }, 100);
@@ -893,6 +911,18 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       this.filterParams.addFilter('sssubTypeId', this.sssubtype.value);
       this.bodyGoodCharacteristics.noSssubType = this.sssubtype.value;
     }
+    if (this.numberClassification && this.numberClassification.value) {
+      this.filterParams.addFilter(
+        'goodclassnumber',
+        this.numberClassification.value
+      );
+      this.bodyGoodCharacteristics.goodclassnumber =
+        this.numberClassification.value;
+    }
+    if (this.status && this.status.value) {
+      this.filterParams.addFilter('status', this.status.value);
+      this.bodyGoodCharacteristics.status = this.status.value;
+    }
     if (this.filterParams.getFilterParams()) {
       return true;
     }
@@ -924,6 +954,10 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   async searchGood(byPage = false) {
     // debugger;
+    if (byPage) {
+      this.loader.load = true;
+    }
+    this.di_numerario_conciliado = null;
     this.loading = true;
 
     if (this.fillParams(byPage)) {
@@ -1015,6 +1049,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           await this.postQuery();
         } else {
           this.loading = false;
+          if (byPage) {
+            this.loader.load = false;
+          }
           this.goodChange++;
           this.alert('error', 'Error', 'No existe biene');
           // this.service.goodChange.next(false);
@@ -1022,6 +1059,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       } else {
         this.totalItems = 0;
         this.loading = false;
+        if (byPage) {
+          this.loader.load = false;
+        }
         this.goodChange++;
         this.alert('error', 'Error', 'No existen bienes');
         // this.service.goodChange.next(false);
@@ -1029,6 +1069,9 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       }
     } else {
       this.loading = false;
+      if (byPage) {
+        this.loader.load = false;
+      }
       this.totalItems = 0;
       this.goodChange++;
       // this.service.goodChange.next(false);
@@ -1165,6 +1208,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
           }
         } else {
           this.disactivateForUser();
+          // this.activateForEdit();
         }
       }
     } else {

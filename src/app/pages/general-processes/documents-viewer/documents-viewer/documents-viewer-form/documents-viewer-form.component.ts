@@ -135,8 +135,6 @@ export class DocumentViewerFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: false,
       folio,
     };
-    // Ocultar el primer modal antes de mostrar el segundo modal
-    this.modalRef.hide();
     this.modalService.show(DocumentsViewerByFolioComponent, modalConfig);
   }
 }
@@ -175,7 +173,7 @@ export class DocumentViewerFormComponent extends BasePage implements OnInit {
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   data: LocalDataSource = new LocalDataSource();
-  columnFilters: any = [];
+  columnFilters: any = [];F
   documentT: IDocumentsViewerFlyerNumber[] = [];
   totalItems: number = 0;
 

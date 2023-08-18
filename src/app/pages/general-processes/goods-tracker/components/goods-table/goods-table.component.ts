@@ -36,6 +36,7 @@ import { PartializeGoodService } from 'src/app/core/services/ms-partializate-goo
 import { GoodPartializeService } from 'src/app/core/services/ms-partialize/partialize.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FullService } from 'src/app/layouts/full/full.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { environment } from 'src/environments/environment';
@@ -114,7 +115,8 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     private procedings: ProceedingsService,
     private partializeGoodServ: PartializeGoodService,
     private photoService: PublicationPhotographsService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private fullService: FullService
   ) {
     super();
     this.settings.actions = false;
@@ -773,16 +775,32 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     });
   }
 
-  subscribeExcel() {
-    return this.socketService.goodsTrackerExcel().pipe(
+  subscribeExcel(token: string) {
+    console.log(token);
+
+    return this.socketService.goodsTrackerExcel(token).pipe(
       take(1),
-      switchMap(() => this.getExcel())
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log({ res });
+      }),
+      switchMap(() => this.getExcel(token))
     );
   }
 
-  subscribePhotos() {
-    return this.socketService.exportGoodsTrackerPhotos().pipe(
+  subscribePhotos(token: string) {
+    return this.socketService.exportGoodsTrackerPhotos(token).pipe(
+      catchError(error => {
+        return throwError(() => error);
+      }),
       tap((res: any) => {
+        this.fullService.generatingFileFlag.next({
+          progress: res.percent,
+          showText: true,
+        });
         if (res.percent == 100 && res.path) {
           this.alert('success', 'Archivo Descargado Correctamente', '');
           const url = `${environment.API_URL}ldocument/${environment.URL_PREFIX}${res.path}`;
@@ -794,13 +812,23 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     );
   }
 
-  getExcel() {
-    return this.goodTrackerService.donwloadExcel().pipe(
+  getExcel(token: string) {
+    return this.goodTrackerService.donwloadExcel(token).pipe(
       catchError(error => {
         this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+        this.fullService.generatingFileFlag.next({
+          progress: 100,
+          showText: true,
+        });
         return throwError(() => error);
       }),
-      tap(resp => this.downloadExcel(resp.file))
+      tap(resp => {
+        this.downloadExcel(resp.file);
+        this.fullService.generatingFileFlag.next({
+          progress: 100,
+          showText: true,
+        });
+      })
     );
   }
 
@@ -825,7 +853,11 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           'Aviso',
           'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
         );
-        this.subscribeExcel().subscribe();
+        this.fullService.generatingFileFlag.next({
+          progress: 99,
+          showText: true,
+        });
+        this.subscribeExcel(resp.token).subscribe();
       },
       error: () => {
         this.excelLoading = false;
@@ -842,7 +874,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
           'Aviso',
           'La Descarga está en Proceso, favor de Esperar'
         );
-        const $sub = this.subscribePhotos().subscribe();
+        const $sub = this.subscribePhotos(res.token).subscribe();
       },
       error: error => {
         console.log(error);

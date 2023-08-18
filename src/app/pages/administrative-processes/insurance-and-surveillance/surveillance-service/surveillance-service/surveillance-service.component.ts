@@ -319,6 +319,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     // params.addFilter('delegationType', event.delegationType, SearchFilter.EQ);
 
     // return new Promise((resolve, reject) => {
+    params['sortBy'] = 'randomId:ASC';
     this.survillanceService.getVigSupervisionDet(params).subscribe({
       next: async (response: any) => {
         console.log('EDED2', response);
@@ -373,7 +374,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
     if (lparams.text != '') {
       params.addFilter('cvePeriod', lparams.text, SearchFilter.EQ);
     }
-
+    params.sortBy = 'cvePeriod:ASC';
     return new Promise((resolve, reject) => {
       this.survillanceService
         .getVigSupervisionMae(params.getParams())

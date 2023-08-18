@@ -5,6 +5,7 @@ import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -23,6 +24,7 @@ import {
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
+
 const datagood: any = [
   {
     amount: 1,
@@ -218,8 +220,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
@@ -229,17 +229,18 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'EXT_DOMINIO'
     ) {
       if (this.requestInfo.regionalDelegationId != 13) {
-        /*  params.getValue()['filter.regionalDelegationId'] =
-          this.requestInfo.regionalDelegationId; */
+        this.params.getValue()[
+          'filter.regionalDelegationId'
+        ] = `$eq:${filters.regionalDelegationId}`;
 
-        this.jsonBody.regionalDelegationId =
-          this.requestInfo.regionalDelegationId;
+        /*this.jsonBody.regionalDelegationId =
+          this.requestInfo.regionalDelegationId; */
       }
     }
 
     if (this.processDet != 'RES_ESPECIE') {
       //params.getValue()['filter.origin'] = 'INVENTARIOS';
-      this.jsonBody.origin = 'INVENTARIOS';
+      //this.jsonBody.origin = 'INVENTARIOS';
     }
 
     if (this.processDet == 'AMPARO') {
@@ -274,13 +275,79 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     //this.params = params;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getGoods(data);
+      this.getGoods(filters);
     });
   }
 
-  getGoods(filters: ListParams) {
+  getGoods(info: any) {
+    this.loading = true;
+    if (info == false) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.goodColumns = new LocalDataSource();
+      this.goodTotalItems = 0;
+      this.loading = false;
+    } else {
+      if (info.origin) {
+        this.params.getValue()['filter.origin'] = `$eq:${info.origin}`;
+      } else if (info.goodId) {
+        this.params.getValue()['filter.goodId'] = `$eq:${info.goodId}`;
+      } else if (info.uniqueKey) {
+        this.params.getValue()['filter.uniqueKey'] = `$eq:${info.uniqueKey}`;
+      }
+
+      if (info.statusKey) {
+        this.params.getValue()['filter.statusKey'] = `$eq:${info.statusKey}`;
+      }
+      if (info.warehouseCode) {
+        this.params.getValue()[
+          'filter.warehouseCode'
+        ] = `$eq:${info.warehouseCode}`;
+      }
+      if (info.descriptionGood) {
+        this.params.getValue()[
+          'filter.descriptionGood'
+        ] = `$eq:${info.descriptionGood}`;
+      }
+      if (info.stationId) {
+        this.params.getValue()['filter.stationId'] = `$eq:${info.stationId}`;
+      }
+      if (info.fileId) {
+        this.params.getValue()['filter.fileId'] = `$eq:${info.fileId}`;
+      }
+      if (info.authorityId) {
+        this.params.getValue()[
+          'filter.authorityId'
+        ] = `$eq:${info.authorityId}`;
+      }
+      if (info.actFolio) {
+        this.params.getValue()['filter.actFolio'] = `$eq:${info.actFolio}`;
+      }
+      if (info.transferFile) {
+        this.params.getValue()[
+          'filter.transferFile'
+        ] = `$eq:${info.transferFile}`;
+      }
+      if (info.relevantTypeId) {
+        this.params.getValue()[
+          'filter.relevantTypeId'
+        ] = `$eq:${info.relevantTypeId}`;
+      }
+
+      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+        next: response => {
+          this.goodColumns.load(response.data);
+          this.goodTotalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    }
+
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    const filter = params.getValue();*/
+    const filter = params.getValue();
+    //delete this.jsonBody.regionalDelegationId
     let page = filters.page;
     let limit = filters.limit;
     this.loading = true;
@@ -289,15 +356,15 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.goodColumns.load(response.data);
         this.goodTotalItems = response.data.length;
         this.loading = false;
-        /*const info = response.data.map(item => {
+        const info = response.data.map(item => {
           return item.good;
-        });*/
+        });
       },
       error: error => {
         this.loading = false;
         console.log(error);
       },
-    });
+    }); */
   }
 
   destinyInfo(idDestiny: number) {
@@ -331,14 +398,27 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-    const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-      initialState: { good: good, requestId: this.requestInfo.id },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.onReserve.subscribe((data: boolean) => {
-      if (data) this.addGood(data);
-    });
+    if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
+      const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+        initialState: { good: good, requestId: this.requestInfo.id },
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.onReserve.subscribe((data: boolean) => {
+        if (data) this.addGood(data);
+      });
+    } else if (this.processDet != 'INFORMACION') {
+      const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+        initialState: { good: good, requestId: this.requestInfo.id },
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.onReserve.subscribe((data: boolean) => {
+        if (data) this.addGood(data);
+      });
+    } else {
+      this.addGoodForInformation(good);
+    }
   }
 
   addGood(good: any) {
@@ -348,9 +428,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
 
-    if (this.processDet != 'RES_PAGO_ESPECIE') {
-      this.hideResultTaxpayer(true);
-    }
+    this.displayColumns();
   }
 
   selectGoods(rows: any) {
@@ -432,12 +510,38 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     }
   }
 
-  hideResultTaxpayer(display: boolean) {
+  displayColumns() {
     const columnas = this.table.grid.getColumns();
-    const columnaSelectRigth = columnas.find(
-      (columna: any) => columna.id === 'resultTaxpayer'
-    );
-    columnaSelectRigth.hide = display;
+
+    if (this.processDet != 'RES_PAGO_ESPECIE') {
+      const columnaSelectRigth = columnas.find(
+        (columna: any) => columna.id === 'resultTaxpayer'
+      );
+      columnaSelectRigth.hide = true;
+
+      const goodGrouper = columnas.find(
+        (columna: any) => columna.id === 'goodGrouper'
+      );
+      goodGrouper.hide = true;
+    }
+
+    if (this.processDet != 'RES_ESPECIE') {
+      const goodGrouper = columnas.find(
+        (columna: any) => columna.id === 'goodGrouper'
+      );
+      goodGrouper.hide = true;
+    }
+
+    if (this.processDet != 'RES_NUMERARIA') {
+      const subinventory = columnas.find(
+        (columna: any) => columna.id === 'subinventory'
+      );
+      subinventory.hide = true;
+      const jobNumber = columnas.find(
+        (columna: any) => columna.id === 'jobNumber'
+      );
+      jobNumber.hide = true;
+    }
   }
 
   assignGoodGrouper() {
@@ -531,6 +635,51 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'No se pudieron actualizar los Bienes');
         },
       });
+    });
+  }
+
+  addGoodForInformation(good: any) {
+    let goodResDev: IGoodsResDev = {};
+    goodResDev.applicationId = this.idRequest; //this.good.solicitudId;
+    goodResDev.goodId = good.goodId;
+    goodResDev.inventoryNumber = good.inventoryNum;
+    goodResDev.jobNumber = good.officeNum;
+    goodResDev.proceedingsId = good.fileId;
+    goodResDev.proceedingsType = good.fileType;
+    goodResDev.uniqueKey = good.uniqueKey;
+    goodResDev.descriptionGood = good.goodDescription;
+    goodResDev.unitExtent = good.unitMeasurement;
+    goodResDev.amountToReserve = good.quantity;
+    (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
+    goodResDev.stateConservation = good.conservationStatus;
+    goodResDev.fractionId = good.fractionId;
+    goodResDev.relevantTypeId = good.typeRelevantId;
+    goodResDev.destination = good.destination;
+    goodResDev.delegationRegionalId = good.regionalDelegationId;
+    goodResDev.cveState = good.stateKey;
+    goodResDev.transfereeId = good.transferId;
+    goodResDev.stationId = good.stationId;
+    goodResDev.authorityId = good.authorityId;
+    goodResDev.codeStore = good.warehouseCode;
+    goodResDev.proceedingsType = good.fileType;
+    goodResDev.locatorId = good.locatorId;
+    goodResDev.inventoryItemId = good.inventoryItemId;
+    goodResDev.organizationId = good.organizationId;
+    goodResDev.invoiceRecord = good.folioAct;
+    goodResDev.subinventory = good.destination;
+    //goodResDev.origin = good.origin;
+    goodResDev.naturalness =
+      good.inventoryNum != null ? 'INVENTARIOS' : 'GESTION';
+
+    console.log(goodResDev);
+    this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'Se agrego el bien');
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo crear el bien');
+        console.log(error);
+      },
     });
   }
 }

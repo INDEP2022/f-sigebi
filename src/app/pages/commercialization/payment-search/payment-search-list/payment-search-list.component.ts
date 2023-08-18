@@ -1,11 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { _Params } from 'src/app/common/services/http-wcontet.service';
+import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -19,7 +30,7 @@ import { PAYMENT_COLUMNS } from './payment-search-columns';
   styles: [],
 })
 export class PaymentSearchListComponent extends BasePage implements OnInit {
-  searchForm: FormGroup = new FormGroup({});
+  searchForm: FormGroup = new FormGroup({ bank: new FormControl(null) });
   params = new BehaviorSubject<ListParams>(new ListParams());
   addRows: any[] = [];
   editRows: any[] = [];
@@ -30,10 +41,22 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   eventItems = new DefaultSelect();
   bankItems = new DefaultSelect();
   localdata: LocalDataSource = new LocalDataSource();
+  banks = new DefaultSelect();
+  columnFilters: any = [];
+
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
     ...TABLE_SETTINGS,
+    hideSubHeader: false,
+    rowClassFunction: (row: { data: { available: any } }) =>
+      row.data.available ? 'available' : 'not-available',
     selectMode: 'multi',
+    actions: {
+      columnTitle: 'Acciones',
+      edit: true,
+      add: false,
+      position: 'right',
+    },
   };
 
   eventsTestData = [
@@ -54,94 +77,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     },
   ];
 
-  banksTestData = [
-    {
-      id: 1,
-      description: 'BANAMEX',
-    },
-    {
-      id: 2,
-      description: 'BANCO SANTANDER',
-    },
-    {
-      id: 3,
-      description: 'BANORTE',
-    },
-    {
-      id: 4,
-      description: 'HSBC',
-    },
-    {
-      id: 5,
-      description: 'BBVA BANCOMER',
-    },
-  ];
-
-  paymentTestData = [
-    {
-      movement: 41678,
-      date: '12/09/2021',
-      originalReference: 'GES515SHEH588TE',
-      reference: 'INAE8166XG2PL',
-      amount: 10000,
-      cve: 'EGW52843',
-      code: 51661,
-      publicBatch: 9273,
-      event: 14267,
-      systemValidity: 'B',
-      result: 'TEST RESULT FOR DEVELOPMENT',
-      paymentId: 16834739,
-      batchId: 122970,
-      entryOrderId: 11387,
-      satDescription: 'TRANSFERENCIA ELECTRÓNICA',
-      type: 'L',
-      inconsistencies: '19 La referncia de carga CSV generó un conflicto',
-    },
-    {
-      movement: 41876,
-      date: '13/09/2021',
-      originalReference: 'GES515SHEH588TE',
-      reference: 'INAE8166XG2PL',
-      amount: 20000,
-      cve: 'EGW52843',
-      code: 51661,
-      publicBatch: 9273,
-      event: 14267,
-      systemValidity: 'B',
-      result: 'TEST RESULT FOR DEVELOPMENT',
-      paymentId: 16834739,
-      batchId: 122970,
-      entryOrderId: 11387,
-      satDescription: 'TRANSFERENCIA ELECTRÓNICA',
-      type: 'L',
-      inconsistencies: '19 La referncia de carga CSV generó un conflicto',
-    },
-    {
-      movement: 41937,
-      date: '14/09/2021',
-      originalReference: 'GES515SHEH588TE',
-      reference: 'INAE8166XG2PL',
-      amount: 15000,
-      cve: 'EGW52843',
-      code: 51661,
-      publicBatch: 9273,
-      event: 14267,
-      systemValidity: 'B',
-      result: 'TEST RESULT FOR DEVELOPMENT',
-      paymentId: 16834739,
-      batchId: 122970,
-      entryOrderId: 11387,
-      satDescription: 'TRANSFERENCIA ELECTRÓNICA',
-      type: 'L',
-      inconsistencies: '19 La referncia de carga CSV genero un conflicto',
-    },
-  ];
-
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
     private modalService: BsModalService,
-    private paymentService: PaymentService
+    private paymentService: PaymentService,
+    private accountMovementService: AccountMovementService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -150,6 +91,87 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     console.log('antes servicio');
+    this.localdata
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.EQ;
+            field = `filter.${filter.field}`;
+            /*SPECIFIC CASES*/
+            switch (filter.field) {
+              case 'movement':
+                field = 'filter.numbermovement';
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'date':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'originalReference':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'reference':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'amount':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'cve':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'code':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'publicBatch':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'event':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'systemValidity':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'result':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'paymentId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'batchId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'entryOrderId':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'satDescription':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'type':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              case 'inconsistencies':
+                searchFilter = SearchFilter.ILIKE;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params = this.pageFilter(this.params);
+          this.getTableData();
+        }
+      });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getTableData());
   }
 
   private prepareForm(): void {
@@ -164,10 +186,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       ],
       validity: [null, [Validators.required]],
       searchType: [null, [Validators.required]],
+      processType: [null, [Validators.required]],
       system: [null, [Validators.required]],
+      action: [null, [Validators.required]],
     });
     this.getEvents({ page: 1, text: '' });
-    this.getBanks({ page: 1, text: '' });
   }
 
   getEvents(params: ListParams) {
@@ -180,25 +203,68 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     }
   }
 
-  getBanks(params: ListParams) {
-    if (params.text == '') {
-      this.bankItems = new DefaultSelect(this.banksTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.banksTestData.filter((i: any) => i.id == id)];
-      this.bankItems = new DefaultSelect(item[0], 1);
-    }
+  getBanks2(lparams: ListParams) {
+    const params = new FilterParams();
+
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+
+    let params__ = '';
+    if (lparams?.text.length > 0)
+      if (!isNaN(parseInt(lparams?.text))) {
+        console.log('SI');
+        params.addFilter('idCode', lparams.text, SearchFilter.EQ);
+      } else {
+        console.log('NO');
+        params.addFilter('cveBank', lparams.text, SearchFilter.ILIKE);
+
+        // params.addFilter('cve_banco', lparams.text);
+      }
+
+    // this.hideError();
+    return new Promise((resolve, reject) => {
+      this.accountMovementService
+        .getPaymentControl(params.getParams())
+        .subscribe({
+          next: response => {
+            console.log('ress1', response);
+            let result = response.data.map(item => {
+              item['bankAndNumber'] = item.idCode + ' - ' + item.cveBank;
+            });
+
+            Promise.all(result).then((resp: any) => {
+              this.banks = new DefaultSelect(response.data, response.count);
+              this.loading = false;
+            });
+          },
+          error: err => {
+            this.banks = new DefaultSelect();
+            console.log(err);
+          },
+        });
+    });
   }
 
   search() {
     let LV_MSG_PROCESO: string;
-    let LV_EST_PROCESO: number;
+    let LV_EST_PROCESO: number = 1;
     let LV_TOTREG: number;
 
-    if (this.searchForm.get('searchType').value == 5) {
-      this.searchForm.get('bank');
+    if (this.searchForm.get('system').value == 1) {
+      if (this.searchForm.get('searchType').value == 5) {
+        this.searchForm.get('bank');
+      } else {
+        //Cod pasado back
+        //
+        if (LV_EST_PROCESO == 1) {
+          console.log('Tipo búsqueda', this.searchForm.get('searchType').value);
+          this.getBusquedaPagMae(this.searchForm.get('searchType').value);
+        }
+      }
     } else {
+      //Cod PUP_BUSQUEDA
     }
+
     this.getTableData();
   }
 
@@ -315,6 +381,13 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   getTableData() {
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    this.dataRows = [];
+    this.localdata.load(this.dataRows);
+    this.localdata.refresh();
     //Provisional data
     //this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
@@ -326,35 +399,53 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     // }
     console.log('CLASIFICADOR DEL BEINE ES: ', data);
 
-    this.paymentService.getBusquedaPag().subscribe({
+    this.paymentService.getBusquedaPag(params).subscribe({
       next: res => {
         console.log('Res -> ', res);
+        const params = new ListParams();
         for (let i = 0; i < res.count; i++) {
           if (res.data[i] != undefined) {
-            let item = {
-              movement: res.data[i].numbermovement,
-              date: res.data[i].date,
-              originalReference: res.data[i].referenceori,
-              reference: res.data[i].reference,
-              amount: res.data[i].amount,
-              cve: res.data[i].cveBank,
-              code: res.data[i].code,
-              publicBatch: res.data[i].batchPublic,
-              event: res.data[i].idEvent,
-              systemValidity: res.data[i].validSystem,
-              result: res.data[i].result,
-              paymentId: res.data[i].payId,
-              batchId: res.data[i].batchId,
-              entryOrderId: res.data[i].numbermovement,
-              //satDescription: res.data[i] 'Descripción Pago SAT'
-              type: res.data[i].guy,
-              inconsistencies: res.data[i].idinconsis,
-            };
-            this.dataRows.push(item);
-            this.localdata.load(this.dataRows);
-            console.log('this dataRows: ', this.dataRows);
-            console.log('this localData: ', this.localdata);
-            this.totalItems = res.count;
+            const _params: any = params;
+            _params['filter.idType'] = `$eq:${res.data[i].idGuySat}`;
+            this.accountMovementService.getPaymentTypeSat(_params).subscribe(
+              response => {
+                if (response != null && response != undefined) {
+                  console.log('Resp PaymentSat', response.data[0].description);
+
+                  let item = {
+                    movement: res.data[i].numbermovement,
+                    date: res.data[i].date,
+                    originalReference: res.data[i].referenceori,
+                    reference: res.data[i].reference,
+                    amount: res.data[i].amount,
+                    cve: res.data[i].cveBank,
+                    code: res.data[i].code,
+                    publicBatch: res.data[i].batchPublic,
+                    event: res.data[i].idEvent,
+                    systemValidity: res.data[i].validSystem,
+                    result: res.data[i].result,
+                    paymentId: res.data[i].payId,
+                    batchId: res.data[i].batchId,
+                    entryOrderId: res.data[i].numbermovement,
+                    satDescription: response.data[0].description,
+                    type: res.data[i].guy,
+                    inconsistencies: res.data[i].idinconsis,
+                  };
+                  console.log(
+                    'Descripcion Pag Sat-> ',
+                    this.getPaymentSat(params, res.data[i].idGuySat)
+                  );
+                  this.dataRows.push(item);
+                  this.localdata.load(this.dataRows);
+                  console.log('this dataRows: ', this.dataRows);
+                  console.log('this localData: ', this.localdata);
+                  this.totalItems = res.count;
+                }
+              },
+              error => {
+                return null;
+              }
+            );
           }
         }
         this.addRow(this.dataRows);
@@ -367,5 +458,37 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         );
       },
     });
+  }
+
+  getBusquedaPagMae(lparams: string) {
+    this.paymentService.getBusquedaMae(lparams).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp PagosMae-> ', resp);
+      }
+    });
+  }
+
+  getBusquedaPagDet(params?: string) {
+    this.paymentService.getBusquedaPag(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp BusquedaPagDet', resp);
+      }
+    });
+  }
+
+  getPaymentSat(params: _Params, id: number): any {
+    const _params: any = params;
+    _params['filter.idType'] = `$eq:${id}`;
+    this.accountMovementService.getPaymentTypeSat(_params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp PaymentSat', resp.data[0].description);
+          return resp.data[0].description;
+        }
+      },
+      error => {
+        return null;
+      }
+    );
   }
 }

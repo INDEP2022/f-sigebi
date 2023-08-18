@@ -29,6 +29,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodsReview } from 'src/app/core/services/ms-good/goods-review.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
+import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { SegAcessXAreasService } from 'src/app/core/services/ms-users/seg-acess-x-areas.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -66,7 +67,7 @@ import { COLUMNS } from './columns';
 })
 export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-
+  form2: FormGroup = new FormGroup({});
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -106,7 +107,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private revisionReasonService: RevisionReasonService,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private massiveGoodService: MassiveGoodService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -259,6 +261,13 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       }
     }
 
+    params['sortBy'] = 'goodNumber:ASC';
+    if (params['filter.descriptionGood']) {
+      params['filter.goodNumber.description'] =
+        params['filter.descriptionGood'];
+      delete params['filter.descriptionGood'];
+    }
+
     this.goodsMotivesrev.getAll(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
@@ -316,6 +325,10 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       option: [null, [Validators.required]],
+      responsable: [null],
+    });
+    this.form2 = this.fb.group({
+      bien: [null, [Validators.required]],
       responsable: [null],
     });
   }
@@ -377,6 +390,8 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'question',
       '¿Está Seguro de dar por Atendidos los Bienes del Archivo?',
+      // 'Se Atenderán Todos los Bienes del Archivo',
+      // '¿Desea Continuar?'
       ''
     ).then(async question => {
       if (question.isConfirmed) {
@@ -782,6 +797,61 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     });
   }
 
+  exportarExcel() {
+    if (this.data.count() == 0) {
+      this.alert('warning', 'No hay Bienes en la Tabla', '');
+      return;
+    }
+
+    let params = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+
+    if (this.selectedGender == 'all') {
+      params['filter.attended'] = `$eq:0`;
+      params['filter.manager'] = `$eq:${this.responsable}`;
+      params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+    } else if (this.selectedGender == 'immovables') {
+      params['filter.goodType'] = `$eq:I`;
+      params['filter.attended'] = `$eq:0`;
+      params['filter.manager'] = `$eq:${this.responsable}`;
+      params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+    } else if (this.selectedGender == 'movables') {
+      params['filter.goodType'] = `$eq:M`;
+      params['filter.manager'] = `$eq:${this.responsable}`;
+      params['filter.attended'] = `$eq:0`;
+      params['filter.delegation'] = `$eq:${this.delegationNumber}`;
+    }
+    params['sortBy'] = 'goodNumber:ASC';
+    delete params['limit'];
+    delete params['page'];
+    this.massiveGoodService.GetAllGoodsMotivesRevExcel(params).subscribe({
+      next: async (response: any) => {
+        // Decodifica el archivo Base64 a un array de bytes
+        const base64 = response.base64File;
+        // const base64 = await this.decompressBase64ToString(response.data.base64File)
+        await this.downloadExcel(base64);
+
+        console.log('RESSS', response);
+      },
+      error(err) {
+        console.log('Errorr', err);
+      },
+    });
+  }
+
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'FMATENCBIENESREV.csv';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+  }
+
   async returnJsonToCsv() {
     return this.data.getAll();
     this.data.getAll().then(resp => {
@@ -829,7 +899,9 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
         this.loadingBtn2 = true;
         let obj_: any = {
           goodNumber: this.selectedRow.goodNumber,
-          eventId: this.selectedRow.eventId.id,
+          eventId: this.selectedRow.eventId
+            ? this.selectedRow.eventId.id
+            : null,
           goodType: this.selectedRow.goodType,
           status: this.selectedRow.status,
           manager: this.responsable,
@@ -975,7 +1047,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       LV_RESPONSABLE: any = null;
     let LV_DESC1: any,
       LV_DESC: any = null;
-    let motivoTest = 'MotivoTEST';
+    let motivoTest = 'MotivoTEST11';
     let obj = {
       initialStatus: this.selectedRow.status,
       goodType: this.selectedRow.goodType,
@@ -1208,5 +1280,31 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   miFuncion() {
     this.getMotives();
     // //console.log('Función ejecutada desde el componente hijo');
+  }
+  async search() {
+    await this.getGoodResponable();
+  }
+  clear() {
+    this.form2.reset();
+  }
+
+  async getGoodResponable() {
+    const good = this.form2.get('bien').value;
+    if (!good) {
+      this.alert('warning', 'Debe Específicar el Bien a Consultar', '');
+    }
+    const params = new ListParams();
+    console.log('good', good);
+    params['filter.goodNumber'] = `$eq:${good}`;
+    params['filter.attended'] = `$eq:0`;
+    this.goodsMotivesrev.getAll(params).subscribe({
+      next: async (response: any) => {
+        console.log('RESP', response);
+        this.form2.get('responsable').setValue(response.data[0].manager);
+      },
+      error: err => {
+        this.alert('warning', 'No se Encontró el Bien Específicado', '');
+      },
+    });
   }
 }

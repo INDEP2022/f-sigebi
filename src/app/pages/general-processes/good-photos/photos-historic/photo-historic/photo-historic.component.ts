@@ -39,7 +39,7 @@ export class PhotoHistoricComponent
     this.loading = true;
     let index = this.filename.indexOf('F');
     let finish = this.filename.indexOf('.');
-    console.log(index);
+    // console.log(index);
     this.service
       .getByIdHistoric(
         this.goodNumber,
@@ -48,19 +48,19 @@ export class PhotoHistoricComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          console.log(response);
+          // console.log(response);
 
           this.loading = false;
           this.error = false;
           // this.usuarioElimina = response.usuarioElimina;
           this.base64Change(response);
-          console.log(this.error);
+          // console.log(this.error);
         },
         error: error => {
           // this.alert('error', 'Fotos', 'Ocurrio un error al cargar la foto');
           this.loading = false;
           this.error = true;
-          console.log(this.error);
+          // console.log(this.error);
           this.imgSrc = NO_IMAGE_FOUND;
         },
       });
