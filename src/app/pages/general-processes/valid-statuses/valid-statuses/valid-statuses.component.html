@@ -14,7 +14,7 @@
             <div class="row" [ngClass]="{ 'table-loading': loading }">
               <ng2-smart-table
                 [settings]="settings"
-                [source]="statuses"></ng2-smart-table>
+                [source]="dataFacTableValid"></ng2-smart-table>
               <app-pagination
                 [filterParams]="params"
                 [totalItems]="totalItems"></app-pagination>
