@@ -22,7 +22,7 @@ export class LabelOkeyService
     this.microservice = LabelGoodEndPoints.BasePage;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<ILabelOKey>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<ILabelOKey>> {
     return this.labelOkeyRepository.getAllPaginated(this.route, params);
   }
 
