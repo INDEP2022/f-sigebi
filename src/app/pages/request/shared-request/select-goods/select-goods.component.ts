@@ -231,7 +231,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       if (this.requestInfo.regionalDelegationId != 13) {
         this.params.getValue()[
           'filter.regionalDelegationId'
-        ] = `$eq:${this.requestInfo.regionalDelegationId}`;
+        ] = `$eq:${filters.regionalDelegationId}`;
 
         /*this.jsonBody.regionalDelegationId =
           this.requestInfo.regionalDelegationId; */
@@ -240,7 +240,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     if (this.processDet != 'RES_ESPECIE') {
       //params.getValue()['filter.origin'] = 'INVENTARIOS';
-      this.jsonBody.origin = 'INVENTARIOS';
+      //this.jsonBody.origin = 'INVENTARIOS';
     }
 
     if (this.processDet == 'AMPARO') {
@@ -275,22 +275,76 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
 
     //this.params = params;
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      this.getGoods(data);
+      this.getGoods(filters);
     });
   }
 
-  getGoods(filters: ListParams) {
-    this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        console.log('response', response);
-        this.goodColumns.load(response.data);
-        this.goodTotalItems = response.data.length;
-        this.loading = false;
-      },
-      error: error => {
-        console.log('response', error);
-      },
-    });
+  getGoods(info: any) {
+    this.loading = true;
+    if (info == false) {
+      this.params = new BehaviorSubject<ListParams>(new ListParams());
+      this.goodColumns = new LocalDataSource();
+      this.goodTotalItems = 0;
+      this.loading = false;
+    } else {
+      if (info.origin) {
+        this.params.getValue()['filter.origin'] = `$eq:${info.origin}`;
+      } else if (info.goodId) {
+        this.params.getValue()['filter.goodId'] = `$eq:${info.goodId}`;
+      } else if (info.uniqueKey) {
+        this.params.getValue()['filter.uniqueKey'] = `$eq:${info.uniqueKey}`;
+      }
+
+      if (info.statusKey) {
+        this.params.getValue()['filter.statusKey'] = `$eq:${info.statusKey}`;
+      }
+      if (info.warehouseCode) {
+        this.params.getValue()[
+          'filter.warehouseCode'
+        ] = `$eq:${info.warehouseCode}`;
+      }
+      if (info.descriptionGood) {
+        this.params.getValue()[
+          'filter.descriptionGood'
+        ] = `$eq:${info.descriptionGood}`;
+      }
+      if (info.stationId) {
+        this.params.getValue()['filter.stationId'] = `$eq:${info.stationId}`;
+      }
+      if (info.fileId) {
+        this.params.getValue()['filter.fileId'] = `$eq:${info.fileId}`;
+      }
+      if (info.authorityId) {
+        this.params.getValue()[
+          'filter.authorityId'
+        ] = `$eq:${info.authorityId}`;
+      }
+      if (info.actFolio) {
+        this.params.getValue()['filter.actFolio'] = `$eq:${info.actFolio}`;
+      }
+      if (info.transferFile) {
+        this.params.getValue()[
+          'filter.transferFile'
+        ] = `$eq:${info.transferFile}`;
+      }
+      if (info.relevantTypeId) {
+        this.params.getValue()[
+          'filter.relevantTypeId'
+        ] = `$eq:${info.relevantTypeId}`;
+      }
+
+      this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+        next: response => {
+          this.goodColumns.load(response.data);
+          this.goodTotalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
+    }
+
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
     const filter = params.getValue();
     //delete this.jsonBody.regionalDelegationId
