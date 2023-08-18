@@ -102,7 +102,8 @@ import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scannin
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -612,7 +613,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() { }
+  onSubmit() {}
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -1143,7 +1144,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.selectedRow = event.data;
     console.log('select RRR', this.selectedRow);
 
-
     await this.getStatusGoodService(this.selectedRow.status);
     this.selectedGooods = event.selected;
     this.changeDetectorRef.detectChanges();
@@ -1207,13 +1207,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
             //this.actasDefault = null;
           });
         }
-
       }
     }
   }
   //Quitar uno
   removeSelect() {
-
     if (this.statusCanc == 'CERRADA') {
       this.alert(
         'warning',
@@ -1221,9 +1219,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
       return;
-    }
-    else {
-      console.log("this.actasDefault ", this.actasDefault);
+    } else {
+      console.log('this.actasDefault ', this.actasDefault);
 
       if (this.actasDefault == null) {
         this.alert(
@@ -1239,9 +1236,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
           'Debe Capturar un Acta.'
         );
         return;
-      }
-
-      else {
+      } else {
         this.loading2 = true;
         if (this.selectedGooodsValid.length > 0) {
           // this.goods = this.goods.concat(this.selectedGooodsValid);
@@ -1270,8 +1265,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         }
       }
     }
-    console.log("selectedGooodsValid--", this.selectedGooodsValid);
-
+    console.log('selectedGooodsValid--', this.selectedGooodsValid);
   }
 
   //Quitar todos
@@ -1292,7 +1286,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
         return;
       } else {
-        console.log("DataRecepcion", this.dataRecepcion);
+        console.log('DataRecepcion', this.dataRecepcion);
 
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
@@ -1379,8 +1373,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() { }
-  sendOffice() { }
+  btnDetail() {}
+  sendOffice() {}
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1469,10 +1463,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-      console.log('AUTORITHY --', this.authorityNumber)
-      this.actaRecepttionForm
-        .get('claveTrans')
-        .setValue(this.authorityNumber);
+      console.log('AUTORITHY --', this.authorityNumber);
+      this.actaRecepttionForm.get('claveTrans').setValue(this.authorityNumber);
 
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
@@ -1634,9 +1626,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     this.alert('success', 'Datos Exportados', '');
   }
 
-
   viewPictures(event: any) {
-
     let foliouniversal = this.formScan.get('scanningFoli').value;
     console.log('FOLIO PARA IMA -->', foliouniversal);
     if (foliouniversal == null) {
@@ -1800,9 +1790,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-        flyerNumber +
-        ' y Expediente: ' +
-        this.fileNumber
+          flyerNumber +
+          ' y Expediente: ' +
+          this.fileNumber
       );
       return;
     }
@@ -1848,9 +1838,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
             this.formScan.get('scanningFoli').value;
-          this.showMessageDigitalization();    // se llama el reporte 
+          this.showMessageDigitalization(); // se llama el reporte
 
-          console.log('this.actasDefault.universalFolio -->>', this.dataRecepcion.universalFolio);
+          console.log(
+            'this.actasDefault.universalFolio -->>',
+            this.dataRecepcion.universalFolio
+          );
           return Observable.create(() => {
             _document;
           });
@@ -1893,7 +1886,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => { },
+              callback: (data: any) => {},
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1979,7 +1972,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => { },
+                  callback: (data: any) => {},
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
@@ -2062,7 +2055,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
   }
   async createScannerFoil() {
-
     // validación
     let foliouniversal = this.formScan.get('scanningFoli').value;
     if (foliouniversal != null) {
@@ -2094,7 +2086,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
           // this.loading = false
         },
       });
-
   }
 
   saveNewUniversalFolio_Replicate() {

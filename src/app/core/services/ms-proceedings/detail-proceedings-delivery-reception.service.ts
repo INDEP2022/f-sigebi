@@ -33,6 +33,11 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
+  putProceedingsDeliveryReception(body: any, id: number) {
+    const route = `proceedings-delivery-reception/${id}`;
+    return this.put(route, body);
+  }
+
   PADelActaEntrega(actNumber: string | number) {
     return this.delete(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
   }

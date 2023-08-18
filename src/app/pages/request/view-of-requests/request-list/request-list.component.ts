@@ -322,6 +322,16 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'MBVerificacionIncumpliento',
   },
+  //gestionar resarcimiento economico
+  {
+    title:
+      'RESARCIMIENTO NUMERARIO: Registro de Documentacion Complementaria. No. Solicitud: 56820',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RNRegistroDocumenComple',
+  },
 ];
 
 //AP_Amparo
@@ -635,6 +645,13 @@ export class RequestListComponent extends BasePage implements OnInit {
       case 'MBVerificacionIncumpliento':
         this.router.navigate([
           'pages/request/generate-monitoring-sampling/verify-noncompliance',
+        ]);
+        break;
+      case 'RNRegistroDocumenComple':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
         ]);
         break;
       default:

@@ -653,7 +653,7 @@ export class GoodsTableService {
       class: 'bg-success-soft',
     },
     warehouseNumber: {
-      title: 'Almacén',
+      title: 'No. Almacén',
       sort: false,
       class: 'bg-success-soft',
     },

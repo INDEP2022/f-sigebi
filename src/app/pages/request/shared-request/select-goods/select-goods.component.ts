@@ -5,6 +5,7 @@ import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGoodsResDev } from 'src/app/core/models/ms-rejectedgood/goods-res-dev-model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -23,6 +24,7 @@ import {
   SELECT_GOODS_COLUMNS,
 } from './select-goods-columns';
 import { ViewFileButtonComponent } from './view-file-button/view-file-button.component';
+
 const datagood: any = [
   {
     amount: 1,
@@ -218,8 +220,6 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getInfoGoods(filters: any) {
-    const params = new BehaviorSubject<ListParams>(new ListParams());
-    this.params = new BehaviorSubject<ListParams>(new ListParams());
     this.jsonBody = {};
     if (
       this.processDet == 'DEVOLUCION' ||
@@ -229,11 +229,12 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
       this.processDet == 'EXT_DOMINIO'
     ) {
       if (this.requestInfo.regionalDelegationId != 13) {
-        /*  params.getValue()['filter.regionalDelegationId'] =
-          this.requestInfo.regionalDelegationId; */
+        this.params.getValue()[
+          'filter.regionalDelegationId'
+        ] = `$eq:${this.requestInfo.regionalDelegationId}`;
 
-        this.jsonBody.regionalDelegationId =
-          this.requestInfo.regionalDelegationId;
+        /*this.jsonBody.regionalDelegationId =
+          this.requestInfo.regionalDelegationId; */
       }
     }
 
@@ -279,8 +280,19 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   }
 
   getGoods(filters: ListParams) {
+    this.goodResDevInvService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log('response', response);
+        this.goodColumns.load(response.data);
+        this.goodTotalItems = response.data.length;
+        this.loading = false;
+      },
+      error: error => {
+        console.log('response', error);
+      },
+    });
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
-    const filter = params.getValue();*/
+    const filter = params.getValue();
     //delete this.jsonBody.regionalDelegationId
     let page = filters.page;
     let limit = filters.limit;
@@ -290,15 +302,15 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         this.goodColumns.load(response.data);
         this.goodTotalItems = response.data.length;
         this.loading = false;
-        /*const info = response.data.map(item => {
+        const info = response.data.map(item => {
           return item.good;
-        });*/
+        });
       },
       error: error => {
         this.loading = false;
         console.log(error);
       },
-    });
+    }); */
   }
 
   destinyInfo(idDestiny: number) {
@@ -332,14 +344,27 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   } */
 
   openReserveModal(good: any) {
-    const modalRef = this.modalService.show(ReserveGoodModalComponent, {
-      initialState: { good: good, requestId: this.requestInfo.id },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.onReserve.subscribe((data: boolean) => {
-      if (data) this.addGood(data);
-    });
+    if (this.processDet == 'DEVOLUCION' || this.processDet == 'RES_NUMERARIO') {
+      const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+        initialState: { good: good, requestId: this.requestInfo.id },
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.onReserve.subscribe((data: boolean) => {
+        if (data) this.addGood(data);
+      });
+    } else if (this.processDet != 'INFORMACION') {
+      const modalRef = this.modalService.show(ReserveGoodModalComponent, {
+        initialState: { good: good, requestId: this.requestInfo.id },
+        class: 'modal-md modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.onReserve.subscribe((data: boolean) => {
+        if (data) this.addGood(data);
+      });
+    } else {
+      this.addGoodForInformation(good);
+    }
   }
 
   addGood(good: any) {
@@ -532,6 +557,51 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
           this.onLoadToast('error', 'No se pudieron actualizar los Bienes');
         },
       });
+    });
+  }
+
+  addGoodForInformation(good: any) {
+    let goodResDev: IGoodsResDev = {};
+    goodResDev.applicationId = this.idRequest; //this.good.solicitudId;
+    goodResDev.goodId = good.goodId;
+    goodResDev.inventoryNumber = good.inventoryNum;
+    goodResDev.jobNumber = good.officeNum;
+    goodResDev.proceedingsId = good.fileId;
+    goodResDev.proceedingsType = good.fileType;
+    goodResDev.uniqueKey = good.uniqueKey;
+    goodResDev.descriptionGood = good.goodDescription;
+    goodResDev.unitExtent = good.unitMeasurement;
+    goodResDev.amountToReserve = good.quantity;
+    (goodResDev.amount = 0), (goodResDev.statePhysical = good.physicalStatus);
+    goodResDev.stateConservation = good.conservationStatus;
+    goodResDev.fractionId = good.fractionId;
+    goodResDev.relevantTypeId = good.typeRelevantId;
+    goodResDev.destination = good.destination;
+    goodResDev.delegationRegionalId = good.regionalDelegationId;
+    goodResDev.cveState = good.stateKey;
+    goodResDev.transfereeId = good.transferId;
+    goodResDev.stationId = good.stationId;
+    goodResDev.authorityId = good.authorityId;
+    goodResDev.codeStore = good.warehouseCode;
+    goodResDev.proceedingsType = good.fileType;
+    goodResDev.locatorId = good.locatorId;
+    goodResDev.inventoryItemId = good.inventoryItemId;
+    goodResDev.organizationId = good.organizationId;
+    goodResDev.invoiceRecord = good.folioAct;
+    goodResDev.subinventory = good.destination;
+    //goodResDev.origin = good.origin;
+    goodResDev.naturalness =
+      good.inventoryNum != null ? 'INVENTARIOS' : 'GESTION';
+
+    console.log(goodResDev);
+    this.rejectedGoodService.createGoodsResDev(goodResDev).subscribe({
+      next: resp => {
+        this.onLoadToast('success', 'Se agrego el bien');
+      },
+      error: error => {
+        this.onLoadToast('error', 'No se pudo crear el bien');
+        console.log(error);
+      },
     });
   }
 }
