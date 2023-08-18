@@ -375,12 +375,12 @@
               <!-- Mover todos -->
               <i class="bx bx-chevrons-down bx-md"></i>
             </button>
-            
             <button
               class="btn btn-secondary btn-sm active m-3 p-1 pointer"
               type="button"
               (click)="removeAll()">
-               <!-- Quitar todos -->
+              <!-- Quitar todos -->
+
               <i class="bx bx-chevrons-up bx-md"></i>
             </button>
             <button
@@ -442,7 +442,7 @@
                   </span>
                   <span title="Escanear" containerClass="tooltip-style">
                     <button
-                    [disabled]="!disabledBtnEscaneo"
+                      [disabled]="!disabledBtnEscaneo"
                       (click)="openScannerPage()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file"></i>
@@ -477,7 +477,7 @@
 
                         <div class="m-3">
                           <button
-                          [disabled]="!disabledBtnReplicar"
+                            [disabled]="!disabledBtnReplicar"
                             (click)="replicate()"
                             type="button"
                             class="btn btn-primary btn-sm active">
@@ -493,7 +493,7 @@
                     title="imprimir Solicitud de Escaneo"
                     containerClass="tooltip-style">
                     <button
-                     [disabled]="!disabledBtnImprimir"
+                      [disabled]="!disabledBtnImprimir"
                       (click)="showMessageDigitalization()"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-printer"></i>
@@ -504,12 +504,13 @@
                     title="Consulta de Imágenes Escaneadas"
                     containerClass="tooltip-style">
                     <button
-                    [disabled]="!disabledBtnImage"
-                      (click)="viewPictures($event)" 
+                      [disabled]="!disabledBtnImage"
+                      (click)="viewPictures($event)"
                       class="btn btn-secondary btn-sm active m-1">
                       <i class="bx bxs-file-find"></i>
                     </button>
-                    <!-- "showScannerFoil()"  -->
+                    <!--"showScannerFoil()"
+                    "viewPictures($event)"-->
                   </span>
                 </div>
               </div>
@@ -532,8 +533,8 @@
           Cerrar Acta
           <i class="fas fa-close bx-sm float-icon"></i>
         </button>
-       <button
-       [disabled]="!Exportdate"
+        <button
+          [disabled]="!Exportdate"
           class="btn btn-sm btn-success active"
           type="button"
           (click)="exportToExcel()">

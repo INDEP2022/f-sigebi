@@ -1205,6 +1205,8 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     this.isLoading = true;
     // this.createConversion();
     // this.createConversion();
+    if (!this.conversion)
+      return this.alert('warning', 'Debe Seleccionar una Conversión', '');
     await this.updateConversion();
     // this.edit ? this.update() : this.create();
     let params = {

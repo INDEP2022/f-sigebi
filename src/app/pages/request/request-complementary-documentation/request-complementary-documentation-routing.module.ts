@@ -17,6 +17,10 @@ const routes: Routes = [
     path: 'tasks/:process/:request',
     component: RequestCompDocTasksComponent,
   },
+  /*  {
+    path: 'tasks/:request',
+    component: RequestCompDocTasksComponent,
+  }, */
 ];
 
 @NgModule({
