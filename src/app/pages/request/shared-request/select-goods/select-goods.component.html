@@ -48,7 +48,7 @@
           [leftList]="true"
           [(settings)]="selectedGoodSettings"></app-columns-select>
       </div>
-      <div>
+      <div *ngIf="requestInfo?.affair != 10">
         <button
           class="btn btn-sm btn-success active me-2 font-size-13"
           (click)="assignGoodGrouper()">
@@ -69,7 +69,7 @@
         <button
           class="btn btn-sm btn-danger active me-2 font-size-13"
           (click)="removeGoods()">
-          Eliminar
+          Eliminar <i class="fa fa-trash"></i>
         </button>
       </div>
     </div>
