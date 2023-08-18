@@ -651,6 +651,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
             folioScan: this.originFolio,
             expedient: this.expedient,
             acta: this.acta,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
           },
         }
       );
