@@ -32,4 +32,8 @@ export class ComerLotService extends HttpService {
   remove(id: string | number) {
     return this.delete('comer-lot/' + id);
   }
+
+  PostResumenEven(params: any) {
+    return this.post(PrepareEventEndpoints.ResumenEvento, params);
+  }
 }
