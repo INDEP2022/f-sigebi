@@ -1,6 +1,6 @@
 export const GOOD_LIST = {
   No_bien: {
-    title: 'Numero de Bien',
+    title: 'No. Bien',
     type: 'text',
     sort: false,
   },
