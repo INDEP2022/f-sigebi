@@ -5,13 +5,25 @@
     </div>
   </div>
   <div body>
-    <div class="d-flex justify-content-end mb-3">
+    <div class="d-flex justify-content-end">
       <div class="ml-auto" style="margin-top: -20px">
         <p class="font-weight-bold" style="border-bottom: 1px solid black">
-          {{ dateNow | date: 'dd/MM/yyyy - HH:mm:ss' }}
+          {{ dateNow | date : 'dd/MM/yyyy - HH:mm:ss' }}
         </p>
       </div>
     </div>
+    <div class="d-flex justify-content-center">
+      <h3 class="h3">
+        <span id="lblTipoAccOficio">{{ lblTipoAccOficio }}</span>
+        <span id="lbltipOficio">{{ lbltipOficio }}</span>
+        PARA
+        <span id="lblDireccion">{{ lblDireccion }}</span>
+        <small>
+          <span id="lblCvlOfocio">{{ lblCvlOfocio }}</span>
+        </small>
+      </h3>
+    </div>
+
     <br />
     <!--  -->
     <div>

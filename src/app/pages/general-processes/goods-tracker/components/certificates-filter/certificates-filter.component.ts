@@ -9,7 +9,31 @@ import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 @Component({
   selector: 'certificates-filter',
   templateUrl: './certificates-filter.component.html',
-  styles: [],
+  styles: [
+    `
+      .custom-tmp {
+        font-size: 0.9em !important;
+        margin-bottom: 5px !important;
+        color: #333 !important;
+        background-color: #ebf5ff !important;
+        border-radius: 2px !important;
+        margin-right: 5px !important;
+      }
+
+      .custom-icon {
+        font-size: 0.9em !important;
+        cursor: pointer;
+        border-right: 1px solid #b8dbff !important;
+        display: inline-block;
+        padding: 1px 5px;
+      }
+
+      .custom-value-label {
+        display: inline-block !important;
+        padding: 1px 5px !important;
+      }
+    `,
+  ],
 })
 export class CertificatesFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();

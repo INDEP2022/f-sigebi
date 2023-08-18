@@ -163,6 +163,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.classifGood = ssssubType.numClasifGoods;
       this.getGoodsSheard({ limit: 10, page: 1 });
       // this.searchTabForm.controls['noBien'].enable();
+      this.goods = new DefaultSelect([], 0, true);
+      this.params = new BehaviorSubject<FilterParams>(new FilterParams());
       console.log(this.classifGood);
     } else {
       this.classifGood = null;
@@ -332,8 +334,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
     //Provisional data
     console.log(params);
     // this.searchTabForm.controls['noBien'].disable();
+
     this.loader.load = true;
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
     data.page = params.page;
     data.limit = params.limit;
@@ -363,7 +365,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
         // this.searchTabForm.controls['noBien'].enable();
       },
       error: err => {
-        this.goods = new DefaultSelect([], 0);
+        this.goods = new DefaultSelect([], 0, true);
         let error = '';
         this.loader.load = false;
         // if (err.status === 0) {
