@@ -106,14 +106,14 @@ export class GoodTrackerService extends HttpService {
   }
 
   getExcel(tmp: GoodTrackerMap) {
-    return this.post(GoodTrackerEndpoints.GoodExcel, tmp);
+    return this.post<{ token: string }>(GoodTrackerEndpoints.GoodExcel, tmp);
   }
 
-  donwloadExcel() {
-    return this.get(GoodTrackerEndpoints.DownloadExcel);
+  donwloadExcel(token: string) {
+    return this.get(`${GoodTrackerEndpoints.DownloadExcel}/${token}`);
   }
 
   getPhotos(tmp: GoodTrackerMap) {
-    return this.post(GoodTrackerEndpoints.GoodPhotos, tmp);
+    return this.post<{ token: string }>(GoodTrackerEndpoints.GoodPhotos, tmp);
   }
 }
