@@ -8,10 +8,10 @@
         type="button"
         [routerLink]="['execute-schelude-delivery']"
         class="btn btn-primary btn-sm active">
-        Enviar programaci&oacute;n
+        Enviar programaci&oacute;n <i class="bx bx-send"></i>
       </button>
-      <button type="button" class="btn btn-success btn-sm active">
-        Guardar
+      <button type="button" class="btn btn btn-primary btn-sm active">
+        Guardar <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
 
@@ -25,6 +25,7 @@
               control="typeEvent"
               [data]="TypeEventOptions"
               value="nameEvent"
+              (change)="typeEventSelect($event)"
               bindLabel="nameEvent"
               label="Selecciona un tipo de evento"></ngx-select>
           </div>
@@ -32,7 +33,7 @@
           <div class="pt-3">
             <form-field
               [control]="schedulingDeliverieForm.get('dateStartDelivery')"
-              label="Fecha page de entrega">
+              label="Fecha inicio de entrega">
               <input
                 class="form-control"
                 formControlName="dateStartDelivery"
@@ -41,12 +42,21 @@
           </div>
 
           <div class="pt-3">
-            <form-field
-              [control]="schedulingDeliverieForm.get('transferent')"
-              label="Transferente">
-              <select class="form-control" formControlName="transferent">
-                <option [value]="null">Transferente</option>
-              </select>
+            <form-field [control]="schedulingDeliverieForm.get('transferent')">
+              <ngx-select
+                [form]="schedulingDeliverieForm"
+                control="transferent"
+                [showTooltip]="true"
+                [data]="transferences"
+                value="id"
+                bindLabel="nameAndId"
+                label="Transferente"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+              <!--
+                <select class="form-control" formControlName="transferent">
+                  <option [value]="null">Transferente</option>
+                </select>
+              -->
             </form-field>
           </div>
         </div>
@@ -57,8 +67,8 @@
               [form]="schedulingDeliverieForm"
               control="warehouse"
               [data]="warehouse"
-              value="id"
-              bindLabel="description"
+              value="organization"
+              bindLabel="name"
               label="Selecciona un almac&eacute;n"
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
           </div>
