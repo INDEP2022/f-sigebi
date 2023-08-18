@@ -428,9 +428,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     this.selectedGoodColumns = [...this.selectedGoodColumns, good];
     this.selectedGoodTotalItems = this.selectedGoodColumns.length;
 
-    if (this.processDet != 'RES_PAGO_ESPECIE') {
-      this.hideResultTaxpayer(true);
-    }
+    this.displayColumns();
   }
 
   selectGoods(rows: any) {
@@ -512,12 +510,38 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     }
   }
 
-  hideResultTaxpayer(display: boolean) {
+  displayColumns() {
     const columnas = this.table.grid.getColumns();
-    const columnaSelectRigth = columnas.find(
-      (columna: any) => columna.id === 'resultTaxpayer'
-    );
-    columnaSelectRigth.hide = display;
+
+    if (this.processDet != 'RES_PAGO_ESPECIE') {
+      const columnaSelectRigth = columnas.find(
+        (columna: any) => columna.id === 'resultTaxpayer'
+      );
+      columnaSelectRigth.hide = true;
+
+      const goodGrouper = columnas.find(
+        (columna: any) => columna.id === 'goodGrouper'
+      );
+      goodGrouper.hide = true;
+    }
+
+    if (this.processDet != 'RES_ESPECIE') {
+      const goodGrouper = columnas.find(
+        (columna: any) => columna.id === 'goodGrouper'
+      );
+      goodGrouper.hide = true;
+    }
+
+    if (this.processDet != 'RES_NUMERARIA') {
+      const subinventory = columnas.find(
+        (columna: any) => columna.id === 'subinventory'
+      );
+      subinventory.hide = true;
+      const jobNumber = columnas.find(
+        (columna: any) => columna.id === 'jobNumber'
+      );
+      jobNumber.hide = true;
+    }
   }
 
   assignGoodGrouper() {
