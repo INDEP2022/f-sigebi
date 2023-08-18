@@ -21,7 +21,10 @@ import {
   styles: [],
 })
 export class resCancelValuationComponent extends BasePage implements OnInit {
+  //
+
   arrayResponseOffice: any[] = [];
+  arrayResponseOfficeTwo: any[] = [];
   form: FormGroup;
   formTwo: FormGroup;
   formDialogOne: FormGroup;
@@ -40,6 +43,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   subscribeDelete: Subscription;
   city: any;
   event: any;
+
+  //Var asiggn
+  lblTipoAccOficio: any = 'Hola Mundo';
+  lbltipOficio: any = 'Hola Mundo';
+  lblDireccion: any = 'Hola Mundo';
+  lblCvlOfocio: any = 'Hola Mundo';
 
   //Var Validation
   radioValueOne: boolean = false;
@@ -194,6 +203,32 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       },
       error: error => {},
     });
+    this.serviceJobs.postByFiltersResponse(body).subscribe({
+      next: response => {
+        this.arrayResponseOfficeTwo = response.data;
+        this.findPostData(this.arrayResponseOfficeTwo);
+      },
+      error: error => {},
+    });
+  }
+
+  findPostData(array: any[]) {
+    for (const i of array) {
+      this.lblTipoAccOficio = i?.des_tipo_oficio.toUpperCase();
+      if (i?.tipo == 'VALOR') {
+        this.lbltipOficio = ' DE REFERENCIA DE ' + i?.tipo;
+      } else if (i?.tipo == 'AVALUO') {
+        this.lbltipOficio = ' DE AVALUO ';
+      }
+      if (i?.direccion == 'I') {
+        this.lblDireccion = ' INMUEBLES ';
+      } else if (i?.direccion == 'M') {
+        this.lblDireccion = ' MUEBLES ';
+      } else if (i?.direccion == 'A') {
+        this.lblDireccion = ' ACTIVOS FINANCIEROS ';
+      }
+      this.lblCvlOfocio = '';
+    }
   }
 
   actualizarHora(): void {
@@ -290,6 +325,8 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
         this.findDataTable(value);
       });
   }
+
+  uploadService() {}
 
   //
 

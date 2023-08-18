@@ -741,6 +741,8 @@ export interface ICharacteristicsGoodDTO {
   noSsubType?: number;
   noSssubType?: number;
   noGood?: number;
+  status?: string;
+  goodclassnumber?: string;
 }
 
 export interface IValNumeOtro {
