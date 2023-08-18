@@ -135,9 +135,11 @@
           <button
             *ngIf="newDataFilled"
             type="submit"
+            [disabled]="loadingNewBtn"
             (click)="newPackage()"
             class="btn btn-primary active btn-sm mr-3">
-            Guardar Nuevo <i class="bx bx-save bx-sm float-icon"></i>
+            Guardar Nuevo <i *ngIf="!loadingNewBtn" class="bx bx-save bx-sm float-icon"></i>
+            <i *ngIf="loadingNewBtn" class="spinner-border spinner-border-sm"></i>
           </button>
         </div>
       </div>
@@ -280,7 +282,7 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <form-field [control]="form.get('goodStatus')">
             <ngx-select
-            (fetchItems)="getCatalogGoodStatus($event)"
+              (fetchItems)="getCatalogGoodStatus($event)"
               control="goodStatus"
               label="Estatus Bienes"
               bindLabel="labelValue"

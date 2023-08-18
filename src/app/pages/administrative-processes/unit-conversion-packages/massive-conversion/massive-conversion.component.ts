@@ -49,6 +49,7 @@ import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive
 import { PackageGoodService } from 'src/app/core/services/ms-packagegood/package-good.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
+import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { firstFormatDate } from 'src/app/shared/utils/date';
@@ -57,7 +58,6 @@ import { MassiveConversionErrorsModalComponent } from '../massive-conversion-err
 import { MassiveConversionModalGoodComponent } from '../massive-conversion-modal-good/massive-conversion-modal-good.component';
 import { MassiveConversionSelectGoodComponent } from '../massive-conversion-select-good/massive-conversion-select-good.component';
 import { UnitConversionPackagesDataService } from '../services/unit-conversion-packages-data.service';
-import { StrategyServiceService } from 'src/app/core/services/ms-strategy/strategy-service.service';
 
 interface ValidaButton {
   PB_VALIDA: boolean;
@@ -92,8 +92,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   dataTransferent = new DefaultSelect();
   dataWarehouse = new DefaultSelect();
   dataUnit = new DefaultSelect();
-  dataTag = new DefaultSelect()
-  dataGoodStatus = new DefaultSelect()
+  dataTag = new DefaultSelect();
+  dataGoodStatus = new DefaultSelect();
+
+  loadingNewBtn = false;
 
   modalRef: BsModalRef;
   loadingText: string = '';
@@ -508,12 +510,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
   //Datos de usuario logueado
   getDataUser() {
-    const user =
-      localStorage.getItem('username') == 'sigebiadmon'
-        ? localStorage.getItem('username')
-        : localStorage.getItem('username').toLocaleUpperCase();
-    const routeUser = `?filter.name=$eq:${user}`;
-    this.userService.getAllSegUsers(routeUser).subscribe(
+    const token = this.authService.decodeToken();
+    const user = token.preferred_username;
+    const routeUser = `?filter.id=$eq:${user}`;
+    this.userService.getAllSegUsers().subscribe(
       res => {
         const resJson = JSON.parse(JSON.stringify(res.data[0]));
         console.log(resJson.usuario.delegationNumber);
@@ -530,7 +530,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           }
         );
       },
-      err => {}
+      err => {
+        console.log(err);
+      }
     );
   }
 
@@ -554,7 +556,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   getWarehouseDescription() {
     this.warehouse.valueChanges.subscribe(res => {
       if (this.warehouse.value != null) {
-        let params = { text: `filter.idWarehouse=${this.warehouse.value.idWarehouse}` };
+        let params = {
+          text: `filter.idWarehouse=${this.warehouse.value.idWarehouse}`,
+        };
         this.warehouseService.getAll(params.text).subscribe(
           res => {
             console.log(res);
@@ -616,11 +620,11 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         this.fecCancelado.setValue(res.dateCancelled);
         this.userCancelado.setValue(res.useCancelled);
         //Setep de la tercera parte
-        this.getCatalogDelegation({text: res.numberDelegation}, true);
-        this.getCatalogClassGood({text: res.numberClassifyGood}, true)
-        this.getCatalogTag({text: res.numberLabel}, true)
-        this.getCatalogTransferent({text: res.numbertrainemiaut}, true)
-        this.getCatalogWareHouse({text: res.numberStore}, true)
+        this.getCatalogDelegation({ text: res.numberDelegation }, true);
+        this.getCatalogClassGood({ text: res.numberClassifyGood }, true);
+        this.getCatalogTag({ text: res.numberLabel }, true);
+        this.getCatalogTransferent({ text: res.numbertrainemiaut }, true);
+        this.getCatalogWareHouse({ text: res.numberStore }, true);
         //Parrafos
         this.paragraph1.setValue(res.paragraph1);
         this.paragraph2.setValue(res.paragraph2);
@@ -632,7 +636,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         // this.goodDescription.setValue(res.numberGoodFather);
         // this.amount.setValue(res.numberGoodFather);
         this.measurementUnit.setValue(res.unit);
-        this.getCatalogClassGood({text: res.status}, true)
+        this.getCatalogClassGood({ text: res.status }, true);
         // this.status2.setValue(res.numberGoodFather);
 
         if (
@@ -1821,6 +1825,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Funciones Agregadar por Grigork Farfan
   //Nuevo
   newPackage() {
+    this.loadingNewBtn = true;
     console.log(this.form.get('packageType').value);
 
     if (!this.generalPermissions.Proyecto) {
@@ -1842,12 +1847,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.targetTag.markAsTouched();
       this.goodStatus.markAsTouched();
       this.transferent.markAsTouched();
+      this.loadingNewBtn = false;
     } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
+      this.loadingNewBtn = false;
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value.idWarehouse == null) {
         this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
+        this.loadingNewBtn = false;
       } else {
         this.newCvePackage();
       }
@@ -1903,6 +1911,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             let edo = JSON.parse(JSON.stringify(res));
             console.log(edo);
             const paramsF2 = new FilterParams();
+            console.log(this.delegation.value);
             paramsF2.addFilter('numberDelegation2', this.delegation.value.id);
             paramsF2.addFilter('stageedo', edo.stagecreated);
             this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
@@ -1951,16 +1960,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                         },
                         err => {
                           console.log(err);
+                          this.loadingNewBtn = false;
+                          this.alert(
+                            'error',
+                            'Se presentó un error inesperado',
+                            ''
+                          );
                         }
                       );
                     },
                     err => {
                       console.log(err);
+                      this.loadingNewBtn = false;
+                      this.alert(
+                        'error',
+                        'Se presentó un error inesperado',
+                        ''
+                      );
                     }
                   );
               },
               err => {
                 console.log(err);
+                this.loadingNewBtn = false;
+                this.alert('error', 'Se presentó un error inesperado', '');
               }
             );
           });
@@ -1968,6 +1991,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         v_clave = 'XXX';
+        this.alert('error', 'Se presentó un error inesperado', '');
+        this.loadingNewBtn = false;
       }
     );
   }
@@ -2047,10 +2072,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         console.log(res);
         console.log(res.numberPackage);
         this.researchNoPackage(res.numberPackage);
+        this.loadingNewBtn = false;
         this.alert('success', 'Se creó un Nuevo Paquete', '');
       },
       err => {
         console.log(err);
+        this.loadingNewBtn = false;
+        this.alert('error','Se presentó un error inesperado','')
       }
     );
   }
@@ -2298,7 +2326,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   addNewPack() {
     this.clear();
     this.newDataFilled = true;
-    this.getCatalogGoodStatus({text: 'ADM'}, true)
+    this.getCatalogGoodStatus({ text: 'ADM' }, true);
   }
 
   updatePackage() {
@@ -2333,8 +2361,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     this.getCatalogTransferent();
     this.getCatalogWareHouse();
     this.getCatalogUnit();
-    this.getCatalogTag()
-    this.getCatalogGoodStatus({text: 'ADM'}, true)
+    this.getCatalogTag();
+    this.getCatalogGoodStatus({ text: 'ADM' }, true);
   }
 
   getCatalogDelegation(e?: ListParams, research?: boolean) {
@@ -2426,7 +2454,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           };
         });
         this.dataTransferent = new DefaultSelect(newData, res.count);
-          research ? this.transferent.setValue(newData[0]) : '';
+        research ? this.transferent.setValue(newData[0]) : '';
       },
       err => {
         console.log(err);
@@ -2523,13 +2551,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             labelValue: `${e.id} - ${e.description}`,
           };
         });
-        this.dataTag = new DefaultSelect(newData, res.count)
+        this.dataTag = new DefaultSelect(newData, res.count);
         research ? this.targetTag.setValue(newData[0]) : '';
       },
       err => {
-        this.dataTag = new DefaultSelect()
+        this.dataTag = new DefaultSelect();
         console.log(err);
-        
       }
     );
   }
@@ -2539,7 +2566,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     if (e) {
       if (e.text.length < 4) {
         if (isNaN(parseInt(e.text))) {
-          paramsF.addFilter('status', e.text.toUpperCase() , SearchFilter.ILIKE);
+          paramsF.addFilter('status', e.text.toUpperCase(), SearchFilter.ILIKE);
         } else {
           paramsF.addFilter('description', e.text, SearchFilter.ILIKE);
         }
@@ -2557,13 +2584,12 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             labelValue: `${e.status} - ${e.description}`,
           };
         });
-        this.dataGoodStatus = new DefaultSelect(newData, res.count)
+        this.dataGoodStatus = new DefaultSelect(newData, res.count);
         research ? this.goodStatus.setValue(newData[0]) : '';
       },
       err => {
-        this.dataGoodStatus = new DefaultSelect()
+        this.dataGoodStatus = new DefaultSelect();
         console.log(err);
-        
       }
     );
   }
