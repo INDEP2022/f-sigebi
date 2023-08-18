@@ -262,6 +262,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     }
 
     params['sortBy'] = 'goodNumber:ASC';
+    if (params['filter.descriptionGood']) {
+      params['filter.goodNumber.description'] =
+        params['filter.descriptionGood'];
+      delete params['filter.descriptionGood'];
+    }
+
     this.goodsMotivesrev.getAll(params).subscribe({
       next: async (response: any) => {
         let result = response.data.map(async (item: any) => {
