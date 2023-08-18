@@ -216,8 +216,12 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
         } else {
           this.closeActa = false;
         }
-        if (this.folioScan == null && response.data[0].universalFolio != null) {
+        if (
+          this.folioScan == null ||
+          (this.folioScan != null && response.data[0].universalFolio != null)
+        ) {
           console.log('Entra a la validacion del folioScan');
+          this.form.reset();
           let formActParams = {
             scanningFoli: response.data[0].universalFolio,
           };
