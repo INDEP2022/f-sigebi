@@ -38,7 +38,7 @@ export class ReserveGoodModalComponent extends BasePage implements OnInit {
         [
           Validators.required,
           Validators.min(1),
-          Validators.max(parseInt(String(this.good.quantity))),
+          //Validators.max(parseInt(String(this.good.quantity))),
         ],
       ],
     });

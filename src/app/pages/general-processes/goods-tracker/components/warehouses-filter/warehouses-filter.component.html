@@ -1,0 +1,77 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Búsqueda de Almacenes</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form [formGroup]="form" class="form-material">
+        <div class="col-md-6">
+          <form-field [control]="form.get('state')">
+            <ngx-select
+              [form]="form"
+              [searchOnInit]="true"
+              control="state"
+              value="id"
+              bindLabel="downloadState"
+              label="Estado"
+              [data]="states"
+              (fetchItems)="getStates($event)"
+              [labelTemplate]="cordinationLabel"
+              [optionTemplate]="cordinationOption"></ngx-select>
+            <ng-template #cordinationLabel let-item="item"
+              ><span [title]="item.id + ' - ' + item.downloadState"
+                >{{ item.id }} - {{ item.downloadState }}</span
+              ></ng-template
+            >
+            <ng-template #cordinationOption let-item="item"
+              ><span [title]="item.id + ' - ' + item.downloadState"
+                >{{ item.id }} - {{ item.downloadState }}</span
+              ></ng-template
+            >
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            (click)="search()"
+            type="button"
+            class="btn btn-primary active btn-sm">
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="row pt-2">
+      <div class="col-md-12 table-responsive">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="warehouses">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <app-pagination
+          [filterParams]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="mb-4 mr-3">
+        <button class="btn active btn-sm btn-primary" (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="mb-4">
+        <button class="btn active btn-sm btn-danger" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
