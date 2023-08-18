@@ -64,7 +64,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            'Ocurrio Un Error Al Guardar La Configuración De Columnas'
+            'Ocurrio un Error al Guardar la Configuración de Columnas'
           );
         }
         return throwError(() => error);
@@ -73,7 +73,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración De Columnas',
+          'Configuración de Columnas',
           'Guardada Correctamente'
         );
         this.refresh.emit(true);
@@ -95,7 +95,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            'Ocurrio Un Error Al Actualizar La Configuración De Columnas'
+            'Ocurrio un Error al Actualizar la Configuración de Columnas'
           );
           // this.modalRef.hide();
         }
@@ -105,7 +105,7 @@ export class PageSetupModalComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración De Columnas',
+          'Configuración de Columnas',
           'Actualizada Correctamente'
         );
         this.refresh.emit(true);

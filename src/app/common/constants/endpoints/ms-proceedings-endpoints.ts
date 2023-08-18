@@ -31,4 +31,6 @@ export enum ProceedingsEndpoints {
   getAct = 'aplication/getActDev',
   updateStatus = 'proceduremanagement/update-status-procedure',
   proceedingGet = 'aplication/data-word',
+  procedingDelivery = 'proceedings-delivery-reception/get-all-acta-reception-type-actas',
+  procedingActa = 'proceedings-delivery-reception/get-all-acta-reception-status',
 }

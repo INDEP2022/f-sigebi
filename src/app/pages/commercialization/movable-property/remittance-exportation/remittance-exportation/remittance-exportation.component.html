@@ -7,7 +7,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field
             [control]="form.get('rangeDate')"
             label="Seleccione Fecha Inicial y Final">
@@ -23,7 +23,7 @@
               }" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" style="margin-top: -4px">
           <ng-custom-select-loading
             [form]="form"
             formControlName="coordination"
@@ -35,7 +35,7 @@
             path="catalog/api/v1/delegation/get-all">
           </ng-custom-select-loading>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('opcion')" label="Opción">
             <ng-select
               formControlName="opcion"
@@ -53,11 +53,19 @@
           </form-field>
         </div>
         <div class="col-md-2">
+          <app-event-type-shared
+            [form]="form"
+            formControlName="event"
+            (onEventsChange)="event()"
+            [bindLabel]="'id'"></app-event-type-shared>
+        </div>
+        <div class="col-md-2">
           <form-field [control]="form.get('goods')" label="Bienes">
             <ng-select
               formControlName="goods"
               [searchable]="false"
               class="form-control"
+              (change)="event()"
               [clearable]="false">
               <ng-option value="B">Bienes no Registrados</ng-option>
               <ng-option value="R">Bienes en Remesa</ng-option>
@@ -65,12 +73,6 @@
               <ng-option value="T">Bienes Retirados</ng-option>
             </ng-select>
           </form-field>
-        </div>
-        <div class="col-md-2">
-          <app-event-type-shared
-            [form]="form"
-            formControlName="event"
-            [bindLabel]="'descripcion'"></app-event-type-shared>
         </div>
       </div>
 

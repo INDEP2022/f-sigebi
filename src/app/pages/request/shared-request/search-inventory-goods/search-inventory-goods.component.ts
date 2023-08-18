@@ -21,6 +21,7 @@ import {
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ORIGIN_INFO } from './origin-data.model';
 
 @Component({
   selector: 'app-search-inventory-goods',
@@ -46,7 +47,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
   regionalDelegationUser: IRegionalDelegation;
   authorities: any[] = [];
   goodTypes: any[] = [];
-  origins = new DefaultSelect();
+  origins = new DefaultSelect(ORIGIN_INFO);
   @Output() onSearch = new EventEmitter<any>();
 
   constructor(
@@ -71,7 +72,7 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
     this.getRequestInfo();
     this.getRegionalDelegationSelect(new ListParams());
     this.getGoodType(new ListParams());
-    this.getOrigin(new ListParams());
+    //this.getOrigin(new ListParams());
   }
 
   getRequestInfo() {
@@ -135,16 +136,16 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       regionalDelegationId: [null],
       saeNo: [null],
       uniqueKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
-      stateKey: [null],
+      statusKey: [null],
       warehouseCode: [null],
-      goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
       stationId: [null],
       origin: [null],
-      fileNum: [null],
+      fileId: [null],
       authorityId: [null],
-      folioAct: [null],
+      actFolio: [null],
       transferFile: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeRelevantId: [null],
+      relevantTypeId: [null],
     });
 
     const info = JSON.parse(localStorage.getItem('Task'));
@@ -268,14 +269,15 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
     });*/
   }
 
-  getOrigin(params?: ListParams) {
+  /*getOrigin(params?: ListParams) {
     this.originService.getAll(params).subscribe({
       next: resp => {
         this.origins = new DefaultSelect(resp.data, resp.count);
       },
     });
-  }
+  } */
   reset() {
     this.searchForm.reset();
+    this.onSearch.emit(false);
   }
 }

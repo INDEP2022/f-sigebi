@@ -8,4 +8,5 @@ export enum EventRelatedEndpoints {
   Central = 'comer-datamart/central',
   Segbien = 'comer-datamart/segGood',
   BienesEvento = 'comer-datamart/event-goods',
+  Elimina = 'comer-datamart-remevents',
 }
