@@ -188,7 +188,7 @@ export class LayoutsConfigurationModalComponent
     // setTimeout(() => {
     //   this.alert('success', this.title, `${message} Correctamente`);
     // }, 2000);
-    this.alert('success', this.title, `${message} Correctamente`);
+    this.alert('success', `${message} Correctamente`, '');
     this.loading = false;
     this.onConfirm.emit(true);
     // this.modalRef.content.callback(true);
