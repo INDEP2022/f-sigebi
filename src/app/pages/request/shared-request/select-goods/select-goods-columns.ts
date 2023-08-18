@@ -137,6 +137,20 @@ export const SELECT_GOODS_COLUMNS = {
     type: 'number',
     sort: false,
   },
+  /* RES_NUMERARIA */
+  subinventory: {
+    title: 'Sub Inventario',
+    type: 'string',
+    sort: false,
+  },
+
+  jobNumber: {
+    title: 'No. Oficio',
+    type: 'string',
+    sort: false,
+    //valuePrepareFunction: (value: any) => Number(value),
+  },
+  /* FIN */
 
   /* transferQuantity: {
     title: 'Cantidad de la Transferencia',

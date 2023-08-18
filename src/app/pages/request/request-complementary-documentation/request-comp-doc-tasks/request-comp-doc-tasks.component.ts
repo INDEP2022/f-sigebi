@@ -54,6 +54,7 @@ export class RequestCompDocTasksComponent
   resultEyeVisitReport: boolean = false;
   makeResultPaperReport: boolean = false;
   resultVisits: boolean = false;
+  RequestEconomicResourcesReport: boolean = false;
   listGoodSelectedTitle: string = 'Listado de Bienes';
   /**
    * SET STATUS ACTIONS
@@ -199,7 +200,7 @@ export class RequestCompDocTasksComponent
       if (question.isConfirmed) {
         if (this.process == 'similar-good-register-documentation') {
           this.onLoadToast('success', 'Solicitud turnada con éxito', '');
-        } else if (this.process == 'BSRegistroSolicitudes') {
+        } else if (this.process == 'register-request') {
           this.setEmailNotificationTask();
         } else if (this.process == 'BSNotificarTransferente') {
           this.setEmailNotificationTask();
@@ -476,6 +477,19 @@ export class RequestCompDocTasksComponent
     return new Promise((resolve, reject) => {
       //si cuenta con reporte de notificacion devuelve true
       resolve(true);
+    });
+  }
+
+  //Partial<CreateReportComponent>
+  openRequestResourcesReport(context?: any) {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) {
+      } //this.getCities();
     });
   }
 }
