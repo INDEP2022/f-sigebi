@@ -31,6 +31,7 @@
                   [(settings)]="settings"></app-columns-select> -->
                 <button
                   (click)="addMovement()"
+                  [disabled]="loading || loadingBtn2"
                   type="button"
                   containerClass="tooltip-style"
                   class="btn btn-info btn-sm active ml-2 mr-2">
@@ -38,6 +39,7 @@
                   <i class="bx bx-plus bx-sm float-icon"></i>
                 </button>
                 <button
+                  [disabled]="loading || loadingBtn2"
                   class="btn btn-primary btn-sm active mr-5"
                   (click)="openForm()">
                   Movimientos
@@ -122,12 +124,12 @@
             </ng2-smart-table>
           </ng-scrollbar>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-12">
             <app-pagination [params]="paramsList2" [totalItems]="totalItems2">
             </app-pagination>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <form class="form-material mt-4" [formGroup]="form">
@@ -159,6 +161,7 @@
             <div class="row">
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  [disabled]="loading || loadingBtn2"
                   class="btn btn-success btn-sm active w-100"
                   style="font-size: 12px"
                   type="button"
@@ -176,16 +179,19 @@
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  [ngClass]="{ loading: loadingBtn2 }"
+                  [disabled]="loading || loadingBtn2"
                   (click)="exportar()"
                   style="font-size: 12px"
                   class="btn btn-success btn-sm active w-100">
                   Exportar CSV
-                  <i class="bx bx-upload float-icon"></i>
+                  <i *ngIf="!loadingBtn2" class="bx bx-upload float-icon"></i>
                 </button>
               </div>
 
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  [disabled]="loading || loadingBtn2"
                   (click)="actualizarFunc()"
                   class="btn btn-primary btn-sm active w-100">
                   Actualizar
@@ -194,6 +200,7 @@
               </div>
               <div class="col-md-12 mt-3 text-center">
                 <button
+                  [disabled]="loading || loadingBtn2"
                   (click)="desconciliarFunc()"
                   class="btn btn-primary btn-sm active w-100">
                   Desconciliar
@@ -324,7 +331,11 @@
                 <button
                   [ngClass]="{ loading: loadingBtn }"
                   [disabled]="
-                    !dataMovements || !dateMovemFin || !dateMovemInicio
+                    !dataMovements ||
+                    !dateMovemFin ||
+                    !dateMovemInicio ||
+                    loading ||
+                    loadingBtn2
                   "
                   (click)="calcularSaldo()"
                   style="width: 80%"

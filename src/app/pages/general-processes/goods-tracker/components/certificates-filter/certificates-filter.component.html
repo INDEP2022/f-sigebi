@@ -87,7 +87,22 @@
         value="status"
         bindLabel="description"
         (fetchItems)="getGoodStatuses($event)"
-        label="Estatus"></ngx-select>
+        label="Estatus"
+        [labelTemplate]="statusLabel"
+        [optionTemplate]="statusOption"></ngx-select>
+      <ng-template #statusLabel let-item="item" let-clear="clear">
+        <div class="custom-tmp" [title]="item.status + '-' + item.description">
+          <span class="custom-icon" (click)="clear(item)">x</span>
+          <span class="custom-value-label"
+            >{{ item.status }} - {{ item.description }}</span
+          >
+        </div>
+      </ng-template>
+      <ng-template #statusOption let-item="item">
+        <div [title]="item.status + '-' + item.description">
+          {{ item.status }} - {{ item.description }}
+        </div>
+      </ng-template>
     </form-field>
   </div>
 

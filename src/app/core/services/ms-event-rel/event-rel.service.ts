@@ -78,4 +78,8 @@ export class EventRelatedService extends HttpService {
     const route = `${EventRelatedEndpoints.FindAll}?filter.eventDadId=$eq:${id}`;
     return this.get(route, params);
   }
+
+  delElimina(id: string | number) {
+    return this.delete(EventRelatedEndpoints.Elimina, id);
+  }
 }
