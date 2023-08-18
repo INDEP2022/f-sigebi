@@ -96,8 +96,16 @@ export class GoodsManagementSocialCabinetTabComponent
   }
 
   async processCabinetSocial() {
-    console.log(this.form.get('process').value);
-    return;
+    // console.log(this.form.get('process').value);
+    // console.log({
+    //   pId: this.identifier,
+    //   pTypeProcess: this.form.get('process').value,
+    //   pJustify: this.form.get('excuse').value,
+    //   pUser: this.user,
+    //   currentProcessType: this.process,
+    // });
+
+    // return;
     this.pageLoading = true;
     this.service
       .paValidSocialCabinet({
