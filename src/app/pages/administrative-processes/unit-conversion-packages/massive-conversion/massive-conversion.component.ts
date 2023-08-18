@@ -2078,7 +2078,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         this.loadingNewBtn = false;
-        this.alert('error','Se presentó un error inesperado','')
+        this.alert('error', 'Se presentó un error inesperado', '');
       }
     );
   }
