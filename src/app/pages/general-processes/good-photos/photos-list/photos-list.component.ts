@@ -1,5 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+
+import * as FileSaver from 'file-saver';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
   catchError,
@@ -20,6 +28,7 @@ import { SecurityService } from 'src/app/core/services/ms-security/security.serv
 import { BasePage } from 'src/app/core/shared';
 import { PhotosHistoricComponent } from '../photos-historic/photos-historic.component';
 import { GoodPhotosService } from '../services/good-photos.service';
+import { PhotoComponent } from './photo/photo.component';
 
 @Component({
   selector: 'app-photos-list',
@@ -42,6 +51,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
       this.errorMessage = '';
     }
   }
+  @ViewChildren('photo') photos: QueryList<PhotoComponent>;
   private _goodNumber: string | number;
   options = [
     { value: 1, label: 'Visualizar' },
@@ -71,6 +81,22 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   get typedblClickAction() {
     return this.form ? this.form.get('typedblClickAction').value : 1;
+  }
+
+  async download() {
+    this.alert(
+      'info',
+      'Aviso',
+      'La Descarga está en Proceso, favor de Esperar'
+    );
+    const zip = await this.service.downloadByGood(this.photos);
+    const name = this.goodNumber + '.zip';
+    zip.generateAsync({ type: 'blob' }).then(content => {
+      if (content) {
+        FileSaver.saveAs(content, name);
+        this.alert('success', 'Archivo Descargado Correctamente', '');
+      }
+    });
   }
 
   async ngOnInit() {
@@ -179,7 +205,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   private async getData() {
     this.files = [];
-    // debugger;
     // this.lastConsecutive = 1;
     this.filePhotoService
       .getAll(this.goodNumber + '')
@@ -188,7 +213,6 @@ export class PhotosListComponent extends BasePage implements OnInit {
         next: async response => {
           if (response) {
             // console.log(response);
-            debugger;
             if (response) {
               this.files = [...response];
               // this.errorMessage = null;
@@ -200,7 +224,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
                   const noActa = await this.pufValidaProcesoBien();
                   if (noActa) {
                     this.errorMessage =
-                      'No tiene permisos de eliminación y edición debido a que el bien ya fue recibido por el acta ' +
+                      'No tiene permisos de eliminación debido a que el bien ya fue recibido por el acta ' +
                       noActa +
                       ' y esta se encuentra cerrada';
                     // console.log(this.errorMessage);
@@ -363,7 +387,7 @@ export class PhotosListComponent extends BasePage implements OnInit {
         accept: '.zip',
         uploadFiles: false,
         service: this.filePhotoSaveZipService,
-        identificator: this.goodNumber + '',
+        identificator: [this.goodNumber],
         multiple: false,
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',

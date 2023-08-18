@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 
+import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IListResponse,
+  IListResponseMessage,
+} from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/good/good.model';
 import { GoodFinderEndpoint } from './../../../common/constants/endpoints/ms-good-endpoints';
 
@@ -13,6 +17,20 @@ export class GoodFinderService extends HttpService {
   constructor() {
     super();
     this.microservice = GoodFinderEndpoint.GoodFinderBase;
+  }
+
+  getAll(params?: _Params) {
+    const route = GoodFinderEndpoint.GoodQuery;
+    return this.get<IListResponseMessage<IGood>>(route, params).pipe(
+      map(x => {
+        return {
+          ...x,
+          data: x.data.map(good => {
+            return { ...good, select: false };
+          }),
+        };
+      })
+    );
   }
 
   goodFinder(params?: _Params) {

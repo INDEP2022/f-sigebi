@@ -70,6 +70,9 @@
           role="menu"
           aria-labelledby="button-basic">
           <li role="menuitem">
+            <a class="dropdown-item" (click)="download()">Exportar Fotos</a>
+          </li>
+          <li role="menuitem">
             <a class="dropdown-item" (click)="openZipUploader()"
               >Carga Masiva (ZIP)</a
             >
@@ -112,6 +115,7 @@
           <div class="row">
             <div class="col-md-12">
               <app-photo
+                #photo
                 (refreshFiles)="refresh($event)"
                 [typedblClickAction]="typedblClickAction"
                 [filename]="image"
