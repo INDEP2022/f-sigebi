@@ -86,6 +86,16 @@
             Notificacion
           </button>
         </div>
+        <div class="mx-1" *ngIf="RequestEconomicResourcesReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openRequestResourcesReport()">
+            Solicitud Recursos Económicos
+            <i class="bx bx-notepad mr-1 float-icon"></i>
+          </button>
+        </div>
         <div class="mx-1" *ngIf="createReport">
           <button
             type="button"
@@ -179,9 +189,7 @@
       [request]="requestInfo"></app-request-information-similar-goods>
 
     <div
-      *ngIf="
-        processDetonate == 'RES_ESPECIE' && process == 'BSRegistroSolicitudes'
-      ">
+      *ngIf="processDetonate == 'RES_ESPECIE' && process == 'register-request'">
       <app-card [header]="false" class="p-10">
         <div body>
           <form [formGroup]="emailForm" class="form-material">
@@ -260,7 +268,9 @@
           *ngIf="viewSelectedGoods"
           heading="{{ listGoodSelectedTitle }}"
           id="goodsListTab">
-          <app-goods-list [requestId]="requestId"></app-goods-list>
+          <app-goods-list
+            [requestId]="requestId"
+            [processDetonate]="processDetonate"></app-goods-list>
         </tab>
         <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines></app-guidelines>
