@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { catchError, firstValueFrom, of, takeUntil } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import {
   FilterParams,
   SearchFilter,
@@ -12,6 +14,8 @@ import { Iidentifier } from 'src/app/core/models/ms-good-tracker/identifier.mode
 import { ITmpTracker } from 'src/app/core/models/ms-good-tracker/tmpTracker.model';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { GoodsManagementSocialNotLoadGoodsComponent } from '../goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 import { GoodsManagementService } from '../services/goods-management.service';
 import { ETypeGabinetProcess } from './typeProcess';
@@ -32,6 +36,7 @@ export class GoodsManagementSocialCabinetComponent
   identifier: number;
   typeGabinetProcess = ETypeGabinetProcess;
   totalItems = 0;
+  $trackedGoods = this.store.select(getTrackedGoods);
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
 
   get sinAsignarCant() {
@@ -83,6 +88,8 @@ export class GoodsManagementSocialCabinetComponent
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
+    private store: Store,
+    private router: Router,
     private goodTrackerService: GoodTrackerService,
     private goodsManagementService: GoodsManagementService
   ) {
@@ -104,6 +111,21 @@ export class GoodsManagementSocialCabinetComponent
           }
         },
       });
+    this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
+      next: response => {
+        if (response && response.length > 0) {
+          this.selectedGoodstxt = response.map(x => {
+            return +x.goodNumber;
+          });
+          this.getData();
+        }
+      },
+    });
+  }
+
+  searchGood() {
+    this.selectedGoodstxt = [this.form.get('good').value];
+    this.getData();
   }
 
   override ngAfterViewInit() {
@@ -141,6 +163,7 @@ export class GoodsManagementSocialCabinetComponent
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      good: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       file: [null, [Validators.required]],
       //message: [null, [Validators.required]]
     });
@@ -213,6 +236,12 @@ export class GoodsManagementSocialCabinetComponent
       // console.log(response);
     };
     fileReader.readAsText(file);
+  }
+
+  goToRastreador() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBCAMBIOESTAT' },
+    });
   }
 
   private activateTabs() {
