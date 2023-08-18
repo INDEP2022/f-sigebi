@@ -7,6 +7,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
+import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
 import { FullComponent } from './full.component';
 import { MenuDynamicComponent } from './sidebar/menu-dynamic/menu-dynamic.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -28,6 +29,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     BsDropdownModule,
     RouterModule,
     TooltipModule.forRoot(),
+    ProgressbarModule,
   ],
   exports: [FullComponent],
 })
