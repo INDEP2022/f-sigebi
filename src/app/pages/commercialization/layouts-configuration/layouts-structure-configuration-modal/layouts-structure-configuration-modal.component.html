@@ -1,0 +1,127 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="providerForm">
+      <div class="row">
+        <!-- <div class="col-md-3">
+          <form-field [control]="providerForm.get('idLayout')" label="Layout">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idLayout"
+              readonly />
+          </form-field>
+        </div> -->
+        <div class="col-md-2">
+          <form-field [control]="providerForm.get('position')" label="Posición">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="position"
+              maxlength="5" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="providerForm.get('column')" label="Columna">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="column"
+              maxlength="35" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="providerForm.get('type')" label="Tipo Dato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="type"
+              maxlength="15" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="providerForm.get('length')" label="Longitud">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="length"
+              maxlength="3" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="providerForm.get('constant')"
+            label="Constante">
+            <textarea
+              class="form-control"
+              formControlName="constant"
+              rows="4"
+              maxlength="500">
+            </textarea>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('carFilling')"
+            label="Car&aacute;cter de Relleno">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="carFilling"
+              maxlength="1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('justification')"
+            label="Justificaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="justification"
+              maxlength="1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="providerForm.get('decimal')" label="Decimal">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="decimal"
+              maxlength="2" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="providerForm.get('dateFormat')"
+            label="Formato de Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateFormat"
+              maxlength="20" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="providerForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()"
+          >Agregar estructura</confirm-button
+        >
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

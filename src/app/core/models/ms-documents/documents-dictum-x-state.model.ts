@@ -1,15 +1,14 @@
 export interface IDocumentsDictumXState {
   recordNumber: string;
   goodNumber: string;
-  key: string;
   typeDictum: string;
   dateReceipt: string;
   userReceipt: string;
-  insertionDate: string;
+  insertionDate: Date;
   userInsertion: string;
   numRegister: string;
   officialNumber: any;
-  keyDocument: KeyDocument[];
+  key: string;
 }
 
 export interface KeyDocument {

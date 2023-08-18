@@ -99,7 +99,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         polizaafectada: {
-          title: 'Poliza Afectada',
+          title: 'Póliza Afectada',
           type: 'string',
           sort: false,
         },
@@ -225,13 +225,21 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.seraLogService.postObtnGoodSinister(data, new ListParams()).subscribe({
       next: data => {
         if (data) {
-          this.claimsFollowUpForm.controls['description'].setValue(
-            data.data[0].descripcion
-          );
-          this.newSiniester = true;
-          this.params
-            .pipe(takeUntil(this.$unSubscribe))
-            .subscribe(() => this.queryClaims());
+          if (data.data[0].descripcion) {
+            this.claimsFollowUpForm.controls['description'].setValue(
+              data.data[0].descripcion
+            );
+            this.newSiniester = true;
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.queryClaims());
+          } else {
+            this.alert(
+              'warning',
+              'No se encontró el número de bien buscado.',
+              ''
+            );
+          }
         } else {
           this.claimsFollowUpForm.controls['description'].setValue('');
           this.alert(
@@ -284,7 +292,16 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.modalService.show(ClaimsFollowUpDetailComponent, config);
   }
   edit(siniester: any) {
-    this.openForm(siniester);
+    console.log(siniester);
+    if (siniester.estatus == 'ABIERTO') {
+      this.openForm(siniester);
+    } else {
+      this.alert(
+        'warning',
+        'El siniestro se encuentra cerrada, no se puede actualizar',
+        ''
+      );
+    }
   }
 
   delete(bank: any) {
@@ -398,35 +415,25 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     );
   }
   exportDelAl() {
-    if (this.claimsFollowUpForm.controls['numberGood'].value) {
-      let data = {
-        initDate: this.convertDate(this.dateDelAlForm.controls['del'].value),
-        endDate: this.convertDate(this.dateDelAlForm.controls['al'].value),
-      };
-      this.seraLogService.postDateExport(data).subscribe(
-        response => {
-          console.log(response);
-          this._downloadExcelFromBase64(
-            response,
-            `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
-          );
-          // this.alert(
-          //   'success',
-          //   'Siniestros Seguimiento',
-          //   'Se genero el archivo excel'
-          // );
-        },
-        error => {
-          this.alert(
-            'warning',
-            'Siniestros Seguimiento',
-            'Error al generar el archivo excel.'
-          );
-        }
-      );
-    } else {
-      this.alert('warning', 'Siniestros Seguimiento', 'Debe validar un Bien.');
-    }
+    let data = {
+      initDate: this.convertDate(this.dateDelAlForm.controls['del'].value),
+      endDate: this.convertDate(this.dateDelAlForm.controls['al'].value),
+    };
+    this.seraLogService.postDateExport(data).subscribe(
+      response => {
+        this._downloadExcelFromBase64(
+          response,
+          `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
+        );
+      },
+      error => {
+        this.alert(
+          'warning',
+          'Siniestros Seguimiento',
+          'Error al generar el archivo excel.'
+        );
+      }
+    );
   }
   export() {
     let data = {
@@ -435,16 +442,10 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     };
     this.seraLogService.postExport(data).subscribe(
       response => {
-        console.log(response);
         this._downloadExcelFromBase64(
           response,
           `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
         );
-        // this.alert(
-        //   'success',
-        //   'Siniestros Seguimiento',
-        //   'Se genero el archivo excel'
-        // );
       },
       error => {
         this.alert(

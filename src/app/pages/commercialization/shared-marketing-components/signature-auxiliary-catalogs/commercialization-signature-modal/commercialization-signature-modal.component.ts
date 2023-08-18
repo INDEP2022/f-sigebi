@@ -22,6 +22,7 @@ export class CommercializationSignatureModalComponent
 {
   data: any;
   edit: boolean = false;
+  countTypeSignatures: number;
   dataUser = new DefaultSelect();
   dataFirmType = new DefaultSelect();
   formGroup: FormGroup = new FormGroup({});
@@ -83,7 +84,37 @@ export class CommercializationSignatureModalComponent
       return;
     }
     if (this.edit == false) {
-      this.getConsecutiveNumber(this.formGroup.value.idDocumentsxml);
+      let params = new ListParams();
+      params['filter.id_docums_xml'] = `$eq:${this.data.idDocumentsxml}`;
+      this.svSignatureAuxiliaryCatalogsService
+        .getAllComerceDocumentsXmlTCatFelec(params)
+        .subscribe({
+          next: res => {
+            console.log(
+              'DATA SIGNATURE',
+              res,
+              res.count,
+              this.countTypeSignatures
+            );
+            if (res.count == this.countTypeSignatures) {
+              this.alert(
+                'warning',
+                'No se Puede Agregar otra Firma. Total de firmas: ' + res.count,
+                ''
+              );
+            } else {
+              this.getConsecutiveNumber(this.formGroup.value.idDocumentsxml);
+            }
+          },
+          error: error => {
+            console.log(error);
+            if (error.status == 400) {
+              this.getConsecutiveNumber(this.formGroup.value.idDocumentsxml);
+            } else {
+              this.alert('warning', 'Error al Validar el Total de Firmas', '');
+            }
+          },
+        });
     } else {
       this.svSignatureAuxiliaryCatalogsService
         .updateComerceDocumentsXmlT(this.formGroup.value)
