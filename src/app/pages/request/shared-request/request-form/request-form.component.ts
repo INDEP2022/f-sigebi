@@ -463,6 +463,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   async turnRequest() {
+    console.log('this.op ', this.op);
     this.alertQuestion(
       'question',
       'Turnar Solicitud',
@@ -784,13 +785,13 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.idAuthoridad = form.authorityId;
       form.id = this.requestId;
       const idRequest = form.id;
-      const { title, urlNb, processName } = this.getValuesForTurn();
+      //falta ver en que variable se guarda el typeProcess
+      const { title, urlNb, typeProcess } = this.getValuesForTurn(idRequest);
       /*  const title =
         'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud: ' +
         idRequest;
       const urlNb = 'pages/request/request-comp-doc';
       const processName = 'similar-good-register-documentation'; */
-
       const requestResult: any = await this.updateTurnedRequest(form);
       if (requestResult) {
         const actualUser: any = this.authService.decodeToken();
@@ -812,9 +813,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
         task['title'] = title;
         task['programmingId'] = 0;
         task['requestId'] = idRequest;
-        task['expedientId'] = 0;
+        task['expedientId'] = null;
         task['urlNb'] = urlNb;
-        task['processName'] = processName;
+        task['processName'] = '';
         task['idstation'] = this.idEmisora;
         task['idTransferee'] = this.idTransferente;
         task['idAuthority'] = this.idAuthoridad;
@@ -846,20 +847,35 @@ export class RequestFormComponent extends BasePage implements OnInit {
     }
   }
 
-  getValuesForTurn(): any {
+  getValuesForTurn(idRequest: number): any {
     const affair = +this.requestForm.controls['affair'].value;
     let title = '';
     let url = '';
     let process = '';
     switch (affair) {
       case 33: //RESARCIMIENTO EN ESPECIA
-        title =
-          'BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud:';
-        url = 'pages/request/request-comp-doc';
-        process = 'SRegistroSolicitudes';
+        title = `BIENES SIMILARES Registro de Documentación Complementaria,No. Solicitud: ${idRequest}`; //BSRegistroSolicitudes
+        url = 'pages/request/request-comp-doc/tasks';
+        process = 'DocComplementaria';
+        return { title: title, urlNb: url, typeProcess: process };
+        break;
+      case 13: //Documentacion complementaria
+        title = '';
+        url = '';
+        process = '';
+        break;
+      case 10: //Gestionar Devolucion
+        title = '';
+        url = '';
+        process = '';
+        return { title: title, urlNb: url, typeProcess: process };
+        break;
+      case 40: //Gestionar Resarcimiento en especie
+        title = '';
+        url = '';
+        process = '';
         return { title: title, urlNb: url, processName: process };
         break;
-
       default:
         break;
     }

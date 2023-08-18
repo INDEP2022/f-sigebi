@@ -2297,7 +2297,7 @@ export class AppointmentsComponent
         } else {
           this.alert(
             'warning',
-            'No se Puede Escanear Imagenes, Folio de Acta Depositaria es Nulo, ',
+            'No se Puede Escanear Imagenes, Folio de Acta Depositaria es Nulo.',
             ''
           );
           this.showScanRadio = false;
@@ -2309,7 +2309,7 @@ export class AppointmentsComponent
         } else {
           this.alert(
             'warning',
-            'No se Puede Escanear Imagenes, Folio de Remoción es Nulo, ',
+            'No se Puede Escanear Imagenes, Folio de Remoción es Nulo.',
             ''
           );
           this.showScanRadio = false;
