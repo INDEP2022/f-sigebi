@@ -899,13 +899,18 @@ export class SignatureAuxiliaryCatalogsMainComponent
       return;
     }
     this.openModalCommercializationSignature({
-      data: { idDocumentsxml: this.idDocumentsXml },
+      data: {
+        idDocumentsxml: this.idDocumentsXml,
+      },
+      countTypeSignatures: this.totalType,
     });
   }
 
   openModalCommercializationSignature(
     context?: Partial<CommercializationSignatureModalComponent>
   ) {
+    console.log('CONTEXT ', context);
+
     const modalRef = this.modalService.show(
       CommercializationSignatureModalComponent,
       {
@@ -916,7 +921,7 @@ export class SignatureAuxiliaryCatalogsMainComponent
     );
     modalRef.content.onConfirm.subscribe(data => {
       console.log(data);
-      this.loadingDataTableAddresee();
+      this.loadingDataTableSignature();
     });
   }
 

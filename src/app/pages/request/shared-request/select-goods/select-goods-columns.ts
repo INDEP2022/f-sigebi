@@ -4,7 +4,7 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción',
     type: 'string',
     sort: false,
@@ -43,19 +43,19 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     sort: false,
   },
 
-  destination: {
+  destiny: {
     title: 'Destino',
     type: 'string',
     sort: false,
   },
   //fileId --idExpediente
-  fileNum: {
+  fileId: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
 
-  solicitudId: {
+  requestId: {
     title: 'No. Solicitud de la Transferencia',
     type: 'string',
     sort: false,
@@ -65,12 +65,12 @@ export const GOODS_RES_DEV_INV_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  inventoryNum: {
+  inventoryNumber: {
     title: 'No. Inventario',
     type: 'string',
     sort: false,
   },
-  typeRelevantId: {
+  relevantTypeId: {
     title: 'Tipo Relevante',
     type: 'string',
     sort: false,
@@ -150,13 +150,13 @@ export const SELECT_GOODS_COLUMNS = {
   }, */
 
   //fileId --idExpediente
-  fileNum: {
+  fileId: {
     title: 'No. Expediente',
     type: 'number',
     sort: false,
   },
 
-  applicationId: {
+  requestId: {
     title: 'No. Solicitud de la Transferencia',
     type: 'string',
     sort: false,

@@ -60,6 +60,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     if (id) {
       newParams['filter.status'] = id;
     }
+    newParams['sortBy'] = 'status:ASC';
     this.service.getStatusAll(newParams).subscribe(
       data => {
         this.status = new DefaultSelect(data.data, data.count);
