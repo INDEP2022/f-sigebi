@@ -155,7 +155,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actaGoodForm: FormGroup;
   formTag: FormGroup;
   actaReception: IProceduremanagement;
-  gTramite: IProceduremanagement[] = [];
+  gTramite: IProceduremanagement;
   statusCanc: string = '';
   expedient: IExpedient;
   validateEx: boolean = true;
@@ -428,6 +428,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLogged = token;
+    this.gestionTramite(this.paramsScreen.P_NO_TRAMITE);
     this.initFormPostGetUserData();
     this.actaReception = this.actasDefault;
     this.goodForm();
@@ -912,18 +913,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
         });
     });
   }
-  gestionTramite() {
+  gestionTramite(tramite: string) {
     this.bienesLoading = false;
-    this.filterParams
-      .getValue()
-      .addFilter('expedient', this.fileNumber, SearchFilter.EQ);
-    this.procedureManagementService.getAll(this.params.getValue()).subscribe({
+    this.procedureManagementService.getById(tramite).subscribe({
       next: data => {
-        this.gTramite = data.data;
-        console.log(this.bienes);
-        this.dataTableGood.load(this.bienes);
-        this.dataTableGood.refresh();
-        this.totalItems = data.count;
+        this.gTramite = data;
+        console.log(this.gTramite);
+        this.fileNumber = this.gTramite.expedient;
+        this.getGoodsByStatus(this.fileNumber);
       },
       error: () => {
         this.bienesLoading = false;
@@ -2214,6 +2211,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         origin3: this.origin3,
         P_GEST_OK: this.paramsScreen.P_GEST_OK,
         P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+        folio: this.formScan.get('scanningFoli').value,
+        expedient: this.fileNumber,
+        acta: this.actaRecepttionForm.get('type').value,
       },
     });
   }
