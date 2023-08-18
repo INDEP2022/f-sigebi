@@ -7,8 +7,36 @@
   <div body>
     <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('valid')" label="Filtrar Por">
+            <ng-select
+              formControlName="valid"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false"
+              (change)="changeValid($event)">
+              <ng-option value="A">Año</ng-option>
+              <ng-option value="R">Rango de Fechas</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('year')" label="Año">
+            <ng-select
+              [(ngModel)]="ddlAnio"
+              formControlName="year"
+              [searchable]="false"
+              class="form-control"
+              (change)="changeValue($event)"
+              [clearable]="false">
+              <ng-option *ngFor="let anio of anios" [value]="anio">{{
+                anio
+              }}</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('rangeDate')" label="Rango de fechas">
+          <form-field [control]="form.get('rangeDate')" label="Rango de Fechas">
             <input
               class="form-control"
               formControlName="rangeDate"
@@ -38,21 +66,8 @@
             </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('year')" label="Año">
-            <ng-select
-              [(ngModel)]="ddlAnio"
-              formControlName="year"
-              [searchable]="false"
-              class="form-control"
-              [clearable]="false">
-              <ng-option *ngFor="let anio of anios" [value]="anio">{{
-                anio
-              }}</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-3">
+
+        <div class="col-md-2">
           <form-field [control]="form.get('typeCFDI')" label="Tipo de CFDI">
             <ng-select
               formControlName="typeCFDI"
@@ -122,40 +137,68 @@
           </div>
         </div>
       </div>
+      <hr />
     </form>
-    <div class="row pt-5" *ngIf="show">
-      <div class="ch-content" header>
-        <h5 class="title">Detalle de facturas</h5>
-        <div class="col-md-5 text-end d-flex flex-row-reverse mb-3">
+    <div *ngIf="show">
+      <div class="ch-content mt-5" header>
+        <h5 class="title">Detalle de Facturas</h5>
+        <app-columns-select
+          [(settings)]="settings"
+          [leftList]="true"></app-columns-select>
+        <!--<div class="col-md-5 text-end d-flex flex-row-reverse mb-3">
           <div>
-            <!--<button
-              type="button"
-              class="btn btn-success btn-sm active"
-              disabled>
-              Descargar
-            </button>-->
             <button
               class="btn btn-success active btn-sm ml-3"
               (click)="exportAll()">
               Exportar a Excel <i class="bx bx-download float-icon"></i>
             </button>
           </div>
+        </div>-->
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="data1"
+              (rowSelect)="rowSelect($event)">
+            </ng2-smart-table>
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
+          </div>
+          <hr />
         </div>
       </div>
-      <div>
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered table-responsive'"
-            [settings]="settings"
-            [source]="data"
-            (rowSelect)="rowSelect($event)">
-          </ng2-smart-table>
-          <app-pagination [params]="params" [totalItems]="totalItems">
-          </app-pagination>
+
+      <div class="row pt-5">
+        <div class="col-md-8 mb-3"></div>
+        <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+          <div>
+            <button
+              class="btn btn-success active btn-sm ml-3"
+              (click)="getDetailInvoicesExcel()">
+              Exportar a Excel <i class="bx bx-download float-icon"></i>
+            </button>
+          </div>
+          <app-columns-select
+            [(settings)]="settings1"
+            [leftList]="true"></app-columns-select>
         </div>
-        <!--<div class="col-md-12">
-          
-        </div>-->
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings1"
+              [source]="data2">
+            </ng2-smart-table>
+            <app-pagination [params]="params2" [totalItems]="totalItems2">
+            </app-pagination>
+          </div>
+        </div>
       </div>
     </div>
   </div>

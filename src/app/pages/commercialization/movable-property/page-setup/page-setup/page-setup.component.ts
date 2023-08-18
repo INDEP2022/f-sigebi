@@ -59,17 +59,6 @@ export class PageSetupComponent extends BasePage implements OnInit {
       },
       columns: {
         ...PAGE_SETUP_COLUMNS,
-        visualiza: {
-          title: 'Visualizar',
-          sort: false,
-          type: 'custom',
-          valuePrepareFunction: (visualiza: string) =>
-            visualiza == '1' ? true : false,
-          renderComponent: CheckboxElementComponent<IConfigvtadmun>,
-          onComponentInitFunction: (
-            instance: CheckboxElementComponent<IConfigvtadmun>
-          ) => this.onVisualizaChange(instance),
-        },
       },
     };
   }
@@ -160,7 +149,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Esta Configuración De Columnas?'
+      '¿Desea Eliminar Esta Configuración de Columnas?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(pageSetup);
@@ -176,7 +165,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración De Columnas',
+          'Configuración de Columnas',
           'Eliminada Correctamente'
         );
         this.getData();
@@ -186,7 +175,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio Un Error Al Eliminar La Configuración De Columnas'
+          'Ocurrio un Error al Eliminar la Configuración de Columnas'
         );
       },
     });
@@ -244,7 +233,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio Un Error Al Actualizar La Configuración De Columnas'
+          'Ocurrio un Error al Actualizar la Configuración de Columnas'
         );
         return throwError(() => error);
       }),
@@ -252,7 +241,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast(
           'success',
-          'Configuración De Columnas',
+          'Configuración de Columnas',
           'Actualizada Correctamente'
         );
         this.getData();
