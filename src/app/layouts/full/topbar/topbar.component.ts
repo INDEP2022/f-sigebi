@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { finalize, Subject, takeUntil, tap } from 'rxjs';
 import { ScreenCodeService } from 'src/app/common/services/screen-code.service';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SweetalertModel } from 'src/app/core/shared';
@@ -17,6 +17,7 @@ import {
   HELP_SCREEN,
 } from 'src/app/utils/constants/main-routes';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
+import { FullService } from '../full.service';
 
 @Component({
   selector: 'app-topbar',
@@ -30,7 +31,10 @@ export class TopbarComponent implements OnInit, OnDestroy {
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
   $unSubscribe = new Subject<void>();
-
+  loading = false;
+  loadingText = 'Generando archivo, por favor espere';
+  loadingProgress = 0;
+  showLoadingText = true;
   get currentScreen() {
     return this.screenCodeService.$id.getValue();
   }
@@ -40,7 +44,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private screenCodeService: ScreenCodeService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private fullService: FullService
   ) {}
 
   openMobileMenu: boolean;
@@ -49,6 +54,30 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.openMobileMenu = false;
     this.element = document.documentElement;
     this.userName = this.authService.decodeToken().name;
+    this.subscribeToFileGeneration().subscribe();
+  }
+
+  subscribeToFileGeneration() {
+    return this.fullService.generatingFileFlag.pipe(
+      takeUntil(this.$unSubscribe),
+      tap(prog => {
+        console.warn('PROGRESO EN TOPBAR');
+
+        console.log({ prog });
+
+        this.loading = true;
+        const { progress, showText, text } = prog;
+        this.loadingProgress = progress;
+        this.showLoadingText = showText;
+        if (text) {
+          this.loadingText = text;
+        }
+        if (progress == 100) {
+          this.loading = false;
+        }
+      }),
+      finalize(() => (this.loading = false))
+    );
   }
 
   /**

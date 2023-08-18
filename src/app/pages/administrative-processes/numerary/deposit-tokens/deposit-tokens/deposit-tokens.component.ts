@@ -85,6 +85,7 @@ export class DepositTokensComponent
   testCompare: any;
   validExcel: boolean = true;
   settings2 = { ...this.settings };
+  loadingBtn2: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -282,33 +283,43 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            if (typeof text === 'number') {
-              let date = new Date((Number(text) - 25569) * 86400 * 1000);
-              let fechaString = date.toString();
-
-              let fecha = new Date(fechaString);
-
-              let dia = fecha.getDate();
-              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-              let año = fecha.getFullYear();
-
-              // Asegurarse de que el día y el mes tengan dos dígitos
-              let diaString = dia < 10 ? '0' + dia : dia;
-              let mesString = mes < 10 ? '0' + mes : mes;
-
-              let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-              return `${fechaFormateada}`;
-            } else {
-              return `${
-                text ? text.split('T')[0].split('-').reverse().join('/') : ''
-              }`;
-            }
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
           },
           filter: {
             type: 'custom',
             component: CustomDateFilterComponent,
           },
+          // type: 'html',
+          // valuePrepareFunction: (text: string) => {
+          //   console.log('text', text);
+          //   if (typeof text === 'number') {
+          //     let date = new Date((Number(text) - 25569) * 86400 * 1000);
+          //     let fechaString = date.toString();
+
+          //     let fecha = new Date(fechaString);
+
+          //     let dia = fecha.getDate();
+          //     let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+          //     let año = fecha.getFullYear();
+
+          //     // Asegurarse de que el día y el mes tengan dos dígitos
+          //     let diaString = dia < 10 ? '0' + dia : dia;
+          //     let mesString = mes < 10 ? '0' + mes : mes;
+
+          //     let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+          //     return `${fechaFormateada}`;
+          //   } else {
+          //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          //       }`;
+          //   }
+          // },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomDateFilterComponent,
+          // },
         },
         FOLIO_FICHA: {
           title: 'Folio',
@@ -323,33 +334,43 @@ export class DepositTokensComponent
           type: 'html',
           valuePrepareFunction: (text: string) => {
             console.log('text', text);
-            if (typeof text === 'number') {
-              let date = new Date((Number(text) - 25569) * 86400 * 1000);
-              let fechaString = date.toString();
-
-              let fecha = new Date(fechaString);
-
-              let dia = fecha.getDate();
-              let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
-              let año = fecha.getFullYear();
-
-              // Asegurarse de que el día y el mes tengan dos dígitos
-              let diaString = dia < 10 ? '0' + dia : dia;
-              let mesString = mes < 10 ? '0' + mes : mes;
-
-              let fechaFormateada = `${diaString}/${mesString}/${año}`;
-
-              return `${fechaFormateada}`;
-            } else {
-              return `${
-                text ? text.split('T')[0].split('-').reverse().join('/') : ''
-              }`;
-            }
+            return `${
+              text ? text.split('T')[0].split('-').reverse().join('/') : ''
+            }`;
           },
           filter: {
             type: 'custom',
             component: CustomDateFilterComponent,
           },
+          // type: 'html',
+          // valuePrepareFunction: (text: string) => {
+          //   console.log('text', text);
+          //   if (typeof text === 'number') {
+          //     let date = new Date((Number(text) - 25569) * 86400 * 1000);
+          //     let fechaString = date.toString();
+
+          //     let fecha = new Date(fechaString);
+
+          //     let dia = fecha.getDate();
+          //     let mes = fecha.getMonth() + 1; // Se suma 1 porque los meses se indexan desde 0
+          //     let año = fecha.getFullYear();
+
+          //     // Asegurarse de que el día y el mes tengan dos dígitos
+          //     let diaString = dia < 10 ? '0' + dia : dia;
+          //     let mesString = mes < 10 ? '0' + mes : mes;
+
+          //     let fechaFormateada = `${diaString}/${mesString}/${año}`;
+
+          //     return `${fechaFormateada}`;
+          //   } else {
+          //     return `${text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          //       }`;
+          //   }
+          // },
+          // filter: {
+          //   type: 'custom',
+          //   component: CustomDateFilterComponent,
+          // },
         },
         DI_MONEDA: {
           title: 'Moneda',
@@ -361,7 +382,7 @@ export class DepositTokensComponent
         },
         DEPOSITO: {
           title: 'Depósito',
-          type: 'custom',
+          type: 'string',
           sort: false,
           // renderComponent: CustomdbclickdepositComponent,
           // onComponentInitFunction: (instance: any) => {
@@ -395,6 +416,7 @@ export class DepositTokensComponent
         }
       },
     };
+    this.settings2.hideSubHeader = true;
     this.settings2.actions = false;
   }
 
@@ -458,6 +480,51 @@ export class DepositTokensComponent
       this.getAccount();
     });
 
+    this.data2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = '';
+            //Default busqueda SearchFilter.ILIKE
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+
+            //Verificar los datos si la busqueda sera EQ o ILIKE dependiendo el tipo de dato aplicar regla de búsqueda
+            const search: any = {
+              TI_BANCO: () => (searchFilter = SearchFilter.EQ),
+              DI_CUENTA: () => (searchFilter = SearchFilter.ILIKE),
+              FEC_MOVIMIENTO: () => (searchFilter = SearchFilter.EQ),
+              FOLIO_FICHA: () => (searchFilter = SearchFilter.ILIKE),
+              FEC_CALCULO_INTERESES: () => (searchFilter = SearchFilter.ILIKE),
+              DI_MONEDA: () => (searchFilter = SearchFilter.ILIKE),
+              DEPOSITO: () => (searchFilter = SearchFilter.ILIKE),
+              di_expediente2: () => (searchFilter = SearchFilter.EQ),
+              no_bien: () => (searchFilter = SearchFilter.EQ),
+            };
+
+            search[filter.field]();
+
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${filter.search}`;
+              // this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+
+              // console.log(
+              //   'this.columnFilters[field]',
+              //   this.columnFilters[field]
+              // );
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.paramsList2 = this.pageFilter(this.paramsList2);
+          //Su respectivo metodo de busqueda de datos
+          // this.readExcel(this.excelFile, false);
+        }
+      });
+
     this.paramsList2
       .pipe(
         skip(1),
@@ -468,7 +535,7 @@ export class DepositTokensComponent
         takeUntil(this.$unSubscribe)
       )
       .subscribe(() => {
-        this.readExcel(this.excelFile, false);
+        // this.readExcel(this.excelFile, false);
         // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
       });
   }
@@ -832,19 +899,6 @@ export class DepositTokensComponent
           this.validExcel = true;
 
           let result = data.result.map(async (item: any) => {
-            // let obj1 = {
-            //   TI_BANCO: item.bank,
-            //   DI_CUENTA: item.accountkey,
-            //   NO_CUENTA: item.accountnumber,
-            //   DI_MONEDA: item.currency,
-            //   FEC_MOVIMIENTO: item.motiondate,
-            //   FOLIO_FICHA: item.isfiledeposit,
-            //   FEC_CALCULO_INTERESES: item.calculationinterestsdate,
-            //   DEPOSITO: item.deposit,
-            //   no_bien: item.goodnumber,
-            //   di_expediente2: item.proceedingsnumber
-            // }
-
             item['accountnumber'] = item.NO_CUENTA ? item.NO_CUENTA : null;
             const detailsBank: any = await this.returnDataBank(
               item.accountnumber
@@ -865,13 +919,12 @@ export class DepositTokensComponent
             this.cleanDataBank();
             this.showPagination = true;
             this.totalItems2 = response.count;
-            this.cargarDataStorage(response.base64.base64File);
+            // this.cargarDataStorage(response.base64.base64File);
             // this.excelFile =
 
             let str = response.msg;
-            console.log('substr1', str);
             let substr = str[0].slice(0, Number(str.length) - 7);
-            console.log('substr', substr);
+
             if (filter == true) {
               this.alert('success', substr, '');
             }
@@ -905,73 +958,151 @@ export class DepositTokensComponent
   }
 
   async exportar() {
-    const filename: string = 'Deposit Tokens';
-    const jsonToCsv: any = await this.returnJsonToCsv();
+    if (!this.validExcel) {
+      await this.getExcelExport();
+    } else {
+      this.loadingBtn2 = true;
+      const filename: string = 'CARINSFICHDEPO';
+      const jsonToCsv: any = await this.returnJsonToCsv();
 
-    let arr: any = [];
-    let result = jsonToCsv.map(async (item: any) => {
-      if (!this.validExcel) {
-        let obj1 = {
-          TI_BANCO: item.bank,
-          DI_CUENTA: item.accountkey,
-          NO_CUENTA: item.accountnumber,
-          DI_MONEDA: item.currency,
-          FEC_MOVIMIENTO: item.motiondate,
-          FOLIO_FICHA: item.isfiledeposit,
-          FEC_CALCULO_INTERESES: item.calculationinterestsdate,
-          DEPOSITO: item.deposit,
-          no_bien: item.goodnumber,
-          di_expediente2: item.proceedingsnumber,
-        };
-        arr.push(obj1);
-      } else {
+      let arr: any = [];
+      let result = jsonToCsv.map(async (item: any) => {
+        // if (!this.validExcel) {
+        //   let obj1 = {
+        //     TI_BANCO: item.bank,
+        //     DI_CUENTA: item.accountkey,
+        //     NO_CUENTA: item.accountnumber,
+        //     DI_MONEDA: item.currency,
+        //     FEC_MOVIMIENTO: item.motiondate,
+        //     FOLIO_FICHA: item.isfiledeposit,
+        //     FEC_CALCULO_INTERESES: item.calculationinterestsdate,
+        //     DEPOSITO: item.deposit,
+        //     no_bien: item.goodnumber,
+        //     di_expediente2: item.proceedingsnumber,
+        //   };
+        //   arr.push(obj1);
+        // } else {
         let obj2 = {
-          TI_BANCO: item.TI_BANCO,
-          DI_CUENTA: item.DI_CUENTA,
+          BANCO: item.TI_BANCO,
+          CUENTA: item.DI_CUENTA,
           NO_CUENTA: item.NO_CUENTA,
-          DI_MONEDA: item.DI_MONEDA,
-          FEC_MOVIMIENTO: item.FEC_MOVIMIENTO,
-          FOLIO_FICHA: item.FOLIO_FICHA,
-          FEC_CALCULO_INTERESES: item.FEC_CALCULO_INTERESES,
+          MONEDA: item.DI_MONEDA,
+          FECHA_DEPOSITO: item.FEC_MOVIMIENTO,
+          FOLIO: item.FOLIO_FICHA,
+          FECHA_TRANSF: item.FEC_CALCULO_INTERESES,
           DEPOSITO: item.DEPOSITO,
-          no_bien: item.no_bien,
-          di_expediente2: item.di_expediente2,
+          BIEN: item.no_bien,
+          EXPEDIENTE: item.di_expediente2,
+          DESCRIPCION: '',
+          CATEGORIA: '',
+          PARCIAL: 'N',
         };
 
         arr.push(obj2);
-      }
-      // let obj2 = {
-      //   motionnumber: item.motionnumber,
-      //   motiondate: item.motiondate,
-      //   deposit: item.deposit,
-      //   userinsert: item.userinsert,
-      //   insertiondate: item.insertiondate,
-      //   isfiledeposit: item.isfiledeposit,
-      //   accountnumber: item.accountnumber,
-      //   calculationInterestsDate_: item.calculationinterestsdate,
-      //   calculationinterestsdate: item.calculationinterestsdate,
-      //   registernumber: item.registernumber,
-      //   category: item.category,
-      //   currency: item.currency,
-      //   goodnumber: item.goodnumber,
-      //   proceedingsnumber: item.proceedingsnumber,
-      //   bank: item.bank,
-      //   cveAccount: item.accountkey,
-      //   accountkey: item.accountkey,
-      //   motionDate_: item.motiondate,
-      //   transferdate: item.transferdate,
-      // };
-    });
+        // }
+      });
 
-    Promise.all(result).then(i => {
-      console.log('jsonToCsv', arr);
-      this.jsonToCsv = arr;
-      this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
-    });
+      Promise.all(result).then(i => {
+        console.log('jsonToCsv', arr);
+        this.jsonToCsv = arr;
+        this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+        this.alert('success', 'Archivo Descargado Correctamente', '');
+        this.loadingBtn2 = false;
+      });
+    }
+  }
+
+  async getExcelExport() {
+    this.loadingBtn2 = true;
+    let params: any = {
+      ...this.paramsList.getValue(),
+      ...this.columnFilters,
+    };
+    if (params['filter.cveAccount']) {
+      params['accountNumber'] = params['filter.cveAccount'];
+      delete params['filter.cveAccount'];
+    }
+
+    if (params['filter.cveAccount']) {
+      params['accountNumber'] = params['filter.cveAccount'];
+      delete params['filter.cveAccount'];
+    }
+
+    if (params['filter.motionnumber']) {
+      params['numberMotion'] = params['filter.motionnumber'];
+      delete params['filter.motionnumber'];
+    }
+
+    if (params['filter.motionnumber']) {
+      params['numberMotion'] = params['filter.motionnumber'];
+      delete params['filter.motionnumber'];
+    }
+
+    if (params['filter.motionDate_']) {
+      var fecha = new Date(params['filter.motionDate_']);
+
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['dateMotion'] = fechaFormateada;
+      delete params['filter.motionDate_'];
+    }
+
+    // let obj = {
+    //   bank: () => (searchFilter = SearchFilter.ILIKE),
+    //   cveAccount: () => (searchFilter = SearchFilter.EQ),
+    //   motionDate_: () => (searchFilter = SearchFilter.ILIKE),
+    //   invoicefile: () => (searchFilter = SearchFilter.ILIKE),
+    //   calculationInterestsDate_: () =>
+    //     (searchFilter = SearchFilter.ILIKE),
+    //   currency: () => (searchFilter = SearchFilter.ILIKE),
+    //   deposit: () => (searchFilter = SearchFilter.EQ),
+    //   proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
+    //   goodnumber: () => (searchFilter = SearchFilter.EQ),
+    //   category: () => (searchFilter = SearchFilter.ILIKE),
+    //   ispartialization: () => (searchFilter = SearchFilter.EQ),
+    // }
+
+    delete params['limit'];
+    delete params['page'];
+    // return new Promise((resolve, reject) => {
+    this.accountMovementService
+      .MovementAccountXBankAccountExcel(params)
+      .subscribe({
+        next: async (response: any) => {
+          console.log('res', response);
+          // Decodifica el archivo Base64 a un array de bytes
+          const base64 = response.resultExcel.base64File;
+          // const base64 = await this.decompressBase64ToString(response.data.base64File)
+          await this.downloadExcel(base64);
+          // resolve(true);
+        },
+        error: err => {
+          this.alert('error', 'Error al Descargar el Archivo', '');
+          this.loadingBtn2 = false;
+          // resolve(false);
+        },
+      });
+    // });
+  }
+  async downloadExcel(base64String: any) {
+    const mediaType =
+      'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
+    const link = document.createElement('a');
+    link.href = mediaType + base64String;
+    link.download = 'CARINSFICHDEPO.csv';
+    link.click();
+    link.remove();
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.loadingBtn2 = false;
   }
 
   async returnJsonToCsv() {
-    return this.data1.getAll();
+    return !this.validExcel ? this.data1.getAll() : this.data2.getAll();
   }
   // GET DETAILS CURRENCY //
   async getTvalTable5(currency: any) {

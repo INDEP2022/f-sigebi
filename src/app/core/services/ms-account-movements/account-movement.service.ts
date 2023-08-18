@@ -208,6 +208,13 @@ export class AccountMovementService extends HttpService {
       params
     );
   }
+
+  MovementAccountXBankAccountExcel(params?: _Params) {
+    return this.get<IListResponse<any>>(
+      AccountmvmntEndpoint.MovementAccountXBankAccountExcel,
+      params
+    );
+  }
 }
 
 //``

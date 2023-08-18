@@ -27,6 +27,7 @@ import { PhotoGaleryComponent } from './components/photo-galery/photo-galery.com
 import { RecordNotificationFilterComponent } from './components/record-notification-filter/record-notification-filter.component';
 import { TransferAutorityFilterComponent } from './components/transfer-autority-filter/transfer-autority-filter.component';
 import { ViewPhotosComponent } from './components/view-photos/view-photos.component';
+import { WarehousesFilterComponent } from './components/warehouses-filter/warehouses-filter.component';
 import { GoodsTrackerRoutingModule } from './goods-tracker-routing.module';
 import { GoodsTrackerComponent } from './goods-tracker/goods-tracker.component';
 import {
@@ -50,6 +51,7 @@ import {
     PhotoGaleryComponent,
     PhotoGaleryItemComponent,
     GtDocumentsListComponent,
+    WarehousesFilterComponent,
   ],
   imports: [
     CommonModule,
