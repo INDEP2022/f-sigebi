@@ -97,6 +97,10 @@ export class GoodsManagementSocialCabinetComponent
     // this.settings.columns = COLUMNS;
   }
 
+  get good() {
+    return this.form.get('good');
+  }
+
   ngOnInit(): void {
     /*this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -112,19 +116,46 @@ export class GoodsManagementSocialCabinetComponent
         },
       });
     this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
-      next: response => {
+      next: async response => {
         if (response && response.length > 0) {
-          this.selectedGoodstxt = response.map(x => {
+          this.pageLoading = true;
+          this.disabledProcess = false;
+          this.identifier = await firstValueFrom(this.getSeqRastreador());
+          if (!this.identifier) {
+            this.alert('error', 'Secuencia Rastreador', 'No encontrada');
+            this.disabledProcess = true;
+            this.pageLoading = false;
+            return;
+          }
+          let response2 = response.map(x => {
             return +x.goodNumber;
           });
+          response2.forEach(item => {
+            if (item) {
+              this.saveInTemp(this.identifier, item + '');
+            }
+          });
+          this.selectedGoodstxt = response2;
           this.getData();
         }
       },
     });
   }
 
-  searchGood() {
-    this.selectedGoodstxt = [this.form.get('good').value];
+  async searchGood() {
+    console.log(this.good.value);
+    // console.log();
+    this.pageLoading = true;
+    this.disabledProcess = false;
+    this.identifier = await firstValueFrom(this.getSeqRastreador());
+    if (!this.identifier) {
+      this.alert('error', 'Secuencia Rastreador', 'No encontrada');
+      this.disabledProcess = true;
+      this.pageLoading = false;
+      return;
+    }
+    this.saveInTemp(this.identifier, this.good.value);
+    this.selectedGoodstxt = [this.good.value];
     this.getData();
   }
 
@@ -204,13 +235,17 @@ export class GoodsManagementSocialCabinetComponent
       console.log(array);
 
       if (!array || array.length < 2) {
+        this.disabledProcess = true;
+        this.pageLoading = false;
         this.alert('error', 'No se han cargado datos en archivo', '');
         return;
       }
       this.disabledProcess = false;
       this.identifier = await firstValueFrom(this.getSeqRastreador());
       if (!this.identifier) {
+        this.disabledProcess = true;
         this.alert('error', 'Secuencia Rastreador', 'No encontrada');
+        this.pageLoading = false;
         return;
       }
       array.forEach(row => {
