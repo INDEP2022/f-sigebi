@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CreateReportComponent } from '../create-report/create-report.component';
@@ -59,6 +60,11 @@ export class ComplementaryRequestInformationComponent
   }
 
   ngOnInit(): void {
+    this.registRequestForm
+      .get('date')
+      .setValue(
+        moment(this.registRequestForm.get('date').value).format('DD/MM/YYYY')
+      );
     this.selectTitleReport();
     this.getPathParameter();
     this.prepareForm();
@@ -91,16 +97,14 @@ export class ComplementaryRequestInformationComponent
   prepareForm() {
     this.registRequestForm = this.fb.group({
       date: [],
-      noOfi: ['400-10-00-01*00*2020-7824'],
-      regDelega: ['BAJA CALIFORNIA'],
-      noExpedient: ['24355'],
-      noRequest: ['27445'],
-      state: ['Juan Pablo'],
-      tranfe: ['SAT FISCO FEDERAL'],
-      transmitter: ['ADMINISTRACION GENERAL DE RECAUDACION'],
-      authority: [
-        'ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA',
-      ],
+      noOfi: [null],
+      regDelega: [null],
+      noExpedient: [null],
+      noRequest: [null],
+      state: [null],
+      tranfe: [null],
+      transmitter: [null],
+      authority: [null],
     });
   }
   dataRegistration(data: any) {
