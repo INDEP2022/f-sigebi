@@ -33,6 +33,11 @@ export class TypeSiniesterService
     return this.htpp.get(url, { params });
     // return this.get(this.route1, params);
   }
+  getStatusSinister(params?: ListParams): Observable<any> {
+    const url = `${environment.API_URL}catalog/api/v1/apps/sp-get-status-sinister`;
+    return this.htpp.get(url, { params });
+    // return this.get(this.route1, params);
+  }
 
   getById(id: string | number): Observable<ITypeSiniester> {
     return this.typeSiniesterRepository.getById(this.route, id);

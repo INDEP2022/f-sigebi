@@ -248,7 +248,7 @@ export class MassiveConversionSelectGoodComponent
 
   private asignarDescripcionLabelExcel(data: any): any {
     let item = {
-      'NUMERO BIEN': data.goodNumber,
+      'No. BIEN': data.goodNumber,
       DESCRIPCIÓN: data.description,
       CANTIDAD: data.amount,
       'UNIDAD MEDIDA': data.unitExtent,

@@ -256,6 +256,18 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.rejectReq = true;
         this.turnReq = true;
         break;
+      case 'RNRegistroDocumenComple':
+        //registro del formulario
+        this.regDocForm = true;
+        //buscar solicitudes de bienes
+        this.searchRequestSimGoods = true;
+        //seleccionar bienes
+        this.selectGoods = true;
+        //expedientes
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.turnReq = true;
+        break;
       default:
         break;
     }
