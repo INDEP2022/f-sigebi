@@ -9,4 +9,5 @@ export enum AccountmvmntEndpoint {
   getDevolutionsBanks = 'aplication/selectDevoluciones',
   PaymentControl = 'payment-control',
   PaymentTypeSat = 'payment-type-sat',
+  MovementAccountXBankAccountExcel = 'aplication/movementAccountXBankAccount-excel',
 }
