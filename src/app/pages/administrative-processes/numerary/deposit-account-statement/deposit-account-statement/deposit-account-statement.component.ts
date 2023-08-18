@@ -116,6 +116,8 @@ export class DepositAccountStatementComponent
   form2: FormGroup;
   dateTransfer: Date;
   transferDate: Date;
+  disabledAccount = false;
+  disabledMovement = false;
   checksDevolution: IUserChecks[] = [];
   ilikeFilters = [
     'nameindicated',
@@ -177,6 +179,11 @@ export class DepositAccountStatementComponent
     },
   };
   columnsType = {
+    devolutionnumber: {
+      title: 'Devolución',
+      type: 'string',
+      sort: true,
+    },
     accountkey: {
       title: 'Cuenta',
       type: 'string',
@@ -184,11 +191,6 @@ export class DepositAccountStatementComponent
     },
     accountnumber: {
       title: 'Movimiento',
-      type: 'string',
-      sort: true,
-    },
-    devolutionnumber: {
-      title: 'Devolución',
       type: 'string',
       sort: true,
     },
@@ -369,7 +371,7 @@ export class DepositAccountStatementComponent
 
   prepareForm() {
     this.form = this.fb.group({
-      movementNumber: [null, Validators.required],
+      movementNumber: [null],
       account: [null, Validators.required],
       bank: [null, Validators.nullValidator],
       currency: [null, Validators.nullValidator],
@@ -412,6 +414,14 @@ export class DepositAccountStatementComponent
     this.getParameters();
     // this.form.controls['depositDate'].disable();
     //this.validation();
+  }
+
+  get movementNumber() {
+    return this.form.get('movementNumber');
+  }
+
+  get accountNumber() {
+    return this.form.get('account');
   }
 
   get goodFilter() {
@@ -743,6 +753,17 @@ export class DepositAccountStatementComponent
       +this.userChecks.returnamount - +this.userChecks.creditedinterest
     );
     this.updatePupReturnsByDates = false;
+    this.disabledAccount = true;
+    this.disabledMovement = true;
+    if (this.userChecks.accountnumberorigindeposit) {
+      this.accountNumber.setValue(this.userChecks.accountnumberorigindeposit);
+      this.accountnumberorigindeposit.setValue(
+        this.userChecks.accountnumberorigindeposit
+      );
+    }
+    if (this.userChecks.movementnumber) {
+      this.movementNumber.setValue(this.userChecks.movementnumber);
+    }
     // this.accountPayReturn = this.userChecks.accountnumberpayreturn;
     if (this.userChecks.scheduleddatebyconfiscationreturn) {
       const datePipeReturn = new DatePipe('en-US');
@@ -769,9 +790,7 @@ export class DepositAccountStatementComponent
     this.status.setValue(this.userChecks.status);
     this.expedient.setValue(this.userChecks.expedientnumber);
     this.devolutionnumber.setValue(this.userChecks.devolutionnumber);
-    this.accountnumberorigindeposit.setValue(
-      this.userChecks.accountnumberorigindeposit
-    );
+
     this.accountnumberpayreturn.setValue(
       this.userChecks.accountnumberpayreturn
     );

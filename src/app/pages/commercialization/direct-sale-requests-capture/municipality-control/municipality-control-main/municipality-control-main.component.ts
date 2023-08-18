@@ -187,10 +187,19 @@ export class MunicipalityControlMainComponent
     console.log(data);
   }
   getDataGoods(id: any) {
-    this.msDirectawardService.getGoodsByApplicant(id).subscribe(data => {
-      this.assignedGoodColumns = data.data;
-      this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-      console.log(this.assignedGoodColumns);
+    this.msDirectawardService.getGoodsByApplicant(id).subscribe({
+      next: data => {
+        this.assignedGoodColumns = data.data;
+        this.assignedGoodTotalItems = this.assignedGoodColumns.length;
+        console.log(this.assignedGoodColumns);
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'advertencia',
+          'No Se Han Encontrado Bienes Para El Solicitante Seleccionado'
+        );
+      },
     });
   }
 

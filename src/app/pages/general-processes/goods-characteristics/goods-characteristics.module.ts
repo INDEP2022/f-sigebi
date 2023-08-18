@@ -5,6 +5,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
+import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { GoodsFilterSharedComponent } from '../../../@standalone/shared-forms/goods-shared/goods-filter-shared';
@@ -45,6 +46,7 @@ import { GoodsCharacteristicsComponent } from './goods-characteristics/goods-cha
     GoodsFilterSharedComponent,
     FileUploadModalComponent,
     PreviewDocumentsComponent,
+    GoodsStatusSharedComponent,
   ],
   exports: [GoodCharacteristicsTable, CharacteristicsLegendComponent],
 })

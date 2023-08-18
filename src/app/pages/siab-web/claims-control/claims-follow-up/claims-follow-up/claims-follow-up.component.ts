@@ -99,7 +99,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
           sort: false,
         },
         polizaafectada: {
-          title: 'Poliza Afectada',
+          title: 'Póliza Afectada',
           type: 'string',
           sort: false,
         },
@@ -284,7 +284,16 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.modalService.show(ClaimsFollowUpDetailComponent, config);
   }
   edit(siniester: any) {
-    this.openForm(siniester);
+    console.log(siniester);
+    if (siniester.estatus == 'ABIERTO') {
+      this.openForm(siniester);
+    } else {
+      this.alert(
+        'warning',
+        'El siniestro se encuentra cerrada, no se puede actualizar',
+        ''
+      );
+    }
   }
 
   delete(bank: any) {
@@ -406,15 +415,15 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
       this.seraLogService.postDateExport(data).subscribe(
         response => {
           console.log(response);
-          this.convertAndDownloadExcel(
+          this._downloadExcelFromBase64(
             response,
             `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
           );
-          this.alert(
-            'success',
-            'Siniestros Seguimiento',
-            'Se genero el archivo excel'
-          );
+          // this.alert(
+          //   'success',
+          //   'Siniestros Seguimiento',
+          //   'Se genero el archivo excel'
+          // );
         },
         error => {
           this.alert(
@@ -436,15 +445,15 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     this.seraLogService.postExport(data).subscribe(
       response => {
         console.log(response);
-        this.convertAndDownloadExcel(
+        this._downloadExcelFromBase64(
           response,
           `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
         );
-        this.alert(
-          'success',
-          'Siniestros Seguimiento',
-          'Se genero el archivo excel'
-        );
+        // this.alert(
+        //   'success',
+        //   'Siniestros Seguimiento',
+        //   'Se genero el archivo excel'
+        // );
       },
       error => {
         this.alert(

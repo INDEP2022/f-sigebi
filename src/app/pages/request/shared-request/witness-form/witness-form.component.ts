@@ -14,6 +14,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class WitnessFormComponent extends BasePage implements OnInit {
   witnessForm: FormGroup = new FormGroup({});
   proceeding: IProceedings;
+  typeFirm: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -23,7 +24,6 @@ export class WitnessFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('proceeding', this.proceeding);
     this.prepareForm();
   }
 
@@ -34,7 +34,7 @@ export class WitnessFormComponent extends BasePage implements OnInit {
       programmingId: [this.proceeding.programmingId],
       nameWitness: [null, [Validators.pattern(STRING_PATTERN)]],
       chargeWitness: [null, [Validators.pattern(STRING_PATTERN)]],
-      electronicSignature: [null],
+      electronicSignature: [this.typeFirm],
       creationUser: ['ost13335'],
       creationDate: ['2023-06-12'],
       modificationUser: ['ost13335'],
@@ -47,32 +47,40 @@ export class WitnessFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.alertQuestion(
-      'question',
-      'Confirmación',
-      '¿Estás seguro que desea crear un nuevo testigo?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        if (this.witnessForm.get('electronicSignature').value == true) {
-          this.witnessForm.get('electronicSignature').setValue('S');
-        } else {
-          this.witnessForm.get('electronicSignature').setValue('N');
+    if (this.typeFirm == this.witnessForm.get('electronicSignature').value) {
+      this.alertQuestion(
+        'question',
+        'Confirmación',
+        '¿Estás seguro que desea crear un nuevo testigo?'
+      ).then(question => {
+        if (question.isConfirmed) {
+          if (this.witnessForm.get('electronicSignature').value == true) {
+            this.witnessForm.get('electronicSignature').setValue('S');
+          } else {
+            this.witnessForm.get('electronicSignature').setValue('N');
+          }
+          this.receptionGoodService
+            .createReceiptWitness(this.witnessForm.value)
+            .subscribe({
+              next: response => {
+                this.alert(
+                  'success',
+                  'Registro Guardado',
+                  'Testigo creado correctamente'
+                );
+                this.modalRef.content.callback(true);
+                this.close();
+              },
+              error: error => {},
+            });
         }
-        this.receptionGoodService
-          .createReceiptWitness(this.witnessForm.value)
-          .subscribe({
-            next: response => {
-              this.alert(
-                'success',
-                'Registro Guardado',
-                'Testigo creado correctamente'
-              );
-              this.modalRef.content.callback(true);
-              this.close();
-            },
-            error: error => {},
-          });
-      }
-    });
+      });
+    } else {
+      this.alert(
+        'warning',
+        'Acción Invalida',
+        'El tipo de firma no es igual a la persona que entrega y recibe'
+      );
+    }
   }
 }

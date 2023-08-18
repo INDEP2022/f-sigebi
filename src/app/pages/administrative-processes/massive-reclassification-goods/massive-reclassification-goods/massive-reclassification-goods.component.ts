@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { debounceTime, forkJoin, takeUntil } from 'rxjs';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,11 +18,16 @@ export class MassiveReclassificationGoodsComponent
   implements OnInit
 {
   // listGood: IGood[] = [];
+  files: any = [];
   goodNotValid: IGood[] = [];
   origin: string = null;
   changeDescription: string;
   changeDescriptionAlterning: string;
   contador = 0;
+
+  get pathClasification() {
+    return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
+  }
 
   get selectedGooods() {
     return this.service.selectedGooods;
@@ -43,7 +50,8 @@ export class MassiveReclassificationGoodsComponent
 
   constructor(
     private service: MassiveReclassificationGoodsService,
-    private readonly goodServices: GoodService
+    private readonly goodServices: GoodService,
+    private router: Router
   ) {
     super();
   }
@@ -84,6 +92,7 @@ export class MassiveReclassificationGoodsComponent
           this.classificationGoodAlterning.removeValidators(
             Validators.required
           );
+          this.classificationOfGoods.addValidators(Validators.required);
         }
         this.form.updateValueAndValidity();
         // console.log(this.form.valid);
@@ -195,11 +204,24 @@ export class MassiveReclassificationGoodsComponent
     this.form.enable();
   }
 
-  onChage(event: string) {
+  onChange(event: IGoodSssubtype) {
     console.log(event);
-    this.changeDescription = event;
+    this.changeDescription = event.description;
   }
   onChageAlterning(event: string) {
     this.changeDescriptionAlterning = event;
+  }
+
+  goToRastreador() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBCAMBIOESTAT' },
+    });
+  }
+
+  //Llenado de excel
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    this.files = files;
   }
 }

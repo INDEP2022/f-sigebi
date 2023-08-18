@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">&Aacute;ctas de Donaci&oacute;n</h5>
+    <h5 class="title">Actas de Donaci&oacute;n</h5>
   </div>
 
   <div body>
@@ -10,30 +10,31 @@
           <form-field
             [control]="form.get('no_expediente')"
             label="No. Expediente"
-            class="col-md-1">
+            class="col-md-5">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="no_expediente"
               [(ngModel)]="noExpe"
-              (blur)="getAllBLKByFilters()" />
+              maxlength="10" />
           </form-field>
 
           <form-field
             [control]="form.get('av_previa')"
             label="Averiguaci&oacute;n Previa"
-            class="col-md-5">
+            class="col-md-7">
             <input
               type="text"
               class="form-control"
               formControlName="av_previa"
               readonly />
           </form-field>
-
+        </div>
+        <div class="row pt-3">
           <form-field
             [control]="form.get('ca_penal')"
             label="Causa Penal"
-            class="col-md-2">
+            class="col-md-4">
             <input
               type="text"
               class="form-control"
@@ -43,7 +44,7 @@
 
           <form-field
             [control]="form.get('no_transferente')"
-            class="col-md-2"
+            class="col-md-4"
             label="No. Exp. Transferente">
             <input
               type="text"
@@ -54,7 +55,7 @@
 
           <form-field
             [control]="form.get('ti_expediente')"
-            class="col-md-2"
+            class="col-md-4"
             label="Ti. Expediente">
             <input
               type="text"
@@ -67,6 +68,21 @@
     </div>
 
     <div class="d-flex">
+      <div>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="getAllBLKByFilters()">
+          Consultar
+          <i class="bx bx-search-alt bx-sm float-icon"></i>
+        </button>
+      </div>
+      <div>
+        <button
+          class="btn btn-danger btn-sm active ml-3 mr-3"
+          (click)="resetForm()">
+          Limpiar <i class="fas fa-eraser"> </i>
+        </button>
+      </div>
       <div class="ml-auto">
         <button class="btn btn-primary btn-sm active" (click)="closeExp()">
           Cerrar
@@ -82,7 +98,7 @@
           <form-field
             [control]="actForm.get('status')"
             label="Estado:"
-            class="col-md-1">
+            class="col-md-2">
             <input
               type="text"
               class="form-control"
@@ -92,13 +108,13 @@
 
           <form-field
             [control]="actForm.get('actSelect')"
-            label="&Aacute;cta:"
-            class="col-md-5">
-            <input
+            label="Acta:"
+            class="col-md-4">
+            <textarea
               type="text"
               class="form-control"
               formControlName="actSelect"
-              readonly />
+              readonly></textarea>
           </form-field>
 
           <!-- <form-field [control]="actForm.get('trans')" label="Trans:" class="col-md-1">
@@ -118,7 +134,7 @@
 
           <form-field
             [control]="actForm.get('es_acta')"
-            label="Estatus &Aacute;cta:"
+            label="Estatus Acta:"
             class="col-md-4">
             <input
               type="text"
@@ -131,13 +147,13 @@
         <div class="row pt-3">
           <form-field
             [control]="actForm.get('cv_acta')"
-            label="&Aacute;cta:"
+            label="Acta:"
             class="col-md-6">
-            <input
+            <textarea
               type="text"
               class="form-control"
               formControlName="cv_acta"
-              readonly />
+              readonly></textarea>
           </form-field>
 
           <form-field
