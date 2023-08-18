@@ -344,6 +344,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
         },
       });
     }
+
     /*const params = new BehaviorSubject<ListParams>(new ListParams());
     const filter = params.getValue();
     //delete this.jsonBody.regionalDelegationId

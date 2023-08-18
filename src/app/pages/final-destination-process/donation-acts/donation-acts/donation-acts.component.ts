@@ -74,6 +74,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   varFour: string;
   varFive: string;
   varObjectFinal: any[] = [];
+  varObjectFinalModal: any[] = [];
   varCreateObject: any;
   varDeleteObject: any;
 
@@ -147,6 +148,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
   }
 
   getAllBLKByFilters() {
+    this.resetFormTwo();
     if (this.noExpe == null || '') {
       this.alert('warning', 'Advertencia', `Por Favor Ingrese un Expediente`);
     } else {
@@ -196,6 +198,8 @@ export class DonationActsComponent extends BasePage implements OnInit {
           .getGoodsByProceeding(paramsRecep)
           .subscribe({
             next: response => {
+              console.log('Aqui va todo el arreglo inicial: ', response.data);
+              this.varObjectFinalModal = response.data;
               this.varObjectFinal = response.data[0];
               this.actForm.controls['actSelect'].setValue(
                 response.data[0].keysProceedings
@@ -287,6 +291,19 @@ export class DonationActsComponent extends BasePage implements OnInit {
     } else {
       if (this.varOne == null) {
         this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
+      } else if (
+        this.actForm.controls['actSelect'].value == null ||
+        undefined ||
+        ''
+      ) {
+        // if (this.varTwo == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
+        // }
+        // if (this.varThree == null) {
+        //   this.alert('warning', 'Advertencia', `Indique el Testigo de la Contraloría`);
+        // }
+
+        this.alert('warning', 'Advertencia', `No Existe Acta Para Cerrar`);
       } else if (this.data2.count() === 0) {
         // if (this.varTwo == null) {
         //   this.alert('warning', 'Advertencia', `Indique el folio de escaneo`);
@@ -302,7 +319,7 @@ export class DonationActsComponent extends BasePage implements OnInit {
       } else if (this.varFour == 'CERRADA') {
         this.alert('warning', 'Advertencia', `El Acta ya Esta Cerrada`);
       } else {
-        let data: any[] = this.varObjectFinal;
+        let data: any[] = this.varObjectFinalModal;
         let config: ModalOptions = {
           initialState: {
             data,
@@ -314,7 +331,13 @@ export class DonationActsComponent extends BasePage implements OnInit {
           ignoreBackdropClick: true,
         };
         // console.log('Config: ', config);
-        this.modalService.show(ConfirmationDonationActsComponent, config);
+        const modalRef = this.modalService.show(
+          ConfirmationDonationActsComponent,
+          config
+        );
+        modalRef.onHidden.subscribe(() => {
+          this.getAllBLKByFilters();
+        });
       }
     }
   }
@@ -479,6 +502,12 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   resetForm() {
     this.form.reset();
+    this.actForm.reset();
+    this.datas.load([]);
+    this.data2.load([]);
+  }
+
+  resetFormTwo() {
     this.actForm.reset();
     this.datas.load([]);
     this.data2.load([]);
