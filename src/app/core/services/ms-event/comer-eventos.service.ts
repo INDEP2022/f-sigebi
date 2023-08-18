@@ -107,6 +107,10 @@ export class ComerEventosService extends HttpService {
     return this.get(EventEndpoints.MANDXEVENTO + '/' + event);
   }
 
+  getComerEventGet(params: ListParams) {
+    return this.get(EventEndpoints.ComerEventGetEvent, params);
+  }
+
   //PUF GRACE DATE
   pufGraceDate(body: IGraceDate) {
     return this.post('application/puf-grace-date', body);

@@ -32,11 +32,9 @@ export const PAGE_SETUP_COLUMNS = {
           case '0':
             value = false;
             return value;
-            break;
           case '1':
             value = true;
             return value;
-            break;
         }
       }
     },
