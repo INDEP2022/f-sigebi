@@ -1,78 +1,55 @@
 <app-modal>
-  <div header class="d-flex justify-content-between">
-    <div>
-      <h5 class="modal-title">CREACIÓN DE ACTA</h5>
+    <div header class="d-flex justify-content-between">
+        <div>
+            <h5 class="modal-title">CREACIÓN DE ACTA</h5>
+        </div>
     </div>
-  </div>
-  <div body>
-    <form [formGroup]="actaRecepttionForm" class="form-material">
-      <div class="col-12">
-        <div class="row">
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('acta')"
-                label="Acta">
-                <ng-select formControlName="acta" class="form-control pt-1">
-                  <ng-option value="RFP">RFP</ng-option>
-                </ng-select>
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('type')"
-                label="Estado">
-                <ng-select formControlName="type" class="form-control pt-1">
-                  <ng-option value="A">A</ng-option>
-                  <ng-option value="D">D</ng-option>
-                  <ng-option value="RT">RT</ng-option>
-                </ng-select>
-                <!-- <input #inputValue type="text" class="form-control" formControlName="type" readonly /> -->
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-6 mt-2">
-            <div>
-              <form-field [control]="actaRecepttionForm.get('claveTrans')">
-                <ngx-select
-                  [form]="actaRecepttionForm"
-                  [data]="trans"
-                  (fetchItems)="consultREG_TRANSFERENTES($event)"
-                  bindLabel="transfer"
-                  value="password"
-                  control="claveTrans"
-                  label="Clave Transferente"
-                  [searchOnInit]="true"
-                  [showTooltip]="true"
-                  termMaxLength="30">
-                </ngx-select>
-                <!-- <input #inputValue type="text" class="form-control" formControlName="claveTrans" /> -->
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('administra')"
-                label="Administra">
-                <ng-select
-                  formControlName="administra"
-                  class="form-control pt-1">
-                  <ng-option
-                    *ngFor="let item of arrayDele"
-                    [value]="item.delegacion"
-                    >{{ item.no_delegacion_2 }} -
-                    {{ item.delegacion }}</ng-option
-                  >
-                </ng-select>
-                <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
+    <div body>
+        <form [formGroup]="actaRecepttionForm" class="form-material">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('acta')" label="Acta">
+                                <ng-select formControlName="acta" class="form-control pt-1">
+                                    <ng-option value="RFP">RFP</ng-option>
+                                </ng-select>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('type')" label="Estado">
+                                <ng-select formControlName="type" class="form-control pt-1">
+                                    <ng-option value="A">A</ng-option>
+                                    <ng-option value="D">D</ng-option>
+                                    <ng-option value="RT">RT</ng-option>
+                                </ng-select>
+                                <!-- <input #inputValue type="text" class="form-control" formControlName="type" readonly /> -->
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('claveTrans')">
+                                <ngx-select [form]="actaRecepttionForm" [data]="trans" (fetchItems)="consultREG_TRANSFERENTES($event)" bindLabel="transfer" value="password" control="claveTrans" label="Clave Transferente" [searchOnInit]="true" [showTooltip]="true" termMaxLength="30">
+                                </ngx-select>
+                                <!-- <input #inputValue type="text" class="form-control" formControlName="claveTrans" /> -->
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('administra')" label="Administra">
+                                <ng-select formControlName="administra" class="form-control pt-1">
+                                    <ng-option *ngFor="let item of arrayDele" [value]="item.delegacion">{{ item.no_delegacion_2 }} - {{ item.delegacion }}</ng-option>
+                                </ng-select>
+                                <!-- <input #inputValue type="text" class="form-control" formControlName="cveReceived"
                                     readonly /> -->
-              </form-field>
-            </div>
-          </div>
-          <!-- <div class="col-md-3 mt-2">
+                            </form-field>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-3 mt-2">
             <div>
               <form-field [control]="actaRecepttionForm.get('cveReceived')">
                 <ngx-select
@@ -90,106 +67,68 @@
               </form-field>
             </div>
           </div> -->
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('consec')"
-                label="Folio">
-                <input
-                  pattern="^[0-9]+"
-                  type="number"
-                  class="form-control pt-1"
-                  formControlName="consec" />
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('anio')"
-                label="Año">
-                <ng-select
-                  class="form-control pt-1"
-                  formControlName="anio"
-                  [items]="years"
-                  [ngModel]="currentYear"></ng-select>
-                <!-- <input #inputValue [max-length]="2" pattern="^[0-9]+" type="number" class="form-control"
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('consec')" label="Folio">
+                                <input pattern="^[0-9]+" type="number" class="form-control pt-1" formControlName="consec" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('anio')" label="Año">
+                                <ng-select class="form-control pt-1" formControlName="anio" [items]="years" [ngModel]="currentYear"></ng-select>
+                                <!-- <input #inputValue [max-length]="2" pattern="^[0-9]+" type="number" class="form-control"
                   formControlName="anio" /> -->
-              </form-field>
-            </div>
-          </div>
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field [control]="actaRecepttionForm.get('mes')" label="Mes">
-                <ng-select
-                  class="form-control pt-1"
-                  formControlName="mes"
-                  [items]="months"></ng-select>
-                <!-- <select>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('mes')" label="Mes">
+                                <ng-select class="form-control pt-1" formControlName="mes" [items]="months"></ng-select>
+                                <!-- <select>
                   <option formControlName="mes" class="form-control" *ngFor="let month of currentmonths"
                     value="month.value">
                     {{ month.label }}</option>
                 </select> -->
-                <!-- <input [max-length]="2" pattern="^[0-9]+" #inputValue type="number" class="form-control"
+                                <!-- <input [max-length]="2" pattern="^[0-9]+" #inputValue type="number" class="form-control"
                   formControlName="mes" /> -->
-              </form-field>
-            </div>
-          </div>
-          <!-- <div class="col-md-6 mt-3">
+                            </form-field>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-6 mt-3">
                     </div> -->
-          <div class="col-md-3 mt-2">
-            <div>
-              <form-field
-                [control]="actaRecepttionForm.get('elaboradate')"
-                label="Fecha de Elaboración">
-                <input
-                  [ngClass]="{ 'not-press bg-gray': !disabledSend }"
-                  #datepickerElement
-                  type="text"
-                  class="form-control pt-1"
-                  formControlName="elaboradate"
-                  bsDatepicker
-                  [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
-              </form-field>
+                    <div class="col-md-3 mt-2">
+                        <div>
+                            <form-field [control]="actaRecepttionForm.get('elaboradate')" label="Fecha de Elaboración">
+                                <input [ngClass]="{ 'not-press bg-gray': !disabledSend }" #datepickerElement type="text" class="form-control pt-1" formControlName="elaboradate" bsDatepicker [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <form-field [control]="actaRecepttionForm.get('direccion')" label="Direcci&oacute;n">
+                            <textarea maxlength="2000" type="text" class="form-control pt-1" formControlName="direccion" rows="5"></textarea>
+                        </form-field>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-md-12 col-sm-12 col-xs-12">
-            <form-field
-              [control]="actaRecepttionForm.get('direccion')"
-              label="Direcci&oacute;n">
-              <textarea
-                maxlength="2000"
-                type="text"
-                class="form-control pt-1"
-                formControlName="direccion"
-                rows="5"></textarea>
-            </form-field>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button
-          [disabled]="!actaRecepttionForm.valid"
-          type="button"
-          class="btn btn-primary active btn-sm mr-3"
-          (click)="agregarActa()">
+        </form>
+    </div>
+    <div footer>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <button [disabled]="!actaRecepttionForm.valid" type="button" class="btn btn-primary active btn-sm mr-3" (click)="agregarActa()">
           Guardar <i class="fas fa-save bx-sm float-icon"></i>
         </button>
-      </div>
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active mr-3"
-          (click)="return()">
+            </div>
+            <div class="m-3">
+                <button type="button" class="btn btn-danger btn-sm active mr-3" (click)="return()">
           Cancelar
         </button>
-      </div>
+            </div>
+        </div>
     </div>
-  </div>
 </app-modal>
