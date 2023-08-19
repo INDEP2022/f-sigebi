@@ -69,8 +69,17 @@
           class="dropdown-menu dropdown-menu-right"
           role="menu"
           aria-labelledby="button-basic">
+          <li
+            role="menuitem"
+            [class]="filesToDelete.length === 0 ? 'disabledDelete' : ''">
+            <a class="dropdown-item" (click)="download()"
+              >Exportar Seleccionadas</a
+            >
+          </li>
           <li role="menuitem">
-            <a class="dropdown-item" (click)="download()">Exportar Fotos</a>
+            <a class="dropdown-item" (click)="download(true)"
+              >Exportar Fotos (Todas)</a
+            >
           </li>
           <li role="menuitem">
             <a class="dropdown-item" (click)="openZipUploader()"
@@ -126,10 +135,7 @@
                     type="checkbox"
                     class="float-check checkbox-color checkbox-primary"
                     id="check2" /> -->
-          <form-check
-            for="keep-{{ i }}"
-            class="float-check"
-            *ngIf="!errorMessage">
+          <form-check for="keep-{{ i }}" class="float-check">
             <input
               type="checkbox"
               id="keep-{{ i }}"

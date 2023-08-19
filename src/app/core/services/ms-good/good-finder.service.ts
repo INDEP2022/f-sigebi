@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 
-import { map } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
   IListResponse,
@@ -19,17 +18,10 @@ export class GoodFinderService extends HttpService {
     this.microservice = GoodFinderEndpoint.GoodFinderBase;
   }
 
-  getAll(params?: _Params) {
+  getByGoodNumber(goodId: string | number) {
     const route = GoodFinderEndpoint.GoodQuery;
-    return this.get<IListResponseMessage<IGood>>(route, params).pipe(
-      map(x => {
-        return {
-          ...x,
-          data: x.data.map(good => {
-            return { ...good, select: false };
-          }),
-        };
-      })
+    return this.get<IListResponseMessage<IGood>>(
+      `${route}?filter.goodId=$eq:${goodId}`
     );
   }
 

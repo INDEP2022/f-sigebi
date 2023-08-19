@@ -5,7 +5,7 @@
         Bienes
         <i
           class="bx bx-chevron-down bx-md float-icon-md"
-          style="float: right"
+          style="float: right; top: 0px"
           [ngClass]="{
             'rotate-down': toggleInformation,
             'rotate-up': !toggleInformation
@@ -14,6 +14,18 @@
     </div>
     <app-card [header]="false">
       <div body>
+        <div class="d-flex selected">
+          <div>Seleccionado: {{ goodTemp?.id }}</div>
+          <button
+            class="btn btn-primary btn-sm active"
+            type="button"
+            [disabled]="!goodTemp"
+            (click)="showPhotos()">
+            Ver Fotos
+            <i class="fa fa-eye"></i>
+          </button>
+        </div>
+
         <div class="row">
           <div class="col-6">
             <div class="buttons">
@@ -23,6 +35,7 @@
                   dropdownToggle
                   class="btn btn-primary dropdown-toggle btn-sm active"
                   type="button"
+                  [class]="selectedGoods.length === 0 ? 'disabled' : ''"
                   aria-controls="dropdown-basic">
                   <div class="d-flex align-items-center">
                     Acciones <span class="caret ml-2"></span>

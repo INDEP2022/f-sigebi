@@ -1,15 +1,44 @@
 import { Injectable, QueryList } from '@angular/core';
 
 import * as JSZip from 'jszip';
-import { Subject } from 'rxjs';
+import { map, Subject } from 'rxjs';
+import { GoodFinderEndpoint } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
+import { IListResponseMessage } from 'src/app/core/interfaces/list-response.interface';
+import { IGood } from 'src/app/core/models/good/good.model';
 import { PhotoComponent } from '../photos-list/photo/photo.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GoodPhotosService {
+export class GoodPhotosService extends HttpService {
   deleteEvent = new Subject<boolean>();
-  constructor() {}
+  showEvent = new Subject();
+  selectedGood: any;
+  selectedGoods: any[] = [];
+  constructor() {
+    super();
+    this.microservice = GoodFinderEndpoint.GoodFinderBase;
+  }
+  getAll(params?: _Params) {
+    const route = GoodFinderEndpoint.GoodQuery;
+    return this.get<IListResponseMessage<IGood>>(route, params).pipe(
+      map(x => {
+        return {
+          ...x,
+          data: x.data.map(good => {
+            return {
+              ...good,
+              select:
+                this.selectedGoods.length > 0
+                  ? this.selectedGoods.includes(good.id)
+                  : false,
+            };
+          }),
+        };
+      })
+    );
+  }
 
   private base64toBlob(base64Data: any, contentType: string): Blob {
     contentType = contentType || '';

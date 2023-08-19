@@ -14,6 +14,7 @@ import { PhotosHistoricComponent } from './photos-historic/photos-historic.compo
 import { PhotoComponent } from './photos-list/photo/photo.component';
 import { PhotosListComponent } from './photos-list/photos-list.component';
 import { PhotosTabsComponent } from './photos-tabs/photos-tabs.component';
+import { CheckBoxComponent } from './table-goods/check-box/check-box.component';
 import { TableGoodsComponent } from './table-goods/table-goods.component';
 
 @NgModule({
@@ -36,6 +37,7 @@ import { TableGoodsComponent } from './table-goods/table-goods.component';
     PhotosTabsComponent,
     PhotosByGoodComponent,
     TableGoodsComponent,
+    CheckBoxComponent,
   ],
   exports: [PhotosTabsComponent],
 })

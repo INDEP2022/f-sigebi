@@ -14,3 +14,23 @@
     }
   }
 }
+
+.selected {
+  justify-content: center;
+  align-items: center;
+  > div {
+    font-size: 15px;
+    font-weight: 500;
+    width: 200px;
+  }
+  > button {
+    width: auto;
+    margin: 10px;
+  }
+  @media screen and (max-width: 576px) {
+    flex-direction: column;
+    > div {
+      text-align: center;
+    }
+  }
+}

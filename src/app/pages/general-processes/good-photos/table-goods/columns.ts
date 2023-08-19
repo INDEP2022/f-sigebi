@@ -1,12 +1,21 @@
-import { CheckboxDisabledElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-disabled-element';
+import { CheckBoxComponent } from './check-box/check-box.component';
 
 export const COLUMNS = {
   select: {
-    title: '',
+    title: 'Carga/Exportación',
     sort: false,
     filter: false,
     type: 'custom',
-    renderComponent: CheckboxDisabledElementComponent,
+    renderComponent: CheckBoxComponent,
+    valuePrepareFunction: (value: any, row: any) => {
+      // DATA FROM HERE GOES TO renderComponent
+      // console.log(value);
+      return {
+        checked: row.select,
+        disabled: false,
+        id: row.id,
+      };
+    },
   },
   id: {
     title: 'No. Bien',

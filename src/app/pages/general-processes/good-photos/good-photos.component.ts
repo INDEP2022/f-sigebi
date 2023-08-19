@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
-import { IGoodDesc } from 'src/app/core/models/ms-good/good-and-desc.model';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
+import { GoodPhotosService } from './services/good-photos.service';
 
 @Component({
   selector: 'app-good-photos',
@@ -13,15 +13,23 @@ import { BasePage } from 'src/app/core/shared';
 })
 export class GoodPhotosComponent extends BasePage implements OnInit {
   origin: string = null;
-  selectedGoodsForPhotos: number[] = [];
+  selectedGoodsByQueryParams: number[] = [];
   showTable = true;
-  good: IGoodDesc;
+  resetTable = 0;
   constructor(
     private activatedRoute: ActivatedRoute,
     private goodService: GoodService,
+    private dataService: GoodPhotosService,
     private previousRouteService: PreviousRouteService
   ) {
     super();
+  }
+
+  cleanFilters() {
+    this.good = null;
+    this.selectedGoods = [];
+    this.resetTable++;
+    this.dataService.showEvent.next(true);
   }
 
   ngOnInit() {
@@ -29,9 +37,9 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
       next: param => {
         console.log(param);
         if (this.previousRouteService.getHistory().length > 1) {
-          this.selectedGoodsForPhotos = [];
+          this.selectedGoodsByQueryParams = [];
           if (localStorage.getItem('selectedGoodsForPhotos')) {
-            this.selectedGoodsForPhotos = JSON.parse(
+            this.selectedGoodsByQueryParams = JSON.parse(
               localStorage.getItem('selectedGoodsForPhotos')
             );
           }
@@ -39,7 +47,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
             this.origin = param['origin'];
           }
           if (param['numberGood']) {
-            this.selectedGoodsForPhotos = [param['numberGood']];
+            this.selectedGoodsByQueryParams = [param['numberGood']];
             this.showTable = false;
             this.searchGood();
           }
@@ -50,8 +58,20 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     });
   }
 
-  clear() {
-    this.selectedGoodsForPhotos = [];
+  get good() {
+    return this.dataService.selectedGood;
+  }
+
+  set good(value) {
+    this.dataService.selectedGood = value;
+  }
+
+  get selectedGoods() {
+    return this.dataService.selectedGoods;
+  }
+
+  set selectedGoods(value) {
+    this.dataService.selectedGoods = value;
   }
 
   private searchGood() {
@@ -62,22 +82,22 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     // });
     this.loading = true;
     this.goodService
-      .getGoodAndDesc(this.selectedGoodsForPhotos[0])
+      .getGoodAndDesc(this.selectedGoodsByQueryParams[0])
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
           if (response) {
             this.good = {
               ...response,
-              id: this.selectedGoodsForPhotos[0] + '',
+              id: this.selectedGoodsByQueryParams[0] + '',
             };
             this.loading = false;
           } else {
-            this.goodNotLoaded(this.selectedGoodsForPhotos[0] + '');
+            this.goodNotLoaded(this.selectedGoodsByQueryParams[0] + '');
           }
         },
         error: err => {
-          this.goodNotLoaded(this.selectedGoodsForPhotos[0] + '');
+          this.goodNotLoaded(this.selectedGoodsByQueryParams[0] + '');
         },
       });
   }

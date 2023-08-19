@@ -13,7 +13,19 @@
     </div>
   </div>
   <div body>
-    <app-table-goods></app-table-goods>
+    <div class="mb-4">
+      <button
+        class="btn btn-warning btn-sm active"
+        type="button"
+        (click)="cleanFilters()">
+        Limpiar
+        <i class="fa fa-eraser"></i>
+      </button>
+    </div>
+
+    <app-table-goods
+      [selectedGoodsByQueryParams]="selectedGoodsByQueryParams"
+      [reset]="resetTable"></app-table-goods>
     <app-photos-by-good></app-photos-by-good>
   </div>
 </app-card>
