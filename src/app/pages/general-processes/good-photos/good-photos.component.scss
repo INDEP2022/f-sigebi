@@ -8,22 +8,22 @@
   }
 }
 
-:host ::ng-deep app-pagination {
-  .paginator-page-size {
-    display: none !important;
-  }
+// :host ::ng-deep app-pagination {
+//   .paginator-page-size {
+//     display: none !important;
+//   }
 
-  .pagination {
-    display: flex;
-    column-gap: 5px;
+//   .pagination {
+//     display: flex;
+//     column-gap: 5px;
 
-    .page-item {
-      .page-link {
-        width: 36px !important;
-        height: 36px !important;
-        display: flex !important;
-        margin-top: 0px !important;
-      }
-    }
-  }
-}
+//     .page-item {
+//       .page-link {
+//         width: 36px !important;
+//         height: 36px !important;
+//         display: flex !important;
+//         margin-top: 0px !important;
+//       }
+//     }
+//   }
+// }

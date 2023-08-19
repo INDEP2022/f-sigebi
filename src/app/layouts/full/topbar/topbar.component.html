@@ -30,7 +30,16 @@
         <i class="fa fa-fw fa-bars"></i>
       </button>
     </div>
-
+    <div class="d-flex" *ngIf="loading">
+      <div class="mt-4" [style.width.px]="300">
+        <progressbar
+          class="progress-striped active"
+          [value]="loadingProgress"
+          type="info"
+          ><i>Generando archivo, por favor espere</i></progressbar
+        >
+      </div>
+    </div>
     <div class="d-flex">
       <!--<div class="dropdown d-none d-lg-inline-block ms-1" dropdown>
                 <button type="button" class="btn header-item noti-icon" dropdownToggle>

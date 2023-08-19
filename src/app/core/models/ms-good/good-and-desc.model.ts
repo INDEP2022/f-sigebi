@@ -15,4 +15,5 @@ export interface IGoodDesc {
   descSsubtype: string;
   descSubtype: string;
   descType: string;
+  id?: string;
 }

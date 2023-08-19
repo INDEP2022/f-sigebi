@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 import { Component, inject, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import {
@@ -23,11 +23,7 @@ import {
 
 export interface IServiceUpload {
   [others: string]: any;
-  uploadFile(
-    campo: any,
-    file: File,
-    fileField: string
-  ): Observable<HttpEvent<unknown>>;
+  uploadFile(campo: any, file: File, fileField: string): Observable<any>;
 }
 
 @Component({
