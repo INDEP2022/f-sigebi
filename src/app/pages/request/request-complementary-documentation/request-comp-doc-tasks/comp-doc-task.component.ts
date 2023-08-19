@@ -258,6 +258,17 @@ export abstract class CompDocTasksComponent extends BasePage {
         this.createReport = true;
         this.saveRequest = true;
         this.turnReq = true;
+
+        if (affair == 25) {
+          this.regDocView = true;
+          this.viewSelectedGoods = true;
+          this.guidelines = true;
+          this.docRequest = true;
+          this.expRequest = true;
+          this.createReport = true;
+          this.saveRequest = true;
+          this.turnReq = true;
+        }
         break;
       case 'GRAnalisisResarcimiento':
         this.regDocView = true;

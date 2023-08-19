@@ -4,45 +4,46 @@
   </div>
 
   <div body>
-    <form [formGroup]="helpForm" class="form-material">
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h3>{{ screenCtrl.value }}</h3>
-        </div>
+    <div class="row">
+      <div class="row justify-content-center">
+        <h3 class="text-center">{{ screenCtrl.value }}</h3>
       </div>
-      <div class="row">
-        <div class="col-md-12 md-tabs">
-          <tabset>
-            <tab heading="Estatus" id="tab1">
-              <div class="row" [ngClass]="{ 'table-loading': loading }">
-                <ng2-smart-table
-                  [settings]="settings"
-                  [source]="statuses"></ng2-smart-table>
-                <app-pagination
-                  [filterParams]="params"
-                  [totalItems]="totalItems"></app-pagination>
-              </div>
-            </tab>
-            <tab heading="Ayuda">
-              <div class="card-body" style="height: max-content">
-                <form-field
-                  class="form-control"
-                  [control]="helpForm.get('description')"
-                  label="Ayuda">
-                  <textarea
-                    maxlength="4000"
-                    class="form-control text-justify"
-                    formControlName="description"
-                    rows="10"
-                    cols="30"
-                    readonly
-                    resize="none"></textarea>
-                </form-field>
-              </div>
-            </tab>
-          </tabset>
-        </div>
+      <div class="col-md-12 md-tabs">
+        <tabset>
+          <tab heading="Estatus" id="tab1">
+            <div class="row" [ngClass]="{ 'table-loading': loading }">
+              <ng2-smart-table
+                [settings]="settings"
+                [source]="dataFacTableValid"></ng2-smart-table>
+              <app-pagination
+                [filterParams]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab heading="Ayuda" id="tab2">
+            <div class="card-body">
+              <form [formGroup]="helpForm" class="form-material">
+                <div class="row">
+                  <div class="col-12 mt-4">
+                    <form-field
+                      class="form-control"
+                      [control]="helpForm.get('description')"
+                      label="Ayuda">
+                      <textarea
+                        maxlength="4000"
+                        class="form-control text-justify"
+                        formControlName="description"
+                        rows="30"
+                        cols="30"
+                        readonly></textarea>
+                    </form-field>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </tab>
+        </tabset>
       </div>
-    </form>
+    </div>
   </div>
 </app-card>
