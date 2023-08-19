@@ -20,4 +20,10 @@ export class GuarantyService extends HttpService {
       params
     );
   }
+
+  GetTransfereexEvent(evento: any) {
+    return this.get<IListResponse<IComerRefGuarantees>>(
+      `${this.route.GetTransfereexEvent}/${evento}`
+    );
+  }
 }
