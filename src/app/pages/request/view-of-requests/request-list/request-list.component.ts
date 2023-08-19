@@ -341,6 +341,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RNSolicitudRecursosEcono',
   },
+  {
+    title:
+      'Revición de Liniamiento Resarcimiento(EN ESPECIES), No. Solicitud 56820, Contribuyente Carlos G,PAMA',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RevisonLineamientos',
+  },
 ];
 
 //AP_Amparo
@@ -665,6 +674,13 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
       case 'RNSolicitudRecursosEcono':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RevisonLineamientos':
         this.router.navigate([
           'pages/request/request-comp-doc/tasks',
           event.data.process,
