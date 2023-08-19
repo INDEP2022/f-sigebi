@@ -64,6 +64,12 @@ import { IProceedingDeliveryReception } from 'src/app/core/models/ms-proceedings
 import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ModalScanningFoilComponent } from '../modal-scanning-foil/modal-scanning-foil.component';
+
+export type IGoodAndAvailable = IGood & {
+  available: boolean;
+  selected: boolean;
+};
+
 @Component({
   selector: 'app-acts-circumstantiated-cancellation-theft',
   templateUrl: './acts-circumstantiated-cancellation-theft.component.html',
@@ -113,11 +119,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
   origin: string = '';
   origin3: string = '';
   loadingExcel: boolean = true;
+  selectedGood: IGoodAndAvailable;
   totalItems2: number = 0;
   loadDetail: number = 0;
   dictationData: IDictation;
   loading2: boolean = false;
   goods: string;
+  origin2: string = '';
   formScan: FormGroup;
   delete: boolean = false;
   dataUserLogged: any;
@@ -128,9 +136,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actaRecepttionForm: FormGroup;
   validPermisos: boolean = true;
   goodFormFormGroup: FormGroup;
+  dataTableGoods: IGoodAndAvailable[] = [];
   paramsScreen: IParamsActaC = {
     origin: '',
-    NO_EXP: '',
+    P_GEST_OK: '',
+    P_NO_TRAMITE: '',
   };
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
@@ -145,7 +155,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   actaGoodForm: FormGroup;
   formTag: FormGroup;
   actaReception: IProceduremanagement;
-  gTramite: IProceduremanagement[] = [];
+  gTramite: IProceduremanagement;
   statusCanc: string = '';
   expedient: IExpedient;
   validateEx: boolean = true;
@@ -194,7 +204,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   folioBoool: boolean = false;
   authorityNumber: any;
   Exportdate: boolean = false;
-
+  dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
+  dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   constructor(
     private fb: FormBuilder,
     private fileBrowserService: FileBrowserService,
@@ -417,11 +428,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLogged = token;
-    // this.anotherSearchAppointment();
+    this.gestionTramite(this.paramsScreen.P_NO_TRAMITE);
+    this.initFormPostGetUserData();
     this.actaReception = this.actasDefault;
     this.goodForm();
     this.actaForm();
     this.formFolio();
+
     this.dateElaboration = this.datePipe.transform(this.time, 'dd/MM/yyyy');
 
     // const claveActa = "RFP/D/AEROBANOBRAS/CCB/TIJ/0066/98/02"; // Año 2019, Mes Febrero
@@ -778,14 +791,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       this.getExpedient(next.id);
     });
   }
-  goStatus() {
-    this.router.navigate(['/pages/administrative-processes/derivation-goods'], {
-      queryParams: {
-        origin: this.screenKey,
-        // PAR_FOLIO: this.folio,
-      },
-    });
-  }
+
   actasDefault: any = null;
   searchActas(actas?: string) {
     actas = this.cveActa;
@@ -907,18 +913,14 @@ export class ActsCircumstantiatedCancellationTheftComponent
         });
     });
   }
-  gestionTramite() {
+  gestionTramite(tramite: string) {
     this.bienesLoading = false;
-    this.filterParams
-      .getValue()
-      .addFilter('expedient', this.fileNumber, SearchFilter.EQ);
-    this.procedureManagementService.getAll(this.params.getValue()).subscribe({
+    this.procedureManagementService.getById(tramite).subscribe({
       next: data => {
-        this.gTramite = data.data;
-        console.log(this.bienes);
-        this.dataTableGood.load(this.bienes);
-        this.dataTableGood.refresh();
-        this.totalItems = data.count;
+        this.gTramite = data;
+        console.log(this.gTramite);
+        this.fileNumber = this.gTramite.expedient;
+        this.getGoodsByStatus(this.fileNumber);
       },
       error: () => {
         this.bienesLoading = false;
@@ -1124,6 +1126,26 @@ export class ActsCircumstantiatedCancellationTheftComponent
     // }
   }
 
+  getScreenStatus(good: any) {
+    let obj = {
+      estatus: good.status,
+      vc_pantalla: 'FACTCIRCUNR_0001',
+    };
+
+    // console.log('re', obj);
+    return new Promise((resolve, reject) => {
+      this.screenStatusService.getAllFiltro_(obj).subscribe({
+        next: (resp: any) => {
+          console.log('Status', resp);
+          resolve(resp.data[0].statusFinal);
+        },
+        error: (error: any) => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
   async deleteDetailProcee(params: any) {
     return new Promise((resolve, reject) => {
       this.detailProceeDelRecService.deleteDetailProcee(params).subscribe({
@@ -1151,7 +1173,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   async getStatusGoodService(status: any) {
     this.statusGoodService.getById(status).subscribe({
       next: async (resp: any) => {
-        console.log('resp.data', resp);
+        console.log('datapruebaJess', resp);
         this.statusGood_ = resp.description;
         // this.statusGoodForm.get('statusGood').setValue(resp.description)
       },
@@ -2173,9 +2195,81 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // })
     );
   }
+
+  changeSelection(event: any, id: number) {
+    const good = this.dataTableGoodsMap.get(id);
+    if (event.target.checked) {
+      this.dataGoodsSelected.set(id, good);
+    } else {
+      this.dataGoodsSelected.delete(id);
+    }
+  }
+  goBack() {
+    this.router.navigate(['/pages/general-processes/scan-documents'], {
+      queryParams: {
+        origin: this.origin,
+        origin3: this.origin3,
+        P_GEST_OK: this.paramsScreen.P_GEST_OK,
+        P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+        folio: this.formScan.get('scanningFoli').value,
+        expedient: this.fileNumber,
+        acta: this.actaRecepttionForm.get('type').value,
+      },
+    });
+  }
+  initFormPostGetUserData() {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe((params: any) => {
+        console.log(params);
+        console.log(this.paramsScreen);
+        for (const key in this.paramsScreen) {
+          if (Object.prototype.hasOwnProperty.call(params, key)) {
+            this.paramsScreen[key as keyof typeof this.paramsScreen] =
+              params[key] ?? null;
+          }
+        }
+        this.origin = params['origin2']
+          ? params['origin2']
+          : params['origin'] ?? null;
+        this.origin3 = params['origin3'] ?? null;
+        this.paramsScreen.P_GEST_OK = params['P_GEST_OK'] ?? null;
+        this.paramsScreen.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
+        if (
+          this.origin &&
+          this.paramsScreen.P_GEST_OK != null &&
+          this.paramsScreen.P_NO_TRAMITE != null
+        ) {
+          // this.btnSearchAppointment();
+        }
+        console.log(params, this.paramsScreen);
+      });
+    if (this.paramsScreen) {
+      if (this.paramsScreen.P_GEST_OK && this.paramsScreen.P_NO_TRAMITE) {
+        this.initForm();
+      } else {
+        console.log('SIN PARAMETROS');
+        if (!this.origin) {
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
+          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
+        } else {
+          // this.alertInfo(
+          //   'info',
+          //   'Error en los paramétros',
+          //   'Los paramétros No. Oficio: ' +
+          //     this.paramsScreen.P_VALOR +
+          //     ' y el Tipo Oficio: ' +
+          //     this.paramsScreen.TIPO +
+          //     ' al iniciar la pantalla son requeridos'
+          // );
+        }
+      }
+    }
+  }
 }
 
 export interface IParamsActaC {
   origin: string;
-  NO_EXP: string;
+  P_GEST_OK: string;
+  P_NO_TRAMITE: string;
 }

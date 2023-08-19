@@ -20,5 +20,6 @@ export enum EventEndpoints {
   DetRemesa = 'application/det-consignment',
   ResumenRemesa = 'application/resumen-remesa',
   MANDXEVENTO = 'application/valid-mand-x-event',
+  ComerEventGetEvent = 'application/get-event',
   Event = 'application/get-aux-desc-event',
 }

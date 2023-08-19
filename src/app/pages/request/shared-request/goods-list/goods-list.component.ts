@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -12,10 +12,12 @@ import { SELECT_GOODS_LIST_COLUMNS } from './select-good-list-columns';
 @Component({
   selector: 'app-goods-list',
   templateUrl: './goods-list.component.html',
-  styles: [],
+  styleUrls: ['./good-list.component.scss'],
 })
 export class GoodsListComponent extends BasePage implements OnInit {
+  @ViewChild('table', { static: false }) table: any;
   @Input() requestId: number;
+  @Input() processDetonate: number | string;
   selectedGoodParams = new BehaviorSubject<ListParams>(new ListParams());
   selectedGoodTotalItems: number = 0;
   selectedGoodColumns: any[] = [];
@@ -93,6 +95,9 @@ export class GoodsListComponent extends BasePage implements OnInit {
         Promise.all(result).then(data => {
           this.selectedGoodColumns = resp.data;
           this.selectedGoodTotalItems = resp.count;
+          setTimeout(() => {
+            this.displayGrouperName();
+          }, 300);
         });
       },
     });
@@ -115,5 +120,15 @@ export class GoodsListComponent extends BasePage implements OnInit {
 
   viewFile(file: any) {
     console.log(file);
+  }
+
+  displayGrouperName() {
+    console.log(this.processDetonate);
+    if (this.processDetonate == 'RES_NUMERARIO') {
+      const columns = this.table.grid.getColumns();
+      console.log(columns);
+      const grouperName = columns.find((x: any) => x.id == 'goodGrouper');
+      grouperName.hide = true;
+    }
   }
 }
