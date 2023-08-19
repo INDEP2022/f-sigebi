@@ -25,6 +25,7 @@ import { ILot } from 'src/app/core/models/ms-lot/lot.model';
 import { ComerEventosService } from 'src/app/core/services/ms-event/comer-eventos.service';
 import { EventAppService } from 'src/app/core/services/ms-event/event-app.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GuarantyService } from 'src/app/core/services/ms-guaranty/guaranty.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { ComerEventService } from 'src/app/core/services/ms-prepareevent/comer-event.service';
@@ -36,7 +37,29 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-payment-dispersion-validation',
   templateUrl: './payment-dispersion-validation.component.html',
-  styles: [],
+  styles: [
+    `
+      button.loading:after {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        animation: spin 0.8s linear infinite;
+        margin-left: 5px;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    `,
+  ],
 })
 export class PaymentDispersionValidationComponent
   extends BasePage
@@ -116,6 +139,12 @@ export class PaymentDispersionValidationComponent
   @ViewChild('myTable2', { static: false }) table2: TheadFitlersRowComponent;
   @ViewChild('myTable3', { static: false }) table3: TheadFitlersRowComponent;
   @ViewChild('myTable4', { static: false }) table4: TheadFitlersRowComponent;
+
+  loadingBtnExcel1: boolean = false;
+  loadingBtnExcel2: boolean = false;
+  loadingBtnExcel3: boolean = false;
+  loadingBtnExcel4: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
@@ -127,7 +156,8 @@ export class PaymentDispersionValidationComponent
     private paymentService: PaymentService,
     private spentService: SpentService,
     private eventAppService: EventAppService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private guarantyService: GuarantyService
   ) {
     super();
 
@@ -649,7 +679,7 @@ export class PaymentDispersionValidationComponent
     });
   }
 
-  // -------------- EXPORTACIÓN DE EXCEL -------------- //
+  // -------------- EXPORTACIÓN DE EXCEL MUEBLES -------------- //
   async exportarExcel1(body: any) {
     return new Promise((resolve, reject) => {
       this.comerEventosService.pupExpExcel(body).subscribe({
@@ -724,7 +754,57 @@ export class PaymentDispersionValidationComponent
     this.alert('success', 'Archivo Descargado Correctamente', '');
   }
 
-  // -------------- EXPORTACIÓN DE EXCEL -------------- //
+  // -------------- EXPORTACIÓN DE EXCEL MUEBLES -------------- //
+
+  // -------------- EXPORTACIÓN DE EXCEL MUEBLES -------------- //
+  async exportarExcel1Inmueble(evento: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.pupExpExcelI(evento).subscribe({
+        next: async data => {
+          const base64 = data.base64File;
+          // const base64 = await this.decompressBase64ToString(response.data.base64File)
+          await this.downloadExcel(base64, 'Detalle_de_los_Pagos.csv');
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async exportarExcel3Inmueble(evento: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.pupExpPayModestI(evento).subscribe({
+        next: async data => {
+          const base64 = data.base64File;
+          // const base64 = await this.decompressBase64ToString(response.data.base64File)
+          await this.downloadExcel(base64, 'Pagos_s/m_estatus.csv');
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  async exportarExcel4Inmueble(body: any) {
+    return new Promise((resolve, reject) => {
+      this.comerEventosService.pupExportDetpaymentsI(body).subscribe({
+        next: async data => {
+          const base64 = data.base64File;
+          // const base64 = await this.decompressBase64ToString(response.data.base64File)
+          await this.downloadExcel(base64, 'Pagos_vs_lotes.csv');
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+  // -------------- EXPORTACIÓN DE EXCEL MUEBLES -------------- //
 
   async exportAsXLSXLotes() {
     if (!this.eventSelected) {
@@ -733,9 +813,16 @@ export class PaymentDispersionValidationComponent
     }
 
     if (this.layout == 'M') {
+      this.loadingBtnExcel1 = true;
       const lots: any = await this.getLotsPayment(this.eventSelected.id);
       if (!lots) {
-        this.alert('error', 'Ocurrió un Error', '');
+        this.alert(
+          'error',
+          'Ocurrió un Error al Consultar los Pagos del Evento',
+          ''
+        );
+        this.loadingBtnExcel1 = false;
+        return;
       } else {
         if (lots.lotes == 0) {
           this.alert(
@@ -743,6 +830,8 @@ export class PaymentDispersionValidationComponent
             `No se han Procesado Pagos en el Evento: ${this.eventSelected.id}.`,
             ''
           );
+          this.loadingBtnExcel1 = false;
+          return;
         } else if (lots.lotes > 0) {
           this.alert(
             'success',
@@ -754,14 +843,70 @@ export class PaymentDispersionValidationComponent
             pEventKey: this.eventSelected.id,
             pDirection: this.layout,
           };
-          await this.exportarExcel1(obj);
+          const resp1 = await this.exportarExcel1(obj);
+          if (!resp1) {
+            this.loadingBtnExcel1 = false;
+            return;
+          } else {
+            this.loadingBtnExcel1 = false;
+            return;
+          }
         }
       }
     } else if (this.layout == 'I') {
-    }
-    // } else if (this.layout == "I") {
+      this.loadingBtnExcel1 = true;
+      const lotsPayment: any = await this.getLotsPaymentInmueble(
+        this.eventSelected.id
+      );
+      if (!lotsPayment) {
+        this.alert(
+          'error',
+          'Ocurrió un Error al Consultar los Pagos del Evento',
+          ''
+        );
+        this.loadingBtnExcel1 = false;
+        return;
+      } else {
+        if (lotsPayment.vLots == 0) {
+          this.alert(
+            'warning',
+            `No se han Procesado Pagos en el Evento: ${this.eventSelected.id}.`,
+            ''
+          );
+          this.loadingBtnExcel1 = false;
+          return;
+        } else if (lotsPayment.vLots > 0) {
+          this.alert(
+            'success',
+            `El Evento: ${this.eventSelected.id} Cuenta con ${lotsPayment.vPayments} Pago(s) de ${lotsPayment.vLots} Lote(s).`,
+            ''
+          );
 
-    // }
+          const resp = await this.exportarExcel1Inmueble(this.eventSelected.id);
+          if (!resp) {
+            this.loadingBtnExcel1 = false;
+            return;
+          } else {
+            this.loadingBtnExcel1 = false;
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  async getLotsPaymentInmueble(id: any) {
+    return new Promise((resolve, reject) => {
+      this.guarantyService.GetTransfereexEvent(id).subscribe({
+        next: data => {
+          console.log('data', data);
+          resolve(data.data[0]);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   async exportAsXLSXBienes() {
@@ -769,11 +914,18 @@ export class PaymentDispersionValidationComponent
       this.alert('warning', `Debe Especificar un Evento`, '');
       return;
     }
-
+    this.loadingBtnExcel2 = true;
     let obj = {
       pEventKey: this.eventSelected.id,
     };
-    await this.exportarExcel2(obj);
+    const resp = await this.exportarExcel2(obj);
+    if (!resp) {
+      this.loadingBtnExcel2 = false;
+      return;
+    } else {
+      this.loadingBtnExcel2 = false;
+      return;
+    }
   }
 
   async exportAsXLSXPagosBanco() {
@@ -783,11 +935,28 @@ export class PaymentDispersionValidationComponent
     }
 
     if (this.layout == 'M') {
+      this.loadingBtnExcel3 = true;
       let obj = {
         pEventKey: this.eventSelected.id,
       };
-      await this.exportarExcel3(obj);
-    } else {
+      const resp = await this.exportarExcel3(obj);
+      if (!resp) {
+        this.loadingBtnExcel3 = false;
+        return;
+      } else {
+        this.loadingBtnExcel3 = false;
+        return;
+      }
+    } else if (this.layout == 'I') {
+      this.loadingBtnExcel3 = true;
+      const resp = await this.exportarExcel3Inmueble(this.eventSelected.id);
+      if (!resp) {
+        this.loadingBtnExcel3 = false;
+        return;
+      } else {
+        this.loadingBtnExcel3 = false;
+        return;
+      }
     }
   }
 
@@ -797,12 +966,33 @@ export class PaymentDispersionValidationComponent
       return;
     }
     if (this.layout == 'M') {
+      this.loadingBtnExcel4 = true;
       let obj = {
         pEventKey: this.eventSelected.id,
         pType: 1,
       };
-      await this.exportarExcel4(obj);
-    } else {
+      const resp = await this.exportarExcel4(obj);
+      if (!resp) {
+        this.loadingBtnExcel4 = false;
+        return;
+      } else {
+        this.loadingBtnExcel4 = false;
+        return;
+      }
+    } else if (this.layout == 'I') {
+      this.loadingBtnExcel4 = true;
+      let obj = {
+        pEventKey: this.eventSelected.id,
+        pType: 1,
+      };
+      const resp = await this.exportarExcel4Inmueble(obj);
+      if (!resp) {
+        this.loadingBtnExcel4 = false;
+        return;
+      } else {
+        this.loadingBtnExcel4 = false;
+        return;
+      }
     }
   }
 
@@ -824,7 +1014,7 @@ export class PaymentDispersionValidationComponent
     }
     // params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
     // params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
-
+    params.sortBy = `id:ASC`;
     this.comerEventService.getAllFilter(params.getParams()).subscribe({
       next: data => {
         console.log('EVENT', data);
@@ -940,6 +1130,7 @@ export class PaymentDispersionValidationComponent
     }
 
     params2['filter.lotId'] = `$eq:${this.loteSelected.idLot}`;
+    params2['sortBy'] = `goodNumber:ASC`;
     this.comerGoodsRejectedService
       .getFindAllComerGoodXlotTotal(params2)
       .subscribe({

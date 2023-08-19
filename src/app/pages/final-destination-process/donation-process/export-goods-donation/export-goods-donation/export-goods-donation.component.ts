@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
-import { Router } from '@angular/router';
-import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
 import { IGoodsExportPost } from 'src/app/core/models/catalogs/goods.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
-import { LocalDataSource } from 'ng2-smart-table';
+import { ExpedientSamiService } from 'src/app/core/services/ms-expedient/expedient-sami.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DetailProceeDelRecService } from '../../../../../core/services/ms-proceedings/detail-proceedings-delivery-reception.service';
+import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
 
 @Component({
   selector: 'app-export-goods-donation',
@@ -25,15 +25,14 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
     private router: Router,
     private expedientSamiService: ExpedientSamiService,
     private delegationService: DelegationService,
-    private detailProceeDelRecService: DetailProceeDelRecService,
-
+    private detailProceeDelRecService: DetailProceeDelRecService
   ) {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS_EXPORT_GOODS;
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   settingsChange($event: any): void {
     this.settings = $event;
@@ -119,8 +118,8 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.alertQuestion(
         'info',
         'Se recuperarán ' +
-        response.data.length +
-        ' registros ¿Deseas continuar? ',
+          response.data.length +
+          ' registros ¿Deseas continuar? ',
         '',
         'Si',
         'No'
@@ -136,13 +135,7 @@ export class ExportGoodsDonationComponent extends BasePage implements OnInit {
       this.mapearDatos(response);
     }
   }
-
 }
-
-
-
-
-
 
 // const EXAMPLE_DATA = [
 //   {
