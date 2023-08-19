@@ -203,16 +203,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
   folioBoool: boolean = false;
   authorityNumber: any;
   Exportdate: boolean = false;
-<<<<<<< HEAD
 
   contador: number = 0;
   vTotalB: string = '';
 
 
-=======
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
   constructor(
     private fb: FormBuilder,
     private fileBrowserService: FileBrowserService,
@@ -1254,14 +1251,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         ''
       );
       return;
-<<<<<<< HEAD
     }
     else {
       console.log("this.actasDefault ", this.actasDefault);
-=======
-    } else {
-      console.log('this.actasDefault ', this.actasDefault);
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
 
       if (this.actasDefault == null) {
         this.alert(
@@ -1330,11 +1322,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         );
         return;
       } else {
-<<<<<<< HEAD
         console.log("DataRecepcion", this.dataRecepcion);
-=======
-        console.log('DataRecepcion', this.dataRecepcion);
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
 
         if (this.dataRecepcion.length > 0) {
           this.dataRecepcion.forEach((good: any) => {
@@ -1511,15 +1499,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
-<<<<<<< HEAD
       console.log('AUTORITHY --', this.authorityNumber)
       this.actaRecepttionForm
         .get('claveTrans')
         .setValue(this.authorityNumber);
-=======
-      console.log('AUTORITHY --', this.authorityNumber);
-      this.actaRecepttionForm.get('claveTrans').setValue(this.authorityNumber);
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
 
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
@@ -1686,10 +1669,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
 
   viewPictures(event: any) {
-<<<<<<< HEAD
-
-=======
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
     let foliouniversal = this.formScan.get('scanningFoli').value;
     console.log('FOLIO PARA IMA -->', foliouniversal);
     if (foliouniversal == null) {
@@ -1901,18 +1880,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
         switchMap(_document => {
           this.dataRecepcion.universalFolio =
             this.formScan.get('scanningFoli').value;
-<<<<<<< HEAD
-          this.showMessageDigitalization();    // se llama el reporte 
-
-          console.log('this.actasDefault.universalFolio -->>', this.dataRecepcion.universalFolio);
-=======
           this.showMessageDigitalization(); // se llama el reporte
 
           console.log(
             'this.actasDefault.universalFolio -->>',
             this.dataRecepcion.universalFolio
           );
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
           return Observable.create(() => {
             _document;
           });
@@ -2001,6 +1974,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
                 acta: this.actaRecepttionForm.get('type').value,
+                origin3: this.origin3,
+                P_GEST_OK: this.paramsScreen.P_GEST_OK,
+                P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
                 //...this.paramsScreen,
               },
             });
@@ -2025,14 +2001,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (params.PN_FOLIO) {
       const msg = setTimeout(() => {
         this.jasperService
-          .fetchReport('RGERGENSOLICDIGIT', params)
+          //.fetchReport('RGERGENSOLICDIGIT', params)  No existe reporte
+          .fetchReportBlank('blank')
           .pipe(
             tap(response => {
-              /*  this.alert(
-                  'success',
-                  'Generado correctamente',
-                  'Generado correctamente con folio: ' + this.folioScan
-                );*/
+              this.alert(
+                'success',
+                'Generado Correctamente',
+                'Folio de Escaneo: ' + this.formScan.get('scanningFoli').value
+              );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
               let config = {
@@ -2124,10 +2101,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     }
   }
   async createScannerFoil() {
-<<<<<<< HEAD
-
-=======
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
     // validación
     let foliouniversal = this.formScan.get('scanningFoli').value;
     if (foliouniversal != null) {
@@ -2248,7 +2221,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     );
   }
 
-<<<<<<< HEAD
   ValidGoods(): void {
 
     if (this.bienes.length === 0) {
@@ -2284,7 +2256,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
   }
 
-=======
   changeSelection(event: any, id: number) {
     const good = this.dataTableGoodsMap.get(id);
     if (event.target.checked) {
@@ -2300,6 +2271,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         origin3: this.origin3,
         P_GEST_OK: this.paramsScreen.P_GEST_OK,
         P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
+        folio: this.formScan.get('scanningFoli').value,
       },
     });
   }
@@ -2352,7 +2324,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       }
     }
   }
->>>>>>> 33e0a62d3bf6e5574d8dc9f1dd738394de427157
 }
 
 export interface IParamsActaC {
