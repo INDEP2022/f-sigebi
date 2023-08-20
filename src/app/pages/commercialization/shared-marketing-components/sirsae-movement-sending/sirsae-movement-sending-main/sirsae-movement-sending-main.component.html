@@ -59,7 +59,7 @@
                 [ngClass]="{ loading: loadingBtn }"
                 [disabled]="loading || loadingBtn || !eventSelected"
                 type="button"
-                class="btn btn-primary btn-sm active mr-3"
+                class="btn btn-primary btn-block btn-sm active mr-3"
                 tooltip="Enviar a SIRSAE"
                 containerClass="tooltip-style"
                 (click)="enviarSIRSAE()">
@@ -68,8 +68,16 @@
             </div>
             <div *ngIf="layout == 'I'" class="col-sm-3 col-md-3 col-xl-3">
               <button
-                [disabled]="loading || loadingBtn || !eventSelected"
-                (click)="obtenerOI()"
+                [ngClass]="{ loading: loadingBtnOII }"
+                [disabled]="
+                  loading ||
+                  loadingBtn ||
+                  !eventSelected ||
+                  loadingBtnOII ||
+                  loadingBtnOIICliente ||
+                  loadingBtnSendIn
+                "
+                (click)="obtenerOIInmueble()"
                 class="w-100 btn btn-sm btn-block btn-info active">
                 Obtener OI
               </button>
@@ -112,8 +120,15 @@
             <div class="col-sm-3 col-md-3 col-xl-3 mt-2"></div>
             <div class="col-sm-3 col-md-3 col-xl-3 mt-2">
               <button
-                [ngClass]="{ loading: loadingBtn }"
-                [disabled]="loading || loadingBtn || !eventSelected"
+                [ngClass]="{ loading: loadingBtnSendIn }"
+                [disabled]="
+                  loading ||
+                  loadingBtn ||
+                  !eventSelected ||
+                  loadingBtnOII ||
+                  loadingBtnOIICliente ||
+                  loadingBtnSendIn
+                "
                 *ngIf="layout == 'I'"
                 type="button"
                 class="btn btn-primary btn-block btn-sm active mr-3"
@@ -121,7 +136,7 @@
                 containerClass="tooltip-style"
                 (click)="enviarSIRSAE()">
                 Enviar x Lote y/o Evento
-                <i *ngIf="!loadingBtn" class="bx bx-send"></i>
+                <i *ngIf="!loadingBtnSendIn" class="bx bx-send"></i>
               </button>
             </div>
           </div>
@@ -150,7 +165,14 @@
                 <div class="col-sm-2 col-md-2 col-xl-2 mt-2 mr-2">
                   <button
                     *ngIf="layout == 'I'"
-                    [disabled]="!eventSelectedInmueble || loading || loadingBtn"
+                    [disabled]="
+                      !eventSelectedInmueble ||
+                      loading ||
+                      loadingBtn ||
+                      loadingBtnOII ||
+                      loadingBtnOIICliente ||
+                      loadingBtnSendIn
+                    "
                     (click)="searchInmueble()"
                     class="btn btn-sm btn-block btn-primary active">
                     Buscar <i class="bx bx-search-alt bx-sm float-icon"></i>
@@ -192,7 +214,14 @@
             <div class="d-flex flex-row-reverse my-3">
               <div class="mb-2 col-2">
                 <button
-                  [disabled]="loading || loadingBtn || totalItems == 0"
+                  [disabled]="
+                    loading ||
+                    loadingBtn ||
+                    totalItems == 0 ||
+                    loadingBtnOII ||
+                    loadingBtnOIICliente ||
+                    loadingBtnSendIn
+                  "
                   (click)="allNo()"
                   type="button"
                   tooltip="Cambiar Enviar Sirsae a NO"
@@ -204,7 +233,14 @@
               </div>
               <div class="mb-2 mr-2 col-2">
                 <button
-                  [disabled]="loading || loadingBtn || totalItems == 0"
+                  [disabled]="
+                    loading ||
+                    loadingBtn ||
+                    totalItems == 0 ||
+                    loadingBtnOII ||
+                    loadingBtnOIICliente ||
+                    loadingBtnSendIn
+                  "
                   (click)="allYes()"
                   type="button"
                   tooltip="Cambiar Enviar Sirsae a SI"
@@ -217,7 +253,15 @@
               <div class="col-sm-2 col-md-2 col-xl-2">
                 <button
                   *ngIf="layout == 'I'"
-                  [disabled]="loading || loadingBtn || !eventSelectedInmueble"
+                  [ngClass]="{ loading: loadingBtnOIICliente }"
+                  [disabled]="
+                    loading ||
+                    loadingBtn ||
+                    !eventSelectedInmueble ||
+                    loadingBtnOII ||
+                    loadingBtnOIICliente ||
+                    loadingBtnSendIn
+                  "
                   (click)="obtenerOI()"
                   class="w-100 btn btn-sm btn-block btn-info active">
                   Obtener OI
@@ -227,9 +271,16 @@
                 <button
                   *ngIf="layout == 'I'"
                   [ngClass]="{ loading: loadingBtn }"
-                  [disabled]="loading || loadingBtn || !eventSelectedInmueble"
+                  [disabled]="
+                    loading ||
+                    loadingBtn ||
+                    !eventSelectedInmueble ||
+                    loadingBtnOII ||
+                    loadingBtnOIICliente ||
+                    loadingBtnSendIn
+                  "
                   type="button"
-                  class="btn btn-primary btn-sm active mr-3"
+                  class="btn btn-primary btn-sm active btn-block"
                   tooltip="Enviar a SIRSAE"
                   containerClass="tooltip-style"
                   (click)="enviarSIRSAExCliente()">

@@ -14,4 +14,5 @@ export enum PrepareEventEndpoints {
   SalePrices = 'util-comer-v1/priceVta',
   getFindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
   FindAllComerGoodXlotTotal = 'comer-good-xlot/findAllComerGoodXlotTotal',
+  ResumenEvento = 'application/eventResume',
 }

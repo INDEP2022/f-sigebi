@@ -80,8 +80,6 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
   cveActa: string = null;
   acta: string | number = null;
   tipoConv: number;
-  pgestOk: string = null;
-  pnoTramite: string = null;
   paramsDepositaryAppointment: any = {
     P_NB: null,
     P_FOLIO: null,
@@ -110,8 +108,6 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
         this.originFlyer = params['volante'] ?? '';
         this.origin = params['origin'] ?? null;
         this.requestOrigin = params['requestOrigin'] ?? null;
-        this.pgestOk = params['P_GEST_OK'] ?? null;
-        this.pnoTramite = params['P_NO_TRAMITE'] ?? null;
         //mantenimiento amparo
         this.expedientNumber = params['expedientNumber'] ?? null;
         this.wheelNumber = params['wheelNumber'] ?? null;
@@ -655,8 +651,8 @@ export class DocumentsScanComponent extends BasePage implements OnInit {
             folioScan: this.originFolio,
             expedient: this.expedient,
             acta: this.acta,
-            P_GEST_OK: this.pgestOk,
-            P_NO_TRAMITE: this.pnoTramite,
+            P_NO_TRAMITE: this.P_NO_TRAMITE,
+            P_GEST_OK: this.P_GEST_OK,
           },
         }
       );

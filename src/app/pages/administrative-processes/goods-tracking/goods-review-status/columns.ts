@@ -5,6 +5,10 @@ export const COLUMNS = {
     title: 'No.Bien',
     sort: false,
   },
+  descriptionGood: {
+    title: 'Descripción del Bien',
+    sort: false,
+  },
   motive1: {
     title: 'Motivo 1',
     sort: false,
@@ -262,9 +266,5 @@ export const COLUMNS = {
         // this.miFuncion();
       });
     },
-  },
-  descriptionGood: {
-    title: 'Descripción del Bien',
-    sort: false,
   },
 };

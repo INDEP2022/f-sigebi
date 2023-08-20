@@ -27,6 +27,14 @@ export class MsInvoiceService extends HttpService {
     return this.post(ENDPOINT_INVOICE.GetGegraficaFacturas, body, params);
   }
 
+  getGetGegraficaDetailExcel(body: any) {
+    return this.post(ENDPOINT_INVOICE.DetailGetGeograficaExcel, body);
+  }
+
+  getDetailGetGegrafica(body: any, params?: ListParams) {
+    return this.post(ENDPOINT_INVOICE.DetailGetGegraficaFacturas, body, params);
+  }
+
   VALIDA_PAGOSREF_OBT_PARAMETROS(id: any) {
     // VALIDA_PAGOSREF.OBT_PARAMETROS
     return this.get(`ctrl-invoice/obt-parameters/${id}`);

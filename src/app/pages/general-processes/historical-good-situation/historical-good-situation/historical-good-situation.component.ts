@@ -219,13 +219,9 @@ export class HistoricalGoodSituationComponent
       catchError(error => {
         this.form.reset();
         if (error.status < 500) {
-          this.alert('error', 'Error', 'El bien no existe');
+          this.onLoadToast('info', 'El Bien no Existe', '');
         } else {
-          this.onLoadToast(
-            'error',
-            'Error',
-            'Ocurrió un error al obtener el bien'
-          );
+          this.onLoadToast('info', 'El Bien no Existe', '');
         }
         return throwError(() => error);
       }),

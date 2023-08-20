@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -9,7 +9,6 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { DocumentsViewerByFolioComponent } from 'src/app/@standalone/modals/documents-viewer-by-folio/documents-viewer-by-folio.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -51,7 +50,10 @@ import { COLUMNS } from './columns';
 })
 export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   response: boolean = false;
+  selectForm: FormGroup;
   actForm: FormGroup;
+  @Input() maxLength: number = 10;
+  @Input() selectBar: string = 'selectBar';
   boolScan: boolean = true;
   formTable1: FormGroup;
   folioScan: number;
@@ -72,7 +74,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   params5 = new BehaviorSubject<ListParams>(new ListParams());
   documentForm: FormGroup;
   document: any;
-
+  expedient2: any = null;
   bsValueFromMonth: Date = new Date();
   minModeFromMonth: BsDatepickerViewMode = 'month';
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
@@ -92,6 +94,9 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
   proceedingDev: any;
   crime: any;
 
+  get selectForma() {
+    return this.selectForm.get(this.selectBar);
+  }
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -120,6 +125,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     private notificationService: NotificationService
   ) {
     super();
+
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS;
@@ -129,6 +135,9 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.folioScan2 = params['folio'] ? Number(params['folio']) : null;
+        this.expedient2 = params['expedient']
+          ? Number(params['expedient'])
+          : null;
       });
     /* this.settings.columns = IMPLEMENTATION_COLUMNS;
     this.settings.rowClassFunction = (row: { data: { estatus: any } }) =>
@@ -147,6 +156,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.initialize();
     this.startCalendars();
     this.data
       .onChanged()
@@ -179,13 +189,13 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
             }
           });
           this.params = this.pageFilter(this.params);
-          this.getGood();
+          // this.getGood(this.expedient2);
         }
       });
 
-    this.params
+    /*  this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getGood());
+      .subscribe(() => this.getGood());*/
     const noTransfer = 1;
     const type = 'P';
     this.getCveTransferent(noTransfer, type);
@@ -271,6 +281,9 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       detail: [null, []],
       crime: [null, []],
     });
+    this.selectForm = this.fb.group({
+      selectBar: [this.expedient2, [Validators.maxLength(1000000)]],
+    });
   }
 
   settingsChange(event: any, op: number) {
@@ -294,11 +307,23 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     );
   }
 
-  search(term: string | number) {
-    this.expedientSearch = term;
+  initialize() {
+    console.log(this.folioScan2);
+    if (this.folioScan2) {
+      console.log('ioooooooooo');
+      ///this.expedient2 = 403822;
+      //this.selectForm.value.selectBar = this.expedient2;
+      this.selectForm.controls['selectBar'].setValue(this.expedient2);
+      console.log(this.selectForm);
+      this.search();
+    }
+  }
+
+  search() {
+    this.expedientSearch = this.selectForm.value.selectBar;
     console.log(this.expedientSearch);
     //this.response = !this.response;
-    this.getExpedient(term);
+    this.getExpedient(this.selectForm.value.selectBar);
     // this.actForm.disable();
     //this.formTable1.disable();
   }
@@ -349,12 +374,14 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     keyTypeDocument: ['DEVOL', [Validators.required]],
                     natureDocument: ['ORIGINAL'],
                     descriptionDocument: ['ACTA'],
-                    significantDate: ['2023'],
+                    significantDate: [
+                      `${new Date().getMonth()}/${new Date().getFullYear()}`,
+                    ],
                     scanStatus: ['SOLICITADO'],
                     userRequestsScan: [
                       this.authService.decodeToken().preferred_username,
                     ],
-                    dateRegistrationScan: ['2023'],
+                    dateRegistrationScan: [new Date()],
                     numberDelegationRequested: [
                       this.proceedingDev[0].delegationNumber.id,
                     ],
@@ -367,7 +394,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                   });
                   console.log(this.documentForm);
                   this.document = this.documentForm.value;
-                  console.log(this.document);
+                  console.log(JSON.stringify(this.document));
                   this.documentsService.create(this.document).subscribe({
                     next: data => {
                       console.log(data);
@@ -433,10 +460,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
           this.expedient[0].expedientType
         );
         console.log(response.data);
-        this.response = !this.response;
-        this.getCrime(this.formTable1.controls['crimeKey'].value);
         this.getProceedingsDevolution(this.formTable1.controls['id'].value);
-        this.getGood(this.formTable1.controls['id'].value);
       },
       error: err => {
         this.alert(
@@ -508,10 +532,18 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
             this.proceedingDev[0].proceedingStatus
           );
           console.log('aquiiiiiiiiiiiiiii', this.proceedingDev[0]);
+          this.response = !this.response;
           this.getDetailProcedings(this.proceedingDev[0].id);
+          this.getCrime(this.formTable1.controls['crimeKey'].value);
+          this.getGood(this.formTable1.controls['id'].value);
         },
         error: err => {
           console.log('ups');
+          this.alert(
+            'warning',
+            '',
+            'No Se Ha Encontrado Acta de Devolucion Para Este Expediente'
+          );
         },
       });
   }
@@ -565,7 +597,16 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.bsModalRef.content.closeBtnName = 'Close';
   }
 
-  openScannerPage() {
+  openScannerPage(type: string) {
+    let message = '';
+    if (type == 'foto') {
+      message =
+        'Se abrirá la Pantalla de Escaneo Para el Folio de Escaneo del Dictamen. ¿Deseas continuar?';
+    } else {
+      message =
+        'Se abrirá la Pantalla Para Selecconar las Fotos del Dictamen. ¿Deseas continuar?';
+    }
+
     this.boolScan = false;
     if (
       (this.proceedingDev[0].proceedingStatus != 'CERADA' &&
@@ -577,7 +618,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         this.alertQuestion(
           'info',
           '',
-          'Se abrirá la pantalla de escaneo para el folio de Escaneo del Dictamen. ¿Deseas continuar?',
+          `${message}`,
           'Aceptar',
           'Cancelar'
         ).then(res => {
@@ -587,6 +628,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
               queryParams: {
                 origin: 'FACTREFACTAPOSTER',
                 folio: this.actForm.value.folioScan,
+                expedient: this.selectForm.value.selectBar,
               },
             });
           }
@@ -618,8 +660,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
+
         this.data.load(response.data);
-        this.totalItems = response.count || 0;
         this.data.refresh();
         this.totalItems = response.count;
         //this.params.value.page = 1;
@@ -637,6 +679,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   getDetailProcedings(expId: string | number) {
     this.loading = true;
+    console.log(expId);
     if (expId) {
       //this.params.getValue()['numGoodProceedingsId'] = `$eq:650`;
       this.params.getValue()['numGoodProceedingsId'] = `$eq:${expId}`;
@@ -875,89 +918,6 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     return vret;
   }
 
-  viewPictures(event: any) {
-    if (!this.noBienReadOnly) {
-      this.alert(
-        'warning',
-        'Se Requiere de una Búsqueda de Bien Primero para Poder ver está Opción',
-        ''
-      );
-      return;
-    }
-    if (this._saveDataDepositary == true) {
-      this.alert(
-        'warning',
-        'Se Requiere Guardar el Registro para Poder ver está Opción',
-        ''
-      );
-      return;
-    }
-    console.log(event);
-    if (this.depositaryAppointment.revocation == 'N') {
-      if (this.actForm.get('scanningFoli').value) {
-        ///
-        // Continuar proceso para cargar imágenes
-        this.getDocumentsByFolio(
-          Number(this.depositaryAppointment.InvoiceUniversal),
-          true
-        );
-      } else {
-        this.alertInfo(
-          'warning',
-          'No Tiene Folio de Escaneo para Visualizar',
-          ''
-        );
-      }
-    } else {
-      if (this.actForm.get('returnFoli').value) {
-        ///
-        // Continuar proceso para cargar imágenes
-        this.getDocumentsByFolio(
-          Number(this.depositaryAppointment.InvoiceReturn),
-          false
-        );
-      } else {
-        this.alertInfo(
-          'warning',
-          'No Tiene Folio de Escaneo para Visualizar',
-          ''
-        );
-      }
-    }
-  }
-
-  getDocumentsByFolio(folio: number, folioUniversal: boolean) {
-    const title = 'Folios relacionados al Volante';
-    const modalRef = this.openDocumentsModal(
-      folio,
-      folio,
-      title,
-      false,
-      folioUniversal
-    );
-    modalRef.content.selected
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(document => this.getPicturesFromFolio(document));
-  }
-  getPicturesFromFolio(document: IDocuments) {
-    console.log(document);
-    let folio = document.id;
-    // let folio = document.file.universalFolio;
-    // if (document.id != this.depositaryAppointment.){
-    //   folio = this.depositaryAppointment;
-    // }
-    if (document.associateUniversalFolio) {
-      folio = document.associateUniversalFolio;
-    }
-    const config = {
-      ...MODAL_CONFIG,
-      ignoreBackdropClick: false,
-      initialState: {
-        folio,
-      },
-    };
-    this.modalService.show(DocumentsViewerByFolioComponent, config);
-  }
   openDocumentsModal(
     flyerNum: string | number,
     folioUniversal: number,
