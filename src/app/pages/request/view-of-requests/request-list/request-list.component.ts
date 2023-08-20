@@ -248,7 +248,7 @@ var usuario: IRequestList[] = [
     numTask: 3405,
     noInstance: 820170,
     created: 'tester_nsbxt',
-    process: 'BSRegistroSolicitudes',
+    process: 'register-request',
   },
   {
     title:
@@ -330,7 +330,25 @@ var usuario: IRequestList[] = [
     numTask: 56820,
     noInstance: 820170,
     created: 'tester_nsbxt',
-    process: 'RNRegistroDocumenComple',
+    process: 'register-request',
+  },
+  {
+    title:
+      'Solicitar Recursos Económicos, No. Solicitud 56820, Contribuyente Carlos G,PAMA',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RNSolicitudRecursosEcono',
+  },
+  {
+    title:
+      'Revición de Liniamiento Resarcimiento(EN ESPECIES), No. Solicitud 56820, Contribuyente Carlos G,PAMA',
+    noRequest: 56820,
+    numTask: 56820,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RevisonLineamientos',
   },
 ];
 
@@ -574,7 +592,7 @@ export class RequestListComponent extends BasePage implements OnInit {
         //En el caso que sea recibir la notificación del contibuyente resarcimiento (especie)
         this.router.navigate(['pages/request/notification-request-delivery/']);
         break;
-      case 'BSRegistroSolicitudes':
+      case 'register-request':
         //Doc. Complementaria Gestionar Bienes Similares
         this.router.navigate([
           'pages/request/request-comp-doc/tasks',
@@ -647,7 +665,22 @@ export class RequestListComponent extends BasePage implements OnInit {
           'pages/request/generate-monitoring-sampling/verify-noncompliance',
         ]);
         break;
-      case 'RNRegistroDocumenComple':
+      //NUMERARIO DECOMISO DEVUELTO
+      case 'register-request':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RNSolicitudRecursosEcono':
+        this.router.navigate([
+          'pages/request/request-comp-doc/tasks',
+          event.data.process,
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RevisonLineamientos':
         this.router.navigate([
           'pages/request/request-comp-doc/tasks',
           event.data.process,
