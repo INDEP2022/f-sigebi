@@ -121,18 +121,12 @@ export class SchedulingDeliveriesFormComponent
     const tomorrow = addDays(new Date(), 1);
     this.schedulingDeliverieForm = this.fb.group({
       typeEvent: [null],
-      dateStartDelivery: [
-        null,
-        [Validators.required, minDate(new Date(tomorrow))],
-      ],
-      warehouse: [null],
-      dateEndDelivery: [
-        null,
-        [Validators.required, minDate(new Date(tomorrow))],
-      ],
-      transferent: [null],
+      startDate: [null, [Validators.required, minDate(new Date(tomorrow))]],
+      store: [null],
+      endDate: [null, [Validators.required, minDate(new Date(tomorrow))]],
+      transferId: [null],
       client: [null],
-      emails: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -209,6 +203,8 @@ export class SchedulingDeliveriesFormComponent
   typeEventSelect(typeEvent: any) {
     console.log('typeEvent', typeEvent);
   }
+
+  saveProgDelivery() {}
 
   addEstate(data: any) {
     /*this.goodsToProgram = Object.assign({}, this.goodsToProgramData);

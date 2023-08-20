@@ -10,7 +10,11 @@
         class="btn btn-primary btn-sm active">
         Enviar programaci&oacute;n <i class="bx bx-send"></i>
       </button>
-      <button type="button" class="btn btn btn-primary btn-sm active">
+
+      <button
+        (click)="saveProgDelivery()"
+        type="button"
+        class="btn btn btn-primary btn-sm active">
         Guardar <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
@@ -27,25 +31,25 @@
               value="nameEvent"
               (change)="typeEventSelect($event)"
               bindLabel="nameEvent"
-              label="Selecciona un tipo de evento"></ngx-select>
+              label="Tipo de Evento"></ngx-select>
           </div>
 
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('dateStartDelivery')"
-              label="Fecha inicio de entrega">
+              [control]="schedulingDeliverieForm.get('startDate')"
+              label="Fecha Inicio de Entrega">
               <input
                 class="form-control"
-                formControlName="dateStartDelivery"
+                formControlName="startDate"
                 bsDatepicker />
             </form-field>
           </div>
 
           <div class="pt-3">
-            <form-field [control]="schedulingDeliverieForm.get('transferent')">
+            <form-field [control]="schedulingDeliverieForm.get('transferId')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
-                control="transferent"
+                control="transferId"
                 [showTooltip]="true"
                 [data]="transferences"
                 value="id"
@@ -65,7 +69,7 @@
           <div class="pt-3">
             <ngx-select
               [form]="schedulingDeliverieForm"
-              control="warehouse"
+              control="store"
               [data]="warehouse"
               value="organization"
               bindLabel="name"
@@ -75,11 +79,11 @@
 
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('dateEndDelivery')"
+              [control]="schedulingDeliverieForm.get('endDate')"
               label="Fecha final de entrega">
               <input
                 class="form-control"
-                formControlName="dateEndDelivery"
+                formControlName="endDate"
                 bsDatepicker />
             </form-field>
           </div>
@@ -112,11 +116,9 @@
           </div>
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('emails')"
+              [control]="schedulingDeliverieForm.get('email')"
               label="Correos electr&oacute;nicos">
-              <textarea
-                class="form-control"
-                formControlName="emails"></textarea>
+              <textarea class="form-control" formControlName="email"></textarea>
             </form-field>
           </div>
         </div>

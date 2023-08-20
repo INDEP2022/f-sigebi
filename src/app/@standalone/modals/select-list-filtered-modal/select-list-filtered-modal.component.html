@@ -1,6 +1,7 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Seleccionar {{ title }}</h5>
+    <h5 class="modal-title" *ngIf="title">Seleccionar {{ title }}</h5>
+    <h5 class="modal-title" *ngIf="title2">{{ title2 }}</h5>
   </div>
   <div body>
     <div class="row mt-n3" *ngIf="!haveColumnFilters">
