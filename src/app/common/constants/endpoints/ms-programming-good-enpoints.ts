@@ -7,4 +7,5 @@ export enum ProgrammingGoodEndpoints {
   UpdateDescBien = 'programminggood/apps/update-good-description',
   UpdateDateProgramingReception = 'programminggood/apps/update-date-programming-reception',
   UpdateDateProgramingDelivery = 'programminggood/apps/update-date-schedule-selivery',
+  GetDeliveryGoods = 'programming-delivery-good',
 }

@@ -379,7 +379,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
           this.handleSuccess();
         },
         error: error => {
-          this.alert('error', 'Ha Ocurrido al Intentar Crear un Acta', '');
+          this.alert('error', 'El Acta no se puede crear', '');
         },
       });
   }
