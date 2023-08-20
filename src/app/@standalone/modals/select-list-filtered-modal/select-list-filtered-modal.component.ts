@@ -64,6 +64,7 @@ export class SelectListFilteredModalComponent
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
   id = new BehaviorSubject<string>('0');
   title: string = ''; // Input requerido al llamar el modal
+  title2: string;
   columnsType: any = {}; // Input requerido al llamar el modal
   service: any; // Input requerido al llamar el modal
   dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal por filterParams

@@ -13,7 +13,6 @@ import {
   tap,
   throttleTime,
 } from 'rxjs';
-import { Subscription } from 'rxjs/internal/Subscription';
 import { first, take } from 'rxjs/operators';
 import {
   FilterParams,
@@ -46,7 +45,6 @@ export class GoodsListComponent
 {
   previousSelecteds: IGood[] = [];
   pageSelecteds: number[] = [];
-  subscription: Subscription = new Subscription();
   changeSettings: number = 0;
   _changeDescription: string;
   ids: IDs[];
