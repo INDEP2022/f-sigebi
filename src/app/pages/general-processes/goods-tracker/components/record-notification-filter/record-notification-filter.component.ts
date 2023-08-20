@@ -144,8 +144,11 @@ export class RecordNotificationFilterComponent
     const _params = new FilterParams();
     _params.page = params.page;
     _params.limit = params.limit;
-    if (params.text) {
-      _params.addFilter('description', params.text, SearchFilter.ILIKE);
+    const search = params?.text ?? '';
+    if (Number(search)) {
+      _params.addFilter('id', search);
+    } else {
+      _params.addFilter('description', search, SearchFilter.ILIKE);
     }
     this.changeSubloading(true);
     this.minPubService.getAllWithFilters(_params.getParams()).subscribe({
@@ -161,6 +164,14 @@ export class RecordNotificationFilterComponent
   }
 
   getCourts(params: ListParams) {
+    const search = params?.text ?? '';
+    if (Number(search)) {
+      params['filter.id'] = search;
+    } else {
+      params['filter.description'] = '$ilike:' + search;
+    }
+    params.text = '';
+    params['search'] = '';
     this.changeSubloading(true);
     this.courtService.getAll(params).subscribe({
       next: res => {

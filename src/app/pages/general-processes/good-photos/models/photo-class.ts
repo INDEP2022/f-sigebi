@@ -19,6 +19,7 @@ export class PhotoClassComponent extends BasePage {
   @Input() typedblClickAction: number = 1;
   @ViewChild('container', { static: true })
   imgSrc: string | SafeResourceUrl = null;
+  base64: string;
   mimeType: string = null;
   loadingGif = LOADING_GIF;
   error: boolean = false;

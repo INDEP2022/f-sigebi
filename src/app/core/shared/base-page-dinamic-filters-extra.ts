@@ -9,7 +9,7 @@ import { IListResponseMessage } from '../interfaces/list-response.interface';
   template: '',
 })
 export abstract class BasePageWidhtDinamicFiltersExtra<
-  B
+  B = any
 > extends BasePageWidhtDinamicFilters {
   items: B[] = [];
   override service: ServiceGetAll<IListResponseMessage<B>>;

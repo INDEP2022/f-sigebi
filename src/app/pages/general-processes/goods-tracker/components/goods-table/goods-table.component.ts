@@ -837,7 +837,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = 'Rastreador_Bienes.xlsx';
+    link.download = 'Rastreador_Bienes.csv';
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');
