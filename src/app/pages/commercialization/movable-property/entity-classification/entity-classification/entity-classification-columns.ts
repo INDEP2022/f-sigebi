@@ -3,12 +3,13 @@ import { SelectIdComponent } from 'src/app/shared/render-components/entity-class
 
 export const ENTITY_CLASS_COLUMNS = {
   id: {
-    title: 'ID',
+    title: 'Id',
     sort: false,
     editor: {
       type: 'custom',
       component: SelectIdComponent,
     },
+    width: '20%',
   },
   description: {
     title: 'Descripción',

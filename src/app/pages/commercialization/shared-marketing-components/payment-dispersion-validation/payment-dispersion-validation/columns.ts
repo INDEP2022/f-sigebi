@@ -50,22 +50,22 @@ export const ALLOTMENT_COLUMNS = {
     sort: false,
   },
   camp2: {
-    title: '',
+    title: 'Campo 2',
     type: 'string',
     sort: false,
   },
   camp3: {
-    title: '',
+    title: 'Campo 3',
     type: 'string',
     sort: false,
   },
   camp4: {
-    title: '',
+    title: 'Campo 4',
     type: 'string',
     sort: false,
   },
   camp5: {
-    title: '',
+    title: 'Campo 5',
     type: 'string',
     sort: false,
   },
@@ -174,7 +174,7 @@ export const RECEIVED_COLUMNS = {
       } else if (row.type == 'I') {
         return 'Interés';
       } else if (row.type == 'M') {
-        return '';
+        return 'Moratorio';
       } else if (row.type == 'N') {
         return 'Normal';
       } else {

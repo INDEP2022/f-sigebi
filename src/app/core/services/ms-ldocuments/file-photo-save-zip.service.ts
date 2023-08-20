@@ -18,7 +18,7 @@ export class FilePhotoSaveZipService extends HttpService {
     this.microservice = IDocumentEndpoints.Base;
   }
 
-  uploadFile(identificator: any, file: File, fileField: string = 'file') {
+  uploadFile(identificator: number[], file: File, fileField: string = 'file') {
     const filename = file.name;
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
     const formData = new FormData();

@@ -33,6 +33,11 @@ export class DetailProceeDelRecService extends HttpService {
     return this.get(route, params);
   }
 
+  putProceedingsDeliveryReception(body: any, id: number) {
+    const route = `proceedings-delivery-reception/${id}`;
+    return this.put(route, body);
+  }
+
   PADelActaEntrega(actNumber: string | number) {
     return this.delete(`${ProceedingsEndpoints.PADelActaEntrega}/${actNumber}`);
   }
@@ -104,6 +109,10 @@ export class DetailProceeDelRecService extends HttpService {
 
   getProcedingbyId(id: number | string) {
     const route = `${ProceedingsEndpoints.ProeedingsDevolution}/${id}`;
+    return this.get(route);
+  }
+  getProceding(report: number | string) {
+    const route = `${ProceedingsEndpoints.proceedingGet}/${report}`;
     return this.get(route);
   }
 

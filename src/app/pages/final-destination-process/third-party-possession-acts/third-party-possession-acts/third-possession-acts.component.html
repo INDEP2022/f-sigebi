@@ -6,11 +6,30 @@
   <div body>
     <div class="row justify-content-center">
       <div class="col-12 col-sm-12 col-md-6">
-        <search-bar-simple
-          (eventEmit)="search($event)"
-          [label]="'No. Expediente'"
-          [placeholder]="''">
-        </search-bar-simple>
+        <div class="col-md-8">
+          <form [formGroup]="selectForm" class="form-material">
+            <form-field
+              [control]="selectForm.get('selectBar')"
+              label="No. Expediente">
+              <input
+                class="form-control"
+                type="number"
+                formControlName="selectBar"
+                max="1000000"
+                [value]="expedient2" />
+            </form-field>
+          </form>
+        </div>
+        <div class="col-md-4">
+          <button
+            type="button"
+            [disabled]="!selectForm.value.selectBar || selectForm.invalid"
+            class="btn btn-primary active btn-sm"
+            (click)="search()">
+            Buscar
+            <i class="bx bx-search-alt bx-sm float-icon"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -459,22 +478,27 @@
                 <button
                   class="btn btn-primary active btn-sm mr-3"
                   (click)="openModalApplicant('nuevo')">
-                  Guardar Folio
+                  <i
+                    _ngcontent-nsy-c242=""
+                    aria-hidden="true"
+                    class="fa fa-save"></i>
                 </button>
                 <button
-                  class="btn btn-info active btn-sm mr-3"
-                  (click)="openScannerPage()">
-                  Escanear <i class="bx bx-file bx-sm float-icon"></i>
+                  tooltip="Generar Folio de Escaneo y Solicitud"
+                  containerClass="tooltip-style"
+                  class="btn btn-secondary btn-sm active m-1"
+                  (click)="openScannerPage('escanear')">
+                  <i class="bx bxs-printer"></i>
                 </button>
-                <button
-                  class="btn btn-info active btn-sm mr-3"
-                  (click)="validationAct()">
+                <!-- <button class="btn btn-info active btn-sm mr-3" (click)="validationAct()">
                   Validacion <i class="bx bx-file bx-sm float-icon"></i>
-                </button>
+                </button>-->
                 <button
-                  class="btn btn-info active btn-sm"
-                  (click)="viewPictures($event)">
-                  Folio <i class="bx bx-file bx-sm float-icon"></i>
+                  tooltip="Subir las imagenes del folio "
+                  containerClass="tooltip-style"
+                  class="btn btn-secondary btn-sm active m-1"
+                  (click)="openScannerPage('foto')">
+                  <i class="bx bxs-file-find"></i>
                 </button>
               </div>
             </div>
@@ -542,7 +566,7 @@
             </div>
           </div>
 
-          <div class="row mt-5">
+          <!-- <div class="row mt-5">
             <app-divider></app-divider>
           </div>
           <div class="d-flex justify-content-end mt-5">
@@ -561,7 +585,7 @@
                 </app-pagination>
               </div>
             </div>
-          </div>
+          </div>-->
         </form>
       </div>
     </div>

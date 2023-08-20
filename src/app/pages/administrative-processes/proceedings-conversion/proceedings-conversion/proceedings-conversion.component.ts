@@ -1671,13 +1671,13 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
             if (good.di_acta != null) {
               this.alert(
                 'warning',
-                `Ese Bien ya se Encuentra en el Acta ${good.di_acta}`,
+                `Ese Bien ya se encuentra en el Acta ${good.di_acta}`,
                 'Debe Capturar un Acta.'
               );
             } else if (good.di_disponible == 'N') {
               this.onLoadToast(
                 'warning',
-                `El Bien ${good.id} tiene un Estatus Inválido para ser Asignado a algún Acta`
+                `El Bien ${good.id} tiene un estatus inválido para ser asignado a algún acta`
               );
               return;
             } else {
