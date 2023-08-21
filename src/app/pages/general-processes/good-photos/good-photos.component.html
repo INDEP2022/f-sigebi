@@ -13,17 +13,27 @@
     </div>
   </div>
   <div body>
-    <div class="mb-4">
-      <button
-        class="btn btn-warning btn-sm active"
-        type="button"
-        (click)="cleanFilters()">
-        Limpiar
-        <i class="fa fa-eraser"></i>
-      </button>
+    <div class="row">
+      <div class="mb-4 col-6">
+        <button
+          *ngIf="showTable"
+          class="btn btn-warning btn-sm active"
+          type="button"
+          (click)="cleanFilters()">
+          Limpiar
+          <i class="fa fa-eraser"></i>
+        </button>
+      </div>
+      <div class="col-6 text-end mb-4" *ngIf="origin">
+        <button class="btn btn-primary active btn-sm m-2" (click)="goBack()">
+          Regresar
+          <i class="fas fa-arrow-circle-left"></i>
+        </button>
+      </div>
     </div>
 
     <app-table-goods
+      *ngIf="showTable"
       [selectedGoodsByQueryParams]="selectedGoodsByQueryParams"
       [reset]="resetTable"></app-table-goods>
     <app-photos-by-good></app-photos-by-good>

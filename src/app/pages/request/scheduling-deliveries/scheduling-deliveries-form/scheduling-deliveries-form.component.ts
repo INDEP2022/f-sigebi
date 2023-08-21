@@ -164,7 +164,7 @@ export class SchedulingDeliveriesFormComponent
     //params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe({
       next: data => {
-        console.log('data', data);
+        //  console.log('data', data);
         this.warehouse = new DefaultSelect(data.data, data.count);
       },
       error: error => {
