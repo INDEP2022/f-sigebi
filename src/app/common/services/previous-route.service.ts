@@ -12,7 +12,7 @@ export class PreviousRouteService {
       if (event instanceof NavigationEnd) {
         this.history.push(event.urlAfterRedirects);
         let finalUrl =
-          this.router.getCurrentNavigation().previousNavigation.finalUrl ??
+          this.router.getCurrentNavigation().previousNavigation?.finalUrl ??
           null;
         if (finalUrl)
           localStorage.setItem('previousRoute', finalUrl.toString());
