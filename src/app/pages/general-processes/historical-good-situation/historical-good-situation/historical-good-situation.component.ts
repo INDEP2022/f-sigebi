@@ -219,9 +219,9 @@ export class HistoricalGoodSituationComponent
       catchError(error => {
         this.form.reset();
         if (error.status < 500) {
-          this.onLoadToast('info', 'El Bien no Existe', '');
+          this.onLoadToast('warning', 'El Bien no Existe', '');
         } else {
-          this.onLoadToast('info', 'El Bien no Existe', '');
+          this.onLoadToast('warning', 'Bien no admitido en la Pantalla', '');
         }
         return throwError(() => error);
       }),
@@ -233,5 +233,13 @@ export class HistoricalGoodSituationComponent
         this.params.next(params);
       })
     );
+  }
+  cleanForm() {
+    this.form.reset();
+    this.history = [];
+    this.data.load([]);
+    this.data.refresh();
+    this.loading = false;
+    this.totalItems = 0;
   }
 }
