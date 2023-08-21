@@ -4,18 +4,7 @@
       &Aacute;ctas Circunstanciadas de Cancelaci&oacute;n de Entrega por Robo
     </h5>
   </div>
-
   <div body>
-    <div
-      class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 p-5"
-      *ngIf="loadingExpedient">
-      <div class="d-flex justify-content-center">
-        <div class="d-flex justify-content-center">
-          <div class="loader"></div>
-          <h6 class="loader-msg pt-3">Cargando... por favor espere...</h6>
-        </div>
-      </div>
-    </div>
     <div class="row">
       <div class="d-flex justify-content-end mb-2">
         <div>
@@ -108,20 +97,19 @@
           <i class="bx bx-search bx-sm float-icon"></i>
         </button>
         <button
+          type="button"
+          class="btn btn-primary active btn-sm mr-3"
+          (click)="cerrarActa()">
+          Cerrar Acta
+          <i class="fas fa-close bx-sm float-icon"></i>
+        </button>
+        <button
           (click)="cleanActa()"
           type="button"
           class="btn btn-danger active btn-sm mr-3">
           Limpiar
           <i class="fa fa-eraser" aria-hidden="true"></i>
         </button>
-        <!-- <button
-                          [disabled]="!actasDefault"
-                          type="button"
-                          class="btn btn-primary btn-sm active mr-2"
-                          (click)="savActa()">
-                          Guardar
-                          <i aria-hidden="true" class="fa fa-save"></i>
-                        </button> -->
       </div>
     </div>
     <form [formGroup]="actaRecepttionForm" class="form-material">
@@ -485,17 +473,6 @@
                     </div>
                     <div class="col-md-12 col-sm-12 col-12">
                       <div class="d-flex justify-content-center">
-                        <!-- <div class="m-3">
-                          <button
-                            [disabled]="!disabledBtnCerrar"
-                            type="button"
-                            class="btn btn-primary active btn-sm"
-                            (click)="cerrarActa()">
-                            Cerrar Acta
-                            <i class="fas fa-close bx-sm float-icon"></i>
-                          </button>
-                        </div> -->
-
                         <div class="m-3">
                           <button
                             [disabled]="!disabledBtnReplicar"
@@ -547,12 +524,9 @@
       <div class="col-4"></div>
       <div class="col-md-8 text-end">
         <button
-          [disabled]="!disabledBtnCerrar"
-          type="button"
-          class="btn btn-primary active btn-sm mr-3"
-          (click)="cerrarActa()">
-          Cerrar Acta
-          <i class="fas fa-close bx-sm float-icon"></i>
+          class="btn btn-secondary btn-sm active btn-sm mr-3"
+          (click)="ValidGoods()">
+          Valida Bienes
         </button>
         <button
           [disabled]="!Exportdate"
@@ -565,26 +539,20 @@
       </div>
     </div>
 
-    <!-- 
-    <div class="m-6">
-      <div class="col-md-12 text-end">
-      <button
-        [disabled]="!disabledBtnCerrar"
-        type="button"
-        class="btn btn-primary active btn-sm"
-        (click)="cerrarActa()">
-        Cerrar Acta
-        <i class="fas fa-close bx-sm float-icon"></i>
+    <!-- <div class="row m-3">
+      <div class="col-4"></div>
+      <div class="col-md-8 text-end">
+        <div class="col-6">
+        <button class="btn btn-secondary btn-sm active text-center text-md-right">
+          Valida Bienes
         </button>
-
-
-        <button
-          class="btn btn-sm btn-success active"
-          type="button"
-          (click)="exportToExcel()">
+        </div>
+        <div class="col-6">
+        <button [disabled]="!Exportdate" class="btn btn-sm btn-success active" type="button" (click)="exportToExcel()">
           Exportar Datos
           <i class="bx bx-download float-icon"></i>
         </button>
+        </div>
       </div>
     </div> -->
   </div>

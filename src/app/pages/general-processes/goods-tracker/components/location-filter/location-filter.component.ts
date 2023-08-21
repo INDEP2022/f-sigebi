@@ -64,8 +64,11 @@ export class LocationFilterComponent implements OnInit {
     const _params = new FilterParams();
     _params.page = params.page;
     _params.limit = params.limit;
-    if (params.text) {
-      _params.addFilter('description', params.text, SearchFilter.ILIKE);
+    const search = params.text;
+    if (Number(search)) {
+      _params.addFilter('idWarehouse', search);
+    } else {
+      _params.addFilter('description', search, SearchFilter.ILIKE);
     }
     this.warehouseService
       .getAllFilter(_params.getParams())
@@ -79,6 +82,14 @@ export class LocationFilterComponent implements OnInit {
   }
 
   getDelegations(params: ListParams) {
+    const search = params.text;
+    if (Number(search)) {
+      params['filter.id'] = search;
+    } else {
+      params['filter.description'] = '$ilike:' + search;
+    }
+    params.text = '';
+    params['search'] = '';
     this.delegationService.getAll(params).subscribe({
       next: res => (this.delegations = new DefaultSelect(res.data, res.count)),
       error: () => {
@@ -88,6 +99,14 @@ export class LocationFilterComponent implements OnInit {
   }
 
   getAutorityStates(params: ListParams) {
+    const search = params.text;
+    if (Number(search)) {
+      params['filter.id'] = search;
+    } else {
+      params['filter.descCondition'] = '$ilike:' + search;
+    }
+    params.text = '';
+    params['search'] = '';
     this.statesService.getAll(params).subscribe({
       next: res =>
         (this.autorityStates = new DefaultSelect(res.data, res.count)),
@@ -98,6 +117,14 @@ export class LocationFilterComponent implements OnInit {
   }
 
   getGoodStates(params: ListParams) {
+    const search = params.text;
+    if (Number(search)) {
+      params['filter.id'] = search;
+    } else {
+      params['filter.descCondition'] = '$ilike:' + search;
+    }
+    params.text = '';
+    params['search'] = '';
     this.statesService.getAll(params).subscribe({
       next: res => (this.goodStates = new DefaultSelect(res.data, res.count)),
       error: () => {
