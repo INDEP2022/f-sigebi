@@ -68,18 +68,6 @@ export class PageSetupComponent extends BasePage implements OnInit {
       next: () => this.getData(),
     });*/
 
-    this.activatedRoute.queryParams
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params2: any) => {
-        console.log(params2);
-        console.log(this.paramsScreen);
-        for (const key in this.paramsScreen) {
-          if (Object.prototype.hasOwnProperty.call(params2, key)) {
-            this.paramsScreen[key as keyof typeof this.paramsScreen] =
-              params2[key] ?? null;
-          }
-        }
-      });
     if (this.paramsScreen) {
       if (this.paramsScreen.PAR_MASIVO) {
         this.getData();
@@ -212,6 +200,7 @@ export class PageSetupComponent extends BasePage implements OnInit {
       ...this.params2.getValue(),
       ...this.columnFilters,
     };
+    console.log('params', params);
     this.configvtadmunService.getAllFilter(params).subscribe({
       next: response => {
         this.loading = false;
