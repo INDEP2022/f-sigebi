@@ -47,7 +47,7 @@
             <div class="form-group">
               <label class="col-lg-5 text-right">Fecha page entrega:</label>
               <span>
-                {{ programmingDetailPanel.startDate | date: 'MM/dd/yy' }}
+                {{ programmingDetailPanel.startDate | date : 'MM/dd/yy' }}
               </span>
             </div>
           </form>
@@ -58,7 +58,7 @@
             <div class="form-group">
               <label class="col-lg-4 text-right">Fecha final entrega:</label>
               <span>
-                {{ programmingDetailPanel.endDate | date: 'MM/dd/yy' }}
+                {{ programmingDetailPanel.endDate | date : 'MM/dd/yy' }}
               </span>
             </div>
 
@@ -86,28 +86,29 @@
       <h5 class="title">Ejecuci&oacute;n entrega de bienes</h5>
       <div class="form-inline justify-content-end btn-toolbar">
         <a
+          *ngIf="programmingDetailPanel.status == 'EJECUTAR_ENTREGA'"
           style="cursor: pointer"
-          (click)="certificateDelivery()"
+          (click)="certificateDelivery(1)"
           class="link-primary"
           >Constancia entregados
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
-          (click)="certificateDelivery()"
+          (click)="certificateDelivery(2)"
           style="cursor: pointer"
           class="link-primary"
           >Constancia no entregados
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
-          (click)="certificateDelivery()"
+          (click)="certificateDelivery(3)"
           style="cursor: pointer"
           class="link-primary"
           >Constancia no aceptados
           <i class="fa fa-folder-open" aria-hidden="true"></i></a
         >&nbsp;
         <a
-          (click)="certificateDelivery()"
+          (click)="certificateDelivery(4)"
           style="cursor: pointer"
           class="link-primary"
           >Constancia no retirados

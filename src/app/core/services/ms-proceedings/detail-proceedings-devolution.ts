@@ -55,7 +55,7 @@ export class DetailProceedingsDevolutionService extends HttpService {
   }
 
   updateProcedings(id: any, body: any) {
-    console.log(id, body);
+    // console.log(id, body);
     return this.put<IListResponse<any>>(`${this.endpoint}/${id}`, body);
   }
 }
