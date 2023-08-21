@@ -44,6 +44,7 @@ import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dy
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodsInvService } from 'src/app/core/services/ms-good/goodsinv.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { StoreAliasStockService } from 'src/app/core/services/ms-store/store-alias-stock.service';
@@ -246,7 +247,8 @@ export class PerformProgrammingFormComponent
     private goodProcessService: GoodProcessService,
     private statesService: StateOfRepublicService,
     private massiveGoodService: MassiveGoodService,
-    private dynamicCatalogService: DynamicCatalogService
+    private dynamicCatalogService: DynamicCatalogService,
+    private goodsinvService: GoodsInvService
   ) {
     super();
     this.settings = {
@@ -279,7 +281,6 @@ export class PerformProgrammingFormComponent
     this.getRegionalDelegationSelect(new ListParams());
     this.getTypeRelevantSelect(new ListParams());
     this.getAkaWarehouse(new ListParams());
-    this.getStates(new ListParams());
 
     this.getTransferentSelect(new ListParams());
     this.getValueSelect(new ListParams());
@@ -695,357 +696,474 @@ export class PerformProgrammingFormComponent
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
-    /*
 
-    if (municipality && !colony && !akaWarehouse && !postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.townshipKey == municipality;
-      });
+    if (
+      !goodId &&
+      !municipality &&
+      !colony &&
+      akaWarehouse &&
+      !postalCode &&
+      !state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (municipality && colony && !akaWarehouse && !postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.townshipKey == municipality && item.settlementKey == colony;
-      });
+    if (
+      !goodId &&
+      !municipality &&
+      !colony &&
+      !akaWarehouse &&
+      !postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+
+        stateKey: state,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
+    }
+    if (
+      !goodId &&
+      municipality &&
+      !colony &&
+      !akaWarehouse &&
+      !postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
+
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
+      }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        stateKey: state,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (municipality && colony && akaWarehouse && !postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.townshipKey == municipality &&
-          item.settlementKey == colony &&
-          item.aliasStore == akaWarehouse
-        );
-      });
+    if (
+      !goodId &&
+      municipality &&
+      colony &&
+      !akaWarehouse &&
+      !postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        stateKey: state,
+        locality: colony,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (municipality && colony && akaWarehouse && postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.townshipKey == municipality &&
-          item.settlementKey == colony &&
-          item.aliasStore == akaWarehouse &&
-          item.code == postalCode
-        );
-      });
+    if (
+      !goodId &&
+      municipality &&
+      colony &&
+      !akaWarehouse &&
+      postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        stateKey: state,
+        locality: colony,
+        postalCode: postalCode,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (colony && !municipality && !akaWarehouse && !postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.settlementKey == colony;
-      });
+    if (
+      !goodId &&
+      !municipality &&
+      !colony &&
+      !akaWarehouse &&
+      postalCode &&
+      !state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+
+        postalCode: postalCode,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (akaWarehouse) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.aliasWarehouse == akaWarehouse;
-      });
+    if (
+      goodId &&
+      municipality &&
+      colony &&
+      !akaWarehouse &&
+      postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        stateKey: state,
+        locality: colony,
+        postalCode: postalCode,
+        goodNumber: goodId,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (akaWarehouse && colony && !municipality && !postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse && item.settlementKey == colony
-        );
-      });
+    if (
+      goodId &&
+      municipality &&
+      colony &&
+      akaWarehouse &&
+      postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        stateKey: state,
+        locality: colony,
+        postalCode: postalCode,
+        goodNumber: goodId,
+        aliasStore: akaWarehouse,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (akaWarehouse && colony && municipality && !postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.settlementKey == colony &&
-          item.townshipKey == municipality
-        );
-      });
+    if (
+      goodId &&
+      akaWarehouse &&
+      !municipality &&
+      !colony &&
+      !postalCode &&
+      !state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        aliasStore: akaWarehouse,
+        goodNumber: goodId,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (akaWarehouse && colony && municipality && postalCode && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.settlementKey == colony &&
-          item.townshipKey == municipality &&
-          item.code == postalCode
-        );
-      });
+    if (
+      goodId &&
+      !akaWarehouse &&
+      municipality &&
+      !colony &&
+      !postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        municipality: municipality,
+        goodNumber: goodId,
+        stateKey: state,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
+    }
+    if (
+      goodId &&
+      municipality &&
+      !akaWarehouse &&
+      colony &&
+      !postalCode &&
+      state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
+
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
+      }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        goodNumber: goodId,
+        stateKey: state,
+        municipality: municipality,
+        locality: colony,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
 
-    if (postalCode && !akaWarehouse && !colony && !municipality && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.code == postalCode;
-      });
+    if (
+      goodId &&
+      !municipality &&
+      !akaWarehouse &&
+      !colony &&
+      postalCode &&
+      !state
+    ) {
+      let tranferent: number = 0;
+      let typeRelevant: number = 0;
 
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
+      if (this.transferentId) {
+        tranferent = this.transferentId;
+      } else if (this.dataProgramming.tranferId)
+        tranferent = this.dataProgramming.tranferId;
+
+      if (this.idTypeRelevant) {
+        typeRelevant = this.idTypeRelevant;
+      } else if (this.dataProgramming.typeRelevantId) {
+        typeRelevant = this.dataProgramming.typeRelevantId;
       }
+
+      const filterColumns: Object = {
+        regionalDelegation: Number(
+          this.dataProgramming.regionalDelegationNumber
+        ),
+        transferent: tranferent,
+        relevantType: typeRelevant,
+        statusGood: 'APROBADO',
+        goodNumber: goodId,
+        postalCode: postalCode,
+      };
+
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getProgGoodsSearch(filterColumns));
     }
-
-    if (postalCode && akaWarehouse && !colony && !municipality && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.aliasWarehouse == akaWarehouse && item.code == postalCode;
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-
-    if (postalCode && akaWarehouse && colony && !municipality && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.settlementKey == colony &&
-          item.code == postalCode
-        );
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-
-    if (postalCode && akaWarehouse && colony && municipality && !state) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.settlementKey == colony &&
-          item.townshipKey == municipality &&
-          item.code == postalCode
-        );
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-
-    if (state && !postalCode && !akaWarehouse && !colony && !municipality) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.stateKey == state;
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-    if (state && postalCode && !akaWarehouse && !colony && !municipality) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return item.stateKey == state && item.code == postalCode;
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-
-    if (state && postalCode && akaWarehouse && !colony && !municipality) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.stateKey == state &&
-          item.code == postalCode
-        );
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-
-    if (state && postalCode && akaWarehouse && colony && !municipality) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.settlementKey == colony &&
-          item.code == postalCode &&
-          item.stateKey == state
-        );
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    }
-
-    if (state && postalCode && akaWarehouse && colony && municipality) {
-      const filterData = this.goodsProgCopy.filter(item => {
-        return (
-          item.aliasWarehouse == akaWarehouse &&
-          item.settlementKey == colony &&
-          item.townshipKey == municipality &&
-          item.stateKey == state &&
-          item.code == postalCode
-        );
-      });
-
-      if (filterData.length > 0) {
-        this.estatesList.load(filterData);
-      } else {
-        this.alert(
-          'warning',
-          'Acción inválida',
-          'No hay bienes disponibles para programar'
-        );
-        this.estatesList.load(filterData);
-      }
-    } */
   }
+
   showClean() {
     this.searchGoodsForm.reset();
     this.params
@@ -1093,6 +1211,7 @@ export class PerformProgrammingFormComponent
             .setValue(delegation.description);
           this.regionalDelegationUser = delegation;
           this.getWarehouseSelect(new ListParams());
+          this.getStates(new ListParams());
           this.getStateSelect(new ListParams());
         });
     });
@@ -1115,6 +1234,7 @@ export class PerformProgrammingFormComponent
   }
 
   getStateSelect(params?: ListParams) {
+    params['filter.sortBy'] = 'descCondition:ASC';
     params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
     this.stateService.getAll(params).subscribe({
       next: data => {
@@ -1254,25 +1374,41 @@ export class PerformProgrammingFormComponent
   }
 
   getAkaWarehouse(params?: ListParams) {
+    params['sortBy'] = 'aliasStock:ASC';
     this.storeAkaService.getAll(params).subscribe({
       next: response => {
         this.akaWarehouse = new DefaultSelect(response.data, response.count);
       },
-      error: error => {},
+      error: error => {
+        this.akaWarehouse = new DefaultSelect();
+      },
     });
   }
 
   getStates(params?: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      const filterStates = data.data.filter(_states => {
-        return _states.stateCode;
-      });
+    params['filter.sortBy'] = 'descCondition:ASC';
+    params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
 
-      const states = filterStates.map(items => {
-        return items.stateCode;
-      });
-      this.statesSearch = new DefaultSelect(states, data.count);
+    this.stateService.getAll(params).subscribe({
+      next: data => {
+        console.log('data', data);
+        const filterStates = data.data.filter(_states => {
+          return _states.stateCode;
+        });
+
+        const states = filterStates.map(items => {
+          return items.stateCode;
+        });
+        this.statesSearch = new DefaultSelect(states, data.count);
+      },
+      error: error => {
+        this.statesSearch = new DefaultSelect();
+      },
     });
+
+    /*(data => {
+      
+    }); */
   }
 
   stateSearchSelect(state: IStateOfRepublic) {
@@ -1281,26 +1417,46 @@ export class PerformProgrammingFormComponent
   }
 
   getMunicipalities(params?: ListParams) {
-    params['filter.stateKey'] = this.stateKey;
-    this.municipalityService.getAll(params).subscribe({
+    params['sortBy'] = 'nameMunicipality:ASC';
+    params['filter.stateKey'] = Number(this.stateKey);
+    this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
       next: response => {
         this.municipailitites = new DefaultSelect(
           response.data,
           response.count
         );
       },
-      error: error => {},
+      error: error => {
+        this.municipailitites = new DefaultSelect();
+      },
     });
+    /*
+    params['sortBy'] = 'nameMunicipality:ASC';
+    params['filter.stateKey'] = this.stateKey;
+    this.municipalityService.getAll(params).subscribe({
+      next: response => {
+        console.log('mun', response);
+        this.municipailitites = new DefaultSelect(
+          response.data,
+          response.count
+        );
+      },
+      error: error => {
+        this.municipailitites = new DefaultSelect();
+      },
+    }); */
   }
 
   municipalitySearchSelect(municipality: IMunicipality) {
-    this.idMunicipality = municipality.idMunicipality;
+    this.idMunicipality = municipality.municipalityKey;
     this.getLocalities(new ListParams());
   }
 
   getLocalities(params?: ListParams) {
-    params['filter.municipalityId'] = this.idMunicipality;
-    this.localityService.getAll(params).subscribe({
+    params['sortBy'] = 'township:ASC';
+    params['filter.municipalityKey'] = this.idMunicipality;
+    params['filter.stateKey'] = this.stateKey;
+    this.goodsinvService.getAllTownshipByFilter(params).subscribe({
       next: response => {
         this.localities = new DefaultSelect(response.data, response.count);
       },
@@ -1377,26 +1533,49 @@ export class PerformProgrammingFormComponent
         .postGoodsProgramming(this.params.getValue(), filterColumns)
         .subscribe({
           next: response => {
-            let goodsFilter = response.data.map(items => {
-              if (items.physicalState) {
-                if (items.physicalState == 1) {
-                  items.physicalState = 'BUENO';
-                  return items;
-                } else if (items.physicalState == 2) {
-                  items.physicalState = 'MALO';
-                  return items;
-                }
-              } else {
-                return items;
-              }
-            });
+            if (response.count == 0) {
+              this.loadingGoods = false;
+              this.alert('warning', 'Advertencia', 'No se econtraron bienes');
+              this.estatesList = new LocalDataSource();
+            } else {
+              let goodsFilter = response.data.map(async item => {
+                const showMunicipality: any = await this.showMunicipality(
+                  new ListParams(),
+                  item.townshipKey,
+                  item.stateKey
+                );
 
-            //goodsFilter = goodsFilter.filter(item => item);
-            this.estatesList.load(goodsFilter);
-            this.goodsProgCopy = goodsFilter;
-            this.loadingGoods = false;
-            this.totalItems = response.count;
-            //this.filterGoodsProgramming(goodsFilter);
+                const showStateKey: any = await this.showStateOfRepublic(
+                  item.stateKey
+                );
+
+                if (showStateKey) {
+                  item.stateKeyName = showStateKey;
+                }
+                if (showMunicipality) {
+                  item.municipalityName = showMunicipality;
+                }
+                if (item.physicalState) {
+                  if (item.physicalState == 1) {
+                    item.physicalState = 'BUENO';
+                    return item;
+                  } else if (item.physicalState == 2) {
+                    item.physicalState = 'MALO';
+                    return item;
+                  }
+                } else {
+                  return item;
+                }
+              });
+              Promise.all(goodsFilter).then((goodsFilter: any) => {
+                //goodsFilter = goodsFilter.filter(item => item);
+                this.estatesList.load(goodsFilter);
+                this.goodsProgCopy = goodsFilter;
+                this.loadingGoods = false;
+                this.totalItems = response.count;
+                //this.filterGoodsProgramming(goodsFilter);
+              });
+            }
           },
           error: error => (this.loadingGoods = false),
         });
@@ -1421,28 +1600,49 @@ export class PerformProgrammingFormComponent
         .postGoodsProgramming(this.params.getValue(), filterColumns)
         .subscribe({
           next: response => {
-            let goodsFilter = response.data.map(items => {
-              if (items.physicalState) {
-                if (items.physicalState == 1) {
-                  items.physicalState = 'BUENO';
-                  return items;
-                } else if (items.physicalState == 2) {
-                  items.physicalState = 'MALO';
-                  return items;
+            let goodsFilter = response.data.map(async item => {
+              const showMunicipality: any = await this.showMunicipality(
+                new ListParams(),
+                item.townshipKey,
+                item.stateKey
+              );
+
+              const showStateKey: any = await this.showStateOfRepublic(
+                item.stateKey
+              );
+              if (showStateKey) {
+                item.stateKeyName = showStateKey;
+              }
+
+              if (showMunicipality) {
+                item.municipalityName = showMunicipality;
+              }
+              if (item.physicalState) {
+                if (item.physicalState == 1) {
+                  item.physicalState = 'BUENO';
+                  return item;
+                } else if (item.physicalState == 2) {
+                  item.physicalState = 'MALO';
+                  return item;
                 }
               } else {
-                return items;
+                return item;
               }
             });
-
-            //goodsFilter = goodsFilter.filter(item => item);
-            this.estatesList.load(goodsFilter);
-            this.goodsProgCopy = goodsFilter;
-            this.loadingGoods = false;
-            this.totalItems = response.count;
-            //this.filterGoodsProgramming(goodsFilter);
+            Promise.all(goodsFilter).then((goodsFilter: any) => {
+              //goodsFilter = goodsFilter.filter(item => item);
+              this.estatesList.load(goodsFilter);
+              this.goodsProgCopy = goodsFilter;
+              this.loadingGoods = false;
+              this.totalItems = response.count;
+              //this.filterGoodsProgramming(goodsFilter);
+            });
           },
-          error: error => (this.loadingGoods = false),
+          error: error => {
+            this.alert('warning', 'Advertencia', 'No se econtraron bienes');
+            this.loadingGoods = false;
+            this.estatesList = new LocalDataSource();
+          },
         });
     }
   }
@@ -1454,29 +1654,84 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterData)
       .subscribe({
         next: response => {
-          let goodsFilter = response.data.map(items => {
-            if (items.physicalState) {
-              if (items.physicalState == 1) {
-                items.physicalState = 'BUENO';
-                return items;
-              } else if (items.physicalState == 2) {
-                items.physicalState = 'MALO';
-                return items;
-              }
-            } else {
-              return items;
-            }
-          });
+          if (response.data.length == 0) {
+            this.loadingGoods = false;
+            this.alert('warning', 'Advertencia', 'No se econtraron bienes');
+            this.estatesList = new LocalDataSource();
+          } else {
+            let goodsFilter = response.data.map(async item => {
+              const showMunicipality: any = await this.showMunicipality(
+                new ListParams(),
+                item.townshipKey,
+                item.stateKey
+              );
 
-          //goodsFilter = goodsFilter.filter(item => item);
-          this.estatesList.load(goodsFilter);
-          this.goodsProgCopy = goodsFilter;
-          this.loadingGoods = false;
-          this.totalItems = response.count;
-          //this.filterGoodsProgramming(goodsFilter);
+              if (showMunicipality) {
+                item.municipalityName = showMunicipality;
+              }
+
+              const showStateKey: any = await this.showStateOfRepublic(
+                item.stateKey
+              );
+              if (showStateKey) {
+                item.stateKeyName = showStateKey;
+              }
+              if (item.physicalState) {
+                if (item.physicalState == 1) {
+                  item.physicalState = 'BUENO';
+                  return item;
+                } else if (item.physicalState == 2) {
+                  item.physicalState = 'MALO';
+                  return item;
+                }
+              } else {
+                return item;
+              }
+            });
+            Promise.all(goodsFilter).then((goodsFilter: any) => {
+              //goodsFilter = goodsFilter.filter(item => item);
+              this.estatesList.load(goodsFilter);
+              this.goodsProgCopy = goodsFilter;
+              this.loadingGoods = false;
+              this.totalItems = response.count;
+              //this.filterGoodsProgramming(goodsFilter);
+            });
+          }
         },
-        error: error => (this.loadingGoods = false),
+        error: error => {
+          this.alert('warning', 'Advertencia', 'No se econtraron bienes');
+          this.loadingGoods = false;
+          this.estatesList = new LocalDataSource();
+        },
       });
+  }
+
+  showMunicipality(
+    params: ListParams,
+    townshipKey?: number,
+    stateKey?: number
+  ) {
+    return new Promise((resolve, reject) => {
+      params['filter.municipalityKey'] = townshipKey;
+      params.limit = 50;
+      this.goodsinvService.getAllMunipalitiesByFilter(params).subscribe({
+        next: resp => {
+          resolve(resp.data[0]?.municipality);
+        },
+      });
+    });
+  }
+
+  showStateOfRepublic(stateKey: number) {
+    return new Promise((resolve, reject) => {
+      const params = new BehaviorSubject<ListParams>(new ListParams());
+      params.getValue()['filter.id'] = stateKey;
+      this.statesService.getAll(params.getValue()).subscribe({
+        next: response => {
+          resolve(response.data[0].descCondition);
+        },
+      });
+    });
   }
 
   filterGoodsProgramming(goods: any[]) {
@@ -1655,6 +1910,7 @@ export class PerformProgrammingFormComponent
           goodId: item.googId,
           goodStatus: 'EN_TRANSPORTABLE',
           programmationStatus: 'EN_TRANSPORTABLE',
+          status: 'VXP',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
@@ -1967,6 +2223,7 @@ export class PerformProgrammingFormComponent
           goodStatus: 'EN_RESGUARDO_TMP',
           programmationStatus: 'EN_RESGUARDO_TMP',
           storeId: warehouse,
+          status: 'VXP',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: () => {
@@ -2250,6 +2507,7 @@ export class PerformProgrammingFormComponent
           goodStatus: 'EN_ALMACEN_TMP',
           programmationStatus: 'EN_ALMACEN_TMP',
           storeId: warehouse,
+          status: 'VXP',
         };
         this.goodService.updateByBody(formData).subscribe({
           next: response => {
