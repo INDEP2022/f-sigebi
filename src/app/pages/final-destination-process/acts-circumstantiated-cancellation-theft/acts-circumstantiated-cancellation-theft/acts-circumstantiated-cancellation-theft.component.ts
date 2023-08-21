@@ -2266,35 +2266,22 @@ export class ActsCircumstantiatedCancellationTheftComponent
   initFormPostGetUserData() {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        console.log(params);
-        for (const key in this.paramsScreen) {
-          if (Object.prototype.hasOwnProperty.call(params, key)) {
-            this.paramsScreen[key as keyof typeof this.paramsScreen] =
-              params[key] ?? null;
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
+        this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
+        if (this.origin == 'FACTCIRCUNR_0001') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
           }
-        }
-        this.origin = params['origin2']
-          ? params['origin2']
-          : params['origin'] ?? null;
-        this.origin3 = params['origin3'] ?? null;
-        this.paramsScreen.P_GEST_OK = params['P_GEST_OK'] ?? null;
-        this.paramsScreen.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
-        if (
-          this.origin &&
-          this.paramsScreen.P_GEST_OK != null &&
-          this.paramsScreen.P_NO_TRAMITE != null
-        ) {
-          this.gestionTramite();
+          console.log(this.paramsScreen);
+          this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin3 = paramsQuery['origin3'] ?? null;
         }
       });
-    if (this.paramsScreen) {
-      if (!this.paramsScreen.P_GEST_OK && !this.paramsScreen.P_NO_TRAMITE) {
-        this.initForm();
-      } else {
-        console.log('FALTA PARAMETROS');
-      }
-    }
   }
 }
 
