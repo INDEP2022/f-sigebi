@@ -117,6 +117,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   formTable1: FormGroup;
   statusInicial: string = 'RFI';
   statusFinal: string = 'RFP';
+  statusInicial: string = 'RFI';
+  statusFinal: string = 'RFP';
   formFind: FormGroup;
   origin: string = '';
   origin3: string = '';
