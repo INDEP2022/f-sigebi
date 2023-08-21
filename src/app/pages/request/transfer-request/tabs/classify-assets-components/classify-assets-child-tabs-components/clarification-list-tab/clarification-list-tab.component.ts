@@ -221,6 +221,7 @@ export class ClarificationListTabComponent
                 body['goodId'] = this.good[0].goodId;
                 body.processStatus = 'CLASIFICAR_BIEN';
                 body.goodStatus = 'CLASIFICAR_BIEN';
+                body.status = null;
                 await this.updateGoods(body);
               } else {
                 //si existe mas de una aclaracion
@@ -231,11 +232,13 @@ export class ClarificationListTabComponent
                     ? 'ACLARADO'
                     : 'CLASIFICAR_BIEN';
                 body.processStatus = 'CLASIFICAR_BIEN';
+                body.status = null;
                 await this.updateGoods(body);
               }
               this.updateGoodTable.emit({
                 processStatus: body.processStatus,
                 goodStatus: body.goodStatus,
+                status: body.status,
               });
               setTimeout(() => {
                 this.getData();
