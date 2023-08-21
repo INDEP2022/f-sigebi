@@ -41,7 +41,7 @@ import { RELATED_FOLIO_COLUMNS } from 'src/app/pages/juridical-processes/deposit
 import { ModalScanningFoilAppointmentTableComponent } from 'src/app/pages/juridical-processes/depositary/appointments/modal-scanning-foil/modal-scanning-foil.component';
 import { DetailDelegationsComponent } from '../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
-import { COLUMNS } from './columns';
+import { COLUMNS, COLUMNS2 } from './columns';
 
 @Component({
   selector: 'app-third-possession-acts',
@@ -129,12 +129,15 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
     this.settings.columns = COLUMNS;
-    this.settings2.columns = COLUMNS;
+    this.settings2.columns = COLUMNS2;
 
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.folioScan2 = params['folio'] ? Number(params['folio']) : null;
+        this.expedient2 = params['expedient']
+          ? Number(params['expedient'])
+          : null;
       });
     /* this.settings.columns = IMPLEMENTATION_COLUMNS;
     this.settings.rowClassFunction = (row: { data: { estatus: any } }) =>
@@ -308,7 +311,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     console.log(this.folioScan2);
     if (this.folioScan2) {
       console.log('ioooooooooo');
-      this.expedient2 = 403822;
+      ///this.expedient2 = 403822;
       //this.selectForm.value.selectBar = this.expedient2;
       this.selectForm.controls['selectBar'].setValue(this.expedient2);
       console.log(this.selectForm);
@@ -321,8 +324,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     console.log(this.expedientSearch);
     //this.response = !this.response;
     this.getExpedient(this.selectForm.value.selectBar);
-    // this.actForm.disable();
-    //this.formTable1.disable();
+    this.actForm.disable();
+    this.formTable1.disable();
   }
 
   onSubmit() {}
@@ -350,14 +353,14 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       ).then(question => {
         if (question.isConfirmed) {
           if (this.proceedingDev[0].universalFolio != null) {
-            this.alert('warning', '', 'El Acta Ya Tiene Folio de Escaneo');
+            this.alert('warning', '', 'El Acta ya Tiene Folio de Escaneo');
           } else {
             this.notificationService
               .getMaxFlyerByExpedient(this.expedient[0].id, 'MAX')
               .subscribe({
                 next: data => {
                   lnu_no_volante = data.no_volante;
-                  // hay un problema con la base de datos con el tama;o de los dates//////////////////////////////////////////////////////////
+                  // hay un problema con la base de datos con el tamaño de los dates//////////////////////////////////////////////////////////
                   this.documentForm = this.fb.group({
                     goodNumber: [
                       this.proceedingDev[0].universalFolio,
@@ -372,15 +375,13 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     natureDocument: ['ORIGINAL'],
                     descriptionDocument: ['ACTA'],
                     significantDate: [
-                      `${new Date().getMonth}/${new Date().getFullYear()}`,
+                      `${new Date().getMonth()}/${new Date().getFullYear()}`,
                     ],
                     scanStatus: ['SOLICITADO'],
                     userRequestsScan: [
                       this.authService.decodeToken().preferred_username,
                     ],
-                    dateRegistrationScan: [
-                      `${new Date().getMonth}/${new Date().getFullYear()}`,
-                    ],
+                    dateRegistrationScan: [new Date()],
                     numberDelegationRequested: [
                       this.proceedingDev[0].delegationNumber.id,
                     ],
@@ -393,7 +394,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                   });
                   console.log(this.documentForm);
                   this.document = this.documentForm.value;
-                  console.log(this.document);
+                  console.log(JSON.stringify(this.document));
                   this.documentsService.create(this.document).subscribe({
                     next: data => {
                       console.log(data);
@@ -600,10 +601,10 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     let message = '';
     if (type == 'foto') {
       message =
-        'Se abrirá la Pantalla de Escaneo Para el Folio de Escaneo del Dictamen. ¿Deseas continuar?';
+        'Se Abrirá la Pantalla de Escaneo para el Folio de Escaneo del Dictamen. ¿Deseas Continuar?';
     } else {
       message =
-        'Se abrirá la Pantalla Para Selecconar las Fotos del Dictamen. ¿Deseas continuar?';
+        'Se Abrirá la Pantalla para Selecconar las Fotos del Dictamen. ¿Deseas Continuar?';
     }
 
     this.boolScan = false;
@@ -637,11 +638,11 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         this.alert(
           'warning',
           '',
-          'No Tiene Folio de Escaneo Para Continuar a la Pantalla de Escaneo'
+          'No Tiene Folio de Escaneo para Continuar a la Pantalla de Escaneo'
         );
       }
     } else {
-      this.alert('warning', '', 'No Se Puede Escanear Para Un Acta Cerrada');
+      this.alert('warning', '', 'No Se Puede Escanear para Un Acta Cerrada');
     }
   }
 
@@ -688,11 +689,13 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       ...this.columnFilters1,
     };
     console.log('hoooooolaaaaaaa', params);
+    console.log('heyyyy', this.proceedingDev[0].id);
     this.detailProceedingsDevolutionService
-      .getAllByActNumber(params)
+      .getAllByActNumber(this.proceedingDev[0].id, params)
       .subscribe({
         next: response => {
           //this.comerEvent = response.data;
+          console.log('--------', response.data);
           this.data2.load(response.data);
           console.log('hoooooolaaaaaaa', this.data2);
           this.totalItems1 = response.count || 0;
@@ -721,14 +724,14 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       this.alert(
         'warning',
         'Ha Ocurrido un Error',
-        'No Existe Ningun Acta a Cerra'
+        'No Existe Ningun acta a Cerra'
       );
     }
     if (!this.proceedingDev[0].universalFolio) {
       this.alert(
         'warning',
         'Ha Ocurrido un Error',
-        'Indique El Folio de Escaneo'
+        'Indique el Folio de Escaneo'
       );
     } else {
       this.serviceDocuments
@@ -740,14 +743,14 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Ha Ocurrido un Error',
-                'No se ha realizado el escaneo...'
+                'No se ha Realizado el Escaneo...'
               );
             }
             if (!this.validateActCve()) {
               this.alert(
                 'warning',
                 'Ha Ocurrido un Error',
-                'La Clave del Acta Es Inconsistente'
+                'La Clave del acta es Inconsistente'
               );
             }
             vban = true;
@@ -765,7 +768,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     this.alert(
                       'warning',
                       'Ha Ocurrido un Error',
-                      'Está Fuera de Tiempo Para Cerrar el Acta'
+                      'Está Fuera de Tiempo para Cerrar el Acta'
                     );
                   }
                 },
@@ -778,7 +781,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
               this.alert(
                 'warning',
                 'Ha Ocurrido un Error',
-                'El Acta No Tiene Ningun Bien Asignado, No Se Puede Cerrar.'
+                'El Acta no Tiene Ningun bien Asignado, no se Puede Cerrar.'
               );
               console.log('cagamos');
             } else {
@@ -786,13 +789,13 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                 this.alert(
                   'warning',
                   'Ha Ocurrido un Error',
-                  'El Acta Ya Esta Cerrada.'
+                  'El acta ya esta Cerrada.'
                 );
               } else {
                 this.alertQuestion(
                   'question',
                   '',
-                  '¿Esta Seguro Que Desea Cerrar el Acta?',
+                  '¿Esta Seguro Que Desea Cerrar el acta?',
                   'Cerrar',
                   'Cancelar'
                 ).then(question => {
@@ -850,7 +853,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                             this.alert(
                               'warning',
                               'Ha Ocurrido un Error',
-                              'Error Insertar En el Historico el Bien:' +
+                              'Error Insertar en el Historico el Bien:' +
                                 this.data['data'][i].goodId
                             );
                           },

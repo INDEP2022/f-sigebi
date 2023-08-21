@@ -28,30 +28,19 @@ export const COLUMNS = {
 };
 
 export const COLUMNS2 = {
-  id: {
-    title: 'No. Bien',
+  numGoodProceedingsId: {
+    title: 'No. Detalle Bien',
     type: 'number',
     sort: false,
   },
-  description: {
-    title: 'Descripcion',
+  numberRegister: {
+    title: 'Numero de Registro',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  refundAmount: {
     title: 'Cantidad',
     type: 'number',
-    sort: false,
-  },
-  appraisedValue: {
-    title: 'Importe',
-    type: 'string',
-    sort: false,
-  },
-
-  status: {
-    title: 'Estatus',
-    type: 'string',
     sort: false,
   },
 };

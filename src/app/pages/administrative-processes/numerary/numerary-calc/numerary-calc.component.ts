@@ -411,7 +411,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       '¿Desea Continuar?',
-      '¿Se Continua con la Selección?'
+      ''
     );
     if (response.isConfirmed) {
       this.openModal();
@@ -423,9 +423,10 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingStatusAccount = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    console.log({params1: params, date: this.date.value, dateValid: new Date('20-08-2023')})
+    this.downloadReport('RCONBIENESPROC_COMIS', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }
@@ -436,7 +437,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const params = {
       // this.idProcess.value
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: this.formatDateToDdMmYyyy(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
     console.log('params111', params);
     this.downloadReport('RCONBIENESPROC', params, () => {
@@ -444,14 +445,29 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     });
   }
 
-  formatDateToDdMmYyyy(date: any) {
-    if (!date) return '';
+  cambiarFormatoFecha(fechaOriginal: any) {
+    if (!fechaOriginal) return null;
 
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript están basados en cero.
-    const year = date.getFullYear();
+    let partesFecha = fechaOriginal.split('/');
+    let dia = partesFecha[0];
+    let mes = partesFecha[1];
+    let anio = partesFecha[2];
 
-    return `${year}-${month}-${day}`;
+    let fechaNueva = new Date(mes + '/' + dia + '/' + anio);
+
+    let nuevoAnio: any = fechaNueva.getFullYear();
+    let nuevoMes: any = fechaNueva.getMonth() + 1;
+    let nuevoDia: any = fechaNueva.getDate();
+
+    if (nuevoMes < 10) {
+      nuevoMes = '0' + nuevoMes;
+    }
+    if (nuevoDia < 10) {
+      nuevoDia = '0' + nuevoDia;
+    }
+
+    let fechaFormateada = nuevoAnio + '-' + nuevoMes + '-' + nuevoDia;
+    return fechaFormateada;
   }
 
   isLoadingProrraComission = false;
@@ -459,7 +475,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === 'P') {
       const params = {
         P_PROCNUM: this.idProcess.value,
-        P_FEC_PROCNUM: this.formatDateToDdMmYyyy(this.date.value),
+        P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
         // P_FEC_PROCNUM: new Date(this.date.value),
       };
       this.downloadReport('blank', params, () => {

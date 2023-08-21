@@ -41,11 +41,6 @@
         <div class="m-3">
           <button
             type="submit"
-            [disabled]="
-              !form.value.expedientNumber ||
-              !form.value.wheelNumber ||
-              !form.value.id
-            "
             class="btn btn-primary active btn-sm text-wrap ml-2"
             (click)="searchDictation()">
             Buscar
@@ -310,7 +305,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="tableSettings"
-            [source]="dataTable"></ng2-smart-table>
+            [source]="dataTable2"></ng2-smart-table>
         </div>
         <div>
           <app-pagination

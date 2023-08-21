@@ -223,6 +223,7 @@ export class GoodsTypesSharedGoodComponent extends BasePage implements OnInit {
     } else {
       _params['filter.nameSubtypeGood'] = `$ilike:${params.text}`;
     }
+    _params['sortBy'] = 'id:ASC';
     delete _params.search;
     delete _params.text;
     if (this.type.value) {
@@ -253,6 +254,7 @@ export class GoodsTypesSharedGoodComponent extends BasePage implements OnInit {
     if (this.type.value) {
       _params['filter.noSubType'] = this.subtype.value;
     }
+    _params['sortBy'] = 'id:ASC';
     this.goodSsubtypeService.getAll(_params).subscribe({
       next: data => {
         this.ssubtypes = new DefaultSelect(data.data, data.count);
@@ -281,6 +283,7 @@ export class GoodsTypesSharedGoodComponent extends BasePage implements OnInit {
     if (this.ssubtype.value) {
       _params['filter.numSsubType'] = this.ssubtype.value;
     }
+    _params['sortBy'] = 'id:ASC';
     this.goodSssubtypeService.getAll(_params).subscribe({
       next: data => {
         this.sssubtypes = new DefaultSelect(data.data, data.count);

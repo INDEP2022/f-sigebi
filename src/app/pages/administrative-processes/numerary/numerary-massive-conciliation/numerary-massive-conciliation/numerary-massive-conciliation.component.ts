@@ -1067,9 +1067,28 @@ export class NumeraryMassiveConciliationComponent
           return e.deposit;
         });
 
+        let sum: number;
+        depositArray.forEach((e: any) => {
+          sum = sum + e;
+          console.log(e);
+        });
+
         const currencyArray = goodCheck2.map((e: any) => {
           return e.currencyKey;
         });
+
+        console.log({
+          sum: sum,
+          total: this.form2.get('currencyDeposit').value,
+        });
+        if (sum > this.form2.get('currencyDeposit').value) {
+          this.alert(
+            'warning',
+            'El valor de los datos es mayor al depósito',
+            ''
+          );
+          return;
+        }
 
         /* this.numeraryService.pupAssociateGood() */
         const model: IPupAssociateGood = {
