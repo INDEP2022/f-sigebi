@@ -165,9 +165,9 @@ export class MassRulingComponent
   }
 
   ngOnInit(): void {
-    this.form.get('wheelNumber').valueChanges.subscribe(x => {
+    /* this.form.get('wheelNumber').valueChanges.subscribe(x => {
       this.getVolante();
-    });
+    });*/
     this.params.pipe(skip(1)).subscribe(params => {
       this.loadDataForDataTable(params);
     });
@@ -183,7 +183,7 @@ export class MassRulingComponent
         if (change.action === 'filter') {
           let filters = change.filter.filters;
           filters.map((filter: any) => {
-            console.log('loooool');
+            //  console.log('loooool');
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
@@ -410,11 +410,11 @@ export class MassRulingComponent
         // .getTmpExpDesahogoByExpedient(793680)
         .subscribe({
           next: data => {
-            console.log(data);
+            // console.log(data);
             bodyDelete['ofDictNumber'] = this.dictaminacion.id;
             bodyDelete['id'] = data.data[0].goodNumber;
             bodyDelete['typeDict'] = this.dictaminacion.typeDict;
-            console.log(bodyDelete);
+            // console.log(bodyDelete);
           },
           error: err => {
             this.onLoadToast(
@@ -447,7 +447,7 @@ export class MassRulingComponent
         );
         let usuar;
         try {
-          console.log(this.authService.decodeToken());
+          //  console.log(this.authService.decodeToken());
           const user = this.authService
             .decodeToken()
             .preferred_username?.toUpperCase();
@@ -463,7 +463,7 @@ export class MassRulingComponent
         }
 
         if (usuar?.user) {
-          console.log(bodyDelete);
+          //  console.log(bodyDelete);
           this.dictationXGood1Service.removDictamen(bodyDelete).subscribe({
             next: data => {
               this.alert('success', 'Dictamen', 'Proceso terminado');
@@ -768,7 +768,7 @@ export class MassRulingComponent
       },
     });
     if (type == 'find') {
-      console.log(this.form);
+      // console.log(this.form);
       this.openMoreOneResults();
     }
   }
