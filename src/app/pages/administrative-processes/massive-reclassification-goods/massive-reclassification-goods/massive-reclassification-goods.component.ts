@@ -40,6 +40,7 @@ export class MassiveReclassificationGoodsComponent
   get mode() {
     return this.form.get('mode');
   }
+
   get classificationOfGoods() {
     return this.form.get('classificationOfGoods');
   }
@@ -112,6 +113,10 @@ export class MassiveReclassificationGoodsComponent
     // });
 
     console.log(this.mode.value);
+  }
+
+  get ids() {
+    return this.service.ids;
   }
 
   clearFilter() {
