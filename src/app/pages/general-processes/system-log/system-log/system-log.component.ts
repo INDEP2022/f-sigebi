@@ -43,6 +43,7 @@ export class SystemLogComponent extends BasePage implements OnInit {
   dynamicParams = new BehaviorSubject(new FilterParams());
   rowSelected: ITableLog = null;
   tableLogs: LocalDataSource = new LocalDataSource();
+  dataFacRegister: LocalDataSource = new LocalDataSource();
   dynamicRegisters: any[] = [];
   totalLogs: number = 0;
   totalDynamic: number = 0;
@@ -92,41 +93,6 @@ export class SystemLogComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
-    // this.params
-    //   .pipe(
-    //     takeUntil(this.$unSubscribe),
-    //     switchMap(params =>
-    //       this.origin ? this.getTableLogsFiltered() : this.getTableLogs(params)
-    //     )
-    //   )
-    //   .subscribe();
-    // this.tableLogs
-    //   .onChanged()
-    //   .pipe(takeUntil(this['$unSubscribe']))
-    //   .subscribe(change => {
-    //     if (change.action === 'filter') {
-    //       let filters = change.filter.filters;
-    //       filters.map((filter: any) => {
-    //         let field = '';
-    //         let searchFilter = SearchFilter.ILIKE;
-    //         switch (filter.field) {
-    //           case 'destable':
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //           default:
-    //             searchFilter = SearchFilter.ILIKE;
-    //             break;
-    //         }
-    //         if (filter.search !== '') {
-    //           console.log(
-    //             (this.columnFilters[field] = `${searchFilter}:${filter.search}`)
-    //           );
-    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-    //         } else {
-    //           delete this.columnFilters[field];
-    //         }
-    //         console.log(this.columnFilters);
-    //       });
     this.tableLogs
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))

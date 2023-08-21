@@ -1,6 +1,6 @@
 import { HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { v4 as uuidv4 } from 'uuid';
@@ -28,7 +28,11 @@ export class FileBrowserService extends HttpService {
     });
   }
 
-  uploadFile(folio: string | number, file: File, fileField = 'file') {
+  uploadFile(
+    folio: string | number,
+    file: File,
+    fileField = 'file'
+  ): Observable<any> {
     const filename = file.name;
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
     const formData = new FormData();

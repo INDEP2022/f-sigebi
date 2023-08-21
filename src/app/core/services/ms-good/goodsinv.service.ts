@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IGoodsinvEndpoint } from 'src/app/common/constants/endpoints/ms-goodsinv.endpoint';
@@ -49,7 +50,8 @@ export class GoodsInvService extends HttpService {
     return this.post(IGoodsinvEndpoint.GetCodePostalByParams, params);
   }
 
-  getAllMunipalitiesByFilter(params: ListParams | string) {
+  getAllMunipalitiesByFilter(_params: ListParams | string) {
+    const params = this.makeParams(_params);
     return this.get(IGoodsinvEndpoint.GetMunicipalityByFilter, params);
   }
 
@@ -74,5 +76,13 @@ export class GoodsInvService extends HttpService {
   ): Observable<IGoodResDevInvView> {
     const route = IGoodsinvEndpoint.GetGoodResDevInvVew;
     return this.get(`${route}`, params);
+  }
+
+  private makeParams(params: ListParams | string): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

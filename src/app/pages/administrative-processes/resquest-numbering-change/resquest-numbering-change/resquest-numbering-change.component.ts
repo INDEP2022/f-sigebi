@@ -372,7 +372,7 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         expedienteid: {
-          title: 'Número de Expediente',
+          title: 'No. Expediente',
           width: '10%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -646,8 +646,8 @@ export class ResquestNumberingChangeComponent
   }
 
   getUsuario(params: ListParams, usuario?: string) {
-    if (usuario) {
-      params['filter.usuario'] = `$in:${usuario}`;
+    if (params.text) {
+      params['filter.usuario'] = `$ilike:${params.text}`;
     }
 
     this.securityService.getAllUser(params).subscribe((data: any) => {
@@ -663,8 +663,8 @@ export class ResquestNumberingChangeComponent
   }
 
   getUsuario1(params1: ListParams, usuario?: string) {
-    if (usuario) {
-      params1['filter.usuario'] = `$in:${usuario}`;
+    if (params1.text) {
+      params1['filter.usuario'] = `$ilike:${params1.text}`;
     }
 
     this.securityService.getAllUser(params1).subscribe((dat: any) => {
@@ -1339,13 +1339,13 @@ export class ResquestNumberingChangeComponent
         next: value => {
           this.alert(
             'success',
-            'Se Agregó Correctamente el No. Bien ' + payload.goodNumber,
+            'Se Agregó Correctamente el Bien: ' + payload.goodNumber,
             ''
           );
           resolve(true);
         },
         error: err => {
-          this.handleSuccess('No se Agregó el No. Bien ' + payload.goodNumber);
+          this.handleSuccess('No se Agregó el Bien: ' + payload.goodNumber);
           resolve(false);
         },
       });
@@ -1467,7 +1467,7 @@ export class ResquestNumberingChangeComponent
           // this.loading = false;
           this.alert(
             'success',
-            'No. Bien ' + body.goodNumber + ' Eliminado Correctamente ',
+            'Bien: ' + body.goodNumber + ' Eliminado Correctamente ',
             ''
           );
           resolve(true);

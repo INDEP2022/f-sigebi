@@ -135,6 +135,9 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(params => {
         this.folioScan2 = params['folio'] ? Number(params['folio']) : null;
+        this.expedient2 = params['expedient']
+          ? Number(params['expedient'])
+          : null;
       });
     /* this.settings.columns = IMPLEMENTATION_COLUMNS;
     this.settings.rowClassFunction = (row: { data: { estatus: any } }) =>
@@ -308,7 +311,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     console.log(this.folioScan2);
     if (this.folioScan2) {
       console.log('ioooooooooo');
-      this.expedient2 = 403822;
+      ///this.expedient2 = 403822;
       //this.selectForm.value.selectBar = this.expedient2;
       this.selectForm.controls['selectBar'].setValue(this.expedient2);
       console.log(this.selectForm);
@@ -372,15 +375,13 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                     natureDocument: ['ORIGINAL'],
                     descriptionDocument: ['ACTA'],
                     significantDate: [
-                      `${new Date().getMonth}/${new Date().getFullYear()}`,
+                      `${new Date().getMonth()}/${new Date().getFullYear()}`,
                     ],
                     scanStatus: ['SOLICITADO'],
                     userRequestsScan: [
                       this.authService.decodeToken().preferred_username,
                     ],
-                    dateRegistrationScan: [
-                      `${new Date().getMonth}/${new Date().getFullYear()}`,
-                    ],
+                    dateRegistrationScan: [new Date()],
                     numberDelegationRequested: [
                       this.proceedingDev[0].delegationNumber.id,
                     ],
@@ -393,7 +394,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
                   });
                   console.log(this.documentForm);
                   this.document = this.documentForm.value;
-                  console.log(this.document);
+                  console.log(JSON.stringify(this.document));
                   this.documentsService.create(this.document).subscribe({
                     next: data => {
                       console.log(data);
@@ -659,8 +660,8 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
     this.goodService.getAll(params).subscribe({
       next: response => {
         //this.comerEvent = response.data;
+
         this.data.load(response.data);
-        this.totalItems = response.count || 0;
         this.data.refresh();
         this.totalItems = response.count;
         //this.params.value.page = 1;
