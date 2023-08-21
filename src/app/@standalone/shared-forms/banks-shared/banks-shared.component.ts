@@ -78,7 +78,7 @@ export class BanksSharedComponent extends BasePage implements OnInit {
         } else {
           error = err.message;
         }
-        this.onLoadToast('error', 'Error', error);
+        this.onLoadToast('error', 'No se encontraron registros', '');
       },
     });
   }
