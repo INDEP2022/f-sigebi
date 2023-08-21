@@ -425,7 +425,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       P_PROCNUM: this.idProcess.value,
       P_FEC_PROCNUM: new Date(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    this.downloadReport('RCONBIENESPROC_COMIS', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }

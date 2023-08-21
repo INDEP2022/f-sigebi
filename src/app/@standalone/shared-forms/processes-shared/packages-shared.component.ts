@@ -38,9 +38,11 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getProcesses()
+  }
 
-  getProcesses(params: ListParams) {
+  getProcesses(params?: ListParams) {
     this.historyGoodService
       .getByGoodAndProcess(this.idGood, this.process)
       .subscribe({
@@ -53,7 +55,7 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
         },
         error: error => {
           this.loading = false;
-          this.processes = new DefaultSelect();
+          this.processes = new DefaultSelect([]);
           if (error.status == 404) {
             this.alert(
               'warning',
