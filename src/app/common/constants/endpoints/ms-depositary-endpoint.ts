@@ -27,4 +27,5 @@ export enum DepositaryEndPoints {
   PaymentRefVentaSbm = 'payment-ref/venta-sbm', // VALIDA_PAGOSREF.VENTA_SBM
   UpdateStatusBase = 'validate-payments-ref/updateStatusBase', // MODIFICA_ESTATUS_BASES_ANT
   UpdateGeneralStatus = 'validate-payments-ref/updateGeneralStatus',
+  SearchPayment = 'comer-payment/search-payment',
 }

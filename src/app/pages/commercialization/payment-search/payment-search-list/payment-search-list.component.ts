@@ -17,6 +17,7 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -43,6 +44,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   localdata: LocalDataSource = new LocalDataSource();
   banks = new DefaultSelect();
   columnFilters: any = [];
+
+  LV_MSG_PROCESO: string;
+  LV_EST_PROCESO: number = 1;
+  LV_TOTREG: number;
+  LV_WHERE: number;
 
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
@@ -82,7 +88,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private excelService: ExcelService,
     private modalService: BsModalService,
     private paymentService: PaymentService,
-    private accountMovementService: AccountMovementService
+    private accountMovementService: AccountMovementService,
+    private msDepositaryService: MsDepositaryService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -90,7 +97,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getBusquedaPagDet(5);
+    this.getBusquedaPagMae(5);
     console.log('antes servicio');
+    this.searchID(5);
     this.localdata
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -186,9 +196,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       ],
       validity: [null, [Validators.required]],
       searchType: [null, [Validators.required]],
-      processType: [null, [Validators.required]],
+      processType: [null],
       system: [null, [Validators.required]],
-      action: [null, [Validators.required]],
+      action: [null],
     });
     this.getEvents({ page: 1, text: '' });
   }
@@ -246,29 +256,54 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   search() {
-    let LV_MSG_PROCESO: string;
-    let LV_EST_PROCESO: number = 1;
     let LV_TOTREG: number;
+
+    this.searchID(5);
 
     if (this.searchForm.get('system').value == 1) {
       if (this.searchForm.get('searchType').value == 5) {
         this.searchForm.get('bank');
       } else {
-        //Cod pasado back
-        //
-        if (LV_EST_PROCESO == 1) {
+        let param = {
+          typeSearch: this.searchForm.get('searchType').value,
+          event: this.searchForm.get('event').value,
+          lot: this.searchForm.get('batch').value,
+          bankKey: this.searchForm.get('bank').value,
+          amount: this.searchForm.get('amount').value,
+          preference: this.searchForm.get('reference').value,
+          sistemValue: this.searchForm.get('system').value,
+        };
+        this.searchPayment(param);
+
+        if (this.LV_EST_PROCESO == 1) {
           console.log('Tipo búsqueda', this.searchForm.get('searchType').value);
           this.getBusquedaPagMae(this.searchForm.get('searchType').value);
+        } else {
+          this.alert('warning', 'Información', this.LV_MSG_PROCESO);
         }
       }
     } else {
-      //Cod PUP_BUSQUEDA
+      //Servicio PUP_BUSQUEDA
+
+      this.searchID(this.LV_TOTREG);
+      if (this.LV_TOTREG == 0) {
+        this.alert(
+          'warning',
+          'Información',
+          'No se generaron registros de la consulta'
+        );
+      } else {
+        this.getBusquedaPagMae(5);
+      }
     }
 
     this.getTableData();
   }
 
   cleanSearch() {
+    let LV_TOTREG: number;
+    let LV_WHERE: string;
+
     this.searchForm.reset();
     this.paymentColumns = [];
     this.totalItems = 0;
@@ -433,7 +468,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
                   };
                   console.log(
                     'Descripcion Pag Sat-> ',
-                    this.getPaymentSat(params, res.data[i].idGuySat)
+                    this.getPaymentSat(params, res.data[i].idGuySat) // <- Undefine
                   );
                   this.dataRows.push(item);
                   this.localdata.load(this.dataRows);
@@ -460,15 +495,16 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  getBusquedaPagMae(lparams: string) {
-    this.paymentService.getBusquedaMae(lparams).subscribe(resp => {
+  getBusquedaPagMae(params: number) {
+    this.paymentService.getBusquedaMae(params).subscribe(resp => {
       if (resp != null && resp != undefined) {
-        console.log('Resp PagosMae-> ', resp);
+        this.LV_WHERE = resp.data[0].tsearchId;
+        console.log('Resp PagosMae-> ', this.LV_WHERE);
       }
     });
   }
 
-  getBusquedaPagDet(params?: string) {
+  getBusquedaPagDet(params?: number) {
     this.paymentService.getBusquedaPag(params).subscribe(resp => {
       if (resp != null && resp != undefined) {
         console.log('Resp BusquedaPagDet', resp);
@@ -490,5 +526,29 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         return null;
       }
     );
+  }
+
+  searchID(id: number) {
+    console.log('Resp Search Id-> ', id);
+    this.paymentService.getSearchId(id).subscribe(resp => {
+      console.log('Resp Search Id-> ', resp);
+      if (resp != null && resp != undefined) {
+        this.LV_TOTREG = resp.count;
+        console.log('Resp BusquedaId-> ', resp.count);
+      }
+    });
+  }
+
+  searchPayment(params: any) {
+    console.log('Busqueda Pago->', params);
+    this.msDepositaryService.postSearchPay(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        this.LV_MSG_PROCESO = resp.messageProcess;
+        this.LV_EST_PROCESO = resp.statusProcess;
+        console.log('Resp SearchPay-> ', resp);
+        console.log('LV_MSG_PROCESO-> ', resp.messageProcess);
+        console.log('LV_EST_PROCESO-> ', resp.statusProcess);
+      }
+    });
   }
 }

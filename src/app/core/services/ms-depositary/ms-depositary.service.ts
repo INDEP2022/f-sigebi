@@ -244,4 +244,8 @@ export class MsDepositaryService extends HttpService {
   MODIFICA_ESTATUS_ANT(body: any) {
     return this.put(`${DepositaryEndPoints.UpdateGeneralStatus}`, body);
   }
+
+  postSearchPay(params: any) {
+    return this.post(DepositaryEndPoints.SearchPayment, params);
+  }
 }
