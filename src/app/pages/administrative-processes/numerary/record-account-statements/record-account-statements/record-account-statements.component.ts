@@ -343,8 +343,14 @@ export class RecordAccountStatementsComponent
 
   // Genera el saldo de la cuenta seleccionada al escoger un rango de fechas
   DateAccountBalance() {
-    const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
-    const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
+    const balanceOf = this.datePipe.transform(
+      this.variableOf,
+      'dd-MM-yyyy HH:mm:ss'
+    );
+    const balanceAt = this.datePipe.transform(
+      this.variableAt,
+      'dd-MM-yyyy HH:mm:ss'
+    );
 
     if (!balanceOf && !balanceAt) {
       this.alert('warning', 'Debe ingresar las fechas de saldo', '');
