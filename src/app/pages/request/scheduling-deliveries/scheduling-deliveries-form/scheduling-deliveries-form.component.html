@@ -10,12 +10,16 @@
         class="btn btn-primary btn-sm active">
         Enviar programaci&oacute;n <i class="bx bx-send"></i>
       </button>
-      <button type="button" class="btn btn btn-primary btn-sm active">
+
+      <button
+        (click)="saveProgDelivery()"
+        type="button"
+        class="btn btn btn-primary btn-sm active">
         Guardar <i aria-hidden="true" class="fa fa-save"></i>
       </button>
     </div>
 
-    <h5 class="title">Detalle de la programaci&oacute;n de entrega</h5>
+    <h5 class="title">Detalle Programaci&oacute;n de Entrega</h5>
     <form [formGroup]="schedulingDeliverieForm" class="form-material">
       <div class="row pt-3">
         <div class="col-md-6">
@@ -27,25 +31,34 @@
               value="nameEvent"
               (change)="typeEventSelect($event)"
               bindLabel="nameEvent"
-              label="Selecciona un tipo de evento"></ngx-select>
+              label="Tipo de Evento"></ngx-select>
           </div>
 
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('dateStartDelivery')"
-              label="Fecha inicio de entrega">
+              [control]="schedulingDeliverieForm.get('startDate')"
+              label="Fecha Inicio de Entrega">
               <input
                 class="form-control"
-                formControlName="dateStartDelivery"
+                formControlName="startDate"
+                [minDate]="date"
+                (ngModelChange)="startDateSelect($event)"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  dateInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  keepDatepickerOpened: true
+                }"
                 bsDatepicker />
             </form-field>
           </div>
 
           <div class="pt-3">
-            <form-field [control]="schedulingDeliverieForm.get('transferent')">
+            <form-field [control]="schedulingDeliverieForm.get('transferId')">
               <ngx-select
                 [form]="schedulingDeliverieForm"
-                control="transferent"
+                control="transferId"
                 [showTooltip]="true"
                 [data]="transferences"
                 value="id"
@@ -65,7 +78,7 @@
           <div class="pt-3">
             <ngx-select
               [form]="schedulingDeliverieForm"
-              control="warehouse"
+              control="store"
               [data]="warehouse"
               value="organization"
               bindLabel="name"
@@ -75,11 +88,19 @@
 
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('dateEndDelivery')"
+              [control]="schedulingDeliverieForm.get('endDate')"
               label="Fecha final de entrega">
               <input
                 class="form-control"
-                formControlName="dateEndDelivery"
+                [minDate]="startDate"
+                [daysDisabled]="[6, 0]"
+                [bsConfig]="{
+                  withTimepicker: true,
+                  rangeInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  dateInputFormat: 'DD/MM/YYYY HH:mm:ss',
+                  keepDatepickerOpened: true
+                }"
+                formControlName="endDate"
                 bsDatepicker />
             </form-field>
           </div>
@@ -112,15 +133,133 @@
           </div>
           <div class="pt-3">
             <form-field
-              [control]="schedulingDeliverieForm.get('emails')"
+              [control]="schedulingDeliverieForm.get('email')"
               label="Correos electr&oacute;nicos">
-              <textarea
-                class="form-control"
-                formControlName="emails"></textarea>
+              <textarea class="form-control" formControlName="email"></textarea>
             </form-field>
           </div>
         </div>
       </div>
+      <div *ngIf="idTypeEvent == 5" class="pt-5">
+        <h5 class="title pt-5">Detalles Programación por Destrucción</h5>
+        <div class="justify-content-end btn-toolbar">
+          <button class="btn btn-primary btn-sm active">
+            Generar constancias de destrucción <i class="fa fa-file"></i>
+          </button>
+          <button class="btn btn-primary btn-sm active">
+            Notificación para destrucción <i class="fa fa-file"></i>
+          </button>
+          <button class="btn btn-primary btn-sm active">
+            Notificación destrucción fondos <i class="fa fa-file"></i>
+          </button>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('officeDestructionNumber')"
+              label="No. de Oficio">
+              <input
+                class="form-control"
+                formControlName="officeDestructionNumber" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('company')"
+              label="Empresa">
+              <input class="form-control" formControlName="company" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('responsibleSae')"
+              label="Nombre Destinatario">
+              <input class="form-control" formControlName="responsibleSae" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('placeDestruction')"
+              label="Lugar Destrucción">
+              <input class="form-control" formControlName="placeDestruction" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('chargeSae')"
+              label="Cargo Destinatario">
+              <input class="form-control" formControlName="chargeSae" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('locationDestruction')"
+              label="Ubicación Destrucción">
+              <input
+                class="form-control"
+                formControlName="locationDestruction" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('addressee')"
+              label="Dirección Destinatario">
+              <input class="form-control" formControlName="addressee" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('taxpayerName')"
+              label="Nombre Contribuyente">
+              <input class="form-control" formControlName="taxpayerName" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('metodDestruction')"
+              label="Método Destrucción">
+              <input class="form-control" formControlName="metodDestruction" />
+            </form-field>
+          </div>
+
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('legalRepresentativeName')"
+              label="Nombre Representante Legal">
+              <input
+                class="form-control"
+                formControlName="legalRepresentativeName" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="schedulingDeliverieForm.get('startRestDate')"
+              label="Plazo (días)">
+              <input class="form-control" formControlName="startRestDate" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
       <div *ngIf="filterSales" class="row pt-3">
         <h5 class="title">
           <p>
@@ -260,7 +399,7 @@
         </div>
       </div>
 
-      <div class="row pt-3">
+      <div class="row pt-5">
         <h5 class="title">Vista previa de bienes a programar</h5>
 
         <div class="btn-toolbar pt-3">

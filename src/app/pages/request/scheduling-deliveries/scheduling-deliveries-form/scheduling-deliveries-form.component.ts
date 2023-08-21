@@ -41,7 +41,11 @@ export class SchedulingDeliveriesFormComponent
   goodsToProgram: any[] = [];
   SearchSalesData: any[] = [];
   regionalDelegationNum: number = 0;
+  idTypeEvent: number = 0;
   goodsToProgramData: any[] = [];
+  date = new Date();
+  startDate = new Date();
+  endDate = new Date();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   settingsSearchSales = {
@@ -121,18 +125,23 @@ export class SchedulingDeliveriesFormComponent
     const tomorrow = addDays(new Date(), 1);
     this.schedulingDeliverieForm = this.fb.group({
       typeEvent: [null],
-      dateStartDelivery: [
-        null,
-        [Validators.required, minDate(new Date(tomorrow))],
-      ],
-      warehouse: [null],
-      dateEndDelivery: [
-        null,
-        [Validators.required, minDate(new Date(tomorrow))],
-      ],
-      transferent: [null],
+      startDate: [null, [Validators.required, minDate(new Date(tomorrow))]],
+      store: [null],
+      endDate: [null, [Validators.required, minDate(new Date(tomorrow))]],
+      transferId: [null],
       client: [null],
-      emails: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      officeDestructionNumber: [null, [Validators.pattern(STRING_PATTERN)]],
+      company: [null, [Validators.pattern(STRING_PATTERN)]],
+      responsibleSae: [null, [Validators.pattern(STRING_PATTERN)]],
+      placeDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
+      chargeSae: [null, [Validators.pattern(STRING_PATTERN)]],
+      locationDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
+      addressee: [null, [Validators.pattern(STRING_PATTERN)]],
+      taxpayerName: [null, [Validators.pattern(STRING_PATTERN)]],
+      metodDestruction: [null, [Validators.pattern(STRING_PATTERN)]],
+      legalRepresentativeName: [null, [Validators.pattern(STRING_PATTERN)]],
+      startRestDate: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -149,24 +158,19 @@ export class SchedulingDeliveriesFormComponent
   }
 
   getWarehouseSelect(params: ListParams) {
+    params['sortBy'] = `name:ASC`;
     params['filter.name'] = `$ilike:${params.text}`;
     params['filter.regionalDelegation'] = this.regionalDelegationNum;
     //params['filter.managedBy'] = 'SAE';
-    this.goodsQueryService.getCatStoresView(params).subscribe(data => {
-      console.log('data', data);
-      this.warehouse = new DefaultSelect(data.data, data.count);
+    this.goodsQueryService.getCatStoresView(params).subscribe({
+      next: data => {
+        console.log('data', data);
+        this.warehouse = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        this.warehouse = new DefaultSelect();
+      },
     });
-    /*if (params.text) {
-      this.warehouseService.search(params).subscribe(data => {
-        console.log('almacenes', data);
-        this.warehouse = new DefaultSelect(data.data, data.count);
-      });
-    } else {
-      this.warehouseService.getAll(params).subscribe(data => {
-        console.log('almacenes', data);
-        this.warehouse = new DefaultSelect(data.data, data.count);
-      });
-    } */
   }
 
   selectEvent(event: Event) {
@@ -207,26 +211,25 @@ export class SchedulingDeliveriesFormComponent
   }
 
   typeEventSelect(typeEvent: any) {
-    console.log('typeEvent', typeEvent);
+    this.idTypeEvent = typeEvent.id;
   }
 
-  addEstate(data: any) {
-    /*this.goodsToProgram = Object.assign({}, this.goodsToProgramData);
-    this.goodsToProgram.push(data);
-    this.goodsToProgramData = this.goodsToProgram;
-    this.sourceChange.emit(true); */
+  saveProgDelivery() {}
 
-    const goodsToProgramData = Object.assign({}, this.goodsToProgramData);
-    goodsToProgramData.push(data);
-    this.goodsToProgramData = goodsToProgramData;
-
-    /*const dataSource = this.goodsToProgramData;
-    dataSource.push(data);
-    this.goodsToProgramData = dataSource;
-    console.log(this.goodsToProgramData); */
-
-    /*const dataSource = Object.assign({}, this.goodsToProgramData);
-    dataSource.push(data);
-    this.goodsToProgramData = dataSource; */
+  startDateSelect(date: any) {
+    this.startDate = date;
   }
+
+  endDateSelect(_endDate: any) {
+    if (this.startDate < _endDate) {
+      this.schedulingDeliverieForm
+        .get('endDate')
+        .addValidators([minDate(this.startDate)]);
+      this.schedulingDeliverieForm
+        .get('endDate')
+        .setErrors({ minDate: { min: this.startDate } });
+    }
+  }
+
+  addEstate(event: Event) {}
 }

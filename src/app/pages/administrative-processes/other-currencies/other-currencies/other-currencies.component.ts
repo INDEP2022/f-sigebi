@@ -127,7 +127,7 @@ export class OtherCurrenciesComponent implements OnInit {
     // params.page = _params.page;
     // params.limit = _params.limit;
     // if (val) params.addFilter3('filter.desc_moneda', _params.text);
-
+    _params.sortBy = `cve_moneda:ASC`;
     this.tableServ.getReg4WidthFilters(_params.getParams()).subscribe({
       next: data => {
         data.data.map(data => {

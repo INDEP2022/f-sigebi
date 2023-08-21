@@ -240,7 +240,11 @@ export class InventoryDataComponent
       fechaInventario: [new Date(), [Validators.required]],
       responsable: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.max(60),
+        ],
       ],
     });
   }
@@ -384,7 +388,7 @@ export class InventoryDataComponent
         this.alert(
           'success',
           'Datos Inventario',
-          'Se ha Realizado la Actualización Correctamente'
+          'El Inventario se ha Actualizado'
         );
       } else {
         let required: boolean = false;
@@ -413,7 +417,7 @@ export class InventoryDataComponent
           this.alert(
             'success',
             'Datos Inventario',
-            'Se ha Guardado Correctamente el Inventario.'
+            'El inventario se ha Guardado.'
           );
           this.inventoryDataForm.get('responsable').reset();
         } else {
