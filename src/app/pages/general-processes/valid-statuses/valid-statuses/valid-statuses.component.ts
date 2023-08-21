@@ -12,6 +12,7 @@ import {
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 
 import { LocalDataSource } from 'ng2-smart-table';
@@ -78,38 +79,58 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareHelpForm();
-    // this.dataFacTableValid
-    //   .onChanged()
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(change => {
-    //     if (change.action === 'filter') {
-    //       let filters = change.filter.filters;
-    //       filters.map((filter: any) => {
-    //         let field = ``;
-    //         let searchFilter = SearchFilter.ILIKE;
-    //         field = `filter.${filter.field}`;
-    //         filter.field == 'description' ||
-    //           filter.field == 'status' ||
-    //           filter.field == 'statusGood' ||
-    //           filter.field == ' statusFinal' ||
-    //           filter.field == 'descripcion2' ||
-    //           filter.field == 'processExtSun'
-    //           ? (searchFilter = SearchFilter.EQ)
-    //           : (searchFilter = SearchFilter.ILIKE);
-    //         if (filter.search !== '') {
-    //           this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-    //         } else {
-    //           delete this.columnFilters[field];
-    //         }
-    //       });
-    //       // this.params = this.pageFilter(this.params);
-    //       this.params.pipe(skip(1)).subscribe(params => {
-    //         this.getScreenStatuses(params).subscribe();
-    //         this.getHelpByScreen(this.global.screenStatus).subscribe();
-    //       });
-    //       this.fillFromParams();
-    //     }
-    //   });
+    this.dataFacTableValid
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'statusGood':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'statusFinal':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'descripcion2':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'processExtSun':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.params.pipe(skip(1)).subscribe(params => {
+            this.getScreenStatuses(params).subscribe();
+            this.getHelpByScreen(this.global.screenStatus).subscribe();
+          });
+          this.fillFromParams();
+        }
+      });
 
     this.params.pipe(skip(1)).subscribe(params => {
       this.getScreenStatuses(params).subscribe();

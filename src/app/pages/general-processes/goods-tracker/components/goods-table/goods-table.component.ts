@@ -20,6 +20,7 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { GoodTrackerEndpoints } from 'src/app/common/constants/endpoints/ms-good-tracker-endpoints';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -786,8 +787,9 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       tap(res => {
         console.warn('RESPUESTA DEL SOCKET');
         console.log({ res });
-      }),
-      switchMap(() => this.getExcel(token))
+        this.getExcel(token);
+      })
+      // switchMap(() => )
     );
   }
 
@@ -813,23 +815,30 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   }
 
   getExcel(token: string) {
-    return this.goodTrackerService.donwloadExcel(token).pipe(
-      catchError(error => {
-        this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
-        this.fullService.generatingFileFlag.next({
-          progress: 100,
-          showText: true,
-        });
-        return throwError(() => error);
-      }),
-      tap(resp => {
-        this.downloadExcel(resp.file);
-        this.fullService.generatingFileFlag.next({
-          progress: 100,
-          showText: true,
-        });
-      })
-    );
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+    const url = `${environment.API_URL}trackergood/${environment.URL_PREFIX}${GoodTrackerEndpoints.DownloadExcel}/${token}`;
+    console.log({ url });
+    window.open(url, '_blank');
+    // this.downloadExcel(resp.file);
+    this.fullService.generatingFileFlag.next({
+      progress: 100,
+      showText: true,
+    });
+    // return this.goodTrackerService.donwloadExcel(token).pipe(
+    //   // catchError(error => {
+    //   //   this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+    //   //   this.fullService.generatingFileFlag.next({
+    //   //     progress: 100,
+    //   //     showText: true,
+    //   //   });
+    //   //   return throwError(() => error);
+    //   // }),
+    //   tap(resp => {
+    //     console.warn('excel');
+
+    //     console.log(resp);
+    //   })
+    // );
   }
 
   downloadExcel(base64String: string) {
@@ -837,7 +846,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,';
     const link = document.createElement('a');
     link.href = mediaType + base64String;
-    link.download = 'Rastreador_Bienes.xlsx';
+    link.download = 'Rastreador_Bienes.csv';
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');

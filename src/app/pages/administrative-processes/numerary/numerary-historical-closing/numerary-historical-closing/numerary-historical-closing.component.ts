@@ -59,11 +59,7 @@ export class NumeraryHistoricalClosingComponent
         this.loading = false;
       },
       error: err => {
-        this.alert(
-          'warning',
-          'No se tiene registrado algún cierre para esa fecha',
-          ''
-        );
+        this.alert('warning', 'No hay registros en la fecha seleccionada', '');
         this.loading = false;
       },
     });

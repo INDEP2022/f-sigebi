@@ -74,7 +74,7 @@ export class DynamicTablesService extends HttpService {
 
   getAllOtkeyModal(self?: DynamicTablesService, params?: _Params) {
     return self.post(
-      'dinamic-tables/get-otkey-otvalue',
+      'dinamic-tables/get-otkey-otvalue?sortBy=otvalor:ASC',
       {
         classificationGoodNumber: self.selectedClasification,
         table: self.selectedTable,
@@ -85,7 +85,7 @@ export class DynamicTablesService extends HttpService {
 
   getAllOtkeyReservadoModal(self?: DynamicTablesService, params?: _Params) {
     return self.post(
-      'dinamic-tables/get-otkey-otvalue?filter.nmtabla=417',
+      'dinamic-tables/get-otkey-otvalue?filter.nmtabla=417&sortBy=otvalor:ASC',
       {
         classificationGoodNumber: self.selectedClasification,
         table: self.selectedTable,
@@ -102,7 +102,7 @@ export class DynamicTablesService extends HttpService {
 
   getAllOtkeySJuridaModal(self?: DynamicTablesService, params?: _Params) {
     return self.post(
-      'dinamic-tables/get-otkey-otvalue?filter.nmTablefilter.nmtabla=418',
+      'dinamic-tables/get-otkey-otvalue?filter.nmTablefilter.nmtabla=418&sortBy=otvalor:ASC',
       {
         classificationGoodNumber: self.selectedClasification,
         table: self.selectedTable,

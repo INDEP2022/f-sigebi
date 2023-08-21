@@ -115,6 +115,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   selectedRow: IGood;
   statusGood_: any;
   formTable1: FormGroup;
+  statusInicial: string = 'RFI';
+  statusFinal: string = 'RFP';
   formFind: FormGroup;
   origin: string = '';
   origin3: string = '';
@@ -146,7 +148,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
   disabledBtnImprimir: boolean = false;
   disabledBtnEscaneo: boolean = false;
   disabledBtnReplicar: boolean = false;
-  disabledBtnCerrar: boolean = true;
+  //disabledBtnCerrar: boolean = true;
   showScanForm: boolean = true;
   ocultarPaginado: boolean = false;
   transfer: number = 0;
@@ -204,6 +206,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
   folioBoool: boolean = false;
   authorityNumber: any;
   Exportdate: boolean = false;
+
+  contador: number = 0;
+  vTotalB: string = '';
+
   dataTableGoodsMap = new Map<number, IGoodAndAvailable>();
   dataGoodsSelected = new Map<number, IGoodAndAvailable>();
   constructor(
@@ -428,7 +434,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLogged = token;
-    this.gestionTramite(this.paramsScreen.P_NO_TRAMITE);
     this.initFormPostGetUserData();
     this.actaReception = this.actasDefault;
     this.goodForm();
@@ -695,7 +700,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
         this.loadingBienes = false;
@@ -830,11 +834,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
       );
       this.statusCanc = next.statusProceedings;
       if (this.statusCanc == 'CERRADA') {
-        this.disabledBtnCerrar = false;
+        //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
-        this.disabledBtnCerrar = true;
+        //this.disabledBtnCerrar = true;
       }
 
       // MAPEAR DATOS
@@ -913,10 +917,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
         });
     });
   }
-  gestionTramite(tramite: string) {
+  gestionTramite() {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${this.paramsScreen.P_NO_TRAMITE}`;
     this.bienesLoading = false;
-    this.procedureManagementService.getById(tramite).subscribe({
-      next: data => {
+    this.procedureManagementService.getAllFiltered(params).subscribe({
+      next: (data: any) => {
         this.gTramite = data;
         console.log(this.gTramite);
         this.fileNumber = this.gTramite.expedient;
@@ -1460,11 +1466,11 @@ export class ActsCircumstantiatedCancellationTheftComponent
       // this.fCreate = this.datePipe.transform(next.dateElaborationReceipt,'dd/MM/yyyy');
       this.statusCanc = next.statusProceedings;
       if (this.statusCanc == 'CERRADA') {
-        this.disabledBtnCerrar = false;
+        //this.disabledBtnCerrar = false;
         this.disabledBtnActas = false;
       } else {
         this.disabledBtnActas = true;
-        this.disabledBtnCerrar = true;
+        //this.disabledBtnCerrar = true;
       }
       console.log('NEXT', next);
       this.actaRecepttionForm.patchValue({
@@ -1531,7 +1537,10 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.alert('warning', 'No Existe Acta para Cerrar', '');
         return;
       }
-
+      if (this.actasDefault.statusProceedings == 'CERRADA') {
+        this.alertInfo('warning', 'El Acta ya se Encuentra Cerrada', '');
+        return;
+      }
       if (this.dataRecepcionGood.count() == 0) {
         this.alertInfo(
           'warning',
@@ -1584,7 +1593,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
 
                   this.alertInfo('success', 'El Acta Ha Sido Cerrada', '');
                   this.alert('success', 'Acta Cerrada', '');
-                  this.disabledBtnCerrar = false;
+                  //this.disabledBtnCerrar = false;
                   this.disabledBtnActas = false;
                   this.getGoodsByStatus(this.fileNumber);
                   await this.getDetailProceedingsDevollution(
@@ -1954,6 +1963,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
                 acta: this.actaRecepttionForm.get('type').value,
+                origin3: this.origin3,
+                P_GEST_OK: this.paramsScreen.P_GEST_OK,
+                P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
                 //...this.paramsScreen,
               },
             });
@@ -1978,14 +1990,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
     if (params.PN_FOLIO) {
       const msg = setTimeout(() => {
         this.jasperService
-          .fetchReport('RGERGENSOLICDIGIT', params)
+          //.fetchReport('RGERGENSOLICDIGIT', params)  No existe reporte
+          .fetchReportBlank('blank')
           .pipe(
             tap(response => {
-              /*  this.alert(
-                  'success',
-                  'Generado correctamente',
-                  'Generado correctamente con folio: ' + this.folioScan
-                );*/
+              this.alert(
+                'success',
+                'Generado Correctamente',
+                'Folio de Escaneo: ' + this.formScan.get('scanningFoli').value
+              );
               const blob = new Blob([response], { type: 'application/pdf' });
               const url = URL.createObjectURL(blob);
               let config = {
@@ -2196,6 +2209,39 @@ export class ActsCircumstantiatedCancellationTheftComponent
     );
   }
 
+  ValidGoods(): void {
+    if (this.bienes.length === 0) {
+      this.alertInfo('warning', 'No Hay Ningún Bien a Comprar', '');
+      return;
+    }
+
+    this.contador = 0;
+    this.vTotalB = '';
+
+    for (const bien of this.bienes) {
+      if (bien.goodId >= 1) {
+        this.contador++;
+
+        if (this.contador === 1) {
+          this.vTotalB = bien.goodId.toString();
+        } else {
+          this.vTotalB = bien.goodId + ',' + this.vTotalB;
+        }
+      }
+    }
+
+    if (this.contador > 0) {
+      this.onLoadToast(
+        'success',
+        'Se Encontraton ' + this.contador + ' Bienes',
+        'Que Son: ' + this.vTotalB
+      );
+      console.log('SE ENCONTRARON:', this.contador, 'QUE SON:', this.vTotalB);
+    } else {
+      this.alertInfo('warning', 'No Hay Ningún Bien a Comprar', '');
+    }
+  }
+
   changeSelection(event: any, id: number) {
     const good = this.dataTableGoodsMap.get(id);
     if (event.target.checked) {
@@ -2220,51 +2266,28 @@ export class ActsCircumstantiatedCancellationTheftComponent
   initFormPostGetUserData() {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        console.log(params);
-        console.log(this.paramsScreen);
-        for (const key in this.paramsScreen) {
-          if (Object.prototype.hasOwnProperty.call(params, key)) {
-            this.paramsScreen[key as keyof typeof this.paramsScreen] =
-              params[key] ?? null;
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
+        this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
+        if (this.origin == 'FACTCIRCUNR_0001') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin3 = paramsQuery['origin3'] ?? null;
+          if (
+            this.origin != null &&
+            this.paramsScreen.P_GEST_OK != null &&
+            this.paramsScreen.P_NO_TRAMITE != null
+          ) {
+            this.gestionTramite();
           }
         }
-        this.origin = params['origin2']
-          ? params['origin2']
-          : params['origin'] ?? null;
-        this.origin3 = params['origin3'] ?? null;
-        this.paramsScreen.P_GEST_OK = params['P_GEST_OK'] ?? null;
-        this.paramsScreen.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
-        if (
-          this.origin &&
-          this.paramsScreen.P_GEST_OK != null &&
-          this.paramsScreen.P_NO_TRAMITE != null
-        ) {
-          // this.btnSearchAppointment();
-        }
-        console.log(params, this.paramsScreen);
       });
-    if (this.paramsScreen) {
-      if (this.paramsScreen.P_GEST_OK && this.paramsScreen.P_NO_TRAMITE) {
-        this.initForm();
-      } else {
-        console.log('SIN PARAMETROS');
-        if (!this.origin) {
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-        } else {
-          // this.alertInfo(
-          //   'info',
-          //   'Error en los paramétros',
-          //   'Los paramétros No. Oficio: ' +
-          //     this.paramsScreen.P_VALOR +
-          //     ' y el Tipo Oficio: ' +
-          //     this.paramsScreen.TIPO +
-          //     ' al iniciar la pantalla son requeridos'
-          // );
-        }
-      }
-    }
   }
 }
 

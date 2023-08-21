@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { distinctUntilChanged, throttleTime } from 'rxjs';
+import { distinctUntilChanged, Subscription, throttleTime } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { Observable } from 'rxjs/internal/Observable';
 import { takeUntil } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
   contador = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   service: ServiceGetAll<T>;
+  subscription: Subscription = new Subscription();
   constructor() {
     super();
     this.settings = {
@@ -115,7 +116,10 @@ export abstract class BasePageWidhtDinamicFilters<T = any> extends BasePage {
     this.loading = true;
     let params = this.getParams();
     if (this.service) {
-      this.service
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
+      this.subscription = this.service
         .getAll(params)
         .pipe(takeUntil(this.$unSubscribe))
         .subscribe({
