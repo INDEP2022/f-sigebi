@@ -149,3 +149,24 @@ export interface IGood {
     valor_referencia: NULL,
     fec_reg_insert_hc: NULL,
     proceso_ext_dom: ASEGURADO*/
+export interface IGoodsExport {
+  cantidad: string;
+  descripcion: string;
+  estatus: string;
+  fecha_liberacion?: string;
+  id_almacen: string;
+  no_bien: string;
+  no_bien_padre_parcializacion: string;
+  no_bien_referencia: string;
+  no_clasif_bien: string;
+  no_expediente: string;
+  no_transferente: string;
+  proceso_ext_dom: string;
+  unidad: string;
+}
+
+export interface IGoodsExportPost {
+  noBien: number;
+  vNoBienPadre: number;
+  vNobienreferencia: number;
+}
