@@ -49,14 +49,14 @@ export class UnreconciledFilesComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, Validators.required],
-      subdelegation: [null, Validators.required],
-      fileFrom: [null, Validators.required],
-      fileTo: [null, Validators.required],
+      delegation: [null],
+      subdelegation: [null],
+      fileFrom: [null],
+      fileTo: [null],
       from: [null, Validators.required],
       to: [null, Validators.required],
-      // currency: [null, Validators.required],
-      // bank: [null, Validators.required],
+      currency: [null, Validators.required],
+      bank: [null, Validators.required],
       importe: [null, Validators.required],
     });
   }

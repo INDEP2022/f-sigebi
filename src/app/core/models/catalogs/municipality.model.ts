@@ -6,6 +6,7 @@ export interface IMunicipality {
   codMarginality?: number;
   noRegister?: number;
   risk?: string;
+  municipalityKey?: string;
   version?: number;
 }
 

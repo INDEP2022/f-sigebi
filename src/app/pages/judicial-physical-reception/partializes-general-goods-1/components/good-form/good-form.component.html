@@ -5,7 +5,7 @@
         <input class="form-control" formControlName="noBien" maxlength="10" />
       </form-field>
       <button
-        [disabled]="formLoading"
+        [disabled]="formLoading || form.invalid"
         class="btn btn-primary btn-sm active"
         type="button"
         (click)="searchGood()">
