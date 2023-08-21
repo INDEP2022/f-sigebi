@@ -81,6 +81,17 @@ export class EffectiveNumeraryDevolutionComponent implements OnInit {
       PF_FECFIN: this.toT,
     };
 
+    // let params = {
+    //   PN_DELEG: this.form.controls['delegation'].value ? '[null]' : this.form.controls['delegation'].value,
+    //   PN_SUBDEL: this.form.controls['subdelegation'].value ? '[null]' : this.form.controls['subdelegation'].value,
+    //   PN_EXPINI: this.form.controls['fileFrom'].value ? '[null]' : this.form.controls['fileFrom'].value,
+    //   PN_EXPFIN: this.form.controls['fileTo'].value ? '[null]' : this.form.controls['fileTo'].value,
+    //   PN_BIENINI: this.form.controls['goodFrom'].value ? '[null]' : this.form.controls['goodFrom'].value,
+    //   PN_BIENFIN: this.form.controls['goodTo'].value ? '[null]' : this.form.controls['goodTo'].value,
+    //   PF_FECINI: this.fromF ? '[null]' : this.fromF,
+    //   PF_FECFIN: this.toT ? '[null]' : this.toT,
+    // };
+
     this.siabService
       .fetchReport('RGERADBDEVNUMEFEC', params)
       // .fetchReportBlank('blank')

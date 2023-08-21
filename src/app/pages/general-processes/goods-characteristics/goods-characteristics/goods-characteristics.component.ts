@@ -391,10 +391,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
       noBien: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       noClasif: [null, [Validators.pattern(POSITVE_NUMBERS_PATTERN)]],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
-      descripcion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      descripcion: [null, [Validators.required]],
       unidad: [null, [Validators.pattern(STRING_PATTERN)]],
       cantidad: [null, [Validators.pattern(DOUBLE_POSITIVE_PATTERN)]],
       delegation: [null],

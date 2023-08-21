@@ -115,6 +115,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   selectedRow: IGood;
   statusGood_: any;
   formTable1: FormGroup;
+  statusInicial: string = 'RFI';
+  statusFinal: string = 'RFP';
   formFind: FormGroup;
   origin: string = '';
   origin3: string = '';
@@ -432,7 +434,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLogged = token;
-    this.gestionTramite(this.paramsScreen.P_NO_TRAMITE);
     this.initFormPostGetUserData();
     this.actaReception = this.actasDefault;
     this.goodForm();
@@ -699,7 +700,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
         this.loadingBienes = false;
@@ -917,10 +917,12 @@ export class ActsCircumstantiatedCancellationTheftComponent
         });
     });
   }
-  gestionTramite(tramite: string) {
+  gestionTramite() {
+    const params = new ListParams();
+    params['filter.id'] = `$eq:${this.paramsScreen.P_NO_TRAMITE}`;
     this.bienesLoading = false;
-    this.procedureManagementService.getById(tramite).subscribe({
-      next: data => {
+    this.procedureManagementService.getAllFiltered(params).subscribe({
+      next: (data: any) => {
         this.gTramite = data;
         console.log(this.gTramite);
         this.fileNumber = this.gTramite.expedient;
@@ -2264,51 +2266,28 @@ export class ActsCircumstantiatedCancellationTheftComponent
   initFormPostGetUserData() {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        console.log(params);
-        console.log(this.paramsScreen);
-        for (const key in this.paramsScreen) {
-          if (Object.prototype.hasOwnProperty.call(params, key)) {
-            this.paramsScreen[key as keyof typeof this.paramsScreen] =
-              params[key] ?? null;
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
+        this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
+        if (this.origin == 'FACTCIRCUNR_0001') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin3 = paramsQuery['origin3'] ?? null;
+          if (
+            this.origin != null &&
+            this.paramsScreen.P_GEST_OK != null &&
+            this.paramsScreen.P_NO_TRAMITE != null
+          ) {
+            this.gestionTramite();
           }
         }
-        this.origin = params['origin2']
-          ? params['origin2']
-          : params['origin'] ?? null;
-        this.origin3 = params['origin3'] ?? null;
-        this.paramsScreen.P_GEST_OK = params['P_GEST_OK'] ?? null;
-        this.paramsScreen.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
-        if (
-          this.origin &&
-          this.paramsScreen.P_GEST_OK != null &&
-          this.paramsScreen.P_NO_TRAMITE != null
-        ) {
-          // this.btnSearchAppointment();
-        }
-        console.log(params, this.paramsScreen);
       });
-    if (this.paramsScreen) {
-      if (this.paramsScreen.P_GEST_OK && this.paramsScreen.P_NO_TRAMITE) {
-        this.initForm();
-      } else {
-        console.log('SIN PARAMETROS');
-        if (!this.origin) {
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-        } else {
-          // this.alertInfo(
-          //   'info',
-          //   'Error en los paramétros',
-          //   'Los paramétros No. Oficio: ' +
-          //     this.paramsScreen.P_VALOR +
-          //     ' y el Tipo Oficio: ' +
-          //     this.paramsScreen.TIPO +
-          //     ' al iniciar la pantalla son requeridos'
-          // );
-        }
-      }
-    }
   }
 }
 

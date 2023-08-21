@@ -76,7 +76,7 @@ export class AccountsInsuredByFileComponent implements OnInit {
       PF_INI: this.fromF,
       PF_FIN: this.toT,
     };
-
+    console.log('params', params);
     this.siabService
       .fetchReport('RGENADBCTASASEGEX', params)
       // .fetchReportBlank('blank')

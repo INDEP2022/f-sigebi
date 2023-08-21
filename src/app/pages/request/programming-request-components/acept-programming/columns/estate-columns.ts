@@ -66,7 +66,13 @@ export const ESTATE_COLUMNS = {
     sort: false,
   },
 
-  townshipKey: {
+  stateKeyName: {
+    title: 'Estado',
+    type: 'string',
+    sort: false,
+  },
+
+  municipalityName: {
     title: 'Municipio',
     type: 'string',
     sort: false,
