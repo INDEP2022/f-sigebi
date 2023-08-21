@@ -458,6 +458,7 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     this.registers = null;
     this.files.nativeElement.value = '';
     this.isActions = true;
+    this.form.get('solnumType').patchValue('D');
   }
 
   async saveData() {
@@ -559,6 +560,13 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
             : good.dateCalculationInterests;
         }
         await this.createGoodDet(good);
+        this.filterParams2.getValue().removeAllFilters();
+        this.filterParams2.getValue().page = 1;
+        this.filterParams2
+          .getValue()
+          .addFilter('solnumId', body.solnumId, SearchFilter.EQ);
+
+        await this.getNumDet();
       } else {
         if (typeof good.dateCalculationInterests == 'object') {
           good.dateCalculationInterests = good.dateCalculationInterests
@@ -657,14 +665,14 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
             ? this.parseDateNoOffset(good.dateCalculationInterests)
             : good.dateCalculationInterests;
           await this.createGoodDet(good);
+          this.filterParams2.getValue().removeAllFilters();
+          this.filterParams2.getValue().page = 1;
+          this.filterParams2
+            .getValue()
+            .addFilter('solnumId', solnumId, SearchFilter.EQ);
+          await this.getNumDet();
         });
 
-        this.filterParams2.getValue().removeAllFilters();
-        this.filterParams2.getValue().page = 1;
-        this.filterParams2
-          .getValue()
-          .addFilter('solnumId', solnumId, SearchFilter.EQ);
-        await this.getNumDet();
         this.isNew = false;
       },
       error: () => {

@@ -934,6 +934,7 @@ export class VerifyComplianceTabComponent
               body['goodId'] = this.goodsSelected[0].goodId;
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
               body.goodStatus = 'VERIFICAR_CUMPLIMIENTO';
+              body.status = null;
               await this.updateGoods(body);
             } else {
               body['id'] = this.goodsSelected[0].id;
@@ -943,6 +944,7 @@ export class VerifyComplianceTabComponent
                   ? 'ACLARADO'
                   : 'VERIFICAR_CUMPLIMIENTO';
               body.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+              body.status = null;
               await this.updateGoods(body);
             }
             this.updateTable(body.goodStatus, body.processStatus);

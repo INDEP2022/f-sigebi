@@ -425,8 +425,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
   get pathUnit() {
     return (
       'classifygood/api/v1/unit-x-classif?sortBy=unit:ASC' +
-      (this.numberClassification && this.numberClassification.value
-        ? '&filter.classifyGoodNumber:$eq:' + this.numberClassification.value
+      (this.delegacion
+        ? '&filter.classifyGoodNumber:$eq:' + this.delegacion
         : '')
     );
   }
@@ -951,6 +951,7 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
 
   async searchGood(byPage = false) {
     // debugger;
+    // this.reloadSubdelegation = false;
     if (byPage) {
       this.loader.load = true;
     }
@@ -1183,11 +1184,22 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     this.errorMessage = 'El usuario no tiene permisos de escritura';
   }
 
+  get pathSubdelegation() {
+    return (
+      'catalog/api/v1/subdelegation/get-all' +
+      (this.delegation && this.delegation.value
+        ? '?filter.delegationNumber=$eq:' + this.delegation.value
+        : '')
+    );
+  }
+
   private async getValidations() {
     // debugger;
     const response = await firstValueFrom(
       this.getStatusXPantalla().pipe(catchError(x => of(null)))
     );
+    this.activateForEdit();
+    return;
     if (response) {
       const di_disponible_e = response.filter(x => x.action === 'E').length;
       const di_disponible = response.filter(
