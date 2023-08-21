@@ -221,7 +221,7 @@ export class HistoricalGoodSituationComponent
         if (error.status < 500) {
           this.onLoadToast('warning', 'El Bien no Existe', '');
         } else {
-          this.onLoadToast('warning', 'El Bien no Existe', '');
+          this.onLoadToast('warning', 'Bien no admitido en la Pantalla', '');
         }
         return throwError(() => error);
       }),
