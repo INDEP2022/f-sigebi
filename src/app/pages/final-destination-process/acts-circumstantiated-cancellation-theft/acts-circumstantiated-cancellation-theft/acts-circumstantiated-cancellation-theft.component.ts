@@ -197,7 +197,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   bienes: IGood[] = [];
   //folioScan: number;
   consec: number;
-  type: number;
   loadingDoc: boolean = false;
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
@@ -251,7 +250,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.fileNumber = params['expedient']
           ? Number(params['expedient'])
           : null;
-        this.type = params['acta'] ? Number(params['acta']) : null;
+        this.cveActa = params['acta'] ? String(params['acta']) : null;
       });
     this.validPermisos = !this.validPermisos;
     this.settings = {
@@ -510,13 +509,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     return { anio: anioCompleto, mes: mesTexto };
   }
 
-  // LLAMAR DATOS DESPUES DE ESCANEAR
+  // MAPEO o LLAMAR DATOS DESPUES DE ESCANEAR
   formFolio() {
     this.formScan.patchValue({
       scanningFoli: this.consec,
     });
     this.actaRecepttionForm.patchValue({
-      type: this.type,
+      cveActa: this.cveActa,
     });
   }
 
@@ -1499,8 +1498,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
+
+      // Se mapea Autoridad cuando se crea nueva acta
       console.log('AUTORITHY --', this.authorityNumber);
       this.actaRecepttionForm.get('claveTrans').setValue(this.authorityNumber);
+
+      // Se mapea Mes  y año al crear nueva acta
+      this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
@@ -1970,7 +1974,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 origin: 'FACTCIRCUNR_0001',
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
-                acta: this.actaRecepttionForm.get('type').value,
+                acta: this.actaRecepttionForm.get('cveActa').value,
                 origin3: this.origin3,
                 P_GEST_OK: this.paramsScreen.P_GEST_OK,
                 P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
@@ -2267,7 +2271,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
         folio: this.formScan.get('scanningFoli').value,
         expedient: this.fileNumber,
-        acta: this.actaRecepttionForm.get('type').value,
+        acta: this.actaRecepttionForm.get('cveActa').value,
       },
     });
   }
