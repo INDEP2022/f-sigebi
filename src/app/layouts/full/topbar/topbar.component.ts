@@ -183,17 +183,20 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   noScreenId() {
-    this.onLoadToast('error', 'Error', 'No existe un código de pantalla');
+    this.onLoadToast(
+      'warning',
+      'Advertencia',
+      'No existe un código de pantalla'
+    );
   }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
     let sweetalert = new SweetalertModel();
-    sweetalert.toast = true;
-    sweetalert.position = 'top-end';
-    sweetalert.timer = 6000;
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
+    sweetalert.showConfirmButton = true;
+    sweetalert.allowOutsideClick = false;
     Swal.fire(sweetalert);
   }
 }
