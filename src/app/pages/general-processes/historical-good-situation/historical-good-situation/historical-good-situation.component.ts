@@ -239,5 +239,7 @@ export class HistoricalGoodSituationComponent
     this.history = [];
     this.data.load([]);
     this.data.refresh();
+    this.loading = false;
+    this.totalItems = 0;
   }
 }
