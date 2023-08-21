@@ -411,7 +411,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       '¿Desea Continuar?',
-      '¿Se Continua con la Selección?'
+      ''
     );
     if (response.isConfirmed) {
       this.openModal();
@@ -423,9 +423,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingStatusAccount = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    console.log({
+      params1: params,
+      date: this.date.value,
+      dateValid: new Date('20-08-2023'),
+    });
+    this.downloadReport('RCONBIENESPROC_COMIS', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }

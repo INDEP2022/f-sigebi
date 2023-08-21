@@ -526,47 +526,23 @@
             </div>
           </div>
 
-          <div class="row">
-            <div class="d-flex align-items-center">
-              <div class="col-6 align-items-center">
-                <div class="mt-5">
-                  <form
-                    class="form-material form-horizontal"
-                    [formGroup]="formTable1"
-                    (ngSubmit)="onSubmit()">
-                    <div
-                      class="row mt-5 justify-content-start justify-content-sm-end">
-                      <div class="mb-3 pl-4 pr-4">
-                        <form-field [control]="formTable1.get('detail')">
-                          <input
-                            type="text"
-                            class="form-control"
-                            formControlName="detail"
-                            readonly />
-                        </form-field>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div class="col-6 align-items-center">
-                <div class="row">
-                  <div class="col-6">
-                    <span class="text-success mr-5"
-                      ><i class="fa fa-square"></i> Disponibles</span
-                    >
-                  </div>
-                  <div class="col-6">
-                    <span class="text-danger"
-                      ><i class="fa fa-square"></i> No disponibles</span
-                    >
-                  </div>
-                </div>
-              </div>
+          <!----   <div class="row">
+                        <div class="d-flex align-items-center">
+                            <div class="col-6 align-items-center">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <span class="text-danger"><i class="fa fa-square"></i> No disponibles</span
+                   
             </div>
-          </div>
+        </div>
+    </div>
+    </div>
+    </div> >------->
 
-          <!-- <div class="row mt-5">
+          <div class="row mt-5">
             <app-divider></app-divider>
           </div>
           <div class="d-flex justify-content-end mt-5">
@@ -581,11 +557,11 @@
                   [attr.class]="'table-bordered responsive'"
                   [settings]="settings2"
                   [source]="data2"></ng2-smart-table>
-                <app-pagination [params]="params5" [totalItems]="totalItems1">
+                <app-pagination [params]="params2" [totalItems]="totalItems1">
                 </app-pagination>
               </div>
             </div>
-          </div>-->
+          </div>
         </form>
       </div>
     </div>

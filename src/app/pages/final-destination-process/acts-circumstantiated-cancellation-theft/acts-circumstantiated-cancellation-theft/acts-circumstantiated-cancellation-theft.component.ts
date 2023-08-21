@@ -143,6 +143,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     origin: '',
     P_GEST_OK: '',
     P_NO_TRAMITE: '',
+    folio: '',
   };
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
@@ -918,21 +919,28 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
   gestionTramite() {
-    const params = new ListParams();
-    params['filter.id'] = `$eq:${this.paramsScreen.P_NO_TRAMITE}`;
     this.bienesLoading = false;
-    this.procedureManagementService.getAllFiltered(params).subscribe({
-      next: (data: any) => {
-        this.gTramite = data;
-        console.log(this.gTramite);
-        this.fileNumber = this.gTramite.expedient;
-        this.getGoodsByStatus(this.fileNumber);
-      },
-      error: () => {
-        this.bienesLoading = false;
-        console.error('error ');
-      },
-    });
+    this.procedureManagementService
+      .getById(this.paramsScreen.P_NO_TRAMITE)
+      .subscribe({
+        next: (data: any) => {
+          this.gTramite = data;
+          console.log(this.gTramite);
+          this.fileNumber = this.gTramite.expedient;
+          this.getExpedient(this.fileNumber);
+          this.getGoodsByStatus(this.fileNumber);
+          this.getActaGoodExp(
+            this.actaRecepttionForm.value.cveActa,
+            this.fileNumber
+          );
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+          this.formScan.get('scanningFoli').setValue(this.paramsScreen.folio);
+        },
+        error: () => {
+          this.bienesLoading = false;
+          console.error('error ');
+        },
+      });
   }
   onGoodSelect(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -2270,6 +2278,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.origin = paramsQuery['origin'] ?? null;
         this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
         this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
+        this.paramsScreen.folio = paramsQuery['folio'] ?? null;
         if (this.origin == 'FACTCIRCUNR_0001') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -2284,6 +2293,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             this.paramsScreen.P_GEST_OK != null &&
             this.paramsScreen.P_NO_TRAMITE != null
           ) {
+            console.log(this.paramsScreen);
             this.gestionTramite();
           }
         }
@@ -2295,4 +2305,5 @@ export interface IParamsActaC {
   origin: string;
   P_GEST_OK: string;
   P_NO_TRAMITE: string;
+  folio: string;
 }
