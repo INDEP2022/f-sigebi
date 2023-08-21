@@ -55,9 +55,9 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         // this.selectGood(response)
       },
       error: err => {
-        this.resetForm();
         this.alert('error', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
+        this.resetForm();
       },
     });
   }

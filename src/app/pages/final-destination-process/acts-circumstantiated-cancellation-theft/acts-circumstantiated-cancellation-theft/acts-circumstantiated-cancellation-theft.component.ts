@@ -115,6 +115,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
   selectedRow: IGood;
   statusGood_: any;
   formTable1: FormGroup;
+  statusInicial: string = 'RFI';
+  statusFinal: string = 'RFP';
   formFind: FormGroup;
   origin: string = '';
   origin3: string = '';
@@ -141,6 +143,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     origin: '',
     P_GEST_OK: '',
     P_NO_TRAMITE: '',
+    folio: '',
   };
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
@@ -432,7 +435,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
     const token = this.authService.decodeToken();
     console.log(token);
     this.dataUserLogged = token;
-    this.gestionTramite(this.paramsScreen.P_NO_TRAMITE);
     this.initFormPostGetUserData();
     this.actaReception = this.actasDefault;
     this.goodForm();
@@ -699,7 +701,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    console.log('1412212', params);
     this.goodService.getByExpedient_(id, params).subscribe({
       next: data => {
         this.loadingBienes = false;
@@ -917,20 +918,29 @@ export class ActsCircumstantiatedCancellationTheftComponent
         });
     });
   }
-  gestionTramite(tramite: string) {
+  gestionTramite() {
     this.bienesLoading = false;
-    this.procedureManagementService.getById(tramite).subscribe({
-      next: data => {
-        this.gTramite = data;
-        console.log(this.gTramite);
-        this.fileNumber = this.gTramite.expedient;
-        this.getGoodsByStatus(this.fileNumber);
-      },
-      error: () => {
-        this.bienesLoading = false;
-        console.error('error ');
-      },
-    });
+    this.procedureManagementService
+      .getById(this.paramsScreen.P_NO_TRAMITE)
+      .subscribe({
+        next: (data: any) => {
+          this.gTramite = data;
+          console.log(this.gTramite);
+          this.fileNumber = this.gTramite.expedient;
+          this.getExpedient(this.fileNumber);
+          this.getGoodsByStatus(this.fileNumber);
+          this.getActaGoodExp(
+            this.actaRecepttionForm.value.cveActa,
+            this.fileNumber
+          );
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+          this.formScan.get('scanningFoli').setValue(this.paramsScreen.folio);
+        },
+        error: () => {
+          this.bienesLoading = false;
+          console.error('error ');
+        },
+      });
   }
   onGoodSelect(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -2264,51 +2274,30 @@ export class ActsCircumstantiatedCancellationTheftComponent
   initFormPostGetUserData() {
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe((params: any) => {
-        console.log(params);
-        console.log(this.paramsScreen);
-        for (const key in this.paramsScreen) {
-          if (Object.prototype.hasOwnProperty.call(params, key)) {
-            this.paramsScreen[key as keyof typeof this.paramsScreen] =
-              params[key] ?? null;
+      .subscribe(paramsQuery => {
+        this.origin = paramsQuery['origin'] ?? null;
+        this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
+        this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
+        this.paramsScreen.folio = paramsQuery['folio'] ?? null;
+        if (this.origin == 'FACTCIRCUNR_0001') {
+          for (const key in this.paramsScreen) {
+            if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
+              this.paramsScreen[key as keyof typeof this.paramsScreen] =
+                paramsQuery[key] ?? null;
+            }
+          }
+          this.origin2 = paramsQuery['origin2'] ?? null;
+          this.origin3 = paramsQuery['origin3'] ?? null;
+          if (
+            this.origin != null &&
+            this.paramsScreen.P_GEST_OK != null &&
+            this.paramsScreen.P_NO_TRAMITE != null
+          ) {
+            console.log(this.paramsScreen);
+            this.gestionTramite();
           }
         }
-        this.origin = params['origin2']
-          ? params['origin2']
-          : params['origin'] ?? null;
-        this.origin3 = params['origin3'] ?? null;
-        this.paramsScreen.P_GEST_OK = params['P_GEST_OK'] ?? null;
-        this.paramsScreen.P_NO_TRAMITE = params['P_NO_TRAMITE'] ?? null;
-        if (
-          this.origin &&
-          this.paramsScreen.P_GEST_OK != null &&
-          this.paramsScreen.P_NO_TRAMITE != null
-        ) {
-          // this.btnSearchAppointment();
-        }
-        console.log(params, this.paramsScreen);
       });
-    if (this.paramsScreen) {
-      if (this.paramsScreen.P_GEST_OK && this.paramsScreen.P_NO_TRAMITE) {
-        this.initForm();
-      } else {
-        console.log('SIN PARAMETROS');
-        if (!this.origin) {
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-          // this.showSearchAppointment = true; // Habilitar pantalla de búsqueda de dictaminaciones
-        } else {
-          // this.alertInfo(
-          //   'info',
-          //   'Error en los paramétros',
-          //   'Los paramétros No. Oficio: ' +
-          //     this.paramsScreen.P_VALOR +
-          //     ' y el Tipo Oficio: ' +
-          //     this.paramsScreen.TIPO +
-          //     ' al iniciar la pantalla son requeridos'
-          // );
-        }
-      }
-    }
   }
 }
 
@@ -2316,4 +2305,5 @@ export interface IParamsActaC {
   origin: string;
   P_GEST_OK: string;
   P_NO_TRAMITE: string;
+  folio: string;
 }

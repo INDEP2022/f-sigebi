@@ -171,7 +171,7 @@ export class DictationService extends HttpService {
     return this.post(route, body);
   }
 
-  postFindGoodDictGood1(body: { id: any; typeDict: string }) {
+  postFindGoodDictGood1(body: { ofDictNumber: any; typeDict: string }) {
     const route = `${DictationEndpoints.FindIdsDictationXGood1}`;
     return this.post(route, body);
   }
