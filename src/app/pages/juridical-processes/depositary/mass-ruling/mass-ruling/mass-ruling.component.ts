@@ -10,11 +10,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, firstValueFrom, skip, take } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, skip, take, takeUntil } from 'rxjs';
 import { HasMoreResultsComponent } from 'src/app/@standalone/has-more-results/has-more-results.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { getDataFromExcel, showToast } from 'src/app/common/helpers/helpers';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
@@ -45,9 +48,11 @@ export class MassRulingComponent
   expedientNumber: number = null;
   wheelNumber: number = null;
   data: LocalDataSource = new LocalDataSource();
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   wheelType: string = '';
   maxDate: Date = new Date();
   deleteGoodDictamen: boolean;
+  columnFilters: any = [];
   dictaminacion: any;
   tableSettings = {
     actions: {
@@ -56,7 +61,7 @@ export class MassRulingComponent
       edit: false,
       delete: false,
     },
-    hideSubHeader: true, //oculta subheaader de filtro
+    hideSubHeader: false, //oculta subheaader de filtro
     mode: 'external', // ventana externa
     columns: {
       goodNumber: {
@@ -74,9 +79,11 @@ export class MassRulingComponent
         // },
       },
     },
+    noDataMessage: 'No se encontrarón registros',
   };
   totalItems = 0;
   // Data table
+  dataTable2: LocalDataSource = new LocalDataSource();
   dataTable: { goodNumber: number; fileNumber: number }[] = [];
   isFileLoad = false;
 
@@ -88,7 +95,7 @@ export class MassRulingComponent
       edit: false,
       delete: false,
     },
-    hideSubHeader: true, //oculta subheaader de filtro
+    hideSubHeader: false, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -97,6 +104,7 @@ export class MassRulingComponent
         title: 'Errores del proceso',
       },
     },
+    noDataMessage: 'No se encontrarón registros',
   };
   // Data table
   dataTableErrors: { processId: any; description: string }[] = [];
@@ -112,9 +120,7 @@ export class MassRulingComponent
     /**@description no_of_dicta */
     id: new FormControl(''),
     /**@description clave_oficio_armada */
-    passOfficeArmy: new FormControl('', [
-      Validators.pattern(KEYGENERATION_PATTERN),
-    ]),
+    passOfficeArmy: new FormControl(''),
     /**@description no_expediente */
     expedientNumber: new FormControl(''),
     /**@description tipo_dictaminacion */
@@ -170,6 +176,36 @@ export class MassRulingComponent
     this.paramsErrors.pipe(skip(1)).subscribe(params => {
       this.getTmpErrores(params);
     });
+
+    this.dataTable2
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            console.log('loooool');
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            field = `filter.${filter.field}`;
+            switch (filter.field) {
+              case 'goodNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'fileNumber':
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.loadDataByIdentifier();
+        }
+      });
   }
 
   loadDataForDataTable(listParams: ListParams) {
@@ -260,14 +296,25 @@ export class MassRulingComponent
 
   async onClickGoodDictation() {
     console.log(this.dictaminacion);
-    let bodyDelete: any = {};
-    this.dictationService
+    const question = await this.alertQuestion(
+      'warning',
+      'Confirmación',
+      'Los Bienes del Dictamen Serán Eliminados ¿Desea Continuar?'
+    );
+    if (!question.isConfirmed) {
+      return;
+    } else {
+      let bodyDelete: any = {};
+      bodyDelete['officialNumber'] = this.form.value.expedientNumber;
+      bodyDelete['typeDictum'] = this.form.value.typeDict;
+      //// hace udo de la tabla documentos_dictamen_x_bien_m elige un dato de tipo PROCEDENCIA
+      ///los datos de la tabla  no concuerdan
+      /*this.dictationService
       .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
       .subscribe({
         next: data => {
           console.log(data);
-          bodyDelete['officialNumber'] = this.dictaminacion.expedientNumber;
-          bodyDelete['typeDictum'] = this.dictaminacion.typeDict;
+          
           console.log(bodyDelete);
         },
         error: err => {
@@ -277,62 +324,56 @@ export class MassRulingComponent
             'No Se Han encontrado Bienes Relacionados'
           );
         },
-      });
+      });*/
 
-    if (this.dataTable.length < 1) {
-      this.onLoadToast(
-        'warning',
-        '',
-        'No Se Tiene Datos Cargados En la Tabla de Carga Masiva'
-      );
-      return;
-    }
-    const question = await this.alertQuestion(
-      'warning',
-      'Confirmación',
-      'Los Bienes del Dictamen Serán Eliminados ¿Desea Continuar?'
-    );
-    if (!question.isConfirmed) {
-      return;
-    }
-
-    let body: any = {};
-    if (this.isFileLoad) {
-      body['goodIds'] = /* this.dataTable.map(x => {
-        return { no_bien: x.goodNumber }; 
-      });*/ this.dataFile.map(x => {
-        return { no_bien: x.goodNumber };
-      });
-    } else {
-      if (!this.formCargaMasiva.value.identificadorCargaMasiva) {
+      if (this.dataTable.length < 1) {
         this.onLoadToast(
           'warning',
           '',
-          'Debe Ingresar Un Identificador de Carga Masiva y Cargar los Bienes del Identificador'
+          'No Se Tiene Datos Cargados En la Tabla de Carga Masiva'
         );
         return;
       }
 
-      body['identifier'] = this.formCargaMasiva.value.identificadorCargaMasiva;
-      this.btnsEnabled.btnGoodDictation = true;
+      let body: any = {};
+      if (this.isFileLoad) {
+        body['goodIds'] = /* this.dataTable.map(x => {
+        return { no_bien: x.goodNumber }; 
+      });*/ this.dataFile.map(x => {
+          return { no_bien: x.goodNumber };
+        });
+      } else {
+        if (!this.formCargaMasiva.value.identificadorCargaMasiva) {
+          this.onLoadToast(
+            'warning',
+            '',
+            'Debe Ingresar Un Identificador de Carga Masiva y Cargar los Bienes del Identificador'
+          );
+          return;
+        }
+
+        body['identifier'] =
+          this.formCargaMasiva.value.identificadorCargaMasiva;
+        this.btnsEnabled.btnGoodDictation = true;
+      }
+      this.documentsDictumStatetMService.removeDictamen(bodyDelete).subscribe({
+        next: data => {
+          this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
+          this.dataTable = [];
+          this.totalItems = 0;
+          this.dataTableErrors = [];
+          this.totalItemsErrors = 0;
+          this.formCargaMasiva.reset();
+          this.form.get('delete').setValue(false);
+          this.form.get('delete').disable();
+          this.btnsEnabled.btnGoodDictation = false;
+        },
+        error: err => {
+          this.onLoadToast('warning', '', 'Error al Eliminar los Bienes');
+          this.btnsEnabled.btnGoodDictation = false;
+        },
+      });
     }
-    this.documentsDictumStatetMService.removeDictamen(bodyDelete).subscribe({
-      next: data => {
-        this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
-        this.dataTable = [];
-        this.totalItems = 0;
-        this.dataTableErrors = [];
-        this.totalItemsErrors = 0;
-        this.formCargaMasiva.reset();
-        this.form.get('delete').setValue(false);
-        this.form.get('delete').disable();
-        this.btnsEnabled.btnGoodDictation = false;
-      },
-      error: err => {
-        this.onLoadToast('warning', '', 'Error al Eliminar los Bienes');
-        this.btnsEnabled.btnGoodDictation = false;
-      },
-    });
   }
 
   onClickBtnClear() {
@@ -350,27 +391,41 @@ export class MassRulingComponent
   //TODO: FOR TESTING
   async onClickDictation() {
     console.log(this.dictaminacion);
-    let bodyDelete: any = {};
-    this.dictationService
-      .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
-      .subscribe({
-        next: data => {
-          console.log(data);
-          bodyDelete['ofDictNumber'] = this.dictaminacion.id;
-          bodyDelete['id'] = data.data[0].goodNumber;
-          bodyDelete['typeDict'] = this.dictaminacion.typeDict;
-          console.log(bodyDelete);
-        },
-        error: err => {
-          this.onLoadToast(
-            'warning',
-            '',
-            'No Se Han encontrado Bienes Relacionados'
-          );
-        },
-      });
 
-    const armyOfficeKey = this.form.get('passOfficeArmy').value;
+    const responseQuestion = await this.alertQuestion(
+      'info',
+      '',
+      'Desea Eliminar el Dictamen: ' + this.form.get('passOfficeArmy').value,
+      'Continuar',
+      'Cancelar'
+    );
+    if (!responseQuestion.isConfirmed) {
+      this.btnsEnabled.btnDictation = false;
+      return;
+    } else {
+      let bodyDelete: any = {};
+      //// de utilizan datos  de la tabla : tmp_exp_desahogob
+      this.dictationService
+        // .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
+        .getTmpExpDesahogoByExpedient(793680)
+        .subscribe({
+          next: data => {
+            console.log(data);
+            bodyDelete['ofDictNumber'] = this.dictaminacion.id;
+            bodyDelete['id'] = data.data[0].goodNumber;
+            bodyDelete['typeDict'] = this.dictaminacion.typeDict;
+            console.log(bodyDelete);
+          },
+          error: err => {
+            this.onLoadToast(
+              'warning',
+              '',
+              'No Se Han encontrado Bienes Relacionados'
+            );
+          },
+        });
+
+      /*  const armyOfficeKey = this.form.get('passOfficeArmy').value;
     console.log(armyOfficeKey);
     if (!armyOfficeKey) {
       this.alert(
@@ -379,28 +434,19 @@ export class MassRulingComponent
         'Debe Ingresar la Clave de la Oficina del Ejercito'
       );
       return;
-    }
+    }*/
 
-    try {
-      const count = await this.CountDictationGoodFile(armyOfficeKey);
-      const responseQuestion = await this.alertQuestion(
-        'info',
-        '',
-        'Desea Eliminar el Dictamen: ' + armyOfficeKey,
-        'Continuar',
-        'Cancelar'
-      );
-      if (!responseQuestion.isConfirmed) {
-        this.btnsEnabled.btnDictation = false;
-        return;
-      }
-      this.onLoadToast(
-        'info',
-        '',
-        `El Total de Expediente a eliminar son: ${count}`
-      );
-      let usuar;
       try {
+        const count = await this.CountDictationGoodFile(
+          this.form.get('passOfficeArmy').value
+        );
+        this.onLoadToast(
+          'info',
+          '',
+          `El Total de Expediente a eliminar son: ${count}`
+        );
+        let usuar;
+        /* try {
         console.log(this.authService.decodeToken());
         const user = this.authService
           .decodeToken()
@@ -414,32 +460,37 @@ export class MassRulingComponent
           'Su Usuario No Tiene Permiso Para Eliminar Registros'
         );
         return;
-      }
+      }*/
 
-      if (usuar?.user) {
+        //  if (usuar?.user) {
         console.log(bodyDelete);
         this.dictationXGood1Service.removDictamen(bodyDelete).subscribe({
           next: data => {
             this.alert('success', 'Dictamen', 'Proceso terminado');
           },
           error: err => {
-            this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
+            this.alert(
+              'error',
+              'Error',
+              'Error Desconocido Consulte a Su Analista'
+            );
           },
         });
         // await this.procedureDeleteDictationMoreTax(armyOfficeKey);
-        this.alert('success', 'Dictamen', 'Proceso terminado');
+        //this.alert('success', 'Dictamen', 'Proceso terminado');
         this.btnsEnabled.btnDictation = false;
-      } else {
+        /*  } else {
         this.alert(
           'error',
           '',
           'Su Usuario No Tiene Permiso Para Eliminar Registros'
         );
         this.btnsEnabled.btnDictation = false;
+      }*/
+      } catch (ex: any) {
+        this.btnsEnabled.btnDictation = false;
+        this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
       }
-    } catch (ex: any) {
-      this.btnsEnabled.btnDictation = false;
-      this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
     }
   }
 
@@ -467,9 +518,14 @@ export class MassRulingComponent
       return;
     }
     this.loading = true;
-    const params = `?filter.id=${identificador}&page=${listParams.page}&limit=${listParams.limit}`;
+    const params2 = `?filter.id=${identificador}&page=${listParams.page}&limit=${listParams.limit}`;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
+    console.log(params2);
     console.log(params);
-    this.massiveGoodService.getAllWithFilters(params).subscribe({
+    this.massiveGoodService.getAllWithFilters(params2, params).subscribe({
       next: data => {
         console.log('rrrrrrr', data);
         this.dataTable = data.data.map(item => {
@@ -478,6 +534,7 @@ export class MassRulingComponent
             fileNumber: (item.fileNumber as any)?.id,
           };
         });
+        this.dataTable2.load(this.dataTable);
         this.totalItems = data.count;
         this.loading = false;
         // this.file = null;
@@ -622,32 +679,33 @@ export class MassRulingComponent
   isDisableCreateDictation = false;
 
   async onClickCreatedDictation() {
+    console.log(this.form);
     if (
-      this.form.value.instructorDate ||
-      this.form.value.dictDate ||
-      this.form.value.expedientNumber ||
-      this.form.value.id ||
-      this.form.value.passOfficeArmy ||
-      this.form.value.statusDict ||
-      this.form.value.typeDict ||
-      this.form.value.userDict ||
-      this.form.value.wheelNumber
+      !this.form.value.instructorDate ||
+      !this.form.value.dictDate ||
+      !this.form.value.expedientNumber ||
+      !this.form.value.id ||
+      !this.form.value.passOfficeArmy ||
+      !this.form.value.statusDict ||
+      !this.form.value.typeDict ||
+      !this.form.value.userDict ||
+      !this.form.value.wheelNumber
     ) {
-      this.alert('error', '', 'Se Debe Ingresar la Informacion de Un Dictamen');
+      this.alert('error', '', 'Se Debe Ingresar la Informacion de un Dictamen');
       return;
     }
     let vNO_OF_DICTA;
     if (this.form.invalid) {
-      this.alert('error', '', 'Se Debe Ingresar la Informacion de Un Dictamen');
+      this.alert('error', '', 'Se Debe Ingresar la Informacion de un Dictamen');
       return;
     }
     if (!this.form.value.id && !this.form.value.typeDict) {
-      this.alert('error', '', 'Se Debe Ingresar la Informacion de Un Dictamen');
+      this.alert('error', '', 'Se Debe Ingresar la Informacion de un Dictamen');
       return;
     }
 
     try {
-      const dictation = await this.getDictationForId('find');
+      const dictation = await this.getDictationForId('other');
       vNO_OF_DICTA = dictation;
     } catch (error) {
       this.alert('error', '', 'No Se Encontró el Dictamen');
@@ -691,6 +749,15 @@ export class MassRulingComponent
         const dictation = data;
         this.dictaminacion = data;
         console.log(data);
+        this.form.controls['typeDict'].setValue(data.typeDict);
+        this.form.controls['statusDict'].setValue(data.statusDict);
+        this.form.controls['userDict'].setValue(data.userDict);
+        this.form.controls['dictDate'].setValue(data.dictDate.toString());
+        this.form.controls['instructorDate'].setValue(
+          data.instructorDate.toString()
+        );
+        this.form.controls['passOfficeArmy'].setValue(data.passOfficeArmy);
+
         // this.openMoreOneResults();
         return dictation;
       },
@@ -882,7 +949,7 @@ export class MassRulingComponent
 
   async findGoodAndDictXGood1(): Promise<any> {
     const body = {
-      id: this.form.value.id,
+      ofDictNumber: this.form.value.id,
       typeDict: this.form.value.typeDict,
     };
     console.log(body);
