@@ -126,6 +126,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `id:DESC`;
     if (this.paramsCurrentScreen.TIPO_PROC) {
       params['filter.pair1'] = this.paramsCurrentScreen.TIPO_PROC;
     }
