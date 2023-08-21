@@ -307,7 +307,7 @@ export class MassRulingComponent
       let bodyDelete: any = {};
       bodyDelete['officialNumber'] = this.form.value.expedientNumber;
       bodyDelete['typeDictum'] = this.form.value.typeDict;
-      //// hace udo de la tabla documentos_dictamen_x_bien_m elige un dato de tipo PROCEDENCIA (38022)
+      //// hace udo de la tabla documentos_dictamen_x_bien_m elige un dato de tipo PROCEDENCIA
       ///los datos de la tabla  no concuerdan
       /*this.dictationService
       .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
@@ -356,7 +356,6 @@ export class MassRulingComponent
           this.formCargaMasiva.value.identificadorCargaMasiva;
         this.btnsEnabled.btnGoodDictation = true;
       }
-      console.log(bodyDelete);
       this.documentsDictumStatetMService.removeDictamen(bodyDelete).subscribe({
         next: data => {
           this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
@@ -526,11 +525,11 @@ export class MassRulingComponent
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    console.log(params2);
-    console.log(params);
+    // console.log(params2);
+    // console.log(params);
     this.massiveGoodService.getAllWithFilters(params2, params).subscribe({
       next: data => {
-        console.log('rrrrrrr', data);
+        //console.log('rrrrrrr', data);
         this.dataTable = data.data.map(item => {
           return {
             goodNumber: (item.goodNumber as any)?.id,
@@ -556,7 +555,7 @@ export class MassRulingComponent
   dataFile: { goodNumber: number; fileNumber: number }[];
 
   async onClickLoadFile(event: any) {
-    console.log(event.target.files);
+    //  console.log(event.target.files);
     this.dataTableErrors = [];
     this.dataTable = [];
     this.totalItemsErrors = 0;
@@ -672,7 +671,7 @@ export class MassRulingComponent
   }
 
   async btnExpedientesXls(event: any) {
-    console.log('event', event);
+    // console.log('event', event);
     const data = await getDataFromExcel(event.target.files[0]);
     if (!this.validateExcel(data)) {
       return;
@@ -720,7 +719,7 @@ export class MassRulingComponent
     };
     // debugger;
     ////////////////////////////////////Hay que revisar por que si se le envia todo no realiza la insercion correctamente.
-    console.log(body);
+    // console.log(body);
     this.dictationService.postCargaMasDesahogob(body).subscribe({
       next: () => {
         this.isDisableCreateDictation = true;
@@ -751,7 +750,7 @@ export class MassRulingComponent
       next: data => {
         const dictation = data;
         this.dictaminacion = data;
-        console.log(data);
+        //  console.log(data);
         this.form.controls['typeDict'].setValue(data.typeDict);
         this.form.controls['statusDict'].setValue(data.statusDict);
         this.form.controls['userDict'].setValue(data.userDict);
@@ -760,18 +759,18 @@ export class MassRulingComponent
           data.instructorDate.toString()
         );
         this.form.controls['passOfficeArmy'].setValue(data.passOfficeArmy);
-        console.log(this.form);
-        this.openMoreOneResults(data);
+        //console.log(this.form);
+        // this.openMoreOneResults(data);
         return dictation;
       },
       error: error => {
         console.log(error);
       },
     });
-    /* if (type == 'find') {
-      console.log(this.form, );
+    if (type == 'find') {
+      console.log(this.form);
       this.openMoreOneResults();
-    }*/
+    }
   }
 
   getVolante() {
@@ -826,7 +825,7 @@ export class MassRulingComponent
     const { id, typeDict, passOfficeArmy } = this.form.value;
     let vTIPO_VOLANTE: any;
     let vIDENTI = '';
-    console.log({ id, typeDict, passOfficeArmy });
+    // console.log({ id, typeDict, passOfficeArmy });
     if (!id && !typeDict && !passOfficeArmy) {
       this.alert('warning', 'Error', 'Se Debe Ingresar un Dictamen.');
       throw new Error('Se debe ingresar un Dictamen.');
@@ -841,7 +840,7 @@ export class MassRulingComponent
 
     try {
       vIDENTI = await this.findGoodAndDictXGood1();
-      console.log(vIDENTI);
+      //console.log(vIDENTI);
     } catch (error: any) {
       if (error.status >= 400 && error.status < 500) {
         this.alert(
@@ -917,7 +916,7 @@ export class MassRulingComponent
   printReport(report: string, params: any) {
     this.siabService.fetchReport(report, params).subscribe({
       next: response => {
-        console.log('habemus pdf');
+        //  console.log('habemus pdf');
         const blob = new Blob([response], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         let config = {
@@ -943,11 +942,11 @@ export class MassRulingComponent
   async getNotificationWhereWheelNumber() {
     const { wheelNumber } = this.form.value;
     const queryParams = `filter.wheelNumber=$eq:${wheelNumber || ''}&limit=1`;
-    console.log(queryParams);
+    //   console.log(queryParams);
     const notification = await firstValueFrom(
       this.notificationsService.getAllFilter(queryParams)
     );
-    console.log(notification.data);
+    // console.log(notification.data);
     return notification.data;
   }
 
@@ -956,12 +955,12 @@ export class MassRulingComponent
       ofDictNumber: this.form.value.id,
       typeDict: this.form.value.typeDict,
     };
-    console.log(body);
+    //  console.log(body);
     const data = [];
     data.push(
       await firstValueFrom(this.dictationService.postFindGoodDictGood1(body))
     );
-    console.log(data);
+    //  console.log(data);
     if (data?.length > 1) {
       throw new Error('Se tiene varios identificadores en el Dictamen.');
     }

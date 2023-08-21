@@ -485,6 +485,7 @@ export class MassiveConversionSelectGoodComponent
               map(x => x.data.length > 0)
             )
         );
+        console.log(encontro);
         if (encontro) {
           V_BANR = false;
         }

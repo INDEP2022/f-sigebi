@@ -696,11 +696,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
         next: response => {
           //this.comerEvent = response.data;
           // console.log('--------', response.data);
-          this.data2.load(response.data);
           // console.log('hoooooolaaaaaaa', this.data2);
-          this.totalItems1 = response.count || 0;
-          this.data2.refresh();
-          //this.params.value.page = 1;
           this.loading = false;
         },
         error: error => {
