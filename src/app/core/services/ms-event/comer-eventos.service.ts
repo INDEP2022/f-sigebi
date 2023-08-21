@@ -115,4 +115,25 @@ export class ComerEventosService extends HttpService {
   pufGraceDate(body: IGraceDate) {
     return this.post('application/puf-grace-date', body);
   }
+
+  //------------- INMUEBLES -------------START//
+  pupExpExcelI(evento: any) {
+    // PUP_EXP_EXCEL
+    return this.get(`application/pup-exp-excel/${evento}`);
+  }
+
+  pupExpPayModestI(evento: any) {
+    // PUP_EXPPAGOMODEST
+    return this.get(`application/pup-exp-payment-modest/${evento}`);
+  }
+
+  pupExportDetpaymentsI(body: any) {
+    // PUP_EXPORT_DETPAGOS
+    return this.post('application/pup-export-det-payments', body);
+  }
+  //------------- INMUEBLES -------------END//
+
+  GetEventXLot(body: any, params?: _Params) {
+    return this.post(EventEndpoints.GetEventXLot, body, params);
+  }
 }
