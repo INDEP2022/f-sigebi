@@ -2277,9 +2277,15 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 paramsQuery[key] ?? null;
             }
           }
-          console.log(this.paramsScreen);
           this.origin2 = paramsQuery['origin2'] ?? null;
           this.origin3 = paramsQuery['origin3'] ?? null;
+          if (
+            this.origin != null &&
+            this.paramsScreen.P_GEST_OK != null &&
+            this.paramsScreen.P_NO_TRAMITE != null
+          ) {
+            this.gestionTramite();
+          }
         }
       });
   }
