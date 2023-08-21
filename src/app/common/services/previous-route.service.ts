@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
@@ -8,10 +7,15 @@ import { NavigationEnd, Router } from '@angular/router';
 export class PreviousRouteService {
   private history: string[] = [];
 
-  constructor(private router: Router, private location: Location) {
+  constructor(private router: Router) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.history.push(event.urlAfterRedirects);
+        let finalUrl =
+          this.router.getCurrentNavigation().previousNavigation.finalUrl ??
+          null;
+        if (finalUrl)
+          localStorage.setItem('previousRoute', finalUrl.toString());
         // if (event.url !== event.urlAfterRedirects) {
         //   this.history.push(event.urlAfterRedirects);
         // }
@@ -24,11 +28,17 @@ export class PreviousRouteService {
   }
 
   back(): void {
-    this.history.pop();
-    if (this.history.length > 0) {
-      this.location.back();
+    let previousRoute = localStorage.getItem('previousRoute');
+    if (previousRoute) {
+      this.router.navigate([previousRoute]);
     } else {
       this.router.navigateByUrl('/');
     }
+    // this.history.pop();
+    // if (this.history.length > 0) {
+    //   this.location.back();
+    // } else {
+    //   this.router.navigateByUrl('/');
+    // }
   }
 }
