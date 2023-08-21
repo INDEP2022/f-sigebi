@@ -13,7 +13,10 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  POSITVE_NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { getClassColour } from 'src/app/pages/general-processes/goods-characteristics/goods-characteristics/good-table-vals/good-table-vals.component';
 import { CharacteristicGoodCellComponent } from '../../change-of-good-classification/change-of-good-classification/characteristicGoodCell/characteristic-good-cell.component';
 import { ChangeOfGoodCharacteristicService } from '../../change-of-good-classification/services/change-of-good-classification.service';
@@ -91,6 +94,7 @@ export class GeneralDataGoodsComponent
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes) {
+      console.log(changes);
       this.getGood();
     }
   }
@@ -210,6 +214,7 @@ export class GeneralDataGoodsComponent
   private getGood() {
     this.goodService.getById(this.goodId).subscribe({
       next: (response: any) => {
+        console.log(response);
         this.classificationOfGoods = Number(response.data[0].goodClassNumber);
         this.good = response.data[0];
         this.generalDataForm.get('cantidad').patchValue(this.good.quantitySae);
@@ -235,10 +240,16 @@ export class GeneralDataGoodsComponent
   }
   private prepareForm() {
     this.generalDataForm = this.fb.group({
-      descripcion: [null, [Validators.pattern(STRING_PATTERN)]],
-      cantidad: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      descripcion: [null, Validators.maxLength(4000)],
+      cantidad: [
+        null,
+        [Validators.pattern(POSITVE_NUMBERS_PATTERN), Validators.min(1)],
+      ],
       fechaFe: [null],
-      observacion: [null, [Validators.pattern(STRING_PATTERN)]],
+      observacion: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(600)],
+      ],
     });
   }
   update() {

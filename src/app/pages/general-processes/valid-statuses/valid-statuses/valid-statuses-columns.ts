@@ -32,6 +32,7 @@ export const VALID_STATUSES_COLUMNS = {
     valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
       row.statusFinal.description,
   },
+
   processExtSun: {
     title: 'Proceso Ext. Dominio',
     sort: false,
