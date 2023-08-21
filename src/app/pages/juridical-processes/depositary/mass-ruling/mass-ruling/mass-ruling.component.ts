@@ -18,7 +18,6 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocumentsDictumStatetMService } from 'src/app/core/services/catalogs/documents-dictum-state-m.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
@@ -251,6 +250,7 @@ export class MassRulingComponent
     this.dictationService.getAllWithFilters(params).subscribe({
       next: data => {
         if (data.count > +1) {
+          console.log('get dictations', data);
           this.openMoreOneResults();
         } else {
           // this.form.patchValue(data.data[0] as any);
@@ -307,7 +307,7 @@ export class MassRulingComponent
       let bodyDelete: any = {};
       bodyDelete['officialNumber'] = this.form.value.expedientNumber;
       bodyDelete['typeDictum'] = this.form.value.typeDict;
-      //// hace udo de la tabla documentos_dictamen_x_bien_m elige un dato de tipo PROCEDENCIA
+      //// hace udo de la tabla documentos_dictamen_x_bien_m elige un dato de tipo PROCEDENCIA (38022)
       ///los datos de la tabla  no concuerdan
       /*this.dictationService
       .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
@@ -356,6 +356,7 @@ export class MassRulingComponent
           this.formCargaMasiva.value.identificadorCargaMasiva;
         this.btnsEnabled.btnGoodDictation = true;
       }
+      console.log(bodyDelete);
       this.documentsDictumStatetMService.removeDictamen(bodyDelete).subscribe({
         next: data => {
           this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
@@ -406,8 +407,8 @@ export class MassRulingComponent
       let bodyDelete: any = {};
       //// de utilizan datos  de la tabla : tmp_exp_desahogob
       this.dictationService
-        // .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
-        .getTmpExpDesahogoByExpedient(793680)
+        .getTmpExpDesahogoByExpedient(this.dictaminacion.expedientNumber)
+        // .getTmpExpDesahogoByExpedient(793680)
         .subscribe({
           next: data => {
             console.log(data);
@@ -446,47 +447,49 @@ export class MassRulingComponent
           `El Total de Expediente a eliminar son: ${count}`
         );
         let usuar;
-        /* try {
-        console.log(this.authService.decodeToken());
-        const user = this.authService
-          .decodeToken()
-          .preferred_username?.toUpperCase();
-        usuar = await this.getRtdictaAarusr(user);
-      } catch (ex) {
-        this.btnsEnabled.btnDictation = false;
-        this.alert(
-          'info',
-          '',
-          'Su Usuario No Tiene Permiso Para Eliminar Registros'
-        );
-        return;
-      }*/
+        try {
+          console.log(this.authService.decodeToken());
+          const user = this.authService
+            .decodeToken()
+            .preferred_username?.toUpperCase();
+          usuar = await this.getRtdictaAarusr(user);
+        } catch (ex) {
+          this.btnsEnabled.btnDictation = false;
+          this.alert(
+            'info',
+            '',
+            'Su Usuario No Tiene Permiso Para Eliminar Registros'
+          );
+          return;
+        }
 
-        //  if (usuar?.user) {
-        console.log(bodyDelete);
-        this.dictationXGood1Service.removDictamen(bodyDelete).subscribe({
-          next: data => {
-            this.alert('success', 'Dictamen', 'Proceso terminado');
-          },
-          error: err => {
-            this.alert(
-              'error',
-              'Error',
-              'Error Desconocido Consulte a Su Analista'
-            );
-          },
-        });
-        // await this.procedureDeleteDictationMoreTax(armyOfficeKey);
-        //this.alert('success', 'Dictamen', 'Proceso terminado');
-        this.btnsEnabled.btnDictation = false;
-        /*  } else {
-        this.alert(
-          'error',
-          '',
-          'Su Usuario No Tiene Permiso Para Eliminar Registros'
-        );
-        this.btnsEnabled.btnDictation = false;
-      }*/
+        if (usuar?.user) {
+          console.log(bodyDelete);
+          this.dictationXGood1Service.removDictamen(bodyDelete).subscribe({
+            next: data => {
+              this.alert('success', 'Dictamen', 'Proceso terminado');
+            },
+            error: err => {
+              this.alert(
+                'error',
+                'Error',
+                'Error Desconocido Consulte a Su Analista'
+              );
+            },
+          });
+          await this.procedureDeleteDictationMoreTax(
+            this.form.get('passOfficeArmy').value
+          );
+          this.alert('success', 'Dictamen', 'Proceso terminado');
+          this.btnsEnabled.btnDictation = false;
+        } else {
+          this.alert(
+            'error',
+            '',
+            'Su Usuario No Tiene Permiso Para Eliminar Registros'
+          );
+          this.btnsEnabled.btnDictation = false;
+        }
       } catch (ex: any) {
         this.btnsEnabled.btnDictation = false;
         this.alert('error', '', 'Error Desconocido Consulte a Su Analista');
@@ -757,17 +760,18 @@ export class MassRulingComponent
           data.instructorDate.toString()
         );
         this.form.controls['passOfficeArmy'].setValue(data.passOfficeArmy);
-
-        // this.openMoreOneResults();
+        console.log(this.form);
+        this.openMoreOneResults(data);
         return dictation;
       },
       error: error => {
         console.log(error);
       },
     });
-    if (type == 'find') {
+    /* if (type == 'find') {
+      console.log(this.form, );
       this.openMoreOneResults();
-    }
+    }*/
   }
 
   getVolante() {
@@ -1007,10 +1011,12 @@ export class MassRulingComponent
     id && (params['filter.id'] = id);
     expedientNumber && (params['filter.expedientNumber'] = expedientNumber);
     wheelNumber && (params['filter.wheelNumber'] = wheelNumber);
+    console.log(params);
     return params;
   }
 
-  openMoreOneResults(data?: IListResponse<any>) {
+  openMoreOneResults(data?: any) {
+    console.log(data);
     let context: Partial<HasMoreResultsComponent> = {
       queryParams: this.generateParamsSearchDictation(),
       columns: {
@@ -1030,7 +1036,7 @@ export class MassRulingComponent
           title: 'Tipo de Dictamen',
           sort: false,
         },
-        status: {
+        statusDict: {
           title: 'Estatus',
           sort: false,
         },
@@ -1039,7 +1045,7 @@ export class MassRulingComponent
       ms: 'dictation',
       path: 'dictation',
     };
-
+    console.log(context);
     const modalRef = this.modalService.show(HasMoreResultsComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',

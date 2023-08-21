@@ -87,6 +87,7 @@ export class DictationService extends HttpService {
     typeDict?: string | number;
   }): Observable<IDictation> {
     console.log('body', body);
+    console.log(this.route.FindByIds);
     return this.post(this.route.FindByIds, body);
   }
   getCount4(body: any) {

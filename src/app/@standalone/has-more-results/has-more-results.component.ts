@@ -118,7 +118,8 @@ export class HasMoreResultsComponent implements OnInit {
 
   getData(params: ListParams = new ListParams()) {
     this.isLoading = true;
-
+    console.log(`${environment.API_URL}${this.ms}/${API_VERSION}/${this.path}`);
+    console.log(this.queryParams);
     // Object.keys(this.queryParams).forEach((key: any) => {
     // params[key] = this.queryParams[key];
     // });
