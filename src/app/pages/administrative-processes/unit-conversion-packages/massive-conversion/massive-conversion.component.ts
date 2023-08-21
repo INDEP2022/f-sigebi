@@ -95,6 +95,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   dataTag = new DefaultSelect();
   dataGoodStatus = new DefaultSelect();
 
+  loadingNewBtn = false;
+
   modalRef: BsModalRef;
   loadingText: string = '';
   widthErrors = false;
@@ -508,12 +510,10 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
   //Datos de usuario logueado
   getDataUser() {
-    const user =
-      localStorage.getItem('username') == 'sigebiadmon'
-        ? localStorage.getItem('username')
-        : localStorage.getItem('username').toLocaleUpperCase();
-    const routeUser = `?filter.name=$eq:${user}`;
-    this.userService.getAllSegUsers(routeUser).subscribe(
+    const token = this.authService.decodeToken();
+    const user = token.preferred_username;
+    const routeUser = `?filter.id=$eq:${user}`;
+    this.userService.getAllSegUsers().subscribe(
       res => {
         const resJson = JSON.parse(JSON.stringify(res.data[0]));
         console.log(resJson.usuario.delegationNumber);
@@ -530,7 +530,9 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
           }
         );
       },
-      err => {}
+      err => {
+        console.log(err);
+      }
     );
   }
 
@@ -1823,6 +1825,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   //Funciones Agregadar por Grigork Farfan
   //Nuevo
   newPackage() {
+    this.loadingNewBtn = true;
     console.log(this.form.get('packageType').value);
 
     if (!this.generalPermissions.Proyecto) {
@@ -1844,12 +1847,15 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       this.targetTag.markAsTouched();
       this.goodStatus.markAsTouched();
       this.transferent.markAsTouched();
+      this.loadingNewBtn = false;
     } else if (this.form.get('packageType').value == null) {
       this.alert('warning', 'Debe especificar el tipo de paquete', '');
+      this.loadingNewBtn = false;
     } else if (this.form.get('packageType').value != 3) {
       if (this.warehouse.value.idWarehouse == null) {
         this.warehouse.markAsTouched();
         this.alert('warning', 'Debe ingresar el Almacén', '');
+        this.loadingNewBtn = false;
       } else {
         this.newCvePackage();
       }
@@ -1905,6 +1911,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
             let edo = JSON.parse(JSON.stringify(res));
             console.log(edo);
             const paramsF2 = new FilterParams();
+            console.log(this.delegation.value);
             paramsF2.addFilter('numberDelegation2', this.delegation.value.id);
             paramsF2.addFilter('stageedo', edo.stagecreated);
             this.rNomenclaService.getRNomencla(paramsF2.getParams()).subscribe(
@@ -1953,16 +1960,30 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
                         },
                         err => {
                           console.log(err);
+                          this.loadingNewBtn = false;
+                          this.alert(
+                            'error',
+                            'Se presentó un error inesperado',
+                            ''
+                          );
                         }
                       );
                     },
                     err => {
                       console.log(err);
+                      this.loadingNewBtn = false;
+                      this.alert(
+                        'error',
+                        'Se presentó un error inesperado',
+                        ''
+                      );
                     }
                   );
               },
               err => {
                 console.log(err);
+                this.loadingNewBtn = false;
+                this.alert('error', 'Se presentó un error inesperado', '');
               }
             );
           });
@@ -1970,6 +1991,8 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       err => {
         console.log(err);
         v_clave = 'XXX';
+        this.alert('error', 'Se presentó un error inesperado', '');
+        this.loadingNewBtn = false;
       }
     );
   }
@@ -2049,10 +2072,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
         console.log(res);
         console.log(res.numberPackage);
         this.researchNoPackage(res.numberPackage);
+        this.loadingNewBtn = false;
         this.alert('success', 'Se creó un Nuevo Paquete', '');
       },
       err => {
         console.log(err);
+        this.loadingNewBtn = false;
+        this.alert('error', 'Se presentó un error inesperado', '');
       }
     );
   }

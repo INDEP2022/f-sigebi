@@ -14,7 +14,31 @@ import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 @Component({
   selector: 'transfer-autority-filter',
   templateUrl: './transfer-autority-filter.component.html',
-  styles: [],
+  styles: [
+    `
+      .custom-tmp {
+        font-size: 0.9em !important;
+        margin-bottom: 5px !important;
+        color: #333 !important;
+        background-color: #ebf5ff !important;
+        border-radius: 2px !important;
+        margin-right: 5px !important;
+      }
+
+      .custom-icon {
+        font-size: 0.9em !important;
+        cursor: pointer;
+        border-right: 1px solid #b8dbff !important;
+        display: inline-block;
+        padding: 1px 5px;
+      }
+
+      .custom-value-label {
+        display: inline-block !important;
+        padding: 1px 5px !important;
+      }
+    `,
+  ],
 })
 export class TransferAutorityFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
@@ -39,6 +63,18 @@ export class TransferAutorityFilterComponent implements OnInit {
   }
 
   getTransfers(params: ListParams) {
+    const search = params?.text ?? '';
+    if (Number(search)) {
+      if (search.length == 3) {
+        params['filter.id'] = search;
+      } else {
+        params['filter.cvman'] = search;
+      }
+    } else {
+      params['filter.nameTransferent'] = '$ilike:' + search;
+    }
+    params.text = '';
+    params['search'] = '';
     this.trasnferService.getAll(params).subscribe({
       next: res => (this.transfers = new DefaultSelect(res.data, res.count)),
       error: () => {
@@ -58,11 +94,21 @@ export class TransferAutorityFilterComponent implements OnInit {
   }
 
   getTransmitters(params?: ListParams) {
+    this.transmitterParams = new FilterParams();
     if (params) {
       const { page, limit, text } = params;
       this.transmitterParams.page = page;
       this.transmitterParams.limit = limit;
-      this.transmitterParams.addFilter('stationName', text, SearchFilter.ILIKE);
+      const search = text ?? '';
+      if (Number(search)) {
+        this.transmitterParams.addFilter('id', search);
+      } else {
+        this.transmitterParams.addFilter(
+          'stationName',
+          search,
+          SearchFilter.ILIKE
+        );
+      }
     }
     if (this.form.controls.transfers.value.length > 0) {
       const transfers = this.form.controls.transfers.value.join(',');
@@ -72,7 +118,7 @@ export class TransferAutorityFilterComponent implements OnInit {
         SearchFilter.IN
       );
     }
-
+    this.transmitterParams.search = '';
     this.stationService
       .getAllFilter(this.transmitterParams.getParams())
       .subscribe({
@@ -85,11 +131,23 @@ export class TransferAutorityFilterComponent implements OnInit {
   }
 
   getAutorities(params?: ListParams) {
+    this.autoritiesParams = new FilterParams();
+    console.log({ params });
+
     if (params) {
       const { page, limit, text } = params;
       this.autoritiesParams.page = page;
       this.autoritiesParams.limit = limit;
-      this.autoritiesParams.addFilter('stationName', text, SearchFilter.ILIKE);
+      const search = text ?? '';
+      if (Number(search)) {
+        this.autoritiesParams.addFilter('idAuthority', search);
+      } else {
+        this.autoritiesParams.addFilter(
+          'authorityName',
+          search,
+          SearchFilter.ILIKE
+        );
+      }
     }
     if (this.form.controls.transfers.value.length > 0) {
       const transfers = this.form.controls.transfers.value.join(',');
