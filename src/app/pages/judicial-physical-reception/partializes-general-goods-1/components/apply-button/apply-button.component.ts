@@ -852,7 +852,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           },
           error: error => {
             console.log(error);
-            this.alert('error', 'Inserta Bien', 'No se pudo parcializar');
+            this.alert('error', 'Inserta Bien', error.error.message);
             this.loader.load = false;
             return;
           },

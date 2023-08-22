@@ -177,8 +177,8 @@ export class RateCatalogComponent extends BasePage implements OnInit {
           .subscribe({
             next: () => {
               this.alert(
-                'error',
-                'Error',
+                'warning',
+                'Atención',
                 'La tasa de interés que se esta capturando ya existe'
               );
             },
@@ -205,8 +205,8 @@ export class RateCatalogComponent extends BasePage implements OnInit {
                   next: () => {
                     this.alert(
                       'success',
-                      'Tasa Interés',
-                      'Ha sido creado correctamente'
+                      'La tasa de interés ha sido creada',
+                      ''
                     );
                     this.clear();
                     this.getAllNumeraryRate();
@@ -230,8 +230,8 @@ export class RateCatalogComponent extends BasePage implements OnInit {
           });
       } else {
         this.alert(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
           'Hace falta la captura de un campo favor de ingresarlo'
         );
       }
@@ -272,8 +272,8 @@ export class RateCatalogComponent extends BasePage implements OnInit {
     );
     if (newDate <= selectDate) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'El año o el mes sobrepasa la fecha de la tasa de interés, favor de corregir'
       );
       return true;
@@ -319,11 +319,7 @@ export class RateCatalogComponent extends BasePage implements OnInit {
 
             this.numeraryServ.update(data.tasintId, data).subscribe({
               next: () => {
-                this.alert(
-                  'success',
-                  'Tasa Interés',
-                  'Se actualizo correctamente'
-                );
+                this.alert('success', 'Tesa interés se actualizó', '');
                 this.getAllNumeraryRate();
               },
               error: () => {

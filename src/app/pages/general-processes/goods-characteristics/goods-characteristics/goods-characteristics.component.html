@@ -358,13 +358,14 @@
                   <div class="form-group row">
                     <ng-custom-select-loading
                       [form]="form"
+                      [path]="pathSubdelegation"
+                      [isLoadInOnInit]="false"
                       [readonly]="disabledBienes"
                       [limit]="1000"
                       [labelTemplate]="coordinationLabel"
                       [optionTemplate]="coordinationOption"
                       formControlName="subdelegation"
-                      label="Sub Delegación"
-                      path="catalog/api/v1/subdelegation/get-all"
+                      label="Oficina de Atención Regional"
                       value="id"
                       bindLabel="description"
                       paramSearch="filter.id"
