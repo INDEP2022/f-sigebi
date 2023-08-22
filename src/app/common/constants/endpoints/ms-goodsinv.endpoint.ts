@@ -11,4 +11,6 @@ export enum IGoodsinvEndpoint {
   GetCatSubBrandWithFilter = 'views/cat-auto-sub-brands-view-sb',
   GetDescription = 'application/query-description',
   GetGoodResDevInvVew = 'views/goods-res-dev-inv-view',
+  GetGoodInvView = 'views/xxsae-inv-available-view',
+  GetClients = 'views/xxsae-clients-view',
 }

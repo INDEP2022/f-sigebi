@@ -127,9 +127,9 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       },
       rowClassFunction: (row: any) => {
         if (row.data.approved == true) {
-          return 'text-approved';
+          return 'bg-success text-white';
         } else {
-          return 'text-no-approved';
+          return 'bg-no-approved';
         }
       },
     };
@@ -179,11 +179,16 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
     this.cargarDataStorage();
   }
   test: any;
+  justi: any = '';
   async cargarDataStorage() {
     const justification = localStorage.getItem('justification');
     if (justification) {
-      this.form.get('justification').setValue(justification);
-      this.removeItem('justification');
+      this.justi = justification;
+      this.form.get('justification').setValue(this.justi);
+      setTimeout(() => {
+        this.valueJustification1();
+        this.removeItem('justification');
+      }, 2000);
     }
     const folioEscaneoNg = localStorage.getItem('folioEscaneoNg');
     if (folioEscaneoNg) {
@@ -282,6 +287,8 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
       // this.cambiarValor()
       // console.log('SU');
       // this.form.get('justification').setValue('');
+      delete params['page'];
+      delete params['limit'];
       this.massiveGoodService.getFProRecPag2CSV(params, binaryExcel).subscribe(
         (response: any) => {
           console.log('filter', filter);
@@ -407,20 +414,23 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         // this.validStatusXScreen(this.good);
         let valid = 0;
         let result = this.goods.map(async good => {
-          const getDocumentByGood = await this.getDocumentByGood(good);
-          valid = valid + 1;
+          if (good.approved) {
+            const getDocumentByGood: any = await this.getDocumentByGood(good);
+            valid = valid + getDocumentByGood;
+          }
         });
 
         Promise.all(result).then(async (item: any) => {
-          if (valid == 1) {
+          console.log('val', valid);
+          if (valid == 0) {
+            await this.change();
+          } else {
             this.alert(
               'warning',
               'Uno o Algunos de los Bienes no Tiene Documentos Escaneados',
               ''
             );
             return;
-          } else {
-            await this.change();
           }
         });
       }
@@ -451,7 +461,7 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
         // good.status = ;
         let obj: any = {
           id: good.id,
-          goodId: good.id,
+          goodId: good.goodid,
           status: good.status == 'PRP' ? 'ADM' : 'PRP',
           // causeNumberChange: this.form.value.justification,
         };
@@ -831,13 +841,17 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   valueJustification(event: any) {
     console.log(event);
-    if (event) {
-      this.hijoRef.actualizarVariable3(event.value);
+    this.justi = event.value;
+    if (this.justi) {
+      this.hijoRef.actualizarVariable3(this.justi);
     } else {
       this.hijoRef.actualizarVariable3('');
     }
   }
 
+  valueJustification1() {
+    this.hijoRef.actualizarVariable3(this.justi);
+  }
   cambiarValor4(folioEscaneoNg: any) {
     console.log('folioEscaneoNg', folioEscaneoNg);
     this.hijoRef.actualizarVariable4(folioEscaneoNg);
