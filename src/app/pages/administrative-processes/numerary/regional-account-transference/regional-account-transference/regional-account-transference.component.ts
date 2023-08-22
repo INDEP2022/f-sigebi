@@ -570,8 +570,6 @@ export class RegionalAccountTransferenceComponent
     for (let index = 0; index < this.dataTable.length; index++) {
       const element: any = this.dataTable[index];
 
-      console.log(element);
-
       if (element.total == 0 || !element.total) {
         this.dataTable[index].total = String(
           Number(element.val14) + Number(element.allInterest)

@@ -137,7 +137,7 @@ export class EmailComponent extends BasePage implements OnInit {
     )[0].description;
 
     const body = {
-      to: PARA ? PARA.join(',') : 'pruebasqaindep@gmail.com', // ['pruebasqaindep@gmail.com'], ,
+      to: PARA ? PARA.join(',') : '', // ['pruebasqaindep@gmail.com'], ,
       subject: ASUNTO,
       fecTrans: transactionDate,
       cveDescription: del ?? this.description,
@@ -163,8 +163,8 @@ export class EmailComponent extends BasePage implements OnInit {
 
         // const body: any = {
         //   header: 'Test Email',
-        //   destination: ['pruebasqaindep@gmail.com'],
-        //   copy: [''],
+        //   destination: ['sshenrygiovanni@gmail.com'],
+        //   copy: ['henry_portador@outlook.com'],
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };

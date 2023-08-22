@@ -83,7 +83,9 @@ export class GTrackerDocumentsComponent extends BasePage implements OnInit {
           return;
         }
         params.addFilter(
-          this.byExpedient ? filter.field : filter.field?.columnFilter,
+          !this.byExpedient
+            ? filter.field
+            : columns[filter.field]?.columnFilter,
           filter.search,
           operator || SearchFilter.EQ
         );

@@ -20,7 +20,8 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="searchExpedient()">
+            (click)="searchExpedient()"
+            *ngIf="origin == null">
             <i class="bx bx-list-plus bx-sm float-icon"></i>
           </button>
         </div>

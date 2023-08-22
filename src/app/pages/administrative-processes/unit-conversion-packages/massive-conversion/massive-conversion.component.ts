@@ -678,16 +678,13 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
   }
 
   checkPer() {
+    const token = this.authService.decodeToken();
+
     const paramsF = new FilterParams();
     paramsF.addFilter('screenKey', 'FMTOPAQUETE_0001');
     paramsF.addFilter('readingPermission', 'S');
     paramsF.addFilter('writingPermission', 'S');
-    paramsF.addFilter(
-      'user',
-      localStorage.getItem('username') == 'sigebiadmon'
-        ? localStorage.getItem('username')
-        : localStorage.getItem('username').toLocaleUpperCase()
-    );
+    paramsF.addFilter('user', token.preferred_username);
     this.securityService.getAccessXScreenFilter(paramsF.getParams()).subscribe(
       res => {
         console.log(res);
@@ -1486,6 +1483,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     let lv_DESC_ERROR = '';
     console.log(noPack);
     if (noPack.numberDelegation != good.bienes.delegationNumber) {
+      console.log(good);
       console.log({
         valpack: noPack.numberDelegation,
         valgood: good.bienes.delegationNumber,

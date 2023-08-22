@@ -8,28 +8,37 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('event')" label="Evento">
-            <input type="text" class="form-control" formControlName="event" />
+          <form-field [control]="form.get('event')">
+            <ngx-select
+              [form]="form"
+              [data]="evento"
+              label="Evento"
+              bindLabel="evento"
+              value="id_evento"
+              (fetchItems)="getEvent($event)"
+              control="event">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-1">
           <div class="justify-content-center">
             <button
-              type="submit"
-              class="btn btn-primary btn-sm active"
+              type="button"
+              class="btn btn-primary active btn-sm"
               [disabled]="!form.valid"
-              (click)="show = !show">
-              Consultar
+              (click)="lineaCaptura()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
             </button>
           </div>
         </div>
         <div class="col-md-2">
           <div class="justify-content-center">
             <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid">
-              Descargar
+              class="btn btn-sm btn-success active"
+              (click)="exportXlsx()">
+              Exportar a Excel
+              <i class="bx bx-download float-icon"></i>
             </button>
           </div>
         </div>
@@ -41,14 +50,30 @@
           L&iacute;neas de Captura del cliente para el lote p&uacute;blico
         </h5>
         <div class="col-md-5 buttons">
-          <app-columns-select [(settings)]="settings"></app-columns-select>
+          <div class="row">
+            <div class="col-md-8 mb-3"></div>
+            <div class="col-md-4 text-end d-flex flex-row-reverse mb-3">
+              <div>
+                <button
+                  type="button"
+                  tooltip="Nuevo"
+                  containerclass="tooltip-style"
+                  class="btn btn-primary active btn-sm ml-2 mr-2"
+                  (click)="aceptar()">
+                  Aceptar
+                </button>
+              </div>
+              <app-columns-select [(settings)]="settings"></app-columns-select>
+            </div>
+          </div>
         </div>
       </div>
       <div class="table-responsive mt-3">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+        <ng2-smart-table [settings]="settings" [source]="data">
+        </ng2-smart-table>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
     <div class="row pt-5">
       <div class="ch-content" header>
@@ -60,8 +85,11 @@
       <div class="table-responsive mt-3">
         <ng2-smart-table
           [settings]="settings2"
-          [source]="data"></ng2-smart-table>
+          [source]="data1"
+          (userRowSelect)="selectData($event)"></ng2-smart-table>
       </div>
     </div>
+    <app-pagination [params]="params1" [totalItems]="totalItems1">
+    </app-pagination>
   </div>
 </app-card>
