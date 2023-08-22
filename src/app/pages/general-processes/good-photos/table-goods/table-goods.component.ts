@@ -239,12 +239,11 @@ export class TableGoodsComponent
         accept: '.zip',
         uploadFiles: false,
         service: this.massiveFilePhotoSaveZipService,
-        identificator: this.selectedGoods,
         multiple: false,
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          if (refresh && this.selectedGoods.includes(this.selectedGood.id)) {
+          if (refresh) {
             this.dataService.showEvent.next(true);
           }
           // console.log(refresh);
