@@ -346,11 +346,11 @@ export class RecordAccountStatementsComponent
   DateAccountBalance() {
     const balanceOf = this.datePipe.transform(
       this.variableOf,
-      'dd-MM-yyyy HH:mm:ss'
+      'yyyy-MM-dd HH:MM:SS'
     );
     const balanceAt = this.datePipe.transform(
       this.variableAt,
-      'dd-MM-yyyy HH:mm:ss'
+      'yyyy-MM-dd HH:MM:SS'
     );
 
     if (!balanceOf && !balanceAt) {
