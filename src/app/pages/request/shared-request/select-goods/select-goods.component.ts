@@ -10,6 +10,7 @@ import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { AppliGoodResDevViewService } from 'src/app/core/services/ms-commer-concepts/appli-good-res-dev-inv-view.service';
+
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RejectedGoodService } from 'src/app/core/services/ms-rejected-good/rejected-good.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -18,6 +19,7 @@ import { ShowDocumentsGoodComponent } from '../expedients-tabs/sub-tabs/good-doc
 import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
 import { GrouperGoodFieldComponent } from './grouper-good-field/grouper-good-field.component';
+
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import {
   GOODS_RES_DEV_INV_COLUMNS,

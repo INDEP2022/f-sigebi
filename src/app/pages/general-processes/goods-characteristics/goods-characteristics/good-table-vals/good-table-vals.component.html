@@ -1,7 +1,7 @@
 <app-characteristics-legend
   *ngIf="disabled === false"></app-characteristics-legend>
 <app-good-characteristics-table
-  *ngIf="good && clasification && settings"
+  *ngIf="good && clasification && settings && show"
   [goodChange]="goodChange"
   [clasification]="clasification"
   [settings]="settings"

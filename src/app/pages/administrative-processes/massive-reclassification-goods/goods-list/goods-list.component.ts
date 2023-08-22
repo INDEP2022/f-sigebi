@@ -13,7 +13,6 @@ import {
   tap,
   throttleTime,
 } from 'rxjs';
-import { Subscription } from 'rxjs/internal/Subscription';
 import { first, take } from 'rxjs/operators';
 import {
   FilterParams,
@@ -26,15 +25,16 @@ import { ProcedureManagementService } from 'src/app/core/services/proceduremanag
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { COLUMNS } from '../massive-reclassification-goods/columns';
-import { MassiveReclassificationGoodsService } from '../services/massive-reclassification-goods.service';
+import {
+  IDs,
+  MassiveReclassificationGoodsService,
+} from '../services/massive-reclassification-goods.service';
 
 interface NotData {
   id: number;
   reason: string;
 }
-interface IDs {
-  No_bien: number;
-}
+
 @Component({
   selector: 'app-goods-list',
   templateUrl: './goods-list.component.html',
@@ -46,10 +46,10 @@ export class GoodsListComponent
 {
   previousSelecteds: IGood[] = [];
   pageSelecteds: number[] = [];
-  subscription: Subscription = new Subscription();
   changeSettings: number = 0;
+  chargedByExcelOrRastrer = false;
   _changeDescription: string;
-  ids: IDs[];
+
   availableToUpdate: any[] = [];
   idsNotExist: NotData[] = [];
   showError: boolean = false;
@@ -114,6 +114,14 @@ export class GoodsListComponent
         return row.data.notSelect ? 'notSelect' : '';
       },
     };
+  }
+
+  get ids() {
+    return this.massiveService.ids;
+  }
+
+  set ids(value) {
+    this.massiveService.ids = value;
   }
 
   readExcel(binaryExcel: string | ArrayBuffer) {
@@ -286,8 +294,9 @@ export class GoodsListComponent
       next: response => {
         if (response) {
           this.selectedGooods = [];
-          this.getData();
+          this.fillData(this.ids);
         } else {
+          this.ids = null;
           this.data.load([]);
           this.selectedGooods = [];
           this.totalItems = 0;
@@ -437,6 +446,9 @@ export class GoodsListComponent
       .subscribe({
         next: response => {
           console.log(response);
+          if (response.length > 0 && ids) {
+            this.chargedByExcelOrRastrer = true;
+          }
           this.data.load(response);
           this.data.refresh();
           this.fillSelectedRows();

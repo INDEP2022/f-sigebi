@@ -33,4 +33,9 @@ export class GuarantyService extends HttpService {
     const routeWarranty = `${GuarantyEndpoints.ObtainGuaranteeReport}?eventId=${idEvent}`;
     return this.get<any>(routeWarranty, params);
   }
+  GetTransfereexEvent(evento: any) {
+    return this.get<IListResponse<IComerRefGuarantees>>(
+      `${this.route.GetTransfereexEvent}/${evento}`
+    );
+  }
 }

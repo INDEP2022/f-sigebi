@@ -12,8 +12,10 @@ import {
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 
+import { LocalDataSource } from 'ng2-smart-table';
 import { IScreenHelpTwo } from 'src/app/core/models/ms-business-rule/screen-help.model';
 import { IStatusXScreen } from 'src/app/core/models/ms-screen-status/status.model';
 import { ScreenHelpService } from 'src/app/core/services/ms-business-rule/screen-help.service';
@@ -46,14 +48,8 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
   params2 = new BehaviorSubject(new ListParams());
   totalItems2 = 0;
   settings2: any;
-
-  // get description() {
-  //   return this.helpForm.get('description');
-  // }
-
-  // get recordNumber() {
-  //   return this.helpForm.get('recordNumber');
-  // }
+  dataFacTableValid: LocalDataSource = new LocalDataSource();
+  columnFilters: any = [];
 
   constructor(
     private fb: FormBuilder,
@@ -83,6 +79,59 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareHelpForm();
+    this.dataFacTableValid
+      .onChanged()
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(change => {
+        if (change.action === 'filter') {
+          let filters = change.filter.filters;
+          filters.map((filter: any) => {
+            let field = ``;
+            let searchFilter = SearchFilter.ILIKE;
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'status':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'statusGood':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'statusFinal':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'descripcion2':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              case 'processExtSun':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.EQ;
+                break;
+            }
+            if (filter.search !== '') {
+              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
+            } else {
+              delete this.columnFilters[field];
+            }
+          });
+          this.params2 = this.pageFilter(this.params2);
+          this.params.pipe(skip(1)).subscribe(params => {
+            this.getScreenStatuses(params).subscribe();
+            this.getHelpByScreen(this.global.screenStatus).subscribe();
+          });
+          this.fillFromParams();
+        }
+      });
+
     this.params.pipe(skip(1)).subscribe(params => {
       this.getScreenStatuses(params).subscribe();
       this.getHelpByScreen(this.global.screenStatus).subscribe();
@@ -153,6 +202,8 @@ export class ValidStatusesComponent extends BasePage implements OnInit {
         this.getHelpByScreen(this.screenStatus);
         this.loading = false;
         this.statuses = response.data;
+        this.dataFacTableValid.load(response.data);
+        this.dataFacTableValid.refresh();
         this.totalItems = response.count;
         this.showStatus = this.statuses.length > 0;
       })

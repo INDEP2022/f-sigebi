@@ -366,4 +366,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getFilterProceeding2(id: number | string) {
     return this.get(`${ProceedingsEndpoints.ActasDeliveryReception2}/${id}`);
   }
+
+  //tipo_acta in ('ACIRVEN','ACIRDES','ACIRDEV','ACIRDON','ACIRRES','ACIRSUS')
+  getProceeding2(
+    id: number
+  ): Observable<IListResponse<IProceedingDeliveryReception>> {
+    return this.get<IListResponse<IProceedingDeliveryReception>>(
+      `${this.endpoint}?filter.numFile=${id}&filter.typeProceedings=$in:ACIRVEN,ACIRDES,ACIRDEV,ACIRDON,ACIRRES,ACIRSUS` //  &filter.typeProceedings='DESTINO'`
+    );
+  }
 }
