@@ -717,7 +717,7 @@ export class RegistrationOfRequestsComponent
           ).then(async question => {
             if (question.isConfirmed) {
               //this.notifyClarificationsMethod2();
-              this.updateGoodStatus('SOLICITAR_APROBACION');
+              this.updateGoodStatus('SOLICITAR_APROBACION', 'ROP');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
                 //si existe crea solo la Notificacion de aclaracion
@@ -754,7 +754,7 @@ export class RegistrationOfRequestsComponent
             '¿Continuar?'
           ).then(async question => {
             if (question.isConfirmed) {
-              this.updateGoodStatus('SOLICITAR_APROBACION');
+              this.updateGoodStatus('SOLICITAR_APROBACION', 'ROP');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
                 console.log(
@@ -1415,7 +1415,7 @@ export class RegistrationOfRequestsComponent
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
               console.log('verificar-cumplimiento');
-              await this.updateGoodStatus('CLASIFICAR_BIEN');
+              await this.updateGoodStatus('CLASIFICAR_BIEN', 'ROP');
               this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
@@ -1437,7 +1437,7 @@ export class RegistrationOfRequestsComponent
           //DE CLASIFICAR BIEN A DESTINO DOCUMENTAL
           this.loader.load = true;
           console.log('clasificar-bienes');
-          await this.updateGoodStatus('DESTINO_DOCUMENTAL');
+          await this.updateGoodStatus('DESTINO_DOCUMENTAL', 'ROP');
           //creat tarea para destino documental
           this.classifyGoodMethod();
         }
@@ -1445,7 +1445,7 @@ export class RegistrationOfRequestsComponent
           //DE DESTINO DOCUMENTAL A SOLICITAR APROBACIÓN O NOTIFICACIONES
           this.loader.load = true;
           this.deleteMsjRefuse();
-          await this.updateGoodStatus('SOLICITAR_APROBACION');
+          await this.updateGoodStatus('SOLICITAR_APROBACION', 'ROP');
           //tiene aclaraciones
 
           const clarification = await this.haveNotificacions();
@@ -1490,12 +1490,12 @@ export class RegistrationOfRequestsComponent
       }
 
       if (typeCommit === 'proceso-aprovacion') {
-        await this.updateGoodStatus('APROBADO');
+        await this.updateGoodStatus('APROBADO', 'VXR');
         this.approveRequestMethod();
       }
 
       if (typeCommit === 'refuse') {
-        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
+        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
         this.motivoRechazo();
       }
     });
@@ -1583,11 +1583,12 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  async updateGoodStatus(newProcessStatus: string) {
+  async updateGoodStatus(newProcessStatus: string, status: string = null) {
     let body: any = { request: 0, status: '', process: '' };
     body.request = Number(this.requestData.id);
-    body.status = newProcessStatus;
+    body.status = newProcessStatus; //good.processStatus
     body.process = this.process;
+    body.statusGood = status; // good.status
     if (
       this.process === 'process-approval' &&
       newProcessStatus === 'APROBADO'

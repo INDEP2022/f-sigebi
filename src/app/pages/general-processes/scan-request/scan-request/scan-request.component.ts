@@ -630,6 +630,16 @@ export class ScanRequestComponent extends BasePage implements OnInit {
   clearDocument() {
     this.form.reset();
     this.idFolio = null;
+
+    const { receiptDate } = this.formNotification.value;
+    let date: string = '';
+    if (receiptDate) {
+      if (typeof receiptDate == 'string') {
+        date = `${receiptDate.split('/')[1]}/${receiptDate.split('/')[2]}`;
+      }
+    }
+
+    this.form.get('significantDate').patchValue(date);
   }
 
   async checkNoVolante(volante: number): Promise<boolean> {
