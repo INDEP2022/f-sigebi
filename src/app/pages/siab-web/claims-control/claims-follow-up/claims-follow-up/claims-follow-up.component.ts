@@ -421,10 +421,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     };
     this.seraLogService.postDateExport(data).subscribe(
       response => {
-        this._downloadExcelFromBase64(
-          response,
-          `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
-        );
+        this._downloadExcelFromBase64(response, `SINIESTROS SEGUIMIENTO`);
       },
       error => {
         this.alert(
