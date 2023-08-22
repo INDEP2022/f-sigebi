@@ -59,7 +59,6 @@ export class CustomSelectWidthLoading
   @Input() multiple: boolean = false;
   @Input() addTag: boolean = false;
   @Input() isLoadInOnInit: boolean = true;
-  @Input() load = false;
   @Input() url: string = environment.API_URL;
   @Input() pathData: string = 'data';
   @Input() value: string = 'id';
@@ -142,7 +141,7 @@ export class CustomSelectWidthLoading
       // this.input$.next(changes['externalSearch'].currentValue);
       this.loadData(changes['externalSearch'].currentValue, false);
     }
-    if (changes['load']) {
+    if (changes['path'] && changes['path'].currentValue) {
       console.log('Entro a recargar');
       this.page = 1;
       this.isLoading = true;
@@ -354,7 +353,10 @@ export class CustomSelectWidthLoading
         distinctUntilChanged(),
         switchMap((text: string) => {
           // console.log(this.items);
-          if (text === null || (!this.firstLoad && text.length < 3)) {
+          if (
+            text === null ||
+            (!this.firstLoad && isNaN(+text) && text.length < 3)
+          ) {
             return of(null);
           }
           this.firstLoad = false;

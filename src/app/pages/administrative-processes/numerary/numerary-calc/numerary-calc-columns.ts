@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export const REQUESTS_COLUMNS = {
   solnumId: {
     title: 'Id de Solicitud',
@@ -8,6 +10,9 @@ export const REQUESTS_COLUMNS = {
     title: 'Fecha',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(cell), 'dd/MM/yyyy');
+    },
   },
   description: {
     title: 'Concepto',
@@ -25,6 +30,12 @@ export const REQUESTS_COLUMNS = {
     sort: false,
   },
 };
+
+//Correct Date
+function correctDate(date: string) {
+  const dateUtc = new Date(date);
+  return new Date(dateUtc.getTime() + dateUtc.getTimezoneOffset() * 60000);
+}
 
 export const GOODS_COLUMNS = {
   goodNumber: {

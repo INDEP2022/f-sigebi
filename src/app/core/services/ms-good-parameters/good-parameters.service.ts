@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodParameter } from '../../models/ms-good-parameter/good-parameter.model';
 
 @Injectable({
@@ -24,5 +26,13 @@ export class GoodParametersService extends HttpService {
 
   createAccount(movement: any) {
     return this.post('parameters/getFromRates', movement);
+  }
+
+  getRNomencla(params: ListParams) {
+    return this.get<IListResponse>('r-nomencla', params);
+  }
+
+  getAll(params: ListParams) {
+    return this.get<IListResponse<IGoodParameter>>(`parameters`, params);
   }
 }

@@ -7,7 +7,9 @@ export const GOODS_WITH_REQUIRED_INFO_COLUMNS = {
   },
   motive: {
     title: 'Motivo',
-    type: 'string',
     sort: false,
+    // valuePrepareFunction: (cell: any, row: any) => {
+    //   return row.motive.join(', ');
+    // },
   },
 };

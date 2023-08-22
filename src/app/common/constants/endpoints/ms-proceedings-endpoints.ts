@@ -33,4 +33,5 @@ export enum ProceedingsEndpoints {
   proceedingGet = 'aplication/data-word',
   procedingDelivery = 'proceedings-delivery-reception/get-all-acta-reception-type-actas',
   procedingActa = 'proceedings-delivery-reception/get-all-acta-reception-status',
+  SearchActa = 'aplication/get-buscar-actas2',
 }
