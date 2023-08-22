@@ -84,9 +84,9 @@ export class PhotosListComponent extends BasePage implements OnInit {
 
   async download(all = false) {
     this.alert(
-      'info',
+      'warning',
       'Aviso',
-      'La Descarga está en Proceso, favor de Esperar'
+      'La descarga está en proceso, favor de esperar'
     );
     let photos: any;
     if (!all) {
