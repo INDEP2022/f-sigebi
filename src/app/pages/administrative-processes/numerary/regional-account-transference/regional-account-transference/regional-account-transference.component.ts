@@ -14,7 +14,9 @@ import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { BankAccountService } from 'src/app/core/services/ms-bank-account/bank-account.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
@@ -62,6 +64,7 @@ export class RegionalAccountTransferenceComponent
   @ViewChild('file', { static: false }) files: ElementRef<HTMLInputElement>;
   isNew: boolean = false;
   description: string = '';
+  delegation: number;
 
   constructor(
     private fb: FormBuilder,
@@ -76,7 +79,9 @@ export class RegionalAccountTransferenceComponent
     private modalService: BsModalService,
     private dictationService: DictationService,
     private bankService: BankAccountService,
-    private requestNumDetService: RequestNumeraryDetService
+    private requestNumDetService: RequestNumeraryDetService,
+    private receptionService: DocReceptionRegisterService,
+    private user: AuthService
   ) {
     super();
     this.settings = {
@@ -84,6 +89,18 @@ export class RegionalAccountTransferenceComponent
       actions: false,
       columns: REGIONAL_ACCOUNT_COLUMNS,
     };
+
+    const params = new FilterParams();
+    const token = this.user.decodeToken();
+    params.addFilter('user', token.username.toUpperCase());
+    this.receptionService.getUsersSegAreas(params.getParams()).subscribe({
+      next: response => {
+        if (response.data.length > 0) {
+          this.delegation = response.data[0].delegationNumber;
+        }
+      },
+      error: () => {},
+    });
   }
 
   ngOnInit(): void {
@@ -372,6 +389,7 @@ export class RegionalAccountTransferenceComponent
           initialState: {
             email: emailv2,
             report: this.form.value,
+            delegation: this.delegation,
             description: this.description,
             delegations: this.delegations,
             callback: async (next: boolean) => {
