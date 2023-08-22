@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MassiveGoodService } from 'src/app/core/services/ms-massivegood/massive-good.service';
 import { RequestNumeraryDetService } from 'src/app/core/services/ms-numerary/request-numerary-det.service';
 import { RequestNumeraryEncService } from 'src/app/core/services/ms-numerary/request-numerary-enc.service';
@@ -30,6 +31,7 @@ import { REQUEST_NUMERARY_COLUMNS } from './numerary-request-columns';
 })
 export class NumeraryRequestComponent extends BasePage implements OnInit {
   form: FormGroup;
+  formGood: FormGroup;
   registers: number = null;
   data1: any[] = [];
   filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
@@ -53,7 +55,8 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
     private readonly delegationServ: DelegationService,
     private readonly authServ: AuthService,
     private readonly massiveGoodServ: MassiveGoodService,
-    private readonly goodProceesServ: GoodProcessService
+    private readonly goodProceesServ: GoodProcessService,
+    private readonly goodService: GoodService
   ) {
     super();
     this.settings = {
@@ -148,6 +151,10 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       currency: [null],
       name: [null],
       desc_del: [null],
+    });
+
+    this.formGood = this.fb.group({
+      good: [null],
     });
 
     const { solnumStatus } = this.form.value;
@@ -534,6 +541,62 @@ export class NumeraryRequestComponent extends BasePage implements OnInit {
       await this.updateSolcEn(body);
       //update
     }
+  }
+
+  searchGood() {
+    const { good } = this.formGood.value;
+    const { currency, solnumId } = this.form.value;
+
+    const exist = this.data1.findIndex(goodSol => goodSol.goodNumber == good);
+
+    console.log(exist);
+
+    if (exist != -1) {
+      this.alert('warning', `El Bien ${good} ya existe`, '');
+      return;
+    }
+
+    if (!good) return;
+    this.goodService.getGoodSolNumerary(Number(good)).subscribe({
+      next: resp => {
+        this.formGood.reset();
+        let det: NumDetGoodsDetail = {
+          allInterest: null,
+          allNumerary: null,
+          allPayNumber: null,
+          allintPay: null,
+          commission: resp.deposito,
+          currencyId: null,
+          dateCalculationInterests: null,
+          goodFatherpartializationNumber: null,
+          goodNumber: good,
+          recordNumber: null,
+          solnumId: Number(solnumId),
+          valid: 'S',
+          bankDate: resp.fec_movimiento,
+          description: resp.descripcion,
+        };
+        if (currency) {
+          const currencyId: any = {
+            MN: () => 'P',
+            USD: () => 'D',
+            EUR: () => 'E',
+            CN: () => 'C',
+            CD: () => 'CD',
+          };
+
+          det.currencyId = currencyId[currency]();
+        }
+
+        this.data1.push(det);
+        this.data1 = [...this.data1];
+        this.filterParams2.getValue().removeAllFilters();
+        this.totalItems2 = this.data1.length;
+      },
+      error: () => {
+        this.alert('warning', `El Bien ${good} no existe`, '');
+      },
+    });
   }
 
   async updateSolcEn(body: IRequesNumeraryEnc) {
