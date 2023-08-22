@@ -411,7 +411,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     const response = await this.alertQuestion(
       'question',
       '¿Desea Continuar?',
-      '¿Se Continua con la Selección?'
+      ''
     );
     if (response.isConfirmed) {
       this.openModal();
@@ -423,8 +423,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingStatusAccount = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
+    console.log({params1: params, date: this.date.value, dateValid: new Date('20-08-2023')})
     this.downloadReport('blank', params, () => {
       this.isLoadingStatusAccount = false;
     });
@@ -650,8 +651,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Se ejecuta el cálculo?',
-          '¿Desea continuar?'
+          '¿Desea Ejecutar el Cálculo?',
+          '',
+          'Ejecutar'
         );
         if (response.isConfirmed) {
           const vResul = await this.pupElimCalculNume(this.idProcess.value);

@@ -616,6 +616,7 @@ export class ClarificationsComponent
               body['goodId'] = this.good[0].goodId;
               body.processStatus = 'DESTINO_DOCUMENTAL';
               body.goodStatus = 'DESTINO_DOCUMENTAL';
+              body.status = null;
               await this.updateGood(body);
             } else {
               body['id'] = this.good[0].id;
@@ -625,6 +626,7 @@ export class ClarificationsComponent
                   ? 'ACLARADO'
                   : 'DESTINO_DOCUMENTAL';
               body.processStatus = 'DESTINO_DOCUMENTAL';
+              body.status = null;
               await this.updateGood(body);
             }
             this.updateStatusTable(body);

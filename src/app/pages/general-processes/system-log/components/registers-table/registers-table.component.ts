@@ -35,7 +35,6 @@ export class RegistersTableComponent
   constructor() {
     super();
     this.settings = { ...this.settings, actions: false };
-    this.settings.hideSubHeader = false;
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.dataFactRegister.load(changes['registers'].currentValue);
@@ -66,20 +65,11 @@ export class RegistersTableComponent
       .subscribe(change => {
         if (change.action === 'filter') {
           let filters = change.filter.filters;
+          const params = new FilterParams();
           filters.map((filter: any) => {
-            let field = ``;
-            let searchFilter = SearchFilter.ILIKE;
-            field = `filter.${filter.field}`;
-            filter.field == 'id' || filter.field == 'destable'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
-            if (filter.search !== '') {
-              this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-            } else {
-              delete this.columnFilters[field];
-            }
+            params.addFilter(filter.field, filter.search, SearchFilter.ILIKE);
           });
-          this.dataFactRegister.refresh();
+          this.params.next(params);
         }
       });
   }

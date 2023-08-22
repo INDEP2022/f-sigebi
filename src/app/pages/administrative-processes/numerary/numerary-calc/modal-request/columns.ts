@@ -4,7 +4,7 @@ import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-ele
 export let goodCheck: any[] = [];
 export const REQUESTS_COLUMNS_MODAL = {
   id_solnum: {
-    title: 'Número Solicitud',
+    title: 'No. Solicitud',
     type: 'string',
     sort: false,
   },
@@ -19,7 +19,7 @@ export const REQUESTS_COLUMNS_MODAL = {
     sort: false,
   },
   usuario: {
-    title: 'Usuario que solicita',
+    title: 'Usuario que Solicita',
     type: 'string',
     sort: false,
   },
@@ -49,8 +49,9 @@ export const REQUESTS_COLUMNS_MODAL = {
           console.log(goodCheck);
           goodCheck.push(data.row);
         } else {
+         
           goodCheck = goodCheck.filter(
-            valor => valor.id_solnum != data.id_solnum
+            valor => valor.id_solnum != data.row.id_solnum
           );
         }
       });

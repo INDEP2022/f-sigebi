@@ -230,6 +230,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   toNextForm() {
+    if (!this.folioEscaneoNg) {
+      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      return;
+    }
     this.goNextForm();
   }
 
@@ -244,6 +248,11 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   imprimirFolioEscaneo() {
     // if (this.dictamen) {
+    if (!this.folioEscaneoNg) {
+      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      return;
+    }
+
     if (this.folioEscaneoNg.folioUniversal == '') {
       this.alert('warning', 'No Tiene Folio de Escaneo para Imprimir.', '');
       return;
@@ -276,6 +285,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
   }
 
   visualizacionFolioEscaneo() {
+    if (!this.folioEscaneoNg) {
+      this.alert('warning', 'Debe Generar el Folio de Escaneo', '');
+      return;
+    }
     if (this.folioEscaneoNg == '') {
       this.alert('warning', 'No Tiene Folio de Escaneo para Visualizar.', '');
       return;
@@ -332,5 +345,10 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   actualizarVariable4(folio: any) {
     this.folioEscaneoNg = folio;
+    if (folio) {
+      this.generateFo = true;
+    } else {
+      this.generateFo = false;
+    }
   }
 }
