@@ -1,7 +1,7 @@
 import { DateCellComponent } from 'src/app/@standalone/smart-table/date-cell/date-cell.component';
 export const REQUEST_NUMERARY_COLUMNS = {
   goodNumber: {
-    title: 'Bien',
+    title: 'No. Bien',
     type: 'string',
     sort: false,
   },
@@ -20,11 +20,13 @@ export const REQUEST_NUMERARY_COLUMNS = {
     type: 'string',
     sort: false,
     valuePrepareFunction: (value: string) => {
+      console.log(value);
+
       return value
         ? value.includes('T')
           ? value.split('T')[0].split('-').reverse().join('/')
           : value.split('-').join('/')
-        : '';
+        : value;
     },
   },
   dateCalculationInterests: {

@@ -15,6 +15,16 @@
     [ngClass]="leftList == false ? '' : 'left'"
     role="menu"
     aria-labelledby="button-basic">
+    <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
+      <input type="text" [formControl]="searchControl" class="form-control" />
+    </li>
+    <li (click)="$event.stopPropagation()" role="menu" class="dropdown-item">
+      <input
+        [formControl]="selectAllControl"
+        type="checkbox"
+        (click)="selectAll()" />
+      Todas las columnas
+    </li>
     <li
       role="menuitem"
       *ngFor="let column of getColumns()"

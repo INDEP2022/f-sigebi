@@ -37,3 +37,9 @@ export const JSON_TO_CSV_FRELDECOMISO = [
     causa_penal: '',
   },
 ];
+
+export const JSON_TO = [
+  {
+    no_bien: '',
+  },
+];
