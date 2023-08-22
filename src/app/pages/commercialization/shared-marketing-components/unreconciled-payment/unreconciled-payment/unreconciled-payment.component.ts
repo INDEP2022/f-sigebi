@@ -258,6 +258,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
       initialState: {
         data,
         edit: editVal,
+        layout: this.layout,
         callback: (next: boolean) => {
           if (next) {
             this.getPayments();
@@ -307,8 +308,12 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
   async enviarSIRSAE() {
     if (!this.valAcc) return this.alert('warning', 'Seleccione un Pago', '');
 
-    if (!this.valAcc.lots)
-      return this.alert('warning', 'Este Pago no está Asociado a un Lote', '');
+    if (!this.valAcc.event)
+      return this.alert(
+        'warning',
+        'Este Pago no está Asociado a un Evento',
+        ''
+      );
 
     this.loadingBtn = true;
     // CREA_CABECERA;
@@ -386,7 +391,7 @@ export class UnreconciledPaymentComponent extends BasePage implements OnInit {
     let obj = {
       pmodo: item1,
       plote: item2,
-      idEvent: this.valAcc.lots ? this.valAcc.lots.idEvent : null,
+      idEvent: this.valAcc.event,
       idPay: this.valAcc.paymentId,
     };
     return new Promise((resolve, reject) => {

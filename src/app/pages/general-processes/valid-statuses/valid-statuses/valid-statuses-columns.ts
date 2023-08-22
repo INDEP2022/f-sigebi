@@ -1,27 +1,30 @@
 import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
 
 export const VALID_STATUSES_COLUMNS = {
-  description: {
+  id: {
     title: 'Operación',
     sort: false,
   },
   status: {
     title: 'Estatus Inicial',
     sort: false,
-    valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
-      goodStatus?.status,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.status;
+    },
   },
   statusGood: {
     title: 'Descripción',
     sort: false,
-    valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
-      row.status?.description,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.description;
+    },
   },
   statusFinal: {
     title: 'Estatus Final',
     sort: false,
-    valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
-      goodStatus.status,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.statusFinal.codejuntgob;
+    },
   },
   descripcion2: {
     title: 'Descripción',
@@ -29,6 +32,7 @@ export const VALID_STATUSES_COLUMNS = {
     valuePrepareFunction: (goodStatus: IGoodStatus, row: any) =>
       row.statusFinal.description,
   },
+
   processExtSun: {
     title: 'Proceso Ext. Dominio',
     sort: false,

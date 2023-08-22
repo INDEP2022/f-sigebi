@@ -107,7 +107,7 @@ export class HasMoreResultsComponent implements OnInit {
   isLoading = false;
 
   onClickSelect(event: any) {
-    console.log('EVENT', event);
+    //console.log('EVENT', event);
     this.close(event.data);
   }
 
@@ -118,7 +118,8 @@ export class HasMoreResultsComponent implements OnInit {
 
   getData(params: ListParams = new ListParams()) {
     this.isLoading = true;
-
+    // console.log(`${environment.API_URL}${this.ms}/${API_VERSION}/${this.path}`);
+    // console.log(this.queryParams);
     // Object.keys(this.queryParams).forEach((key: any) => {
     // params[key] = this.queryParams[key];
     // });
@@ -132,7 +133,7 @@ export class HasMoreResultsComponent implements OnInit {
       .subscribe({
         next: (res: IListResponse<any>) => {
           this.totalItems = res.count;
-          console.log('DATA', res);
+          // console.log('DATA', res);
           this.data = res.data;
           this.isLoading = false;
         },

@@ -241,11 +241,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/massive-change-status',
       },
       {
-        label: 'Cambio de status',
+        label: 'Cambio de estatus',
         link: '/pages/administrative-processes/change-of-status',
       },
       {
-        label: 'Cambio de status STI',
+        label: 'Cambio de estatus STI',
         link: '/pages/administrative-processes/change-status-sti',
       },
       {

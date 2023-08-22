@@ -53,7 +53,15 @@
     <form [formGroup]="form" class="form-material">
       <div class="row">
         <div class="col-md-full col-sm-12 col-xs-12">
-          <app-justification-shared [form]="form"></app-justification-shared>
+          <!-- <form-field [control]="form.get(justification)">
+            <ngx-select (fetchItems)="getJustification($event)" [data]="justifications" [form]="form" value="value"
+              bindLabel="value" [searchOnInit]="true" label="Justificación" [control]="justification"
+              (change)="onJustificationChange($event)">
+            </ngx-select>
+          </form-field> -->
+          <app-justification-shared
+            (valueJustification)="valueJustification($event)"
+            [form]="form"></app-justification-shared>
         </div>
         <div class="col-md-2 mt-3 mb-3 mr-4">
           <div class="d-flex justify-content-between">
@@ -67,14 +75,10 @@
                 <i class="fas fa-sync-alt"> </i>
               </button>
             </div>
-          </div>
-        </div>
-        <div class="col-md-1 mt-3 mb-3 mr-4">
-          <div class="d-flex justify-content-between">
             <div>
               <button
                 type="button"
-                class="btn btn-danger btn-sm active"
+                class="btn btn-danger btn-sm active ml-3"
                 (click)="clean((file.value = ''))">
                 Limpiar
                 <i class="fa fa-eraser" aria-hidden="true"></i>
@@ -82,6 +86,7 @@
             </div>
           </div>
         </div>
+        <div class="col-md-1 mt-3 mb-3 mr-4"></div>
         <div class="col-8 mt-3 mb-3 mr-4">
           <div class="row pt-3 pb-3">
             <div class="col-6 justify-content-end">

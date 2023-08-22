@@ -22,7 +22,7 @@ export class Repository<T> implements IRepository<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
-    console.log(fullRoute);
+
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
@@ -168,7 +168,6 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(`${fullRoute}/id/${id}`);
   }
   removeDocSac(route: string, formData: any) {
-    console.log(formData);
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}/id/${formData.id}`);
   }

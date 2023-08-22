@@ -32,20 +32,19 @@
             </form-field>
           </div>
           <div class="col-md-12 mb-3">
-            <form-field class="w-100" [control]="form.get('USER')">
+            <form-field class="w-100" [control]="form.get('CC')">
               <ngx-select
                 [form]="form"
                 [multiple]="true"
                 [searchOnInit]="true"
                 className="scroll-line"
-                control="USER"
+                control="CC"
                 [data]="list"
                 value="email"
                 bindLabel="email"
                 (fetchItems)="getNameRemit($event)"
                 (change)="changeName($event)"
                 label="C.C"
-                s
                 [optionTemplate]="opt"></ngx-select>
               <ng-template #opt let-item="item">
                 <div [title]="item.nombre + '-' + item.email">

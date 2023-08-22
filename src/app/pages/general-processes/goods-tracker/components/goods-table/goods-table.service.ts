@@ -13,6 +13,12 @@ import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 
 const ORIGIN = 'FCONGENRASTREADOR';
+const SOCIAL_G_STATUSES: any = {
+  1: 'Susceptible',
+  2: 'Asignado',
+  3: 'Entregado',
+  4: 'Liberado',
+};
 const TYPES = {
   PROCEDENCIA: 'PROCEDENCIA',
   DEVOLUCION: 'DEVOLUCION',
@@ -44,6 +50,8 @@ export class GoodsTableService {
     socialCabite: {
       title: 'Gabinete Social',
       sort: false,
+      valuePrepareFunction: (value: string) =>
+        value ? SOCIAL_G_STATUSES[value] ?? 'Desconocido' : '',
     },
     parentGoodPartialNumber: {
       title: 'No. Bien Padre Parcialización',
