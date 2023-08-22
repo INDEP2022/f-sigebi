@@ -40,6 +40,6 @@ export const JSON_TO_CSV_FRELDECOMISO = [
 
 export const JSON_TO = [
   {
-    NO_BIEN: '',
+    no_bien: '',
   },
 ];

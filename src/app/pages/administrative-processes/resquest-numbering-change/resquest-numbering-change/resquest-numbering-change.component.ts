@@ -43,6 +43,7 @@ import {
   NUM_POSITIVE_LETTERS,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { AbandonmentsDeclarationTradesService } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -281,6 +282,10 @@ export class ResquestNumberingChangeComponent
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   @ViewChild('scrollContainer2') scrollContainer2!: ElementRef;
   formTotal: FormGroup;
+
+  delegationNumber: any = null;
+  subdelegation: any = null;
+  areaDict: any = null;
   constructor(
     private fb: FormBuilder,
     private safeService: SafeService,
@@ -298,7 +303,8 @@ export class ResquestNumberingChangeComponent
     private token: AuthService,
     private readonly historyGoodService: HistoryGoodService,
     private statusXScreenService: StatusXScreenService,
-    private expenseService_: ExpenseService
+    private expenseService_: ExpenseService,
+    private abandonmentsService: AbandonmentsDeclarationTradesService
   ) {
     super();
     this.esta = '';
@@ -487,6 +493,10 @@ export class ResquestNumberingChangeComponent
     this.getUsuario(new ListParams());
     this.getDataTable('no');
     this.getDataTableNum();
+
+    const paramsSender = new ListParams();
+    paramsSender.text = this.token.decodeToken().preferred_username;
+    this.get___Senders(paramsSender);
     if (this.modal?.isShown) {
     }
     this.loading = false;
@@ -649,17 +659,22 @@ export class ResquestNumberingChangeComponent
     if (params.text) {
       params['filter.usuario'] = `$ilike:${params.text}`;
     }
+    params['filter.no_delegacion'] = `$eq:${this.delegationNumber}`;
+    this.securityService.getAllUser(params).subscribe(
+      (data: any) => {
+        const res: any = data.data.map((user: any) => {
+          return user.usuario;
+        });
 
-    this.securityService.getAllUser(params).subscribe((data: any) => {
-      const res: any = data.data.map((user: any) => {
-        return user.usuario;
-      });
+        this.itemsUser = new DefaultSelect(res, data.count);
 
-      this.itemsUser = new DefaultSelect(res, data.count);
-
-      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-      // Llamar a getNameUser solo si se proporcionó un usuario
-    });
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+      },
+      error => {
+        this.itemsUser = new DefaultSelect([], 0);
+      }
+    );
   }
 
   getUsuario1(params1: ListParams, usuario?: string) {
@@ -667,17 +682,23 @@ export class ResquestNumberingChangeComponent
       params1['filter.usuario'] = `$ilike:${params1.text}`;
     }
 
-    this.securityService.getAllUser(params1).subscribe((dat: any) => {
-      const res: any = dat.data.map((userT: any) => {
-        return userT.usuario;
-      });
+    params1['filter.no_delegacion'] = `$eq:${this.delegationNumber}`;
+    this.securityService.getAllUser(params1).subscribe(
+      (dat: any) => {
+        const res: any = dat.data.map((userT: any) => {
+          return userT.usuario;
+        });
 
-      this.itemsUser1 = new DefaultSelect(res, dat.count);
-      // console.log(this.itemsUser1);
-      // console.log(dat);
-      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-      // Llamar a getNameUser solo si se proporcionó un usuario
-    });
+        this.itemsUser1 = new DefaultSelect(res, dat.count);
+        // console.log(this.itemsUser1);
+        // console.log(dat);
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+      },
+      error => {
+        this.itemsUser1 = new DefaultSelect([], 0);
+      }
+    );
   }
 
   getAlmacen(params: ListParams, id?: string) {
@@ -1755,6 +1776,10 @@ export class ResquestNumberingChangeComponent
       .get('dateRequestChangeNumerary')
       .setValue(currentDate);
     this.formaplicationData.get('applicationChangeCashNumber').setValue(null);
+    console.log(
+      'this.formaplicationData.getRawValue()',
+      this.formaplicationData.getRawValue()
+    );
     this.numeraryService
       .createChangeNumerary(this.formaplicationData.getRawValue())
       .subscribe({
@@ -2056,5 +2081,23 @@ export class ResquestNumberingChangeComponent
         block: 'center',
       });
     }
+  }
+
+  async get___Senders(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    // params.addFilter('assigned', 'S');
+    if (lparams?.text) params.addFilter('user', lparams.text, SearchFilter.EQ);
+    this.hideError();
+    this.abandonmentsService.getUsers(params.getParams()).subscribe({
+      next: async (data: any) => {
+        console.log('DATA DDELE', data);
+        this.delegationNumber = data.data[0].delegationNumber;
+        this.subdelegation = data.data[0].subdelegationNumber;
+        this.areaDict = data.data[0].departamentNumber;
+      },
+      error: async () => {},
+    });
   }
 }

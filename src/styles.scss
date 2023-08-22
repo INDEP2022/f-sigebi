@@ -776,3 +776,9 @@ custom-view-component {
 .main-content {
   overflow: visible;
 }
+
+.bg-no-approved {
+  font-weight: 400;
+  background-color: crimson !important;
+  color: white;
+}
