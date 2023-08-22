@@ -108,8 +108,7 @@ export type IGoodAndAvailable = IGood & {
 })
 export class ActsCircumstantiatedCancellationTheftComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   response: boolean = false;
   form: FormGroup;
   selectedRow: IGood;
@@ -143,6 +142,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     origin: '',
     P_GEST_OK: '',
     P_NO_TRAMITE: '',
+    folio: '',
   };
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
@@ -196,7 +196,6 @@ export class ActsCircumstantiatedCancellationTheftComponent
   bienes: IGood[] = [];
   //folioScan: number;
   consec: number;
-  type: number;
   loadingDoc: boolean = false;
   invoiceDetailsForm: ModelForm<any>;
   dataDelivery: any[] = [];
@@ -250,7 +249,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.fileNumber = params['expedient']
           ? Number(params['expedient'])
           : null;
-        this.type = params['acta'] ? Number(params['acta']) : null;
+        this.cveActa = params['acta'] ? String(params['acta']) : null;
       });
     this.validPermisos = !this.validPermisos;
     this.settings = {
@@ -509,13 +508,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
     return { anio: anioCompleto, mes: mesTexto };
   }
 
-  // LLAMAR DATOS DESPUES DE ESCANEAR
+  // MAPEO o LLAMAR DATOS DESPUES DE ESCANEAR
   formFolio() {
     this.formScan.patchValue({
       scanningFoli: this.consec,
     });
     this.actaRecepttionForm.patchValue({
-      type: this.type,
+      cveActa: this.cveActa,
     });
   }
 
@@ -631,7 +630,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
       statusGood: [null],
     });
   }
-  onSubmit() {}
+  onSubmit() { }
 
   search(event: any) {
     // this.loadingExpedient = true;
@@ -918,21 +917,28 @@ export class ActsCircumstantiatedCancellationTheftComponent
     });
   }
   gestionTramite() {
-    const params = new ListParams();
-    params['filter.id'] = `$eq:${this.paramsScreen.P_NO_TRAMITE}`;
     this.bienesLoading = false;
-    this.procedureManagementService.getAllFiltered(params).subscribe({
-      next: (data: any) => {
-        this.gTramite = data;
-        console.log(this.gTramite);
-        this.fileNumber = this.gTramite.expedient;
-        this.getGoodsByStatus(this.fileNumber);
-      },
-      error: () => {
-        this.bienesLoading = false;
-        console.error('error ');
-      },
-    });
+    this.procedureManagementService
+      .getById(this.paramsScreen.P_NO_TRAMITE)
+      .subscribe({
+        next: (data: any) => {
+          this.gTramite = data;
+          console.log(this.gTramite);
+          this.fileNumber = this.gTramite.expedient;
+          this.getExpedient(this.fileNumber);
+          this.getGoodsByStatus(this.fileNumber);
+          this.getActaGoodExp(
+            this.actaRecepttionForm.value.cveActa,
+            this.fileNumber
+          );
+          this.getDetailProceedingsDevollution(this.actasDefault.id);
+          this.formScan.get('scanningFoli').setValue(this.paramsScreen.folio);
+        },
+        error: () => {
+          this.bienesLoading = false;
+          console.error('error ');
+        },
+      });
   }
   onGoodSelect(instance: CheckboxElementComponent) {
     instance.toggle.pipe(takeUntil(this.$unSubscribe)).subscribe({
@@ -1401,8 +1407,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
     nameFile.placeholder = `${newMsg}`;
   }
 
-  btnDetail() {}
-  sendOffice() {}
+  btnDetail() { }
+  sendOffice() { }
 
   Scanner() {
     /*if (this.formScan.get('scanningFoli').value) {
@@ -1491,8 +1497,13 @@ export class ActsCircumstantiatedCancellationTheftComponent
         // parrafo2: next.parrafo2,
         // parrafo3: next.parrafo3,
       });
+
+      // Se mapea Autoridad cuando se crea nueva acta
       console.log('AUTORITHY --', this.authorityNumber);
       this.actaRecepttionForm.get('claveTrans').setValue(this.authorityNumber);
+
+      // Se mapea Mes  y año al crear nueva acta
+      this.generarDatosDesdeUltimosCincoDigitos(next.keysProceedings);
 
       // this.to = this.datePipe.transform(
       //   this.actaRecepttionForm.controls['mes'].value,
@@ -1821,9 +1832,9 @@ export class ActsCircumstantiatedCancellationTheftComponent
         'error',
         'Error',
         'Al localizar la información de Volante: ' +
-          flyerNumber +
-          ' y Expediente: ' +
-          this.fileNumber
+        flyerNumber +
+        ' y Expediente: ' +
+        this.fileNumber
       );
       return;
     }
@@ -1917,7 +1928,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                 type: 'pdf',
               },
-              callback: (data: any) => {},
+              callback: (data: any) => { },
             },
             class: 'modal-lg modal-dialog-centered',
             ignoreBackdropClick: true,
@@ -1962,7 +1973,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 origin: 'FACTCIRCUNR_0001',
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
-                acta: this.actaRecepttionForm.get('type').value,
+                acta: this.actaRecepttionForm.get('cveActa').value,
                 origin3: this.origin3,
                 P_GEST_OK: this.paramsScreen.P_GEST_OK,
                 P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
@@ -2007,7 +2018,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                     urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
                     type: 'pdf',
                   },
-                  callback: (data: any) => {},
+                  callback: (data: any) => { },
                 },
                 class: 'modal-lg modal-dialog-centered',
                 ignoreBackdropClick: true,
@@ -2259,7 +2270,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
         folio: this.formScan.get('scanningFoli').value,
         expedient: this.fileNumber,
-        acta: this.actaRecepttionForm.get('type').value,
+        acta: this.actaRecepttionForm.get('cveActa').value,
       },
     });
   }
@@ -2270,6 +2281,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.origin = paramsQuery['origin'] ?? null;
         this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
         this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
+        this.paramsScreen.folio = paramsQuery['folio'] ?? null;
         if (this.origin == 'FACTCIRCUNR_0001') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -2284,6 +2296,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
             this.paramsScreen.P_GEST_OK != null &&
             this.paramsScreen.P_NO_TRAMITE != null
           ) {
+            console.log(this.paramsScreen);
             this.gestionTramite();
           }
         }
@@ -2295,4 +2308,5 @@ export interface IParamsActaC {
   origin: string;
   P_GEST_OK: string;
   P_NO_TRAMITE: string;
+  folio: string;
 }
