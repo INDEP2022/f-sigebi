@@ -33,6 +33,7 @@ import { UNEXPOSED_GOODS_COLUMNS } from './columns';
 })
 export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
+  form2: FormGroup = new FormGroup({});
   show: boolean = false;
   valorDelInput: number;
   txtSearch: boolean = true;
@@ -72,19 +73,18 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.prepareForm2();
   }
 
   private prepareForm() {
     this.form = this.fb.group({
       typeGood: [],
-      filterGoods: [],
-      filterText: [],
       subtype: [null, [Validators.required]],
       delegation: [null, [Validators.required]],
       status: [null, [Validators.required]],
       totalAssets: [null],
     });
-    this.form.get('filterGoods').setValue('0');
+
     this.form.get('totalAssets').disable();
 
     /*setTimeout(() => {
@@ -92,8 +92,16 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     }, 1000);*/
   }
 
+  private prepareForm2() {
+    this.form2 = this.fb.group({
+      filterGoods: [],
+      filterText: [],
+    });
+    this.form2.get('filterGoods').setValue('0');
+  }
+
   onInputChange() {
-    const filtertxt = this.form.get('filterGoods').value;
+    const filtertxt = this.form2.get('filterGoods').value;
     if (filtertxt == 1) {
       this.txtSearch = true;
       this.goodSearch = false;
@@ -103,7 +111,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
     } else if (filtertxt == 0) {
       this.txtSearch = false;
       this.goodSearch = true;
-      this.form.get('filterText').setValue('');
+      this.form2.get('filterText').setValue('');
       this.validTxt = true;
     }
     //console.log(event.target);
@@ -221,6 +229,7 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
 
   chargeFile(event: any) {
     if (event) {
+      console.log(event);
       this.validTxt = false;
     } else {
       this.validTxt = true;
