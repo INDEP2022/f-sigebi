@@ -67,6 +67,9 @@ export class LotService extends HttpService {
   lotApp(id: any, params: ListParams): Observable<IListResponse<any>> {
     return this.get('apps/query-winners-report/' + id, params);
   }
+  querysp(id: any, params: ListParams): Observable<IListResponse<any>> {
+    return this.get('apps/query-sp-consult-unpaid-lots/' + id, params);
+  }
 
   updateMandate(body: {
     pGood: number | string;
