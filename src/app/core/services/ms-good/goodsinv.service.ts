@@ -10,6 +10,7 @@ import {
 } from '../../interfaces/list-response.interface';
 import {
   IDescInv,
+  IGoodInvAvailableView,
   IGoodResDevInvView,
   IGoodsInv,
 } from '../../models/ms-goodsinv/goodsinv.model';
@@ -76,6 +77,18 @@ export class GoodsInvService extends HttpService {
   ): Observable<IGoodResDevInvView> {
     const route = IGoodsinvEndpoint.GetGoodResDevInvVew;
     return this.get(`${route}`, params);
+  }
+
+  getAllGoodInv(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IGoodInvAvailableView>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.GetGoodInvView;
+    return this.post<IListResponse<IGoodInvAvailableView>>(
+      `${route}?${params}`,
+      formData
+    );
   }
 
   private makeParams(params: ListParams | string): HttpParams {
