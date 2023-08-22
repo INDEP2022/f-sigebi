@@ -12,4 +12,5 @@ export enum IGoodsinvEndpoint {
   GetDescription = 'application/query-description',
   GetGoodResDevInvVew = 'views/goods-res-dev-inv-view',
   GetGoodInvView = 'views/xxsae-inv-available-view',
+  GetClients = 'views/xxsae-clients-view',
 }

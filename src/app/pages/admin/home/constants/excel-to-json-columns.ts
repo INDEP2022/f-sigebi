@@ -65,7 +65,7 @@ export const EXCEL_TO_JSON = {
 };
 
 export const TO_JSON = {
-  id: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },

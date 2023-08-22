@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { IGoodsinvEndpoint } from 'src/app/common/constants/endpoints/ms-goodsinv.endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IClient } from 'src/app/pages/request/scheduling-deliveries/scheduling-deliveries-form/type-events';
 import {
   IListResponse,
   IListResponseMessage,
@@ -89,6 +90,15 @@ export class GoodsInvService extends HttpService {
       `${route}?${params}`,
       formData
     );
+  }
+
+  getClients(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IClient>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.GetClients;
+    return this.post<IListResponse<IClient>>(`${route}?${params}`, formData);
   }
 
   private makeParams(params: ListParams | string): HttpParams {
