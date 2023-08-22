@@ -313,6 +313,7 @@ export class RecordAccountStatementsComponent
     const accountType = value?.accountType;
     let currency = value.cveCurrency;
     this.current = currency;
+    console.log(this.current);
     this.searchCurrent(currency);
 
     // Quitar las comillas simples del valor de currency, si existen
