@@ -9,7 +9,7 @@ export const GOODS_WITH_REQUIRED_INFO_COLUMNS = {
     title: 'Motivo',
     sort: false,
     // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.motive;
+    //   return row.motive.join(', ');
     // },
   },
 };
