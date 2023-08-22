@@ -1,5 +1,20 @@
 export const TypeEvent = [
   {
+    id: 5,
+    nameEvent: 'DESTRUCCIÓN',
+  },
+
+  {
+    id: 4,
+    nameEvent: 'DEVOLUCIÓN',
+  },
+
+  {
+    id: 2,
+    nameEvent: 'DONACIÓN',
+  },
+
+  {
     id: 3,
     nameEvent: 'RESARCIMIENTO',
   },
@@ -7,17 +22,8 @@ export const TypeEvent = [
     id: 1,
     nameEvent: 'VENTAS',
   },
-  {
-    id: 2,
-    nameEvent: 'DONACIÓN',
-  },
-
-  {
-    id: 4,
-    nameEvent: 'DEVOLUCIÓN',
-  },
-  {
-    id: 5,
-    nameEvent: 'DESTRUCCIÓN',
-  },
 ];
+
+export interface IClient {
+  client?: string;
+}
