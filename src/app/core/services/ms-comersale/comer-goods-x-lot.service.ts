@@ -36,6 +36,16 @@ export class ComerGoodsXLotService extends HttpService {
       params
     );
   }
+  getpaREportAttemptsVta(
+    id?: any,
+    params?: ListParams
+  ): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      'application/paREportAttemptsVta',
+      id,
+      params
+    );
+  }
 
   udpate(body: any) {
     return this.put('comer-goods-x-lot', body);

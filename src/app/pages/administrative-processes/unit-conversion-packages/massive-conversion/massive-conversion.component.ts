@@ -1483,7 +1483,7 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
     let lv_DESC_ERROR = '';
     console.log(noPack);
     if (noPack.numberDelegation != good.bienes.delegationNumber) {
-      console.log(good);
+      console.log(good)
       console.log({
         valpack: noPack.numberDelegation,
         valgood: good.bienes.delegationNumber,

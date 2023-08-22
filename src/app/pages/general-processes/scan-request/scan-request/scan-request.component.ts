@@ -539,8 +539,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
     if (!expedientNumber && !wheelNumber) {
       this.alert(
-        'error',
-        'ERROR',
+        'warning',
+        'Atención',
         'Falta el número de expediente o volante, favor de verificar'
       );
       this.loadingDoc = false;
@@ -554,8 +554,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
 
     if (!keySeparator || !keyTypeDocument) {
       this.alert(
-        'error',
-        'ERROR',
+        'warning',
+        'Atención',
         'Falta el número de expediente o separador o tipo de documento, favor de verificar'
       );
       this.loadingDoc = false;
@@ -567,7 +567,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     if (!isPresent) return false;
 
     if (this.idFolio) {
-      this.alert('error', 'ERROR', 'Ya ha sido generada esta solicitud'); //'Ya ha sido solicitado ese documento');
+      this.alert('warning', 'Atención', 'Ya ha sido generada esta solicitud'); //'Ya ha sido solicitado ese documento');
       this.loadingDoc = false;
       return false;
     }
@@ -654,8 +654,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.alert(
-            'error',
-            'ERROR',
+            'warning',
+            'Atención',
             'No existe volante, no se puede generar folio de escaneo, favor de verificar'
           );
           check(false);
@@ -707,8 +707,8 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       }, 1000);
     } else {
       this.alert(
-        'error',
-        'ERROR',
+        'warning',
+        'Atención',
         'Debe tener el folio en pantalla para poder reimprimir'
       );
     }
@@ -762,7 +762,7 @@ export class ScanRequestComponent extends BasePage implements OnInit {
         });
       }
     } else {
-      this.alert('error', 'ERROR', 'No existe un folio para escanear');
+      this.alert('warning', 'Atención', 'No existe un folio para escanear');
     }
   }
 
@@ -771,13 +771,10 @@ export class ScanRequestComponent extends BasePage implements OnInit {
     const token = this.authService.decodeToken();
     params.addFilter('user', token.preferred_username);
 
-    console.log(params);
-
     this.userServices
       .getAllSegUsers(this.filterParams.getValue().getParams())
       .subscribe({
         next: response => {
-          console.log(response);
           this.user = response.data[0];
         },
         error: err => {
@@ -881,11 +878,9 @@ export class ScanRequestComponent extends BasePage implements OnInit {
       numberDepartmentRequest: this.user.usuario.departamentNumber,
       numberSubdelegationRequests: this.user.usuario.subdelegationNumber,
     };
-    console.log(documents);
     this.documnetServices.create(documents).subscribe({
       next: response => {
         this.document = response;
-        console.log(response);
         this.scanningFoli.setValue(response.id);
         this.documentEmmit.emit(response);
         /* this.onLoadToast(

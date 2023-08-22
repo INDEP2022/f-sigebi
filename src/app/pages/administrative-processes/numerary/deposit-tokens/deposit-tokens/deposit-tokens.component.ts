@@ -30,6 +30,7 @@ import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
+import { CustomMultiSelectFilterComponent } from './filterAccount';
 
 @Component({
   selector: 'app-deposit-tokens',
@@ -118,9 +119,20 @@ export class DepositTokensComponent
           type: 'string',
           sort: false,
         },
-        cveAccount: {
+        accountkey: {
           title: 'Cuenta',
-          type: 'string',
+          // type: 'string',
+          filter: {
+            type: 'custom',
+            component: CustomMultiSelectFilterComponent,
+            config: {
+              options: this.getUniqueValues('cveAccount'),
+            },
+          },
+          valuePrepareFunction: (text: string) => {
+            console.log('account', text);
+            return text;
+          },
           sort: false,
         },
         motionDate_: {
@@ -130,7 +142,6 @@ export class DepositTokensComponent
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            console.log('text', text);
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
@@ -139,11 +150,6 @@ export class DepositTokensComponent
             type: 'custom',
             component: CustomDateFilterComponent,
           },
-        },
-        invoicefile: {
-          title: 'Folio',
-          type: 'string',
-          sort: false,
         },
         calculationInterestsDate_: {
           title: 'Fecha Transferencia',
@@ -201,11 +207,6 @@ export class DepositTokensComponent
             });
           },
         },
-        proceedingsnumber: {
-          title: 'Expediente',
-          type: 'string',
-          sort: false,
-        },
         goodnumber: {
           title: 'Bien',
           type: 'custom',
@@ -219,6 +220,17 @@ export class DepositTokensComponent
               this.miSegundaFuncion(); // Nueva segunda función independiente
             });
           },
+        },
+        proceedingsnumber: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+
+        invoicefile: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
         },
         category: {
           title: 'Categoría',
@@ -409,7 +421,7 @@ export class DepositTokensComponent
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.goodnumber != null) {
+        if (row.data.no_bien != null) {
           return 'bg-warning text-black';
         } else {
           return '';
@@ -420,6 +432,10 @@ export class DepositTokensComponent
     this.settings2.actions = false;
   }
 
+  getUniqueValues(columnName: string): void {
+    // Lógica para obtener valores únicos de la columna
+    // Puedes usar lodash u otras herramientas para esto
+  }
   miSegundaFuncion() {
     console.log('SIIAISDASDASD');
     this.loading = !this.loading;
@@ -443,7 +459,7 @@ export class DepositTokensComponent
             const search: any = {
               motionnumber: () => (searchFilter = SearchFilter.EQ),
               bank: () => (searchFilter = SearchFilter.ILIKE),
-              cveAccount: () => (searchFilter = SearchFilter.EQ),
+              accountkey: () => (searchFilter = SearchFilter.IN),
               motionDate_: () => (searchFilter = SearchFilter.ILIKE),
               invoicefile: () => (searchFilter = SearchFilter.ILIKE),
               calculationInterestsDate_: () =>
@@ -539,6 +555,7 @@ export class DepositTokensComponent
         // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
       });
   }
+
   ngOnChanges() {}
   getAccount() {
     this.loading = true;
@@ -602,9 +619,9 @@ export class DepositTokensComponent
       params['bankkey'] = params['filter.bank'];
       delete params['filter.bank'];
     }
-    if (params['filter.cveAccount']) {
-      params['accountkey'] = params['filter.cveAccount'];
-      delete params['filter.cveAccount'];
+    if (params['filter.accountkey']) {
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
+      delete params['filter.accountkey'];
     }
     if (params['filter.motionnumber']) {
       params['motionNumber'] = params['filter.motionnumber'];
@@ -1059,9 +1076,9 @@ export class DepositTokensComponent
       delete params['filter.bank'];
     }
 
-    if (params['filter.cveAccount']) {
-      params['accountkey'] = params['filter.cveAccount'];
-      delete params['filter.cveAccount'];
+    if (params['filter.accountkey']) {
+      params['accountkey'] = params['filter.accountkey'];
+      delete params['filter.accountkey'];
     }
 
     if (params['filter.motionnumber']) {

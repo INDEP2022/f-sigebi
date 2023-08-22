@@ -49,6 +49,7 @@ export const REQUESTS_COLUMNS_MODAL = {
           console.log(goodCheck);
           goodCheck.push(data.row);
         } else {
+         
           goodCheck = goodCheck.filter(
             valor => valor.id_solnum != data.row.id_solnum
           );
