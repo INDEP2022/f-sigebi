@@ -396,13 +396,19 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
       // debugger;
     }
-    return good[column]
+    console.log(good[column]);
+
+    const result = good[column]
       ? item.dataType === 'D' || item.attribute.includes('FECHA')
-        ? formatForIsoDate(good[column], 'string')
+        ? good[column].includes('/')
+          ? good[column]
+          : formatForIsoDate(good[column], 'string')
         : good[column] === 'NULL'
         ? null
         : good[column]
       : null;
+    console.log(result);
+    return result;
   }
 
   private getValueInventary(isFecha: boolean, item: any) {

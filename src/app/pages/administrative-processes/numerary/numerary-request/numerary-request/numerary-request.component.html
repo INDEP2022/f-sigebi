@@ -164,6 +164,25 @@
       </form>
     </div>
     <div class="row pt-4">
+      <div class="col-auto">
+        <form class="form-material d-flex mt-2" [formGroup]="formGood">
+          <form-field [control]="formGood.get('good')" label="No. Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="good"
+              min="1" />
+          </form-field>
+          <div class="d-inline">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm ml-2"
+              (click)="searchGood()">
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+        </form>
+      </div>
       <form-loader *ngIf="loading"></form-loader>
       <div class="row pt-4 table-container">
         <div class="col-md-12 table-responsive">

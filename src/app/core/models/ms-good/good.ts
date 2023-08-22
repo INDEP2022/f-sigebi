@@ -855,6 +855,7 @@ export interface IAttribGoodBad {
   pair2: number;
   pair3: number;
   pair4: number;
+  arrayMotive?: string[];
 }
 
 export interface IGoodSiab {

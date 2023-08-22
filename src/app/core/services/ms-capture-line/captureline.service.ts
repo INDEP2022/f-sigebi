@@ -29,6 +29,15 @@ export class CapturelineService extends HttpService {
     return this.get<IListResponse<any>>(this.route3, params);
   }
 
+  getSettlementReport(idEvent?: number | string, params?: ListParams) {
+    const routeSettlement = `${CapturelineEndpoints.GetSettlementReport}?filter.id_evento=$eq:${idEvent}`;
+    return this.get<any>(routeSettlement, params);
+  }
+
+  getSettlementReportBody(body: any, params?: ListParams) {
+    return this.post<any>(CapturelineEndpoints.GetVarReport, body, params);
+  }
+
   getAllAdminCaptureLine1(params: ListParams): Observable<IListResponse<any>> {
     return this.binnacle.getAllPaginated(this.route3, params);
   }
