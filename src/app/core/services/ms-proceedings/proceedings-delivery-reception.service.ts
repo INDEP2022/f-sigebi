@@ -310,6 +310,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}`;
     return this.get(route, params);
   }
+
+  getSearchActa(params?: ListParams) {
+    return this.get<IListResponse<any>>(
+      ProceedingsEndpoints.SearchActa,
+      params
+    );
+  }
   getAllByActa(
     cve: string,
     fileNumber: number,

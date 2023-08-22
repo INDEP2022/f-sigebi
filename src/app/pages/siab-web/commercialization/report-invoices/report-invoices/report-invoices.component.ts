@@ -301,7 +301,10 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         };
         this.dataFormatPercentage.push(data1);
       }
-      this.getDataAll();
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getDataAll());
+
       console.log(this.dataFormatPercentage);
     } else {
       this.alert(
@@ -330,7 +333,9 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
     let data3 = event.data;
     console.log(data3.id_delegacion);
     this.dataDetail = data3.id_delegacion;
-    this.getDetailInvoices(this.dataDetail);
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getDetailInvoices(this.dataDetail));
     console.log(event.data);
   }
 
