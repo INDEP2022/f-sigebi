@@ -14,4 +14,7 @@ export enum DocumentsEndpoints {
   SeqDocument = 'application/getSeqDocument',
   postdocument = 'application/insertDocument',
   postPup = 'application/pupFolEscMas',
+  ApplicationGetMaxConsec = 'application/getMaxConsec',
+  ComerceDocumentsXmlT = 'comerce-documents-xml-t',
+  DocumentRequestPerGoodNew = 'documents-request-per-good',
 }

@@ -73,7 +73,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.expedient);
+    console.log('expedient--', this.expedient);
     this.actaForm();
     this.consulREG_DEL_ADMIN();
     for (let i = 1900; i <= this.currentYear; i++) {
@@ -87,7 +87,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       type: [null, Validators.required],
       claveTrans: [null, Validators.required],
       administra: [null, Validators.required],
-      cveReceived: [null, Validators.required],
+      //cveReceived: [null, Validators.required],
       consec: [null, Validators.required],
       // ejecuta: [null],
       anio: [null, [Validators.required]],
@@ -157,29 +157,32 @@ export class CreateActaComponent extends BasePage implements OnInit {
         params.addFilter('delegation', lparams.text, SearchFilter.ILIKE);
       }
 
-    this.rNomenclaService.getAll(params.getParams()).subscribe({
-      next: (data: any) => {
-        console.log('data', data);
-        let result = data.data.map(async (item: any) => {
-          item['cveReceived'] =
-            item.numberDelegation2 + ' - ' + item.delegation;
-        });
+    // this.rNomenclaService.getAll(params.getParams()).subscribe({
+    //   next: (data: any) => {
+    //     console.log('data', data);
+    //     let result = data.data.map(async (item: any) => {
+    //       item['cveReceived'] =
+    //         item.numberDelegation2 + ' - ' + item.delegation;
+    //     });
 
-        Promise.all(result).then(resp => {
-          this.dele = new DefaultSelect(data.data, data.count);
-        });
-      },
-      error: error => {
-        this.dele = new DefaultSelect([], 0);
-      },
-    });
+    //     Promise.all(result).then(resp => {
+    //       this.dele = new DefaultSelect(data.data, data.count);
+    //     });
+    //   },
+    //   error: error => {
+    //     this.dele = new DefaultSelect([], 0);
+    //   },
+    // });
   }
 
   consultREG_TRANSFERENTES(lparams: ListParams) {
+    console.log('LPARAMS - ', lparams);
     let obj = {
       transfereeNumber: this.expedient.transferNumber,
       expedientType: this.expedient.expedientType,
     };
+
+    console.log('ObJ --', obj);
 
     const params = new FilterParams();
 
@@ -218,16 +221,19 @@ export class CreateActaComponent extends BasePage implements OnInit {
     const acta = this.actaRecepttionForm.value.acta;
     const type = this.actaRecepttionForm.value.type;
     const claveTrans = this.actaRecepttionForm.value.claveTrans;
-    const cveReceived = this.actaRecepttionForm.value.cveReceived;
+    //const cveReceived = this.actaRecepttionForm.value.cveReceived;
     const administra = this.actaRecepttionForm.value.administra;
     const consec = this.actaRecepttionForm.value.consec;
     this.witnessOic = this.actaRecepttionForm.value.testigoOIC;
     const anio = this.actaRecepttionForm.value.anio;
     const mes = this.actaRecepttionForm.value.mes;
 
-
     const miCadenaAnio = anio + '';
     const miSubcadena = miCadenaAnio.slice(2, 5);
+
+    localStorage.setItem('anio', anio);
+    console.log('AÑO', anio);
+    localStorage.setItem('mes', mes.label);
 
     let consec_ = consec.toString().padStart(4, '0');
     this.foolio = consec;
@@ -237,7 +243,8 @@ export class CreateActaComponent extends BasePage implements OnInit {
       consec_ = consec_.toString().slice(0, 4);
     }
 
-    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
+    //const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${cveReceived}/${consec_}/${miSubcadena
+    const cveActa = `${acta}/${type}/${claveTrans}/${administra}/${consec_}/${miSubcadena
       .toString()
       .padStart(2, '0')}/${mes.value.toString().padStart(2, '0')}`;
     console.log('cveActa -->', cveActa);
@@ -264,6 +271,7 @@ export class CreateActaComponent extends BasePage implements OnInit {
       });
     }
   }
+
   newRegister: any;
   guardarRegistro(cveActa: any) {
     let obj: any = {
@@ -309,7 +317,6 @@ export class CreateActaComponent extends BasePage implements OnInit {
       numDelegation_1: null,
       numDelegation_2: null,
       file: this.fileNumber,
-
     };
     this.proceedingsDeliveryReceptionService
       .createDeliveryReception(obj)

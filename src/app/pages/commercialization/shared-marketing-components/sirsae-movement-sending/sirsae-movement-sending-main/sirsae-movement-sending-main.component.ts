@@ -14,6 +14,7 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ComerDetailsService } from 'src/app/core/services/ms-coinciliation/comer-details.service';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
+import { InterfacesirsaeService } from 'src/app/core/services/ms-interfacesirsae/interfacesirsae.service';
 import { ComerInvoiceService } from 'src/app/core/services/ms-invoice/ms-comer-invoice.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
@@ -157,9 +158,10 @@ export class SirsaeMovementSendingMainComponent
   acordionOpen: boolean = false;
   disabledBtnCerrar: boolean = false;
   loadingBtn: boolean = false;
-
+  loadingBtnOIICliente: boolean = false;
   @ViewChild('myTable', { static: false }) table: TheadFitlersRowComponent;
   lotes = new DefaultSelect();
+  loadingBtnSendIn: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -169,7 +171,8 @@ export class SirsaeMovementSendingMainComponent
     private comerInvoiceService: ComerInvoiceService,
     private paymentService: PaymentService,
     private comerDetailsService: ComerDetailsService,
-    private lotService: LotService
+    private lotService: LotService,
+    private interfacesirsaeService: InterfacesirsaeService
   ) {
     super();
     this.settings = {
@@ -350,8 +353,8 @@ export class SirsaeMovementSendingMainComponent
     } else if (this.layout == 'I') {
       if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
       params.addFilter('address', this.layout, SearchFilter.EQ);
-      params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
-      params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
+      params.addFilter('eventTpId', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+      params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
 
       this.comerEventService.getAllFilter(params.getParams()).subscribe({
         next: data => {
@@ -693,9 +696,9 @@ export class SirsaeMovementSendingMainComponent
         }
       });
     } else if (this.layout == 'I') {
-      if (!this.selectedBatch)
-        return this.alert('warning', 'Debe Seleccionar un Lote', '');
-      this.loadingBtn = true;
+      // if (!this.selectedBatch)
+      //   return this.alert('warning', 'Debe Seleccionar un Lote', '');
+      this.loadingBtnSendIn = true;
       let obj = {
         eventId: this.eventSelected.id,
         lot: this.selectedBatch ? this.selectedBatch.lotPublic : null,
@@ -708,19 +711,32 @@ export class SirsaeMovementSendingMainComponent
           'EL Evento o Lote Seleccionado no tiene Dispersión de Pagos, Verifique',
           ''
         );
-        this.loadingBtn = false;
+        this.loadingBtnSendIn = false;
         return;
       }
 
       const AUX_ESTATUS: any = await this.GET_AUX_ESTATUS();
       if (AUX_ESTATUS <= 0) {
         this.alert('warning', 'Debe Ejecutar Primero el Cambio de Estatus', '');
-        this.loadingBtn = false;
+        this.loadingBtnSendIn = false;
         return;
       }
 
-      // ENVIA_LEE_SIRSAE(1, : BLK_CTRL.LOTE_PUBLICO);
-      this.loadingBtn = false;
+      let objSirsae: any = {
+        pMode: 1,
+        pLot: this.selectedBatch ? this.selectedBatch.lotId : null,
+        lotPublic: this.selectedBatch ? this.selectedBatch.lotPublic : null,
+        idEvent: this.eventSelected.id,
+      };
+      const sendReadSirsae: any = await this.ENVIA_LEE_SIRSAE(objSirsae);
+      if (!sendReadSirsae) {
+        this.alert('error', 'Ha Ocurrido un error al Enviar', '');
+        this.loadingBtnSendIn = false;
+        return;
+      } else {
+        this.alert('success', 'Proceso Terminado Correctamente', '');
+      }
+      this.loadingBtnSendIn = false;
     }
   }
 
@@ -760,12 +776,12 @@ export class SirsaeMovementSendingMainComponent
 
   async ENVIA_LEE_SIRSAE(body: any) {
     return new Promise((resolve, reject) => {
-      this.lotService.getLotbyEvent_(body).subscribe({
+      this.interfacesirsaeService.sendReadSirsae(body).subscribe({
         next: data => {
-          resolve(data.count);
+          resolve(data);
         },
         error: err => {
-          resolve(0);
+          resolve(null);
         },
       });
     });
@@ -846,7 +862,10 @@ export class SirsaeMovementSendingMainComponent
   async sendSirsae(process: any, data: any) {
     let obj = {
       process: process,
-      event: this.eventSelected.id,
+      event:
+        this.layout == 'I'
+          ? this.eventSelectedInmueble.id
+          : this.eventSelected.id,
       // customerXevent: data,
     };
     return new Promise((resolve, reject) => {
@@ -871,38 +890,98 @@ export class SirsaeMovementSendingMainComponent
   }
 
   obtenerOI() {
+    if (this.layout == 'M') {
+      if (!this.eventSelected) {
+        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        return;
+      }
+      const data: any = this.data.getAll().then(async resp => {
+        if (resp.length > 0) this.loading = true;
+        const resss = await this.sendSirsae(2, []);
+        if (
+          resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+        ) {
+          this.alert(
+            'error',
+            'Error de Conexión',
+            'No se pudo Conectar a la Base de Datos (SIRSAE)'
+          );
+          await this.getComerClientsXEvent('no');
+          return;
+        } else {
+          this.alert('success', 'Proceso Terminado Correctamente', '');
+          // this.loading = false;
+          await this.getComerClientsXEvent('no');
+        }
+      });
+    } else if (this.layout == 'I') {
+      if (!this.eventSelectedInmueble) {
+        this.alert('warning', 'Es Necesario Especificar un Evento', '');
+        return;
+      }
+      this.loadingBtnOIICliente = true;
+      const data: any = this.data.getAll().then(async resp => {
+        if (resp.length > 0) this.loading = true;
+        const resss = await this.sendSirsae(2, []);
+        if (
+          resss == 'ERROR EN LA CONEXION A SIRSAE' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
+          resss ==
+            'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
+        ) {
+          this.alert(
+            'error',
+            'Error de Conexión',
+            'No se pudo Conectar a la Base de Datos (SIRSAE)'
+          );
+          await this.getComerClientsXEvent('no');
+          this.loadingBtnOIICliente = false;
+          return;
+        } else {
+          this.alert('success', 'Proceso Terminado Correctamente', '');
+          // this.loading = false;
+          await this.getComerClientsXEvent('no');
+          this.loadingBtnOIICliente = false;
+        }
+      });
+    }
+  }
+  loadingBtnOII: boolean = false;
+  async obtenerOIInmueble() {
+    // ENVIA_LEE_SIRSAE(2, null);
     if (!this.eventSelected) {
       this.alert('warning', 'Es Necesario Especificar un Evento', '');
       return;
     }
-
-    const data: any = this.data.getAll().then(async resp => {
-      if (resp.length > 0) this.loading = true;
-      const resss = await this.sendSirsae(2, []);
-      if (
-        resss == 'ERROR EN LA CONEXION A SIRSAE' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
-      ) {
-        this.alert(
-          'error',
-          'Error de Conexión',
-          'No se pudo Conectar a la Base de Datos (SIRSAE)'
-        );
-        await this.getComerClientsXEvent('no');
-        return;
-      } else {
-        this.alert('success', 'Proceso Terminado Correctamente', '');
-        // this.loading = false;
-        await this.getComerClientsXEvent('no');
-      }
-    });
+    this.loadingBtnOII = true;
+    let objSirsae: any = {
+      pMode: 2,
+      pLot: null,
+      lotPublic: null,
+      idEvent: this.eventSelected.id,
+    };
+    const sendReadSirsae: any = await this.ENVIA_LEE_SIRSAE(objSirsae);
+    if (!sendReadSirsae) {
+      this.alert('error', 'Ha Ocurrido un error al Enviar', '');
+      this.loadingBtnOII = false;
+      return;
+    } else {
+      this.alert('success', 'Proceso Terminado Correctamente', '');
+    }
+    this.loadingBtnOII = false;
   }
 
   // ------------------------------ ------------------------------ --------- //
@@ -958,8 +1037,8 @@ export class SirsaeMovementSendingMainComponent
 
     if (lparams.text) params.addFilter('id', lparams.text, SearchFilter.EQ);
     params.addFilter('address', this.layout, SearchFilter.EQ);
-    params.addFilter('eventTpId', `6,7`, SearchFilter.NOTIN);
-    params.addFilter('statusVtaId', `CONT`, SearchFilter.NOT);
+    params.addFilter('eventTpId', `6,7,8,9,10,11,12`, SearchFilter.NOTIN);
+    params.addFilter('statusVtaId', `CNE`, SearchFilter.NOT);
 
     this.comerEventService.getAllFilter(params.getParams()).subscribe({
       next: data => {
@@ -1029,9 +1108,10 @@ export class SirsaeMovementSendingMainComponent
       }
       this.loadingBtn = true;
 
-      // CAMBIAR
-      await this.pFmcomr612getAuxCount(this.eventSelectedInmueble.id);
+      // VALIDA_PAGOSXCLI
+      await this.VALIDA_PAGOSXCLI(this.eventSelectedInmueble.id);
 
+      // ENVIAR_SIRSAE(1);
       const resss: any = await this.sendSirsaexCliente(1, []);
       console.log('RESS', resss);
       if (resss.status == 400 || resss.status == 500) {
@@ -1065,30 +1145,38 @@ export class SirsaeMovementSendingMainComponent
           return;
         }
       } else {
-        // CAMBIAR
-        await this.actEstEve(this.eventSelectedInmueble.id);
+        // ACT_EST_EVE
+        await this.ACT_EST_EVE(this.eventSelectedInmueble.id);
         this.loadingBtn = false;
         this.alert('success', 'Proceso Terminado Correctamente', '');
         await this.getComerClientsXEvent('no');
       }
-      if (
-        resss == 'ERROR EN LA CONEXION A SIRSAE' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12cluster2016 in 15000ms' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12\\cluster2016 in 15000ms' ||
-        resss ==
-          'ConnectionError: Failed to connect to 172.20.226.12:undefined - Could not connect (sequence)'
-      ) {
-        this.alert(
-          'error',
-          'Error de Conexión',
-          'No se pudo Conectar a la Base de Datos (SIRSAE)'
-        );
-      } else {
-      }
+    });
+  }
+
+  ACT_EST_EVE(evento: any) {
+    return new Promise((resolve, reject) => {
+      this.interfacesirsaeService.actEstEve(evento).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
+  }
+
+  VALIDA_PAGOSXCLI(evento: any) {
+    return new Promise((resolve, reject) => {
+      this.interfacesirsaeService.validatePaymentsXcli(evento).subscribe({
+        next: data => {
+          resolve(data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
     });
   }
 

@@ -1,25 +1,25 @@
 export const LIST_WAREHOUSE_COLUMN = {
-  id: {
+  stockSiabNumber: {
     title: 'No. Almacén',
     type: 'string',
     sort: false,
   },
-  aliasWarehouseName: {
+  name: {
     title: 'Nombre Almacén',
     type: 'string',
     sort: false,
   },
-  keyState: {
+  state: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
-  description: {
+  address1: {
     title: 'Dirección',
     type: 'string',
     sort: false,
   },
-  code: {
+  postalCode: {
     title: 'Codigo Postal',
     type: 'string',
     sort: false,

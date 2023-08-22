@@ -70,7 +70,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
       //console.error(this.goodSelect);
       this.search();
     }
-    this.getGoodsSheard({ limit: 10, page: 1 });
+    this.getGoodsSheard(new ListParams());
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
         this.searchTabForm.get('estatus').setValue('');
@@ -163,6 +163,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
       this.classifGood = ssssubType.numClasifGoods;
       this.getGoodsSheard({ limit: 10, page: 1 });
       // this.searchTabForm.controls['noBien'].enable();
+      this.goods = new DefaultSelect([], 0, true);
+      this.params = new BehaviorSubject<FilterParams>(new FilterParams());
       console.log(this.classifGood);
     } else {
       this.classifGood = null;
@@ -330,9 +332,10 @@ export class SearchTabComponent extends BasePage implements OnInit {
   }
   getGoodsSheard(params: ListParams) {
     //Provisional data
+    console.log(params);
     // this.searchTabForm.controls['noBien'].disable();
+
     this.loader.load = true;
-    this.params = new BehaviorSubject<FilterParams>(new FilterParams());
     let data = this.params.value;
     data.page = params.page;
     data.limit = params.limit;
@@ -340,24 +343,29 @@ export class SearchTabComponent extends BasePage implements OnInit {
     if (this.classifGood) {
       data.addFilter('goodClassNumber', this.classifGood);
     }
-    if (params.text != undefined && params.text != '') {
-      data.addFilter('description', params.text, SearchFilter.ILIKE);
+    if (!isNaN(parseFloat(params.text)) && isFinite(+params.text)) {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('id', params.text, SearchFilter.EQ);
+      }
+    } else {
+      if (params.text != undefined && params.text != '') {
+        data.addFilter('description', params.text, SearchFilter.ILIKE);
+      }
     }
-
     this.service.getAll2(data.getParams()).subscribe({
       next: data => {
-        this.dataGoods = data.data.map(clasi => {
-          return {
-            ...clasi,
-            info: `${clasi.id} - ${clasi.description ?? ''}`,
-          };
-        });
-        this.goods = new DefaultSelect(this.dataGoods, data.count);
+        // this.dataGoods = data.data.map(clasi => {
+        //   return {
+        //     ...clasi,
+        //     info: `${clasi.id} - ${clasi.description ?? ''}`,
+        //   };
+        // });
+        this.goods = new DefaultSelect(data.data, data.count);
         this.loader.load = false;
         // this.searchTabForm.controls['noBien'].enable();
       },
       error: err => {
-        this.goods = new DefaultSelect([], 0);
+        this.goods = new DefaultSelect([], 0, true);
         let error = '';
         this.loader.load = false;
         // if (err.status === 0) {

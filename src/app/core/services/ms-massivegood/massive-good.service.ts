@@ -34,9 +34,12 @@ export class MassiveGoodService extends HttpService {
   postGoodsSchedules(body: any) {
     return this.post(this.route.GoodsShedules, body);
   }
-  getAllWithFilters(params?: string): Observable<IListResponse<IMassiveGood>> {
+  getAllWithFilters(
+    params2?: string,
+    params?: ListParams
+  ): Observable<IListResponse<IMassiveGood>> {
     return this.get<IListResponse<IMassiveGood>>(
-      this.route.MassiveChargeGoods,
+      `${this.route.MassiveChargeGoods}${params2}`,
       params
     );
   }
@@ -163,5 +166,8 @@ export class MassiveGoodService extends HttpService {
 
   createProgGoodMassive(data: Object) {
     return this.post(this.route.MassiveProgGood, data);
+  }
+  GetAllGoodsMotivesRevExcel(params: _Params) {
+    return this.get(this.route.GetAllGoodsMotivesRevExcel, params);
   }
 }

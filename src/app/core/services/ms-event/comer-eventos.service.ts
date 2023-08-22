@@ -4,7 +4,7 @@ import { EventEndpoints } from 'src/app/common/constants/endpoints/ms-event-endp
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
-import { IComerEvent } from './../../models/ms-event/event.model';
+import { IComerEvent, IGraceDate } from './../../models/ms-event/event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -105,5 +105,35 @@ export class ComerEventosService extends HttpService {
 
   getMANDXEVENTO(event: string) {
     return this.get(EventEndpoints.MANDXEVENTO + '/' + event);
+  }
+
+  getComerEventGet(params: ListParams) {
+    return this.get(EventEndpoints.ComerEventGetEvent, params);
+  }
+
+  //PUF GRACE DATE
+  pufGraceDate(body: IGraceDate) {
+    return this.post('application/puf-grace-date', body);
+  }
+
+  //------------- INMUEBLES -------------START//
+  pupExpExcelI(evento: any) {
+    // PUP_EXP_EXCEL
+    return this.get(`application/pup-exp-excel/${evento}`);
+  }
+
+  pupExpPayModestI(evento: any) {
+    // PUP_EXPPAGOMODEST
+    return this.get(`application/pup-exp-payment-modest/${evento}`);
+  }
+
+  pupExportDetpaymentsI(body: any) {
+    // PUP_EXPORT_DETPAGOS
+    return this.post('application/pup-export-det-payments', body);
+  }
+  //------------- INMUEBLES -------------END//
+
+  GetEventXLot(body: any, params?: _Params) {
+    return this.post(EventEndpoints.GetEventXLot, body, params);
   }
 }

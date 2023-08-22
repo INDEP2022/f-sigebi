@@ -36,6 +36,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
   @Output() fillPagedRow = new EventEmitter();
   checkSum: CheckSum;
   vsumimp = 0;
+  finalStatus: string;
+  finalExtDomProcess: string;
   constructor(
     private partializeGoodService: PartializeGoodService,
     private goodSSSubtypeService: GoodSssubtypeService,
@@ -159,6 +161,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     // return true;
     // debugger;
     console.log('Entro a insertaBien', good, pno_acta);
+    delete good.statusDetails;
+    delete good.expediente;
     const newGood: IGoodP = {
       ...good,
       observations,
@@ -174,6 +178,10 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       worthappraisal: item.avaluo ? +(item.avaluo + '') : null,
       goodReferenceNumber: item.noBien,
       extDomProcess: pproextdom,
+      subDelegationNumber: good.subDelegationNumber
+        ? good.subDelegationNumber.id
+        : null,
+      delegationNumber: good.delegationNumber ? good.delegationNumber.id : null,
     };
     let request: GoodDTO = {
       screenKey: 'FACTGENPARCBIEN',
@@ -237,11 +245,8 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
     try {
       const { status, process } = await this.getStatusProcessxPantalla();
       console.log(status, process);
-
-      this.good.status = status;
-      this.good.extDomProcess = process;
-      // this.formGood.get('estatus').setValue(status);
-      // this.formGood.get('extDom').setValue(process);
+      this.finalStatus = status;
+      this.finalExtDomProcess = process;
     } catch (x) {
       // this.onLoadToast(
       //   'error',
@@ -841,11 +846,13 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
               this.fillPagedRow.emit();
               await this.finishApply(vobserv_padre, vdesc_padre);
               console.log(this.good);
+              this.good.status = this.finalStatus;
+              this.good.extDomProcess = this.finalExtDomProcess;
             }
           },
           error: error => {
             console.log(error);
-            this.alert('error', 'Inserta Bien', 'No se pudo parcializar');
+            this.alert('error', 'Inserta Bien', error.error.message);
             this.loader.load = false;
             return;
           },

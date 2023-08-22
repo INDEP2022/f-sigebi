@@ -11,8 +11,8 @@ export class SocketService extends HttpService {
   ) {
     super();
   }
-  goodsTrackerExcel() {
-    return this.socket.fromEvent('tracker_good').pipe(
+  goodsTrackerExcel(token: string) {
+    return this.socket.fromEvent(token).pipe(
       tap(res => {
         console.log('Conexion establecida');
         console.log({ res });
@@ -20,8 +20,8 @@ export class SocketService extends HttpService {
     );
   }
 
-  exportGoodsTrackerPhotos() {
-    return this.socket.fromEvent('tracker_good_photo').pipe(
+  exportGoodsTrackerPhotos(token: string) {
+    return this.socket.fromEvent(token).pipe(
       tap(res => {
         console.log('Conexion establecida');
         console.log({ res });

@@ -72,6 +72,9 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     // DISABLED BUTTON - FINALIZED //
     this.statusTask = this.task.status;
 
+    //info de la solicitud
+    console.log('Solicitud', this.request);
+
     //this.getGoodResDev(Number(this.goodTransfer.id));
     this.getGoodResDev(this.goodTransfer);
     this.loading = false;
@@ -128,7 +131,13 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   getTypeClarification(event: any): void {}
 
   getClarification(params?: ListParams): void {
+    //Mostrar individualización de bienes solo para los de Comercio Exterior
     params['sortBy'] = `clarification:ASC`;
+
+    if (this.request.typeOfTransfer != 'SAT_SAE') {
+      params['filter.id'] = `$not:19`;
+    }
+
     this.clarificationService.getAll(params).subscribe({
       next: data => {
         this.selectClarification = new DefaultSelect(data.data, data.count);
@@ -164,6 +173,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA';
     console.log(this.goodTransfer);
+    return;
     this.goodTransfer.map(async (item, _i) => {
       const index = _i + 1;
       clarification.goodId = item.id;
@@ -344,12 +354,17 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   updateGood(good: any) {
     return new Promise((resolve, reject) => {
       //let good = this.goodTransfer;
+      const typeClarify =
+        this.clarificationForm.controls['clarificationType'].value;
+      const status = typeClarify == 'SOLICITAR_ACLARACION' ? 'STA' : 'STI';
+      //const goodStatus = typeClarify == 'SOLICITAR_ACLARACION'? 'SOLICITUD DE ACLARACION' : 'IMPROCEDENCIA'
       let body: any = {};
       body.id = good.id;
       body.goodId = good.goodId;
       //body.goodResdevId = Number(id);
-      body.processStatus = 'SOLICITAR_ACLARACION';
+      body.processStatus = typeClarify;
       body.goodStatus = 'SOLICITUD DE ACLARACION';
+      body.status = status;
       // debugger;
       this.goodService.update(body).subscribe({
         next: resp => {
@@ -492,8 +507,8 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
               if (this.docClarification === undefined) {
                 reject('Existe bienes con aclaracion');
                 this.onLoadToast(
-                  'info',
-                  'Algunos bienes tienen o tuvieron aclaración'
+                  'warning',
+                  'Algunos Bienes tienen o tuvieron aclaración'
                 );
               }
             }

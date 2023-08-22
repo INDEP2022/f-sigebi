@@ -5,6 +5,7 @@ import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { DocumentsService } from 'src/app/core/services/ms-documents/documents.service';
 import { BasePage } from 'src/app/core/shared';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -21,6 +22,7 @@ export class CommercializationSignatureModalComponent
 {
   data: any;
   edit: boolean = false;
+  countTypeSignatures: number;
   dataUser = new DefaultSelect();
   dataFirmType = new DefaultSelect();
   formGroup: FormGroup = new FormGroup({});
@@ -29,7 +31,8 @@ export class CommercializationSignatureModalComponent
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private svSignatureAuxiliaryCatalogsService: SignatureAuxiliaryCatalogsService
+    private svSignatureAuxiliaryCatalogsService: SignatureAuxiliaryCatalogsService,
+    private msDocumentsService: DocumentsService
   ) {
     super();
   }
@@ -41,7 +44,7 @@ export class CommercializationSignatureModalComponent
   private prepareForm(): void {
     this.formGroup = this.fb.group({
       // recordNumber: [{ value: null, disabled: false }],
-      // numberconsec: [{ value: null, disabled: false }],
+      numberconsec: [{ value: null, disabled: false }],
       idDocumentsxml: [{ value: null, disabled: false }],
       user: [
         { value: null, disabled: false },
@@ -81,23 +84,35 @@ export class CommercializationSignatureModalComponent
       return;
     }
     if (this.edit == false) {
+      let params = new ListParams();
+      params['filter.id_docums_xml'] = `$eq:${this.data.idDocumentsxml}`;
       this.svSignatureAuxiliaryCatalogsService
-        .createComerceDocumentsXmlT(this.formGroup.value)
+        .getAllComerceDocumentsXmlTCatFelec(params)
         .subscribe({
           next: res => {
-            console.log('RESPONSE', res);
-            this.onConfirm.emit(this.formGroup.value);
-            this.alert('success', 'Registro Creado Correctamente', '');
-            this.formGroup.reset();
-            this.close();
+            console.log(
+              'DATA SIGNATURE',
+              res,
+              res.count,
+              this.countTypeSignatures
+            );
+            if (res.count == this.countTypeSignatures) {
+              this.alert(
+                'warning',
+                'No se Puede Agregar otra Firma. Total de firmas: ' + res.count,
+                ''
+              );
+            } else {
+              this.getConsecutiveNumber(this.formGroup.value.idDocumentsxml);
+            }
           },
           error: error => {
             console.log(error);
-            this.alert(
-              'warning',
-              'Ocurrió un Error al Intentar Crear el Registro',
-              ''
-            );
+            if (error.status == 400) {
+              this.getConsecutiveNumber(this.formGroup.value.idDocumentsxml);
+            } else {
+              this.alert('warning', 'Error al Validar el Total de Firmas', '');
+            }
           },
         });
     } else {
@@ -193,5 +208,41 @@ export class CommercializationSignatureModalComponent
           subscription.unsubscribe();
         },
       });
+  }
+
+  getConsecutiveNumber(id_docums_xml: number) {
+    this.msDocumentsService.getMaxConsec(id_docums_xml).subscribe({
+      next: res => {
+        this.formGroup.get('numberconsec').setValue(res);
+        console.log('RESPONSE', res, this.formGroup.value);
+        this.svSignatureAuxiliaryCatalogsService
+          .createComerceDocumentsXmlT(this.formGroup.value)
+          .subscribe({
+            next: res => {
+              console.log('RESPONSE', res);
+              this.onConfirm.emit(this.formGroup.value);
+              this.alert('success', 'Registro Creado Correctamente', '');
+              this.formGroup.reset();
+              this.close();
+            },
+            error: error => {
+              console.log(error);
+              this.alert(
+                'warning',
+                'Ocurrió un Error al Intentar Crear el Registro',
+                ''
+              );
+            },
+          });
+      },
+      error: error => {
+        console.log(error);
+        this.alert(
+          'warning',
+          'Ocurrió un Error al Intentar Crear el Registro',
+          ''
+        );
+      },
+    });
   }
 }

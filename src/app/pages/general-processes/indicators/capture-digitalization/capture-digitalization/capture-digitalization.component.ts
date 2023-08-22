@@ -150,6 +150,13 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       columns: {
         ...GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS,
       },
+      rowClassFunction: (row: any) => {
+        if (row.data.cumplio == true) {
+          return 'bg-success text-white';
+        } else {
+          return 'bg-dark text-white';
+        }
+      },
       noDataMessage: 'No se encontraron registros',
     };
   }
@@ -381,8 +388,8 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
     };
     console.log('params', params);
     this.siabService
-      // .fetchReport('RINDICA_0001', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RINDICA_0001', params)
+      // .fetchReportBlank('blank')
       .subscribe(response => {
         if (response !== null) {
           this.loading = false;
@@ -422,6 +429,10 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
 
   find() {
     this.loading = true;
+    let params = {
+      ...this.params.getValue(),
+      ...this.columnFilters,
+    };
     this.from = this.datePipe.transform(
       this.formCapture.controls['fecStart'].value,
       'yyyy-MM-dd'
@@ -444,7 +455,7 @@ export class CaptureDigitalizationComponent extends BasePage implements OnInit {
       noAuthorityts: Number(this.formCapture.value.noStation),
     };
     this.documentsService
-      .getDocCaptureFind(this.search, this.params.getValue())
+      .getDocCaptureFind(this.search, params)
       // .pipe(timeout(50000))
       .subscribe({
         next: data => {

@@ -118,8 +118,8 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   messageSuccess() {
     const message = 'La(s) fotografías se han cargado correctamente';
     Swal.fire({
-      icon: undefined,
-      title: 'Información',
+      icon: 'success',
+      title: '',
       text: message,
       confirmButtonColor: '#9D2449',
       confirmButtonText: 'Aceptar',
@@ -133,39 +133,19 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
       initialState: {
         data: this.good,
         process: 'sampling-assets',
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
-          debugger;
+        callback: (next?: boolean) => {
+          if (next) {
+            setTimeout(() => {
+              this.messageSuccess();
+              this.getData();
+            }, 300);
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(UploadImgFieldModalComponent, config);
-
-    /* let loadingPhotos = 0;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-  
-      callBack: (next?: boolean) => {
-        if (next) {
-
-          debugger
-          loadingPhotos = loadingPhotos + 1;
-          setTimeout(() => {
-            
-          }, 7000);
-          if (loadingPhotos == 1) {
-            this.alert(
-              'success',
-              'Acción correcta',
-              'Imagen agregada correctamente'
-            );
-          }
-        }
-      },
-    };
-    this.modalService.show(UploadFileComponent, config); */
   }
 
   getTypeDocuments(id: number | string) {

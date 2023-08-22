@@ -698,6 +698,7 @@ export interface IGood {
   estatus?: Estatus;
   no_expediente?: NoExpediente;
   promoter?: string;
+  statusDetails?: any;
   dateRenderDecoDev?: Date | string;
   //TODO: Implement Promoter Interface
   //TODO?: Implement Promoter Interface
@@ -741,6 +742,8 @@ export interface ICharacteristicsGoodDTO {
   noSsubType?: number;
   noSssubType?: number;
   noGood?: number;
+  status?: string;
+  goodclassnumber?: string;
 }
 
 export interface IValNumeOtro {

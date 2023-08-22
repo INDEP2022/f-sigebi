@@ -284,4 +284,14 @@ export class DocumentsService extends HttpService {
   getDocCaptureFind(body: ICaptureDigFilter, params: ListParams) {
     return this.post(DocumentsEndpoints.IndicatorRec, body, params);
   }
+
+  getMaxConsec(id_docums_xml: number) {
+    return this.get(
+      DocumentsEndpoints.ApplicationGetMaxConsec + '/' + id_docums_xml
+    );
+  }
+
+  getComerceDocumentsXmlT(params: _Params) {
+    return this.get(DocumentsEndpoints.ComerceDocumentsXmlT, params);
+  }
 }

@@ -394,8 +394,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.type.value === null) {
       this.alert(
         'warning',
-        'Cálculo de numerario',
-        'Debe especificar el tipo de proceso.'
+        'Cálculo de Numerario',
+        'Debe Especificar el Tipo de Proceso.'
       );
       return;
     }
@@ -403,15 +403,15 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === null) {
       this.alert(
         'warning',
-        'Cálculo de numerario',
-        'Debe especificar el tipo de moneda.'
+        'Cálculo de Numerario',
+        'Debe Especificar el Tipo de Moneda.'
       );
       return;
     }
     const response = await this.alertQuestion(
       'question',
-      '¿Desea continuar?',
-      '¿Se continua con la selección?'
+      '¿Desea Continuar?',
+      ''
     );
     if (response.isConfirmed) {
       this.openModal();
@@ -423,9 +423,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     this.isLoadingStatusAccount = true;
     const params = {
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    console.log({
+      params1: params,
+      date: this.date.value,
+      dateValid: new Date('20-08-2023'),
+    });
+    this.downloadReport('RCONBIENESPROC_COMIS', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }
@@ -434,12 +439,39 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   printDetailMovi() {
     this.isLoadingDetailMovi = true;
     const params = {
+      // this.idProcess.value
       P_PROCNUM: this.idProcess.value,
-      P_FEC_PROCNUM: new Date(this.date.value),
+      P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
-    this.downloadReport('blank', params, () => {
+    console.log('params111', params);
+    this.downloadReport('RCONBIENESPROC', params, () => {
       this.isLoadingDetailMovi = false;
     });
+  }
+
+  cambiarFormatoFecha(fechaOriginal: any) {
+    if (!fechaOriginal) return null;
+
+    let partesFecha = fechaOriginal.split('/');
+    let dia = partesFecha[0];
+    let mes = partesFecha[1];
+    let anio = partesFecha[2];
+
+    let fechaNueva = new Date(mes + '/' + dia + '/' + anio);
+
+    let nuevoAnio: any = fechaNueva.getFullYear();
+    let nuevoMes: any = fechaNueva.getMonth() + 1;
+    let nuevoDia: any = fechaNueva.getDate();
+
+    if (nuevoMes < 10) {
+      nuevoMes = '0' + nuevoMes;
+    }
+    if (nuevoDia < 10) {
+      nuevoDia = '0' + nuevoDia;
+    }
+
+    let fechaFormateada = nuevoAnio + '-' + nuevoMes + '-' + nuevoDia;
+    return fechaFormateada;
   }
 
   isLoadingProrraComission = false;
@@ -447,7 +479,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     if (this.currency.value === 'P') {
       const params = {
         P_PROCNUM: this.idProcess.value,
-        P_FEC_PROCNUM: new Date(this.date.value),
+        P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
+        // P_FEC_PROCNUM: new Date(this.date.value),
       };
       this.downloadReport('blank', params, () => {
         this.isLoadingProrraComission = false;
@@ -455,7 +488,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
     } else {
       this.alert(
         'warning',
-        'Cálculo de numerario',
+        'Cálculo de Numerario',
         'El proceso no presenta ninguna comisión bancaria.'
       );
     }
@@ -463,6 +496,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
 
   downloadReport(reportName: string, params: any, cb: () => void = null) {
     //this.loadingText = 'Generando reporte ...';
+    console.log('params', params);
     this.siabService.fetchReport(reportName, params).subscribe({
       next: response => {
         this.loading = false;
@@ -498,7 +532,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
   async deleteRequest() {
     const response = await this.alertQuestion(
       'question',
-      'Cálculo de numerario',
+      'Cálculo de Numerario',
       'Se eliminará proceso de numerario. ¿Deseas continuar?'
     );
     if (response.isConfirmed) {
@@ -509,7 +543,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
         this.clearAll();
         this.alert(
           'success',
-          'Cálculo de numerario',
+          'Cálculo de Numerario',
           'Fue eliminado el cálculo solicitado correctamente'
         );
       } else {
@@ -638,14 +672,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       } else {
         this.alert(
           'warning',
-          'Cálculo de numerario',
+          'Cálculo de Numerario',
           'No se encontró la solicitud.'
         );
       }
     } else {
       this.alert(
         'warning',
-        'Cálculo de numerario',
+        'Cálculo de Numerario',
         'No se especificó el proceso a calcular.'
       );
     }
@@ -744,7 +778,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId != null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Se ejecuta el cálculo?',
+          '¿Se Ejecuta el Cálculo?',
           ''
         );
 
@@ -755,14 +789,14 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
           );
           console.log(vResul);
           if (vResul === 'Error') {
-            this.alert('error', 'Ha ocurrido un error', '');
+            this.alert('error', 'Ha Ocurrido un Error', '');
           } else {
             this.alert('success', 'Se realizó el Cálculo de Numerario', '');
             this.searchProcess();
           }
         }
       } else {
-        this.alert('error', 'No se encontró la solicitud', '');
+        this.alert('error', 'No se Encontró la Solicitud', '');
       }
     } else {
       this.alert('error', 'No se especificó el proceso a calcular', '');
@@ -782,7 +816,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (res.registers === 0) {
         this.alert(
           'warning',
-          'Cálculo de numerario',
+          'Cálculo de Numerario',
           'No se encontro el tipo de moneda en este proceso. \n Debe seleccionar uno para continuar con el proceso'
         );
         this.currency.enable();
@@ -791,8 +825,8 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (res.registers > 1) {
         this.alert(
           'warning',
-          'Cálculo de numerario',
-          'Se encontraron mas tipos de moneda.'
+          'Cálculo de Numerario',
+          'Se encontraron más tipos de moneda.'
         );
         return;
       }

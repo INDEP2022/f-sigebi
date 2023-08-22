@@ -16,9 +16,25 @@ export class GoodsManagementSocialCabinetTabComponent
   extends BasePage
   implements OnInit
 {
+  options: { value: number; label: string }[] = [];
   // @Input() selectedGoodstxt: number[];
   @Input() identifier: number;
-  @Input() process: ETypeGabinetProcess = ETypeGabinetProcess['Sin Asignar'];
+  _process: ETypeGabinetProcess = ETypeGabinetProcess['Sin Asignar'];
+  @Input()
+  get process() {
+    return this._process;
+  }
+  selectedOption: number = 0;
+  set process(value) {
+    this.options = [];
+    this._process = value;
+    this.selectedOption = value + 1;
+    this.form.get('process').setValue(value + 1);
+    if (value < 1) this.options.push({ value: 1, label: 'Susceptible' });
+    if (value < 2) this.options.push({ value: 2, label: 'Asignado' });
+    if (value < 3) this.options.push({ value: 3, label: 'Entregado' });
+    if (value < 4) this.options.push({ value: 4, label: 'Liberado' });
+  }
   @Input() disabledProcess = true;
   typeGabinetProcess = ETypeGabinetProcess;
   form: FormGroup = new FormGroup({});
@@ -31,7 +47,7 @@ export class GoodsManagementSocialCabinetTabComponent
   ) {
     super();
     this.form = this.fb.group({
-      // option: [null, [Validators.required]],
+      process: [null, [Validators.required]],
       excuse: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       excuse2: [null, [Validators.pattern(STRING_PATTERN)]],
     });
@@ -80,11 +96,21 @@ export class GoodsManagementSocialCabinetTabComponent
   }
 
   async processCabinetSocial() {
+    // console.log(this.form.get('process').value);
+    // console.log({
+    //   pId: this.identifier,
+    //   pTypeProcess: this.form.get('process').value,
+    //   pJustify: this.form.get('excuse').value,
+    //   pUser: this.user,
+    //   currentProcessType: this.process,
+    // });
+
+    // return;
     this.pageLoading = true;
     this.service
       .paValidSocialCabinet({
         pId: this.identifier,
-        pTypeProcess: this.process + 1,
+        pTypeProcess: this.form.get('process').value,
         pJustify: this.form.get('excuse').value,
         pUser: this.user,
         currentProcessType: this.process,
@@ -118,11 +144,7 @@ export class GoodsManagementSocialCabinetTabComponent
             message.includes('correctamente') ||
             message.includes('procesado')
           ) {
-            this.alert(
-              'success',
-              'Procesamiento Gabinete Social',
-              'Bienes procesados'
-            );
+            this.alert('success', 'Bienes Procesados', '');
           } else {
             this.alert('error', 'Procesamiento Gabinete Social', message);
           }

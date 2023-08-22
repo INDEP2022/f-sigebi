@@ -31,6 +31,7 @@ import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodSpentService } from 'src/app/core/services/ms-expense/good-expense.service';
+import { ExpenseService } from 'src/app/core/services/ms-expense_/good-expense.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
@@ -104,6 +105,7 @@ export class ResquestNumberingChangeComponent
   totalItems1: number = 0;
   totalItems2: number = 0;
   columnFilters: any = [];
+  columnFilters2: any = [];
   people$: Observable<any[]>;
   selectedPeople: any = [];
 
@@ -113,7 +115,7 @@ export class ResquestNumberingChangeComponent
   //params = new BehaviorSubject<ListParams>(new ListParams());
   params = new BehaviorSubject<ListParams>(new ListParams());
   params1 = new BehaviorSubject<ListParams>(new ListParams());
-
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
   itemsBoveda = new DefaultSelect();
   itemsDelegation = new DefaultSelect();
   itemsUser = new DefaultSelect();
@@ -147,27 +149,27 @@ export class ResquestNumberingChangeComponent
     ...this.settings,
     actions: false,
     columns: {
-      numberGood: {
+      conceptSpentNumber: {
         title: 'Concepto',
         width: '10%',
         sort: false,
       },
-      Subtipo: {
+      description: {
         title: 'Descripción',
         width: '30%',
         sort: false,
       },
-      Ssubtipo: {
+      exercisedDate: {
         title: 'Fecha',
         width: '30%',
         sort: false,
       },
-      Sssubtipo: {
+      amount: {
         title: 'Monto',
         width: '30%',
         sort: false,
       },
-      SSSS: {
+      dirInd: {
         title: 'Dir/Ind',
         width: '30%',
         sort: false,
@@ -278,6 +280,7 @@ export class ResquestNumberingChangeComponent
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   @ViewChild('scrollContainer2') scrollContainer2!: ElementRef;
+  formTotal: FormGroup;
   constructor(
     private fb: FormBuilder,
     private safeService: SafeService,
@@ -294,7 +297,8 @@ export class ResquestNumberingChangeComponent
     private securityService: SecurityService,
     private token: AuthService,
     private readonly historyGoodService: HistoryGoodService,
-    private statusXScreenService: StatusXScreenService
+    private statusXScreenService: StatusXScreenService,
+    private expenseService_: ExpenseService
   ) {
     super();
     this.esta = '';
@@ -368,7 +372,7 @@ export class ResquestNumberingChangeComponent
           sort: false,
         },
         expedienteid: {
-          title: 'Número de Expediente',
+          title: 'No. Expediente',
           width: '10%',
           sort: false,
           valuePrepareFunction: (cell: any, row: any) => {
@@ -429,6 +433,8 @@ export class ResquestNumberingChangeComponent
     this.settings.hideSubHeader = false;
     this.settings.actions.delete = false;
     this.settings.actions.add = false;
+
+    this.settings2.hideSubHeader = false;
   }
 
   onGoodSelect(instance: CheckboxElementComponent) {
@@ -551,16 +557,39 @@ export class ResquestNumberingChangeComponent
   showReceipt(event: any) {
     this.modal.show();
     // this.loading = true;
+    let params = {
+      ...this.params2.getValue(),
+      ...this.columnFilters2,
+    };
 
-    this.expenseService.getGoodCosto(event.id).subscribe(
+    // const params = new FilterParams()
+
+    params['filter.goodNumber'] = `$eq:${event.id}`;
+    let obj = {
+      exercisedDate: '01/01/2000',
+    };
+    this.expenseService_.getData(params, obj).subscribe(
       (response: any) => {
-        this.totalItems2 = response.count;
-        this.data2.load(response.data);
+        let finalPriceTot = 0;
+        let result = response.data.map((item: any) => {
+          if (item.amount) finalPriceTot = finalPriceTot + Number(item.amount);
+        });
 
-        this.data2.refresh();
+        Promise.all(result).then(resp => {
+          this.formTotal.get('total').setValue(finalPriceTot);
+          this.data2.load(response.data);
+          this.data2.refresh();
+          this.totalItems2 = response.count;
+        });
         // this.loading = false;
       },
-      error => (this.loading = false)
+      error => {
+        this.data2.load([]);
+        this.data2.refresh();
+        this.totalItems2 = 0;
+        this.alert('warning', 'No se Encontraron Resultados', '');
+        this.loading = false;
+      }
     );
   }
   getBoveda(params: ListParams, id?: string) {
@@ -617,8 +646,8 @@ export class ResquestNumberingChangeComponent
   }
 
   getUsuario(params: ListParams, usuario?: string) {
-    if (usuario) {
-      params['filter.usuario'] = `$in:${usuario}`;
+    if (params.text) {
+      params['filter.usuario'] = `$ilike:${params.text}`;
     }
 
     this.securityService.getAllUser(params).subscribe((data: any) => {
@@ -634,8 +663,8 @@ export class ResquestNumberingChangeComponent
   }
 
   getUsuario1(params1: ListParams, usuario?: string) {
-    if (usuario) {
-      params1['filter.usuario'] = `$in:${usuario}`;
+    if (params1.text) {
+      params1['filter.usuario'] = `$ilike:${params1.text}`;
     }
 
     this.securityService.getAllUser(params1).subscribe((dat: any) => {
@@ -1310,13 +1339,13 @@ export class ResquestNumberingChangeComponent
         next: value => {
           this.alert(
             'success',
-            'Se Agregó Correctamente el No. Bien ' + payload.goodNumber,
+            'Se Agregó Correctamente el Bien: ' + payload.goodNumber,
             ''
           );
           resolve(true);
         },
         error: err => {
-          this.handleSuccess('No se Agregó el No. Bien ' + payload.goodNumber);
+          this.handleSuccess('No se Agregó el Bien: ' + payload.goodNumber);
           resolve(false);
         },
       });
@@ -1438,7 +1467,7 @@ export class ResquestNumberingChangeComponent
           // this.loading = false;
           this.alert(
             'success',
-            'No. Bien ' + body.goodNumber + ' Eliminado Correctamente ',
+            'Bien: ' + body.goodNumber + ' Eliminado Correctamente ',
             ''
           );
           resolve(true);
@@ -1896,6 +1925,9 @@ export class ResquestNumberingChangeComponent
       warehouse: [null],
       vault: [null],
       type: [null, Validators.required],
+    });
+    this.formTotal = this.fb.group({
+      total: [null],
     });
   }
   getDate(date: any) {

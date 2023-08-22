@@ -53,6 +53,7 @@ export interface IExpedient {
   id: string;
   identifier: string;
   indicatedName: string;
+  comptrollerWitness: string;
   initialAgreement: string;
   initialAgreementDate: string;
   insertDate: string;

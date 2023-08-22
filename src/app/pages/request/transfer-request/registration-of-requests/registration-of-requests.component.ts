@@ -634,14 +634,14 @@ export class RegistrationOfRequestsComponent
       const filter = params.getParams();
       this.taskService.getAll(filter).subscribe({
         next: resp => {
-          console.log('Tarea antigua:', resp.data[1]);
-          console.log('Fecha de creación', resp.data[1].createdDate);
+          //console.log('Tarea antigua:', resp.data[1]);
+          //console.log('Fecha de creación', resp.data[1]?.createdDate);
           //this.createdDateTask = resp.data[1].createdDate
           const task = {
             //
-            assignees: resp.data[1].assignees,
-            assigneesDisplayname: resp.data[1].assigneesDisplayname,
-            createdDate: resp.data[1].createdDate,
+            assignees: resp.data[1]?.assignees,
+            assigneesDisplayname: resp.data[1]?.assigneesDisplayname,
+            createdDate: resp.data[1]?.createdDate,
           };
           resolve(task);
         },
@@ -717,7 +717,7 @@ export class RegistrationOfRequestsComponent
           ).then(async question => {
             if (question.isConfirmed) {
               //this.notifyClarificationsMethod2();
-              this.updateGoodStatus('SOLICITAR_APROBACION');
+              this.updateGoodStatus('SOLICITAR_APROBACION', 'ROP');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
                 //si existe crea solo la Notificacion de aclaracion
@@ -754,7 +754,7 @@ export class RegistrationOfRequestsComponent
             '¿Continuar?'
           ).then(async question => {
             if (question.isConfirmed) {
-              this.updateGoodStatus('SOLICITAR_APROBACION');
+              this.updateGoodStatus('SOLICITAR_APROBACION', 'ROP');
               const existApprovalTask = await this.existApprobalTask();
               if (existApprovalTask === true) {
                 console.log(
@@ -1017,6 +1017,10 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = this.requestData.recordId;
       task['idDelegationRegional'] = user.department;
       task['urlNb'] = 'pages/request/transfer-request/process-approval';
+      task['idstation'] = this.requestData?.stationId;
+      task['idTransferee'] = this.requestData?.transferenceId;
+      task['idAuthority'] = this.requestData?.authorityId;
+      task['idDelegationRegional'] = user.department;
 
       this.taskService.createTask(task).subscribe({
         next: resp => {
@@ -1139,7 +1143,7 @@ export class RegistrationOfRequestsComponent
     const existDictamen = await this.getDictamen(this.requestData.id);
     if (existDictamen === false) {
       this.onLoadToast(
-        'info',
+        'warning',
         'No se puede aprobar la solicitud',
         'Es requerido previamente tener firmado el dictamen'
       );
@@ -1215,7 +1219,7 @@ export class RegistrationOfRequestsComponent
       'Rechazar',
       '¿Desea rechazar la solicitud con el folio: ' + this.requestData.id + '?',
       'Confirmación',
-      undefined,
+      'question',
       'refuse'
     );
   }
@@ -1299,9 +1303,9 @@ export class RegistrationOfRequestsComponent
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
-      task['idstation'] = request.stationId;
-      task['idTransferee'] = request.transferenceId;
-      task['idAuthority'] = request.authorityId;
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
       task['idDelegationRegional'] = user.department;
       body['task'] = task;
 
@@ -1411,7 +1415,7 @@ export class RegistrationOfRequestsComponent
             console.log('estado verificar:', this.verifyResp);
             if (this.verifyResp === 'turnar') {
               console.log('verificar-cumplimiento');
-              await this.updateGoodStatus('CLASIFICAR_BIEN');
+              await this.updateGoodStatus('CLASIFICAR_BIEN', 'ROP');
               this.verifyComplianceMethod(); // DE VERIFICAR CUMPLIMIENTO A CLASIFICAR BIEN
             } else if (this.verifyResp === 'sin articulos') {
               this.verifyCumplianteMsg(
@@ -1433,7 +1437,7 @@ export class RegistrationOfRequestsComponent
           //DE CLASIFICAR BIEN A DESTINO DOCUMENTAL
           this.loader.load = true;
           console.log('clasificar-bienes');
-          await this.updateGoodStatus('DESTINO_DOCUMENTAL');
+          await this.updateGoodStatus('DESTINO_DOCUMENTAL', 'ROP');
           //creat tarea para destino documental
           this.classifyGoodMethod();
         }
@@ -1441,7 +1445,7 @@ export class RegistrationOfRequestsComponent
           //DE DESTINO DOCUMENTAL A SOLICITAR APROBACIÓN O NOTIFICACIONES
           this.loader.load = true;
           this.deleteMsjRefuse();
-          await this.updateGoodStatus('SOLICITAR_APROBACION');
+          await this.updateGoodStatus('SOLICITAR_APROBACION', 'ROP');
           //tiene aclaraciones
 
           const clarification = await this.haveNotificacions();
@@ -1486,12 +1490,12 @@ export class RegistrationOfRequestsComponent
       }
 
       if (typeCommit === 'proceso-aprovacion') {
-        await this.updateGoodStatus('APROBADO');
+        await this.updateGoodStatus('APROBADO', 'VXR');
         this.approveRequestMethod();
       }
 
       if (typeCommit === 'refuse') {
-        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO');
+        await this.updateGoodStatus('VERIFICAR_CUMPLIMIENTO', 'ROP');
         this.motivoRechazo();
       }
     });
@@ -1579,11 +1583,12 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  async updateGoodStatus(newProcessStatus: string) {
+  async updateGoodStatus(newProcessStatus: string, status: string = null) {
     let body: any = { request: 0, status: '', process: '' };
     body.request = Number(this.requestData.id);
-    body.status = newProcessStatus;
+    body.status = newProcessStatus; //good.processStatus
     body.process = this.process;
+    body.statusGood = status; // good.status
     if (
       this.process === 'process-approval' &&
       newProcessStatus === 'APROBADO'

@@ -1,17 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { catchError, firstValueFrom, of, takeUntil } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import {
   FilterParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { Iidentifier } from 'src/app/core/models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from 'src/app/core/models/ms-good-tracker/tmpTracker.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
 import { GoodsManagementSocialNotLoadGoodsComponent } from '../goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 import { GoodsManagementService } from '../services/goods-management.service';
 import { ETypeGabinetProcess } from './typeProcess';
@@ -32,6 +38,7 @@ export class GoodsManagementSocialCabinetComponent
   identifier: number;
   typeGabinetProcess = ETypeGabinetProcess;
   totalItems = 0;
+  $trackedGoods = this.store.select(getTrackedGoods);
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
 
   get sinAsignarCant() {
@@ -82,12 +89,20 @@ export class GoodsManagementSocialCabinetComponent
 
   constructor(
     private modalService: BsModalService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
     private fb: FormBuilder,
+    private store: Store,
+    private router: Router,
     private goodTrackerService: GoodTrackerService,
     private goodsManagementService: GoodsManagementService
   ) {
     super();
     // this.settings.columns = COLUMNS;
+  }
+
+  get good() {
+    return this.form.get('good');
   }
 
   ngOnInit(): void {
@@ -104,6 +119,48 @@ export class GoodsManagementSocialCabinetComponent
           }
         },
       });
+    this.$trackedGoods.pipe(first(), takeUntil(this.$unSubscribe)).subscribe({
+      next: async response => {
+        if (response && response.length > 0) {
+          this.pageLoading = true;
+          this.disabledProcess = false;
+          this.identifier = await firstValueFrom(this.getSeqRastreador());
+          if (!this.identifier) {
+            this.alert('error', 'Secuencia Rastreador', 'No encontrada');
+            this.disabledProcess = true;
+            this.pageLoading = false;
+            return;
+          }
+          let response2 = response.map(x => {
+            return +x.goodNumber;
+          });
+          response2.forEach(item => {
+            if (item) {
+              this.saveInTemp(this.identifier, item + '');
+            }
+          });
+          this.selectedGoodstxt = response2;
+          this.getData();
+        }
+      },
+    });
+  }
+
+  async searchGood() {
+    console.log(this.good.value);
+    // console.log();
+    this.pageLoading = true;
+    this.disabledProcess = false;
+    this.identifier = await firstValueFrom(this.getSeqRastreador());
+    if (!this.identifier) {
+      this.alert('error', 'Secuencia Rastreador', 'No encontrada');
+      this.disabledProcess = true;
+      this.pageLoading = false;
+      return;
+    }
+    this.saveInTemp(this.identifier, this.good.value);
+    this.selectedGoodstxt = [this.good.value];
+    this.getData();
   }
 
   override ngAfterViewInit() {
@@ -141,6 +198,7 @@ export class GoodsManagementSocialCabinetComponent
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      good: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       file: [null, [Validators.required]],
       //message: [null, [Validators.required]]
     });
@@ -166,9 +224,11 @@ export class GoodsManagementSocialCabinetComponent
   }
 
   async onFileChange(event: any) {
-    this.notLoadedGoods = [];
+    this.clear();
     this.pageLoading = true;
     const file = event.target.files[0];
+    console.log(file);
+
     let fileReader = new FileReader();
     fileReader.onload = async e => {
       const result = fileReader.result as string;
@@ -179,13 +239,17 @@ export class GoodsManagementSocialCabinetComponent
       console.log(array);
 
       if (!array || array.length < 2) {
+        this.disabledProcess = true;
+        this.pageLoading = false;
         this.alert('error', 'No se han cargado datos en archivo', '');
         return;
       }
       this.disabledProcess = false;
       this.identifier = await firstValueFrom(this.getSeqRastreador());
       if (!this.identifier) {
+        this.disabledProcess = true;
         this.alert('error', 'Secuencia Rastreador', 'No encontrada');
+        this.pageLoading = false;
         return;
       }
       array.forEach(row => {
@@ -199,7 +263,9 @@ export class GoodsManagementSocialCabinetComponent
         });
       });
       if (newArray.length === 0) {
+        this.selectedGoodstxt = [...newArray];
         this.alert('error', 'No hay datos válidos en el archivo', '');
+        this.pageLoading = false;
         return;
       }
       this.selectedGoodstxt = [...newArray];
@@ -209,6 +275,12 @@ export class GoodsManagementSocialCabinetComponent
       // console.log(response);
     };
     fileReader.readAsText(file);
+  }
+
+  goToRastreador() {
+    this.router.navigate(['/pages/general-processes/goods-tracker'], {
+      queryParams: { origin: 'FACTADBCAMBIOESTAT' },
+    });
   }
 
   private activateTabs() {
@@ -296,6 +368,29 @@ export class GoodsManagementSocialCabinetComponent
   }
   getLiberado() {
     return this.getByProcessCant(ETypeGabinetProcess.Liberado);
+  }
+
+  downloadReport() {
+    //this.loadingText = 'Generando reporte ...';
+    // this.siabService.fetchReport('RMASINSUPDBIENES', params).subscribe({
+    //   next: response => {
+    //     this.loading = false;
+    //     const blob = new Blob([response], { type: 'application/pdf' });
+    //     const url = URL.createObjectURL(blob);
+    //     let config = {
+    //       initialState: {
+    //         documento: {
+    //           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+    //           type: 'pdf',
+    //         },
+    //         callback: (data: any) => {},
+    //       }, //pasar datos por aca
+    //       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+    //       ignoreBackdropClick: true, //ignora el click fuera del modal
+    //     };
+    //     this.modalService.show(PreviewDocumentsComponent, config);
+    //   },
+    // });
   }
 
   delete(data: any) {

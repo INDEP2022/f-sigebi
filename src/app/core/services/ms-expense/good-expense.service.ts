@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from 'src/app/common/services/http.service';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 @Injectable({
@@ -13,5 +13,9 @@ export class GoodSpentService extends HttpService {
 
   getGoodCosto(id: number | string) {
     return this.get<IListResponse<any>>(`spent-for-good/${id}`);
+  }
+
+  getGoodData(params: _Params) {
+    return this.get<IListResponse<any>>(`spent-for-good`, params);
   }
 }

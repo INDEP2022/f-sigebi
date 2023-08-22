@@ -5,7 +5,28 @@
   <div body>
     <div class="row mt-3 mb-3">
       <form action="" class="form-material" [formGroup]="form">
-        <app-delegation-shared [form]="form"></app-delegation-shared>
+        <!-- <app-delegation-shared [form]="form"></app-delegation-shared> -->
+        <div class="row">
+          <div class="col-md-6">
+            <app-banks-shared
+              [form]="form"
+              labelName="Banco"></app-banks-shared>
+          </div>
+          <div class="col-md-6 mt-3">
+            <form-field [control]="form.get('currency')" class="form-control">
+              <ngx-select
+                (fetchItems)="getCurrencies($event)"
+                [searchOnInit]="true"
+                [data]="currencies"
+                [form]="form"
+                value="cve_moneda"
+                bindLabel="desc_moneda"
+                label="Moneda"
+                control="currency">
+              </ngx-select>
+            </form-field>
+          </div>
+        </div>
         <div class="row mt-4">
           <div class="col-md-6">
             <form-field

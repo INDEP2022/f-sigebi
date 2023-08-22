@@ -4,10 +4,28 @@
   *ngIf="process < typeGabinetProcess.Liberado">
   <div class="row">
     <div class="col-md-10 align-self-baseline">
+      <div class="row mb-2">
+        <form-field [control]="form.get('process')" label="Proceso Siguiente">
+          <ng-select
+            formControlName="process"
+            class="form-control"
+            [clearable]="false"
+            [searchable]="false">
+            <ng-option *ngFor="let option of options" [value]="option.value">
+              {{ option.label }}
+            </ng-option>
+          </ng-select>
+        </form-field>
+      </div>
+
       <div class="row justify-content-between">
         <div class="col-12 mb-3 excuse" *ngIf="cantByProcess(process) > 0">
           <form-field [control]="form.get('excuse')" label="Justificación">
-            <textarea class="form-control" formControlName="excuse" rows="4">
+            <textarea
+              class="form-control"
+              formControlName="excuse"
+              rows="4"
+              maxlength="300">
             </textarea>
           </form-field>
         </div>
@@ -30,7 +48,7 @@
         (click)="processCabinetSocial()"
         [disabled]="form.invalid || disabledProcess">
         Procesar
-        <i class="bx bx-search-alt bx-sm float-icon"></i>
+        <i class="fa fa-arrow-right bx-sm float-icon"></i>
       </button>
       <!-- <button
       class="btn btn-danger btn-sm active ml-3"

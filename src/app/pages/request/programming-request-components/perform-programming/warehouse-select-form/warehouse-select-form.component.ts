@@ -35,8 +35,6 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('delegation', this.delegation);
-    console.log('typeTrans', this.typeTrans);
     this.prepareForm();
     if (this.typeTransportable == 'warehouse')
       this.getWarehouses(new ListParams());
@@ -57,7 +55,6 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
       params['filter.administratorName'] = this.idTransferent;
       this.goodsQueryService.getCatStoresView(params).subscribe({
         next: data => {
-          console.log('almacenes', data);
           this.warehouses = new DefaultSelect(data.data, data.count);
         },
         error: () => {
@@ -75,7 +72,6 @@ export class WarehouseSelectFormComponent extends BasePage implements OnInit {
 
       this.goodsQueryService.getCatStoresView(params).subscribe({
         next: data => {
-          console.log('almacenes', data);
           this.warehouses = new DefaultSelect(data.data, data.count);
         },
         error: () => {

@@ -14,6 +14,15 @@
       </ng-select>
     </form-field>
 
+    <div class="col-md-1">
+      <button
+        (click)="goodNumbersInput.click()"
+        type="button"
+        class="btn btn-primary btn-sm active">
+        <i class="bx bx-list-plus bx-sm float-icon"></i>
+      </button>
+    </div>
+
     <form-field
       [control]="form.get('flyerNum')"
       label="Volante"
@@ -30,7 +39,7 @@
       <!-- <input type="text" formControlName="flyerNum" class="form-control" /> -->
     </form-field>
 
-    <form-field [control]="form.get('judgeNum')" class="col-md-6">
+    <form-field [control]="form.get('judgeNum')" class="col-md-5">
       <!-- <input type="text" formControlName="judgeNum" class="form-control" /> -->
       <ngx-select
         [form]="form"
@@ -41,7 +50,19 @@
         bindLabel="description"
         (fetchItems)="getCourts($event)"
         (change)="courtChange($event)"
-        label="No&#46; Juzgado"></ngx-select>
+        label="No&#46; Juzgado"
+        [labelTemplate]="judgeLabel"
+        [optionTemplate]="judgeOption"></ngx-select>
+      <ng-template #judgeLabel let-item="item"
+        ><span [title]="item.id + ' - ' + item.description"
+          >{{ item.id }}-{{ item.description }}</span
+        ></ng-template
+      >
+      <ng-template #judgeOption let-item="item"
+        ><span [title]="item.id + ' - ' + item.description"
+          >{{ item.id }} - {{ item.description }}</span
+        ></ng-template
+      >
     </form-field>
 
     <!-- No hay filtro para este  campo -->
@@ -119,7 +140,19 @@
         bindLabel="description"
         (fetchItems)="getMinPubs($event)"
         (change)="minpubChange()"
-        label="Ministerio P&uacute;blico"></ngx-select>
+        label="Ministerio P&uacute;blico"
+        [labelTemplate]="minPubLabel"
+        [optionTemplate]="minPubOption"></ngx-select>
+      <ng-template #minPubLabel let-item="item"
+        ><span [title]="item.id + ' - ' + item.description"
+          >{{ item.id }} - {{ item.description }}</span
+        ></ng-template
+      >
+      <ng-template #minPubOption let-item="item"
+        ><span [title]="item.id + ' - ' + item.description">
+          {{ item.id }} - {{ item.description }}
+        </span></ng-template
+      >
     </form-field>
 
     <form-field
@@ -185,3 +218,11 @@
     </div>
   </div>
 </form>
+
+<div [style.display]="'none'">
+  <input
+    #goodNumbersInput
+    (change)="goodNumbersFileChange($event)"
+    [formControl]="goodNumbersControl"
+    type="file" />
+</div>

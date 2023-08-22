@@ -1,9 +1,9 @@
 export interface IConvertiongood {
   id?: number;
   fileNumber?: /* IExpedient | number */ any;
-  goodFatherNumber: string | number;
+  goodFatherNumber?: string | number;
   pageDocto?: string;
-  fCreate: Date;
+  fCreate?: Date;
   fConversions?: Date;
   hourConv?: string;
   fInvitation?: string;
@@ -33,9 +33,9 @@ export interface IConvertiongood {
   chargeCcp4?: string;
   ccp5?: string;
   chargeCcp5?: string;
-  fecActaEr: Date;
-  typeConv: string | number;
-  pwAccess: string;
+  fecActaEr?: Date;
+  typeConv?: string | number;
+  pwAccess?: string;
 }
 
 export class IActasConversion {

@@ -103,21 +103,6 @@
           </form-field>
         </div>
         <div class="col-md-6 mt-2">
-          <form-field [control]="form.get('validSistem')" label="Válido">
-            <ng-select formControlName="validSistem" class="form-control pt-1">
-              <ng-option value="S">Si</ng-option>
-              <ng-option value="R">Rechazado</ng-option>
-              <ng-option value="N">No Inválido</ng-option>
-              <ng-option value="A">Aplicado</ng-option>
-              <ng-option value="B">Pago de Bases</ng-option>
-              <ng-option value="D">Devuelto</ng-option>
-              <ng-option value="C">Contabilizado</ng-option>
-              <ng-option value="P">Penalizado</ng-option>
-              <ng-option value="Z">Devuelto al Cliente</ng-option>
-            </ng-select>
-          </form-field>
-        </div>
-        <div class="col-md-6 mt-2">
           <form-field [control]="form.get('clientId')">
             <ngx-select
               [searchOnInit]="true"

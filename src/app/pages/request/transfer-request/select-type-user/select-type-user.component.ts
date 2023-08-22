@@ -81,6 +81,9 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
     //TRAE USUARIOS QUE SERAN ASIGNADOS PARA LA SIGUIENTE TAREA
     if (this.typeAnnex === 'commit-request') {
       this.userForm.controls['typeUser'].valueChanges.subscribe((data: any) => {
+        this.params.getValue().page = 1;
+        this.params.getValue().limit = 10;
+
         this.getUsers();
         this.TLPMessage();
       });
@@ -168,7 +171,11 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       'SolicitudProgramacion.DelegadosRegionales'
     );
     this.params.value.addFilter('employeetype', 'DR');*/
-
+    this.params.value.addFilter(
+      'regionalDelegation',
+      this.deleRegionalUserId,
+      SearchFilter.ILIKE
+    );
     const filter = this.params.getValue().getParams();
     this.userProcessService.getAllUsersWithRol(filter).subscribe({
       next: resp => {
@@ -437,12 +444,19 @@ export class SelectTypeUserComponent extends BasePage implements OnInit {
       task['expedientId'] = request.recordId;
       task['urlNb'] = url;
       task['processName'] = 'SolicitudTransferencia';
-      task['idstation'] = request.stationId;
-      task['idTransferee'] = request.transferenceId;
-      task['idAuthority'] = request.authorityId;
+      task['idstation'] = request?.stationId;
+      task['idTransferee'] = request?.transferenceId;
+      task['idAuthority'] = request?.authorityId;
       task['idDelegationRegional'] = user.department;
-      task['createdDate'] = this.task1.createdDate;
-      task['endDate'] = this.today;
+
+      if (this.task1?.createdDate != null) {
+        task['createdDate'] = this.task1?.createdDate;
+      } else {
+        task['createdDate'] = this.today;
+      }
+
+      //task['endDate'] = this.today;
+
       body['task'] = task;
 
       let orderservice: any = {};

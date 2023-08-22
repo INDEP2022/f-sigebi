@@ -42,12 +42,17 @@ export class DocumentsDictumStatetMService extends HttpService {
     return this.put(this.route.DocumentsDictuXStateM, body);
   }
 
-  remove(body: {
-    ofDictNumber: string | number;
+  remove(body: { ofDictNumber: string | number; typeDictum: string }) {
+    //console.log(body);
+    return this.delete(this.route.DocumentsDictuXStateM, body);
+  }
+  removeDictamen(body: {
+    officialNumber: string | number;
     id: string | number;
     typeDict: string;
   }) {
-    return this.delete(this.route.DocumentsDictuXStateM, body);
+    //console.log(body);
+    return this.delete(`${this.route.DocumentsDictuXStateM}/delete`, body);
   }
 
   getSeqDocument() {
