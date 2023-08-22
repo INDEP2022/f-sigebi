@@ -5,11 +5,11 @@ export const GOODS_WITH_REQUIRED_INFO_COLUMNS = {
     valuePrepareFunction: (value: any) => (value ? value : ''),
     sort: false,
   },
-  motive: {
+  arrayMotive: {
     title: 'Motivo',
     sort: false,
-    // valuePrepareFunction: (cell: any, row: any) => {
-    //   return row.motive;
-    // },
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.arrayMotive.join(', ');
+    },
   },
 };
