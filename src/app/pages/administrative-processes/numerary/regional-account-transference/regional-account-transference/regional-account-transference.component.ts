@@ -166,8 +166,8 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         `No puede agregar más bienes a este reporte: ${transferenceReport}`
       );
     } else if (idRequest) {
@@ -200,7 +200,11 @@ export class RegionalAccountTransferenceComponent
           },
         });
     } else {
-      this.alert('error', 'Error', 'Ingrese un id solicitud para la consulta');
+      this.alert(
+        'warning',
+        'Atención',
+        'Ingrese un id solicitud para la consulta'
+      );
     }
   }
 
@@ -316,8 +320,8 @@ export class RegionalAccountTransferenceComponent
 
     if (transferenceReport) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         `No puede agregar más bienes a este reporte: ${transferenceReport}`
       );
       return;
@@ -339,10 +343,15 @@ export class RegionalAccountTransferenceComponent
           trans.file = trans.NO_EXPEDIENTE ? trans.NO_EXPEDIENTE : '';
           trans.description = trans.DESCRIPCION ? trans.DESCRIPCION : '';
           trans.status = trans.ESTATUS ? trans.ESTATUS : '';
-          trans.val1 = trans.VAL1 ? trans.VAL1 : '';
-          trans.val14 = trans.VAL14 ? trans.VAL14 : '';
-          trans.goodNumber = trans.NO_BIEN ? trans.NO_BIEN : '';
-          trans.allInterest = trans.TOT_INTERES ? trans.TOT_INTERES : '';
+          trans.val1 = trans.VAL1 ? trans.VAL1.trim() : '';
+          trans.val14 = trans.VAL14 ? Number(trans.VAL14.trim()) : 0;
+          trans.goodNumber = trans.NO_BIEN ? trans.NO_BIEN : 0;
+          trans.allInterest = trans.TOT_INTERES ? Number(trans.TOT_INTERES) : 0;
+          trans.total = Number(trans.val14) + Number(trans.allInterest);
+
+          const sum = Number(this.form.get('monto2').value ?? 0) + trans.total;
+
+          this.form.get('monto2').patchValue(sum);
         });
 
         const date = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
@@ -403,7 +412,7 @@ export class RegionalAccountTransferenceComponent
         this.modalService.show(EmailComponent, config);
       }
     } else {
-      this.alert('error', 'Error', 'Primero debe guardar el reporte');
+      this.alert('warning', 'Atención', 'Primero debe guardar el reporte');
     }
   }
 
@@ -448,24 +457,32 @@ export class RegionalAccountTransferenceComponent
       // this.form.get('monto2').patchValue(total);
 
       if (!delegation) {
-        this.alert('error', 'Error', 'No a ingresado el número de delegación');
+        this.alert(
+          'warning',
+          'Atención',
+          'No a ingresado el número de delegación'
+        );
         return;
       } else if (!folioCash) {
         this.alert(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
           'No a ingresado el número de folio CashWindows'
         );
         return;
       } else if (!transactionDate) {
-        this.alert('error', 'Error', 'No a ingresado la fecha de transacción');
+        this.alert(
+          'warning',
+          'Atención',
+          'No a ingresado la fecha de transacción'
+        );
         return;
       } else if (
         this.convertDate(transactionDate) > this.convertDate(dateReport)
       ) {
         this.alert(
-          'error',
-          'Error',
+          'warning',
+          'Atención',
           'La fecha de transacción no puede ser mayor a la fecha de reporte'
         );
         return;
@@ -478,8 +495,8 @@ export class RegionalAccountTransferenceComponent
 
         if (!element.val1) {
           this.alertInfo(
-            'error',
-            'Error',
+            'warning',
+            'Atención',
             'No puede guardar el reporte si el número de bien no tiene tipo de moneda. Ingrese a la pantalla Características del Bien y agregue esta información (Siab/General/Características del Bien)'
           );
           next = false;
@@ -559,8 +576,8 @@ export class RegionalAccountTransferenceComponent
       this.form.get('cveCurrency').patchValue(null);
 
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'El tipo de moneda de los bienes ingresados es diferente al tipo de moneda de la cuenta, favor de verificar'
       );
 
@@ -574,8 +591,8 @@ export class RegionalAccountTransferenceComponent
 
       if (!element.allInterest) {
         this.alertInfo(
-          'error',
-          'Error',
+          'warning',
+          'warning',
           `Debe ingresar el intéres del bien: ${element.goodNumber}`
         );
         next = false;
@@ -607,15 +624,15 @@ export class RegionalAccountTransferenceComponent
 
     if (total != totalSuma) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'El monto ingresado no corresponde al monto calculado, favor de verificar'
       );
       return;
     } else if (!total && total != 0) {
       this.alert(
-        'error',
-        'Error',
+        'warning',
+        'Atención',
         'Debe ingresar el monto total de devolución'
       );
       return;
@@ -676,21 +693,19 @@ export class RegionalAccountTransferenceComponent
         this.form.get('transferenceReport').patchValue(resp.reportNumber);
         this.alert('success', 'Reporte', 'Creado correctamente');
 
-        this.dataTable.map(async good => {
+        this.dataTable.map(async (good, index) => {
           await this.procedure(Number(good.goodNumber));
           await this.createTransNumDet(good);
+
+          if (index == this.dataTable.length - 1) {
+            this.filterParams.getValue().removeAllFilters();
+            this.filterParams.getValue().page = 1;
+            this.filterParams
+              .getValue()
+              .addFilter('numberReport', resp.reportNumber, SearchFilter.EQ);
+            this.getTransDetail();
+          }
         });
-
-        this.filterParams.getValue().removeAllFilters();
-        this.filterParams.getValue().page = 1;
-        this.filterParams
-          .getValue()
-          .addFilter('numberReport', resp.reportNumber, SearchFilter.EQ);
-
-        const time = setTimeout(() => {
-          this.getTransDetail();
-          clearTimeout(time);
-        }, 2500);
       },
       error: err => {
         this.alert('error', 'Error', err.error.message);
