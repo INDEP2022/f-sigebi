@@ -391,13 +391,13 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
   }
   printAct() {
     let params = {
-      PCLAVE: '',
-      PDESTINO: '',
+      PCLAVE: this.selectItem2,
+      PDESTINO: 'DESTINO',
     };
 
     this.siabService
       // .fetchReport('RGENACTACONVBIS', params)
-      .fetchReportBlank('blank')
+      .fetchReport('RGENACTACONVBIS', params)
       .subscribe(response => {
         if (response !== null) {
           const blob = new Blob([response], { type: 'application/pdf' });
