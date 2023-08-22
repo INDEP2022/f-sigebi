@@ -169,7 +169,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   binnacle() {
     if (!this.currentScreen) {
-      this.noScreenId();
+      this.router.navigate([BINNACLE_ROUTE]);
       return;
     }
     this.router.navigate([BINNACLE_ROUTE], {
