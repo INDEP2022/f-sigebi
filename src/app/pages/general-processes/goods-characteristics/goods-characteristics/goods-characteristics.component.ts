@@ -1198,8 +1198,8 @@ export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
     const response = await firstValueFrom(
       this.getStatusXPantalla().pipe(catchError(x => of(null)))
     );
-    this.activateForEdit();
-    return;
+    // this.activateForEdit();
+    // return;
     if (response) {
       const di_disponible_e = response.filter(x => x.action === 'E').length;
       const di_disponible = response.filter(
