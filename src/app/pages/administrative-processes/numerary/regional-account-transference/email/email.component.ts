@@ -2,10 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { DataEmailService } from 'src/app/core/services/ms-email/data-email.service';
@@ -46,18 +43,6 @@ export class EmailComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-
-    const params = new FilterParams();
-    const token = this.user.decodeToken();
-    params.addFilter('user', token.username.toUpperCase());
-    this.receptionService.getUsersSegAreas(params.getParams()).subscribe({
-      next: response => {
-        if (response.data.length > 0) {
-          this.delegation = response.data[0].delegationNumber;
-        }
-      },
-      error: () => {},
-    });
   }
 
   prepareForm() {
@@ -97,26 +82,30 @@ export class EmailComponent extends BasePage implements OnInit {
   }
 
   getNameRemit(params: ListParams) {
-    params['delegationNumber'] = this.delegation;
+    params['filter.delegationNumber'] = this.delegation;
     params.limit = 50;
 
     this.segUserService.getNameEmail(params).subscribe({
       next: resp => {
         this.list = new DefaultSelect(resp.data, resp.count);
       },
-      error: () => {},
+      error: () => {
+        this.list = new DefaultSelect();
+      },
     });
   }
 
   getNameDist(params: ListParams) {
-    params['delegationNumber'] = this.delegation;
+    params['filter.delegationNumber'] = this.report.delegation;
     params.limit = 50;
 
     this.segUserService.getDisNameEmail(params).subscribe({
       next: resp => {
         this.list2 = new DefaultSelect(resp.data, resp.count);
       },
-      error: () => {},
+      error: () => {
+        this.list2 = new DefaultSelect();
+      },
     });
   }
 
@@ -137,7 +126,7 @@ export class EmailComponent extends BasePage implements OnInit {
     )[0].description;
 
     const body = {
-      to: PARA ? PARA.join(',') : 'pruebasqaindep@gmail.com', // ['pruebasqaindep@gmail.com'], ,
+      to: PARA ? PARA.join(',') : '', // ['pruebasqaindep@gmail.com'], ,
       subject: ASUNTO,
       fecTrans: transactionDate,
       cveDescription: del ?? this.description,
@@ -163,8 +152,8 @@ export class EmailComponent extends BasePage implements OnInit {
 
         // const body: any = {
         //   header: 'Test Email',
-        //   destination: ['pruebasqaindep@gmail.com'],
-        //   copy: [''],
+        //   destination: ['sshenrygiovanni@gmail.com'],
+        //   copy: ['henry_portador@outlook.com'],
         //   subject: ASUNTO,
         //   message: `${resp.message}`,
         // };

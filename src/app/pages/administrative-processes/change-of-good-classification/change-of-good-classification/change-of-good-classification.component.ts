@@ -232,8 +232,8 @@ export class ChangeOfGoodClassificationComponent
     if (results) {
       if (results.data && results.data.length > 0) {
         if (results.data[0].delegationNumber + '' === '0') {
-          // this.showExpedient = true;
-          // this.fileNumberNew.addValidators(Validators.required);
+          this.showExpedient = true;
+          this.fileNumberNew.addValidators(Validators.required);
         }
       }
     }

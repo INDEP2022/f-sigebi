@@ -41,13 +41,13 @@
         <div class="m-3">
           <button
             type="submit"
+            class="btn btn-primary active btn-sm text-wrap ml-2"
+            (click)="searchDictation()"
             [disabled]="
               !form.value.expedientNumber ||
-              !form.value.wheelNumber ||
-              !form.value.id
-            "
-            class="btn btn-primary active btn-sm text-wrap ml-2"
-            (click)="searchDictation()">
+              !form.value.id ||
+              !form.value.wheelNumber
+            ">
             Buscar
           </button>
         </div>
@@ -200,7 +200,7 @@
               path="massivegood/api/v1/application/getIdentifierCount">
               <ng-template let-item>
                 {{ item.identificador }} -
-                {{ item?.fec_cargamasiv | date : 'shortDate' }} -
+                {{ item?.fec_cargamasiv | date: 'shortDate' }} -
                 {{ item?.count }}
               </ng-template>
             </ng-custom-select>
@@ -310,7 +310,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="tableSettings"
-            [source]="dataTable"></ng2-smart-table>
+            [source]="dataTable2"></ng2-smart-table>
         </div>
         <div>
           <app-pagination

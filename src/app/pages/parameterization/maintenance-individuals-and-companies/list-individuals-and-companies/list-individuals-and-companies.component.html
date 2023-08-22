@@ -20,21 +20,10 @@
   </div>
 
   <div body>
-    <div class="ch-content">
-      <h5 class="title"></h5>
-      <div class="col-md-5 buttons">
-        <app-columns-select
-          [(settings)]="settings"
-          [defaultColumns]="6"></app-columns-select>
+    <div class="row">
+      <div class="col-md-8 mt-3 mb-3"></div>
+      <div class="col-md-4 text-end d-flex flex-row-reverse mt-3 mb-3">
         <div>
-          <button
-            (click)="openModal()"
-            type="button"
-            tooltip="Nuevo"
-            containerClass="tooltip-style"
-            class="btn btn-info btn-sm active ml-2 mr-2">
-            Nuevo<i class="bx bx-plus bx-sm float-icon"></i>
-          </button>
           <button
             *ngIf="origin"
             class="btn btn-primary active btn-sm m-2"
@@ -42,10 +31,22 @@
             Regresar
             <i class="fas fa-arrow-circle-left"></i>
           </button>
+          <app-columns-select
+            [(settings)]="settings"
+            [defaultColumns]="6"
+            [leftList]="true"></app-columns-select>
+          <button
+            (click)="openModal()"
+            type="button"
+            tooltip="Nuevo"
+            containerClass="tooltip-style"
+            class="btn btn-info btn-sm active ml-2 mr-2">
+            Nuevo&nbsp;<i class="bx bx-plus bx-sm float-icon"></i>
+          </button>
         </div>
       </div>
     </div>
-    <div class="row pt-4">
+    <div class="row">
       <div class="col-md-12">
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
