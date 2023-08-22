@@ -99,8 +99,8 @@ export class FileUploadModalComponent extends BasePage implements OnInit {
 
   private async loadZipFiles(response: any) {
     console.log(response);
-    const body = response.body;
-    if (body.rejectedPhotos && body.rejectedPhotos.length > 0) {
+    const body = response.body ?? null;
+    if (body && body.rejectedPhotos && body.rejectedPhotos.length > 0) {
       if (body.approvedPhotos && body.approvedPhotos.length > 0) {
         return this.completeWidthErrors();
       } else {
