@@ -378,6 +378,7 @@ export class JuridicalRulingGComponent
   @ViewChild('datepickerElement') datepickerElement: ElementRef;
   cve_Dictum: any;
   objetoDictumKey: DictumData;
+  originScreen: any = '';
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -603,6 +604,7 @@ export class JuridicalRulingGComponent
 
   dateValidS: any;
   P_NO_TRAMITE: any;
+
   getParams() {
     this.dictaminacionesForm.get('wheelNumber').setValue(null);
     this.activatedRoute.queryParams.subscribe((params: any) => {
@@ -611,6 +613,7 @@ export class JuridicalRulingGComponent
         this.showCriminalCase = false;
         //corregido
       }
+      this.originScreen = params?.origin;
       console.log('params?', params);
       this.expedientesForm.get('tipoDictaminacion').setValue(params?.TIPO_DIC);
       console.log('params?.TIPO_DIC', params?.TIPO_DIC);
@@ -3416,7 +3419,11 @@ export class JuridicalRulingGComponent
   // }
 
   goBack() {
-    this.router.navigateByUrl('/pages/juridical/file-data-update');
+    if (this.originScreen == 'FCONGENRASTREADOR') {
+      this.router.navigateByUrl('/pages/general-processes/goods-tracker');
+    } else {
+      this.router.navigateByUrl('/pages/juridical/file-data-update');
+    }
   }
 
   resetFields(fields: AbstractControl[]) {

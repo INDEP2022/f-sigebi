@@ -1,6 +1,6 @@
 export const SCHEDULING_DELIVERIES_COLUMNS = {
   item: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'number',
     sort: false,
   },
@@ -18,12 +18,12 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
   },
 
   goodDescription: {
-    title: 'Descripción de Bien',
+    title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
   quantityEstates: {
-    title: 'Cantidad de Bienes',
+    title: 'Cantidad Bienes',
     type: 'string',
     sort: false,
   },
@@ -43,7 +43,7 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
 
 export const SCHEDULING_DELIVERIES_SALES_COLUMNS = {
   item: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'number',
     sort: false,
   },
@@ -104,7 +104,7 @@ export const SCHEDULING_DELIVERIES_SALES_COLUMNS = {
 
 export const SEARCH_SALES_TABLE = {
   item: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'string',
     sort: false,
   },
@@ -166,7 +166,7 @@ export const SEARCH_SALES_TABLE = {
 
 export const SEARCH_DESTRUCTION_TABLE = {
   tem: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'string',
     sort: false,
   },
