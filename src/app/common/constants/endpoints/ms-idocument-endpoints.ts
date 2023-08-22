@@ -9,5 +9,6 @@ export enum IDocumentEndpoints {
   deletePhoto = 'file-photo/deletePhoto',
   editPhoto = 'file-photo/editPhoto',
   savePhotoZIP = 'file-photo/savePhotoZip',
+  massiveSavePhotoZip = 'file-photo/saveFilePhotoZip',
   filePhotosHistoric = 'file-photo/historicalPhotos',
 }
