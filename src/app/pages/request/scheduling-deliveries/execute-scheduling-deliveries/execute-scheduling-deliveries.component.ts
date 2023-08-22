@@ -36,6 +36,8 @@ export class ExecuteSchedulingDeliveriesComponent
   devgoodTotalItems: number = 0;
   goodDeliveryColumns = GOOD_DELIVERY_COLUMN;
 
+  goodDeliveredSelected: any = [];
+
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
 
@@ -63,10 +65,21 @@ export class ExecuteSchedulingDeliveriesComponent
     };
   }
 
-  certificateDelivery() {
+  certificateDelivery(constancy: number) {
+    if (this.goodDeliveredSelected.length == 0) {
+      this.onLoadToast('info', 'Debe tener al menos un bien seleccionado');
+    }
+
+    const comply = this.validateBeforeOpenModal(constancy);
+    if (comply != true) return;
+
     const certificateDelivery = this.modalService.show(
       DeliveriesConstancyFormComponent,
       {
+        initialState: {
+          goods: this.goodDeliveredSelected,
+          typeConstancy: constancy,
+        },
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
       }
@@ -128,6 +141,7 @@ export class ExecuteSchedulingDeliveriesComponent
           this.programmingDetailPanel.typeUser = resp.typeUser;
           this.programmingDetailPanel.emailAddressCenterTe =
             resp.emailAddressCenterTe;
+          this.programmingDetailPanel.status = resp.status;
           this.getTransferent(resp.transferId);
 
           this.getProgrammingGoodDelivery(new ListParams());
@@ -162,16 +176,73 @@ export class ExecuteSchedulingDeliveriesComponent
   }
 
   selectRows(event: any) {
-    console.log(event);
+    console.log(event.selected);
+    this.goodDeliveredSelected = event.selected;
   }
 
   setamountDelivered(data: any) {
-    console.log(data);
-    console.log(this.goodDeliveryArray);
     this.goodDeliveryArray.map((item: any) => {
       if (item.id == data.row.id) {
         item.amountDelivered = data.data;
       }
     });
+  }
+
+  validateBeforeOpenModal(typeEvent: number): any {
+    for (let index = 0; index < this.goodDeliveredSelected.length; index++) {
+      const item = this.goodDeliveredSelected[index];
+
+      if (typeEvent == 1 && item.commercialEvent == null) {
+        this.onLoadToast(
+          'info',
+          'El bien debe tener un evento comercial. Consulte a su administrador.'
+        );
+        return false;
+      }
+
+      let lsColumna = null;
+      let lsColumnaTot = null;
+      switch (typeEvent) {
+        case 1:
+          (lsColumna = item.amountDelivered), (lsColumnaTot = item.sunGoodEnt);
+          break;
+        case 2:
+          lsColumna = item.CantidadNoEntregados;
+          lsColumnaTot = item.sumGoodNoEnt;
+          break;
+        case 3:
+          lsColumna = item.CantidadNoAceptados;
+          lsColumnaTot = item.sumGoodNoAce;
+          break;
+        default:
+          lsColumna = item.CantidadNoRetirados;
+          lsColumnaTot = item.sumGoodNoRet;
+          break;
+      }
+      if (lsColumna <= 0) {
+        this.onLoadToast(
+          'info',
+          `El bien ${item.goodId} - ${item.inventoryNumber} - tiene un valor menor o igual a cero`
+        );
+        return false;
+      }
+
+      const goodAdded =
+        item.sunGoodEnt +
+        item.sumGoodNoEnt +
+        item.sumGoodNoAce +
+        item.sumGoodNoRet;
+      const totalGood = item.amountGood;
+
+      if (goodAdded > totalGood) {
+        this.onLoadToast(
+          'info',
+          `El bien ${item.goodId} - ${item.inventoryNumber} - excede la cantidad permitida`
+        );
+        return false;
+      }
+
+      return true;
+    }
   }
 }

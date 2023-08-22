@@ -103,9 +103,20 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.ILIKE;
             field = `filter.${filter.field}`;
-            filter.field == 'id' || filter.field == 'description'
-              ? (searchFilter = SearchFilter.EQ)
-              : (searchFilter = SearchFilter.ILIKE);
+            switch (filter.field) {
+              case 'id':
+                searchFilter = SearchFilter.EQ;
+                field = `filter.${filter.field}`;
+                break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                field = `filter.menajeDescription.${filter.field}`;
+                break;
+              default:
+                searchFilter = SearchFilter.ILIKE;
+                break;
+            }
             if (filter.search !== '') {
               this.columnFilters = filters;
             } else {
@@ -264,8 +275,11 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     if (this.columnFilters !== undefined) {
       for (let data of this.columnFilters) {
         if (data.search !== '') {
+          console.log(data);
           paramsF.addFilter(
-            data.field === 'id' ? 'menajeDescription.id' : data.field,
+            data.field === 'id'
+              ? 'menajeDescription.id'
+              : `menajeDescription.${data.field}`,
             data.search,
             data.field !== 'id' ? SearchFilter.ILIKE : SearchFilter.EQ
           );
@@ -275,7 +289,7 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
     paramsF.addFilter('noGood', idGood);
     paramsF.page = this.params.value.page;
     paramsF.limit = this.params.value.limit;
-
+    console.log(paramsF);
     //Son los menajes que aparecen listados en la tabla
     this.menageServices.getMenaje(paramsF.getParams()).subscribe({
       next: response => {

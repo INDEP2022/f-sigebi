@@ -50,6 +50,18 @@ export class SystemLogFormComponent implements OnInit, OnChanges {
 
   buildForm() {
     this.filter.reset();
+    if (this.fields.length) {
+      this.fields = [
+        {
+          registerNumber: '',
+          table: '',
+          column: 'NO_REGISTRO',
+          columnDescription: 'No. Registro',
+          dataType: 'NUMBER',
+        },
+        ...this.fields,
+      ];
+    }
     this.fields.forEach(field => {
       this.filter.push(this.createFieldForm(field));
     });

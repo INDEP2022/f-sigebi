@@ -1,25 +1,28 @@
 export const COLUMNS2 = {
-  goodNumb: {
+  numberGood: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  clasificationNumb: {
+  goodClassNumber: {
     title: 'No. Clasificación',
     type: 'number',
     sort: false,
   },
-  description: {
+  good: {
     title: 'Descripción',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
   },
   process: {
     title: 'Proceso',
     type: 'string',
     sort: false,
   },
-  quantity: {
+  amount: {
     title: 'Cantidad',
     type: 'number',
     sort: false,

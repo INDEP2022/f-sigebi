@@ -63,3 +63,10 @@ export const EXCEL_TO_JSON = {
     sort: false,
   },
 };
+
+export const TO_JSON = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+};
