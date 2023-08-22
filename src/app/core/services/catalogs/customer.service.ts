@@ -113,6 +113,14 @@ export class CustomerService extends HttpService {
     return this.get(route, params);
   }
 
+  getguarantee(id?: any, params?: ListParams): Observable<IListResponse<any>> {
+    return this.post<IListResponse<any>>(
+      'application/get-guarantee',
+      id,
+      params
+    );
+  }
+
   //http://sigebimstest.indep.gob.mx/customers/api/v1/comer-clients-representative/filterExcel?filter.id=$eq:302
   getRepresentativeByClientsExport(id: string | number) {
     const route = `comer-clients-representative/filterExcel?filter.id=$eq:${id}`;
@@ -123,4 +131,6 @@ export class CustomerService extends HttpService {
     const route = `${this.endpointClients}/${id}`;
     return this.get(route);
   }
+
+  guarantee() {}
 }

@@ -183,7 +183,7 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
             if (filter.search !== '') {
               this.columnFilters[field] = `${searchFilter}:${filter.search}`;
-              console.log(filter.search);
+              // console.log(filter.search);
             } else {
               delete this.columnFilters[field];
             }
