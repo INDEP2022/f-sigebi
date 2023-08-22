@@ -6,7 +6,8 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            (click)="updateGood()">
+            (click)="updateGood()"
+            [disabled]="!generalDataForm.valid">
             Guardar
             <i aria-hidden="true" class="fa fa-save"></i>
           </button>

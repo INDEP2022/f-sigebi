@@ -75,6 +75,11 @@ export class HouseholdComponent extends BasePage implements OnInit, OnChanges {
               case 'id':
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'description':
+                searchFilter = SearchFilter.ILIKE;
+                field = `filter.${filter.field}`;
+                field = `filter.menajeDescription.${filter.field}`;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;

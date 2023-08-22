@@ -313,6 +313,7 @@ export class RecordAccountStatementsComponent
     const accountType = value?.accountType;
     let currency = value.cveCurrency;
     this.current = currency;
+    console.log(this.current);
     this.searchCurrent(currency);
 
     // Quitar las comillas simples del valor de currency, si existen
@@ -343,8 +344,14 @@ export class RecordAccountStatementsComponent
 
   // Genera el saldo de la cuenta seleccionada al escoger un rango de fechas
   DateAccountBalance() {
-    const balanceOf = this.datePipe.transform(this.variableOf, 'dd/MM/yyyy');
-    const balanceAt = this.datePipe.transform(this.variableAt, 'dd/MM/yyyy');
+    const balanceOf = this.datePipe.transform(
+      this.variableOf,
+      'yyyy-MM-dd HH:MM:SS'
+    );
+    const balanceAt = this.datePipe.transform(
+      this.variableAt,
+      'yyyy-MM-dd HH:MM:SS'
+    );
 
     if (!balanceOf && !balanceAt) {
       this.alert('warning', 'Debe ingresar las fechas de saldo', '');
