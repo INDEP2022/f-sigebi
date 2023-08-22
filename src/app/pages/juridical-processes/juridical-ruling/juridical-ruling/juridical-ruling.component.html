@@ -36,6 +36,14 @@
         <div class="d-inline mx-2">
           <div class="d-inline mx-2">
             <button
+              class="btn btn-primary active btn-sm ml-2"
+              (click)="back()"
+              style="float: right"
+              *ngIf="origin">
+              Regresar
+              <i class="fas fa-arrow-circle-left"></i>
+            </button>
+            <button
               [disabled]="!dictNumber"
               style="float: right"
               type="button"
