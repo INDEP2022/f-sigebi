@@ -164,6 +164,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   loadDescriptionStatus(good: IGood) {
     this.goodServices.getStatusByGood(good.id).subscribe({
       next: response => {
+        console.log(response)
         this.setGood(good, response);
       },
       error: error => {
