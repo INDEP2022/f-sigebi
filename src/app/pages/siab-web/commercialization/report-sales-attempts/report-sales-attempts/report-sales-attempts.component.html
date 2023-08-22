@@ -12,7 +12,7 @@
         </div>
         <div class="row">
           <div class="col-md-2">
-            <form-check label="Por bien" for="label1">
+            <form-check label="Por Bien" for="label1">
               <input
                 id="label1"
                 type="checkbox"
@@ -20,20 +20,33 @@
             </form-check>
           </div>
           <div class="col-md-2">
-            <form-check label="Con archivo de texto" for="label2">
+            <form-check label="Con Archivo de Texto" for="label2">
               <input id="label2" type="checkbox" formControlName="filterText" />
             </form-check>
           </div>
           <div class="col-md-3" *ngIf="filterText.value">
-            <input type="file" (change)="chargeFile($event.target)" />
+            <button
+              class="btn btn-success btn-sm ml-2"
+              type="button"
+              (click)="file.click()">
+              Abrir archivo Excel / CSV
+            </button>
+            <input
+              type="file"
+              name="file"
+              #file
+              class="d-none"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              (change)="onFileChange($event)" />
           </div>
           <div class="col-md-2" *ngIf="filterText.value">
             <div class="justify-content-center">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
+                class="btn btn-primary active btn-sm"
                 [disabled]="!form.valid">
-                Buscar bienes
+                Buscar Bienes
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
               </button>
             </div>
           </div>
@@ -44,30 +57,63 @@
           <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
         <div class="row pt-3">
-          <div class="col-md-2">
-            <form-field [control]="form.get('typeGood')" label="Tipo Bien">
-              <ng-select
-                formControlName="typeGood"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="M">Bienes Muebles</ng-option>
-                <ng-option value="I">Bienes Inmuebles</ng-option>
-              </ng-select>
+          <div class="col-md-4">
+            <form-field [control]="form.get('typeGood')">
+              <ngx-select
+                [form]="form"
+                [data]="tiposData"
+                label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+                value="clasifGoodNumber"
+                bindLabel="tipoSupbtipoDescription"
+                (fetchItems)="getTodos($event)"
+                control="typeGood">
+              </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
+            <form-field [control]="form.get('typeStatus')">
+              <ngx-select
+                [form]="form"
+                [data]="tiposstatus"
+                label="Status Bien"
+                value="status"
+                bindLabel="tipoSupbtipoDescription"
+                (fetchItems)="getStatus($event)"
+                control="typeStatus">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
             <div class="justify-content-center">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="!form.valid">
+                class="btn btn-primary active btn-sm"
+                [disabled]="!form.valid"
+                (click)="consultarBien()">
                 Consultar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button class="btn btn-danger btn-sm active m-3">
+                Limpiar Filtro <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>
         </div>
       </div>
     </form>
+    <div class="row mt-4" *ngIf="until">
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="source"></ng2-smart-table>
+          </div>
+        </ng-scrollbar>
+      </div>
+    </div>
   </div>
 </app-card>

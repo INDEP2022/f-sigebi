@@ -353,7 +353,10 @@ export class CustomSelectWidthLoading
         distinctUntilChanged(),
         switchMap((text: string) => {
           // console.log(this.items);
-          if (text === null || (!this.firstLoad && text.length < 3)) {
+          if (
+            text === null ||
+            (!this.firstLoad && isNaN(+text) && text.length < 3)
+          ) {
             return of(null);
           }
           this.firstLoad = false;
