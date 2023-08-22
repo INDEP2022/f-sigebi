@@ -144,6 +144,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
     P_GEST_OK: '',
     P_NO_TRAMITE: '',
     folio: '',
+    acta: '',
   };
   disabledBtnImage: boolean = false;
   disabledBtnImprimir: boolean = false;
@@ -928,11 +929,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
           this.fileNumber = this.gTramite.expedient;
           this.getExpedient(this.fileNumber);
           this.getGoodsByStatus(this.fileNumber);
-          this.getActaGoodExp(
-            this.actaRecepttionForm.value.cveActa,
-            this.fileNumber
-          );
-          this.getDetailProceedingsDevollution(this.actasDefault.id);
+          this.getActaGoodExp(this.paramsScreen.acta, this.fileNumber);
+          this.getDetailProceedingsDevollution(this.paramsScreen.acta);
           this.formScan.get('scanningFoli').setValue(this.paramsScreen.folio);
         },
         error: () => {
@@ -1974,7 +1972,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
                 origin: 'FACTCIRCUNR_0001',
                 folio: this.formScan.get('scanningFoli').value,
                 expedient: this.fileNumber,
-                acta: this.actaRecepttionForm.get('cveActa').value,
+                acta: this.actaRecepttionForm.get('type').value,
                 origin3: this.origin3,
                 P_GEST_OK: this.paramsScreen.P_GEST_OK,
                 P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
@@ -2270,8 +2268,8 @@ export class ActsCircumstantiatedCancellationTheftComponent
         P_GEST_OK: this.paramsScreen.P_GEST_OK,
         P_NO_TRAMITE: this.paramsScreen.P_NO_TRAMITE,
         folio: this.formScan.get('scanningFoli').value,
-        expedient: this.fileNumber,
-        acta: this.actaRecepttionForm.get('cveActa').value,
+        // expedient: this.fileNumber,
+        acta: this.actaRecepttionForm.get('type').value,
       },
     });
   }
@@ -2283,6 +2281,7 @@ export class ActsCircumstantiatedCancellationTheftComponent
         this.paramsScreen.P_GEST_OK = paramsQuery['P_GEST_OK'] ?? null;
         this.paramsScreen.P_NO_TRAMITE = paramsQuery['P_NO_TRAMITE'] ?? null;
         this.paramsScreen.folio = paramsQuery['folio'] ?? null;
+        this.paramsScreen.acta = paramsQuery['type'] ?? null;
         if (this.origin == 'FACTCIRCUNR_0001') {
           for (const key in this.paramsScreen) {
             if (Object.prototype.hasOwnProperty.call(paramsQuery, key)) {
@@ -2310,4 +2309,5 @@ export interface IParamsActaC {
   P_GEST_OK: string;
   P_NO_TRAMITE: string;
   folio: string;
+  acta: string;
 }
