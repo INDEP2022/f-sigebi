@@ -131,6 +131,7 @@ const routes: Routes = [
   { path: '**', redirectTo: '404-not-found' },
 ];
 
+export const pageRoutes = routes;
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],

@@ -188,7 +188,7 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      '¿Desea Eliminar Este Registro?'
+      '¿Desea Eliminar este Registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.remove(typeEntity);
@@ -203,14 +203,14 @@ export class EntityClassificationComponent extends BasePage implements OnInit {
         this.loading = false;
         this.onLoadToast('success', 'Entidad', ' Eliminada Correctamente');
         this.getData();
-        location.reload();
+        //location.reload();
       },
       error: () => {
         this.loading = false;
         this.onLoadToast(
           'error',
           'Error',
-          'Ocurrio Un Error Al Eliminar La Entidad'
+          'Ocurrio un Error al Eliminar la Entidad'
         );
       },
     });

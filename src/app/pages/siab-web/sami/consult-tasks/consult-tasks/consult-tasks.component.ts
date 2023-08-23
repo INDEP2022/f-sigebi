@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { saveAs } from 'file-saver';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, map, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -25,7 +25,7 @@ import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-consult-tasks',
   templateUrl: './consult-tasks.component.html',
-  styles: [],
+  styleUrls: ['./consult-tasks.component.scss'],
 })
 export class ConsultTasksComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -576,11 +576,12 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
       this.taskService.getTasksByUser(filter).subscribe({
         next: response => {
           this.loading = false;
-          response.data.map((item: any) => {
+          response.data.map(async (item: any) => {
             item.taskNumber = item.id;
             item.requestId =
               item.requestId != null ? item.requestId : item.programmingId;
           });
+          console.log(response);
           resolve(response);
         },
         error: () => {
@@ -658,6 +659,25 @@ export class ConsultTasksComponent extends BasePage implements OnInit {
           resolve(resp.data[0]);
         },
       });
+    });
+  }
+
+  getAsyncTransferent(id: number) {
+    return new Promise((resolve, reject) => {
+      const params = new ListParams();
+      params['filter.id'] = `$eq:${id}`;
+      this.transferentService
+        .getAll(params)
+        .pipe(
+          map(x => {
+            return x.data[0];
+          })
+        )
+        .subscribe({
+          next: resp => {
+            resolve(resp.nameTransferent);
+          },
+        });
     });
   }
 }

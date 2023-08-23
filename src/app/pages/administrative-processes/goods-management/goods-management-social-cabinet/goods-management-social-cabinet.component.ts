@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -12,10 +13,12 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { Iidentifier } from 'src/app/core/models/ms-good-tracker/identifier.model';
 import { ITmpTracker } from 'src/app/core/models/ms-good-tracker/tmpTracker.model';
+import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GoodsManagementSocialNotLoadGoodsComponent } from '../goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 import { GoodsManagementService } from '../services/goods-management.service';
 import { ETypeGabinetProcess } from './typeProcess';
@@ -36,6 +39,7 @@ export class GoodsManagementSocialCabinetComponent
   identifier: number;
   typeGabinetProcess = ETypeGabinetProcess;
   totalItems = 0;
+  ngGlobal: any;
   $trackedGoods = this.store.select(getTrackedGoods);
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
 
@@ -87,6 +91,9 @@ export class GoodsManagementSocialCabinetComponent
 
   constructor(
     private modalService: BsModalService,
+    private siabService: SiabService,
+    private sanitizer: DomSanitizer,
+    private globalVarService: GlobalVarsService,
     private fb: FormBuilder,
     private store: Store,
     private router: Router,
@@ -127,12 +134,11 @@ export class GoodsManagementSocialCabinetComponent
             this.pageLoading = false;
             return;
           }
-          let response2 = response.map(x => {
-            return +x.goodNumber;
-          });
-          response2.forEach(item => {
-            if (item) {
-              this.saveInTemp(this.identifier, item + '');
+          let response2: number[] = [];
+          response.forEach(item => {
+            if (item.goodNumber) {
+              response2.push(+item.goodNumber);
+              this.saveInTemp(this.identifier, item.goodNumber);
             }
           });
           this.selectedGoodstxt = response2;
@@ -140,6 +146,37 @@ export class GoodsManagementSocialCabinetComponent
         }
       },
     });
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(first(), takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            this.pageLoading = true;
+            this.disabledProcess = false;
+            const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            paramsF.limit = 100000000;
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe({
+                next: res => {
+                  if (res.data && res.data.length > 0) {
+                    res.data.forEach(x => {});
+                  } else {
+                    this.pageLoading = false;
+                    this.disabledProcess = true;
+                  }
+                },
+                error: err => {
+                  this.pageLoading = false;
+                  this.disabledProcess = true;
+                },
+              });
+          }
+        },
+      });
   }
 
   async searchGood() {
@@ -364,6 +401,29 @@ export class GoodsManagementSocialCabinetComponent
   }
   getLiberado() {
     return this.getByProcessCant(ETypeGabinetProcess.Liberado);
+  }
+
+  downloadReport() {
+    //this.loadingText = 'Generando reporte ...';
+    // this.siabService.fetchReport('RMASINSUPDBIENES', params).subscribe({
+    //   next: response => {
+    //     this.loading = false;
+    //     const blob = new Blob([response], { type: 'application/pdf' });
+    //     const url = URL.createObjectURL(blob);
+    //     let config = {
+    //       initialState: {
+    //         documento: {
+    //           urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(url),
+    //           type: 'pdf',
+    //         },
+    //         callback: (data: any) => {},
+    //       }, //pasar datos por aca
+    //       class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+    //       ignoreBackdropClick: true, //ignora el click fuera del modal
+    //     };
+    //     this.modalService.show(PreviewDocumentsComponent, config);
+    //   },
+    // });
   }
 
   delete(data: any) {

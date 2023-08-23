@@ -111,6 +111,10 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.ProeedingsDevolution}/${id}`;
     return this.get(route);
   }
+  getProceding(report: number | string) {
+    const route = `${ProceedingsEndpoints.proceedingGet}/${report}`;
+    return this.get(route);
+  }
 
   getProcedingbykey(key: number | string) {
     const route = `${ProceedingsEndpoints.procedingDelivery}?filter.keysProceedings=$eq:${key}`;

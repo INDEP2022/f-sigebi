@@ -8,7 +8,7 @@ export const REPORT_INVOICE_COLUMNS = {
     sort: false,
   },
   cuenta_fac: {
-    title: 'Facturas emitidas',
+    title: 'FacturasEemitidas',
     sort: false,
   },
   porcentaje: {

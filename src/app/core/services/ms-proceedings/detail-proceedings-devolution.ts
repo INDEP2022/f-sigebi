@@ -37,9 +37,9 @@ export class DetailProceedingsDevolutionService extends HttpService {
   getAll(params?: ListParams) {
     return this.get<IListResponse<any>>(this.endpoint, params);
   }
-  getAllByActNumber(params?: ListParams) {
+  getAllByActNumber(id: any, params?: ListParams) {
     return this.get<IListResponse<any>>(
-      `${this.endpoint}?filter.numGoodProceedingsId=${params['numGoodProceedingsId']}`,
+      `${this.endpoint}?filter.numGoodProceedingsId=${id}`,
       params
     );
   }
@@ -55,7 +55,7 @@ export class DetailProceedingsDevolutionService extends HttpService {
   }
 
   updateProcedings(id: any, body: any) {
-    console.log(id, body);
+    // console.log(id, body);
     return this.put<IListResponse<any>>(`${this.endpoint}/${id}`, body);
   }
 }

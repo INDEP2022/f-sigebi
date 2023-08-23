@@ -86,7 +86,8 @@ export class DictationService extends HttpService {
     id: string | number;
     typeDict?: string | number;
   }): Observable<IDictation> {
-    console.log('body', body);
+    // console.log('body', body);
+    // console.log(this.route.FindByIds);
     return this.post(this.route.FindByIds, body);
   }
   getCount4(body: any) {
@@ -171,7 +172,7 @@ export class DictationService extends HttpService {
     return this.post(route, body);
   }
 
-  postFindGoodDictGood1(body: { id: any; typeDict: string }) {
+  postFindGoodDictGood1(body: { ofDictNumber: any; typeDict: string }) {
     const route = `${DictationEndpoints.FindIdsDictationXGood1}`;
     return this.post(route, body);
   }

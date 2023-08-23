@@ -37,6 +37,7 @@ export class winnersReportComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
   data1: LocalDataSource = new LocalDataSource();
   @Output() selectEvent = new EventEmitter();
+  private isFirstLoad = true;
 
   constructor(
     private fb: FormBuilder,
@@ -59,12 +60,17 @@ export class winnersReportComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.getEvent(new ListParams());
 
-    this.params1
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getLoser());
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getWinner());
+    this.params1.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isFirstLoad) {
+        this.getLoser();
+      }
+    });
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isFirstLoad) {
+        this.getWinner();
+      }
+    });
+    this.isFirstLoad = false;
   }
 
   private prepareForm() {

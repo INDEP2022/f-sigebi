@@ -30,13 +30,9 @@ button {
 }
 
 .clearButton {
-  display: flex;
-  align-items: center;
-  justify-content: right;
+  text-align: right;
   @media screen and (max-width: 576px) {
-    button {
-      width: 100%;
-    }
+    text-align: left;
   }
 }
 

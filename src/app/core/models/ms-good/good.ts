@@ -698,6 +698,7 @@ export interface IGood {
   estatus?: Estatus;
   no_expediente?: NoExpediente;
   promoter?: string;
+  statusDetails?: any;
   dateRenderDecoDev?: Date | string;
   //TODO: Implement Promoter Interface
   //TODO?: Implement Promoter Interface
@@ -854,6 +855,7 @@ export interface IAttribGoodBad {
   pair2: number;
   pair3: number;
   pair4: number;
+  arrayMotive?: string[];
 }
 
 export interface IGoodSiab {

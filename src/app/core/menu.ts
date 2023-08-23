@@ -95,6 +95,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/request/programming-request/search-schedules',
           },
           {
+            label: 'Programar Entregas',
+            link: '/pages/request/scheduling-deliveries',
+          },
+          {
             label: 'Muestreo Bienes',
             link: '/pages/request/sampling-assets',
           },

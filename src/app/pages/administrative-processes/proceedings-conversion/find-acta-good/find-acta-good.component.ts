@@ -181,7 +181,10 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada = año + '-' + mes + '-' + día;
-      params['filter.elaborationDate'] = `$eq:${fechaFormateada}`;
+
+      params[
+        'filter.elaborationDate'
+      ] = `$btw:${fechaFormateada}T00:00:00.000Z,${fechaFormateada}T23:59:59.999Z`;
       // delete params['filter.elaborationDate'];
     }
 
@@ -249,7 +252,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
       next: data => {
         this.alert(
           'warning',
-          'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
+          'El Acta no se puede eliminar porque tiene bienes asociados',
           ''
         );
       },

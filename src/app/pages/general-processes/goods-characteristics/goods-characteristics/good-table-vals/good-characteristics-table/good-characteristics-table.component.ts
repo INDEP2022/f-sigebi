@@ -84,49 +84,7 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
           this.val_atributos_inmuebles = 0;
 
           if (response.data && response.data.length > 0) {
-            const newData = response.data.sort((a, b) => {
-              return a.columnNumber - b.columnNumber;
-            });
-            /* this.data = newData.map(item => {
-              const column = 'val' + item.columnNumber;
-              if (item.attribute === 'SITUACION JURIDICA') {
-                if (good[column]) {
-                  good.val35 = secondFormatDate(new Date());
-                } else {
-                  good.val35 = null;
-                }
-              }
-              // validar si existe tipo con goodClassNumber
-              let v_val_entfed;
-              this.val_atributos_inmuebles++;
-              if (this.v_bien_inm) {
-                if (
-                  item.attribute === 'ESTADO' &&
-                  this.val_atributos_inmuebles > 4
-                ) {
-                }
-              }
-              return {
-                column,
-                attribute: item.attribute,
-                value:
-                  this.initValue === true ? this.getValue(good, item) : null,
-                required: item.required === 'S',
-                update: this.haveUpdate(item.update),
-                requiredAva: item.attribute
-                  ? this.haveRequiredAva(item.attribute)
-                  : false,
-                tableCd: item.tableCd,
-                editing: false,
-                length: item.length,
-                dataType: item.dataType,
-              };
-            });
-
-            this.totalItems = this.data.length;
-            this.dataTemp = [...this.data];
-            this.getPaginated(this.params.value);
-            this.loading = false; */
+            const newData = response.data;
             console.log(this.data);
             if (this.loadInventary) {
               this.data = newData.map((item, index) => {
@@ -346,7 +304,10 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     const isNormal = this.disabled || row.attribute !== 'SITUACION JURIDICA';
     this.openModalSelect(
       {
-        title: 'los valores para',
+        title: null,
+        title2: isNormal
+          ? 'Seleccione el valor para el atributo'
+          : 'Seleccionar los valores para el atributo',
         columnsType: {
           otvalor: {
             title: row.attribute,
@@ -435,13 +396,19 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
     if (item.dataType === 'D' || item.attribute.includes('FECHA')) {
       // debugger;
     }
-    return good[column]
+    console.log(good[column]);
+
+    const result = good[column]
       ? item.dataType === 'D' || item.attribute.includes('FECHA')
-        ? formatForIsoDate(good[column], 'string')
+        ? good[column].includes('/')
+          ? good[column]
+          : formatForIsoDate(good[column], 'string')
         : good[column] === 'NULL'
         ? null
         : good[column]
       : null;
+    console.log(result);
+    return result;
   }
 
   private getValueInventary(isFecha: boolean, item: any) {

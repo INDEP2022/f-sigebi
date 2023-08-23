@@ -7,6 +7,7 @@ import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
@@ -21,6 +22,10 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   attribGoodBad: LocalDataSource = new LocalDataSource();
   columnFilters: any = [];
   totalItems: number = 0;
+  groups: any;
+  addMo: string;
+  motives: any[] = [];
+  goodBad: IAttribGoodBad[];
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
 
@@ -121,6 +126,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
+    params['sortBy'] = `id:DESC`;
     if (this.paramsCurrentScreen.TIPO_PROC) {
       params['filter.pair1'] = this.paramsCurrentScreen.TIPO_PROC;
     }
@@ -131,15 +137,34 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       next: resp => {
         console.log(resp);
         this.totalItems = resp.count || 0;
+        this.goodBad = resp.data;
         this.attribGoodBad.load(resp.data);
         this.attribGoodBad.refresh();
         this.loading = false;
+        this.groups = this.goodBad.reduce((groups, good) => {
+          const id = good.id;
+          const motive = good?.motive.replace(this.addMo, '');
+          const array = [];
+          array.push(motive);
+          return array;
+        }, {});
+
         //resp.data;
       },
       error: error => {
         this.loading = false;
       },
     });
+  }
+  get motivesAsSelect() {
+    return this.motives.map(motive => ({
+      value: motive.id,
+      label: motive.motive,
+    }));
+  }
+
+  selectMotive(motive: any) {
+    console.log(`Se seleccionó el motivo ${motive.label}`);
   }
 
   openGood(data: any): void {

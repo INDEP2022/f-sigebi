@@ -30,6 +30,7 @@ import { AddMovementComponent } from '../add-movement/add-movement.component';
 import { CustomdbclickComponent } from '../customdbclick/customdbclick.component';
 import { CustomdbclickdepositComponent } from '../customdbclickdeposit/customdbclickdeposit.component';
 import { DepositTokensModalComponent } from '../deposit-tokens-modal/deposit-tokens-modal.component';
+import { CustomMultiSelectFilterComponent } from './filterAccount';
 
 @Component({
   selector: 'app-deposit-tokens',
@@ -118,9 +119,20 @@ export class DepositTokensComponent
           type: 'string',
           sort: false,
         },
-        cveAccount: {
+        accountkey: {
           title: 'Cuenta',
-          type: 'string',
+          // type: 'string',
+          filter: {
+            type: 'custom',
+            component: CustomMultiSelectFilterComponent,
+            config: {
+              options: this.getUniqueValues('cveAccount'),
+            },
+          },
+          valuePrepareFunction: (text: string) => {
+            console.log('account', text);
+            return text;
+          },
           sort: false,
         },
         motionDate_: {
@@ -130,7 +142,6 @@ export class DepositTokensComponent
           // width: '13%',
           type: 'html',
           valuePrepareFunction: (text: string) => {
-            console.log('text', text);
             return `${
               text ? text.split('T')[0].split('-').reverse().join('/') : ''
             }`;
@@ -139,11 +150,6 @@ export class DepositTokensComponent
             type: 'custom',
             component: CustomDateFilterComponent,
           },
-        },
-        invoicefile: {
-          title: 'Folio',
-          type: 'string',
-          sort: false,
         },
         calculationInterestsDate_: {
           title: 'Fecha Transferencia',
@@ -201,11 +207,6 @@ export class DepositTokensComponent
             });
           },
         },
-        proceedingsnumber: {
-          title: 'Expediente',
-          type: 'string',
-          sort: false,
-        },
         goodnumber: {
           title: 'Bien',
           type: 'custom',
@@ -219,6 +220,17 @@ export class DepositTokensComponent
               this.miSegundaFuncion(); // Nueva segunda función independiente
             });
           },
+        },
+        proceedingsnumber: {
+          title: 'Expediente',
+          type: 'string',
+          sort: false,
+        },
+
+        invoicefile: {
+          title: 'Folio',
+          type: 'string',
+          sort: false,
         },
         category: {
           title: 'Categoría',
@@ -409,7 +421,7 @@ export class DepositTokensComponent
         },
       },
       rowClassFunction: (row: any) => {
-        if (row.data.goodnumber != null) {
+        if (row.data.no_bien != null) {
           return 'bg-warning text-black';
         } else {
           return '';
@@ -420,6 +432,10 @@ export class DepositTokensComponent
     this.settings2.actions = false;
   }
 
+  getUniqueValues(columnName: string): void {
+    // Lógica para obtener valores únicos de la columna
+    // Puedes usar lodash u otras herramientas para esto
+  }
   miSegundaFuncion() {
     console.log('SIIAISDASDASD');
     this.loading = !this.loading;
@@ -443,7 +459,7 @@ export class DepositTokensComponent
             const search: any = {
               motionnumber: () => (searchFilter = SearchFilter.EQ),
               bank: () => (searchFilter = SearchFilter.ILIKE),
-              cveAccount: () => (searchFilter = SearchFilter.EQ),
+              accountkey: () => (searchFilter = SearchFilter.IN),
               motionDate_: () => (searchFilter = SearchFilter.ILIKE),
               invoicefile: () => (searchFilter = SearchFilter.ILIKE),
               calculationInterestsDate_: () =>
@@ -539,6 +555,7 @@ export class DepositTokensComponent
         // this.getPupPreviewDatosCsv2(this.cargarDataStorage());
       });
   }
+
   ngOnChanges() {}
   getAccount() {
     this.loading = true;
@@ -602,12 +619,10 @@ export class DepositTokensComponent
       params['bankkey'] = params['filter.bank'];
       delete params['filter.bank'];
     }
-
-    if (params['filter.cveAccount']) {
-      params['accountkey'] = params['filter.cveAccount'];
-      delete params['filter.cveAccount'];
+    if (params['filter.accountkey']) {
+      params['accountkey'] = `$in:${params['filter.accountkey']}`;
+      delete params['filter.accountkey'];
     }
-
     if (params['filter.motionnumber']) {
       params['motionNumber'] = params['filter.motionnumber'];
       delete params['filter.motionnumber'];
@@ -993,7 +1008,7 @@ export class DepositTokensComponent
           DEPOSITO: item.DEPOSITO,
           BIEN: item.no_bien,
           EXPEDIENTE: item.di_expediente2,
-          DESCRIPCION: '',
+          DESCRIPCION: await this.getDetailsGoodForExcel(item.no_bien),
           CATEGORIA: '',
           PARCIAL: 'N',
         };
@@ -1012,25 +1027,58 @@ export class DepositTokensComponent
     }
   }
 
+  getDetailsGoodForExcel(id: any) {
+    return new Promise((resolve, reject) => {
+      this.goodServices.getGoodById(id).subscribe({
+        next: async (response: any) => {
+          resolve(response.description);
+        },
+        error: err => {
+          resolve('');
+        },
+      });
+    });
+  }
+
   async getExcelExport() {
     this.loadingBtn2 = true;
     let params: any = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
     };
-    if (params['filter.cveAccount']) {
-      params['accountNumber'] = params['filter.cveAccount'];
-      delete params['filter.cveAccount'];
+
+    if (params['filter.goodnumber']) {
+      params['goodNumber'] = params['filter.goodnumber'];
+      delete params['filter.goodnumber'];
     }
 
-    if (params['filter.cveAccount']) {
-      params['accountNumber'] = params['filter.cveAccount'];
-      delete params['filter.cveAccount'];
+    if (params['filter.proceedingsnumber']) {
+      params['proceedingsNumber'] = params['filter.proceedingsnumber'];
+      delete params['filter.proceedingsnumber'];
     }
 
-    if (params['filter.motionnumber']) {
-      params['numberMotion'] = params['filter.motionnumber'];
-      delete params['filter.motionnumber'];
+    if (params['filter.category']) {
+      params['category'] = params['filter.category'];
+      delete params['filter.category'];
+    }
+
+    if (params['filter.ispartialization']) {
+      params['ispartialization'] = params['filter.ispartialization'];
+      delete params['filter.ispartialization'];
+    }
+    if (params['filter.currency']) {
+      params['currencykey'] = params['filter.currency'];
+      delete params['filter.currency'];
+    }
+
+    if (params['filter.bank']) {
+      params['bankkey'] = params['filter.bank'];
+      delete params['filter.bank'];
+    }
+
+    if (params['filter.accountkey']) {
+      params['accountkey'] = params['filter.accountkey'];
+      delete params['filter.accountkey'];
     }
 
     if (params['filter.motionnumber']) {
@@ -1048,24 +1096,26 @@ export class DepositTokensComponent
 
       // Crear la cadena de fecha en el formato yyyy-mm-dd
       var fechaFormateada = año + '-' + mes + '-' + día;
-      params['dateMotion'] = fechaFormateada;
+      params['motionDate'] = fechaFormateada;
       delete params['filter.motionDate_'];
     }
+    if (params['filter.deposit']) {
+      params['deposit'] = params['filter.deposit'];
+      delete params['filter.deposit'];
+    }
+    if (params['filter.calculationInterestsDate_']) {
+      var fecha = new Date(params['filter.calculationInterestsDate_']);
 
-    // let obj = {
-    //   bank: () => (searchFilter = SearchFilter.ILIKE),
-    //   cveAccount: () => (searchFilter = SearchFilter.EQ),
-    //   motionDate_: () => (searchFilter = SearchFilter.ILIKE),
-    //   invoicefile: () => (searchFilter = SearchFilter.ILIKE),
-    //   calculationInterestsDate_: () =>
-    //     (searchFilter = SearchFilter.ILIKE),
-    //   currency: () => (searchFilter = SearchFilter.ILIKE),
-    //   deposit: () => (searchFilter = SearchFilter.EQ),
-    //   proceedingsnumber: () => (searchFilter = SearchFilter.EQ),
-    //   goodnumber: () => (searchFilter = SearchFilter.EQ),
-    //   category: () => (searchFilter = SearchFilter.ILIKE),
-    //   ispartialization: () => (searchFilter = SearchFilter.EQ),
-    // }
+      // Obtener los componentes de la fecha (año, mes y día)
+      var año = fecha.getFullYear();
+      var mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Se agrega 1 al mes porque en JavaScript los meses comienzan en 0
+      var día = ('0' + fecha.getDate()).slice(-2);
+
+      // Crear la cadena de fecha en el formato yyyy-mm-dd
+      var fechaFormateada = año + '-' + mes + '-' + día;
+      params['calculationInterestsDate'] = fechaFormateada;
+      delete params['filter.calculationInterestsDate_'];
+    }
 
     delete params['limit'];
     delete params['page'];

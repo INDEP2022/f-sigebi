@@ -481,4 +481,8 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.SearchByExpedient}/${expedient}`;
     return this.get<IListResponse<IGood>>(route, params);
   }
+
+  getGoodSolNumerary(good: number) {
+    return this.get(`${GoodEndpoints.GoodNumberSol}/${good}`);
+  }
 }
