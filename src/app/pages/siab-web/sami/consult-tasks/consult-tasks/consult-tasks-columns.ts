@@ -76,13 +76,28 @@ export const REQUEST_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  transferringDescription: {
+    title: 'Descripción Transferente',
+    type: 'string',
+    sort: false,
+  },
   idstation: {
     title: 'No. Emisora',
     type: 'string',
     sort: false,
   },
+  stationDescription: {
+    title: 'Descripción Emisora',
+    type: 'string',
+    sort: false,
+  },
   idAuthority: {
     title: 'No. Autoridad',
+    type: 'string',
+    sort: false,
+  },
+  descriptionAuthority: {
+    title: 'Descripción Autoridad',
     type: 'string',
     sort: false,
   },

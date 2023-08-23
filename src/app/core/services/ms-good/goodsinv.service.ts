@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { IGoodsinvEndpoint } from 'src/app/common/constants/endpoints/ms-goodsinv.endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { IClient } from 'src/app/pages/request/scheduling-deliveries/scheduling-deliveries-form/type-events';
 import {
   IListResponse,
   IListResponseMessage,
@@ -11,6 +12,7 @@ import {
 import {
   IDescInv,
   IGoodInvAvailableView,
+  IGoodInvDestructionView,
   IGoodResDevInvView,
   IGoodsInv,
 } from '../../models/ms-goodsinv/goodsinv.model';
@@ -88,6 +90,25 @@ export class GoodsInvService extends HttpService {
     return this.post<IListResponse<IGoodInvAvailableView>>(
       `${route}?${params}`,
       formData
+    );
+  }
+
+  getClients(
+    _params: ListParams,
+    formData: Object
+  ): Observable<IListResponse<IClient>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.GetClients;
+    return this.post<IListResponse<IClient>>(`${route}?${params}`, formData);
+  }
+
+  getDestructionView(
+    _params: ListParams
+  ): Observable<IListResponse<IGoodInvDestructionView>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.GetGoodDestView;
+    return this.get<IListResponse<IGoodInvDestructionView>>(
+      `${route}?${params}`
     );
   }
 

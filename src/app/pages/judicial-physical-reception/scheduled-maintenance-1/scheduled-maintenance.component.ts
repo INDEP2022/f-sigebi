@@ -225,6 +225,7 @@ export class ScheduledMaintenanceComponent
     self.router.navigate(['pages/general-processes/good-photos'], {
       queryParams: {
         numberGood: good.id,
+        origin: 'FMENTREC_0001',
       },
     });
     // localStorage.setItem('selectedBad', JSON.stringify(good));
