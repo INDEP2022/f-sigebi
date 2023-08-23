@@ -46,8 +46,8 @@ export class RecordAccountStatementsComponent
   bankAccountSelect = new DefaultSelect();
 
   dataAccount: LocalDataSource = new LocalDataSource();
-  dataAccountPaginated: number;
-
+  // dataAccountPaginated: number;
+  dataAccountPaginated: string;
   factasStatusCta: any;
   selectedDateBalanceOf: Date;
   selectedDateBalanceAt: Date;
@@ -60,10 +60,10 @@ export class RecordAccountStatementsComponent
   variableAt: Date;
   bankCode: string;
   checks: any;
-
+  cveAccount: string;
   dateMotionFilter: boolean;
 
-  accountNumber: number;
+  accouncveAccount: string;
 
   paramsSubject: BehaviorSubject<ListParams> = new BehaviorSubject<ListParams>(
     new ListParams()
@@ -277,8 +277,8 @@ export class RecordAccountStatementsComponent
         .subscribe({
           next: response => {
             const filteredAccounts = response.data.filter(
-              (item: { accountNumber: string | any[] }) =>
-                item.accountNumber.includes(account)
+              (item: { cveAccount: string | any[] }) =>
+                item.cveAccount.includes(account)
             );
             this.bankAccountSelect = new DefaultSelect(
               filteredAccounts,
@@ -303,9 +303,9 @@ export class RecordAccountStatementsComponent
     this.form.get('description').reset();
     this.totalItems = 0;
     this.cleandInfoDate();
-    const accountNumber = value.accountNumber;
-    this.accountDate = value.accountNumber;
-    this.searchDataAccount(accountNumber);
+    const cveAccount = value.cveAccount;
+    this.accountDate = value.cveAccount;
+    this.searchDataAccount(cveAccount);
 
     // Obtener los valores correspondientes de la cuenta seleccionada
     const square = value?.square;
@@ -383,16 +383,16 @@ export class RecordAccountStatementsComponent
   }
 
   // Establece los valores de movimientos de la cuenta seleccionada a la tabla
-  searchDataAccount(accountNumber: number) {
-    this.accountNumber = accountNumber;
+  searchDataAccount(cveAccount: string) {
+    this.cveAccount = cveAccount;
     this.loading = true;
     let params = {
       ...this.params.getValue(),
       ...this.columnFilters,
     };
-    this.dataAccountPaginated = accountNumber;
+    this.dataAccountPaginated = cveAccount;
     this.recordAccountStatementsAccountsService
-      .getDataAccount(accountNumber, params)
+      .getDataAccount(cveAccount, params)
       .subscribe(
         (response: { data: any; count: any }) => {
           this.loading = true;
@@ -404,13 +404,13 @@ export class RecordAccountStatementsComponent
         },
         (error: any) => (this.loading = false)
       );
-    this.searchFactasStatusCta(accountNumber);
+    this.searchFactasStatusCta(cveAccount);
   }
 
   // Trae el nombre del banco y número de cuenta que se establece en el modal de transferencia
-  searchFactasStatusCta(accountNumber: number) {
+  searchFactasStatusCta(cveAccount: string) {
     this.recordAccountStatementsAccountsService
-      .getFactasStatusCta(accountNumber)
+      .getFactasStatusCta(cveAccount)
       .subscribe({
         next: (response: any) => {
           this.factasStatusCta = response;
@@ -439,7 +439,7 @@ export class RecordAccountStatementsComponent
       },
     };
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
-    this.searchDataAccount(this.accountNumber);
+    this.searchDataAccount(this.cveAccount);
   }
 
   searchCheck() {

@@ -233,7 +233,7 @@
             constancia
           </button>
         </div>
-        <table class="table table-bordered">
+        <!-- <table class="table table-bordered">
           <thead>
             <tr>
               <th scope="col">Acciones</th>
@@ -276,7 +276,26 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
+        <div class="row pt-5">
+          <div class="col-md-12">
+            <div class="table-responsive">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered table-responsive'"
+                  [settings]="constancyDeliverySettings"
+                  [source]="constancyDeliveryArray"
+                  (delete)="close($event.data)"
+                  (edit)="preview($event.data)"
+                  ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+                </ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination
+              [params]="constancyParams"
+              [totalItems]="constancyTotalItems"></app-pagination>
+          </div>
+        </div>
       </div>
     </div>
   </div>

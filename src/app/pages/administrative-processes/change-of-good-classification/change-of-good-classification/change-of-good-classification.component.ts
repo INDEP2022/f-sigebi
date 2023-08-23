@@ -603,6 +603,7 @@ export class ChangeOfGoodClassificationComponent
   private updateFirsTable() {
     this.currentClasification.setValue(this.classificationOfGoods.value);
     this.descriptionClasification.setValue(this.newDescription);
+
     this.data.forEach(atrib => {
       if (atrib.value !== undefined) {
         this.good[atrib.column] = atrib.value;
@@ -618,7 +619,7 @@ export class ChangeOfGoodClassificationComponent
 
   updateSecondTable() {
     this.formNew.reset();
-    this.fileNumberNew.setValue(this.numberFile.value);
+
     setTimeout(() => {
       this.goodChange2++;
     }, 100);
@@ -629,7 +630,7 @@ export class ChangeOfGoodClassificationComponent
       id: Number(this.good.id),
       goodId: Number(this.good.goodId),
       goodClassNumber: this.classificationOfGoods.value,
-      fileeNumber: this.fileNumberNew.value,
+      fileNumber: this.fileNumberNew.value,
       unitMeasure: this.unitXClassif.value,
       destiny: this.destination.value,
       // status: this.finalStatus,
