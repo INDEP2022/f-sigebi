@@ -57,3 +57,14 @@ export const VALUATION_REQUEST_COLUMNS_VALIDATED_TWO = {
     sort: false,
   },
 };
+
+export const MOT_CAN = {
+  id_motivo: {
+    title: 'No. Motivo',
+    sort: false,
+  },
+  descripcion_motivo: {
+    title: 'Descripcíon',
+    sort: false,
+  },
+};

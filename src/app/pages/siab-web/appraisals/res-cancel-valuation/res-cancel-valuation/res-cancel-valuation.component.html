@@ -174,6 +174,73 @@
       </form>
     </div>
     <!--  -->
+    <div>
+      <app-card [header]="true">
+        <div header>
+          <div class="ch-content">
+            <h5 class="title">Con Copia Para:</h5>
+          </div>
+        </div>
+        <div body>
+          <form class="form-material" [formGroup]="formThree">
+            <div>
+              <div>
+                <form-radio label="Por Delegación">
+                  <input type="radio" [value]="true" formControlName="byDel" />
+                </form-radio>
+              </div>
+            </div>
+            <div>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formThree.get('user')"
+                    label="Usuario y Nombre">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="user" />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formThree.get('del')"
+                    label="Delegación">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="del" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5"></div>
+              <div class="col-md-3">
+                <button id="btnAgregar" class="btn btn-default btn-block">
+                  Agregar Usuario
+                </button>
+              </div>
+              <div class="col-md-3">
+                <button id="Button2" class="btn btn-danger btn-block">
+                  Quitar Usuario
+                </button>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                <select multiple class="form-control" id="lsbConCopia"></select>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+          </form>
+        </div>
+      </app-card>
+    </div>
+    <br />
+    <!--  -->
     <div class="mt-5">
       <div>
         <ng2-smart-table
@@ -203,7 +270,7 @@
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
           <div class="row" *ngIf="pnlControles2">
-            <div class="col-md-5">
+            <div class="col-md-4">
               <form-field
                 [control]="formTwo.get('allGood')"
                 label="Total de Bienes">
@@ -227,8 +294,10 @@
                 </ng-select>
               </form-field>
             </div>
-            <div class="col-md-2" *ngIf="btnMotCan">
-              <button class="btn btn-primary btn-sm active mr-3">
+            <div class="col-md-3" *ngIf="btnMotCan">
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="reasonsForChange()">
                 Motivos de Cambio a REV
               </button>
             </div>
@@ -357,20 +426,24 @@
                 </div>
                 <div>
                   <ng2-smart-table
-                    [settings]="settingsTwo"
-                    [source]="dataTwo"></ng2-smart-table>
+                    [settings]="settingsModal"
+                    [source]="dataModal"
+                    (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
                 </div>
                 <div>
                   <app-pagination
-                    [params]="paramsTwo"
-                    [totalItems]="totalItemsTwo">
+                    [params]="paramsModal"
+                    [totalItems]="totalItemsModal">
                   </app-pagination>
                 </div>
               </div>
               <!--  -->
               <div class="d-flex justify-content-center">
                 <div class="m-3">
-                  <button type="button" class="btn btn-primary btn-sm active">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="modifySelectedRows()">
                     Aceptar
                   </button>
                 </div>

@@ -12,6 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { OfficesSend } from '../../valuation-request/valuation-request/valuation-request.component';
 import {
+  MOT_CAN,
   VALUATION_REQUEST_COLUMNS,
   VALUATION_REQUEST_COLUMNS_TWO,
   VALUATION_REQUEST_COLUMNS_VALIDATED,
@@ -35,9 +36,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   arrayResponseOffice: any[] = [];
   arrayResponseOfficeTwo: any[] = [];
   array: any[] = [];
+
+  //Forms
   form: FormGroup;
   formTwo: FormGroup;
-  formDialogOne: FormGroup;
+  formThree: FormGroup;
+
   offices = new DefaultSelect();
   cityList = new DefaultSelect();
   columns: any[] = [];
@@ -77,6 +81,15 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   btnGuardar: boolean = true;
   btnMotCan: boolean = true;
 
+  // Modal #1
+  formDialogOne: FormGroup;
+
+  // Modal #2
+  dataModal: LocalDataSource = new LocalDataSource();
+  settingsModal: any;
+  paramsModal = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsModal: number = 0;
+
   //
 
   constructor(
@@ -99,6 +112,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       actions: false,
       columns: { ...VALUATION_REQUEST_COLUMNS_TWO },
+    };
+
+    // Modal #2
+    this.settingsModal = {
+      ...this.settings,
+      selectMode: 'multi',
+      actions: false,
+      columns: { ...MOT_CAN },
     };
   }
 
@@ -410,6 +431,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     } else if (this.returnOfOffice() == 3) {
       this.obtainsCancelAssets(5, this.idOficio);
     }
+    // if (true) {
+    //   this.obtainsCancelAssets(5, this.idOficio);
+    // }
   }
 
   setButtons(ac: number) {
@@ -466,6 +490,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.formDialogOne = this.fb.group({
       noti: [null],
     });
+    this.formThree = this.fb.group({
+      byDel: [null],
+      user: [null],
+      del: [null],
+    });
     this.subscribeDelete = this.form
       .get('office')
       .valueChanges.subscribe(value => {
@@ -478,9 +507,11 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     body.idEventIn = this.event;
     body.idJobIn = numTwo;
     body.tpJobIn = numOne;
-    console.log('En este punto estoy mostrando el oficio: ', this.idOficio);
+    console.log('Los datos de filtrado ', body);
     this.serviceAppraise.postGetAppraise(body).subscribe({
       next: response => {
+        console.log('Esta es la respuesta ---------- ', response);
+        console.log('Respuesta: ', response.data);
         this.data.load(response.data);
         this.data.refresh();
         this.totalItems = response.count || 0;
@@ -578,6 +609,66 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     );
   }
 
+  // Metodo del modal #2
+  getReasonsChange() {
+    let eventGlobal: number;
+    eventGlobal = this.event;
+    this.serviceJobs.getMoCanById(eventGlobal).subscribe({
+      next: response => {
+        console.log(
+          'Esto trae la respuesta : ',
+          response.data[0],
+          ' y esto es el event : ',
+          this.event
+        );
+        this.dataModal.load(response.data[0]);
+        this.dataModal.refresh();
+        this.totalItemsModal = response.count || 0;
+        this.loading = false;
+      },
+      error: error => {
+        this.loader.load = false;
+        this.loading = false;
+        this.dataModal.load([]);
+        this.dataModal.refresh();
+      },
+    });
+  }
+  selectedRowsCancel: Array<any> = [];
+  selectedRows: Array<any> = [];
+
+  onUserRowSelect(event: any): void {
+    this.selectedRows = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
+  }
+
+  onUserRowSelectCancel(event: any): void {
+    this.selectedRowsCancel = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
+  }
+
+  modifySelectedRows(): void {
+    let motivos = '';
+    let noMot = '';
+    let noCaracteres = '';
+    this.selectedRows.forEach(row => {
+      noMot += row.id_motivo + ',';
+      motivos += row.descripcion_motivo + '/';
+    });
+
+    this.selectedRowsCancel.forEach(row => {
+      console.log('Si entro aqui de verdad.');
+      if (row.motivos == ' ') {
+        row.motivos = motivos;
+      }
+    });
+
+    // Actualiza la fuente de datos de la tabla si es necesario
+    this.dataTwo.refresh();
+  }
+  //
+
+  reasonsForChange() {
+    this.getReasonsChange();
+  }
   //
 
   override ngOnDestroy(): void {
