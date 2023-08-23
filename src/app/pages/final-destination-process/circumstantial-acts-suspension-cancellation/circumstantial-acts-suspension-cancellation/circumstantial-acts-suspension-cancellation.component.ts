@@ -1,6 +1,8 @@
 import { DatePipe, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
@@ -26,6 +28,8 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
@@ -104,6 +108,8 @@ export class CircumstantialActsSuspensionCancellationComponent
   settings1: any;
   selectedGood: any;
   selectedGood2: any;
+  goodTrackerGoods: any;
+  $trackedGoods = this.store.select(getTrackedGoods);
   get username() {
     return this.authService.decodeToken().username;
   }
@@ -119,6 +125,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     private goodprocessService: GoodProcessService,
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
+    private router: Router,
+    private store: Store,
     private programminggoodService: ProgrammingGoodsService,
     private expedientService: ExpedientService
   ) {
@@ -144,6 +152,15 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.initForm();
     this.startCalendars();
     this.pupInitForms();
+    const localExpdeient = localStorage.getItem('expediente');
+    if (localExpdeient) {
+      //this.expediente = Number(localExpdeient);
+      this.$trackedGoods.subscribe(data => {
+        console.error(data);
+      });
+      this.search(Number(localExpdeient));
+      localStorage.removeItem('expediente');
+    }
   }
 
   startCalendars() {
@@ -433,6 +450,14 @@ export class CircumstantialActsSuspensionCancellationComponent
     }
   }
 
+  setState() {
+    /* this.$state.pipe(takeUntil(this.$unSubscribe)).subscribe(state => {
+      const { trackerGoods } = state;
+      this.goodTrackerGoods = trackerGoods;
+      //this.getProceedingGoods(id.value).subscribe();
+    }); */
+  }
+
   pupRegresaActa() {
     return new Promise<any>((res, _rej) => {
       const model = {
@@ -495,7 +520,6 @@ export class CircumstantialActsSuspensionCancellationComponent
           res(resp);
         },
         error: err => {
-          console.error(err.error.message);
           if (err.error.message) {
             if (err.error.message.includes('El usuario sigebiadmon no fue')) {
               let message = err.error.message.replace('la', 'el Acta');
@@ -513,7 +537,13 @@ export class CircumstantialActsSuspensionCancellationComponent
 
   addGood() {
     /// llamar al Rastreador de bienes
-    this.alert('success', this.title, 'Llamar al Rastreador de Bienes');
+    //this.alert('success',this.title,'Llamar al Rastreador de Bienes');
+    localStorage.setItem('expediente', this.expediente.toString());
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FACTCIRCUN_0001',
+      },
+    });
   }
 
   async deleteActa() {

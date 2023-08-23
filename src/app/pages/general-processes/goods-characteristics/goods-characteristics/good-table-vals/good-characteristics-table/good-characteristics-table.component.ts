@@ -306,8 +306,8 @@ export class GoodCharacteristicsTable extends BasePage implements OnInit {
       {
         title: null,
         title2: isNormal
-          ? 'Seleccione el valor'
-          : 'Seleccionar los valores para',
+          ? 'Seleccione el valor para el atributo'
+          : 'Seleccionar los valores para el atributo',
         columnsType: {
           otvalor: {
             title: row.attribute,

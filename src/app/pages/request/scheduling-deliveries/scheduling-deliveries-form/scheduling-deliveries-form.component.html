@@ -435,15 +435,16 @@
           <app-columns-select
             [(settings)]="settingsSearchDest"></app-columns-select>
         </div>
-
-        <ng2-smart-table
-          [attr.class]="'table-bordered table-responsive pt-3'"
-          [settings]="settingsSearchDest"
-          [source]="infoGoodDestruction">
-        </ng2-smart-table>
-        <app-pagination
-          [params]="paramsSearchDest"
-          [totalItems]="totalItemsSearchDest"></app-pagination>
+        <div [class]="loadingGoodsDest ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered table-responsive pt-3'"
+            [settings]="settingsSearchDest"
+            [source]="infoGoodDestruction">
+          </ng2-smart-table>
+          <app-pagination
+            [params]="paramsSearchDest"
+            [totalItems]="totalItemsSearchDest"></app-pagination>
+        </div>
       </div>
     </div>
 
