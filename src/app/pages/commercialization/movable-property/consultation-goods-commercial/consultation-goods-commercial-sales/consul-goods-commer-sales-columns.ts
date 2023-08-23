@@ -4,7 +4,7 @@ export let goodCheck: any[] = [];
 
 export const CONSUL_GOODS_COMMER_SALES_COLUMNS = {
   check: {
-    title: '',
+    title: 'Seleccionar',
     type: 'custom',
     sort: false,
     renderComponent: CheckboxElementComponent,

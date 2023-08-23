@@ -4,7 +4,7 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  message: {
+  LIP_MENSAJE: {
     title: 'Mensaje de Error',
     type: 'string',
     sort: false,

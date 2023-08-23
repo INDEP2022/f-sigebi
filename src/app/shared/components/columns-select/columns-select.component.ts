@@ -29,6 +29,11 @@ interface ISettings {
         width: 200px !important;
         max-width: 200px !important;
       }
+
+      #searchbar {
+        font-size: 14px;
+        height: 35px;
+      }
     `,
   ],
 })
