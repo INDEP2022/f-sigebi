@@ -10,13 +10,13 @@
         [formGroup]="deliveryConstancyForm"
         class="form-material"
         style="margin: 0 auto">
-        <div class="form-group">
+        <div class="form-group" *ngIf="typeEvent == 1">
           <label>Destinario constancia:</label>
           <form-radio label="Cliente" class="radio-inline align-baseline">
             <input
               type="radio"
-              formControlName="radio"
-              value="client"
+              formControlName="receiverType"
+              value="CLIENTE"
               (change)="typeUser($event)" />
           </form-radio>
           <form-radio
@@ -24,25 +24,163 @@
             class="radio-inline align-baseline">
             <input
               type="radio"
-              formControlName="radio"
-              value="representLegal"
+              formControlName="receiverType"
+              value="REP_LEGAL"
               (change)="typeUser($event)" />
           </form-radio>
         </div>
 
-        <div class="form-group">
-          <form-field
-            [control]="deliveryConstancyForm.get('typeConstancy')"
-            label="Tipo constancia">
-            <select
-              class="form-control"
-              formControlName="typeConstancy"
-              readonly>
-              <option [value]="null">Entregados</option>
-            </select>
-          </form-field>
+        <div class="row">
+          <div class="col-md-6 pt-5">
+            <ngx-select
+              [form]="deliveryConstancyForm"
+              control="certificateType"
+              [showTooltip]="false"
+              [data]="listTypeConstances"
+              bindLabel="name"
+              label="Tipo de Constancia"
+              value="id"
+              [readonly]="true"></ngx-select>
+          </div>
         </div>
-
+        <!-- TYPE RECEPTOR == REP_LEGAL -->
+        <!-- <div class="row" *ngIf="typeReceptor == 'REP_LEGAL'">
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('publicWritten')" label="Escritura Publica">
+              <input public="text" class="form-control" formControlName="publicWritten" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('writtenDate')" label="Fecha Escritura">
+              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('graduate')" label="Licenciado">
+              <input public="text" class="form-control" formControlName="graduate" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('publicNotary')" label="Notaria Publica">
+              <input public="text" class="form-control" formControlName="publicNotary" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <ngx-select [form]="deliveryConstancyForm" control="cveState" [showTooltip]="false" [data]="selectEntity"
+              (fetchItems)="getState($event)" bindLabel="descCondition" label="Estado" value="id"></ngx-select>
+          </div>
+        </div> -->
+        <!-- FIN -->
+        <!-- TYPE EVENT 2 Y 5 -->
+        <!--  <div class="row pt-5" *ngIf="typeEvent == 2 || typeEvent == 5">
+          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field [control]="deliveryConstancyForm.get('transport')" label="Transporte">
+              <input public="text" class="form-control" formControlName="transport" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field [control]="deliveryConstancyForm.get('brand')" label="Marca">
+              <input public="text" class="form-control" formControlName="brand" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field [control]="deliveryConstancyForm.get('plate')" label="Placa">
+              <input public="text" class="form-control" formControlName="plate" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field [control]="deliveryConstancyForm.get('serie')" label="Serie">
+              <input public="text" class="form-control" formControlName="serie" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field [control]="deliveryConstancyForm.get('driver')" label="Nombre Conductor">
+              <input public="text" class="form-control" formControlName="driver" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('paperNum')" label="No. Oficio">
+              <input public="text" class="form-control" formControlName="paperNum" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('paperDate')" label="Fecha Oficio">
+              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            </form-field>
+          </div>
+        </div> -->
+        <!-- FIN -->
+        <!-- typeEvent == 4 -->
+        <!-- <div class="row pt-5" *ngIf="typeEvent == 4">
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('acreditPerson')" label="Acredita Persona">
+              <input public="text" class="form-control" formControlName="acreditPerson" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('writtenDate')" label="Fecha Escritura">
+              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('writtenDate')" label="Fecha Escritura">
+              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('paperNum')" label="No. Oficio">
+              <input public="text" class="form-control" formControlName="paperNum" />
+            </form-field>
+          </div>
+          <div class="col-md-4 pt-5">
+            <form-field [control]="deliveryConstancyForm.get('paperDate')" label="Fecha Oficio">
+              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            </form-field>
+          </div>
+        </div> -->
+        <!-- FIN -->
+        <div class="row" *ngIf="typeConstancy != 1">
+          <div class="col-md-6 pt-5">
+            <form-field
+              [control]="deliveryConstancyForm.get('virtue')"
+              label="Virtud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="virtue" />
+            </form-field>
+          </div>
+          <div class="col-md-6 pt-5" *ngIf="typeConstancy == 3">
+            <ngx-select
+              [form]="deliveryConstancyForm"
+              control="reasonsNotAccepted"
+              [showTooltip]="false"
+              [data]="selectReasonNoAcep"
+              bindLabel="name"
+              label="Motivo No Aceptado"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-6 pt-5" *ngIf="typeConstancy == 2">
+            <ngx-select
+              [form]="deliveryConstancyForm"
+              control="reasonsNotDelivered"
+              [showTooltip]="false"
+              [data]="selectReasonNoDelive"
+              bindLabel="name"
+              label="Motivo No Entregado"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-6 pt-5" *ngIf="typeConstancy == 4">
+            <ngx-select
+              [form]="deliveryConstancyForm"
+              control="reasonsNotRetired"
+              [showTooltip]="false"
+              [data]="selectReasonNoWithdrawn"
+              bindLabel="name"
+              label="Motivo No Retiro"
+              value="id"></ngx-select>
+          </div>
+        </div>
         <div class="row pt-3">
           <h5 class="title">
             <p>
@@ -66,9 +204,9 @@
 
           <div class="form-group pt-4" *ngIf="showClientForm">
             <form-field
-              [control]="deliveryConstancyForm.get('identification')"
+              [control]="deliveryConstancyForm.get('clientIden')"
               label="Identificación">
-              <select class="form-control" formControlName="identification">
+              <select class="form-control" formControlName="clientIden">
                 <option [value]="null">Seleccione identificaci&oacute;n</option>
                 <option [value]="1">Credencial de elector</option>
                 <option [value]="2">Pasaporte</option>
@@ -82,23 +220,23 @@
 
           <div class="col-md-6 pt-2" *ngIf="showClientForm">
             <form-field
-              [control]="deliveryConstancyForm.get('numIdentification')"
+              [control]="deliveryConstancyForm.get('clientIdennNum')"
               label="No. identificaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="numIdentification" />
+                formControlName="clientIdennNum" />
             </form-field>
           </div>
 
           <div class="col-md-6 pt-2" *ngIf="showClientForm">
             <form-field
-              [control]="deliveryConstancyForm.get('issuedBy')"
+              [control]="deliveryConstancyForm.get('procClientIdennNum')"
               label="Expedida por">
               <input
                 type="text"
                 class="form-control"
-                formControlName="issuedBy" />
+                formControlName="procClientIdennNum" />
             </form-field>
           </div>
         </div>
@@ -129,12 +267,12 @@
           <div class="col-md-6" *ngIf="personalEstates">
             <div class="form-group pt-4">
               <form-field
-                [control]="deliveryConstancyForm.get('name')"
+                [control]="deliveryConstancyForm.get('repLegal')"
                 label="Nombre">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="name" />
+                  formControlName="repLegal" />
               </form-field>
             </div>
           </div>
@@ -142,23 +280,21 @@
           <div class="col-md-6" *ngIf="personalEstates">
             <div class="form-group pt-4">
               <form-field
-                [control]="deliveryConstancyForm.get('position')"
+                [control]="deliveryConstancyForm.get('repLegalPosition')"
                 label="Puesto">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="position" />
+                  formControlName="repLegalPosition" />
               </form-field>
             </div>
           </div>
 
           <div class="form-group pt-4" *ngIf="personalEstates">
             <form-field
-              [control]="deliveryConstancyForm.get('identificationEstate')"
+              [control]="deliveryConstancyForm.get('repLegalIden')"
               label="Identificaci&oacute;n">
-              <select
-                class="form-control"
-                formControlName="identificationEstate">
+              <select class="form-control" formControlName="repLegalIden">
                 <option [value]="null">Seleccione identificaci&oacute;n</option>
                 <option [value]="1">Credencial de elector</option>
                 <option [value]="2">Pasaporte</option>
@@ -172,23 +308,23 @@
 
           <div class="col-md-6 pt-2" *ngIf="personalEstates">
             <form-field
-              [control]="deliveryConstancyForm.get('numIdentificationEstate')"
+              [control]="deliveryConstancyForm.get('repLegalIdenNum')"
               label="No. identificaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="numIdentificationEstate" />
+                formControlName="repLegalIdenNum" />
             </form-field>
           </div>
 
           <div class="col-md-6 pt-2" *ngIf="personalEstates">
             <form-field
-              [control]="deliveryConstancyForm.get('issuedByEstate')"
+              [control]="deliveryConstancyForm.get('repLegalIdenProg')"
               label="Expedida por">
               <input
                 type="text"
                 class="form-control"
-                formControlName="issuedByEstate" />
+                formControlName="repLegalIdenProg" />
             </form-field>
           </div>
         </div>
@@ -197,6 +333,7 @@
         <button class="btn btn-primary btn-sm active">Separar</button>
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
+            #table
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="personalEstateData">

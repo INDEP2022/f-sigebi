@@ -47,6 +47,9 @@ export const RECORDS_ACCOUNT_STATEMENTS_COLUMNS = {
     title: 'Concepto',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (cell: any, row: any) => {
+      return row.cveConcept;
+    },
   },
 };
 

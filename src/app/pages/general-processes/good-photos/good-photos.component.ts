@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { PreviousRouteService } from 'src/app/common/services/previous-route.service';
-import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { GoodFinderService } from 'src/app/core/services/ms-good/good-finder.service';
 import { BasePage } from 'src/app/core/shared';
 import { GoodPhotosService } from './services/good-photos.service';
 
@@ -18,11 +18,15 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   resetTable = 0;
   constructor(
     private activatedRoute: ActivatedRoute,
-    private goodService: GoodService,
+    private goodService: GoodFinderService,
     private dataService: GoodPhotosService,
     private previousRouteService: PreviousRouteService
   ) {
     super();
+    // localStorage.setItem(
+    //   'selectedGoodsForPhotos',
+    //   JSON.stringify([54597100, 78])
+    // );
   }
 
   cleanFilters() {
@@ -33,26 +37,24 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
+    this.selectedGoodsByQueryParams = [];
+    if (localStorage.getItem('selectedGoodsForPhotos')) {
+      this.selectedGoodsByQueryParams = JSON.parse(
+        localStorage.getItem('selectedGoodsForPhotos')
+      );
+    }
     this.activatedRoute.queryParams.subscribe({
       next: param => {
-        console.log(param);
-        if (this.previousRouteService.getHistory().length > 1) {
-          this.selectedGoodsByQueryParams = [];
-          if (localStorage.getItem('selectedGoodsForPhotos')) {
-            this.selectedGoodsByQueryParams = JSON.parse(
-              localStorage.getItem('selectedGoodsForPhotos')
-            );
-          }
-          if (param['origin']) {
-            this.origin = param['origin'];
-          }
-          if (param['numberGood']) {
-            this.selectedGoodsByQueryParams = [param['numberGood']];
-            this.showTable = false;
-            this.searchGood();
-          }
-        } else {
-          this.origin = null;
+        this.origin = null;
+        this.showTable = true;
+        this.cleanFilters();
+        if (param['origin']) {
+          this.origin = param['origin'];
+        }
+        if (param['numberGood']) {
+          this.selectedGoodsByQueryParams = [param['numberGood']];
+          this.showTable = false;
+          this.searchGood();
         }
       },
     });
@@ -80,18 +82,20 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     //   queryParams: { numberGood: this.noBienControl.value },
     //   queryParamsHandling: 'merge', // remove to replace all query params by provided
     // });
-    this.loading = true;
+    this.loader.load = true;
     this.goodService
-      .getGoodAndDesc(this.selectedGoodsByQueryParams[0])
+      .getByGoodNumber(this.selectedGoodsByQueryParams[0])
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
         next: response => {
-          if (response) {
+          console.log(response);
+          if (response && response.data && response.data.length > 0) {
             this.good = {
-              ...response,
+              ...response.data[0],
               id: this.selectedGoodsByQueryParams[0] + '',
             };
-            this.loading = false;
+            this.loader.load = false;
+            this.dataService.showEvent.next(true);
           } else {
             this.goodNotLoaded(this.selectedGoodsByQueryParams[0] + '');
           }

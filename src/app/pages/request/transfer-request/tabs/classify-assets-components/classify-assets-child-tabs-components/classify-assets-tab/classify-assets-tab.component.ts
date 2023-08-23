@@ -910,6 +910,7 @@ export class ClassifyAssetsTabComponent
       goods.processStatus = 'CLASIFICAR_BIEN';
     } else {
       goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      goods.status = 'ROP';
     }
 
     //Verificar que la cantidad transferente para los tipos de bienes

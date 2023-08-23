@@ -252,7 +252,7 @@ export class FindActaGoodComponent extends BasePage implements OnInit {
       next: data => {
         this.alert(
           'warning',
-          'No Puede Borrar Registro Maestro Cuando Existen Registros Detalles Coincidentes.',
+          'El Acta no se puede eliminar porque tiene bienes asociados',
           ''
         );
       },

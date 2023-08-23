@@ -55,9 +55,9 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         // this.selectGood(response)
       },
       error: err => {
-        this.resetForm();
         this.alert('error', 'No. Bien ' + this.noBien, 'No encontrado');
         this.formLoading = false;
+        this.resetForm();
       },
     });
   }
@@ -251,6 +251,15 @@ export class GoodFormComponent extends AlertButton implements OnInit {
       // });
       // this.service.bienesPar = newBienesPar;
       // this.service.savePartializeds();
+
+      if (!good.goodClassNumber) {
+        this.alert(
+          'error',
+          'Parcialización',
+          'Bien ' + good.goodId + ' no cuenta con clasificador'
+        );
+        return;
+      }
       if ([1424, 1426].includes(+(good.goodClassNumber + ''))) {
         bandera = 0;
         const validacion = await this.validateGood(good);
@@ -261,14 +270,6 @@ export class GoodFormComponent extends AlertButton implements OnInit {
         }
       } else {
         clasif = 1;
-      }
-      if (!good.goodClassNumber) {
-        this.alert(
-          'error',
-          'Parcialización',
-          'Bien ' + good.goodId + ' no cuenta con clasificador'
-        );
-        return;
       }
       try {
         this.service.noActa = await this.getNoActa(good);

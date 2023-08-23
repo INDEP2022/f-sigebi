@@ -3,6 +3,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { ITmpProgValidation } from '../../models/good-programming/good-programming';
 @Injectable({
   providedIn: 'root',
 })
@@ -38,8 +39,24 @@ export class ProgrammingGoodsService extends HttpService {
       P_ACCION,
     });
   }
+
   tmpEstGoodsProgr(params?: ListParams) {
     return this.get<IListResponse<any>>('/tmp-est-goods-prog', params);
   }
-  /// /api/v1/tmp-est-goods-prog
+
+  paAbrirActasPrograma(model: Object) {
+    return this.post('programminggood/apps/open-minutes-program', model);
+  }
+
+  paRegresaEstAnterior(model: Object) {
+    return this.post('programminggood/apps/return-previous-status', model);
+  }
+
+  getTmpProgValidation(params: ListParams) {
+    return this.get<IListResponse<ITmpProgValidation>>(
+      `tmp-prog-validation`,
+      params
+    );
+  }
+  /// /api/v1/programminggood/apps/return-previous-status
 }

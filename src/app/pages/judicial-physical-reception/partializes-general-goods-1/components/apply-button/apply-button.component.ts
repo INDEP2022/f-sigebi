@@ -254,6 +254,12 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       //   'No se tienen cantidades a parcializar...'
       // );
       // return;
+      this.alert(
+        'error',
+        'No se puede parcializar nuevamente con estos datos',
+        ''
+      );
+      return null;
     }
 
     return {
@@ -690,6 +696,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
       // debugger;
       const result = await this.validationsV1(v_importe, v_estatus);
       console.log(result, this.good);
+      return;
       v_verif_des = this.service.verif_des;
       v_importe = result.v_importe;
       v_estatus = result.v_estatus;
@@ -852,7 +859,7 @@ export class ApplyButtonComponent extends FunctionButtons implements OnInit {
           },
           error: error => {
             console.log(error);
-            this.alert('error', 'Inserta Bien', 'No se pudo parcializar');
+            this.alert('error', 'Inserta Bien', error.error.message);
             this.loader.load = false;
             return;
           },
