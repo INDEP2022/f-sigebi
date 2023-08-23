@@ -14,4 +14,5 @@ export enum PaymentEndPoints {
   BusquedaPagosDet = 'search-payments-det',
   BusquedaPagosMae = 'search-payments-mae',
   getOI = 'application/obtener-oi',
+  Delete = 'search-payments-det/delete-search-payments',
 }

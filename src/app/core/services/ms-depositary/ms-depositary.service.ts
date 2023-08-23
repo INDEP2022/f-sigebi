@@ -248,4 +248,10 @@ export class MsDepositaryService extends HttpService {
   postSearchPay(params: any) {
     return this.post(DepositaryEndPoints.SearchPayment, params);
   }
+
+  getPaymentChange(process: number, action: number) {
+    return this.get(
+      `${DepositaryEndPoints.GetPaymentChange}/${process}/type/${action}`
+    );
+  }
 }

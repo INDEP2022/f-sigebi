@@ -3,10 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -88,10 +85,7 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      amount: [
-        null,
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
+      amount: [null, [Validators.required]],
       cve: [null, [Validators.required]],
       code: [null, [Validators.required]],
       publicBatch: [null, [Validators.required]],
@@ -113,7 +107,13 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
     });
     if (this.payment != null) {
       this.edit = true;
+      console.log('Resp Payment-> ', this.payment);
       this.paymentForm.patchValue(this.payment);
+      if (this.payment.date != null) {
+        this.paymentForm
+          .get('date')
+          .setValue(this.formatDate(new Date(this.payment.date)));
+      }
     }
   }
 
@@ -126,6 +126,7 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   create() {
+    console.log(' 1');
     this.loading = true;
     this.handleSuccess();
   }
@@ -136,9 +137,11 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    console.log('2');
     // const message: string = this.edit ? 'Actualizado' : 'Guardado';
     // this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
+    console.log('PaymentForm -> ', this.paymentForm.value);
     this.edit
       ? this.onEdit.emit({
           newData: this.paymentForm.value,
@@ -166,5 +169,12 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
       const item = [this.batchesTestData.filter((i: any) => i.id == id)];
       this.batchItems = new DefaultSelect(item[0], 1);
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${day}/${month}/${year}`;
   }
 }

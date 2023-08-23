@@ -16,7 +16,9 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { _Params } from 'src/app/common/services/http-wcontet.service';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { AccountMovementService } from 'src/app/core/services/ms-account-movements/account-movement.service';
+import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -44,11 +46,19 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   localdata: LocalDataSource = new LocalDataSource();
   banks = new DefaultSelect();
   columnFilters: any = [];
+  sssubtypes = new DefaultSelect<any>();
 
   LV_MSG_PROCESO: string;
   LV_EST_PROCESO: number = 1;
   LV_TOTREG: number;
   LV_WHERE: number;
+  n_CONT: number = 0;
+
+  APLICADO_MSG: string;
+  APLICADO_EST: number;
+
+  statusPaymentChange: number;
+  msgPaymentChange: string;
 
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
@@ -61,6 +71,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       columnTitle: 'Acciones',
       edit: true,
       add: false,
+      delete: false,
       position: 'right',
     },
   };
@@ -89,7 +100,9 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private paymentService: PaymentService,
     private accountMovementService: AccountMovementService,
-    private msDepositaryService: MsDepositaryService
+    private msDepositaryService: MsDepositaryService,
+    private bankMovementType: BankMovementType,
+    private authService: AuthService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -97,9 +110,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getParametercomer('SUPUSUCOMER');
     this.getBusquedaPagDet(5);
-    this.getBusquedaPagMae(5);
-    console.log('antes servicio');
     this.searchID(5);
     this.localdata
       .onChanged()
@@ -111,7 +123,6 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
             let field = ``;
             let searchFilter = SearchFilter.EQ;
             field = `filter.${filter.field}`;
-            /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'movement':
                 field = 'filter.numbermovement';
@@ -199,6 +210,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       processType: [null],
       system: [null, [Validators.required]],
       action: [null],
+      type: [null],
     });
     this.getEvents({ page: 1, text: '' });
   }
@@ -300,13 +312,40 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.getTableData();
   }
 
-  cleanSearch() {
-    let LV_TOTREG: number;
-    let LV_WHERE: string;
-
+  formClean() {
     this.searchForm.reset();
     this.paymentColumns = [];
     this.totalItems = 0;
+  }
+
+  cleanSearch() {
+    const elemC = document.getElementById('typeId') as HTMLInputElement;
+
+    //elemC.value = '';
+
+    this.searchID(elemC.value);
+    this.alertQuestion(
+      'question',
+      'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+      '¿Está Seguro de Eliminar los Registros de la Búsqueda o Cargados por Archivo Tipo CSV ?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        /*this.searchForm.reset();
+        this.paymentColumns = [];
+        this.totalItems = 0;*/
+
+        if (this.LV_TOTREG == 0) {
+          this.alert(
+            'warning',
+            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            'No Hay Registros para Borrar ...'
+          );
+        } else {
+          this.deleteId(elemC.value);
+          this.getBusquedaPagMae(elemC.value);
+        }
+      }
+    });
   }
 
   openModal(context?: Partial<PaymentSearchModalComponent>) {
@@ -316,10 +355,36 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onAdd.subscribe(data => {
-      if (data) this.addRow(data);
+      if (data) {
+        console.log('Data Recibida', data);
+        this.addRow(data);
+      }
     });
     modalRef.content.onEdit.subscribe(data => {
-      if (data) this.editRow(data);
+      const elemC = document.getElementById('typeId') as HTMLInputElement;
+      if (data) {
+        //this.editRow(data);
+        console.log('Data Editar', data);
+        let param = {
+          tsearchId: elemC.value,
+          payId: data.newData.paymentId,
+          batchId: data.newData.batchId,
+          idEvent: data.newData.event,
+          idinconsis: data.newData.inconsistencies,
+          numbermovement: data.newData.entryOrderId,
+          date: data.newData.date != null ? new Date(data.newData.date) : null,
+          reference: data.newData.reference,
+          referenceori: data.newData.originalReference,
+          amount: data.newData.amount,
+          cveBank: data.newData.cve,
+          code: data.newData.code,
+          batchPublic: data.newData.publicBatch,
+          validSystem: data.newData.systemValidity,
+          result: data.newData.result,
+          guy: data.newData.type,
+        };
+        this.updateRecord(param);
+      }
     });
   }
 
@@ -355,13 +420,73 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.selectedRows = rows;
   }
 
-  getCsv(event: Event) {
+  async getCsv(event: Event) {
+    console.log(' n_CONT finalv -> ', this.n_CONT);
+    //debugger;
+    if (this.n_CONT == 0) {
+      await this.msgUser(this.n_CONT);
+    }
+
+    /*
     const files = (event.target as HTMLInputElement).files;
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
     fileReader.onload = () => this.readFile(fileReader.result);
+    this.getParametercomer(event); */
   }
+
+  async msgUser(num: number) {
+    if (num == 0) {
+      this.alert(
+        'error',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Usuario Inválido para Ejecutar Este Procedimiento.'
+      );
+    } else {
+      this.alertQuestion(
+        'question',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        '¿Quiere Continuar con el Proceso?'
+      ).then(async question => {
+        if (question.isConfirmed) {
+          // add PUP_CAMBIO_MASIV_LOTES;
+        }
+      });
+    }
+  }
+
+  aplica() {
+    if (this.searchForm.get('processType').value == null) {
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Debe Elegir un Tipo de Proceso'
+      );
+    } else {
+      if (this.searchForm.get('action').value == null) {
+        this.alert(
+          'warning',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          'Debe Elegir un Tipo de Acción'
+        );
+      } else {
+        this.pupProcesa();
+      }
+    }
+  }
+
+  // openModalSec(context?: Partial<PaymentSearchSecurityComponent>) {
+  //   const modalRef = this.modalService.show(PaymentSearchSecurityComponent, {
+  //     initialState: { ...context },
+  //     class: 'modal-lg modal-dialog-centered',
+  //     ignoreBackdropClick: true,
+  //   });
+  // }
+
+  // openFormSec() {
+  //   this.openModalSec();
+  // }
 
   readFile(binaryExcel: string | ArrayBuffer) {
     try {
@@ -495,11 +620,18 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     });
   }
 
-  getBusquedaPagMae(params: number) {
+  getBusquedaPagMae(params: number | string) {
+    const elemC = document.getElementById('typeId') as HTMLInputElement;
+    elemC.value = '';
     this.paymentService.getBusquedaMae(params).subscribe(resp => {
       if (resp != null && resp != undefined) {
-        this.LV_WHERE = resp.data[0].tsearchId;
-        console.log('Resp PagosMae-> ', this.LV_WHERE);
+        this.LV_WHERE = resp.data[0].desTsearch;
+        //this.searchForm.get('type').setValue(resp.data[0].desTsearch);
+        this.searchForm.patchValue({
+          type: resp.data[0].desTsearch,
+        });
+        elemC.value = resp.data[0].tsearchId;
+        console.log('Resp PagosMae-> ', resp);
       }
     });
   }
@@ -528,7 +660,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     );
   }
 
-  searchID(id: number) {
+  searchID(id: number | string) {
     console.log('Resp Search Id-> ', id);
     this.paymentService.getSearchId(id).subscribe(resp => {
       console.log('Resp Search Id-> ', resp);
@@ -550,5 +682,170 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         console.log('LV_EST_PROCESO-> ', resp.statusProcess);
       }
     });
+  }
+
+  getParametercomer(params?: any) {
+    this.n_CONT = 0;
+    const { preferred_username } = this.authService.decodeToken();
+    let username = preferred_username;
+    //username = 'NMORENO';
+    this.bankMovementType
+      .getParameterMod(params, username.toUpperCase())
+      .subscribe(
+        resp => {
+          if (resp != null && resp != undefined) {
+            this.n_CONT = resp.count;
+            console.log('RespCount-> ', this.n_CONT);
+          }
+        },
+        err => {
+          //num = err.count;
+        }
+      );
+  }
+
+  pupProcesa() {
+    let LV_TIPO_PROC: string;
+    let LV_ACCION: string;
+    let LV_PROCESA: number;
+
+    LV_PROCESA == 0;
+
+    if (
+      this.searchForm.get('processType').value == 0 &&
+      this.searchForm.get('action').value == 2
+    ) {
+      if (this.searchForm.get('typeId').value == 0) {
+        //Falta integrar PA_PAGOS_CAMBIOS}
+        this.pagosCambio(
+          this.searchForm.get('processType').value,
+          this.searchForm.get('action').value
+        );
+      } else {
+        LV_PROCESA = 1;
+      }
+    } else if (
+      this.searchForm.get('processType').value &&
+      this.searchForm.get('action').value
+    ) {
+      if (this.searchForm.get('typeId').value) {
+        //servicio PA_PAGOS_EFE_DUP_NREF No está desarrollada
+      } else {
+        LV_PROCESA = 1;
+      }
+    } else if (
+      this.searchForm.get('typeId').value == 5 &&
+      this.searchForm.get('action').value == 3
+    ) {
+      if (this.searchForm.get('typeId').value == 6) {
+        //Servicio PA_PAGOS_ARCHIVOS
+      } else {
+        LV_PROCESA = 1;
+      }
+    }
+    if (LV_PROCESA == 1) {
+      this.msgPaymentChange =
+        'El Tipo de Proceso ' +
+        LV_TIPO_PROC +
+        ' , para la Acción ' +
+        LV_ACCION +
+        ' no Existe ...';
+    } else {
+      if (this.statusPaymentChange == 1) {
+        this.alert(
+          'warning',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          this.msgPaymentChange
+        );
+      } else {
+        this.alert(
+          'warning',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          this.msgPaymentChange
+        );
+      }
+    }
+  }
+
+  procesa() {
+    //Por Implementar CAN_CARGA_CSV -> PUP_CARGA_CSV
+  }
+
+  deleteId(id: number | string) {
+    this.paymentService.deleteId(id).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          this.alert(
+            'error',
+            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            'Registro Eliminado Correctamente.'
+          );
+        }
+      },
+      error => {
+        this.alert(
+          'error',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          'Ocurrió un Error al Eliminar.'
+        );
+      }
+    );
+  }
+
+  systemAplicado() {
+    this.alertQuestion(
+      'question',
+      'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+      '¿Esta seguro de actualizar el valor de todos los registros del atributo valido para sistema ?'
+    ).then(async question => {
+      if (question.isConfirmed) {
+        // add PA_PAGOS_MASIVO_VPS;
+      }
+      if (this.APLICADO_EST == 1) {
+        this.alert(
+          'warning',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          this.APLICADO_MSG
+        );
+      } else {
+        this.alert(
+          'warning',
+          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+          this.APLICADO_MSG
+        );
+      }
+    });
+  }
+
+  pagosCambio(process: number, action: number) {
+    this.msDepositaryService
+      .getPaymentChange(process, action)
+      .subscribe(resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp pagosCambios-> ', resp);
+          this.statusPaymentChange = resp.data.P_EST_PROCESO;
+          this.msgPaymentChange = resp.data.P_MSG_PROCESO;
+        }
+      });
+  }
+
+  updateRecord(params: any) {
+    this.paymentService.UpdateRecord(params).subscribe(
+      resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp ActualizarReg', resp);
+        }
+      },
+      error => {
+        this.alert('error', '', '');
+      }
+    );
+  }
+
+  formatDate(date: Date): string {
+    const day = date.getUTCDate().toString().padStart(2, '0');
+    const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const year = date.getUTCFullYear().toString();
+    return `${year}-${month}-${day}`;
   }
 }

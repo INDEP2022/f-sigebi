@@ -131,16 +131,24 @@ export class PaymentService extends HttpService {
   //   return this.post('comer-payments-ref-virt', body);
   // }
 
-  getBusquedaMae(params: number) {
+  getBusquedaMae(params: number | string) {
     return this.get(
       PaymentEndPoints.BusquedaPagosMae,
       `&filter.tsearchId=$eq:${params}`
     );
   }
 
-  getSearchId(id: number) {
+  getSearchId(id: number | string) {
     return this.get(
       `${PaymentEndPoints.BusquedaPagosDet}?filter.tsearchId=$eq:${id}`
     );
+  }
+
+  deleteId(id: number | string) {
+    return this.delete(`${PaymentEndPoints.Delete}/${id}`);
+  }
+
+  UpdateRecord(params: any) {
+    return this.put(PaymentEndPoints.BusquedaPagosDet, params);
   }
 }
