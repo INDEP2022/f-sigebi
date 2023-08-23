@@ -149,7 +149,6 @@ export class ApplyLifComponent extends ApplyLifRequest implements OnInit {
       },
       error: error => {
         this.loading = false;
-        console.log(error);
       },
     });
   }
