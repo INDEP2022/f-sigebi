@@ -39,7 +39,7 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getProcesses();
+    this.getProcesses()
   }
 
   getProcesses(params?: ListParams) {

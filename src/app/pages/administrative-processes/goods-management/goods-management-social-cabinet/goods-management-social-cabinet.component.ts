@@ -18,6 +18,7 @@ import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-t
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import { GoodsManagementSocialNotLoadGoodsComponent } from '../goods-management-social-table/goods-management-social-not-load-goods/goods-management-social-not-load-goods.component';
 import { GoodsManagementService } from '../services/goods-management.service';
 import { ETypeGabinetProcess } from './typeProcess';
@@ -38,6 +39,7 @@ export class GoodsManagementSocialCabinetComponent
   identifier: number;
   typeGabinetProcess = ETypeGabinetProcess;
   totalItems = 0;
+  ngGlobal: any;
   $trackedGoods = this.store.select(getTrackedGoods);
   @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
 
@@ -91,6 +93,7 @@ export class GoodsManagementSocialCabinetComponent
     private modalService: BsModalService,
     private siabService: SiabService,
     private sanitizer: DomSanitizer,
+    private globalVarService: GlobalVarsService,
     private fb: FormBuilder,
     private store: Store,
     private router: Router,
@@ -131,12 +134,11 @@ export class GoodsManagementSocialCabinetComponent
             this.pageLoading = false;
             return;
           }
-          let response2 = response.map(x => {
-            return +x.goodNumber;
-          });
-          response2.forEach(item => {
-            if (item) {
-              this.saveInTemp(this.identifier, item + '');
+          let response2: number[] = [];
+          response.forEach(item => {
+            if (item.goodNumber) {
+              response2.push(+item.goodNumber);
+              this.saveInTemp(this.identifier, item.goodNumber);
             }
           });
           this.selectedGoodstxt = response2;
@@ -144,6 +146,37 @@ export class GoodsManagementSocialCabinetComponent
         }
       },
     });
+    this.globalVarService
+      .getGlobalVars$()
+      .pipe(first(), takeUntil(this.$unSubscribe))
+      .subscribe({
+        next: global => {
+          this.ngGlobal = global;
+          if (this.ngGlobal.REL_BIENES) {
+            this.pageLoading = true;
+            this.disabledProcess = false;
+            const paramsF = new FilterParams();
+            paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
+            paramsF.limit = 100000000;
+            this.goodTrackerService
+              .getAllTmpTracker(paramsF.getParams())
+              .subscribe({
+                next: res => {
+                  if (res.data && res.data.length > 0) {
+                    res.data.forEach(x => {});
+                  } else {
+                    this.pageLoading = false;
+                    this.disabledProcess = true;
+                  }
+                },
+                error: err => {
+                  this.pageLoading = false;
+                  this.disabledProcess = true;
+                },
+              });
+          }
+        },
+      });
   }
 
   async searchGood() {

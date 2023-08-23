@@ -12,6 +12,7 @@ import {
 import {
   IDescInv,
   IGoodInvAvailableView,
+  IGoodInvDestructionView,
   IGoodResDevInvView,
   IGoodsInv,
 } from '../../models/ms-goodsinv/goodsinv.model';
@@ -99,6 +100,16 @@ export class GoodsInvService extends HttpService {
     const params = this.makeParams(_params);
     const route = IGoodsinvEndpoint.GetClients;
     return this.post<IListResponse<IClient>>(`${route}?${params}`, formData);
+  }
+
+  getDestructionView(
+    _params: ListParams
+  ): Observable<IListResponse<IGoodInvDestructionView>> {
+    const params = this.makeParams(_params);
+    const route = IGoodsinvEndpoint.GetGoodDestView;
+    return this.get<IListResponse<IGoodInvDestructionView>>(
+      `${route}?${params}`
+    );
   }
 
   private makeParams(params: ListParams | string): HttpParams {
