@@ -39,12 +39,19 @@ export class SearchBarSimpleComponent implements OnInit {
   @Input() placeholder?: string = 'Placeholder...';
   @Input() valueBut?: string = '';
   @Input() inputValue?: string | number;
+  @Input() initValue?: string | number;
   @Output() eventEmit = new EventEmitter<string | number>();
   // term: string = '';
   search: FormControl = new FormControl(null, [Validators.required]);
   constructor() {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.initValue) {
+      console.error(this.initValue);
+      this.inputValue = this.initValue;
+      this.search.setValue(this.initValue);
+    }
+  }
 
   // getValue() {
   //   if (this.term == '') return false;
