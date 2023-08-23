@@ -46,6 +46,7 @@ export class SchedulingDeliveriesFormComponent
   filterPreviewGood: boolean = true;
   filterDonation: boolean = true;
   filterSales: boolean = true;
+  loadingGoodsDest: boolean = false;
   TypeEventOptions = new DefaultSelect(TypeEvent);
   warehouse = new DefaultSelect<IWarehouse>();
   transferences = new DefaultSelect<ITransferente>();
@@ -326,7 +327,7 @@ export class SchedulingDeliveriesFormComponent
     params['filter.orderBy'] = `name:ASC`;
     params['filter.name'] = `$ilike:${params.text}`;
     params['filter.regionalDelegation'] = this.regionalDelegationNum;
-    params['filter.stockLocatorCtrlCode'] = 3;
+    params['filter.managedBy'] = 'Tercero';
     //params['filter.managedBy'] = 'SAE';
     this.goodsQueryService.getCatStoresView(params).subscribe({
       next: data => {
@@ -402,12 +403,18 @@ export class SchedulingDeliveriesFormComponent
   }
 
   showGoodsInventory() {
+    this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
     const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
     const transferId = this.schedulingDeliverieForm.get('transferId').value;
-    if (this.regionalDelegationNum && typeEvent && transferId) {
-      const quantity = this.searchDestructionForm.get('quantity').value;
-      const managementNum =
-        this.searchDestructionForm.get('managementNum').value;
+    const store = this.schedulingDeliverieForm.get('store').value;
+    if (this.regionalDelegationNum && typeEvent && transferId && store) {
+      if (typeEvent == 5) {
+        this.paramsSearchDest
+          .pipe(takeUntil(this.$unSubscribe))
+          .subscribe(() => this.showGoodInvDest(transferId, store));
+      }
+      /*const quantity = this.searchDestructionForm.get('quantity').value;
+      
       const descriptionGood =
         this.searchDestructionForm.get('descriptionGood').value;
       const inventoryNum = this.searchDestructionForm.get('inventoryNum').value;
@@ -423,13 +430,469 @@ export class SchedulingDeliveriesFormComponent
         this.paramsSearchDest
           .pipe(takeUntil(this.$unSubscribe))
           .subscribe(() => this.getInventaryGoods());
-      }
+      } */
     } else {
       this.alert(
         'warning',
         'Acción Invalida',
-        'Se requiere seleccionar un almacén y un transferente'
+        'Se requiere seleccionar un almacén y una transferente'
       );
+    }
+  }
+
+  showGoodInvDest(transferent: number, store: string) {
+    const quantity = this.searchDestructionForm.get('quantity').value;
+    const managementNum = this.searchDestructionForm.get('managementNum').value;
+    const descriptionGood =
+      this.searchDestructionForm.get('descriptionGood').value;
+    const inventoryNum = this.searchDestructionForm.get('inventoryNum').value;
+    const bienSiabNum = this.searchDestructionForm.get('bienSiabNum').value;
+
+    if (
+      !quantity &&
+      !managementNum &&
+      !descriptionGood &&
+      !inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disponible des', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      quantity &&
+      !managementNum &&
+      !descriptionGood &&
+      !inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()['filter.quantity'] = `$eq:${quantity}`;
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      quantity &&
+      managementNum &&
+      !descriptionGood &&
+      !inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()['filter.quantity'] = `$eq:${quantity}`;
+      this.paramsSearchDest.getValue()[
+        'filter.managementNumGoodId'
+      ] = `$eq:${managementNum}`;
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      quantity &&
+      managementNum &&
+      descriptionGood &&
+      !inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()['filter.quantity'] = `$eq:${quantity}`;
+      this.paramsSearchDest.getValue()[
+        'filter.managementNumGoodId'
+      ] = `$eq:${managementNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.goodDescription'
+      ] = `$eq:${descriptionGood}`;
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      quantity &&
+      managementNum &&
+      descriptionGood &&
+      inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()['filter.quantity'] = `$eq:${quantity}`;
+      this.paramsSearchDest.getValue()[
+        'filter.managementNumGoodId'
+      ] = `$eq:${managementNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.goodDescription'
+      ] = `$eq:${descriptionGood}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.inventoryNum'
+      ] = `$eq:${inventoryNum}`;
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      quantity &&
+      managementNum &&
+      descriptionGood &&
+      inventoryNum &&
+      bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()['filter.quantity'] = `$eq:${quantity}`;
+      this.paramsSearchDest.getValue()[
+        'filter.managementNumGoodId'
+      ] = `$eq:${managementNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.goodDescription'
+      ] = `$eq:${descriptionGood}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.inventoryNum'
+      ] = `$eq:${inventoryNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.goodSiabNum'
+      ] = `$eq:${bienSiabNum}`;
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      !quantity &&
+      managementNum &&
+      !descriptionGood &&
+      !inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()[
+        'filter.managementNumGoodId'
+      ] = `$eq:${managementNum}`;
+
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      !quantity &&
+      !managementNum &&
+      descriptionGood &&
+      !inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()[
+        'filter.goodDescription'
+      ] = `$eq:${descriptionGood}`;
+
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      !quantity &&
+      !managementNum &&
+      !descriptionGood &&
+      inventoryNum &&
+      !bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()[
+        'filter.inventoryNum'
+      ] = `$eq:${inventoryNum}`;
+
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
+    }
+
+    if (
+      !quantity &&
+      !managementNum &&
+      !descriptionGood &&
+      !inventoryNum &&
+      bienSiabNum
+    ) {
+      this.loadingGoodsDest = true;
+      this.paramsSearchDest.getValue()['sortBy'] = `organizationCode:ASC`;
+      this.paramsSearchDest.getValue()[
+        'filter.delRegioanl'
+      ] = `$eq:${this.regionalDelegationNum}`;
+
+      this.paramsSearchDest.getValue()[
+        'filter.entTransfereeId'
+      ] = `$eq:${transferent}`;
+
+      this.paramsSearchDest.getValue()['filter.inventoryKey'] = `$eq:${store}`;
+      this.paramsSearchDest.getValue()['filter.eventType'] = `$eq:A Destruir`;
+      this.paramsSearchDest.getValue()[
+        'filter.goodSiabNum'
+      ] = `$eq:${bienSiabNum}`;
+
+      this.goodsInvService
+        .getDestructionView(this.paramsSearchDest.getValue())
+        .subscribe({
+          next: response => {
+            console.log('Bienes inv disp cantidad', response);
+            this.infoGoodDestruction.load(response.data);
+            this.totalItemsSearchDest = response.count;
+            this.loadingGoodsDest = false;
+          },
+          error: error => {
+            this.loadingGoodsDest = false;
+            this.alert(
+              'warning',
+              'Advertencia',
+              'No hay bienes para destrucción en el inventario'
+            );
+          },
+        });
     }
   }
 
@@ -470,7 +933,18 @@ export class SchedulingDeliveriesFormComponent
     });
   }
 
-  cleanSearchForm() {}
+  cleanSearchForm() {
+    const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
+    const store = this.schedulingDeliverieForm.get('store').value;
+    const transferId = this.schedulingDeliverieForm.get('transferId').value;
+    if (typeEvent == 5) {
+      this.searchDestructionForm.reset();
+      this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
+      this.paramsSearchDest
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.showGoodInvDest(transferId, store));
+    }
+  }
 
   addEstate(event: Event) {}
 

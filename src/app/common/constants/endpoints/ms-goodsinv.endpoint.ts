@@ -13,4 +13,5 @@ export enum IGoodsinvEndpoint {
   GetGoodResDevInvVew = 'views/goods-res-dev-inv-view',
   GetGoodInvView = 'views/xxsae-inv-available-view',
   GetClients = 'views/xxsae-clients-view',
+  GetGoodDestView = 'views/destruction-view-criteria-v2',
 }
