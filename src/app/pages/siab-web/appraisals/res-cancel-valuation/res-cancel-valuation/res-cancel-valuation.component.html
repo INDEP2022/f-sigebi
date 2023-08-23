@@ -12,11 +12,11 @@
         </p>
       </div>
     </div>
-    <div class="d-flex justify-content-center">
-      <h3 class="h3">
+    <div class="d-flex justify-content-center mb-3" style="margin-top: -20px">
+      <h3>
         <span id="lblTipoAccOficio">{{ lblTipoAccOficio }}</span>
         <span id="lbltipOficio">{{ lbltipOficio }}</span>
-        PARA
+        <span> PARA </span>
         <span id="lblDireccion">{{ lblDireccion }}</span>
         <small>
           <span id="lblCvlOfocio">{{ lblCvlOfocio }}</span>
@@ -32,7 +32,7 @@
           <div class="col-md-5">
             <form-field [control]="form.get('event')" label="Evento">
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 formControlName="event"
                 [(ngModel)]="event" />
@@ -53,7 +53,7 @@
           </div>
         </div>
         <!--  -->
-        <div class="row mt-3" *ngIf="true">
+        <div class="row mt-3" *ngIf="pnlControles">
           <div class="col-md-3"></div>
           <div class="col-md-4" style="margin-left: -20px">
             <form-radio label="Oficio de Respuesta">
@@ -73,7 +73,7 @@
                 value="dog"
                 formControlName="radioTwo"
                 [(ngModel)]="redioValueTwo"
-                (change)="onRadioChange()"
+                (change)="onRadioChangeTwo()"
                 [value]="true" />
             </form-radio>
           </div>
@@ -81,12 +81,17 @@
         </div>
         <!--  -->
         <div class="row mt-3">
-          <div class="col-md-6">
+          <div class="col-md-4">
+            <form-field [control]="form.get('fol')" label="Folio">
+              <input type="text" class="form-control" formControlName="key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
             <form-field [control]="form.get('key')" label="Clave">
               <input type="text" class="form-control" formControlName="key" />
             </form-field>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field [control]="form.get('cityCi')" label="Ciudad">
               <!-- <ngx-select
                 [searchOnInit]="true"
@@ -169,6 +174,73 @@
       </form>
     </div>
     <!--  -->
+    <div>
+      <app-card [header]="true">
+        <div header>
+          <div class="ch-content">
+            <h5 class="title">Con Copia Para:</h5>
+          </div>
+        </div>
+        <div body>
+          <form class="form-material" [formGroup]="formThree">
+            <div>
+              <div>
+                <form-radio label="Por Delegación">
+                  <input type="radio" [value]="true" formControlName="byDel" />
+                </form-radio>
+              </div>
+            </div>
+            <div>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formThree.get('user')"
+                    label="Usuario y Nombre">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="user" />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="formThree.get('del')"
+                    label="Delegación">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="del" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5"></div>
+              <div class="col-md-3">
+                <button id="btnAgregar" class="btn btn-default btn-block">
+                  Agregar Usuario
+                </button>
+              </div>
+              <div class="col-md-3">
+                <button id="Button2" class="btn btn-danger btn-block">
+                  Quitar Usuario
+                </button>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-md-10">
+                <select multiple class="form-control" id="lsbConCopia"></select>
+              </div>
+              <div class="col-md-1"></div>
+            </div>
+          </form>
+        </div>
+      </app-card>
+    </div>
+    <br />
+    <!--  -->
     <div class="mt-5">
       <div>
         <ng2-smart-table
@@ -188,7 +260,7 @@
           [source]="dataTwo"></ng2-smart-table>
       </div>
       <div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
         </app-pagination>
       </div>
     </div>
@@ -197,8 +269,9 @@
       <div>
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <div class="row" *ngIf="pnlControles2">
-            <div class="col-md-5">
+          <!-- <div class="row" *ngIf="pnlControles2"> -->
+          <div class="row" *ngIf="true">
+            <div class="col-md-4">
               <form-field
                 [control]="formTwo.get('allGood')"
                 label="Total de Bienes">
@@ -222,8 +295,11 @@
                 </ng-select>
               </form-field>
             </div>
-            <div class="col-md-2" *ngIf="btnMotCan">
-              <button class="btn btn-primary btn-sm active mr-3">
+            <!-- <div class="col-md-3" *ngIf="btnMotCan"> -->
+            <div class="col-md-3" *ngIf="true">
+              <button
+                class="btn btn-primary btn-sm active mr-3"
+                (click)="reasonsForChange()">
                 Motivos de Cambio a REV
               </button>
             </div>
@@ -231,7 +307,9 @@
           <!--  -->
           <div class="row">
             <div class="col-md-6">
-              <button class="btn btn-sm btn-success active">
+              <button
+                class="btn btn-sm btn-success active"
+                (click)="exportExcel()">
                 Exportar a Excel
                 <i class="bx bx-download float-icon"></i>
               </button>
@@ -332,6 +410,53 @@
             </div>
           </div>
           <!--  -->
+          <!-- Modal #2 -->
+          <div
+            style="border: 1px solid black; padding: 10px; border-radius: 20px"
+            class="mt-5">
+            <p>Este es el modal #2</p>
+            <div>
+              <div class="row mt-5">
+                <div class="col-md-12">
+                  <p>Notificaciones</p>
+                </div>
+              </div>
+              <!--  -->
+              <div class="mt-5">
+                <div>
+                  <p>Motivos de Cancelación</p>
+                </div>
+                <div>
+                  <ng2-smart-table
+                    [settings]="settingsModal"
+                    [source]="dataModal"
+                    (userRowSelect)="onUserRowSelect($event)"></ng2-smart-table>
+                </div>
+                <div>
+                  <app-pagination
+                    [params]="paramsModal"
+                    [totalItems]="totalItemsModal">
+                  </app-pagination>
+                </div>
+              </div>
+              <!--  -->
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active"
+                    (click)="modifySelectedRows()">
+                    Aceptar
+                  </button>
+                </div>
+                <div class="m-3">
+                  <button type="button" class="btn btn-primary btn-sm active">
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
     </div>
