@@ -106,7 +106,7 @@ export class TableGoodsComponent
     let goodNumber = this.selectedGoods;
     console.log(this.selectedGoods);
     this.alert(
-      'info',
+      'warning',
       'Aviso',
       'La Descarga está en Proceso, favor de Esperar'
     );
