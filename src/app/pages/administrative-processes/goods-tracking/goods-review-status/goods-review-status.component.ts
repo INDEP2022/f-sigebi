@@ -261,7 +261,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       }
     }
 
-    params['sortBy'] = 'goodNumber:ASC';
+    if (params['filter.goodNumber']) {
+      params['filter.goodNumber.id'] = params['filter.goodNumber'];
+      delete params['filter.goodNumber'];
+    }
+
+    params['sortBy'] = 'goodNumber:DESC';
     if (params['filter.descriptionGood']) {
       params['filter.goodNumber.description'] =
         params['filter.descriptionGood'];
@@ -417,7 +422,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
             if (good != null) {
               EXISTE = good.goodNumber.id;
-              vl_ID_EVENTO = good.eventId.id;
+              vl_ID_EVENTO = good.eventId ? good.eventId.id : null;
               ESTATUSB = good.status;
             } else {
               let obj = {
@@ -430,7 +435,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             if (EXISTE > 0) {
               let obj_: any = {
                 goodNumber: excelImport[i].NO_BIEN,
-                eventId: good.eventId.id,
+                eventId: good.eventId ? good.eventId.id : null,
                 goodType: good.goodType,
                 status: good.status,
                 manager: this.responsable,
@@ -823,7 +828,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       params['filter.attended'] = `$eq:0`;
       params['filter.delegation'] = `$eq:${this.delegationNumber}`;
     }
-    params['sortBy'] = 'goodNumber:ASC';
+    params['sortBy'] = 'goodNumber:DESC';
     delete params['limit'];
     delete params['page'];
     this.massiveGoodService.GetAllGoodsMotivesRevExcel(params).subscribe({
@@ -897,6 +902,14 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         this.loadingBtn2 = true;
+        if (!this.selectedRow.eventId) {
+          this.alert(
+            'warning',
+            'No se puede atender el bien porque no tiene evento asociado',
+            'Verifique'
+          );
+          return;
+        }
         let obj_: any = {
           goodNumber: this.selectedRow.goodNumber,
           eventId: this.selectedRow.eventId
@@ -1295,7 +1308,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     }
     const params = new ListParams();
     console.log('good', good);
-    params['filter.goodNumber'] = `$eq:${good}`;
+    params['filter.goodNumber.id'] = `$eq:${good}`;
     params['filter.attended'] = `$eq:0`;
     this.goodsMotivesrev.getAll(params).subscribe({
       next: async (response: any) => {

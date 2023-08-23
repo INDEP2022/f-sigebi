@@ -23,6 +23,10 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     private previousRouteService: PreviousRouteService
   ) {
     super();
+    // localStorage.setItem(
+    //   'selectedGoodsForPhotos',
+    //   JSON.stringify([54597100, 78])
+    // );
   }
 
   cleanFilters() {
@@ -33,17 +37,17 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   ngOnInit() {
+    this.selectedGoodsByQueryParams = [];
+    if (localStorage.getItem('selectedGoodsForPhotos')) {
+      this.selectedGoodsByQueryParams = JSON.parse(
+        localStorage.getItem('selectedGoodsForPhotos')
+      );
+    }
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         this.origin = null;
         this.showTable = true;
-        this.selectedGoodsByQueryParams = [];
         this.cleanFilters();
-        if (localStorage.getItem('selectedGoodsForPhotos')) {
-          this.selectedGoodsByQueryParams = JSON.parse(
-            localStorage.getItem('selectedGoodsForPhotos')
-          );
-        }
         if (param['origin']) {
           this.origin = param['origin'];
         }

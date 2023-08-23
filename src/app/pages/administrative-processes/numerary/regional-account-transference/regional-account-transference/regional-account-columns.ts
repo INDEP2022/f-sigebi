@@ -27,16 +27,24 @@ export const REGIONAL_ACCOUNT_COLUMNS = {
     sort: false,
   },
   allInterest: {
-    title: 'Intereses',
+    title: 'Interés',
     sort: false,
     type: 'custom',
     showAlways: true,
     renderComponent: InputCellComponent<any>,
     onComponentInitFunction: (instance: InputCellComponent) => {
+      console.log(instance);
+
       instance.inputType = 'number';
+      //instance.value = instance.rowData.allInterest ?? 0
       instance.inputChange.subscribe({
         next: (resp: any) => {
           resp.row.allInterest = resp.value;
+
+          resp.row.total =
+            Number(resp.row.allInterest) + Number(resp.row.val14);
+
+          instance.rowData.total = resp.row.total;
         },
       });
     },

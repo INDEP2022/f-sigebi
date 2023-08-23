@@ -106,7 +106,7 @@ export class TableGoodsComponent
     let goodNumber = this.selectedGoods;
     console.log(this.selectedGoods);
     this.alert(
-      'info',
+      'warning',
       'Aviso',
       'La Descarga está en Proceso, favor de Esperar'
     );
@@ -239,12 +239,11 @@ export class TableGoodsComponent
         accept: '.zip',
         uploadFiles: false,
         service: this.massiveFilePhotoSaveZipService,
-        identificator: this.selectedGoods,
         multiple: false,
         titleFinishUpload: 'Imagenes Cargadas Correctamente',
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
-          if (refresh && this.selectedGoods.includes(this.selectedGood.id)) {
+          if (refresh) {
             this.dataService.showEvent.next(true);
           }
           // console.log(refresh);
