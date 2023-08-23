@@ -1,5 +1,5 @@
 export const VALUATION_REQUEST_COLUMNS = {
-  bien: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
@@ -7,14 +7,14 @@ export const VALUATION_REQUEST_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     sort: false,
   },
 };
 
 export const VALUATION_REQUEST_COLUMNS_VALIDATED = {
-  bien: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
@@ -25,20 +25,46 @@ export const VALUATION_REQUEST_COLUMNS_VALIDATED = {
 };
 
 export const VALUATION_REQUEST_COLUMNS_TWO = {
-  noBien: {
+  no_bien: {
     title: 'No. Bien',
     sort: false,
   },
-  description: {
+  descripcion: {
     title: 'Descripción',
     sort: false,
   },
-  status: {
+  estatus: {
     title: 'Estatus',
     sort: false,
   },
-  motivo: {
+  motivos: {
     title: 'Motivo(s)',
+    sort: false,
+  },
+};
+
+export const VALUATION_REQUEST_COLUMNS_VALIDATED_TWO = {
+  no_bien: {
+    title: 'No. Bien',
+    sort: false,
+  },
+  descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  motivos: {
+    title: 'Motivo(s)',
+    sort: false,
+  },
+};
+
+export const MOT_CAN = {
+  id_motivo: {
+    title: 'No. Motivo',
+    sort: false,
+  },
+  descripcion_motivo: {
+    title: 'Descripcíon',
     sort: false,
   },
 };

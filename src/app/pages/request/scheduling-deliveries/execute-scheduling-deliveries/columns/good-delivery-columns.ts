@@ -66,7 +66,10 @@ export const GOOD_DELIVERY_COLUMN = {
   },
   amountNotDelivered: {
     title: 'Cantidad No Entregados',
-    type: 'string',
+    type: 'custom',
+    filter: false,
+    renderComponent: InputFieldComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   sumGoodNoEnt: {
@@ -76,17 +79,23 @@ export const GOOD_DELIVERY_COLUMN = {
   },
   anountNotAccelted: {
     title: 'Cantidad Bienes No Aceptados',
-    type: 'string',
+    type: 'custom',
+    filter: false,
+    renderComponent: InputFieldComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   sumGoodNoAce: {
-    title: 'Cantidad Bienes No Aceptados',
+    title: 'Suma Bienes No Aceptados',
     type: 'string',
     sort: false,
   },
   amountNotWhithdrawn: {
     title: 'Cantidad Bienes No Retirados',
-    type: 'string',
+    type: 'custom',
+    filter: false,
+    renderComponent: InputFieldComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   sumGoodNoRet: {
@@ -96,6 +105,63 @@ export const GOOD_DELIVERY_COLUMN = {
   },
   missing: {
     title: 'Faltante',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const CONSTANCY_DELIVERY_COLUMNS = {
+  certificateId: {
+    title: 'Id Constancia',
+    type: 'string',
+    sort: false,
+  },
+  folio: {
+    title: 'Folio',
+    type: 'string',
+    sort: false,
+  },
+  certificateType: {
+    title: 'Tipo Constancia',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      let result = '';
+      if (value == 1) result = 'Entregados';
+      if (value == 2) result = 'No Entregados';
+      if (value == 3) result = 'No Aceptados';
+      if (value == 4) result = 'No Retirados';
+
+      return result;
+    },
+  },
+  clientIden: {
+    title: 'Identificación Cliente',
+    type: 'string',
+    sort: false,
+  },
+  repLegalIden: {
+    title: 'Identificación Rep. Legal',
+    type: 'string',
+    sort: false,
+  },
+  clientIdennNum: {
+    title: 'No. Identificación Cliente',
+    type: 'string',
+    sort: false,
+  },
+  repLegalIdenNum: {
+    title: 'No. Identificación Rep. Legal',
+    type: 'string',
+    sort: false,
+  },
+  client: {
+    title: 'Usuario Cliente',
+    type: 'string',
+    sort: false,
+  },
+  repLegal: {
+    title: 'Usuario Rep. Legal',
     type: 'string',
     sort: false,
   },
