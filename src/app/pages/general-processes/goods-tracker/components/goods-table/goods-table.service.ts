@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { catchError, firstValueFrom, map, of, take } from 'rxjs';
+import { catchError, firstValueFrom, map, of, Subject, take, tap } from 'rxjs';
 import { LinkCellComponent } from 'src/app/@standalone/smart-table/link-cell/link-cell.component';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
+import { DocumentsReceptionDataService } from 'src/app/core/services/document-reception/documents-reception-data.service';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 
 const ORIGIN = 'FCONGENRASTREADOR';
@@ -60,6 +62,7 @@ export class GoodsTableService {
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(trackedGood => {
+          this.stateFlag.next();
           this.router.navigate(
             ['/pages/judicial-physical-reception/partializes-goods'],
             {
@@ -193,6 +196,7 @@ export class GoodsTableService {
               ...global,
               NO_EXPEDIENTE_F: '', //falta service
             });
+            this.stateFlag.next();
             this.router.navigate(
               ['/pages/final-destination-process/proof-of-delivery'],
               {
@@ -241,6 +245,7 @@ export class GoodsTableService {
               ...global,
               NO_EXPEDIENTE_F: expedient,
             });
+            this.stateFlag.next();
             this.router.navigate(
               ['/pages/judicial-physical-reception/cancellation-recepcion'],
               {
@@ -294,6 +299,7 @@ export class GoodsTableService {
               ...global,
               NO_EXPEDIENTE_F: expedient,
             });
+            this.stateFlag.next();
             this.router.navigate(
               ['/pages/final-destination-process/destination-acts'],
               {
@@ -321,6 +327,7 @@ export class GoodsTableService {
               NO_EXPEDIENTE_F: trackedGood.fileNumber,
               TIPO_DICTA_F: 'DESTRUCCION',
             });
+            this.stateFlag.next();
             this.router.navigate(
               ['/pages/final-destination-process/proof-of-delivery'],
               {
@@ -352,6 +359,7 @@ export class GoodsTableService {
               ...global,
               NO_EXPEDIENTE_F: expedient,
             });
+            this.stateFlag.next();
             this.router.navigate(
               ['/pages/final-destination-process/return-acts'],
               {
@@ -381,6 +389,7 @@ export class GoodsTableService {
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(trackedGood => {
+          this.stateFlag.next();
           this.router.navigate(
             ['/pages/general-processes/historical-good-situation'],
             {
@@ -407,6 +416,7 @@ export class GoodsTableService {
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -436,6 +446,7 @@ export class GoodsTableService {
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -466,6 +477,7 @@ export class GoodsTableService {
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -496,6 +508,7 @@ export class GoodsTableService {
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -520,6 +533,7 @@ export class GoodsTableService {
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(trackedGood => {
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling'], {
             queryParams: {
               origin: ORIGIN,
@@ -545,7 +559,7 @@ export class GoodsTableService {
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
-
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -576,6 +590,7 @@ export class GoodsTableService {
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
@@ -596,23 +611,25 @@ export class GoodsTableService {
     abandonmentDict: {
       title: 'Dictamen Abandono',
       sort: false,
+      type: 'custom',
       class: 'bg-success',
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(async trackedGood => {
           const flyer = await this.getDictation({
             pDictOrigin: trackedGood.abandonmentDict,
-            pOrigin: TYPES.DONACION,
+            pOrigin: TYPES.ABANDONO,
             goodNumber: trackedGood.goodNumber,
           });
           const flyerType = await this.getNotificationType(flyer);
+          this.stateFlag.next();
           this.router.navigate(['/pages/juridical/juridical-ruling-g'], {
             queryParams: {
               origin: ORIGIN,
               EXPEDIENTE: trackedGood.fileNumber,
               VOLANTE: flyer, //consulta de service
               TIPO_VO: flyerType, //consulta de service
-              TIPO_DIC: TYPES.DONACION,
+              TIPO_DIC: TYPES.ABANDONO,
               CONSULTA: 'S',
               P_GEST_OK: '',
               P_NO_TRAMITE: '',
@@ -622,22 +639,28 @@ export class GoodsTableService {
         });
       },
     },
-    managementNumber: {
-      title: 'Oficio Gestión',
+    keyPositionRelief: {
+      title: 'Clave Oficio',
       sort: false,
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-        instance.onNavigate.subscribe(trackedGood => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const VOLANTE = await this.getFlyerGest(
+            trackedGood.goodNumber,
+            trackedGood.keyPositionRelief
+          );
+          console.log(VOLANTE);
+          this.stateFlag.next();
           this.router.navigate(
             [
               '/pages/documents-reception/flyers-registration/related-document-management/1',
             ],
             {
               queryParams: {
-                origin: ORIGIN,
+                ORIGIN,
                 EXPEDIENTE: trackedGood.fileNumber,
-                VOLANTE: null, //consulta de service
+                VOLANTE,
               },
             }
           );
@@ -690,9 +713,70 @@ export class GoodsTableService {
       sort: false,
       class: 'bg-success-soft',
     },
+    // ! Autoridad emisora
+    // emisorAuthority: {
+    //   title: 'Autoridad Emisora',
+    //   sort: false,
+    //   type: 'custom',
+    //   renderComponent: LinkCellComponent<ITrackedGood>,
+    //   onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+    //     instance.onNavigate.subscribe(async trackedGood => {
+    //       const no_vol = await this.getVWheel({
+    //         pExpedientNumber: trackedGood.fileNumber,
+    //         pGoodNumber: trackedGood.goodNumber,
+    //       });
+    //       this.docsDataService.flyersRegistrationParams = {
+    //         pIndicadorSat: null,
+    //         pGestOk: 1,
+    //         pNoVolante: no_vol,
+    //         pNoTramite: null,
+    //         pSatTipoExp: null,
+    //         noTransferente: null,
+    //       };
+    //       this.stateFlag.next();
+    //       this.router.navigate(
+    //         ['/pages/documents-reception/flyers-registration'],
+    //         {
+    //           queryParams: {
+    //             origin: ORIGIN,
+    //             P_NO_VOLANTE: no_vol, //consulta de service
+    //           },
+    //         }
+    //       );
+    //     });
+    //   },
+    // },
     transfereeD: {
       title: 'Transferente Puesta a Disposición',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const no_vol = await this.getVWheel({
+            pExpedientNumber: trackedGood.fileNumber,
+            pGoodNumber: trackedGood.goodNumber,
+          });
+          this.docsDataService.flyersRegistrationParams = {
+            pIndicadorSat: null,
+            pGestOk: 1,
+            pNoVolante: no_vol,
+            pNoTramite: null,
+            pSatTipoExp: null,
+            noTransferente: null,
+          };
+          this.stateFlag.next();
+          this.router.navigate(
+            ['/pages/documents-reception/flyers-registration'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                P_NO_VOLANTE: no_vol, //consulta de service
+              },
+            }
+          );
+        });
+      },
     },
     emitter: {
       title: 'Emisora',
@@ -705,7 +789,15 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
-
+          this.docsDataService.flyersRegistrationParams = {
+            pIndicadorSat: null,
+            pGestOk: 1,
+            pNoVolante: no_vol,
+            pNoTramite: null,
+            pSatTipoExp: null,
+            noTransferente: null,
+          };
+          this.stateFlag.next();
           this.router.navigate(
             ['/pages/documents-reception/flyers-registration'],
             {
@@ -729,6 +821,7 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          this.stateFlag.next();
           this.router.navigate(
             ['/pages/documents-reception/flyers-registration'],
             {
@@ -756,6 +849,15 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          this.docsDataService.flyersRegistrationParams = {
+            pIndicadorSat: null,
+            pGestOk: 1,
+            pNoVolante: no_vol,
+            pNoTramite: null,
+            pSatTipoExp: null,
+            noTransferente: null,
+          };
+          this.stateFlag.next();
           this.router.navigate(
             ['/pages/documents-reception/flyers-registration'],
             {
@@ -779,6 +881,15 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          this.docsDataService.flyersRegistrationParams = {
+            pIndicadorSat: null,
+            pGestOk: 1,
+            pNoVolante: no_vol,
+            pNoTramite: null,
+            pSatTipoExp: null,
+            noTransferente: null,
+          };
+          this.stateFlag.next();
           this.router.navigate(
             ['/pages/documents-reception/flyers-registration'],
             {
@@ -1156,7 +1267,7 @@ export class GoodsTableService {
       class: 'bg-primary',
     },
   };
-
+  stateFlag = new Subject<void>();
   constructor(
     private router: Router,
     private dictationService: DictationService,
@@ -1165,7 +1276,9 @@ export class GoodsTableService {
     private store: Store,
     private globalVarService: GlobalVarsService,
     private goodProcessService: GoodprocessService,
-    private lotService: LotService
+    private lotService: LotService,
+    private officeManagementService: OfficeManagementService,
+    private docsDataService: DocumentsReceptionDataService
   ) {}
 
   getVWheel(body: {
@@ -1175,7 +1288,11 @@ export class GoodsTableService {
     return firstValueFrom(
       this.goodProcessService.getVSteeringWhel(body).pipe(
         catchError(err => of({ data: [{ no_volante: null }] })),
-        map(res => res.data[0].no_volante)
+        map(res => res.data[0].no_volante),
+        tap(flyer => {
+          if (!flyer) {
+          }
+        })
       )
     );
   }
@@ -1250,5 +1367,11 @@ export class GoodsTableService {
 
   getEventGlobal(goodId: string | number) {
     return firstValueFrom(this.lotService.getGlobalGood(goodId as number));
+  }
+
+  getFlyerGest(noBien: string | number, cveofgestion: string | number) {
+    return firstValueFrom(
+      this.officeManagementService.getFlyer({ noBien, cveofgestion })
+    );
   }
 }
