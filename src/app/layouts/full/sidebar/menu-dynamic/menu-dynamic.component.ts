@@ -20,6 +20,7 @@ export class MenuDynamicComponent implements OnInit {
   updateStorage(item: IMenuItem) {
     if (item.label === 'Características del Bien') {
       localStorage.removeItem('selectedBad');
+      localStorage.removeItem('goodCharacteristicNumber');
     }
     if (item.link === '/pages/general-processes/good-photos') {
       localStorage.removeItem('selectedGoodsForPhotos');
