@@ -317,7 +317,7 @@ export class ConsultationGoodsCommercialSalesComponent
       const data = goodCheck.map((row: any) => this.transFormColums(row));
       this.excelService.export(data, { filename });
     } else {
-      this.alert('warning', 'No Seleccionó ningún Registro', '');
+      this.alert('warning', 'No Seleccionó Ningún Registro', '');
     }
   }
 
@@ -364,7 +364,7 @@ export class ConsultationGoodsCommercialSalesComponent
       this.loading = false;
       this.alert(
         'warning',
-        'Debe especificar al menos un parámetro de búsqueda',
+        'Debe completar al menos un campo de búsqueda',
         ''
       );
     }
@@ -413,7 +413,7 @@ export class ConsultationGoodsCommercialSalesComponent
     if (Object.keys(model).length === 0) {
       this.alert(
         'warning',
-        'Debe especificar al menos un parámetro de búsqueda',
+        'Debe completar al menos un campo de búsqueda',
         ''
       );
       this.loading = false;

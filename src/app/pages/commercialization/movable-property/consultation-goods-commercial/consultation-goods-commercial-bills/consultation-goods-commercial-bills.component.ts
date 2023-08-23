@@ -49,7 +49,7 @@ export class ConsultationGoodsCommercialBillsComponent
       ...this.settings,
       columns: {
         select: {
-          title: '',
+          title: 'Seleccionar',
           sort: false,
           type: 'custom',
           showAlways: true,
@@ -105,10 +105,10 @@ export class ConsultationGoodsCommercialBillsComponent
 
   getData() {
     if (!this.isValid()) {
-      this.onLoadToast(
+      this.alert(
         'warning',
-        'Advertencia',
-        'Debe especificar al menos un parametro de busqueda'
+        '',
+        'Debe completar al menos un campo de búsqueda'
       );
       return;
     }
@@ -156,7 +156,7 @@ export class ConsultationGoodsCommercialBillsComponent
       const data = this.selectedRows.map(row => this.transFormColums(row));
       this.excelService.export(data, { filename });
     } else {
-      this.alert('warning', 'No Seleccionó ningun Registro', '');
+      this.alert('warning', 'No Seleccionó Ningun Registro', '');
     }
   }
 
@@ -177,7 +177,7 @@ export class ConsultationGoodsCommercialBillsComponent
       this.loading = false;
       this.alert(
         'warning',
-        'Debe especificar al menos un parámetro de búsqueda',
+        'Debe completar al menos un campo de búsqueda',
         ''
       );
     }
@@ -343,7 +343,7 @@ export class ConsultationGoodsCommercialBillsComponent
     if (Object.keys(model).length === 0) {
       this.alert(
         'warning',
-        'Debe especificar al menos un parámetro de búsqueda',
+        'Debe completar al menos un campo de búsqueda',
         ''
       );
       this.loading = false;
