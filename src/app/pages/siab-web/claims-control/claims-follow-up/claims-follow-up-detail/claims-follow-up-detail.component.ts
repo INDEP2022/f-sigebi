@@ -276,9 +276,7 @@ export class ClaimsFollowUpDetailComponent extends BasePage implements OnInit {
       delete params['search'];
     }
     params['sortBy'] = 'descripcion:ASC';
-    params['filter.no_delegacion'] = `$eq:${
-      this.authService.decodeToken().department
-    }`;
+    // params['filter.no_delegacion'] = `$eq:${this.authService.decodeToken().department}`;
     this.seraLogService.getObtnObtenUnidadesResp(params).subscribe({
       next: response => {
         this.unitAdminUser = new DefaultSelect(response.data, response.count);
