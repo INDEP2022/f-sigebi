@@ -53,4 +53,9 @@ export class ParameterCatService
       params
     );
   }
+
+  PupArmaClave(params: any) {
+    const route = `${ParameterGoodEndpoints.PupArmaClave}`;
+    return this.post(route, params);
+  }
 }

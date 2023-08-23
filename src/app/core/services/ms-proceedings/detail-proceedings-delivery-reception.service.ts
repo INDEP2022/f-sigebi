@@ -136,4 +136,19 @@ export class DetailProceeDelRecService extends HttpService {
     const route = `${ProceedingsEndpoints.ProceedingsDeliveryReception}/${id}`;
     return this.put(route, params);
   }
+
+  getProcedingbyKey(numFile: number, key: any, id: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.typeProceedings=$eq:CONSENTR&filter.numFile=$eq:${numFile}&filter.keysProceedings=$ilike:${key}&filter.id=$eq:${id}`;
+    return this.get(route);
+  }
+
+  getProceding(id: number) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}?filter.typeProceedings=$eq:CONSENTR&filter.numFile=$eq:${id}`;
+    return this.get(route);
+  }
+
+  postProceeding(params: any) {
+    const route = `${ProceedingsEndpoints.proceedingDelivery}`;
+    return this.post(route, params);
+  }
 }

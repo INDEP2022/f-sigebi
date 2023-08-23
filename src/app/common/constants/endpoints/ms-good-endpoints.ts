@@ -35,6 +35,7 @@ export enum GoodEndpoints {
   GoodsMotivesrev2 = 'goods-motivesrev',
   Sgood = `good/searchGoods`,
   TmpTotGoodsProgrammed = 'tmp-tot-goods-programmed',
+  goodStatus = 'good/filter-status',
 }
 
 export enum GoodProcessPoints {
