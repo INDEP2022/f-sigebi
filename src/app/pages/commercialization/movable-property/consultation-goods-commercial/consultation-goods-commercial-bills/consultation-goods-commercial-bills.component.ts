@@ -105,11 +105,7 @@ export class ConsultationGoodsCommercialBillsComponent
 
   getData() {
     if (!this.isValid()) {
-      this.alert(
-        'warning',
-        '',
-        'Debe completar al menos un campo de búsqueda'
-      );
+      this.alert('warning', '', 'Debe completar al menos un campo de búsqueda');
       return;
     }
 
@@ -175,11 +171,7 @@ export class ConsultationGoodsCommercialBillsComponent
       );
     } else {
       this.loading = false;
-      this.alert(
-        'warning',
-        'Debe completar al menos un campo de búsqueda',
-        ''
-      );
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
     }
   }
 
@@ -341,11 +333,7 @@ export class ConsultationGoodsCommercialBillsComponent
     this.modelSave2 = model;
 
     if (Object.keys(model).length === 0) {
-      this.alert(
-        'warning',
-        'Debe completar al menos un campo de búsqueda',
-        ''
-      );
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
       this.loading = false;
     } else {
       this.spentService.getChargeSpents(model).subscribe(
