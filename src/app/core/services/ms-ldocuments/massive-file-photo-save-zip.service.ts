@@ -22,7 +22,9 @@ export class MassiveFilePhotoSaveZipService extends HttpService {
     const ext = filename.substring(filename.lastIndexOf('.') + 1) ?? '';
     const formData = new FormData();
     formData.append(fileField, file, `FU_${uuidv4()}.${ext}`);
+    const user = localStorage.getItem('username').toUpperCase();
     formData.append('recordNumber', '305315076');
+    formData.append('userCreation', user);
     formData.append('photoDate', new Date().toISOString());
     formData.append('photoDateHc', new Date().toISOString());
     const request = new HttpRequest(
