@@ -168,7 +168,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       },
       error: error => {
         if (error.status == 400) {
-          this.alert('warning', 'Advertencia', 'No Existen Registros');
+          this.alert('warning', 'Advertencia', 'No Existe(n) Registro(s)');
         } else {
           this.alert('error', 'Error', 'Ha Ocurrido un Error');
         }
@@ -229,6 +229,8 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
 
   preValidatedSaveAll() {
     let object: any;
+    let message: string = '';
+    let count: number = 0;
     if (this.lotServiceArray != null) {
       for (const i of this.lotServiceArray) {
         let params: HttpParams = new HttpParams();
@@ -244,6 +246,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
               object.specialGuarantee = i.priceGuarantee;
               object.nbOrigin = '';
               this.putLotParams(object);
+              count++;
             }
           },
           error: error => {
@@ -255,9 +258,21 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
               nbOrigin: '',
             };
             this.postLorParams(object);
+            count++;
           },
         });
       }
+
+      setTimeout(() => {
+        this.resetForm();
+        if (count == this.lotServiceArray.length) {
+          this.alert(
+            'success',
+            'Parámetros por Lote',
+            `Agregados Correctamente`
+          );
+        }
+      }, 1000);
     }
   }
 
