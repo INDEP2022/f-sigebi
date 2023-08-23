@@ -759,6 +759,7 @@ export class RelatedDocumentsComponent
         //console.log(params);
         this.lastRoute = params['LAST_ROUTE'] ?? null;
         this.origin = params['ORIGIN'] ?? null;
+        this.origin = this.origin == null ? params['origin'] : this.origin;
         this.paramsGestionDictamen.volante = params['VOLANTE'] ?? null;
         this.paramsGestionDictamen.expediente = params['EXPEDIENTE'] ?? null;
         this.paramsGestionDictamen.tipoOf = params['TIPO_OF'] ?? null;
@@ -4903,9 +4904,16 @@ export class RelatedDocumentsComponent
   }
 
   goBack() {
-    this.router.navigate(['/pages/juridical/file-data-update'], {
-      queryParams: { wheelNumber: this.formJobManagement.value.flyerNumber },
-    });
+    debugger;
+    if (this.origin == 'FACTGENACTDATEX') {
+      this.router.navigate(['/pages/juridical/file-data-update'], {
+        queryParams: { wheelNumber: this.formJobManagement.value.flyerNumber },
+      });
+    } else if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate(['/pages/general-processes/goods-tracker']);
+    } else {
+      window.history.back();
+    }
   }
 
   updateGood(good: any) {
