@@ -476,6 +476,10 @@ export class ChangeOfGoodClassificationComponent
     return 'catalog/api/v1/good-sssubtype?sortBy=numClasifGoods:ASC';
   }
 
+  get pathExpedient() {
+    return 'expedient/api/v1/expedient';
+  }
+
   onChange(event: IGoodSssubtype) {
     console.log(event);
     // return;
