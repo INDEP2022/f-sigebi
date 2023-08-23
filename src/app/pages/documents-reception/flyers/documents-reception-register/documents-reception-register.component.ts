@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { format, parse } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -214,6 +214,7 @@ export class DocumentsReceptionRegisterComponent
   // };
   pageParams: IDocReceptionFlyersRegistrationParams = null;
   globals: IGlobalVars;
+  origin: string = null;
 
   constructor(
     private router: Router,
@@ -243,9 +244,16 @@ export class DocumentsReceptionRegisterComponent
     private globalVarsService: GlobalVarsService,
     private showHideErrorInterceptorService: showHideErrorInterceptorService,
     private fileUpdComService: FileUpdateCommunicationService,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
+
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        this.origin = params['origin'];
+      });
 
     this.globalVarsService
       .getGlobalVars$()
@@ -354,6 +362,8 @@ export class DocumentsReceptionRegisterComponent
         (this.pageParams.pNoVolante !== null &&
           this.pageParams.pNoVolante !== undefined)
       ) {
+        console.warn('llego aqui');
+
         // this.formControls.wheelNumber.setValue(null);
         // this.formControls.expedientNumber.setValue(null);
         this.documentsReceptionForm.reset();
@@ -4714,6 +4724,10 @@ export class DocumentsReceptionRegisterComponent
   }
 
   endProcess() {
+    if (this.origin == 'FCONGENRASTREADOR') {
+      this.router.navigateByUrl('pages/general-processes/goods-tracker');
+      return;
+    }
     this.resetGlobalVars();
     this.docDataService.flyersRegistrationParams = null;
     this.docDataService.documentsReceptionRegisterForm = null;
