@@ -438,7 +438,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
             this.flagCargaImagenes = true;
             this.flagFinConversion = true;
             this.flagCambia = true;
-            this.flagUpdate = true;
+            this.flagUpdate = false;
             this.flagGoodNew = false;
             this.flagGoodDelete = false;
           }
@@ -531,7 +531,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
     };
     this.serviceGood.update(data).subscribe(
       res => {
-        this.alert('success', 'Bien', `Actualizado Correctamente`);
+        this.alert('success', 'El Bien se ha Actualizado', ``);
       },
       err => {
         this.alert(
@@ -601,8 +601,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         } else {
           const result = await this.alertQuestion(
             'question',
-            'Finalizar Conversión',
-            '¿ Estas Seguro de FINALIZAR la Captura de la Conversión ?'
+            '¿Desea Finalizar la Captura de Conversión?',
+            ''
           );
 
           if (result.isConfirmed) {
@@ -757,6 +757,8 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         let good = this.good;
         delete good.id;
         delete good.goodId;
+        delete good.statusDetails;
+        delete good.menaje;
         good.goodReferenceNumber = this.goodFatherNumber$.getValue();
         good.almacen =
           this.good.almacen != null ? this.good.almacen.idWarehouse : '';
