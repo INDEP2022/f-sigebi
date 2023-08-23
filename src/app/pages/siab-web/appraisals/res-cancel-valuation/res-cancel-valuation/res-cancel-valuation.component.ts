@@ -426,14 +426,14 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     }
     this.idOficio = this.form.controls['office'].value?.jobId;
     // if (this.returnOfOffice() == 2) {
-    if (true) {
+    if (false) {
       this.obtainsValuedAssets(4, this.idOficio);
     } else if (this.returnOfOffice() == 3) {
       this.obtainsCancelAssets(5, this.idOficio);
     }
-    // if (true) {
-    //   this.obtainsCancelAssets(5, this.idOficio);
-    // }
+    if (true) {
+      this.obtainsCancelAssets(5, this.idOficio);
+    }
   }
 
   setButtons(ac: number) {
@@ -510,12 +510,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     console.log('Los datos de filtrado ', body);
     this.serviceAppraise.postGetAppraise(body).subscribe({
       next: response => {
-        console.log('Esta es la respuesta ---------- ', response);
-        console.log('Respuesta: ', response.data);
-        this.data.load(response.data);
-        this.data.refresh();
-        this.totalItems = response.count || 0;
-        this.loading = false;
+        if (response.data && Array.isArray(response.data)) {
+          this.data.load(response.data);
+          this.data.refresh();
+          this.totalItems = response.count || 0;
+          this.loading = false;
+        } else {
+          this.data.load(response);
+          this.data.refresh();
+          this.totalItems = response.count || 0;
+          this.loading = false;
+        }
       },
       error: error => {
         if (error.status == 400) {
@@ -540,10 +545,17 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     body.tpJobIn = numOne;
     this.serviceAppraise.postGetAppraise(body).subscribe({
       next: response => {
-        this.dataTwo.load(response.data);
-        this.dataTwo.refresh();
-        this.totalItemsTwo = response.count || 0;
-        this.loading = false;
+        if (response.data && Array.isArray(response.data)) {
+          this.dataTwo.load(response.data);
+          this.dataTwo.refresh();
+          this.totalItemsTwo = response.count || 0;
+          this.loading = false;
+        } else {
+          this.dataTwo.load(response);
+          this.dataTwo.refresh();
+          this.totalItemsTwo = response.count || 0;
+          this.loading = false;
+        }
       },
       error: error => {
         if (error.status == 400) {
@@ -638,10 +650,12 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   selectedRows: Array<any> = [];
 
   onUserRowSelect(event: any): void {
+    console.log('Esto es de la tabla del modal');
     this.selectedRows = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
   }
 
   onUserRowSelectCancel(event: any): void {
+    console.log('Esto es de la tabla de abajo');
     this.selectedRowsCancel = event.selected; // Aquí, event.selected te dará todas las filas seleccionadas
   }
 
