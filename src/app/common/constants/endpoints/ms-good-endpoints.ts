@@ -1,5 +1,6 @@
 export enum GoodEndpoints {
   Good = `good`,
+  GoodDescription = 'good/getDescription',
   GoodGetSiab = `goods-siab`,
   GoodFraction = 'good/queryFraction',
   GetGoodById = `good/getGoodById`,

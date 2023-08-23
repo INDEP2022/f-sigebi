@@ -94,7 +94,7 @@ export class ActaConvertionFormComponent extends BasePage implements OnInit {
     this.parrafo3 = `- - - CUARTA.- Los  valores de conversión determinados en la Cláusula Tercera son una referencia para ejecutar el destino de [ precisar destino -venta-donación o destrucción__] de los bienes muebles, por lo que cada registro SIAB conserva el número de expediente y de bien, así como los atributos de referencia recibidos del transferente - - - - - - - - - - -  -- - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - - - - - - - - - - - -\n\n
     - - - - - - - - - - - - - - - - - - - - - - - - - -  CIERRE DEL ACTA --------------------------------------------\n
     Se da por concluida la presente acta, siendo las ____ horas del día ____ de __________ de 200__, firmando  al margen y al calce por las personas que en ella intervienen, para todos los efectos a que haya lugar. - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n\n\n\n
-    \t\t\tPOR EL TLP\t\t\tPOR EL S.A.E.\n\n\n\n\n\n
+    \t\t\tPOR EL TLP\t\t\tPOR EL INDEP\n\n\n\n\n\n
     \t\t\tC. _____________________\t\t\t\t\t\t\t\tC. _____________________\n\n\n\n
     Ultima página del Acta Administrativa de Validación y Conversión de Unidades de Medida de Bienes Muebles con Clave ${
       this.selectItem2 != null ? this.selectItem2 : ''
