@@ -1,11 +1,44 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PERSONAL_ESTATE_COLUMNS } from './personal-estate-columns';
 
+const typeContances: any = [
+  {
+    id: 1,
+    name: 'Entregados',
+    noId: 'siEnt',
+  },
+  {
+    id: 2,
+    name: 'No Entregados',
+    noId: 'siNoEnt',
+  },
+  {
+    id: 3,
+    name: 'No Aceptado',
+    noId: 'siNoAce',
+  },
+  {
+    id: 4,
+    name: 'No Retirados',
+    noId: 'siNoRet',
+  },
+];
 @Component({
   selector: 'app-deliveries-constancy-form',
   templateUrl: './deliveries-constancy-form.component.html',
@@ -18,13 +51,35 @@ export class DeliveriesConstancyFormComponent
   @ViewChild('table', { static: false }) table: any;
   typeConstancy: number = null;
   goods: IProgrammingDeliveryGood[] = [];
+  regDele: number = null;
+  progEntrega: any = null;
   deliveryConstancyForm: FormGroup = new FormGroup({});
   showClientForm: boolean = true;
   personalEstates: boolean = true;
   edit: boolean = false;
   personalEstateData: any[] = [];
+  typeEvent: number = null;
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  listTypeConstances = new DefaultSelect();
+  typeReceptor: string = '';
+  lsColumna: string = '';
+  lsColumnaTot: string = '';
+
+  selectEntity = new DefaultSelect();
+  selectReasonNoAcep = new DefaultSelect();
+  selectReasonNoDelive = new DefaultSelect();
+  selectReasonNoWithdrawn = new DefaultSelect();
+
+  public event: EventEmitter<any> = new EventEmitter();
+
+  private programmingGoodService = inject(ProgrammingGoodService);
+  private certifiDeliveryService = inject(CertificatesDeliveryService);
+
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private delegationStateService: DelegationStateService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -36,6 +91,11 @@ export class DeliveriesConstancyFormComponent
     this.settings.columns = PERSONAL_ESTATE_COLUMNS;
     this.prepareForm();
     //personalEstateData
+    this.regDele = this.progEntrega.delRegId;
+    this.listTypeConstances = new DefaultSelect(
+      typeContances,
+      typeContances.length
+    );
     this.personalEstateData = this.goods;
     setTimeout(() => {
       this.setColumns();
@@ -44,20 +104,52 @@ export class DeliveriesConstancyFormComponent
 
   prepareForm() {
     this.deliveryConstancyForm = this.fb.group({
-      radio: ['T.E'],
-      typeConstancy: [null],
-      identification: [null],
-      numIdentification: [null],
-      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      name: [null, [Validators.pattern(STRING_PATTERN)]],
-      position: [null, [Validators.pattern(STRING_PATTERN)]],
-      identificationEstate: [null],
-      numIdentificationEstate: [null],
-      issuedByEstate: [null, [Validators.pattern(STRING_PATTERN)]],
+      receiverType: ['CLIENTE'],
+      certificateType: [this.typeConstancy],
+      //linea 38 - 68
+      publicWritten: [null],
+      writtenDate: [null],
+      graduate: [null],
+      publicNotary: [null],
+      cveState: [null],
+      //linea 65 - 112
+      transport: [null],
+      brand: [null],
+      modal: [null],
+      plate: [null],
+      serie: [null],
+      driver: [null],
+      paperNum: [null],
+      paperDate: [null],
+      //linea 114 -
+      acreditPerson: [null],
+
+      //
+      virtue: [null],
+      reasonsNotAccepted: [null],
+      reasonsNotDelivered: [null],
+      reasonsNotRetired: [null],
+
+      clientIden: [null],
+      clientIdennNum: [null],
+      procClientIdennNum: [null, [Validators.pattern(STRING_PATTERN)]],
+      repLegal: [null, [Validators.pattern(STRING_PATTERN)]],
+      repLegalPosition: [null, [Validators.pattern(STRING_PATTERN)]],
+      repLegalIden: [null],
+      repLegalIdenNum: [null],
+      repLegalIdenProg: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   typeUser(event: Event): string {
+    this.typeReceptor = this.deliveryConstancyForm.get('receiverType').value;
+    if (this.typeReceptor == 'REP_LEGAL') {
+      this.getState(new ListParams());
+    } else {
+      this.selectEntity = new DefaultSelect();
+      this.deliveryConstancyForm.get('cveState').setValue(null);
+    }
+    console.log(this.typeReceptor);
     return (event.target as HTMLInputElement).value;
   }
 
@@ -77,33 +169,110 @@ export class DeliveriesConstancyFormComponent
     const type4 = table.find((x: any) => x.id == 'amountNotWhithdrawn');
     type4.hide = true;
 
-    let lsColumna = '';
-    let lsColumnaTot = '';
     switch (this.typeConstancy) {
       case 1: //amountDelivered
-        (lsColumna = 'amountDelivered'), (lsColumnaTot = 'SumaBienesEnt');
+        this.lsColumna = 'amountDelivered';
+        this.lsColumnaTot = 'sunGoodEnt';
         break;
       case 2:
-        lsColumna = 'CantidadNoEntregados';
-        lsColumnaTot = 'SumaBienesNoEnt';
+        this.lsColumna = 'amountNotDelivered';
+        this.lsColumnaTot = 'sumGoodNoEnt';
         break;
       case 3:
-        lsColumna = 'CantidadNoAceptados';
-        lsColumnaTot = 'SumaBienesNoAce';
+        this.lsColumna = 'anountNotAccelted';
+        this.lsColumnaTot = 'sumGoodNoAce';
         break;
       default:
-        lsColumna = 'CantidadNoRetirados';
-        lsColumnaTot = 'SumaBienesNoRet';
+        this.lsColumna = 'amountNotWhithdrawn';
+        this.lsColumnaTot = 'sumGoodNoRet';
         break;
     }
 
-    const column = table.find((x: any) => x.id == lsColumna);
+    const column = table.find((x: any) => x.id == this.lsColumna);
     column.hide = false;
   }
 
-  confirm() {}
+  getState(params: ListParams) {
+    params.page = 1;
+    params.limit = 10;
+    params['filter.regionalDelegation'] = `$eq:${this.regDele}`;
+    this.delegationStateService.getAll(params).subscribe({
+      next: data => {
+        console.log(data);
+
+        const stateCode = data.data
+          .map((x: any) => {
+            if (x.stateCode != null) {
+              return x.stateCode;
+            }
+          })
+          .filter(x => x != undefined);
+
+        this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
+      },
+      error: error => {},
+    });
+  }
+
+  confirm() {
+    let idProgDelivery = this.progEntrega.id;
+    let folio = this.progEntrega.folio;
+    this.goods.map(async (item: any, _i: number) => {
+      const index = _i + 1;
+      let total = item[this.lsColumnaTot];
+      total = total + item[this.lsColumna];
+
+      const body: any = {};
+      body['id'] = item.id;
+      body['goodId'] = item.goodId;
+      body[this.lsColumnaTot] = total;
+      //const updated = await this.updateProgrammingDeliveryGood(body); //Actualiza la tabla de programacion entrega bienes
+      //console.log(updated)
+      if (index == this.goods.length) {
+        let deliveryForm = this.deliveryConstancyForm.getRawValue();
+        deliveryForm.deliveryScheduleId = idProgDelivery;
+        deliveryForm.folio = folio;
+        //console.log(deliveryForm)
+        //const created = await this.createCertificateDelivery(deliveryForm); //Crea un registro de certificado de entrega
+
+        //if(created){
+        //generar reporte
+        this.event.emit(deliveryForm);
+        //}
+      }
+    });
+  }
 
   close() {
     this.modalRef.hide();
+  }
+
+  updateProgrammingDeliveryGood(body: any) {
+    return new Promise((resolve, reject) => {
+      this.programmingGoodService
+        .updateProgrammingDeliveryGood(body.id, body)
+        .subscribe({
+          next: resp => {
+            resolve(resp);
+          },
+        });
+    });
+  }
+
+  createCertificateDelivery(body: Object) {
+    return new Promise((resolve, reject) => {
+      this.certifiDeliveryService.create(body).subscribe({
+        next: resp => {
+          resolve(resp);
+        },
+        error: error => {
+          reject(error);
+          this.onLoadToast(
+            'error',
+            'No se pudo crear la constancia de entrega'
+          );
+        },
+      });
+    });
   }
 }

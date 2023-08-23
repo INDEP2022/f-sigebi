@@ -140,6 +140,13 @@ export class ProgrammingGoodService implements ICrudMethods<IGoodProgramming> {
     return this.httpClient.get(path);
   }
 
+  updateProgrammingDeliveryGood(id: number, body: Object) {
+    const deliveryGood = ProgrammingGoodEndpoints.GetDeliveryGoods;
+    const path = `${environment.API_URL}/${this.route}/${deliveryGood}/${id}`;
+
+    return this.httpClient.put(path, body);
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
