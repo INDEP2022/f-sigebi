@@ -16,17 +16,17 @@ export const PERSONAL_ESTATE_COLUMNS = {
     sort: false,
   },
   amountNotDelivered: {
-    title: 'Cantidad No Entregados',
+    title: 'Cantidad Bienes No Entregados',
     type: 'number',
     sort: false,
   },
   anountNotAccelted: {
-    title: 'Cantidad No Entregados',
+    title: 'Cantidad Bienes No Aceptados',
     type: 'number',
     sort: false,
   },
   amountNotWhithdrawn: {
-    title: 'Cantidad No Entregados',
+    title: 'Cantidad Bienes No Retirados',
     type: 'number',
     sort: false,
   },
