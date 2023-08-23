@@ -15,6 +15,13 @@
     <app-card [header]="false">
       <div body>
         <div class="d-flex selected">
+          <button
+            class="btn btn-primary btn-sm active"
+            type="button"
+            (click)="importMassive()">
+            Carga Masiva (ZIP)
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </button>
           <div>Seleccionado: {{ goodTemp?.id }}</div>
           <button
             class="btn btn-primary btn-sm active"
@@ -54,8 +61,8 @@
                   </li>
                   <li role="menuitem">
                     <a class="dropdown-item" (click)="openZipUploader()"
-                      >Carga Masiva (ZIP)</a
-                    >
+                      >Carga por Bien (ZIP)
+                    </a>
                   </li>
                   <!-- <li
             role="menuitem"

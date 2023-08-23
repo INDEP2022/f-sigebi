@@ -185,6 +185,9 @@ export class IncomePerAssetComponent
                 filter.search = this.returnParseDate(filter.search);
                 searchFilter = SearchFilter.EQ;
                 break;
+              case 'account':
+                searchFilter = SearchFilter.EQ;
+                break;
               default:
                 searchFilter = SearchFilter.ILIKE;
                 break;
@@ -218,6 +221,9 @@ export class IncomePerAssetComponent
             /*SPECIFIC CASES*/
             switch (filter.field) {
               case 'bank':
+                searchFilter = SearchFilter.EQ;
+                break;
+              case 'account':
                 searchFilter = SearchFilter.EQ;
                 break;
               case 'depositDate':

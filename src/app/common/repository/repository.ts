@@ -375,7 +375,7 @@ export class Repository<T> implements IRepository<T> {
   }
   getClassif(classif: string | number): Observable<IListResponse<T>> {
     return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL}/catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
+      `${environment.API_URL}catalog/api/v1/good-sssubtype?filter.numClasifGoods=$eq:${classif}`
     );
   }
 

@@ -1,5 +1,5 @@
 export const COLUMNS1 = {
-  goodNumb: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
@@ -9,7 +9,7 @@ export const COLUMNS1 = {
     type: 'number',
     sort: false,
   },
-  process: {
+  extDomProcess: {
     title: 'Proceso',
     type: 'string',
     sort: false,

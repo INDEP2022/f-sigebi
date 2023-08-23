@@ -5,72 +5,63 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="ch-content">
+        <h5 class="title">B&uacute;squeda por bien&#58;</h5>
+      </div>
+    </div>
+    <form class="form-material" [formGroup]="form2">
       <div class="row">
-        <div class="ch-content">
-          <h5 class="title">B&uacute;squeda por bien&#58;</h5>
+        <div class="col-md-3 d-flex">
+          <form-radio label="No. Bien">
+            <input
+              type="radio"
+              (input)="onInputChange()"
+              formControlName="filterGoods"
+              value="1" />
+          </form-radio>
+          <form-radio label="Archivo txt">
+            <input
+              type="radio"
+              (input)="onInputChange()"
+              formControlName="filterGoods"
+              value="0" />
+          </form-radio>
         </div>
-        <div class="row">
-          <div class="col-md-3 d-flex">
-            <form-radio label="No. Bien">
-              <input
-                type="radio"
-                (input)="onInputChange()"
-                formControlName="filterGoods"
-                value="1" />
-            </form-radio>
-            <form-radio label="Archivo txt">
-              <input
-                type="radio"
-                (input)="onInputChange()"
-                formControlName="filterGoods"
-                value="0" />
-            </form-radio>
-          </div>
-          <!--<div class="col-md-2">
-            <form-check label="Por bien" for="label1">
-              <input
-                id="label1"
-                type="checkbox"
-                formControlName="filterGoods" />
-            </form-check>
-          </div>
-          <div class="col-md-2">
-            <form-check label="Con archivo de texto" for="label2">
-              <input id="label2" type="checkbox" formControlName="filterText" />
-            </form-check>
-          </div>-->
-          <div class="col-md-4" *ngIf="txtSearch">
-            <label
-              for=""
-              style="font-size: 10px; font-weight: 600; color: #74788d"
-              >Archivo (txt)</label
-            >
-            <form-field [control]="form.get('filterText')">
-              <input
-                type="file"
-                accept="txt"
-                formControlName="filterText"
-                (change)="chargeFile($event)" />
-            </form-field>
-          </div>
-          <div class="col-md-2 mt-5" *ngIf="txtSearch">
-            <div class="justify-content-center">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="validTxt"
-                (click)="show = !show">
-                Buscar bienes
-              </button>
-            </div>
+        <div class="col-md-4" *ngIf="txtSearch">
+          <label
+            for=""
+            style="font-size: 10px; font-weight: 600; color: #74788d"
+            >Archivo (txt)</label
+          >
+          <form-field [control]="form2.get('filterText')">
+            <input
+              type="file"
+              accept="txt"
+              formControlName="filterText"
+              (change)="chargeFile($event)" />
+          </form-field>
+        </div>
+        <div class="col-md-2 mt-5" *ngIf="txtSearch">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="validTxt"
+              (click)="show = !show">
+              Buscar bienes
+            </button>
           </div>
         </div>
       </div>
+    </form>
+
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row" *ngIf="goodSearch">
         <div class="ch-content">
           <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
+
         <div class="row pt-3">
           <div class="col-md-3">
             <form-field [control]="form.get('typeGood')">

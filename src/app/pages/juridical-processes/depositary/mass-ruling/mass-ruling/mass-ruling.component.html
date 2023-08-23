@@ -42,7 +42,12 @@
           <button
             type="submit"
             class="btn btn-primary active btn-sm text-wrap ml-2"
-            (click)="searchDictation()">
+            (click)="searchDictation()"
+            [disabled]="
+              !form.value.expedientNumber ||
+              !form.value.id ||
+              !form.value.wheelNumber
+            ">
             Buscar
           </button>
         </div>

@@ -720,6 +720,7 @@ export class DerivationGoodsComponent extends BasePage implements OnInit {
         this.router.navigate(['pages/general-processes/good-photos'], {
           queryParams: {
             numberGood: this.form.value.numberGoodFather,
+            origin: 'FCONVBIENHIJOS',
           },
         });
       },

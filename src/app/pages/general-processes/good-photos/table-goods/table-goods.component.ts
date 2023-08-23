@@ -7,6 +7,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { SocketService } from 'src/app/common/socket/socket.service';
 import { GoodTrackerService } from 'src/app/core/services/ms-good-tracker/good-tracker.service';
 import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
+import { MassiveFilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/massive-file-photo-save-zip.service';
 import { BasePageWidhtDinamicFiltersExtra } from 'src/app/core/shared/base-page-dinamic-filters-extra';
 import { FullService } from 'src/app/layouts/full/full.service';
 import { environment } from 'src/environments/environment';
@@ -39,7 +40,8 @@ export class TableGoodsComponent
     private goodTrackerService: GoodTrackerService,
     private socketService: SocketService,
     private fullService: FullService,
-    private filePhotoSaveZipService: FilePhotoSaveZipService
+    private filePhotoSaveZipService: FilePhotoSaveZipService,
+    private massiveFilePhotoSaveZipService: MassiveFilePhotoSaveZipService
   ) {
     super();
     // this.haveInitialCharge = false;
@@ -104,7 +106,7 @@ export class TableGoodsComponent
     let goodNumber = this.selectedGoods;
     console.log(this.selectedGoods);
     this.alert(
-      'info',
+      'warning',
       'Aviso',
       'La Descarga está en Proceso, favor de Esperar'
     );
@@ -220,6 +222,28 @@ export class TableGoodsComponent
         questionFinishUpload: '¿Desea subir más imagenes?',
         callback: (refresh: boolean) => {
           if (refresh && this.selectedGoods.includes(this.selectedGood.id)) {
+            this.dataService.showEvent.next(true);
+          }
+          // console.log(refresh);
+          // this.fileUploaderClose(refresh);
+        },
+      },
+    };
+    this.modalService.show(FileUploadModalComponent, config);
+  }
+
+  importMassive() {
+    const config = {
+      ...MODAL_CONFIG,
+      initialState: {
+        accept: '.zip',
+        uploadFiles: false,
+        service: this.massiveFilePhotoSaveZipService,
+        multiple: false,
+        titleFinishUpload: 'Imagenes Cargadas Correctamente',
+        questionFinishUpload: '¿Desea subir más imagenes?',
+        callback: (refresh: boolean) => {
+          if (refresh) {
             this.dataService.showEvent.next(true);
           }
           // console.log(refresh);

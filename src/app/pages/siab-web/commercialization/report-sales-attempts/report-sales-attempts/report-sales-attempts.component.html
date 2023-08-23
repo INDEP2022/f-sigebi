@@ -10,64 +10,156 @@
         <div class="ch-content">
           <h5 class="title">B&uacute;squeda por bien&#58;</h5>
         </div>
+        <div class="row pt-4">
+          <div class="col-md-2">
+            <form-field [control]="form.get('onlyOne')" label="No. Bien">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="onlyOne" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              [disabled]="!form.valid"
+              (click)="consultarOnlyOne()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+            <button
+              class="btn btn-danger btn-sm active m-2"
+              [disabled]="!form.valid"
+              (click)="cleanOnly()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-2">
-            <form-check label="Por bien" for="label1">
-              <input
-                id="label1"
-                type="checkbox"
-                formControlName="filterGoods" />
-            </form-check>
+            <form-radio label="Por Filtrado">
+              <input type="radio" formControlName="radio" value="true" />
+            </form-radio>
           </div>
-          <div class="col-md-2">
-            <form-check label="Con archivo de texto" for="label2">
-              <input id="label2" type="checkbox" formControlName="filterText" />
-            </form-check>
+          <div class="col-md-4">
+            <form-radio label="Con Archivo de Excel">
+              <input type="radio" formControlName="radio" value="false" />
+            </form-radio>
           </div>
-          <div class="col-md-3" *ngIf="filterText.value">
-            <input type="file" (change)="chargeFile($event.target)" />
-          </div>
-          <div class="col-md-2" *ngIf="filterText.value">
-            <div class="justify-content-center">
-              <button
-                type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="!form.valid">
-                Buscar bienes
-              </button>
+          <div class="row" *ngIf="form.controls['radio'].value === 'false'">
+            <div class="ch-content">
+              <h5 class="title">B&uacute;squeda por Excel</h5>
+            </div>
+            <div class="row pt-3">
+              <div class="col-md-6">
+                <div class="justify-content-center">
+                  <button
+                    class="btn btn-success btn-sm ml-2"
+                    type="button"
+                    (click)="file.click()">
+                    Abrir archivo Excel / CSV
+                  </button>
+                  <input
+                    type="file"
+                    name="file"
+                    #file
+                    class="d-none"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    (change)="onFileChange($event)" />
+                  <button
+                    tooltip="Formato de Ejemplo"
+                    containerClass="tooltip-style"
+                    type="button"
+                    class="btn btn-info btn-sm active m-2 pointer"
+                    (click)="exportCsv()">
+                    <i class="bi bi-question-circle"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary active btn-sm m-2"
+                    (click)="consultarBienExcel()">
+                    Buscar Bienes
+                    <i class="bx bx-search-alt bx-sm float-icon"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm active m-2"
+                    [disabled]="!form.valid"
+                    (click)="cleanExcel()">
+                    Limpiar <i class="fas fa-eraser"> </i>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row" *ngIf="filterGoods.value">
+      <div class="row" *ngIf="form.controls['radio'].value === 'true'">
         <div class="ch-content">
           <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
         <div class="row pt-3">
-          <div class="col-md-2">
-            <form-field [control]="form.get('typeGood')" label="Tipo Bien">
-              <ng-select
-                formControlName="typeGood"
-                [searchable]="false"
-                class="form-control"
-                [clearable]="false">
-                <ng-option value="M">Bienes Muebles</ng-option>
-                <ng-option value="I">Bienes Inmuebles</ng-option>
-              </ng-select>
+          <div class="col-md-4">
+            <form-field [control]="form.get('typeGood')">
+              <ngx-select
+                [form]="form"
+                [data]="tiposData"
+                label="Tipo &#45; Subtipo &#45; Descripci&oacute;n"
+                value="clasifGoodNumber"
+                bindLabel="tipoSupbtipoDescription"
+                (fetchItems)="getTodos($event)"
+                control="typeGood">
+              </ngx-select>
             </form-field>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
+            <form-field [control]="form.get('typeStatus')">
+              <ngx-select
+                [form]="form"
+                [data]="tiposstatus"
+                label="Status Bien"
+                value="status"
+                bindLabel="tipoSupbtipoDescription"
+                (fetchItems)="getStatus($event)"
+                control="typeStatus">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
             <div class="justify-content-center">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active"
-                [disabled]="!form.valid">
+                class="btn btn-primary active btn-sm"
+                [disabled]="!form.valid"
+                (click)="consultarBien()">
                 Consultar
+                <i class="bx bx-search-alt bx-sm float-icon"></i>
+              </button>
+              <button
+                class="btn btn-danger btn-sm active m-3"
+                (click)="cleanFilter()">
+                Limpiar Filtro <i class="fas fa-eraser"> </i>
               </button>
             </div>
           </div>
         </div>
       </div>
     </form>
+    <div class="row mt-4" *ngIf="until">
+      <div class="col-md-12">
+        <ng-scrollbar
+          [track]="'all'"
+          [ngStyle]="{ height: loading ? '0px' : '300px' }">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered table-responsive'"
+              [settings]="settings"
+              [source]="source"></ng2-smart-table>
+          </div>
+        </ng-scrollbar>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
   </div>
 </app-card>

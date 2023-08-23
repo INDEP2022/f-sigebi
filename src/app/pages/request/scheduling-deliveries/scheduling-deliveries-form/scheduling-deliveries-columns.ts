@@ -1,41 +1,41 @@
 export const SCHEDULING_DELIVERIES_COLUMNS = {
   item: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'number',
     sort: false,
   },
 
   numberInventary: {
-    title: 'Número de inventario',
+    title: 'No. Inventario',
     type: 'number',
     sort: false,
   },
 
   numberGestion: {
-    title: 'Número de gestión',
+    title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
   goodDescription: {
-    title: 'Descripción de bien',
+    title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
   quantityEstates: {
-    title: 'Cantidad de bienes',
+    title: 'Cantidad Bienes',
     type: 'string',
     sort: false,
   },
 
   unitOfMeasuremet: {
-    title: 'Unidad de medida',
+    title: 'Unidad de Medida',
     type: 'number',
     sort: false,
   },
 
   saeNumber: {
-    title: 'Número INDEP',
+    title: 'No. INDEP',
     type: 'number',
     sort: false,
   },
@@ -43,54 +43,54 @@ export const SCHEDULING_DELIVERIES_COLUMNS = {
 
 export const SCHEDULING_DELIVERIES_SALES_COLUMNS = {
   item: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'number',
     sort: false,
   },
 
   numberInventary: {
-    title: 'Número de inventario',
+    title: 'No. Inventario',
     type: 'number',
     sort: false,
   },
 
   numberGestion: {
-    title: 'Número de gestión',
+    title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
   goodDescription: {
-    title: 'Descripción de bien',
+    title: 'Descripción de Bien',
     type: 'string',
     sort: false,
   },
   quantityEstates: {
-    title: 'Cantidad de bienes',
+    title: 'Cantidad de Bienes',
     type: 'string',
     sort: false,
   },
 
   unitOfMeasuremet: {
-    title: 'Unidad de medida',
+    title: 'Unidad de Medida',
     type: 'number',
     sort: false,
   },
 
   saeNumber: {
-    title: 'Número INDEP',
+    title: 'No. INDEP',
     type: 'number',
     sort: false,
   },
 
   lotCommercial: {
-    title: 'Lote comercial',
+    title: 'Lote Comercial',
     type: 'number',
     sort: false,
   },
 
   eventCommercial: {
-    title: 'Evento comercial',
+    title: 'Evento Comercial',
     type: 'string',
     sort: false,
   },
@@ -104,55 +104,55 @@ export const SCHEDULING_DELIVERIES_SALES_COLUMNS = {
 
 export const SEARCH_SALES_TABLE = {
   item: {
-    title: 'ITEM',
+    title: 'ÍTEM',
     type: 'string',
     sort: false,
   },
 
   numberInventary: {
-    title: 'Número inventario',
+    title: 'No. Inventario',
     type: 'string',
     sort: false,
   },
 
   numberGestion: {
-    title: 'Número gestión',
+    title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
   goodDescription: {
-    title: 'Descripción bien',
+    title: 'Descripción Bien',
     type: 'string',
     sort: false,
   },
 
   quantityEstates: {
-    title: 'Cantidad bienes',
+    title: 'Cantidad Bienes',
     type: 'number',
     sort: false,
   },
 
   unitOfMeasuremet: {
-    title: 'Unidad de medida',
+    title: 'Unidad de Medida',
     type: 'number',
     sort: false,
   },
 
   saeNumber: {
-    title: 'Número INDEP',
+    title: 'No. INDEP',
     type: 'number',
     sort: false,
   },
 
   commercialLot: {
-    title: 'Lote comercial',
+    title: 'Lote Comercial',
     type: 'number',
     sort: false,
   },
 
   commercialEvent: {
-    title: 'Evento comercial',
+    title: 'Evento Comercial',
     type: 'string',
     sort: false,
   },
@@ -160,6 +160,50 @@ export const SEARCH_SALES_TABLE = {
   facture: {
     title: 'Factura',
     type: 'string',
+    sort: false,
+  },
+};
+
+export const SEARCH_DESTRUCTION_TABLE = {
+  item: {
+    title: 'ÍTEM',
+    type: 'string',
+    sort: false,
+  },
+
+  inventoryNum: {
+    title: 'No. Inventario',
+    type: 'string',
+    sort: false,
+  },
+
+  managementNumGoodId: {
+    title: 'No. Gestión',
+    type: 'number',
+    sort: false,
+  },
+
+  goodDescription: {
+    title: 'Descripción Bien',
+    type: 'string',
+    sort: false,
+  },
+
+  quantity: {
+    title: 'Cantidad Bienes',
+    type: 'number',
+    sort: false,
+  },
+
+  uomCode: {
+    title: 'Unidad de Medida',
+    type: 'number',
+    sort: false,
+  },
+
+  goodSiabNum: {
+    title: 'No. INDEP',
+    type: 'number',
     sort: false,
   },
 };
