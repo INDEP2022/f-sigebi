@@ -168,9 +168,9 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
       },
       error: error => {
         if (error.status == 400) {
-          this.alert('warning', 'Advertencia', 'No existen registros');
+          this.alert('warning', 'Advertencia', 'No Existen Registros');
         } else {
-          this.alert('error', 'Error', 'Ha ocurrido un error');
+          this.alert('error', 'Error', 'Ha Ocurrido un Error');
         }
       },
     });
@@ -206,7 +206,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
         return (responseLocal = response.data);
       },
       error: error => {
-        this.alert('error', 'Error', 'Ha ocurrido un error');
+        this.alert('error', 'Error', 'Ha Ocurrido un Error');
         return responseLocal;
       },
     });
@@ -220,7 +220,7 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
         return (responseLocal = response.data);
       },
       error: error => {
-        this.alert('error', 'Error', 'Ha ocurrido un error');
+        this.alert('error', 'Error', 'Ha Ocurrido un Error');
         return responseLocal;
       },
     });
@@ -259,5 +259,9 @@ export class BatchParametersListComponent extends BasePage implements OnInit {
         });
       }
     }
+  }
+
+  resetForm() {
+    this.form.reset();
   }
 }
