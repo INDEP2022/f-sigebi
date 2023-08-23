@@ -10,7 +10,10 @@ import { DictationService } from 'src/app/core/services/ms-dictation/dictation.s
 import { GoodprocessService } from 'src/app/core/services/ms-goodprocess/ms-goodprocess.service';
 import { LotService } from 'src/app/core/services/ms-lot/lot.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
-import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
+import {
+  ProceedingsDeliveryReceptionService,
+  ProceedingsService,
+} from 'src/app/core/services/ms-proceedings';
 import { OfficeManagementService } from 'src/app/core/services/office-management/officeManagement.service';
 import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 
@@ -192,6 +195,12 @@ export class GoodsTableService {
         instance.onNavigate.subscribe(async trackedGood => {
           this.getGlobalVars().subscribe(global => {
             //global NO_EXPEDIENTE_F
+            const expedient = this.getGlobalExpedientF3({
+              pGoodNumber: trackedGood.goodNumber,
+              pConstEntKey: trackedGood.programmingConstentKey as string,
+            });
+            console.warn({ expedient });
+
             this.globalVarService.updateGlobalVars({
               ...global,
               NO_EXPEDIENTE_F: '', //falta service
@@ -223,6 +232,27 @@ export class GoodsTableService {
     keyReceptionMinutes: {
       title: 'Acta Entrega Recepción',
       sort: false,
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const expedient = await this.getGlobalExpedientF({
+            pCveActa: trackedGood.keyReceptionMinutes as string,
+            pGoodNumber: trackedGood.goodNumber,
+            pDelivery: 'ENTREGA',
+          });
+          this.stateFlag.next();
+          this.router.navigate(
+            ['/pages/judicial-physical-reception/confiscated-records'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                NO_EXPEDIENTE_F: expedient ?? trackedGood.fileNumber,
+              },
+            }
+          );
+        });
+      },
     },
     keyCancelationMinutes: {
       title: 'Acta Recepción Canc. / Susp.',
@@ -233,28 +263,20 @@ export class GoodsTableService {
         instance.onNavigate.subscribe(async trackedGood => {
           const expedient = await this.getGlobalExpedientF2({
             pGoodNumber: trackedGood.goodNumber,
-            pCveActa: trackedGood.programmingConstentKey as string,
+            pCveActa: trackedGood.keyCancelationMinutes as string,
             pRecepCan: 'RECEPCAN',
             pSuspension: 'SUSPENSION',
           });
-          console.log(expedient);
-
-          this.getGlobalVars().subscribe(global => {
-            //global NO_EXPEDIENTE_F
-            this.globalVarService.updateGlobalVars({
-              ...global,
-              NO_EXPEDIENTE_F: expedient,
-            });
-            this.stateFlag.next();
-            this.router.navigate(
-              ['/pages/judicial-physical-reception/cancellation-recepcion'],
-              {
-                queryParams: {
-                  origin: ORIGIN,
-                },
-              }
-            );
-          });
+          this.stateFlag.next();
+          this.router.navigate(
+            ['/pages/judicial-physical-reception/cancellation-recepcion'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                NO_EXPEDIENTE_F: expedient,
+              },
+            }
+          );
         });
       },
       class: 'bg-warning',
@@ -291,24 +313,16 @@ export class GoodsTableService {
             pCveActa: trackedGood.keyDestMinutes as string,
             pDelivery: 'DESTINO',
           });
-          console.log(expedient);
-
-          this.getGlobalVars().subscribe(global => {
-            //global NO_EXPEDIENTE_F
-            this.globalVarService.updateGlobalVars({
-              ...global,
-              NO_EXPEDIENTE_F: expedient,
-            });
-            this.stateFlag.next();
-            this.router.navigate(
-              ['/pages/final-destination-process/destination-acts'],
-              {
-                queryParams: {
-                  origin: ORIGIN,
-                },
-              }
-            );
-          });
+          this.stateFlag.next();
+          this.router.navigate(
+            ['/pages/final-destination-process/destination-acts'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                NO_EXPEDIENTE_F: expedient,
+              },
+            }
+          );
         });
       },
       class: 'bg-warning',
@@ -319,17 +333,20 @@ export class GoodsTableService {
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-        instance.onNavigate.subscribe(trackedGood => {
-          //global NO_EXPEDIENTE_F TIPO_DICTA_F
+        instance.onNavigate.subscribe(async trackedGood => {
+          const expedient = await this.getExpedientDeliveryRecep(
+            trackedGood.keyDestructionMinutes as string,
+            'DESTRUCCION'
+          );
           this.getGlobalVars().subscribe(global => {
             this.globalVarService.updateGlobalVars({
               ...global,
-              NO_EXPEDIENTE_F: trackedGood.fileNumber,
+              NO_EXPEDIENTE_F: expedient ?? trackedGood.fileNumber,
               TIPO_DICTA_F: 'DESTRUCCION',
             });
             this.stateFlag.next();
             this.router.navigate(
-              ['/pages/final-destination-process/proof-of-delivery'],
+              ['/pages/final-destination-process/destruction-acts'],
               {
                 queryParams: {
                   origin: ORIGIN,
@@ -339,6 +356,27 @@ export class GoodsTableService {
           });
         });
       },
+      // onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+      //   instance.onNavigate.subscribe(trackedGood => {
+      //     //global NO_EXPEDIENTE_F TIPO_DICTA_F
+      //     this.getGlobalVars().subscribe(global => {
+      //       this.globalVarService.updateGlobalVars({
+      //         ...global,
+      //         NO_EXPEDIENTE_F: trackedGood.fileNumber,
+      //         TIPO_DICTA_F: 'DESTRUCCION',
+      //       });
+      //       this.stateFlag.next();
+      //       this.router.navigate(
+      //         ['/pages/final-destination-process/proof-of-delivery'],
+      //         {
+      //           queryParams: {
+      //             origin: ORIGIN,
+      //           },
+      //         }
+      //       );
+      //     });
+      //   });
+      // },
       class: 'bg-warning',
     },
     keyDevolutionMinutes: {
@@ -349,26 +387,17 @@ export class GoodsTableService {
       renderComponent: LinkCellComponent<ITrackedGood>,
       onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
         instance.onNavigate.subscribe(async trackedGood => {
-          const expedient = await this.getGlobalExpedientF({
-            pGoodNumber: trackedGood.goodNumber,
-            pCveActa: trackedGood.keyDestMinutes as string,
-            pDelivery: 'DEVOLUCION',
-          });
-          this.getGlobalVars().subscribe(global => {
-            this.globalVarService.updateGlobalVars({
-              ...global,
-              NO_EXPEDIENTE_F: expedient,
-            });
-            this.stateFlag.next();
-            this.router.navigate(
-              ['/pages/final-destination-process/return-acts'],
-              {
-                queryParams: {
-                  origin: ORIGIN,
-                },
-              }
-            );
-          });
+          const expedient = trackedGood.fileNumber;
+          this.stateFlag.next();
+          this.router.navigate(
+            ['/pages/final-destination-process/return-acts'],
+            {
+              queryParams: {
+                origin: ORIGIN,
+                expediente: expedient,
+              },
+            }
+          );
         });
       },
     },
@@ -383,7 +412,7 @@ export class GoodsTableService {
       class: 'bg-warning',
     },
     extDomIniProcess: {
-      title: 'Historico del Bien',
+      title: 'Historico del Proceso',
       sort: false,
       type: 'custom',
       renderComponent: LinkCellComponent<ITrackedGood>,
@@ -821,6 +850,14 @@ export class GoodsTableService {
             pExpedientNumber: trackedGood.fileNumber,
             pGoodNumber: trackedGood.goodNumber,
           });
+          this.docsDataService.flyersRegistrationParams = {
+            pIndicadorSat: null,
+            pGestOk: 1,
+            pNoVolante: no_vol,
+            pNoTramite: null,
+            pSatTipoExp: null,
+            noTransferente: null,
+          };
           this.stateFlag.next();
           this.router.navigate(
             ['/pages/documents-reception/flyers-registration'],
@@ -913,30 +950,30 @@ export class GoodsTableService {
     keyEvent: {
       title: 'Clave del Evento',
       sort: false,
-      // type: 'custom',
-      // renderComponent: LinkCellComponent<ITrackedGood>,
-      // onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
-      //   instance.onNavigate.subscribe(async trackedGood => {
-      //     const eventKey = await this.getEventKey({
-      //       pcveEvent: trackedGood.keyEvent as string,
-      //       pGoodNumber: trackedGood.goodNumber,
-      //     });
-      //     const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
-      //     console.log({ eventKey, goodNum });
+      type: 'custom',
+      renderComponent: LinkCellComponent<ITrackedGood>,
+      onComponentInitFunction: (instance: LinkCellComponent<ITrackedGood>) => {
+        instance.onNavigate.subscribe(async trackedGood => {
+          const eventKey = await this.getEventKey({
+            pcveEvent: trackedGood.keyEvent as string,
+            pGoodNumber: trackedGood.goodNumber,
+          });
+          const goodNum = await this.getEventGlobal(trackedGood.goodNumber);
+          console.log({ eventKey, goodNum });
 
-      //     //Globals ID_EVENTO_F NO_BIEN_F
-      //     this.router.navigate(
-      //       [
-      //         '/pages/commercialization/consultation-goods-commercial-process-tabs',
-      //       ],
-      //       {
-      //         queryParams: {
-      //           origin: ORIGIN,
-      //         },
-      //       }
-      //     );
-      //   });
-      // },
+          //Globals ID_EVENTO_F NO_BIEN_F
+          this.router.navigate(
+            [
+              '/pages/commercialization/consultation-goods-commercial-process-tabs',
+            ],
+            {
+              queryParams: {
+                origin: ORIGIN,
+              },
+            }
+          );
+        });
+      },
       class: 'bg-info',
     },
     lotEvent: {
@@ -1278,7 +1315,8 @@ export class GoodsTableService {
     private goodProcessService: GoodprocessService,
     private lotService: LotService,
     private officeManagementService: OfficeManagementService,
-    private docsDataService: DocumentsReceptionDataService
+    private docsDataService: DocumentsReceptionDataService,
+    private proceedingDeliveryReception: ProceedingsDeliveryReceptionService
   ) {}
 
   getVWheel(body: {
@@ -1372,6 +1410,17 @@ export class GoodsTableService {
   getFlyerGest(noBien: string | number, cveofgestion: string | number) {
     return firstValueFrom(
       this.officeManagementService.getFlyer({ noBien, cveofgestion })
+    );
+  }
+
+  getExpedientDeliveryRecep(keysProceedings: string, typeProceedings?: string) {
+    const params = new FilterParams();
+    params.addFilter('keysProceedings', keysProceedings);
+    params.addFilter('typeProceedings', typeProceedings);
+    return firstValueFrom(
+      this.proceedingDeliveryReception
+        .getAll(params.getParams())
+        .pipe(map(response => response.data[0]?.numFile ?? null))
     );
   }
 }
