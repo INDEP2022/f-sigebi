@@ -37,6 +37,7 @@ export enum GoodEndpoints {
   Sgood = `good/searchGoods`,
   TmpTotGoodsProgrammed = 'tmp-tot-goods-programmed',
   GoodNumberSol = 'good/get-data-good-typegood',
+  ExportExcelGoodBad = 'attrib-good-bad/get-all-export',
 }
 
 export enum GoodProcessPoints {

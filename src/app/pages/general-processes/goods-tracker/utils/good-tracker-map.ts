@@ -163,4 +163,5 @@ export class GoodTrackerMap {
     relGoods: null,
     relExpe: null,
   };
+  gabinete?: boolean;
 }

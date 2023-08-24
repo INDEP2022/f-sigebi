@@ -1,17 +1,20 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FullService } from 'src/app/layouts/full/full.service';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
 import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-columns';
 @Component({
@@ -25,13 +28,16 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   groups: any;
   addMo: string;
+  // binaryExcel: IAttribGoodBad;
+  excelLoading: boolean = false;
+  // binaryExcel: IAttribGoodBad;
   motives: any[] = [];
-  dataExcel: any[] = [];
+  dataExcel: IAttribGoodBad[] = [];
   goodBad: IAttribGoodBad[];
   userName: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
-
+  @Input() filters: IAttribGoodBad;
   paramsScreen: IParamsLegalOpinionsOffice = {
     PAQUETE: '',
     P_GEST_OK: '',
@@ -54,8 +60,11 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private fullService: FullService,
+    private socketService: SocketService,
     private excelService: ExcelService,
     private token: AuthService,
+    private modalRef: BsModalRef,
     private goodService: GoodService,
     public router: Router,
     private activatedRoute: ActivatedRoute
@@ -230,16 +239,76 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       );
     }
   }
-  exportToExcel() {
-    this.loading = true;
-    if (this.goodBad.length == 0) {
-      this.alert('info', 'No hay información para descargar', '');
-      this.loading = false;
-      return;
+
+  exportAll(): void {
+    this.excelLoading = true;
+    this.goodService.getExcel().subscribe({
+      next: response => {
+        this.excelLoading = false;
+        this.alert(
+          'info',
+          'Aviso',
+          'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
+        );
+        // this.fullService.generatingFileFlag.next({
+        //   progress: 99,
+        //   showText: true,
+        // });
+        this.downloadDocument('Atributos_Nulos', 'excel', response.base64File);
+        this.modalRef.hide();
+      },
+      error: error => {
+        this.loading = false;
+      },
+    });
+  }
+
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.excelLoading = true;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
+  }
+
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
     }
-    const filename: string = this.userName + '-AtributosNulos';
-    this.loading = false;
-    this.excelService.export(this.dataExcel, { filename });
-    this.alert('success', 'Datos Exportados', '');
+    this.fullService.generatingFileFlag.next({
+      progress: 100,
+      showText: false,
+    });
+
+    return bytes.buffer;
   }
 }
