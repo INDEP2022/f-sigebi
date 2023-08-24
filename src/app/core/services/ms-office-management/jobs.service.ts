@@ -34,6 +34,10 @@ export class JobsService extends HttpService {
     );
   }
 
+  getMoCanById(id: number | string) {
+    return this.get(`application/getReasonsCan/${id}`);
+  }
+
   create(job: any) {
     const route = `${environment.API_URL}officemanagement/api/v1/jobs`;
     return this.httpClient.post(route, job);
