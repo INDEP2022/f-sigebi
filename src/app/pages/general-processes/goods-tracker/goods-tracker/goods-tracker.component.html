@@ -117,7 +117,9 @@
   [selectedGooods]="selectedGooods"
   [formCheckbox]="formCheckbox"
   [loading]="loading"
-  *ngIf="showTable && !formCheckbox.controls.lookPhoto.value"
+  [style.display]="
+    showTable && !formCheckbox.controls.lookPhoto.value ? '' : 'none'
+  "
   [goods]="goods"
   [params]="_params"
   [formData]="form"
@@ -126,7 +128,9 @@
   [filters]="filters"></goods-table>
 <photo-galery
   [formCheckbox]="formCheckbox"
-  *ngIf="showTable && formCheckbox.controls.lookPhoto.value"
+  [style.display]="
+    showTable && formCheckbox.controls.lookPhoto.value ? '' : 'none'
+  "
   [goods]="goods"
   [loading]="loading"
   [params]="_params"

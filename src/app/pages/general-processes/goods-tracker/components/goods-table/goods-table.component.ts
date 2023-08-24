@@ -230,6 +230,15 @@ export class GoodsTableComponent extends BasePage implements OnInit {
     this.$unSubscribe.subscribe({
       complete: () => this.saveFilterState(),
     });
+
+    this.goodsTableService.stateFlag
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(() => {
+          this.saveState = true;
+        })
+      )
+      .subscribe();
   }
 
   saveFilterState() {

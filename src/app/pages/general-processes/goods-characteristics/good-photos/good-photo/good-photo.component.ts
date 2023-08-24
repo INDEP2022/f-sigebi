@@ -8,7 +8,10 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { BasePage } from 'src/app/core/shared';
 import { getMimeTypeFromBase64 } from 'src/app/utils/functions/get-mime-type';
 
@@ -22,7 +25,7 @@ const NO_IMAGE_FOUND = 'assets/images/documents-icons/not-found.jpg';
   styleUrls: ['./good-photo.component.scss'],
 })
 export class GoodPhotoComponent extends BasePage implements OnInit {
-  @Input() filename: string = '';
+  @Input() file: IPhotoFile = null;
   @Input() goodNumber: string = null;
   @ViewChild('container', { static: true })
   imgSrc: string | SafeResourceUrl = null;
@@ -49,12 +52,16 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
     }
   }
 
+  get filename() {
+    return this.file ? this.file.name : '';
+  }
+
   private filenameChange() {
     this.loading = true;
-    let index = this.filename.indexOf('F');
+    let index = this.file.name.indexOf('F');
     console.log(index);
     this.subscription = this.service
-      .getById(this.goodNumber, +this.filename.substring(index + 1, index + 5))
+      .getById(this.goodNumber, +this.file.name.substring(index + 1, index + 5))
       .subscribe({
         next: base64 => {
           this.loading = false;
@@ -79,7 +86,7 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
     const bytesSize = 4 * Math.ceil(base64.length / 3) * 0.5624896334383812;
     this.documentLength = bytesSize / 1000;
     const ext =
-      this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
+      this.file.name.substring(this.file.name.lastIndexOf('.') + 1) ?? '';
     // TODO: Checar cuando vengan pdf, img etc
     this.imgSrc = ext.toLowerCase().includes('tif')
       ? this.getUrlTiff(base64)
@@ -93,7 +100,7 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
       const tiff = new Tiff({ buffer });
       const canvas: HTMLCanvasElement = tiff.toCanvas();
       canvas.style.width = '100%';
-      console.log('llego aca', this.filename);
+      console.log('llego aca', this.file.name);
       return this.sanitizer.bypassSecurityTrustResourceUrl(canvas.toDataURL());
     } catch (error) {
       this.error = true;
@@ -104,9 +111,9 @@ export class GoodPhotoComponent extends BasePage implements OnInit {
 
   private getUrlDocument(base64: string) {
     let mimeType;
-    mimeType = getMimeTypeFromBase64(base64, this.filename);
+    mimeType = getMimeTypeFromBase64(base64, this.file.name);
     const ext =
-      this.filename.substring(this.filename.lastIndexOf('.') + 1) ?? '';
+      this.file.name.substring(this.file.name.lastIndexOf('.') + 1) ?? '';
     if (ext?.toLowerCase() == 'pdf') {
       mimeType = 'application/pdf';
       this.isDocument = true;

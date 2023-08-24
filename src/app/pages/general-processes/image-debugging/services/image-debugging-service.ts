@@ -21,7 +21,7 @@ export class GoodsPhotoService extends IPhoGoodWidthData {
   disabledNoClasifBien = true;
   disabledDescripcion = true;
   haveTdictaUser = false;
-  files: string[] = [];
+  files: any[] = [];
   // di_numerario_conciliado: string;
 
   // newGood: any;

@@ -118,7 +118,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
       .subscribe({
         next: global => {
           this.ngGlobal = global;
-          if (this.ngGlobal.REL_BIENES) {
+          if (this.ngGlobal.REL_BIENES && this.data['data'] == null) {
             console.log(this.ngGlobal.REL_BIENES);
             const paramsF = new FilterParams();
             paramsF.addFilter('identificator', this.ngGlobal.REL_BIENES);
@@ -456,6 +456,7 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   }
 
   goToRastreador() {
+    this.data.load([]);
     this.router.navigate(['/pages/general-processes/goods-tracker'], {
       queryParams: { origin: 'FACTADBCAMBIOESTAT' },
     });
