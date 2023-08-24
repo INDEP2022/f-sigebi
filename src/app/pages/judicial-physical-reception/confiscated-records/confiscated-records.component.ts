@@ -201,6 +201,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   idGood: number = null;
   idGoodAct: number = null;
 
+  noExpedientParams: any;
+  returnToTracker: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -227,12 +230,13 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceNotification: NotificationService,
     private attribGoodBadService: AttribGoodBadService,
     private authService: AuthService,
-    private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.returnToTracker = false;
     moment.locale('es');
     this.prepareForm();
     this.form.get('year').setValue(moment(new Date()).format('YYYY'));
@@ -311,15 +315,28 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.btnCSSAct = 'btn-primary';
       }
     });
+
+    this.queryParamsFn();
   }
 
-  queryParamsFn(){
-    this.activatedRoute.queryParams.pipe(
-      takeUntil(this.$unSubscribe),
+  queryParamsFn() {
+    this.activatedRoute.queryParams
+      .pipe(
+        takeUntil(this.$unSubscribe),
         tap(params => {
-          console.log(params)
+          console.log({
+            origin: params['origin'],
+            exp: params['NO_EXPEDIENTE_F'],
+          });
+          this.noExpedientParams = params['NO_EXPEDIENTE_F'] ?? null;
+          if (params['NO_EXPEDIENTE_F']) {
+            this.form.get('expediente').setValue(params['NO_EXPEDIENTE_F']);
+            this.returnToTracker = true;
+            this.searchButton();
+          }
         })
-    ).subscribe()
+      )
+      .subscribe();
   }
 
   getDataUser() {
@@ -3646,6 +3663,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         { queryParams: { noBien: this.idGoodAct } }
       );
     }
+  }
+
+  gotoTracker() {
+    this.router.navigate(['pages/general-processes/goods-tracker']);
   }
 
   selectRowBovedaAlmacen(data: any) {

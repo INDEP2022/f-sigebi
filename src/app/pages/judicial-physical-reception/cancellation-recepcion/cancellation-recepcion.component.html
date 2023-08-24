@@ -9,6 +9,13 @@
           <div class="row">
             <div class="col">
               <button
+                *ngIf="returnToTracker"
+                class="btn btn-primary active btn-sm mr-2 mb-2"
+                (click)="gotoTracker()">
+                Regresar
+                <i class="fas fa-arrow-circle-left"></i>
+              </button>
+              <button
                 id="expedient-number"
                 [class]="loading ? 'disabled' : ''"
                 class="btn btn-primary btn-sm disabled mr-2 active"
