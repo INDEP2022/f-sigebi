@@ -29,7 +29,7 @@
               (change)="typeUser($event)" />
           </form-radio>
         </div>
-
+        <!--  -->
         <div class="row">
           <div class="col-md-6 pt-5">
             <ngx-select
@@ -43,102 +43,207 @@
               [readonly]="true"></ngx-select>
           </div>
         </div>
+        <!--  -->
         <!-- TYPE RECEPTOR == REP_LEGAL -->
-        <!-- <div class="row" *ngIf="typeReceptor == 'REP_LEGAL'">
+        <div class="row" *ngIf="typeEvent == 1 && typeReceptor == 'REP_LEGAL'">
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('publicWritten')" label="Escritura Publica">
-              <input public="text" class="form-control" formControlName="publicWritten" />
+            <form-field
+              [control]="deliveryConstancyForm.get('publicDeed')"
+              label="Escritura Publica">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="publicDeed" />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('writtenDate')" label="Fecha Escritura">
-              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            <form-field
+              [control]="deliveryConstancyForm.get('writedate')"
+              label="Fecha Escritura">
+              <input
+                type="text"
+                class="form-control"
+                #dp="bsDatepicker"
+                bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('graduate')" label="Licenciado">
-              <input public="text" class="form-control" formControlName="graduate" />
+            <form-field
+              [control]="deliveryConstancyForm.get('adjudicator')"
+              label="Licenciado">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="adjudicator" />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('publicNotary')" label="Notaria Publica">
-              <input public="text" class="form-control" formControlName="publicNotary" />
+          <div class="col-md-6 pt-5">
+            <form-field
+              [control]="deliveryConstancyForm.get('publicNotary')"
+              label="Notaria Pública">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="publicNotary" />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5">
-            <ngx-select [form]="deliveryConstancyForm" control="cveState" [showTooltip]="false" [data]="selectEntity"
-              (fetchItems)="getState($event)" bindLabel="descCondition" label="Estado" value="id"></ngx-select>
+          <div class="col-md-6 pt-5">
+            <ngx-select
+              [form]="deliveryConstancyForm"
+              control="cveState"
+              [showTooltip]="false"
+              [data]="selectEntity"
+              (fetchItems)="getState($event)"
+              bindLabel="descCondition"
+              label="Estado"
+              value="id"></ngx-select>
           </div>
-        </div> -->
+        </div>
         <!-- FIN -->
         <!-- TYPE EVENT 2 Y 5 -->
-        <!--  <div class="row pt-5" *ngIf="typeEvent == 2 || typeEvent == 5">
-          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
-            <form-field [control]="deliveryConstancyForm.get('transport')" label="Transporte">
-              <input public="text" class="form-control" formControlName="transport" />
+        <div class="row pt-5" *ngIf="typeEvent == 2 || typeEvent == 5">
+          <div
+            class="col-md-4 pt-5"
+            *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field
+              [control]="deliveryConstancyForm.get('transport')"
+              label="Transporte">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="transport" />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
-            <form-field [control]="deliveryConstancyForm.get('brand')" label="Marca">
-              <input public="text" class="form-control" formControlName="brand" />
+          <div
+            class="col-md-4 pt-5"
+            *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field
+              [control]="deliveryConstancyForm.get('marck')"
+              label="Marca">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="marck" />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
-            <form-field [control]="deliveryConstancyForm.get('plate')" label="Placa">
-              <input public="text" class="form-control" formControlName="plate" />
+          <div
+            class="col-md-4 pt-5"
+            *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field
+              [control]="deliveryConstancyForm.get('model')"
+              label="Modelo">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="model" />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
-            <form-field [control]="deliveryConstancyForm.get('serie')" label="Serie">
-              <input public="text" class="form-control" formControlName="serie" />
+          <div
+            class="col-md-4 pt-5"
+            *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field
+              [control]="deliveryConstancyForm.get('plates')"
+              label="Placa">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="plates" />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5" *ngIf="typeConstancy == 1 && typeEvent == 2">
-            <form-field [control]="deliveryConstancyForm.get('driver')" label="Nombre Conductor">
-              <input public="text" class="form-control" formControlName="driver" />
+          <div
+            class="col-md-4 pt-5"
+            *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field
+              [control]="deliveryConstancyForm.get('serie')"
+              label="Serie">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="serie" />
+            </form-field>
+          </div>
+          <div
+            class="col-md-4 pt-5"
+            *ngIf="typeConstancy == 1 && typeEvent == 2">
+            <form-field
+              [control]="deliveryConstancyForm.get('driverName')"
+              label="Nombre Conductor">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="driverName" />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('paperNum')" label="No. Oficio">
-              <input public="text" class="form-control" formControlName="paperNum" />
+            <form-field
+              [control]="deliveryConstancyForm.get('oficioNum')"
+              label="No&#46; Oficio">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="oficioNum" />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('paperDate')" label="Fecha Oficio">
-              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            <form-field
+              [control]="deliveryConstancyForm.get('oficioDate')"
+              label="Fecha Oficio">
+              <input
+                type="text"
+                class="form-control"
+                #dp="bsDatepicker"
+                bsDatepicker />
             </form-field>
           </div>
-        </div> -->
+        </div>
         <!-- FIN -->
         <!-- typeEvent == 4 -->
-        <!-- <div class="row pt-5" *ngIf="typeEvent == 4">
+        <div class="row pt-5" *ngIf="typeEvent == 4">
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('acreditPerson')" label="Acredita Persona">
-              <input public="text" class="form-control" formControlName="acreditPerson" />
+            <form-field
+              [control]="deliveryConstancyForm.get('certifiesPersonality')"
+              label="No&#46; Oficio Devolución">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="certifiesPersonality" />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('writtenDate')" label="Fecha Escritura">
-              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            <form-field
+              [control]="deliveryConstancyForm.get('writedate')"
+              label="Fecha Oficio Devolución">
+              <input
+                type="text"
+                class="form-control"
+                #dp="bsDatepicker"
+                bsDatepicker />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('writtenDate')" label="Fecha Escritura">
-              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
+            <form-field
+              [control]="deliveryConstancyForm.get('oficioNum')"
+              label="No&#46; Oficio">
+              <input
+                public="text"
+                class="form-control"
+                formControlName="oficioNum" />
             </form-field>
           </div>
           <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('paperNum')" label="No. Oficio">
-              <input public="text" class="form-control" formControlName="paperNum" />
+            <form-field
+              [control]="deliveryConstancyForm.get('oficioDate')"
+              label="Fecha Oficio">
+              <input
+                type="text"
+                class="form-control"
+                #dp="bsDatepicker"
+                bsDatepicker />
             </form-field>
           </div>
-          <div class="col-md-4 pt-5">
-            <form-field [control]="deliveryConstancyForm.get('paperDate')" label="Fecha Oficio">
-              <input type="text" class="form-control" #dp="bsDatepicker" bsDatepicker />
-            </form-field>
-          </div>
-        </div> -->
+        </div>
         <!-- FIN -->
+        <!-- TIPO EVENTO != 1 -->
         <div class="row" *ngIf="typeConstancy != 1">
           <div class="col-md-6 pt-5">
             <form-field
@@ -181,15 +286,18 @@
               value="id"></ngx-select>
           </div>
         </div>
-        <div class="row pt-3">
+        <!-- FIN -->
+        <!-- TIPO EVENTO != 1 || TIPO EVENT == 1 Y CONSTANCIA != 4 RECEPTOR CLIENTE -->
+        <div class="row pt-3" *ngIf="validateClientSeccion()">
           <h5 class="title">
             <p>
               <a
                 class="text-color"
                 (click)="showClientForm = true"
                 *ngIf="!showClientForm">
-                <i class="fa fa-angle-right" aria-hidden="true"></i> Cliente</a
-              >
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                {{ typeEvent == 1 ? 'Cliente' : 'Tercero Especializado' }}
+              </a>
             </p>
 
             <p>
@@ -197,60 +305,94 @@
                 class="text-color"
                 (click)="showClientForm = false"
                 *ngIf="showClientForm">
-                <i class="fa fa-angle-down" aria-hidden="true"></i> Cliente</a
-              >
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                {{ typeEvent == 1 ? 'Cliente' : 'Tercero Especializado' }}
+              </a>
             </p>
           </h5>
 
-          <div class="form-group pt-4" *ngIf="showClientForm">
-            <form-field
-              [control]="deliveryConstancyForm.get('clientIden')"
-              label="Identificación">
-              <select class="form-control" formControlName="clientIden">
-                <option [value]="null">Seleccione identificaci&oacute;n</option>
-                <option [value]="1">Credencial de elector</option>
-                <option [value]="2">Pasaporte</option>
-                <option [value]="3">Cartilla militar</option>
-                <option [value]="4">C&eacute;dula profesional</option>
-                <option [value]="5">Crendecial del SAT</option>
-                <option [value]="6">Crendecial del INDEP</option>
-              </select>
-            </form-field>
-          </div>
+          <div class="row" *ngIf="showClientForm">
+            <div>
+              <div class="col-md-6 pt-4" *ngIf="typeEvent != 1">
+                <form-field
+                  [control]="deliveryConstancyForm.get('teName')"
+                  label="Nombre TE">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="teName" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4" *ngIf="typeEvent != 1">
+                <form-field
+                  [control]="deliveryConstancyForm.get('tePosition')"
+                  label="Puesto TE">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="tePosition" />
+                </form-field>
+              </div>
+              <div
+                class="col-md-12 form-group pt-4"
+                *ngIf="typeReceptor != 'REP_LEGAL'">
+                <form-field
+                  [control]="deliveryConstancyForm.get('clientIden')"
+                  label="Identificación">
+                  <select class="form-control" formControlName="clientIden">
+                    <option [value]="null">
+                      Seleccione identificaci&oacute;n
+                    </option>
+                    <option [value]="1">Credencial de elector</option>
+                    <option [value]="2">Pasaporte</option>
+                    <option [value]="3">Cartilla militar</option>
+                    <option [value]="4">C&eacute;dula profesional</option>
+                    <option [value]="5">Crendecial del SAT</option>
+                    <option [value]="6">Crendecial del INDEP</option>
+                  </select>
+                </form-field>
+              </div>
 
-          <div class="col-md-6 pt-2" *ngIf="showClientForm">
-            <form-field
-              [control]="deliveryConstancyForm.get('clientIdennNum')"
-              label="No. identificaci&oacute;n">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="clientIdennNum" />
-            </form-field>
-          </div>
+              <div class="col-md-6 pt-2" *ngIf="typeReceptor != 'REP_LEGAL'">
+                <form-field
+                  [control]="deliveryConstancyForm.get('clientIdennNum')"
+                  label="No&#46; identificaci&oacute;n">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="clientIdennNum" />
+                </form-field>
+              </div>
 
-          <div class="col-md-6 pt-2" *ngIf="showClientForm">
-            <form-field
-              [control]="deliveryConstancyForm.get('procClientIdennNum')"
-              label="Expedida por">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="procClientIdennNum" />
-            </form-field>
+              <div class="col-md-6 pt-2" *ngIf="typeReceptor != 'REP_LEGAL'">
+                <form-field
+                  [control]="deliveryConstancyForm.get('procClientIdennNum')"
+                  label="Expedida por">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="procClientIdennNum" />
+                </form-field>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="row pt-4">
+        <!-- FIN -->
+        <!-- TIPO EVENTO 1 -->
+        <div class="row pt-4" *ngIf="typeEvent == 1">
           <h5 class="title">
             <p>
               <a
                 class="text-color"
                 (click)="personalEstates = true"
                 *ngIf="!personalEstates">
-                <i class="fa fa-angle-right" aria-hidden="true"></i> Personal
-                que entrega los bienes</a
-              >
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                {{
+                  typeEvent == 1
+                    ? 'Personal que entrega los bienes'
+                    : 'Personal SAE'
+                }}
+              </a>
             </p>
 
             <p>
@@ -258,21 +400,25 @@
                 class="text-color"
                 (click)="personalEstates = false"
                 *ngIf="personalEstates">
-                <i class="fa fa-angle-down" aria-hidden="true"></i> Personal que
-                entrega los bienes</a
-              >
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                {{
+                  typeEvent == 1
+                    ? 'Personal que entrega los bienes'
+                    : 'Personal SAE'
+                }}
+              </a>
             </p>
           </h5>
 
           <div class="col-md-6" *ngIf="personalEstates">
             <div class="form-group pt-4">
               <form-field
-                [control]="deliveryConstancyForm.get('repLegal')"
+                [control]="deliveryConstancyForm.get('deliveryName')"
                 label="Nombre">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="repLegal" />
+                  formControlName="deliveryName" />
               </form-field>
             </div>
           </div>
@@ -280,21 +426,21 @@
           <div class="col-md-6" *ngIf="personalEstates">
             <div class="form-group pt-4">
               <form-field
-                [control]="deliveryConstancyForm.get('repLegalPosition')"
+                [control]="deliveryConstancyForm.get('postDelivery')"
                 label="Puesto">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="repLegalPosition" />
+                  formControlName="postDelivery" />
               </form-field>
             </div>
           </div>
 
           <div class="form-group pt-4" *ngIf="personalEstates">
             <form-field
-              [control]="deliveryConstancyForm.get('repLegalIden')"
+              [control]="deliveryConstancyForm.get('deliveryIden')"
               label="Identificaci&oacute;n">
-              <select class="form-control" formControlName="repLegalIden">
+              <select class="form-control" formControlName="deliveryIden">
                 <option [value]="null">Seleccione identificaci&oacute;n</option>
                 <option [value]="1">Credencial de elector</option>
                 <option [value]="2">Pasaporte</option>
@@ -308,26 +454,306 @@
 
           <div class="col-md-6 pt-2" *ngIf="personalEstates">
             <form-field
-              [control]="deliveryConstancyForm.get('repLegalIdenNum')"
-              label="No. identificaci&oacute;n">
+              [control]="deliveryConstancyForm.get('deliveryNum')"
+              label="No&#46; identificaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="repLegalIdenNum" />
+                formControlName="deliveryNum" />
             </form-field>
           </div>
 
           <div class="col-md-6 pt-2" *ngIf="personalEstates">
             <form-field
-              [control]="deliveryConstancyForm.get('repLegalIdenProg')"
+              [control]="deliveryConstancyForm.get('deliveryProcIden')"
               label="Expedida por">
               <input
                 type="text"
                 class="form-control"
-                formControlName="repLegalIdenProg" />
+                formControlName="deliveryProcIden" />
             </form-field>
           </div>
         </div>
+        <!-- FIN -->
+        <!-- INICIA TIPO EVENTO 2, 5 Y 4 -->
+        <div
+          class="row pt-4"
+          *ngIf="typeEvent == 2 || typeEvent == 5 || typeEvent == 4">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showAdminJuridico = true"
+                *ngIf="!showAdminJuridico">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                Administrador Titular Jurídico y de Recepción
+              </a>
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showAdminJuridico = false"
+                *ngIf="showAdminJuridico">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                Administrador Titular Jurídico y de Recepción
+              </a>
+            </p>
+          </h5>
+          <div *ngIf="showAdminJuridico">
+            <div class="row">
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('companyName')"
+                  label="Nombre Empresa">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="companyName" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('positionCompany')"
+                  label="Puesto Empresa">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="positionCompany" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- FIN -->
+        <!-- TIPO EVENT != 1 || TIPO EVENTO 1 Y TIPO RECEPTOR 'REP_LEGAL'-->
+        <div
+          class="row pt-4"
+          *ngIf="
+            typeEvent != 1 || (typeEvent == 1 && typeReceptor == 'REP_LEGAL')
+          ">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showRepLegar = true"
+                *ngIf="!showRepLegar">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                <span *ngIf="typeEvent == 5">Representante Legal Empresa</span>
+                <span *ngIf="typeEvent == 2"
+                  >Representante Legal Donatario</span
+                >
+                <span *ngIf="typeEvent == 4"
+                  >Representante Legal Propietario</span
+                >
+                <!-- <span *ngIf="typeReceptor == 'REPRESENTANTE">
+                  {{typeReceptor == 'REPRESENTANTE? 'Representante':'Representante Lega'}}
+                </span> -->
+              </a>
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showRepLegar = false"
+                *ngIf="showRepLegar">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                <span *ngIf="typeEvent == 1">Representante Legal Empresa</span>
+                <span *ngIf="typeEvent == 2"
+                  >Representante Legal Donatario</span
+                >
+                <span *ngIf="typeEvent == 4"
+                  >Representante Legal Propietario</span
+                >
+                <!-- <span *ngIf="typeReceptor == 'REPRESENTANTE">
+                  {{typeReceptor == 'REPRESENTANTE? 'Representante':'Representante Lega'}}
+                </span> -->
+              </a>
+            </p>
+          </h5>
+          <div *ngIf="showRepLegar">
+            <div class="row">
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('repLegal')"
+                  label="Nombre">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="repLegal" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('repLegalPosition')"
+                  label="Puesto">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="repLegalPosition" />
+                </form-field>
+              </div>
+              <div class="col-md-12 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('repLegalIden')"
+                  label="Identificaci&oacute;n">
+                  <select class="form-control" formControlName="repLegalIden">
+                    <option [value]="null">
+                      Seleccione identificaci&oacute;n
+                    </option>
+                    <option [value]="1">Credencial de elector</option>
+                    <option [value]="2">Pasaporte</option>
+                    <option [value]="3">Cartilla militar</option>
+                    <option [value]="4">C&eacute;dula profesional</option>
+                    <option [value]="5">Crendecial del SAT</option>
+                    <option [value]="6">Crendecial del INDEP</option>
+                  </select>
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('repLegalIdenNum')"
+                  label="No&#46; identificaci&oacute;n">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="repLegalIdenNum" />
+                </form-field>
+              </div>
+
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('repLegalIdenProg')"
+                  label="Expedida por">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="repLegalIdenProg" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- FIN -->
+        <!-- TIPO EVENTO 2 || TIPO EVENTO  5 || TIPO EVENTO 4 -->
+        <div
+          class="row pt-4"
+          *ngIf="typeEvent == 2 || typeEvent == 5 || typeEvent == 4">
+          <h5 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showWitness = true"
+                *ngIf="!showWitness">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                Testigo
+              </a>
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showWitness = false"
+                *ngIf="showWitness">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+                Testigo
+              </a>
+            </p>
+          </h5>
+          <div *ngIf="showWitness">
+            <div class="row">
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('witnessName1')"
+                  label="Nombre 1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="witnessName1" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('witnessName2')"
+                  label="Nombre 2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="witnessName2" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4" *ngIf="typeEvent != 4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('authorizeReceive')"
+                  label="Autoriza">
+                  <select
+                    class="form-control"
+                    formControlName="authorizeReceive">
+                    <option [value]="null">Seleccione el campo</option>
+                    <option [value]="'Y'">Si</option>
+                    <option [value]="'N'">No</option>
+                  </select>
+                </form-field>
+              </div>
+              <div
+                class="col-md-6 pt-4"
+                *ngIf="
+                  deliveryConstancyForm.get('authorizeReceive').value == 'Y'
+                ">
+                <form-field
+                  [control]="deliveryConstancyForm.get('certifiesPersonality')"
+                  label="No&#46; Ofício">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="certifiesPersonality" />
+                </form-field>
+              </div>
+              <div class="col-md-6 pt-4">
+                <form-field
+                  [control]="deliveryConstancyForm.get('oicParticipates')"
+                  label="Participa">
+                  <select
+                    class="form-control"
+                    formControlName="oicParticipates">
+                    <option [value]="null">Seleccione el campo</option>
+                    <option [value]="'Y'">Si</option>
+                    <option [value]="'N'">No</option>
+                  </select>
+                </form-field>
+              </div>
+              <div
+                class="col-md-6 pt-4"
+                *ngIf="
+                  deliveryConstancyForm.get('oicParticipates').value == 'Y'
+                ">
+                <form-field
+                  [control]="deliveryConstancyForm.get('oicName')"
+                  label="Nombre">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="oicName" />
+                </form-field>
+              </div>
+              <div
+                class="col-md-6 pt-4"
+                *ngIf="
+                  deliveryConstancyForm.get('oicParticipates').value == 'Y'
+                ">
+                <form-field
+                  [control]="deliveryConstancyForm.get('oicCall')"
+                  label="Convocatoria">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="oicCall" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- FIN -->
       </form>
       <div class="pt-4">
         <button class="btn btn-primary btn-sm active">Separar</button>

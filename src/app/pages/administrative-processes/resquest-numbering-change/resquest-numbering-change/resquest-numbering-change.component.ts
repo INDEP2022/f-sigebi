@@ -18,6 +18,7 @@ import {
   throwError,
 } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { CustomDateFilterComponent } from 'src/app/@standalone/shared-forms/filter-date-custom/custom-date-filter';
 import {
   FilterParams,
   ListParams,
@@ -164,6 +165,16 @@ export class ResquestNumberingChangeComponent
         title: 'Fecha',
         width: '30%',
         sort: false,
+        valuePrepareFunction: (text: string) => {
+          console.log('text', text);
+          return `${
+            text ? text.split('T')[0].split('-').reverse().join('/') : ''
+          }`;
+        },
+        filter: {
+          type: 'custom',
+          component: CustomDateFilterComponent,
+        },
       },
       amount: {
         title: 'Monto',
@@ -1111,7 +1122,7 @@ export class ResquestNumberingChangeComponent
         ) {
           motivo = 'ASEGURADO PERECEDERO';
         }
-        if (good.goodClassNumber == '319' || good.goodClassNumber == '1078') {
+        if (good.goodClassNumber == 319 || good.goodClassNumber == 1078) {
           motivo = 'ASEGURADO SEMOVIENTE';
         }
 
@@ -1247,27 +1258,6 @@ export class ResquestNumberingChangeComponent
           return;
         }
 
-        // if (good.expediente) {
-        //   if (!good.expediente.id) {
-        //     message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-        //     this.handleSuccess(message);
-        //     // this.validate = true;
-        //     return;
-        //   }
-        // } else {
-        //   message = 'El Bien ' + good.id + ' No tiene Número de Expediente';
-        //   this.handleSuccess(message);
-        //   // this.validate = true;
-        //   return;
-        // }
-
-        // if (good.expediente)
-        //   if (!good.expediente.preliminaryInquiry) {
-        //     message = 'El Bien ' + good.id + ' No tiene Averiguación Previa';
-        //     this.handleSuccess(message);
-        //     // this.validate = true;
-        //     return;
-        //   }
         if (good.status == 'ADM') {
           situacionJuridica = 'ASEGURADO';
         }

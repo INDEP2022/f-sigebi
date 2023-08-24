@@ -173,7 +173,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     clarification.rejectionDate = new Date().toISOString();
     clarification['answered'] = 'NUEVA';
     console.log(this.goodTransfer);
-    return;
+
     this.goodTransfer.map(async (item, _i) => {
       const index = _i + 1;
       clarification.goodId = item.id;
@@ -362,7 +362,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
       body.id = good.id;
       body.goodId = good.goodId;
       //body.goodResdevId = Number(id);
-      body.processStatus = typeClarify;
+      body.processStatus = 'SOLICITAR_ACLARACION'; //typeClarify;
       body.goodStatus = 'SOLICITUD DE ACLARACION';
       body.status = status;
       // debugger;

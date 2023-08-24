@@ -156,8 +156,14 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
   getTransferentData(params?: ListParams) {
     params['sortBy'] = 'cvman:DESC';
+    params['filter.cvman'] = '$not:null';
     if (params.text) {
-      params['filter.nameTransferent'] = `${SearchFilter.ILIKE}:${params.text}`;
+      const isNum = parseInt(params.text);
+      isNum
+        ? (params['filter.cvman'] = `${SearchFilter.EQ}:${params.text}`)
+        : (params[
+            'filter.nameTransferent'
+          ] = `${SearchFilter.ILIKE}:${params.text}`);
     }
     this.transferentService.getAll(params).subscribe({
       next: resp => {
@@ -171,6 +177,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
   getComerClientsData(params?: ListParams) {
     let text: string = '';
+    params['sortBy'] = 'reasonName:ASC';
     if (params.text) {
       params['filter.reasonName'] = `${SearchFilter.ILIKE}:${params.text}`;
       text = params.text;
@@ -182,6 +189,16 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
             .get('Iauthorize')
             .patchValue(resp.data[0].reasonName);
         }
+
+        resp.data.map(name => {
+          if (name.reasonName.includes('null')) {
+            name.reasonName = name.reasonName.replace(
+              new RegExp('null', 'g'),
+              ''
+            );
+          }
+        });
+
         this.dataClient = new DefaultSelect(resp.data, resp.count);
       },
       error: () => {
@@ -192,6 +209,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
   }
 
   getComerClientsData2(params?: ListParams) {
+    params['sortBy'] = 'reasonName:ASC';
     if (params.text) {
       params['filter.reasonName'] = `${SearchFilter.ILIKE}:${params.text}`;
     }
@@ -297,13 +315,11 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
     if (id_evento) {
       this.comerEventService.getDataTpEvents(Number(id_evento)).subscribe({
         next: resp => {
-          console.log(resp);
-
           if (!resp.cve_proceso) {
             this.alert(
               'error',
               'Error',
-              'Evento no existe, debe crear un evento antes de emitir una factura'
+              'No existe la información para el evento seleccionado, no podra emitir una factura'
             );
             return;
           }
@@ -326,7 +342,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
           this.alert(
             'error',
             'Error',
-            'Evento no existe, debe crear un evento antes de emitir una factura'
+            'No existe la información para el evento seleccionado, no podra emitir una factura'
           );
         },
       });
@@ -365,7 +381,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         this.alert(
           'error',
           'Error',
-          'No se encontro facturació de penalización'
+          'No se encontro facturación de penalización'
         );
       },
     });
@@ -380,6 +396,11 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         },
         error: () => {
           this.dataLote = new DefaultSelect();
+          this.alert(
+            'warning',
+            'Atención',
+            'No existe lotes para el evento seleccionado'
+          );
         },
       });
     }
@@ -591,7 +612,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
         })
         .subscribe({
           next: () => {
-            this.alert('success', 'Folios', 'Generado correctamente');
+            this.alert('success', 'Folios', 'Generados Correctamente');
           },
           error: () => {},
         });
@@ -649,7 +670,7 @@ export class PenaltyBillingMainComponent extends BasePage implements OnInit {
 
     this.comerInvoice.deleteFolio({ eventId, invoiceId: billId }).subscribe({
       next: () => {
-        this.alert('success', 'Folios', 'Eliminado Correctamente');
+        this.alert('success', 'Folios', 'Eliminados Correctamente');
         const dataUpdate = this.billingForm.value;
 
         dataUpdate.impressionDate = dataUpdate.impressionDate

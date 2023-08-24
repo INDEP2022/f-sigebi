@@ -28,7 +28,7 @@ import { secondFormatDateToDate2 } from 'src/app/shared/utils/date';
   styles: [
     `
       .bg-gray {
-        background-color: white !important;
+        background-color: #eee !important;
       }
     `,
   ],
@@ -218,22 +218,40 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
     this.paymentService.update(this.data.paymentId, requestBody).subscribe({
       next: response => {
-        this.handleSuccess();
+        if (this.valScroll) {
+          this.alert(
+            'success',
+            'Descripción Pago Sat Actualizada Correctamente',
+            ''
+          );
+          this.loading = false;
+          this.modalRef.content.callback(true);
+          this.modalRef.hide();
+        } else {
+          this.handleSuccess();
+        }
       },
       error: error => {
-        if (
-          error.error.message ==
-          'duplicate key value violates unique constraint "unique_pago"'
-        ) {
+        if (this.valScroll) {
           this.alert(
             'error',
-            'Se ha Encontrado un Registro con estos Datos',
-            'Verifique y Actualice Nuevamente'
+            'Error al Intentar Actualizar la Descripción Pago Sat',
+            ''
           );
         } else {
-          this.handleError();
+          if (
+            error.error.message ==
+            'duplicate key value violates unique constraint "unique_pago"'
+          ) {
+            this.alert(
+              'error',
+              'Se ha Encontrado un Registro con estos Datos',
+              'Verifique y Actualice Nuevamente'
+            );
+          } else {
+            this.handleError();
+          }
         }
-        //
       },
     });
   }
@@ -287,7 +305,7 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
-    this.alert('success', `Registro ${message} Correctamente`, '');
+    this.alert('success', `Pago Referenciado ${message} Correctamente`, '');
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
@@ -295,7 +313,11 @@ export class NewAndUpdateComponent extends BasePage implements OnInit {
 
   handleError() {
     const message: string = this.edit ? 'Actualizar' : 'Guardar';
-    this.alert('error', `Error al Intentar ${message} el Registro`, '');
+    this.alert(
+      'error',
+      `Error al Intentar ${message} el Pago Referenciado`,
+      ''
+    );
     this.loading = false;
   }
 

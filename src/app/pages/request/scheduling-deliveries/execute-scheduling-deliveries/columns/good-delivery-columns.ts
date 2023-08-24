@@ -135,7 +135,12 @@ export const CONSTANCY_DELIVERY_COLUMNS = {
       return result;
     },
   },
-  clientIden: {
+  identificator: {
+    title: 'Identificación',
+    type: 'string',
+    sort: false,
+  },
+  /* clientIden: {
     title: 'Identificación Cliente',
     type: 'string',
     sort: false,
@@ -144,8 +149,13 @@ export const CONSTANCY_DELIVERY_COLUMNS = {
     title: 'Identificación Rep. Legal',
     type: 'string',
     sort: false,
+  }, */
+  IdennNum: {
+    title: 'No. Identificación',
+    type: 'string',
+    sort: false,
   },
-  clientIdennNum: {
+  /* clientIdennNum: {
     title: 'No. Identificación Cliente',
     type: 'string',
     sort: false,
@@ -154,8 +164,13 @@ export const CONSTANCY_DELIVERY_COLUMNS = {
     title: 'No. Identificación Rep. Legal',
     type: 'string',
     sort: false,
+  }, */
+  name: {
+    title: 'Nombre',
+    type: 'string',
+    sort: false,
   },
-  client: {
+  /* client: {
     title: 'Usuario Cliente',
     type: 'string',
     sort: false,
@@ -164,5 +179,5 @@ export const CONSTANCY_DELIVERY_COLUMNS = {
     title: 'Usuario Rep. Legal',
     type: 'string',
     sort: false,
-  },
+  }, */
 };
