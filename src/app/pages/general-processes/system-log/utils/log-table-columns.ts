@@ -18,11 +18,15 @@ export const LOG_TABLE_COLUMNS = {
   cad_modif1: {
     title: 'Modificación',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (modif1: string, row: any) => {
+      return modif1.replaceAll('&&', `<br>`) ?? '';
+    },
   },
   modif3: {
     title: 'Observaciones',
     sort: false,
-    valuePrepareFunction: (user: string, row: any) => {
+    valuePrepareFunction: (modif3: string, row: any) => {
       if (!row.bitacora_id) {
         return '';
       }

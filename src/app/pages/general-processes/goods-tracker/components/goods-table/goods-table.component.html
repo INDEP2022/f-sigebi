@@ -60,7 +60,8 @@
         <app-columns-select
           class="mx-1"
           [(settings)]="settings"
-          (settingsChange)="setterColorRow($event)"></app-columns-select>
+          (settingsChange)="setterColorRow($event)"
+          [leftList]="true"></app-columns-select>
         <div>
           <div class="btn-group mx-1" dropdown>
             <button

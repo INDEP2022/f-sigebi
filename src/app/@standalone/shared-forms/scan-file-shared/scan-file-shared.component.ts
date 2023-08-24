@@ -34,6 +34,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
   @Input() cveScreen: string;
   @Input() reportPrint: string;
   @Input() replicateFolioView: boolean = true;
+  @Input() actaSC: boolean = false;
 
   @Output() emitfileNumber = new EventEmitter();
 
@@ -262,10 +263,17 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
                         ),
                       };
                       const paramsF = new FilterParams();
-                      paramsF.addFilter(
-                        'keysProceedings',
-                        this.form.get('acta2').value
-                      );
+                      if (this.actaSC) {
+                        paramsF.addFilter(
+                          'keysProceedings',
+                          this.form.get('acta2').value
+                        );
+                      } else {
+                        paramsF.addFilter(
+                          'keysProceedings',
+                          this.form.get(this.formControlName).value
+                        );
+                      }
                       this.serviceProcVal
                         .getByFilter(paramsF.getParams())
                         .subscribe(
@@ -372,6 +380,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
             'Continuar'
           ).then(q => {
             if (q.isConfirmed) {
+              this.savedLocal();
               this.goToScan();
             }
           });
@@ -420,6 +429,7 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
           const idMedium = data.data[0]['mediumId'];
 
           if (scanStatus === 'ESCANEADO') {
+            this.savedLocal();
             this.goToScan();
           } else {
             this.alert(
@@ -432,5 +442,10 @@ export class ScanFileSharedComponent extends BasePage implements OnInit {
     } else {
       this.alert('warning', 'No tiene folio de escaneo para visualizar.', '');
     }
+  }
+
+  savedLocal() {
+    localStorage.setItem('expediente', this.noExpedient.toString());
+    localStorage.setItem('folio', this.form.get(this.formControlName).value);
   }
 }
