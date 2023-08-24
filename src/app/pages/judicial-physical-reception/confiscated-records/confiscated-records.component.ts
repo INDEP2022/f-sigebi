@@ -5,12 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, takeUntil, tap } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -226,7 +226,8 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceHistoryGood: HistoryGoodService,
     private serviceNotification: NotificationService,
     private attribGoodBadService: AttribGoodBadService,
-    private authService: AuthService
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute,
   ) {
     super();
   }
@@ -310,6 +311,15 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.btnCSSAct = 'btn-primary';
       }
     });
+  }
+
+  queryParamsFn(){
+    this.activatedRoute.queryParams.pipe(
+      takeUntil(this.$unSubscribe),
+        tap(params => {
+          console.log(params)
+        })
+    ).subscribe()
   }
 
   getDataUser() {
