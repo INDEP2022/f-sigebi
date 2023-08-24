@@ -124,10 +124,14 @@
         <button class="btn btn-success btn-sm active">
           <i class="fa fa-arrow-down" aria-hidden="true"></i> Descargar
         </button>
-        <button class="btn btn-primary btn-sm active" (click)="delivery()">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="delivery('entragados')">
           <i class="fa fa-check-circle" aria-hidden="true"></i> Entregados
         </button>
-        <button class="btn btn-danger btn-sm active">
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="noDelivery('noEntregados')">
           <i class="fa fa-times-circle" aria-hidden="true"></i> No entregados
         </button>
       </div>
