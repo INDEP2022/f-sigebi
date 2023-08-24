@@ -31,15 +31,12 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   // binaryExcel: IAttribGoodBad;
   excelLoading: boolean = false;
   // binaryExcel: IAttribGoodBad;
-  excelLoading: boolean = false;
   motives: any[] = [];
-  dataExcel: IAttribGoodBad[] = [];
   dataExcel: IAttribGoodBad[] = [];
   goodBad: IAttribGoodBad[];
   userName: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
-  @Input() filters: IAttribGoodBad;
   @Input() filters: IAttribGoodBad;
   paramsScreen: IParamsLegalOpinionsOffice = {
     PAQUETE: '',
@@ -63,8 +60,6 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private fullService: FullService,
-    private socketService: SocketService,
     private fullService: FullService,
     private socketService: SocketService,
     private excelService: ExcelService,
