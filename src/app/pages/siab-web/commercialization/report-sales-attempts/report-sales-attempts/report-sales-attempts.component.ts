@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, forkJoin, map, merge, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, merge, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -80,7 +80,8 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
 
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
       if (!this.isFirstLoad) {
-        combinedObservable;
+        this.consultarBienExcel();
+        this.consultarBien();
       }
     });
     this.isFirstLoad = false;
@@ -148,7 +149,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   }
 
   consultarBienExcel() {
-    if (this.dataExcel.length === 0) {
+    if (!this.commaSeparatedString) {
       this.alert('warning', 'Debe importar el Archivo Excel', '');
       return;
     }
@@ -156,72 +157,12 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     let params = {
       ...this.params.getValue(),
     };
-
-    const observables = this.propertyValues.map(noBien => {
-      let body = {
-        pGoodNumber: noBien,
-        pType: 0,
-        pSubtypes: '',
-        pStatus: '',
-      };
-
-      return this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params);
-    });
-
-    forkJoin(observables).subscribe(
-      responses => {
-        const countMap: { [key: string]: number } = {};
-
-        responses.forEach((resp: any) => {
-          resp.data.forEach((item: any) => {
-            const noBienValue: string = item.no_bien;
-            if (countMap[noBienValue]) {
-              countMap[noBienValue]++;
-            } else {
-              countMap[noBienValue] = 1;
-            }
-          });
-        });
-
-        console.log('Conteo de ocurrencias de cada bien:', countMap);
-
-        const newData = Object.keys(countMap).map(bien => ({
-          bien,
-          conteo_ocurrencias: countMap[bien],
-        }));
-
-        this.source = new LocalDataSource(newData);
-
-        this.settings.columns = {
-          bien: { title: 'No. Bien', sort: false },
-          conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
-          // ... otras columnas ...
-        };
-
-        this.until = true;
-        this.source.refresh();
-        this.totalItems = this.dataExcel.length;
-        console.log(this.dataExcel);
-      },
-      error => {
-        this.alert('error', 'No se Encontraron Registros', '');
-      }
-    );
-  }
-
-  consultarOnlyOne() {
-    if (!this.form.get('onlyOne').value) {
-      this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
-      return;
-    }
-    let params = {
-      ...this.params.getValue(),
-    };
     let body = {
-      pGoodNumber: this.form.get('onlyOne').value,
+      pGoodNumber: this.commaSeparatedString,
       pType: 0,
       pSubtypes: '',
       pStatus: '',
+      ...this.params.getValue(),
     };
     console.log(body);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -248,14 +189,15 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         }));
 
         // Crear una instancia de LocalDataSource con la nueva estructura de datos
-        this.source = new LocalDataSource(newData);
+        // this.source = new LocalDataSource(newData);
 
-        // Opcionalmente, configurar las columnas de la tabla
-        this.settings.columns = {
-          bien: { title: 'No. Bien', sort: false },
-          conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
-          // ... otras columnas ...
-        };
+        // // Opcionalmente, configurar las columnas de la tabla
+        // this.settings.columns = {
+        //   bien: { title: 'No. Bien', sort: false },
+        //   conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
+        //   // ... otras columnas ...
+        // };
+        this.source.load(resp.data);
         this.until = true;
         this.source.refresh();
         this.totalItems = resp.count;
@@ -265,6 +207,66 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         this.alert('error', 'No se Encontraron Registros', '');
       },
     });
+  }
+
+  consultarOnlyOne() {
+    if (!this.form.get('onlyOne').value) {
+      this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
+      return;
+    }
+    let params = {};
+    let body = {
+      pGoodNumber: this.form.get('onlyOne').value,
+      pType: 0,
+      pSubtypes: '',
+      pStatus: '',
+      ...this.params.getValue(),
+    };
+    console.log(body);
+    this.getparEportAttemptsVta
+      .getpaREportAttemptsVta(body, this.params.getValue())
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          // Contar la cantidad de veces que aparece "no_bien" en la respuesta
+          // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
+          const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
+
+          // Recorrer los registros y contar las ocurrencias
+          resp.data.forEach((item: any) => {
+            const noBienValue: string = item.no_bien;
+            if (countMap[noBienValue]) {
+              countMap[noBienValue]++;
+            } else {
+              countMap[noBienValue] = 1;
+            }
+          });
+
+          console.log('Conteo de ocurrencias de cada bien:', countMap);
+          const newData = Object.keys(countMap).map(bien => ({
+            bien,
+            conteo_ocurrencias: countMap[bien],
+          }));
+
+          // Crear una instancia de LocalDataSource con la nueva estructura de datos
+          // this.source = new LocalDataSource(newData);
+
+          // // Opcionalmente, configurar las columnas de la tabla
+          // this.settings.columns = {
+          //   bien: { title: 'No. Bien', sort: false },
+          //   conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
+          //   // ... otras columnas ...
+          // };
+          this.source.load(resp.data);
+          this.until = true;
+          this.source.refresh();
+          this.totalItems = resp.count;
+        },
+        error: err => {
+          console.log(err);
+          this.alert('error', 'No se Encontraron Registros', '');
+        },
+      });
   }
 
   exportCsv() {
@@ -399,6 +401,7 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
       pType: resultArray[0].typeNumber,
       pSubtypes: resultArray[0].subTypeNumber,
       pStatus: resultStatus[0].status,
+      ...this.params.getValue(),
     };
     console.log(params);
     this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
@@ -425,14 +428,16 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
         }));
 
         // Crear una instancia de LocalDataSource con la nueva estructura de datos
-        this.source = new LocalDataSource(newData);
+        // this.source = new LocalDataSource(newData);
 
-        // Opcionalmente, configurar las columnas de la tabla
-        this.settings.columns = {
-          bien: { title: 'No. Bien', sort: false },
-          conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
-          // ... otras columnas ...
-        };
+        // // Opcionalmente, configurar las columnas de la tabla
+        // this.settings.columns = {
+        //   bien: { title: 'No. Bien', sort: false },
+        //   conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
+        //   // ... otras columnas ...
+        // };
+
+        this.source.load(resp.data);
         this.until = true;
         this.source.refresh();
         this.totalItems = resp.count;
