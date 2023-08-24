@@ -1,18 +1,29 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  take,
+  takeUntil,
+  tap,
+  throwError,
+} from 'rxjs';
+import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
 import {
   ListParams,
   SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { SocketService } from 'src/app/common/socket/socket.service';
 import { IAttribGoodBad } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FullService } from 'src/app/layouts/full/full.service';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
+import { environment } from 'src/environments/environment';
 import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-columns';
 @Component({
   selector: 'app-goods-with-required-info',
@@ -25,13 +36,15 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   groups: any;
   addMo: string;
+  // binaryExcel: IAttribGoodBad;
+  excelLoading: boolean = false;
   motives: any[] = [];
-  dataExcel: any[] = [];
+  dataExcel: IAttribGoodBad[] = [];
   goodBad: IAttribGoodBad[];
   userName: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   @Output() customEvent = new EventEmitter<string>();
-
+  @Input() filters: IAttribGoodBad;
   paramsScreen: IParamsLegalOpinionsOffice = {
     PAQUETE: '',
     P_GEST_OK: '',
@@ -54,6 +67,8 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
+    private fullService: FullService,
+    private socketService: SocketService,
     private excelService: ExcelService,
     private token: AuthService,
     private goodService: GoodService,
@@ -230,16 +245,94 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
       );
     }
   }
-  exportToExcel() {
-    this.loading = true;
-    if (this.goodBad.length == 0) {
-      this.alert('info', 'No hay información para descargar', '');
-      this.loading = false;
-      return;
-    }
-    const filename: string = this.userName + '-AtributosNulos';
-    this.loading = false;
-    this.excelService.export(this.dataExcel, { filename });
-    this.alert('success', 'Datos Exportados', '');
+
+  // exportToExcel() {
+  //   this.loading = true;
+  //   this.readExcel();
+  //   if (this.goodBad.length == 0) {
+  //     this.alert('info', 'No hay información para descargar', '');
+  //     this.loading = false;
+  //     return;
+  //   }
+  //   const filename: string = this.userName + '-AtributosNulos';
+  //   this.loading = false;
+  //   this.excelService.export(this.dataExcel, { filename });
+  //   this.alert('success', 'Datos Exportados', '');
+  // }
+
+  // exportToExcel() {
+  //   this.excelLoading = true;
+  //   this.goodService.getExcel().subscribe({
+  //     next: resp => {
+  //       this.excelLoading = false;
+  //       // this.dataExcel = resp
+  //       const tokenBad = resp
+
+  //       this.alert(
+  //         'info',
+  //         'Aviso',
+  //         'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
+  //       );
+  //       this.fullService.generatingFileFlag.next({
+  //         progress: 99,
+  //         showText: true,
+  //       });
+  //       this.downloadExcel(resp);
+  //     },
+  //     error: () => {
+  //       this.excelLoading = false;
+  //       this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+  //     },
+  //   });
+  // }
+  getDataExcell() {
+    this.excelLoading = true;
+    this.goodService.getExcel().subscribe({
+      next: resp => {
+        this.excelLoading = false;
+        this.alert(
+          'info',
+          'Aviso',
+          'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
+        );
+        this.fullService.generatingFileFlag.next({
+          progress: 99,
+          showText: true,
+        });
+        this.subscribeExcel(resp.base64File).subscribe();
+      },
+      error: () => {
+        this.excelLoading = false;
+        this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+      },
+    });
+  }
+
+  subscribeExcel(token: string) {
+    console.log(token);
+    return this.socketService.goodsTrackerExcel(token).pipe(
+      take(1),
+      catchError(error => {
+        return throwError(() => error);
+      }),
+      tap(res => {
+        console.warn('RESPUESTA DEL SOCKET');
+        console.log({ res });
+        this.getExcel(token);
+      })
+      // switchMap(() => )
+    );
+  }
+
+  getExcel(token: string) {
+    this.alert('success', 'Archivo Descargado Correctamente', '');
+    const url = `${environment.API_URL}good/${environment.URL_PREFIX}${GoodEndpoints.ExportExcelGoodBad}/${token}`;
+    console.log({ url });
+    window.open(url, '_blank');
+    // this.downloadExcel(resp.file);
+    this.fullService.generatingFileFlag.next({
+      progress: 100,
+      showText: true,
+    });
   }
 }
