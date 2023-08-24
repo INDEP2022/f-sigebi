@@ -2,15 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
-import {
-  BehaviorSubject,
-  catchError,
-  take,
-  takeUntil,
-  tap,
-  throwError,
-} from 'rxjs';
-import { GoodEndpoints } from 'src/app/common/constants/endpoints/ms-good-endpoints';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import {
   ListParams,
   SearchFilter,
@@ -23,7 +16,6 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FullService } from 'src/app/layouts/full/full.service';
 import { IParamsLegalOpinionsOffice } from 'src/app/pages/juridical-processes/depositary/legal-opinions-office/legal-opinions-office/legal-opinions-office.component';
-import { environment } from 'src/environments/environment';
 import { GOODS_WITH_REQUIRED_INFO_COLUMNS } from './goods-with-required-info-columns';
 @Component({
   selector: 'app-goods-with-required-info',
@@ -38,6 +30,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
   addMo: string;
   // binaryExcel: IAttribGoodBad;
   excelLoading: boolean = false;
+  // binaryExcel: IAttribGoodBad;
   motives: any[] = [];
   dataExcel: IAttribGoodBad[] = [];
   goodBad: IAttribGoodBad[];
@@ -71,6 +64,7 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     private socketService: SocketService,
     private excelService: ExcelService,
     private token: AuthService,
+    private modalRef: BsModalRef,
     private goodService: GoodService,
     public router: Router,
     private activatedRoute: ActivatedRoute
@@ -246,93 +240,75 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     }
   }
 
-  // exportToExcel() {
-  //   this.loading = true;
-  //   this.readExcel();
-  //   if (this.goodBad.length == 0) {
-  //     this.alert('info', 'No hay información para descargar', '');
-  //     this.loading = false;
-  //     return;
-  //   }
-  //   const filename: string = this.userName + '-AtributosNulos';
-  //   this.loading = false;
-  //   this.excelService.export(this.dataExcel, { filename });
-  //   this.alert('success', 'Datos Exportados', '');
-  // }
-
-  // exportToExcel() {
-  //   this.excelLoading = true;
-  //   this.goodService.getExcel().subscribe({
-  //     next: resp => {
-  //       this.excelLoading = false;
-  //       // this.dataExcel = resp
-  //       const tokenBad = resp
-
-  //       this.alert(
-  //         'info',
-  //         'Aviso',
-  //         'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
-  //       );
-  //       this.fullService.generatingFileFlag.next({
-  //         progress: 99,
-  //         showText: true,
-  //       });
-  //       this.downloadExcel(resp);
-  //     },
-  //     error: () => {
-  //       this.excelLoading = false;
-  //       this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
-  //     },
-  //   });
-  // }
-  getDataExcell() {
+  exportAll(): void {
     this.excelLoading = true;
     this.goodService.getExcel().subscribe({
-      next: resp => {
+      next: response => {
         this.excelLoading = false;
         this.alert(
           'info',
           'Aviso',
           'El Archivo Excel está en Proceso de Generación, favor de esperar la Descarga'
         );
-        this.fullService.generatingFileFlag.next({
-          progress: 99,
-          showText: true,
-        });
-        this.subscribeExcel(resp.base64File).subscribe();
+        // this.fullService.generatingFileFlag.next({
+        //   progress: 99,
+        //   showText: true,
+        // });
+        this.downloadDocument('Atributos_Nulos', 'excel', response.base64File);
+        this.modalRef.hide();
       },
-      error: () => {
-        this.excelLoading = false;
-        this.alert('error', 'Error', 'No se Generó Correctamente el Archivo');
+      error: error => {
+        this.loading = false;
       },
     });
   }
 
-  subscribeExcel(token: string) {
-    console.log(token);
-    return this.socketService.goodsTrackerExcel(token).pipe(
-      take(1),
-      catchError(error => {
-        return throwError(() => error);
-      }),
-      tap(res => {
-        console.warn('RESPUESTA DEL SOCKET');
-        console.log({ res });
-        this.getExcel(token);
-      })
-      // switchMap(() => )
+  //Descargar Excel
+  downloadDocument(
+    filename: string,
+    documentType: string,
+    base64String: string
+  ): void {
+    let documentTypeAvailable = new Map();
+    documentTypeAvailable.set(
+      'excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
+    documentTypeAvailable.set(
+      'word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    );
+    documentTypeAvailable.set('xls', '');
+
+    let bytes = this.base64ToArrayBuffer(base64String);
+    let blob = new Blob([bytes], {
+      type: documentTypeAvailable.get(documentType),
+    });
+    let objURL: string = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = objURL;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    this._toastrService.clear();
+    this.excelLoading = true;
+    this.alert('success', 'Reporte Excel', 'Descarga Finalizada');
+    URL.revokeObjectURL(objURL);
   }
 
-  getExcel(token: string) {
-    this.alert('success', 'Archivo Descargado Correctamente', '');
-    const url = `${environment.API_URL}good/${environment.URL_PREFIX}${GoodEndpoints.ExportExcelGoodBad}/${token}`;
-    console.log({ url });
-    window.open(url, '_blank');
-    // this.downloadExcel(resp.file);
+  base64ToArrayBuffer(base64String: string) {
+    let binaryString = window.atob(base64String);
+    let binaryLength = binaryString.length;
+    let bytes = new Uint8Array(binaryLength);
+    for (var i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
     this.fullService.generatingFileFlag.next({
       progress: 100,
-      showText: true,
+      showText: false,
     });
+
+    return bytes.buffer;
   }
 }

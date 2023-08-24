@@ -412,7 +412,33 @@ export class ExecuteSchedulingDeliveriesComponent
     });
   }
 
-  delivery() {
+  delivery(executionType: string, causa?: string) {
+    if (
+      this.goodDeliveredSelected.length == 0 ||
+      this.goodDeliveredSelected > 1
+    ) {
+      this.onLoadToast(
+        'info',
+        'Debe tener un bien seleccionado para la ejecucide entrega'
+      );
+      return;
+    }
+    let colDestino = '';
+
+    if (executionType == 'entragados') {
+      colDestino = 'amountDelivered'; //Cantidad Entregados
+    } else {
+      if (causa == 'NO ENTREGADOS') {
+        colDestino = 'amountNotDelivered'; //CantidadNoEntregados
+      } else if (causa == 'NO ACEPTADOS') {
+        colDestino = 'anountNotAccelted'; //CantidadNoAceptados
+      } else {
+        colDestino = 'amountNotWhithdrawn'; //CantidadNoRetirados
+      }
+    }
+  }
+
+  noDelivery(executionType: string) {
     if (
       this.goodDeliveredSelected.length == 0 ||
       this.goodDeliveredSelected > 1
@@ -424,6 +450,10 @@ export class ExecuteSchedulingDeliveriesComponent
       return;
     }
 
+    this.openTypeReason(executionType);
+  }
+
+  openTypeReason(executionType: string) {
     const typeEvent = this.programmingDetailPanel.typeEvent;
     let config: ModalOptions = {
       initialState: {
@@ -442,9 +472,9 @@ export class ExecuteSchedulingDeliveriesComponent
     );
     this.bsModelRef.content.event.subscribe((data: any) => {
       console.log(data);
+      this.delivery(executionType, data.type);
     });
   }
-
   preview(event: any) {
     console.log(event);
   }
