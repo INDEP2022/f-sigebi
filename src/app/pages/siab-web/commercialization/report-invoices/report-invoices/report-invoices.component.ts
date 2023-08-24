@@ -46,6 +46,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   inputControl = new FormControl('');
 
   array: any;
+  arrayData: any;
 
   data1: LocalDataSource = new LocalDataSource();
   data2: LocalDataSource = new LocalDataSource();
@@ -70,6 +71,52 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: false,
       columns: { ...REPORT_INVOICE_COLUMNS },
+      rowClassFunction: (row: any) => {
+        console.log(row.data);
+        switch (row.data.id_delegacion) {
+          case '0':
+            return 'bg-info0 text-white';
+          //break;
+          case '1':
+            return 'bg-info1 text-white';
+          //break;
+          case '2':
+            return 'bg-info2 text-white';
+          //break;
+          case '3':
+            return 'bg-info3 text-white';
+          //break;
+          case '4':
+            return 'bg-info4 text-white';
+          //break;
+          case '5':
+            return 'bg-info5 text-white';
+          //break;
+          case '6':
+            return 'bg-info6 text-white';
+          //break;
+          case '7':
+            return 'bg-info7 text-white';
+          //break;
+          case '8':
+            return 'bg-info8 text-white';
+          //break;
+          case '9':
+            return 'bg-info9 text-white';
+          //break;
+          case '10':
+            return 'bg-info10 text-white';
+          //break;
+          case '11':
+            return 'bg-info11 text-white';
+          //break;
+          /*case '12':
+            return 'bg-info12 text-white'*/
+          //break;
+          default:
+            return 'bg-light text-black';
+        }
+      },
     };
 
     this.settings1 = {
@@ -229,17 +276,13 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.form.reset();
-      //this.show = false;
       this.array = [];
       this.dataFormatPercentage = [];
       this.dataFormat = [];
-      //this.data.length = 0;
       this.data1.load([]);
       this.data1.refresh();
       this.data2.load([]);
       this.data2.refresh();
-      /*this.dataFormat = [];
-      this.totalItems = 0;*/
       console.log(this.data);
     }
     console.warn('Your order has been submitted');
@@ -258,28 +301,21 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
   }
 
   async consultInvoices() {
-    /*const idEvent = 0;
-    const anio = 0;
-    const tpInvoice = '';
-    const status = '';
-    const fecStart = '';
-    const fecEnd = '';
-    const tpGood = '';*/
-
     let getGrafica = await this.getInvoices();
     console.log(getGrafica);
     this.array = getGrafica;
-    console.log(this.array);
-    for (let i = 0; i < this.array.length; i++) {
-      if (this.array[i].cuenta_fac > 0) {
+    this.arrayData = this.array.data;
+    console.log(this.arrayData);
+    for (let i = 0; i < this.array.count; i++) {
+      if (this.arrayData[i].accountFac > 0) {
         const data: any = {
-          color: this.array[i].color,
-          cuenta_fac: this.array[i].cuenta_fac,
-          descripcion: this.array[i].descripcion,
-          id_delegacion: this.array[i].id_delegacion,
+          color: this.arrayData[i].color,
+          cuenta_fac: this.arrayData[i].accountFac,
+          descripcion: this.arrayData[i].description,
+          id_delegacion: this.arrayData[i].delegationId,
         };
         this.totInvoices =
-          Number(this.totInvoices) + Number(this.array[i].cuenta_fac);
+          Number(this.totInvoices) + Number(this.arrayData[i].accountFac);
         this.dataFormat.push(data);
       }
     }
@@ -391,6 +427,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         endDate: endDate,
         goodTp: this.form.get('goods').value,
       };
+      this.params1.getValue()['limit'] = 20;
       let param = {
         ...this.params1.getValue(),
         ...this.columnFilters1,
@@ -400,7 +437,7 @@ export class reportInvoicesComponent extends BasePage implements OnInit {
         next: resp => {
           console.log(resp);
           if (resp.data) {
-            resolve(resp.data);
+            resolve(resp);
           } else {
             resolve(null);
           }

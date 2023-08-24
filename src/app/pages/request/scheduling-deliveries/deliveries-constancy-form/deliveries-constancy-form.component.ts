@@ -6,9 +6,11 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import * as moment from 'moment';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProgrammingDeliveryGood } from 'src/app/core/models/good-programming/programming-delivery-good.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
@@ -56,6 +58,9 @@ export class DeliveriesConstancyFormComponent
   deliveryConstancyForm: FormGroup = new FormGroup({});
   showClientForm: boolean = true;
   personalEstates: boolean = true;
+  showAdminJuridico: boolean = true;
+  showRepLegar: boolean = true;
+  showWitness: boolean = true;
   edit: boolean = false;
   personalEstateData: any[] = [];
   typeEvent: number = null;
@@ -74,6 +79,7 @@ export class DeliveriesConstancyFormComponent
 
   private programmingGoodService = inject(ProgrammingGoodService);
   private certifiDeliveryService = inject(CertificatesDeliveryService);
+  private auth = inject(AuthService);
 
   constructor(
     private modalRef: BsModalRef,
@@ -99,28 +105,30 @@ export class DeliveriesConstancyFormComponent
     this.personalEstateData = this.goods;
     setTimeout(() => {
       this.setColumns();
+      this.validateClientSeccion();
     }, 300);
   }
 
   prepareForm() {
     this.deliveryConstancyForm = this.fb.group({
+      certificateId: [null],
       receiverType: ['CLIENTE'],
       certificateType: [this.typeConstancy],
       //linea 38 - 68
-      publicWritten: [null],
-      writtenDate: [null],
-      graduate: [null],
+      publicDeed: [null],
+      writedate: [null],
+      adjudicator: [null],
       publicNotary: [null],
       cveState: [null],
       //linea 65 - 112
       transport: [null],
-      brand: [null],
-      modal: [null],
-      plate: [null],
+      marck: [null],
+      model: [null],
+      plates: [null],
       serie: [null],
-      driver: [null],
-      paperNum: [null],
-      paperDate: [null],
+      driverName: [null],
+      oficioNum: [null],
+      oficioDate: [null],
       //linea 114 -
       acreditPerson: [null],
 
@@ -130,6 +138,9 @@ export class DeliveriesConstancyFormComponent
       reasonsNotDelivered: [null],
       reasonsNotRetired: [null],
 
+      teName: [null],
+      tePosition: [null],
+
       clientIden: [null],
       clientIdennNum: [null],
       procClientIdennNum: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -138,7 +149,37 @@ export class DeliveriesConstancyFormComponent
       repLegalIden: [null],
       repLegalIdenNum: [null],
       repLegalIdenProg: [null, [Validators.pattern(STRING_PATTERN)]],
+      //
+      companyName: [null],
+      positionCompany: [null],
+      //
+      deliveryName: [null],
+      postDelivery: [null],
+      deliveryIden: [null],
+      deliveryNum: [null],
+      deliveryProcIden: [null],
+      //
+      witnessName1: [null],
+      witnessName2: [null],
+      authorizeReceive: [null],
+      certifiesPersonality: [null],
+      oicParticipates: [null],
+      oicName: [null],
+      oicCall: [null],
     });
+    this.typeReceptor = this.deliveryConstancyForm.get('receiverType').value;
+  }
+
+  validateClientSeccion(): boolean {
+    if (
+      this.typeEvent != 1 ||
+      (this.typeEvent == 1 &&
+        this.typeConstancy != 4 &&
+        this.typeReceptor == 'CLIENTE')
+    ) {
+      return true;
+    }
+    return false;
   }
 
   typeUser(event: Event): string {
@@ -217,28 +258,40 @@ export class DeliveriesConstancyFormComponent
   confirm() {
     let idProgDelivery = this.progEntrega.id;
     let folio = this.progEntrega.folio;
+    let userAuth = this.auth.decodeToken();
     this.goods.map(async (item: any, _i: number) => {
       const index = _i + 1;
-      let total = item[this.lsColumnaTot];
-      total = total + item[this.lsColumna];
+      let total = Number(item[this.lsColumnaTot]);
+      total = total + Number(item[this.lsColumna]);
 
       const body: any = {};
       body['id'] = item.id;
       body['goodId'] = item.goodId;
       body[this.lsColumnaTot] = total;
-      //const updated = await this.updateProgrammingDeliveryGood(body); //Actualiza la tabla de programacion entrega bienes
+      const updated = await this.updateProgrammingDeliveryGood(body); //Actualiza la tabla de programacion entrega bienes
       //console.log(updated)
       if (index == this.goods.length) {
         let deliveryForm = this.deliveryConstancyForm.getRawValue();
+        deliveryForm.certificateId = null; //ingresar el dato
         deliveryForm.deliveryScheduleId = idProgDelivery;
         deliveryForm.folio = folio;
+        deliveryForm.userCreation = userAuth.username;
+        deliveryForm.userModification = userAuth.username;
+        deliveryForm.creationDate = moment(new Date()).format('YYYY-MM-DD');
+        deliveryForm.modificationDate = moment(new Date()).format('YYYY-MM-DD');
+        deliveryForm.oficioDate =
+          deliveryForm.oficioDate != null
+            ? moment(deliveryForm.oficioDate).format('YYYY-MM-DD')
+            : null;
         //console.log(deliveryForm)
-        //const created = await this.createCertificateDelivery(deliveryForm); //Crea un registro de certificado de entrega
+        const created = await this.createCertificateDelivery(deliveryForm); //Crea un registro de certificado de entrega
 
-        //if(created){
-        //generar reporte
-        this.event.emit(deliveryForm);
-        //}
+        if (created) {
+          //generar reporte
+
+          this.event.emit(deliveryForm);
+          this.close();
+        }
       }
     });
   }
@@ -254,6 +307,13 @@ export class DeliveriesConstancyFormComponent
         .subscribe({
           next: resp => {
             resolve(resp);
+          },
+          error: error => {
+            reject(error);
+            this.onLoadToast(
+              'error',
+              'No se pudo actualizar la programacion de entrega'
+            );
           },
         });
     });

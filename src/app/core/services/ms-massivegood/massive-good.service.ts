@@ -170,4 +170,8 @@ export class MassiveGoodService extends HttpService {
   GetAllGoodsMotivesRevExcel(params: _Params) {
     return this.get(this.route.GetAllGoodsMotivesRevExcel, params);
   }
+
+  AttendedPorGoodReasonRev(formData: any) {
+    return this.post(this.route.PorGoodReasonRev, formData);
+  }
 }

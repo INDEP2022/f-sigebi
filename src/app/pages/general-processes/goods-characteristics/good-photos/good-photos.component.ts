@@ -3,7 +3,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { catchError, forkJoin, takeUntil, throwError } from 'rxjs';
 import { FileUploadModalComponent } from 'src/app/@standalone/modals/file-upload-modal/file-upload-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { BasePage } from 'src/app/core/shared';
 import { GoodsCharacteristicsService } from '../services/goods-characteristics.service';
 
@@ -26,7 +29,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
     }
   }
   lastConsecutive: number = 1;
-  filesToDelete: string[] = [];
+  filesToDelete: IPhotoFile[] = [];
   private _goodNumber: string | number;
   constructor(
     private service: GoodsCharacteristicsService,
@@ -46,7 +49,7 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
 
   ngOnInit() {}
 
-  selectFile(image: string, event: Event) {
+  selectFile(image: IPhotoFile, event: Event) {
     const target = event.target as HTMLInputElement;
     const checked = target.checked;
     if (checked) {
@@ -66,8 +69,8 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
           if (response) {
             this.files = [...response];
             const last = response[response.length - 1];
-            const index = last.indexOf('F');
-            this.lastConsecutive += +last.substring(index + 1, index + 5);
+            const index = last.name.indexOf('F');
+            this.lastConsecutive += +last.name.substring(index + 1, index + 5);
           }
         },
       });
@@ -94,9 +97,9 @@ export class GoodPhotosComponent extends BasePage implements OnInit {
   }
 
   private deleteSelectedFiles() {
-    const obs = this.filesToDelete.map(filename => {
-      const index = filename.indexOf('F');
-      return this.deleteFile(+filename.substring(index + 1, index + 5));
+    const obs = this.filesToDelete.map(file => {
+      const index = file.name.indexOf('F');
+      return this.deleteFile(+file.name.substring(index + 1, index + 5));
     });
     forkJoin(obs).subscribe({
       complete: () => {

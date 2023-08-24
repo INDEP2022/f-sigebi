@@ -1,17 +1,17 @@
 export const COLUMNS1 = {
-  goodNumb: {
+  id: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
   description: {
     title: 'Descripción',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   quantity: {
     title: 'Cantidad',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
   act: {

@@ -17,6 +17,20 @@
 
   <div body>
     <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button
+            class="btn btn-success btn-sm ml-2 active"
+            type="button"
+            (click)="getDataExcell()">
+            Exportar a Excel
+            <i class="bx bx-download float-icon"></i>
+          </button>
+          <!-- <confirm-button type="button" [loading]="excelLoading" text="Exportar a Excel" loadingText="Cargando..."
+            className="btn-success ml-2" [icon]="'bx bx-download'" [btnSmall]="true"
+            (confirm)="getDataExcell()"></confirm-button> -->
+        </div>
+      </div>
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">

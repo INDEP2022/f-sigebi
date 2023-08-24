@@ -93,11 +93,7 @@ export class PwComponent extends BasePage implements OnInit {
       this._password = this.idConversion.value.pwAccess;
       if (this.password != null) {
         if (this.password.value != this._password) {
-          this.alert(
-            'warning',
-            'Contraseña Incorrecta',
-            'Por Favor Verificar y Volver a Intentar'
-          );
+          this.alert('warning', 'Corregir y volver a intentar', '');
           this.loader.load = false;
         } else {
           if (this.conversionData.goodFatherNumber != null) {
