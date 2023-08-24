@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format } from 'date-fns';
 
 export const REQUESTS_COLUMNS = {
   solnumId: {
@@ -10,9 +10,9 @@ export const REQUESTS_COLUMNS = {
     title: 'Fecha',
     type: 'string',
     sort: false,
-    valuePrepareFunction: (cell: any, row: any) =>{
-        return format(correctDate(cell),'dd/MM/yyyy')
-    }
+    valuePrepareFunction: (cell: any, row: any) => {
+      return format(correctDate(cell), 'dd/MM/yyyy');
+    },
   },
   description: {
     title: 'Concepto',

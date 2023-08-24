@@ -18,7 +18,10 @@
     <div *ngIf="response">
       <div class="row mt-5 justify-content-md-end">
         <div class="col-md-4 text-center text-md-right mt-3 mt-md-0">
-          <button class="btn btn-secondary btn-sm active">Cerrar</button>
+          Status Acta:
+          <span
+            ><strong style="color: #9d2449">{{ statusActa }}</strong></span
+          >
         </div>
       </div>
       <div class="mt-5">
@@ -26,8 +29,20 @@
           class="form-material form-horizontal"
           [formGroup]="form"
           (ngSubmit)="onSubmit()">
+          <div class="row mt-12">
+            <div class="col-md-10 mt-3 mt-md-0"></div>
+            <div class="col-md-2 text-center text-md-right mt-3 mt-md-0">
+              <button
+                type="submit"
+                class="btn btn-secondary btn-sm active"
+                [disabled]="!form.valid">
+                Cerrar
+              </button>
+            </div>
+          </div>
+
           <div class="row mt-5">
-            <div class="col-md-6">
+            <div class="col-md-5">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="form.get('preliminaryAscertainment')"
@@ -39,7 +54,7 @@
                 </form-field>
               </div>
             </div>
-            <div class="col-md-6 mt-3 mt-md-0">
+            <div class="col-md-5 mt-3 mt-md-0">
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="form.get('causePenal')"
@@ -59,10 +74,14 @@
                 <form-field
                   [control]="form.get('actSelect')"
                   label="&Aacute;cta">
-                  <select class="form-control" formControlName="actSelect">
+                  <select
+                    class="form-control"
+                    formControlName="actSelect"
+                    (change)="onCambioActa($event)">
                     <option [value]="null">Seleccione un valor</option>
-                    <option [value]="1">1</option>
-                    <option [value]="2">2</option>
+                    <option *ngFor="let acta of listaActas" [value]="acta.id">
+                      {{ acta.id }}
+                    </option>
                   </select>
                 </form-field>
               </div>
@@ -70,11 +89,10 @@
             <div class="col-12 col-md-3 mt-3 mt-md-0">
               <div class="mb-3 pl-4 pr-4">
                 <form-field [control]="form.get('type')" label="Tipo">
-                  <select class="form-control" formControlName="type">
-                    <option [value]="null">Seleccione un valor</option>
-                    <option [value]="1">1</option>
-                    <option [value]="2">2</option>
-                  </select>
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="type" />
                 </form-field>
               </div>
             </div>
@@ -157,7 +175,6 @@
                   <input
                     type="text"
                     class="form-control"
-                    bsDatepicker
                     formControlName="elabDate" />
                 </form-field>
               </div>
@@ -266,7 +283,7 @@
         <div class="row mt-5 justify-content-end mt-3">
           <div class="col-md-5 buttons pt-3 text-right">
             <app-columns-select
-              (settingsChange)="settingsChange($event, 1)"
+              (settingsChange)="settingsChange($event, 0)"
               [settings]="settings">
             </app-columns-select>
           </div>
@@ -276,10 +293,11 @@
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="data1"
+            (rowSelect)="selectFila1($event)">
           </ng2-smart-table>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination [params]="params1" [totalItems]="totalItems1">
         </app-pagination>
         <div class="row">
           <div class="d-flex align-items-center">
@@ -323,11 +341,17 @@
 
         <div class="row mt-5">
           <div class="col-md-12 text-center">
-            <button type="button" class="mx-2 btn btn-secondary btn-sm active">
-              <i class="fa fa-angle-up"></i>
+            <button
+              (click)="agregar()"
+              type="button"
+              tooltip="Agregar"
+              containerClass="tooltip-style"
+              class="btn btn-info btn-sm active ml-2 mr-2">
+              Agregar <i class="bx bx-plus bx-sm float-icon"></i>
             </button>
-            <button type="button" class="mx-2 btn btn-secondary btn-sm active">
-              <i class="fa fa-angle-down"></i>
+
+            <button (click)="retirar()" class="btn btn-red btn-sm active m-3">
+              Eliminar <i class="fa fa-trash" aria-hidden="true"></i>
             </button>
           </div>
         </div>
@@ -346,15 +370,18 @@
             class="col-md-12"
             [attr.class]="'table-bordered'"
             [settings]="settings2"
-            [source]="data2">
+            [source]="data2"
+            (rowSelect)="selectFila2($event)">
           </ng2-smart-table>
         </div>
-        <app-pagination [params]="params" [totalItems]="totalItems">
+        <app-pagination [params]="params2" [totalItems]="totalItems2">
         </app-pagination>
 
         <div class="row mt-5">
           <div class="col-12 text-center text-md-right">
-            <button class="btn btn-secondary btn-sm active">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="getScreenStatusFinal()">
               Mantenimiento de Estatus
             </button>
           </div>

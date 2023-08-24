@@ -20,5 +20,15 @@ export class AppComponent implements OnInit {
     this.selectConfig.loadingText = 'Cargando...';
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const cadena =
+      'INSERT &&NO_BIEN: 9549293&&ESTATUS: ADM&&FEC_CAMBIO: 2023-08-18 00:00:00&&USUARIO_CAMBIO: sigebiadmon&&PROGRAMA_CAMBIO_ESTATUS: FACTGENPARCBIEN&&MOTIVO_CAMBIO: Parcialización&&PROCESO_EXT_DOM: TRANSFERENTE';
+    console.log(cadena);
+
+    console.log(this.processString(cadena));
+  }
+
+  processString(P_CADENA: string): string {
+    return P_CADENA.replaceAll('&&', '\n');
+  }
 }

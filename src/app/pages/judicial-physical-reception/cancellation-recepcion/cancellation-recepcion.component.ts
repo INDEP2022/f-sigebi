@@ -5,10 +5,10 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, takeUntil, tap } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import {
   FilterParams,
@@ -270,6 +270,8 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
   subDelUser: string;
   departmentUser: string;
 
+  returnToTracker: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private render: Renderer2,
@@ -287,12 +289,15 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
     private serviceUser: UsersService,
     private serviceNotification: NotificationService,
     private serviceHistoryGood: HistoryGoodService,
-    private authService: AuthService
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.returnToTracker = false;
+
     this.prepareForm();
     this.form.get('year').setValue(format(new Date(), 'yyyy'));
     this.form.get('mes').setValue(format(new Date(), 'MM'));
@@ -352,6 +357,31 @@ export class CancellationRecepcionComponent extends BasePage implements OnInit {
       });
 
     this.getDataUser();
+
+    this.queryParamsFn();
+  }
+
+  queryParamsFn() {
+    this.activatedRoute.queryParams
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(params => {
+          console.log({
+            origin: params['origin'],
+            exp: params['NO_EXPEDIENTE_F'],
+          });
+          if (params['NO_EXPEDIENTE_F']) {
+            this.form.get('expediente').setValue(params['NO_EXPEDIENTE_F']);
+            this.returnToTracker = true;
+            this.goodsByExpediente();
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  gotoTracker() {
+    this.router.navigate(['pages/general-processes/goods-tracker']);
   }
 
   getDataUser() {
