@@ -161,6 +161,7 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.startCalendars();
     this.pupInitForms();
     const localExpdeient = localStorage.getItem('expediente');
+    const folio = localStorage.getItem('folio');
     if (localExpdeient) {
       this.inputValue = Number(localExpdeient);
       this.$trackedGoods.subscribe(async data => {
@@ -170,6 +171,9 @@ export class CircumstantialActsSuspensionCancellationComponent
         this.data1.load(dataNew);
         this.data1.refresh();
       });
+      if (folio) {
+        this.form.controls['universalFolio'].setValue(folio);
+      }
       this.search(Number(localExpdeient));
       localStorage.removeItem('expediente');
     }
