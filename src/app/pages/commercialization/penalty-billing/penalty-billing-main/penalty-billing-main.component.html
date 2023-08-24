@@ -203,8 +203,8 @@
                   {{ item.reasonName }}
                 </ng-template>
                 <ng-template #authorizeDesc let-item="item">
-                  <div [title]="item.reasonName">
-                    {{ item.reasonName }}
+                  <div [title]="item.reasonName + ' - ' + item.rfc">
+                    {{ item.reasonName }} - {{ item.rfc }}
                   </div>
                 </ng-template>
               </form-field>
@@ -241,8 +241,8 @@
                   {{ item.reasonName }}
                 </ng-template>
                 <ng-template #clientDesc let-item="item">
-                  <div [title]="item.reasonName">
-                    {{ item.reasonName }}
+                  <div [title]="item.reasonName + ' - ' + item.rfc">
+                    {{ item.reasonName }} - {{ item.rfc }}
                   </div>
                 </ng-template>
               </form-field>
@@ -299,7 +299,7 @@
             <div class="col-sm-4 col-md-3">
               <form-field [control]="billingForm.get('cop')" label="C.P.">
                 <input
-                  type="text"
+                  type="number"
                   formControlName="cop"
                   class="form-control"
                   oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6)" />
@@ -352,11 +352,9 @@
                     [btnSmall]="true"
                     [loading]="loadingSearch"
                     (confirm)="searchData()"></confirm-button>
-                  <button
-                    class="btn btn-danger btn-sm active mr-2"
-                    (click)="resetData()">
+                  <!-- <button class="btn btn-danger btn-sm active mr-2" (click)="resetData()">
                     Limpiar <i class="fas fa-eraser"> </i>
-                  </button>
+                  </button> -->
                 </div>
               </div>
             </div>
@@ -398,13 +396,13 @@
                 Eliminar Folios <i class="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>
-            <div class="col-12">
+            <!-- <div class="col-12">
               <button
                 class="btn btn-sm btn-secondary btn-block active me-2 mb-3"
                 (click)="getImage()">
                 Obtener Imagen <i class="fa fa-image" aria-hidden="true"></i>
               </button>
-            </div>
+            </div> -->
             <div class="col-12">
               <button
                 class="btn btn-sm btn-success btn-block active me-2 mb-3"

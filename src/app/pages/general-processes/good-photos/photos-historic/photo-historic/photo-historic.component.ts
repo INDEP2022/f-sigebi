@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { takeUntil } from 'rxjs';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IHistoricalPhoto,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { formatForIsoDate } from 'src/app/shared/utils/date';
 import { NO_IMAGE_FOUND, PhotoClassComponent } from '../../models/photo-class';
 
@@ -13,6 +16,7 @@ export class PhotoHistoricComponent
   extends PhotoClassComponent
   implements OnInit
 {
+  @Input() override file: IHistoricalPhoto = null;
   @Input() userDeleted: string;
   deletedDateString: string;
   @Input() deletedDate: Date;
@@ -22,10 +26,14 @@ export class PhotoHistoricComponent
     super();
   }
 
+  get filename() {
+    return this.file.name;
+  }
+
   ngOnInit() {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['filename']) {
+    if (changes['file']) {
       this.filenameChange();
     }
     if (changes['deletedDate']) {
@@ -37,13 +45,13 @@ export class PhotoHistoricComponent
 
   private filenameChange() {
     this.loading = true;
-    let index = this.filename.indexOf('F');
-    let finish = this.filename.indexOf('.');
+    let index = this.file.name.indexOf('F');
+    let finish = this.file.name.indexOf('.');
     // console.log(index);
     this.service
       .getByIdHistoric(
         this.goodNumber,
-        +this.filename.substring(index + 1, finish)
+        +this.file.name.substring(index + 1, finish)
       )
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe({
