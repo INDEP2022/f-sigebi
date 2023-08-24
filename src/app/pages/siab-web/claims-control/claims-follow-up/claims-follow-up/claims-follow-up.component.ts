@@ -43,19 +43,6 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
         position: 'right',
       },
       columns: {
-        officialConclusion: {
-          title: 'Ver Oficio Conclusión',
-          width: '5%',
-          type: 'custom',
-          sort: false,
-          renderComponent: ButtonColumnComponent,
-          onComponentInitFunction: (instance: any) => {
-            instance.onClick.subscribe((row: any) => {
-              console.log(row);
-              this.seeOfficialConclusion(row);
-            });
-          },
-        },
         officeMail: {
           title: 'Ver Oficio Correo',
           width: '5%',
@@ -79,6 +66,19 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
             instance.onClick.subscribe((row: any) => {
               console.log(row);
               this.seeClaimLetter(row);
+            });
+          },
+        },
+        officialConclusion: {
+          title: 'Ver Oficio Conclusión',
+          width: '5%',
+          type: 'custom',
+          sort: false,
+          renderComponent: ButtonColumnComponent,
+          onComponentInitFunction: (instance: any) => {
+            instance.onClick.subscribe((row: any) => {
+              console.log(row);
+              this.seeOfficialConclusion(row);
             });
           },
         },
@@ -421,10 +421,7 @@ export class ClaimsFollowUpComponent extends BasePage implements OnInit {
     };
     this.seraLogService.postDateExport(data).subscribe(
       response => {
-        this._downloadExcelFromBase64(
-          response,
-          `SINIESTROS SEGUIMIENTO ${this.claimsFollowUpForm.controls['numberGood'].value}`
-        );
+        this._downloadExcelFromBase64(response, `SINIESTROS SEGUIMIENTO`);
       },
       error => {
         this.alert(

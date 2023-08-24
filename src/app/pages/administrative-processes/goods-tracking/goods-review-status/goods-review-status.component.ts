@@ -91,6 +91,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
   @ViewChild('file', { static: false }) myInput: ElementRef;
   loadingBtn: boolean = false;
   loadingBtn2: boolean = false;
+  loadingBtn3: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -261,7 +262,12 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       }
     }
 
-    params['sortBy'] = 'goodNumber:ASC';
+    if (params['filter.goodNumber']) {
+      params['filter.goodNumber.id'] = params['filter.goodNumber'];
+      delete params['filter.goodNumber'];
+    }
+
+    params['sortBy'] = 'goodNumber:DESC';
     if (params['filter.descriptionGood']) {
       params['filter.goodNumber.description'] =
         params['filter.descriptionGood'];
@@ -358,20 +364,89 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     if (files.length != 1) throw 'No files selected, or more than of allowed';
     const fileReader = new FileReader();
     fileReader.readAsBinaryString(files[0]);
-    fileReader.onload = () => this.readExcel(fileReader.result);
+    fileReader.onload = () => this.readExcel(files[0]);
+    // fileReader.onload = () => this.readExcel(fileReader.result);
   }
 
   // LEER EXCEL / CSV //
-  async readExcel(binaryExcel: string | ArrayBuffer) {
+  async readExcel(binaryExcel: string | ArrayBuffer | any) {
     try {
-      const excelImport = this.excelService.getData<any>(binaryExcel);
-      await this.attentionMassive(excelImport);
+      // await this.attentionMassive(binaryExcel);
+      this.alertQuestion(
+        'question',
+        '¿Está Seguro de dar por Atendidos los Bienes del Archivo?',
+        // 'Se Atenderán Todos los Bienes del Archivo',
+        // '¿Desea Continuar?'
+        ''
+      ).then(async question => {
+        if (question.isConfirmed) {
+          const formData = new FormData();
+          formData.append('file', binaryExcel);
+          formData.append('responsible', this.responsable);
+          formData.append('user', this.token.decodeToken().preferred_username);
+          formData.append('curform', 'FMATENCBIENESREV');
+          let obj = {
+            responsible: this.responsable,
+            user: this.token.decodeToken().preferred_username,
+            curform: 'FMATENCBIENESREV',
+          };
+          this.loadingBtn = true;
+          const attendedMassive: any = await this.attendedMassive(formData);
+
+          console.log('attendedMassive', attendedMassive);
+          if (attendedMassive == null)
+            return this.alert(
+              'warning',
+              'No se pudo cargar el archivo',
+              'Verifíquelo e intente nuevamente'
+            );
+
+          if (attendedMassive.length > 0) {
+            this.alertQuestion(
+              'question',
+              'Hay Bienes que no se pudieron atender',
+              '¿Quiere Visualizarlos?'
+            ).then(async question => {
+              if (question.isConfirmed) {
+                this.openForm(attendedMassive);
+              }
+            });
+            this.loadingBtn = false;
+            await this.getMotives();
+          } else {
+            this.alert(
+              'success',
+              'Todos los Bienes del Archivo Fueron Atendidos',
+              ''
+            );
+            this.loadingBtn = false;
+            await this.getMotives();
+          }
+          this.clearInput();
+        }
+      });
+      // const excelImport = this.excelService.getData<any>(binaryExcel);
+      // await this.attentionMassive(excelImport);
       // this.data1.load(excelImport);
       // this.showPagination = false;
       // this.totalItems = this.data1.count();
     } catch (error) {
       this.alert('error', 'Ocurrio un Error al leer el Archivo', '');
     }
+  }
+
+  async attendedMassive(formData: any) {
+    return new Promise((resolve, reject) => {
+      this.massiveGoodService.AttendedPorGoodReasonRev(formData).subscribe({
+        next: response => {
+          // //console.log('res', response);
+          resolve(response.data);
+        },
+        error: err => {
+          resolve(null);
+        },
+      });
+    });
   }
 
   // FUNCIÓN DE BOTÓN DE ATENCIÓN MASIVA //
@@ -417,7 +492,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
             if (good != null) {
               EXISTE = good.goodNumber.id;
-              vl_ID_EVENTO = good.eventId.id;
+              vl_ID_EVENTO = good.eventId ? good.eventId.id : null;
               ESTATUSB = good.status;
             } else {
               let obj = {
@@ -430,7 +505,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
             if (EXISTE > 0) {
               let obj_: any = {
                 goodNumber: excelImport[i].NO_BIEN,
-                eventId: good.eventId.id,
+                eventId: good.eventId ? good.eventId.id : null,
                 goodType: good.goodType,
                 status: good.status,
                 manager: this.responsable,
@@ -802,7 +877,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       this.alert('warning', 'No hay Bienes en la Tabla', '');
       return;
     }
-
+    this.loadingBtn3 = true;
     let params = {
       ...this.paramsList.getValue(),
       ...this.columnFilters,
@@ -823,7 +898,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
       params['filter.attended'] = `$eq:0`;
       params['filter.delegation'] = `$eq:${this.delegationNumber}`;
     }
-    params['sortBy'] = 'goodNumber:ASC';
+    params['sortBy'] = 'goodNumber:DESC';
     delete params['limit'];
     delete params['page'];
     this.massiveGoodService.GetAllGoodsMotivesRevExcel(params).subscribe({
@@ -835,8 +910,9 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
 
         console.log('RESSS', response);
       },
-      error(err) {
+      error: err => {
         console.log('Errorr', err);
+        this.loadingBtn3 = false;
       },
     });
   }
@@ -850,6 +926,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     link.click();
     link.remove();
     this.alert('success', 'Archivo Descargado Correctamente', '');
+    this.loadingBtn3 = false;
   }
 
   async returnJsonToCsv() {
@@ -897,6 +974,14 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     ).then(async question => {
       if (question.isConfirmed) {
         this.loadingBtn2 = true;
+        if (!this.selectedRow.eventId) {
+          this.alert(
+            'warning',
+            'No se puede atender el bien porque no tiene evento asociado',
+            'Verifique'
+          );
+          return;
+        }
         let obj_: any = {
           goodNumber: this.selectedRow.goodNumber,
           eventId: this.selectedRow.eventId
@@ -1295,7 +1380,7 @@ export class GoodsReviewStatusComponent extends BasePage implements OnInit {
     }
     const params = new ListParams();
     console.log('good', good);
-    params['filter.goodNumber'] = `$eq:${good}`;
+    params['filter.goodNumber.id'] = `$eq:${good}`;
     params['filter.attended'] = `$eq:0`;
     this.goodsMotivesrev.getAll(params).subscribe({
       next: async (response: any) => {

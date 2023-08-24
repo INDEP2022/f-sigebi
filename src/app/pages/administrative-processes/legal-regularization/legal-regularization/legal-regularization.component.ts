@@ -70,23 +70,17 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       this.numberFoli = parseInt(JSON.parse(numberFoli), 10);
       this.loadGood();
     }
-    this.justifier.valueChanges.subscribe(data => {
-      console.log(data);
-      if (data) {
-        if (data.length > 0 && this.good) {
-          this.disableButton = false;
-        } else {
-          this.disableButton = true;
-        }
-      }
-    });
+    // this.justifier.valueChanges.subscribe(data => {
+    //   console.log(data);
+    //   if (data) {
+    //     if (data.length > 0 && this.good) {
+    //       this.disableButton = false;
+    //     } else {
+    //       this.disableButton = true;
+    //     }
+    //   }
+    // });
   }
-
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
 
   private buildForm() {
     this.form = this.fb.group({
@@ -96,7 +90,10 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
       ],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
       description: [null, [Validators.pattern(STRING_PATTERN)]],
-      justifier: [null, [Validators.pattern(STRING_PATTERN)]],
+      justifier: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.min(1)],
+      ],
     });
   }
 
@@ -131,6 +128,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
               .setValidators([
                 Validators.required,
                 Validators.pattern(STRING_PATTERN),
+                Validators.min(1),
               ]);
             //this.form.get('justifier').updateValueAndValidity();
           } else {
@@ -165,7 +163,9 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   }
 
   async updateStatus() {
-    console.log('Cambiando Staus');
+    console.log('Cambiando Staus' + this.numberFoli);
+    console.log(this.numberFoli);
+
     if (
       this.numberFoli === undefined ||
       this.numberFoli === null ||
@@ -201,6 +201,7 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   changeFoli(event: any) {
     console.log(event);
     this.document = event;
+    this.numberFoli = event.id;
   }
   validDocument() {
     return new Promise<boolean>((res, _rej) => {

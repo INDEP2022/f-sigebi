@@ -206,4 +206,5 @@ export enum ENDPOINT_LINKS {
   documentFolio = 'documents/folio',
   setStatus = 'application/setbienVstatus',
   documentHist = 'application/setHistBien',
+  guarantee = 'application/get-guarantee',
 }

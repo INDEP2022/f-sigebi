@@ -1,5 +1,6 @@
 export enum GoodEndpoints {
   Good = `good`,
+  GoodDescription = 'good/getDescription',
   GoodGetSiab = `goods-siab`,
   GoodFraction = 'good/queryFraction',
   GetGoodById = `good/getGoodById`,
@@ -35,6 +36,7 @@ export enum GoodEndpoints {
   GoodsMotivesrev2 = 'goods-motivesrev',
   Sgood = `good/searchGoods`,
   TmpTotGoodsProgrammed = 'tmp-tot-goods-programmed',
+  GoodNumberSol = 'good/get-data-good-typegood',
 }
 
 export enum GoodProcessPoints {

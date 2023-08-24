@@ -117,14 +117,24 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12 mt-3" *ngIf="showExpedient">
-          <form-field
+          <ng-custom-select-loading
+            [form]="formNew"
+            [path]="pathExpedient"
+            label="Nuevo No. Expediente"
+            formControlName="fileNumberNew"
+            value="id"
+            bindLabel="id"
+            paramSearch="filter.id"
+            prefixSearch="$eq"></ng-custom-select-loading>
+
+          <!-- <form-field
             [control]="formNew.get('fileNumberNew')"
             label="Nuevo No. Expediente">
             <input
               type="text"
               class="form-control"
               formControlName="fileNumberNew" />
-          </form-field>
+          </form-field> -->
         </div>
       </div>
       <div class="row mt-5">
