@@ -4,7 +4,10 @@ import { NgModule } from '@angular/core';
 import { SiabWebRoutingModule } from './siab-web-routing.module';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    /*PropertyComponent,
+    ScannedDocumentsComponent*/
+  ],
   imports: [CommonModule, SiabWebRoutingModule],
 })
 export class SiabWebModule {}

@@ -7,10 +7,10 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
             [control]="form.get('rangeDate')"
-            label="Fechas page y final">
+            label="Fecha Inicial y Final">
             <input
               class="form-control"
               formControlName="rangeDate"
@@ -24,33 +24,60 @@
               }" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field
             [control]="form.get('typeAuction')"
-            label="Tipo de subasta">
+            label="Tipo de Subasta">
             <ng-select
               formControlName="typeAuction"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">Muebles</ng-option>
-              <ng-option value="2">Inmuebles</ng-option>
+              <ng-option value="M">Muebles</ng-option>
+              <ng-option value="I">Inmuebles</ng-option>
             </ng-select>
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('idEvent')" label="ID Evento">
+        <div class="col-md-3">
+          <form-field [control]="form.get('idEvent')" label="Id Evento">
             <input type="text" class="form-control" formControlName="idEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              [disabled]="!form.valid"
+              (click)="ObtenerRepOI()">
+              Buscar
+              <i class="bx bx-search-alt bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <br />
+    <form class="form-material" [formGroup]="formReport">
+      <div class="row mt-4 justify-content-center">
+        <div class="col-md-4">
+          <form-field
+            [control]="formReport.get('NameReport')"
+            label="Nombre del Archivo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="NameReport" />
           </form-field>
         </div>
         <div class="col-md-2">
           <div class="justify-content-center">
             <button
-              type="button"
-              class="btn btn-primary btn-sm active"
-              [disabled]="!form.valid"
-              (click)="show = !show">
-              Aceptar
+              class="btn btn-sm btn-success active"
+              (click)="exportXlsx()"
+              [disabled]="!formReport.valid">
+              Exportar a Excel
+              <i class="bx bx-download float-icon"></i>
             </button>
           </div>
         </div>
@@ -60,24 +87,23 @@
       <div class="mb-2 ch-content" header>
         <h5 class="title"></h5>
         <div class="justify-content-end">
-          <div class="col-md-5 buttons">
-            <app-columns-select [(settings)]="settings"></app-columns-select>
-          </div>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            (click)="openPrevPdf()">
-            Descargar Reporte
-          </button>
+          <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
       </div>
-      <div class="table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+      <div class="row">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data">
+            </ng2-smart-table>
+          </div>
+        </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems">
-      </app-pagination>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>

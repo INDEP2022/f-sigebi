@@ -29,6 +29,7 @@ export const COUNT_SAFE_COLUMNS = {
   },
   localityCode: {
     title: 'Localidad',
+    sort: false,
   },
 };
 
