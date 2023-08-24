@@ -21,10 +21,12 @@ import { AccountMovementService } from 'src/app/core/services/ms-account-movemen
 import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
 import { MsDepositaryService } from 'src/app/core/services/ms-depositary/ms-depositary.service';
 import { PaymentService } from 'src/app/core/services/ms-payment/payment-services.service';
+import { IndUserService } from 'src/app/core/services/ms-users/ind-user.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PaymentSearchModalComponent } from '../payment-search-modal/payment-search-modal.component';
+import { PaymentSearchProcessComponent } from '../payment-search-process/payment-search-process.component';
 import { PAYMENT_COLUMNS } from './payment-search-columns';
 
 @Component({
@@ -59,6 +61,18 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
 
   statusPaymentChange: number;
   msgPaymentChange: string;
+
+  processId: any;
+  idCustomer: any;
+  idGuySat: any;
+  idselect: any;
+  incomeid: any;
+  account: any;
+
+  LV_VALUSER: number;
+  LV_USR_CON: number = 0;
+
+  LV_VAL_SISTEMA: string;
 
   //params = new BehaviorSubject<FilterParams>(new FilterParams());
   paymentSettings = {
@@ -102,7 +116,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     private accountMovementService: AccountMovementService,
     private msDepositaryService: MsDepositaryService,
     private bankMovementType: BankMovementType,
-    private authService: AuthService
+    private authService: AuthService,
+    private indUserService: IndUserService
   ) {
     super();
     this.paymentSettings.columns = PAYMENT_COLUMNS;
@@ -113,6 +128,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.getParametercomer('SUPUSUCOMER');
     this.getBusquedaPagDet(5);
     this.searchID(5);
+    this.pagosArchivos(5, 2);
     this.localdata
       .onChanged()
       .pipe(takeUntil(this.$unSubscribe))
@@ -368,19 +384,25 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
         let param = {
           tsearchId: elemC.value,
           payId: data.newData.paymentId,
-          batchId: data.newData.batchId,
-          idEvent: data.newData.event,
-          idinconsis: data.newData.inconsistencies,
-          numbermovement: data.newData.entryOrderId,
+          processId: Number(this.processId),
+          batchId: Number(data.newData.batchId),
+          idEvent: Number(data.newData.event),
+          idCustomer: Number(this.idCustomer),
+          idGuySat: Number(this.idGuySat),
+          idselect: Number(this.idselect),
+          incomeid: Number(this.incomeid),
+          idinconsis: Number(data.newData.inconsistencies),
+          numbermovement: Number(data.newData.entryOrderId),
           date: data.newData.date != null ? new Date(data.newData.date) : null,
           reference: data.newData.reference,
           referenceori: data.newData.originalReference,
           amount: data.newData.amount,
           cveBank: data.newData.cve,
-          code: data.newData.code,
-          batchPublic: data.newData.publicBatch,
+          code: Number(data.newData.code),
+          batchPublic: Number(data.newData.publicBatch),
           validSystem: data.newData.systemValidity,
           result: data.newData.result,
+          account: this.account,
           guy: data.newData.type,
         };
         this.updateRecord(param);
@@ -395,6 +417,16 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     //   this.editedRowTable = lc;
     // }
   }
+
+  openModal2(context?: Partial<PaymentSearchProcessComponent>) {
+    const modalRef = this.modalService.show(PaymentSearchProcessComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
+
+  changeProcess2() {}
 
   addRow(rows: any[]) {
     this.paymentColumns = [...this.paymentColumns, ...rows];
@@ -471,7 +503,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
           'Debe Elegir un Tipo de Acción'
         );
       } else {
-        this.pupProcesa();
+        this.confirm();
       }
     }
   }
@@ -623,6 +655,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   getBusquedaPagMae(params: number | string) {
     const elemC = document.getElementById('typeId') as HTMLInputElement;
     elemC.value = '';
+    this.searchForm.get('type').setValue('');
+
     this.paymentService.getBusquedaMae(params).subscribe(resp => {
       if (resp != null && resp != undefined) {
         this.LV_WHERE = resp.data[0].desTsearch;
@@ -640,6 +674,12 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     this.paymentService.getBusquedaPag(params).subscribe(resp => {
       if (resp != null && resp != undefined) {
         console.log('Resp BusquedaPagDet', resp);
+        this.processId = resp.data[0].processId;
+        this.idCustomer = resp.data[0].idCustomer;
+        this.idGuySat = resp.data[0].idGuySat;
+        this.idselect = resp.data[0].idselect;
+        this.incomeid = resp.data[0].incomeid;
+        this.account = resp.data[0].account;
       }
     });
   }
@@ -710,13 +750,14 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     let LV_PROCESA: number;
 
     LV_PROCESA == 0;
+    const elemC = document.getElementById('typeId') as HTMLInputElement;
 
     if (
       this.searchForm.get('processType').value == 0 &&
       this.searchForm.get('action').value == 2
     ) {
       if (this.searchForm.get('typeId').value == 0) {
-        //Falta integrar PA_PAGOS_CAMBIOS}
+        //integrar PA_PAGOS_CAMBIOS}
         this.pagosCambio(
           this.searchForm.get('processType').value,
           this.searchForm.get('action').value
@@ -729,7 +770,11 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       this.searchForm.get('action').value
     ) {
       if (this.searchForm.get('typeId').value) {
-        //servicio PA_PAGOS_EFE_DUP_NREF No está desarrollada
+        //servicio PA_PAGOS_EFE_DUP_NREF
+        this.paPagosEfeDup(
+          this.searchForm.get('processType').value &&
+            this.searchForm.get('action').value
+        );
       } else {
         LV_PROCESA = 1;
       }
@@ -739,6 +784,7 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     ) {
       if (this.searchForm.get('typeId').value == 6) {
         //Servicio PA_PAGOS_ARCHIVOS
+        this.pagosArchivos(elemC.value, this.searchForm.get('action').value);
       } else {
         LV_PROCESA = 1;
       }
@@ -768,7 +814,15 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   procesa() {
-    //Por Implementar CAN_CARGA_CSV -> PUP_CARGA_CSV
+    if (this.searchForm.get('bank').value == 0) {
+      this.alert(
+        'warning',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Debe Elegir un Banco'
+      );
+    } else {
+      //Por Implementar PUP_CARGA_CSV
+    }
   }
 
   deleteId(id: number | string) {
@@ -793,26 +847,16 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
   }
 
   systemAplicado() {
+    //this.pagosMasivosVps('A', 0);
+    const elemC = document.getElementById('typeId') as HTMLInputElement;
     this.alertQuestion(
       'question',
       'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
       '¿Esta seguro de actualizar el valor de todos los registros del atributo valido para sistema ?'
     ).then(async question => {
       if (question.isConfirmed) {
-        // add PA_PAGOS_MASIVO_VPS;
-      }
-      if (this.APLICADO_EST == 1) {
-        this.alert(
-          'warning',
-          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          this.APLICADO_MSG
-        );
-      } else {
-        this.alert(
-          'warning',
-          'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
-          this.APLICADO_MSG
-        );
+        this.LV_VAL_SISTEMA = 'B';
+        this.pagosMasivosVps(this.LV_VAL_SISTEMA, Number(elemC.value)); // add PA_PAGOS_MASIVO_VPS;
       }
     });
   }
@@ -847,5 +891,84 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
     const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
     const year = date.getUTCFullYear().toString();
     return `${year}-${month}-${day}`;
+  }
+
+  paPagosEfeDup(params: any) {
+    this.msDepositaryService.postPaymentEfeDup(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp paPagosEfeDup-> ', resp);
+        this.statusPaymentChange = resp.data.P_EST_PROCESO;
+        this.msgPaymentChange = resp.data.P_MSG_PROCESO;
+      }
+    });
+  }
+
+  pagosArchivos(searchId: any, action: number) {
+    this.msDepositaryService
+      .getPaymentFile(searchId, action)
+      .subscribe(resp => {
+        if (resp != null && resp != undefined) {
+          console.log('Resp pagosArchivos-> ', resp);
+          this.statusPaymentChange = resp.data.P_EST_PROCESO;
+          this.msgPaymentChange = resp.data.P_MSG_PROCESO;
+        }
+      });
+  }
+
+  pagosMasivosVps(process: string, action: number) {
+    console.log('Proceso accion-> ', process, action);
+    this.msDepositaryService.getPaymentBulk(process, action).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        console.log('Resp -> ', resp);
+        this.APLICADO_EST = resp.P_EST_PROCESO;
+        this.APLICADO_MSG = resp.P_MSG_PROCESO;
+
+        if (this.APLICADO_EST == 1) {
+          this.alert(
+            'warning',
+            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            this.APLICADO_MSG
+          );
+        } else {
+          this.alert(
+            'warning',
+            'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+            this.APLICADO_MSG
+          );
+        }
+      }
+    });
+  }
+
+  getSegAccessAreas(params: string) {
+    this.indUserService.getSegAccessAreas(params).subscribe(resp => {
+      if (resp != null && resp != undefined) {
+        let count = resp.count;
+        console.log('Resp GetSegAcces->', resp);
+        console.log('Resp.count-> ', resp.count);
+      }
+    });
+  }
+
+  confirm() {
+    const { preferred_username } = this.authService.decodeToken();
+    let username = preferred_username;
+    this.getSegAccessAreas(username);
+    if (this.LV_VALUSER == 0) {
+      this.alert(
+        'error',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'Usuario no Autorizado'
+      );
+    }
+    if (this.LV_USR_CON != 1) {
+      this.alert(
+        'error',
+        'BÚSQUEDA Y PROCESAMIENTO DE PAGOS',
+        'El Usuario no Puede Autorizar Procesar Pagos.'
+      );
+    } else {
+      this.pupProcesa();
+    }
   }
 }

@@ -29,4 +29,7 @@ export enum DepositaryEndPoints {
   UpdateGeneralStatus = 'validate-payments-ref/updateGeneralStatus',
   SearchPayment = 'comer-payment/search-payment',
   GetPaymentChange = 'comer-payment/change-payment/type-action',
+  PaymentEfeDup = 'comer-payment/pa-payment-efe-dup-nref',
+  PaymentFiles = 'comer-payment/files-payment/type-action',
+  PaymentBulk = 'comer-payment/massive-payment/system',
 }

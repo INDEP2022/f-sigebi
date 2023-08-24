@@ -254,4 +254,20 @@ export class MsDepositaryService extends HttpService {
       `${DepositaryEndPoints.GetPaymentChange}/${process}/type/${action}`
     );
   }
+
+  postPaymentEfeDup(params: any) {
+    return this.post(DepositaryEndPoints.PaymentEfeDup, params);
+  }
+
+  getPaymentFile(searchId: any, action: number) {
+    return this.get(
+      `${DepositaryEndPoints.PaymentFiles}/${searchId}/type/${action}`
+    );
+  }
+
+  getPaymentBulk(process: string, action: number) {
+    return this.get(
+      `${DepositaryEndPoints.PaymentBulk}/${process}/type/${action}`
+    );
+  }
 }
