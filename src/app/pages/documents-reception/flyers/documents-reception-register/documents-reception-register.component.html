@@ -11,7 +11,7 @@
           <i class="bx bx-chevron-left float-icon"></i>Regresar
         </button> -->
         <button
-          *ngIf="flyerReceptionMode"
+          *ngIf="flyerReceptionMode || origin"
           class="btn btn-primary active btn-sm m-2"
           [disabled]="loadingPostCapture"
           (click)="endProcess()">

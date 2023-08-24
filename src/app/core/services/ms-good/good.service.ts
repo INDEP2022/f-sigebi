@@ -54,6 +54,12 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
+  getDescription(goodNumber: number) {
+    return this.get<{ description: string }>(
+      GoodEndpoints.GoodDescription + '/' + goodNumber
+    );
+  }
+
   getAllSiab(
     params?: ListParams | string
   ): Observable<IListResponse<IGoodSami>> {

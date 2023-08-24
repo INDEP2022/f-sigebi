@@ -2,7 +2,8 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">
-        Generaci&oacute;n de ficha comercial de ingresos y egresos
+        GENERACIÓN DE FICHA COMERCIAL, FICHA TÉCNICA Y FICHA DE INGRESOS Y
+        EGRESOS
       </h5>
     </div>
   </div>
@@ -10,7 +11,7 @@
     <div class="row">
       <form class="form-material" [formGroup]="form">
         <div class="row justify-content-center">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <form-field [control]="form.get('noGood')" label="No. Bien">
               <input
                 type="text"
@@ -18,6 +19,13 @@
                 formControlName="noGood" />
             </form-field>
             <!-- <app-goods-table-shared [form]="form" [disabled]="statusActaValue !== 'ABIERTA'"></app-goods-table-shared> -->
+          </div>
+          <div class="col-md-2">
+            <button
+              class="btn btn-danger btn-sm active mr-3"
+              (click)="cleanBtn()">
+              Limpiar <i class="fas fa-eraser"> </i>
+            </button>
           </div>
         </div>
       </form>
@@ -60,7 +68,7 @@
         <div class="d-flex justify-content-center">
           <div class="m-3">
             <button class="btn btn-danger btn-sm active mr-3" (click)="clean()">
-              Limpiar <i class="fas fa-eraser"> </i>
+              Limpiar Fotos <i class="fas fa-eraser"> </i>
             </button>
           </div>
         </div>

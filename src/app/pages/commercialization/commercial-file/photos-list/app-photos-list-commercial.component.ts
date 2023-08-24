@@ -7,7 +7,10 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { DictationService } from 'src/app/core/services/ms-dictation/dictation.service';
 import { FilePhotoSaveZipService } from 'src/app/core/services/ms-ldocuments/file-photo-save-zip.service';
-import { FilePhotoService } from 'src/app/core/services/ms-ldocuments/file-photo.service';
+import {
+  FilePhotoService,
+  IPhotoFile,
+} from 'src/app/core/services/ms-ldocuments/file-photo.service';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings';
 import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { BasePage } from 'src/app/core/shared';
@@ -38,7 +41,7 @@ export class PhotosListCommercialComponent extends BasePage implements OnInit {
   errorMessage: string = '';
   // lastConsecutive: number = 1;
   filesToDelete: string[] = [];
-  files: string[] = [];
+  files: IPhotoFile[] = [];
   form: FormGroup;
   errorImages: string[] = [];
   constructor(

@@ -362,11 +362,7 @@ export class ConsultationGoodsCommercialSalesComponent
       );
     } else {
       this.loading = false;
-      this.alert(
-        'warning',
-        'Debe completar al menos un campo de búsqueda',
-        ''
-      );
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
     }
   }
 
@@ -411,11 +407,7 @@ export class ConsultationGoodsCommercialSalesComponent
     this.modelSave = model;
 
     if (Object.keys(model).length === 0) {
-      this.alert(
-        'warning',
-        'Debe completar al menos un campo de búsqueda',
-        ''
-      );
+      this.alert('warning', 'Debe completar al menos un campo de búsqueda', '');
       this.loading = false;
     } else {
       const paramsF = new FilterParams();
