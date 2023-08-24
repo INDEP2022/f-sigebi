@@ -303,6 +303,10 @@ export class GoodsWithRequiredInfoComponent extends BasePage implements OnInit {
     for (var i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
+    this.fullService.generatingFileFlag.next({
+      progress: 100,
+      showText: false,
+    });
 
     return bytes.buffer;
   }
