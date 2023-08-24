@@ -425,7 +425,11 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       P_PROCNUM: this.idProcess.value,
       P_FEC_PROCNUM: this.cambiarFormatoFecha(this.date.value),
     };
-    console.log({params1: params, date: this.date.value, dateValid: new Date('20-08-2023')})
+    console.log({
+      params1: params,
+      date: this.date.value,
+      dateValid: new Date('20-08-2023'),
+    });
     this.downloadReport('blank', params, () => {
       this.isLoadingStatusAccount = false;
     });

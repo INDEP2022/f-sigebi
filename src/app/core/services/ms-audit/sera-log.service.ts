@@ -57,4 +57,11 @@ export class SeraLogService extends HttpService {
     const url = `${environment.API_URL}massivedictation/api/v1/application/obtn-good-sinister-export`;
     return this.htpp.post(url, body);
   }
+
+  getLogData(registerNum: number | string, params?: _Params) {
+    return this.get(
+      `application/getPupTraeRegBitacora?p_num_registro=${registerNum}`,
+      params
+    );
+  }
 }

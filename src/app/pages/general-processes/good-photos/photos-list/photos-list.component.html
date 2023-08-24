@@ -127,7 +127,7 @@
                 #photo
                 (refreshFiles)="refresh($event)"
                 [typedblClickAction]="typedblClickAction"
-                [filename]="image"
+                [file]="image"
                 [goodNumber]="goodNumber + ''"></app-photo>
             </div>
           </div>
@@ -135,7 +135,10 @@
                     type="checkbox"
                     class="float-check checkbox-color checkbox-primary"
                     id="check2" /> -->
-          <form-check for="keep-{{ i }}" class="float-check">
+          <form-check
+            for="keep-{{ i }}"
+            class="float-check"
+            *ngIf="validationUser(image)">
             <input
               type="checkbox"
               id="keep-{{ i }}"

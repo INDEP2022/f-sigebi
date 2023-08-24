@@ -48,4 +48,8 @@ export class AppraiseService extends HttpService {
   getPerito(params?: string): Observable<IListResponse<any>> {
     return this.get<IListResponse<any>>('proficient?limit=5&page=1', params);
   }
+
+  postGetAppraise(body: any) {
+    return this.post(AppraiseEndpoints.PostAppraise, body);
+  }
 }

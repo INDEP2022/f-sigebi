@@ -467,6 +467,7 @@ export class SchedulingDeliveriesFormComponent
   }
 
   showGoodsInventory() {
+    this.paramsSearchDest = new BehaviorSubject<ListParams>(new ListParams());
     const typeEvent = this.schedulingDeliverieForm.get('typeEvent').value;
     const transferId = this.schedulingDeliverieForm.get('transferId').value;
     const store = this.schedulingDeliverieForm.get('store').value;
@@ -672,7 +673,6 @@ export class SchedulingDeliveriesFormComponent
       !bienSiabNum
     ) {
       this.loadingGoodsDest = true;
-
       const formData = {
         delRegSol: this.regionalDelegationNum,
         inventoryKey: store,
@@ -860,7 +860,6 @@ export class SchedulingDeliveriesFormComponent
       bienSiabNum
     ) {
       this.loadingGoodsDest = true;
-
       const formData = {
         delRegSol: this.regionalDelegationNum,
         inventoryKey: store,

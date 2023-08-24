@@ -39,6 +39,7 @@ export class MunicipalityControlMainComponent
   data: IConfigvtadmun[] = [];
   columnFilters: any = [];
   assignedGoodColumns: any[] = [];
+  idGood: any;
   applicantSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -84,8 +85,6 @@ export class MunicipalityControlMainComponent
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe((params2: any) => {
-        //console.log(params2);
-        //console.log(this.paramsScreen);
         for (const key in this.paramsScreen) {
           if (Object.prototype.hasOwnProperty.call(params2, key)) {
             this.paramsScreen[key as keyof typeof this.paramsScreen] =
@@ -169,7 +168,7 @@ export class MunicipalityControlMainComponent
       next: response => {
         this.loading = false;
         this.data = response.data;
-        //console.log(this.data);
+        console.log(this.data);
         this.totalItems = response.count;
         this.dataFactGen.load(response.data);
         this.dataFactGen.refresh();
@@ -180,17 +179,18 @@ export class MunicipalityControlMainComponent
   onClick(data: any) {
     // console.log(data);
   }
-  getDataGoods(id: any) {
+  getDataGoods(id?: any) {
+    this.idGood = id;
     this.msDirectawardService.getGoodsByApplicant(id).subscribe({
       next: data => {
         this.assignedGoodColumns = data.data;
         this.assignedGoodTotalItems = this.assignedGoodColumns.length;
-        // console.log(this.assignedGoodColumns);
+        console.log(this.assignedGoodColumns);
       },
       error: err => {
         this.onLoadToast(
           'warning',
-          'advertencia',
+          'Advertencia',
           'No se han Encontrado Bienes para el Solicitante Seleccionado'
         );
       },
@@ -205,8 +205,8 @@ export class MunicipalityControlMainComponent
     //console.log(row, type);
     this.alertQuestion(
       'question',
-      '',
       '¿Desea Eliminar este Registro?',
+      '',
       'Eliminar'
     ).then(question => {
       if (question.isConfirmed) {
@@ -245,23 +245,21 @@ export class MunicipalityControlMainComponent
   }
 
   deleteAssignedGood(row: any) {
-    //console.log(row);
-    this.municipalityControlMainService
-      .deleteBienesAsignados(row.repvendcId)
-      .subscribe({
-        next: data => {
-          this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
-          // location.reload();
-          this.getData();
-        },
-        error: err => {
-          this.onLoadToast(
-            'warning',
-            'advertencia',
-            'El Bien no se ha Eliminado Correctamente'
-          );
-        },
-      });
+    // console.log(row);
+    this.msDirectawardService.deleteGoodsById(row.detbienesadjId).subscribe({
+      next: data => {
+        this.onLoadToast('success', 'Bien', 'Eliminado Correctamente');
+        // location.reload();
+        this.getData();
+      },
+      error: err => {
+        this.onLoadToast(
+          'warning',
+          'Advertencia',
+          'El bien no se ha Eliminado Correctamente'
+        );
+      },
+    });
   }
 
   openFormApplicant(applicant?: any) {
@@ -276,7 +274,7 @@ export class MunicipalityControlMainComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onConfirm.subscribe(data => {
+    modalRef.content.refresh.subscribe(data => {
       if (data) this.getData();
     });
   }
@@ -287,12 +285,12 @@ export class MunicipalityControlMainComponent
 
   openModalAssignedGood(context?: Partial<AssignedGoodsModalComponent>) {
     const modalRef = this.modalService.show(AssignedGoodsModalComponent, {
-      initialState: { ...context },
+      initialState: { ...context, ...this.assignedGoodColumns },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.refreshGoods();
+    modalRef.content.refresh.subscribe(data => {
+      if (data) this.getDataGoods(this.idGood);
     });
   }
 }
