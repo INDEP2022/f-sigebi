@@ -1,14 +1,14 @@
 import { DatePipe, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -53,6 +53,11 @@ interface IGlobal {
 interface IParametro {
   pGestOk: number;
   pNumeroTramite: string;
+}
+
+interface IQueryParams {
+  origin: string;
+  noExpedient: string;
 }
 
 interface IBlkControl {
@@ -117,6 +122,10 @@ export class CircumstantialActsSuspensionCancellationComponent
   goodTrackerGoods: any;
   $trackedGoods = this.store.select(getTrackedGoods);
   inputValue: number;
+  queryParams: IQueryParams = {
+    origin: null,
+    noExpedient: null,
+  };
   get username() {
     return this.authService.decodeToken().username;
   }
@@ -136,7 +145,8 @@ export class CircumstantialActsSuspensionCancellationComponent
     private store: Store,
     private programminggoodService: ProgrammingGoodsService,
     private expedientService: ExpedientService,
-    private historygoodService: HistoryGoodService
+    private historygoodService: HistoryGoodService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
     this.settings1 = {
@@ -157,6 +167,17 @@ export class CircumstantialActsSuspensionCancellationComponent
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(params => {
+        if (params['origin']) {
+          console.error(params);
+          this.queryParams.origin = params['origin'];
+          this.queryParams.noExpedient = params['noExpedient'];
+          this.search(this.queryParams.noExpedient);
+          this.inputValue = Number(this.queryParams.noExpedient);
+        }
+      });
     this.initForm();
     this.startCalendars();
     this.pupInitForms();
@@ -1077,6 +1098,13 @@ export class CircumstantialActsSuspensionCancellationComponent
         console.log(error);
       },
     });
+  }
+
+  goBack() {
+    //FCONGENRASTREADOR
+    if (this.queryParams.origin == 'FCONGENRASTREADOR') {
+      this.router.navigate([`/pages/general-processes/goods-tracker`]);
+    }
   }
 
   manejarTipoActa(event: any): void {
