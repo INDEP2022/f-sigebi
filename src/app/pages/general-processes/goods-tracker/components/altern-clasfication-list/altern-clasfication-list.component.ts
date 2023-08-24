@@ -22,7 +22,6 @@ export class AlternClasficationListComponent
 {
   clasifications: IAlternativeClasification[] = [];
   selectedClasifications: IAlternativeClasification[] = [];
-  childSelected: string[] | number[] = [];
   totalItems = 0;
   params = new BehaviorSubject(new FilterParams());
   constructor(
@@ -73,7 +72,7 @@ export class AlternClasficationListComponent
       this.selectedClasifications.push(clasfication);
     } else {
       this.selectedClasifications = this.selectedClasifications.filter(
-        clasif => clasif.id == clasfication.id
+        clasif => clasif.id != clasfication.id
       );
     }
   }
@@ -92,6 +91,7 @@ export class AlternClasficationListComponent
   getAll(params?: FilterParams) {
     const _params = params ?? new FilterParams();
     _params.addFilter('id', 11, SearchFilter.GTE);
+    _params.sortBy = 'id:ASC';
     this.loading = true;
     return this.alternClasificationService
       .getAllFilter(_params.getParams())
