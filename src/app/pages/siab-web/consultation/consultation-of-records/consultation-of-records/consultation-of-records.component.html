@@ -1,0 +1,32 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Consulta constancias</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('expedient')" label="No. Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="expedient" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active mr-3"
+              [disabled]="!form.valid"
+              (click)="generateDocuments()">
+              Generar Documentos
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
