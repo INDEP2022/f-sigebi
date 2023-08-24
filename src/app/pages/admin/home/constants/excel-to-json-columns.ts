@@ -69,4 +69,9 @@ export const TO_JSON = {
     title: 'No. Bien',
     sort: false,
   },
+  desc_bien: { title: 'Descripción', sort: false },
+  cont_no_intento: {
+    title: 'Intentos de Venta',
+    sort: false,
+  },
 };
