@@ -16,6 +16,7 @@
     </form-field>
     <div class="col-md-1">
       <button
+        tooltip="Seleccionar desde archivo txt"
         (click)="goodNumbersInput.click()"
         type="button"
         class="btn btn-primary btn-sm active">
@@ -223,14 +224,6 @@
         oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         class="form-control"></textarea>
     </form-field>
-
-    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
-      <input
-        type="checkbox"
-        formControlName="gabinete"
-        id="gabinete"
-        class="form-control" />
-    </form-check> -->
   </div>
 
   <div class="row pt-3">
@@ -241,6 +234,16 @@
         oninput="if(this.value.length > 200) this.value = this.value.slice(0, 200)"
         class="form-control"></textarea>
     </form-field>
+  </div>
+
+  <div class="row pt-3">
+    <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
+      <input
+        type="checkbox"
+        formControlName="gabinete"
+        id="gabinete"
+        class="form-control" />
+    </form-check>
   </div>
 
   <!-- <div class="row pt-5"> -->

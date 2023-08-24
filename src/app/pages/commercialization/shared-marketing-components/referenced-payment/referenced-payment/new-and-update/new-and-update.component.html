@@ -1,6 +1,9 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">
+    <h5 *ngIf="valScroll" class="modal-title">
+      Agregar Descripción del Pago Sat al Pago {{ idPayment }}
+    </h5>
+    <h5 *ngIf="!valScroll" class="modal-title">
       {{ edit ? 'Editar' : 'Agregar' }} {{ title }} {{ edit ? idPayment : '' }}
     </h5>
   </div>
@@ -10,6 +13,7 @@
         <div class="col-md-6 mt-3">
           <form-field [control]="form.get('bankKey')">
             <ngx-select
+              [readonly]="valScroll"
               [searchOnInit]="true"
               [form]="form"
               control="bankKey"
@@ -20,10 +24,11 @@
             </ngx-select>
           </form-field>
         </div>
+
         <div class="col-md-6 mt-3">
           <form-field [control]="form.get('date')" label="Fecha">
             <input
-              [ngClass]="{ 'bg-gray': disabledSend }"
+              [ngClass]="{ 'not-press bg-gray': valScroll }"
               maxlength="11"
               bsDatepicker
               type="text"
@@ -37,6 +42,7 @@
             [control]="form.get('movementNumber')"
             label="No. Movimiento">
             <input
+              [readonly]="valScroll"
               maxlength="11"
               type="text"
               class="form-control"
@@ -46,6 +52,7 @@
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('lotId')">
             <ngx-select
+              [readonly]="valScroll"
               [searchOnInit]="true"
               [form]="form"
               control="lotId"
@@ -61,6 +68,7 @@
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('reference')" label="Referencia">
             <input
+              [readonly]="valScroll"
               maxlength="30"
               type="text"
               class="form-control"
@@ -72,6 +80,7 @@
             [control]="form.get('referenceOri')"
             label="Referencia Orden Ingresos">
             <input
+              [readonly]="valScroll"
               maxlength="30"
               type="text"
               class="form-control"
@@ -89,7 +98,10 @@
         </div> -->
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('validSistem')" label="Válido">
-            <ng-select formControlName="validSistem" class="form-control pt-1">
+            <ng-select
+              [readonly]="valScroll"
+              formControlName="validSistem"
+              class="form-control pt-1">
               <ng-option value="S">Si</ng-option>
               <ng-option value="R">Rechazado</ng-option>
               <ng-option value="N">No Inválido</ng-option>
@@ -105,6 +117,7 @@
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('clientId')">
             <ngx-select
+              [readonly]="valScroll"
               [searchOnInit]="true"
               [form]="form"
               control="clientId"
@@ -118,6 +131,7 @@
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('amount')" label="Monto">
             <input
+              [readonly]="valScroll"
               maxlength="17"
               type="text"
               class="form-control"
@@ -168,6 +182,7 @@
         <div class="col-md-6 mt-2">
           <form-field [control]="form.get('branchOffice')" label="Sucursal">
             <input
+              [readonly]="valScroll"
               maxlength="6"
               type="text"
               class="form-control"
@@ -177,6 +192,7 @@
         <div class="col-md-3 mt-2">
           <form-field [control]="form.get('type')" label="Tipo">
             <input
+              [readonly]="valScroll"
               maxlength="1"
               type="text"
               class="form-control"
@@ -190,6 +206,7 @@
                 [control]="form.get('description')"
                 label="Descripción">
                 <textarea
+                  [readonly]="valScroll"
                   maxlength="200"
                   class="form-control"
                   cols="5"

@@ -4,16 +4,18 @@ import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { CertificatesDeliveryService } from 'src/app/core/services/ms-delivery-constancy/certificates-delivery.service';
 import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DocumentFormComponent } from '../../shared-request/document-form/document-form.component';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
+import { TypeDeliveryModelComponent } from '../type-delivery-model/type-delivery-model.component';
 import {
   CONSTANCY_DELIVERY_COLUMNS,
   GOOD_DELIVERY_COLUMN,
 } from './columns/good-delivery-columns';
 
-const data = [
+const testdata = [
   {
     certificateId: 1,
     folio: 'hjhjhjhjh',
@@ -61,7 +63,7 @@ export class ExecuteSchedulingDeliveriesComponent
 
   private programmingService = inject(ProgrammingGoodService);
   private transferenteService = inject(TransferenteService);
-  //private bsModelRef = inject(BsModalRef)
+  private certifiDeliveryService = inject(CertificatesDeliveryService);
 
   constructor(private modalService: BsModalService) {
     super();
@@ -133,9 +135,7 @@ export class ExecuteSchedulingDeliveriesComponent
       },
     };
 
-    setTimeout(() => {
-      this.constancyDeliveryArray = data;
-    }, 400);
+    this.constancyDeliveryArray = testdata;
   }
 
   certificateDelivery(constancy: number) {
@@ -162,6 +162,28 @@ export class ExecuteSchedulingDeliveriesComponent
 
     certificateDelivery.content.event.subscribe((data: any) => {
       console.log(data);
+      const typeEvent = this.programmingDetailPanel.typeEvent;
+
+      let certifyArray: any = {};
+      const typeReceptor = data.receiverType;
+      certifyArray.certificateId = data.certificateId;
+      certifyArray.folio = data.folio;
+      certifyArray.certificateType = data.certificateType;
+
+      if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
+        certifyArray.identificator = data.clientIden;
+        certifyArray.IdennNum = data.clientIdennNum;
+        certifyArray.name = data.cliente;
+      } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
+        certifyArray.identificator = data.repLegalIden;
+        certifyArray.IdennNum = data.repLegalIdenNum;
+        certifyArray.name = data.repLegal;
+      }
+
+      this.constancyDeliveryArray = [
+        ...this.constancyDeliveryArray,
+        certifyArray,
+      ];
     });
   }
 
@@ -234,6 +256,7 @@ export class ExecuteSchedulingDeliveriesComponent
           this.getTransferent(resp.transferId);
 
           this.getProgrammingGoodDelivery(new ListParams());
+          this.getCertificateDelivery(new ListParams());
         },
       });
   }
@@ -359,6 +382,67 @@ export class ExecuteSchedulingDeliveriesComponent
 
       return true;
     }
+  }
+
+  getCertificateDelivery(params: ListParams) {
+    const progDeliveryId = this.programmingDetailPanel.id;
+    params['filter.deliveryScheduleId'] = `$eq:${progDeliveryId}`;
+    this.certifiDeliveryService.getAll().subscribe({
+      next: resp => {
+        const typeEvent = this.programmingDetailPanel.typeEvent;
+        resp.data.map((item: any) => {
+          let certifyArray: any = {};
+          const typeReceptor = item.receiverType;
+          certifyArray.certificateId = item.certificateId;
+          certifyArray.folio = item.folio;
+          certifyArray.certificateType = item.certificateType;
+          if (typeEvent == 1 && typeReceptor == 'CLIENTE') {
+            certifyArray.identificator = item.clientIden;
+            certifyArray.IdennNum = item.clientIdennNum;
+            certifyArray.name = item.cliente;
+          } else if (typeEvent != 1 && typeReceptor != 'CLIENTE') {
+            certifyArray.identificator = item.repLegalIden;
+            certifyArray.IdennNum = item.repLegalIdenNum;
+            certifyArray.name = item.repLegal;
+          }
+          this.constancyDeliveryArray.push(certifyArray);
+        });
+        this.constancyDeliveryArray = [...this.constancyDeliveryArray];
+      },
+    });
+  }
+
+  delivery() {
+    if (
+      this.goodDeliveredSelected.length == 0 ||
+      this.goodDeliveredSelected > 1
+    ) {
+      this.onLoadToast(
+        'info',
+        'Debe tener un bien seleccionado para la ejecucide entrega'
+      );
+      return;
+    }
+
+    const typeEvent = this.programmingDetailPanel.typeEvent;
+    let config: ModalOptions = {
+      initialState: {
+        typeEvent,
+        callback: (next: boolean) => {
+          if (next) {
+          }
+        },
+      },
+      class: 'modal-sm modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModelRef = this.modalService.show(
+      TypeDeliveryModelComponent,
+      config
+    );
+    this.bsModelRef.content.event.subscribe((data: any) => {
+      console.log(data);
+    });
   }
 
   preview(event: any) {
