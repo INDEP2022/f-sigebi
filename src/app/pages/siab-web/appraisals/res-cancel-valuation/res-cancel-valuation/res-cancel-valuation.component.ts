@@ -425,13 +425,9 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       }
     }
     this.idOficio = this.form.controls['office'].value?.jobId;
-    // if (this.returnOfOffice() == 2) {
-    if (false) {
+    if (this.returnOfOffice() == 2) {
       this.obtainsValuedAssets(4, this.idOficio);
     } else if (this.returnOfOffice() == 3) {
-      this.obtainsCancelAssets(5, this.idOficio);
-    }
-    if (true) {
       this.obtainsCancelAssets(5, this.idOficio);
     }
   }
@@ -671,7 +667,7 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
     this.selectedRowsCancel.forEach(row => {
       console.log('Si entro aqui de verdad.');
       if (row.motivos == ' ') {
-        row.motivos = motivos;
+        row.motivos += motivos;
       }
     });
 
@@ -683,6 +679,41 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
   reasonsForChange() {
     this.getReasonsChange();
   }
+
+  updateOffice() {}
+
+  countGoodsSelected() {
+    let typeOffice: number = this.returnOfOffice();
+    if (typeOffice == 2) {
+      if (this.selectedRowsCancel.length == 0) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario Seleccionar Bienes'
+        );
+      }
+    } else if (typeOffice == 3) {
+      this.addReasons();
+    }
+  }
+
+  addReasons() {
+    this.validatedReasons();
+  }
+
+  validatedReasons() {
+    if (this.returnOfOffice() == 3) {
+      if (this.selectedRowsCancel.length == 0) {
+        this.alert(
+          'warning',
+          'Advertencia',
+          'Para Continuar es Necesario que Seleccione los Motivos por los Cuales se va a Enviar a REV el Bien'
+        );
+      }
+    }
+  }
+
+  selection() {}
   //
 
   override ngOnDestroy(): void {

@@ -217,12 +217,18 @@
             <div class="row">
               <div class="col-md-5"></div>
               <div class="col-md-3">
-                <button id="btnAgregar" class="btn btn-default btn-block">
+                <button
+                  id="btnAgregar"
+                  type="button"
+                  class="btn btn-primary btn-sm active">
                   Agregar Usuario
                 </button>
               </div>
               <div class="col-md-3">
-                <button id="Button2" class="btn btn-danger btn-block">
+                <button
+                  id="Button2"
+                  type="button"
+                  class="btn btn-primary btn-sm active">
                   Quitar Usuario
                 </button>
               </div>
@@ -257,7 +263,8 @@
       <div>
         <ng2-smart-table
           [settings]="settingsTwo"
-          [source]="dataTwo"></ng2-smart-table>
+          [source]="dataTwo"
+          (userRowSelect)="onUserRowSelectCancel($event)"></ng2-smart-table>
       </div>
       <div>
         <app-pagination [params]="paramsTwo" [totalItems]="totalItemsTwo">
@@ -269,8 +276,7 @@
       <div>
         <form class="form-material" [formGroup]="formTwo">
           <!--  -->
-          <!-- <div class="row" *ngIf="pnlControles2"> -->
-          <div class="row" *ngIf="true">
+          <div class="row" *ngIf="pnlControles2">
             <div class="col-md-4">
               <form-field
                 [control]="formTwo.get('allGood')"
@@ -295,8 +301,7 @@
                 </ng-select>
               </form-field>
             </div>
-            <!-- <div class="col-md-3" *ngIf="btnMotCan"> -->
-            <div class="col-md-3" *ngIf="true">
+            <div class="col-md-3" *ngIf="btnMotCan">
               <button
                 class="btn btn-primary btn-sm active mr-3"
                 (click)="reasonsForChange()">
@@ -349,25 +354,21 @@
             <div class="m-3" *ngIf="btnModificar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Modificar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnVerOficio">
               <button type="button" class="btn btn-primary btn-sm active">
                 Visualizar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnGuardar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Guardar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
             <div class="m-3" *ngIf="btnEnviar">
               <button type="button" class="btn btn-primary btn-sm active">
                 Enviar Oficio
-                <i aria-hidden="true" class="fa fa-save"></i>
               </button>
             </div>
           </div>
