@@ -5,12 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { addDays, format } from 'date-fns';
 import * as moment from 'moment';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, takeUntil, tap } from 'rxjs';
 import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -201,6 +201,9 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
   idGood: number = null;
   idGoodAct: number = null;
 
+  noExpedientParams: any;
+  returnToTracker: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private serviceGood: GoodService,
@@ -226,12 +229,14 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
     private serviceHistoryGood: HistoryGoodService,
     private serviceNotification: NotificationService,
     private attribGoodBadService: AttribGoodBadService,
-    private authService: AuthService
+    private authService: AuthService,
+    private activatedRoute: ActivatedRoute
   ) {
     super();
   }
 
   ngOnInit(): void {
+    this.returnToTracker = false;
     moment.locale('es');
     this.prepareForm();
     this.form.get('year').setValue(moment(new Date()).format('YYYY'));
@@ -310,6 +315,28 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         this.btnCSSAct = 'btn-primary';
       }
     });
+
+    this.queryParamsFn();
+  }
+
+  queryParamsFn() {
+    this.activatedRoute.queryParams
+      .pipe(
+        takeUntil(this.$unSubscribe),
+        tap(params => {
+          console.log({
+            origin: params['origin'],
+            exp: params['NO_EXPEDIENTE_F'],
+          });
+          this.noExpedientParams = params['NO_EXPEDIENTE_F'] ?? null;
+          if (params['NO_EXPEDIENTE_F']) {
+            this.form.get('expediente').setValue(params['NO_EXPEDIENTE_F']);
+            this.returnToTracker = true;
+            this.searchButton();
+          }
+        })
+      )
+      .subscribe();
   }
 
   getDataUser() {
@@ -3636,6 +3663,10 @@ export class ConfiscatedRecordsComponent extends BasePage implements OnInit {
         { queryParams: { noBien: this.idGoodAct } }
       );
     }
+  }
+
+  gotoTracker() {
+    this.router.navigate(['pages/general-processes/goods-tracker']);
   }
 
   selectRowBovedaAlmacen(data: any) {
