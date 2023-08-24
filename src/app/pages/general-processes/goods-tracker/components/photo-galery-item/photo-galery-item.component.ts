@@ -81,7 +81,7 @@ export class PhotoGaleryItemComponent extends BasePage implements OnInit {
           return;
         }
         const last = res.at(-1);
-        const filename = last.split('.')[0];
+        const filename = last.name.split('.')[0];
         const consSplit = filename.split('F');
         const consec = consSplit.at(-1);
         console.log({ consec });

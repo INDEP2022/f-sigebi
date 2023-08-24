@@ -94,6 +94,9 @@ export class CommercialFileComponent extends BasePage implements OnInit {
     window.scrollTo(0, 0);
     this.viewPhoto = false;
   }
+  cleanBtn() {
+    this.form.reset();
+  }
 }
 
 /* 

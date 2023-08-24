@@ -115,11 +115,7 @@ export class GeneralDataGoodsComponent
       }
     });
     if (required) {
-      this.alert(
-        'warning',
-        'Datos Inventario',
-        'Debe llenar los Valores Requeridos.'
-      );
+      this.alert('warning', 'Debe llenar los Atributos Requeridos.', '');
       return;
     }
     const patron: RegExp =

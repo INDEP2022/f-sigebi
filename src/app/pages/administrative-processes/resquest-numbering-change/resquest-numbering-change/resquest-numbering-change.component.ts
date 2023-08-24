@@ -43,6 +43,7 @@ import {
   NUM_POSITIVE_LETTERS,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { AbandonmentsDeclarationTradesService } from 'src/app/pages/juridical-processes/abandonments-declaration-trades/service/abandonments-declaration-trades.service';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -281,6 +282,10 @@ export class ResquestNumberingChangeComponent
   @ViewChild('scrollContainer') scrollContainer!: ElementRef;
   @ViewChild('scrollContainer2') scrollContainer2!: ElementRef;
   formTotal: FormGroup;
+
+  delegationNumber: any = null;
+  subdelegation: any = null;
+  areaDict: any = null;
   constructor(
     private fb: FormBuilder,
     private safeService: SafeService,
@@ -298,7 +303,8 @@ export class ResquestNumberingChangeComponent
     private token: AuthService,
     private readonly historyGoodService: HistoryGoodService,
     private statusXScreenService: StatusXScreenService,
-    private expenseService_: ExpenseService
+    private expenseService_: ExpenseService,
+    private abandonmentsService: AbandonmentsDeclarationTradesService
   ) {
     super();
     this.esta = '';
@@ -477,16 +483,17 @@ export class ResquestNumberingChangeComponent
     }
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.buildForm();
     this.buildFormaplicationData();
     this.getBoveda(new ListParams());
     this.getDelegations(new ListParams());
     this.getAlmacen(new ListParams());
     this.getTodos(new ListParams());
-    this.getUsuario(new ListParams());
+
     this.getDataTable('no');
     this.getDataTableNum();
+
     if (this.modal?.isShown) {
     }
     this.loading = false;
@@ -495,30 +502,6 @@ export class ResquestNumberingChangeComponent
   clearModel() {
     this.selectedPeople = [];
   }
-
-  /**
-   * @method: metodo para iniciar el formulario
-   * @author:  Alexander Alvarez
-   * @since: 27/09/2022
-   */
-
-  /*validationScreen(id: any) {
-    //row.data.id ? 'bg-dark text-white' : 'bg-success text-white'
-    this.loading = true;
-    const payload = {
-      pNumberGood: id,
-      vcScreen: 'FACTADBSOLCAMNUME',
-    };
-    this.goodprocessService.getScreenGood(payload).subscribe({
-      next: async (response: any) => {
-        this.getDataTableNum()loading = false;
-      },
-      error: err => {
-        this.loading = false;
-      },
-    });
-    this.loading = false;
-  }*/
 
   async validationScreen(id: any): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -611,7 +594,7 @@ export class ResquestNumberingChangeComponent
 
   public searchUsuario(data: any) {
     const params = new ListParams();
-    params['filter.usuario'] = data.usuario;
+    if (data.usuario) params['filter.usuario'] = data.usuario;
 
     this.securityService.getAllUser(params).subscribe({
       next: (types: any) => {
@@ -624,16 +607,22 @@ export class ResquestNumberingChangeComponent
           types.data[0].no_delegacion
         );
       },
+      error: err => {
+        this.formaplicationData.controls['postUserRequestCamnum'].setValue('');
+        this.formaplicationData.controls['delegationRequestcamnum'].setValue(
+          ''
+        );
+      },
     });
   }
 
   public searchUsuario1(dat: any) {
     const params1 = new ListParams();
-    params1['filter.usuario'] = dat.usuario;
+    if (dat.usuario) params1['filter.usuario'] = dat.usuario;
 
     this.securityService.getAllUser(params1).subscribe({
       next: (type: any) => {
-        this.itemsUser1 = new DefaultSelect(type.data, type.count);
+        // this.itemsUser1 = new DefaultSelect(type.data, type.count);
 
         this.formaplicationData.controls['authorizePostUser'].setValue(
           type.data[0].otvalor
@@ -642,42 +631,58 @@ export class ResquestNumberingChangeComponent
           type.data[0].no_delegacion
         );
       },
+      error: err => {
+        this.formaplicationData.controls['authorizePostUser'].setValue('');
+        this.formaplicationData.controls['authorizeDelegation'].setValue('');
+        // this.itemsUser1 = new DefaultSelect([], 0);
+      },
     });
   }
 
-  getUsuario(params: ListParams, usuario?: string) {
+  async getUsuario(params: ListParams, usuario?: string) {
     if (params.text) {
       params['filter.usuario'] = `$ilike:${params.text}`;
     }
+    params['filter.no_delegacion'] = `$eq:${this.delegationNumber}`;
+    this.securityService.getAllUser(params).subscribe(
+      (data: any) => {
+        const res: any = data.data.map((user: any) => {
+          return user.usuario;
+        });
 
-    this.securityService.getAllUser(params).subscribe((data: any) => {
-      const res: any = data.data.map((user: any) => {
-        return user.usuario;
-      });
+        this.itemsUser = new DefaultSelect(res, data.count);
 
-      this.itemsUser = new DefaultSelect(res, data.count);
-
-      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-      // Llamar a getNameUser solo si se proporcionó un usuario
-    });
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+      },
+      error => {
+        this.itemsUser = new DefaultSelect([], 0);
+      }
+    );
   }
 
-  getUsuario1(params1: ListParams, usuario?: string) {
+  async getUsuario1(params1: ListParams, usuario?: string) {
     if (params1.text) {
       params1['filter.usuario'] = `$ilike:${params1.text}`;
     }
 
-    this.securityService.getAllUser(params1).subscribe((dat: any) => {
-      const res: any = dat.data.map((userT: any) => {
-        return userT.usuario;
-      });
+    params1['filter.no_delegacion'] = `$eq:${this.delegationNumber}`;
+    this.securityService.getAllUser(params1).subscribe(
+      (dat: any) => {
+        const res: any = dat.data.map((userT: any) => {
+          return userT.usuario;
+        });
 
-      this.itemsUser1 = new DefaultSelect(res, dat.count);
-      // console.log(this.itemsUser1);
-      // console.log(dat);
-      //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
-      // Llamar a getNameUser solo si se proporcionó un usuario
-    });
+        this.itemsUser1 = new DefaultSelect(res, dat.count);
+        // console.log(this.itemsUser1);
+        // console.log(dat);
+        //this.formaplicationData.controls['postUserRequestCamnum'].setValue(data.itemsUser.name);
+        // Llamar a getNameUser solo si se proporcionó un usuario
+      },
+      error => {
+        this.itemsUser1 = new DefaultSelect([], 0);
+      }
+    );
   }
 
   getAlmacen(params: ListParams, id?: string) {
@@ -1755,6 +1760,10 @@ export class ResquestNumberingChangeComponent
       .get('dateRequestChangeNumerary')
       .setValue(currentDate);
     this.formaplicationData.get('applicationChangeCashNumber').setValue(null);
+    console.log(
+      'this.formaplicationData.getRawValue()',
+      this.formaplicationData.getRawValue()
+    );
     this.numeraryService
       .createChangeNumerary(this.formaplicationData.getRawValue())
       .subscribe({
@@ -1940,7 +1949,7 @@ export class ResquestNumberingChangeComponent
     return newDate;
   }
 
-  private buildFormaplicationData() {
+  async buildFormaplicationData() {
     this.formaplicationData = this.fb.group({
       dateRequestChangeNumerary: [new Date(), [Validators.required]],
       applicationChangeCashNumber: [
@@ -1994,35 +2003,11 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData.controls['authorizeDate'].disable();
     this.formaplicationData.controls['dateRequestChangeNumerary'].disable();
 
-    setTimeout(() => {
-      this.getUsuario(new ListParams());
-      this.getUsuario1(new ListParams());
-    }, 1000);
+    const paramsSender = new ListParams();
+    paramsSender.text = this.token.decodeToken().preferred_username;
+    await this.get___Senders(paramsSender);
 
     this.formaplicationData.controls;
-    /*this.formaplicationData
-      .get('dateRequestChangeNumerary')
-      .valueChanges.subscribe((date: Date) => {
-        if (date) {
-          const formattedDate = moment(date).format('DD-MM-YYYY');
-          this.formaplicationData.patchValue(
-            { dateRequestChangeNumerary: formattedDate },
-            { emitEvent: false }
-          );
-        }
-      });
-
-    /*this.formaplicationData
-      .get('authorizeDate')
-      .valueChanges.subscribe((date: Date) => {
-        if (date) {
-          const formattedDate = moment(date).format('DD-MM-YYYY');
-          this.formaplicationData.patchValue(
-            { authorizeDate: formattedDate },
-            { emitEvent: false }
-          );
-        }
-      });*/
   }
   opcionSeleccionada: any[] = [];
 
@@ -2056,5 +2041,27 @@ export class ResquestNumberingChangeComponent
         block: 'center',
       });
     }
+  }
+
+  async get___Senders(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    // params.addFilter('assigned', 'S');
+    if (lparams?.text) params.addFilter('user', lparams.text, SearchFilter.EQ);
+    this.abandonmentsService.getUsers(params.getParams()).subscribe({
+      next: async (data: any) => {
+        console.log('DATA DDELE', data);
+        this.delegationNumber = data.data[0].delegationNumber;
+        this.subdelegation = data.data[0].subdelegationNumber;
+        this.areaDict = data.data[0].departamentNumber;
+
+        setTimeout(async () => {
+          await this.getUsuario(new ListParams());
+          await this.getUsuario1(new ListParams());
+        }, 1000);
+      },
+      error: async () => {},
+    });
   }
 }

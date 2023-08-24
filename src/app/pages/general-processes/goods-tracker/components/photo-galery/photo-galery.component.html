@@ -9,7 +9,10 @@
           [formGroup]="formCheckbox"
           class="form-material d-flex justify-content-end">
           <form-check for="galery" label="Ver Fotos">
-            <input type="checkbox" id="galery" formControlName="lookPhoto" />
+            <input
+              type="checkbox"
+              [checked]="formCheckbox.get('lookPhoto').value"
+              formControlName="lookPhoto" />
           </form-check>
           <div></div>
         </form>
@@ -19,7 +22,9 @@
     <div class="row" *ngIf="!loading">
       <div class="col-md-6 px-5 py-3" *ngFor="let good of goods">
         <div class="row photo-container shadow h-100 p-0 m-0 bg-white">
-          <photo-galery-item [good]="good"></photo-galery-item>
+          <photo-galery-item
+            [good]="good"
+            (dblclick)="goToAdmin(good)"></photo-galery-item>
         </div>
       </div>
     </div>

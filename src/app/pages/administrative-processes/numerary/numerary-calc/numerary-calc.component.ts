@@ -430,7 +430,7 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       date: this.date.value,
       dateValid: new Date('20-08-2023'),
     });
-    this.downloadReport('RCONBIENESPROC_COMIS', params, () => {
+    this.downloadReport('blank', params, () => {
       this.isLoadingStatusAccount = false;
     });
   }
@@ -655,8 +655,9 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       if (this.requestNumeDet.solnumId !== null) {
         const response = await this.alertQuestion(
           'question',
-          '¿Se ejecuta el cálculo?',
-          '¿Desea continuar?'
+          '¿Desea Ejecutar el Cálculo?',
+          '',
+          'Ejecutar'
         );
         if (response.isConfirmed) {
           const vResul = await this.pupElimCalculNume(this.idProcess.value);
