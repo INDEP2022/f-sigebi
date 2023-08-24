@@ -921,7 +921,7 @@ export class ClassifyAssetsTabComponent
     if (this.process == 'classify-assets') {
       goods.processStatus = 'CLASIFICAR_BIEN';
     } else {
-      goods.processStatus = 'VERIFICAR_CUMPLIMIENTO';
+      goods.processStatus = 'REGISTRO_SOLICITUD';
       goods.status = 'ROP';
     }
 
