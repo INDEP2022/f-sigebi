@@ -177,13 +177,13 @@ export const SEARCH_DESTRUCTION_TABLE = {
     sort: false,
   },
 
-  managementNumGoodId: {
+  managementNum: {
     title: 'No. Gestión',
     type: 'number',
     sort: false,
   },
 
-  goodDescription: {
+  descriptionGood: {
     title: 'Descripción Bien',
     type: 'string',
     sort: false,
@@ -201,7 +201,7 @@ export const SEARCH_DESTRUCTION_TABLE = {
     sort: false,
   },
 
-  goodSiabNum: {
+  bienSiabNum: {
     title: 'No. INDEP',
     type: 'number',
     sort: false,
