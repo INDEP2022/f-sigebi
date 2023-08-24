@@ -64,4 +64,8 @@ export class OfficeManagementService extends HttpService {
   postOfficeAvaluo(model: any) {
     return this.post(`application/getOfficeAvaluo`, model);
   }
+
+  getFlyer(body: { noBien: string | number; cveofgestion: string | number }) {
+    return this.post('application/get-noVolante', body);
+  }
 }

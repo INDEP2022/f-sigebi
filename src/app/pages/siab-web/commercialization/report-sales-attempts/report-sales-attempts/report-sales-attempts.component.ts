@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map, merge, takeUntil } from 'rxjs';
 import {
   FilterParams,
   ListParams,
@@ -39,6 +39,10 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   fileReader = new FileReader();
   jsonToCsv = JSON_TO;
   until = false;
+  propertyValues: string[] = [];
+  commaSeparatedString: string = '';
+  totalItems: number = 0;
+  private isFirstLoad = true;
 
   get filterGoods() {
     return this.form.get('filterGoods');
@@ -67,14 +71,30 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     this.prepareForm2();
     this.getTodos(new ListParams());
     this.getStatus(new ListParams());
+
+    const observable1 = this.params.pipe(map(() => this.consultarBienExcel()));
+    const observable2 = this.params.pipe(map(() => this.consultarBien()));
+    const observable3 = this.params.pipe(map(() => this.consultarOnlyOne()));
+
+    const combinedObservable = merge(observable1, observable2, observable3);
+
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      if (!this.isFirstLoad) {
+        this.consultarBienExcel();
+        this.consultarBien();
+      }
+    });
+    this.isFirstLoad = false;
   }
 
   private prepareForm2() {
     this.form = this.fb.group({
+      onlyOne: [],
       typeGood: [],
       typeStatus: [],
       filterGoods: [],
       filterText: [],
+      radio: [''],
     });
     setTimeout(() => {
       this.getStatus(new ListParams());
@@ -116,19 +136,137 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
       this.dataExcel = this.excelService.getData<IExcelToJson>(binaryExcel);
-      const mappedData: any = [];
-      for (let i = 0; i < this.dataExcel.length; i++) {
-        mappedData.push({
-          id: this.dataExcel[i].pGoodNumber,
-        });
-      }
-      this.source.load(mappedData);
-      this.until = true;
-      this.source.refresh();
+      this.propertyValues = this.dataExcel.map((item: any) => item.no_bien);
+
+      // Unir las cadenas con comas para obtener una cadena separada por comas
+      this.commaSeparatedString = this.propertyValues.join(',');
+
+      console.log(this.commaSeparatedString);
       console.log(this.dataExcel);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
+  }
+
+  consultarBienExcel() {
+    if (!this.commaSeparatedString) {
+      this.alert('warning', 'Debe importar el Archivo Excel', '');
+      return;
+    }
+
+    let params = {
+      ...this.params.getValue(),
+    };
+    let body = {
+      pGoodNumber: this.commaSeparatedString,
+      pType: 0,
+      pSubtypes: '',
+      pStatus: '',
+      ...this.params.getValue(),
+    };
+    console.log(body);
+    this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
+      next: resp => {
+        console.log(resp);
+        // Contar la cantidad de veces que aparece "no_bien" en la respuesta
+        // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
+        const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
+
+        // Recorrer los registros y contar las ocurrencias
+        resp.data.forEach((item: any) => {
+          const noBienValue: string = item.no_bien;
+          if (countMap[noBienValue]) {
+            countMap[noBienValue]++;
+          } else {
+            countMap[noBienValue] = 1;
+          }
+        });
+
+        console.log('Conteo de ocurrencias de cada bien:', countMap);
+        const newData = Object.keys(countMap).map(bien => ({
+          bien,
+          conteo_ocurrencias: countMap[bien],
+        }));
+
+        // Crear una instancia de LocalDataSource con la nueva estructura de datos
+        // this.source = new LocalDataSource(newData);
+
+        // // Opcionalmente, configurar las columnas de la tabla
+        // this.settings.columns = {
+        //   bien: { title: 'No. Bien', sort: false },
+        //   conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
+        //   // ... otras columnas ...
+        // };
+        this.source.load(resp.data);
+        this.until = true;
+        this.source.refresh();
+        this.totalItems = resp.count;
+      },
+      error: err => {
+        console.log(err);
+        this.alert('error', 'No se Encontraron Registros', '');
+      },
+    });
+  }
+
+  consultarOnlyOne() {
+    if (!this.form.get('onlyOne').value) {
+      this.alert('warning', 'Es Necesario Contar con el No. Bien', '');
+      return;
+    }
+    let params = {};
+    let body = {
+      pGoodNumber: this.form.get('onlyOne').value,
+      pType: 0,
+      pSubtypes: '',
+      pStatus: '',
+      ...this.params.getValue(),
+    };
+    console.log(body);
+    this.getparEportAttemptsVta
+      .getpaREportAttemptsVta(body, this.params.getValue())
+      .subscribe({
+        next: resp => {
+          console.log(resp);
+          // Contar la cantidad de veces que aparece "no_bien" en la respuesta
+          // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
+          const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
+
+          // Recorrer los registros y contar las ocurrencias
+          resp.data.forEach((item: any) => {
+            const noBienValue: string = item.no_bien;
+            if (countMap[noBienValue]) {
+              countMap[noBienValue]++;
+            } else {
+              countMap[noBienValue] = 1;
+            }
+          });
+
+          console.log('Conteo de ocurrencias de cada bien:', countMap);
+          const newData = Object.keys(countMap).map(bien => ({
+            bien,
+            conteo_ocurrencias: countMap[bien],
+          }));
+
+          // Crear una instancia de LocalDataSource con la nueva estructura de datos
+          // this.source = new LocalDataSource(newData);
+
+          // // Opcionalmente, configurar las columnas de la tabla
+          // this.settings.columns = {
+          //   bien: { title: 'No. Bien', sort: false },
+          //   conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
+          //   // ... otras columnas ...
+          // };
+          this.source.load(resp.data);
+          this.until = true;
+          this.source.refresh();
+          this.totalItems = resp.count;
+        },
+        error: err => {
+          console.log(err);
+          this.alert('error', 'No se Encontraron Registros', '');
+        },
+      });
   }
 
   exportCsv() {
@@ -249,55 +387,91 @@ export class ReportSalesAttemptsComponent extends BasePage implements OnInit {
     );
     console.log(selectedTypeStatus);
 
-    console.log(selectedTypeNumber);
-    if (this.dataExcel.length > 0) {
-      this.dataExcel.map((item: any) => {
-        item['pType'] = resultArray[0].typeNumber;
-        item['pSubtypes'] = resultArray[0].subTypeNumber;
-        item['pStatus'] = resultStatus[0].status;
-      });
-
-      let params = {
-        ...this.params.getValue(),
-      };
-      console.log(params);
-      this.getparEportAttemptsVta
-        .getpaREportAttemptsVta(this.dataExcel, params)
-        .subscribe({
-          next: resp => {
-            console.log(resp);
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
-    } else {
-      let params = {
-        ...this.params.getValue(),
-      };
-      let body = {
-        pType: resultArray[0].typeNumber,
-        pSubtypes: resultArray[0].subTypeNumber,
-        pStatus: resultStatus[0].status,
-      };
-      console.log(params);
-      this.getparEportAttemptsVta
-        .getpaREportAttemptsVta(body, params)
-        .subscribe({
-          next: resp => {
-            console.log(resp);
-          },
-          error: err => {
-            console.log(err);
-          },
-        });
+    if (!selectedTypeStatus) {
+      this.alert('warning', 'Debe Seleccionar los Filtros', '');
+      return;
     }
+
+    console.log(selectedTypeNumber);
+
+    let params = {
+      ...this.params.getValue(),
+    };
+    let body = {
+      pType: resultArray[0].typeNumber,
+      pSubtypes: resultArray[0].subTypeNumber,
+      pStatus: resultStatus[0].status,
+      ...this.params.getValue(),
+    };
+    console.log(params);
+    this.getparEportAttemptsVta.getpaREportAttemptsVta(body, params).subscribe({
+      next: resp => {
+        console.log(resp);
+        // Contar la cantidad de veces que aparece "no_bien" en la respuesta
+        // Crear un objeto para almacenar las ocurrencias de cada valor en no_bien
+        const countMap: { [key: string]: number } = {}; // Anotación de tipo para countMap
+
+        // Recorrer los registros y contar las ocurrencias
+        resp.data.forEach((item: any) => {
+          const noBienValue: string = item.no_bien;
+          if (countMap[noBienValue]) {
+            countMap[noBienValue]++;
+          } else {
+            countMap[noBienValue] = 1;
+          }
+        });
+
+        console.log('Conteo de ocurrencias de cada bien:', countMap);
+        const newData = Object.keys(countMap).map(bien => ({
+          bien,
+          conteo_ocurrencias: countMap[bien],
+        }));
+
+        // Crear una instancia de LocalDataSource con la nueva estructura de datos
+        // this.source = new LocalDataSource(newData);
+
+        // // Opcionalmente, configurar las columnas de la tabla
+        // this.settings.columns = {
+        //   bien: { title: 'No. Bien', sort: false },
+        //   conteo_ocurrencias: { title: 'Intentos de Venta', sort: false },
+        //   // ... otras columnas ...
+        // };
+
+        this.source.load(resp.data);
+        this.until = true;
+        this.source.refresh();
+        this.totalItems = resp.count;
+      },
+      error: err => {
+        console.log(err);
+        this.alert('error', 'No se Encontraron Registros', '');
+      },
+    });
   }
 
-  clean() {
+  cleanFilter() {
     this.form.get('typeStatus').setValue(null);
+    this.form.get('typeGood').setValue(null);
 
     // Llamar a getEvent sin el filtro
     this.getStatus({});
+    this.source.load([]);
+    this.until = false;
+  }
+
+  cleanOnly() {
+    this.form.get('onlyOne').setValue(null);
+
+    // Llamar a getEvent sin el filtro
+    this.source.load([]);
+    this.until = false;
+  }
+
+  cleanExcel() {
+    this.dataExcel = [];
+
+    // Llamar a getEvent sin el filtro
+    this.source.load([]);
+    this.until = false;
   }
 }

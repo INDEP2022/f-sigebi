@@ -77,16 +77,13 @@
                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
             </form-field>
           </div>
-          <div class="col-md-12 mb-3">
+          <!-- <div class="col-md-12 mb-3">
             <form-field [control]="form.get('FECHA_ENV')" label="Fecha Envio">
-              <input
-                formControlName="FECHA_ENV"
-                class="form-control"
-                bsDatepicker
+              <input formControlName="FECHA_ENV" class="form-control" bsDatepicker
                 [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY' }" />
             </form-field>
-          </div>
-          <div class="col-md-12 mb-3">
+          </div> -->
+          <!-- <div class="col-md-12 mb-3">
             <form-field [control]="form.get('MENSAJE')" label="Mensaje">
               <textarea
                 class="form-control"
@@ -95,14 +92,14 @@
                 formControlName="MENSAJE"
                 oninput="if(this.value.length > 10000) this.value = this.value.slice(0, 10000)"></textarea>
             </form-field>
-          </div>
+          </div> -->
           <!-- <div class="col-md-12 mb-3">
                         <form-field [control]="form.get('LPARA')" label="LPara">
                             <input type="text" class="form-control" formControlName="LPARA" min="1"
                                 oninput="if(this.value.length > 50) this.value = this.value.slice(0, 50)" />
                         </form-field>
                     </div> -->
-          <div class="col-md-12 mb-3">
+          <!-- <div class="col-md-12 mb-3">
             <form-field
               [control]="form.get('DELEGACION')"
               label="No. Delegación">
@@ -143,7 +140,7 @@
                 min="1"
                 oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11)" />
             </form-field>
-          </div>
+          </div> -->
         </div>
       </form>
     </div>

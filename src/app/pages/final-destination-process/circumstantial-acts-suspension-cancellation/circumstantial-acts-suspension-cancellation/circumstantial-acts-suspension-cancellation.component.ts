@@ -1,20 +1,28 @@
 import { DatePipe, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { LocalDataSource } from 'ng2-smart-table';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IGoodParameter } from 'src/app/core/models/ms-good-parameter/good-parameter.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
+import {
+  IDetailProceedingsDevollution,
+  IDetailProceedingsDevollutionDelete,
+} from 'src/app/core/models/ms-proceedings/proceedings.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { GoodProcessService } from 'src/app/core/services/ms-good/good-process.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import {
   ProceedingsDeliveryReceptionService,
   ProceedingsService,
@@ -26,6 +34,8 @@ import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { getTrackedGoods } from 'src/app/pages/general-processes/goods-tracker/store/goods-tracker.selector';
+import { GOODS_TACKER_ROUTE } from 'src/app/utils/constants/main-routes';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
@@ -97,13 +107,16 @@ export class CircumstantialActsSuspensionCancellationComponent
     tipoActa: null,
     tipoAcIr: null,
   };
-  title: string = 'Áctas Circunstanciadas Suspensión/Cancelación';
+  title: string = 'Actas Circunstanciadas Suspensión/Cancelación';
   deleteAct: boolean = false;
   textButtonAct: string = 'Abrir Acta';
   expediente: number;
   settings1: any;
   selectedGood: any;
   selectedGood2: any;
+  goodTrackerGoods: any;
+  $trackedGoods = this.store.select(getTrackedGoods);
+  inputValue: number;
   get username() {
     return this.authService.decodeToken().username;
   }
@@ -119,8 +132,11 @@ export class CircumstantialActsSuspensionCancellationComponent
     private goodprocessService: GoodProcessService,
     private statusGoodService: StatusGoodService,
     private datePipe: DatePipe,
+    private router: Router,
+    private store: Store,
     private programminggoodService: ProgrammingGoodsService,
-    private expedientService: ExpedientService
+    private expedientService: ExpedientService,
+    private historygoodService: HistoryGoodService
   ) {
     super();
     this.settings1 = {
@@ -144,6 +160,23 @@ export class CircumstantialActsSuspensionCancellationComponent
     this.initForm();
     this.startCalendars();
     this.pupInitForms();
+    const localExpdeient = localStorage.getItem('expediente');
+    const folio = localStorage.getItem('folio');
+    if (localExpdeient) {
+      this.inputValue = Number(localExpdeient);
+      this.$trackedGoods.subscribe(async data => {
+        console.error(data);
+        const data1 = await this.data1.getAll();
+        const dataNew = [...data, data1];
+        this.data1.load(dataNew);
+        this.data1.refresh();
+      });
+      if (folio) {
+        this.form.controls['universalFolio'].setValue(folio);
+      }
+      this.search(Number(localExpdeient));
+      localStorage.removeItem('expediente');
+    }
   }
 
   startCalendars() {
@@ -433,6 +466,14 @@ export class CircumstantialActsSuspensionCancellationComponent
     }
   }
 
+  setState() {
+    /* this.$state.pipe(takeUntil(this.$unSubscribe)).subscribe(state => {
+      const { trackerGoods } = state;
+      this.goodTrackerGoods = trackerGoods;
+      //this.getProceedingGoods(id.value).subscribe();
+    }); */
+  }
+
   pupRegresaActa() {
     return new Promise<any>((res, _rej) => {
       const model = {
@@ -489,13 +530,13 @@ export class CircumstantialActsSuspensionCancellationComponent
             ? localStorage.getItem('username')
             : localStorage.getItem('username').toLocaleUpperCase(),
       };
+      console.log(model);
       this.programminggoodService.paAbrirActasPrograma(model).subscribe({
         next: resp => {
           console.log(resp);
           res(resp);
         },
         error: err => {
-          console.error(err.error.message);
           if (err.error.message) {
             if (err.error.message.includes('El usuario sigebiadmon no fue')) {
               let message = err.error.message.replace('la', 'el Acta');
@@ -511,9 +552,236 @@ export class CircumstantialActsSuspensionCancellationComponent
     });
   }
 
+  async removeSelect() {
+    if (this.selectedGood2 === null) {
+      this.alert('error', this.title, 'Debe Seleccionar un Registro');
+    } else {
+      if (this.form.get('statusAct').value === 'CERRADA') {
+        this.alert(
+          'error',
+          this.title,
+          'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+        );
+      } else {
+        const data: any[] = await this.data1.getAll();
+        data.forEach(item => {
+          if (item.id === this.selectedGood2.numberGood) {
+            item.di_disponible = 'S';
+          }
+        });
+        this.data1.load(data);
+        this.data1.refresh();
+        this.deleteDetailProceedingsDevolution(
+          this.selectedGood2.numberGood,
+          this.form.get('noActa').value
+        );
+      }
+    }
+  }
+  deleteDetailProceedingsDevolution(
+    numberGood: number,
+    numberProceedings: number
+  ) {
+    const model: IDetailProceedingsDevollutionDelete = {
+      numberGood,
+      numberProceedings,
+    };
+    this.proceedingService.deleteDetailProceedingsDevolution(model).subscribe({
+      next: (response: any) => {
+        console.log(response.data);
+        this.getDetailProceedingsDevolution(numberProceedings);
+        this.alert(
+          'success',
+          this.title,
+          'Se ha eliminado el registro correctamente'
+        );
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  addSelect() {
+    if (!this.validAdd(this.selectedGood)) {
+      return;
+    }
+    if (this.selectedGood === null) {
+      this.onLoadToast('error', 'Debe Seleccionar un Registro');
+    } else {
+      this.preInsert(this.selectedGood);
+      this.createDetailProceedingsDevolution(
+        this.selectedGood,
+        this.form.get('noActa').value
+      );
+    }
+  }
+
+  createDetailProceedingsDevolution(good: IGood, numberProceedings: number) {
+    const { id, quantity } = good;
+    const model: IDetailProceedingsDevollution = {
+      numberGood: id,
+      amount: quantity,
+      numberProceedings,
+    };
+    console.log(model);
+    this.proceedingService.createDetailProceedingsDevolution(model).subscribe({
+      next: (response: any) => {
+        this.getDetailProceedingsDevolution(numberProceedings);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  statusFinal(goodNumber: number) {
+    return new Promise<any[]>((res, rej) => {
+      const model = {
+        vcScreen: 'FACTCIRCUN_0001',
+        goodNumber,
+      };
+      this.goodprocessService.getStatusFinal(model).subscribe({
+        next: (response: any) => {
+          res(response.data.filter((index: number) => index === 0));
+        },
+        error: error => {
+          console.log(error);
+          res([]);
+        },
+      });
+    });
+  }
+
+  async preInsert(good: any) {
+    if (this.form.get('statusAct').value === 'CERRADA') {
+      const data: any[] = await this.statusFinal(good.goodId);
+      if (data.length === 0) {
+        data.forEach(element => {
+          if (element.estatus_final !== null) {
+            this.updateGood(good, element.estatus_final);
+            this.insertHistoryStatus(
+              good,
+              element.estatus_final,
+              this.username
+            );
+          }
+        });
+      }
+    }
+  }
+
+  insertHistoryStatus(good: IGood, statusFinal: string, usuario: string) {
+    const model: IHistoryGood = {
+      changeDate: this.getCurrentDate(),
+      userChange: usuario,
+      propertyNum: good.id,
+      reasonForChange: 'Automatico',
+      status: statusFinal,
+      statusChangeProgram: 'FACTDESACTASUTILI',
+    };
+    this.historygoodService.create(model).subscribe({
+      next: (response: any) => {
+        console.log(response.data);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  getCurrentDate(): string {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  updateGood(good: any, statusFinal: string) {
+    const model: IGood = null;
+    model.id = good.id;
+    model.goodId = good.goodId;
+    model.status = statusFinal;
+    this.goodService.update(model).subscribe({
+      next: (response: any) => {
+        console.log(response.data);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  validAdd(good: any) {
+    console.log(good);
+    const cve_act: string = this.form.get('act').value;
+    const status_act: string = this.form.get('statusAct').value;
+    if (good.di_disponible === 'N') {
+      this.onLoadToast(
+        'warning',
+        this.title,
+        'El bien tiene un estatus inválido para ser asignado a alguna acta'
+      );
+      return false;
+    }
+    if (cve_act === null) {
+      this.onLoadToast(
+        'warning',
+        this.title,
+        'Debe registrar un acta antes de poder mover el bien'
+      );
+      return false;
+    }
+    if (good.goodClassNumber === 62 && cve_act.substring(0, 2) !== 'NA') {
+      this.onLoadToast(
+        'warning',
+        this.title,
+        'Para este bien la clave de acta dede iniciar con " NA "'
+      );
+      return false;
+    }
+    if (
+      good.goodClassNumber === 62 &&
+      cve_act.substring(13, 3) !== 'DAB' &&
+      cve_act.substring(14, 3) !== 'DAB'
+    ) {
+      this.onLoadToast(
+        'warning',
+        this.title,
+        'En la parte de quien administra en la clave de acta debe ser para este bien " DAB "'
+      );
+      return false;
+    }
+    if (status_act === 'CERRADA') {
+      this.onLoadToast(
+        'warning',
+        this.title,
+        'El acta ya esta cerrada, no puede realizar modificaciones a esta'
+      );
+      return false;
+    } else {
+      if (good.acta !== null) {
+        this.onLoadToast(
+          'warning',
+          this.title,
+          'Ese bien ya se encuentra en la acta ' + good.acta
+        );
+        return false;
+      }
+    }
+    return true;
+  }
+
   addGood() {
     /// llamar al Rastreador de bienes
-    this.alert('success', this.title, 'Llamar al Rastreador de Bienes');
+    //this.alert('success',this.title,'Llamar al Rastreador de Bienes');
+    localStorage.setItem('expediente', this.expediente.toString());
+    this.router.navigate([GOODS_TACKER_ROUTE], {
+      queryParams: {
+        origin: 'FACTCIRCUN_0001',
+      },
+    });
   }
 
   async deleteActa() {

@@ -766,12 +766,12 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
           this.actaRecepttionForm.get('testigoOIC').setValue(res.witnessOic);
           this.actaRecepttionForm.get('testigoTwo').setValue(res.witness2);
           this.actaRecepttionForm.get('testigoTree').setValue(res.witness3);
-
+          this.cleanActa();
           subscription.unsubscribe();
         },
         error: error => {
           console.log(error);
-
+          this.cleanActa();
           subscription.unsubscribe();
         },
       });
@@ -1052,7 +1052,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
         return;
       }
 
-      if (this.actasDefault.comptrollerWitness == null) {
+      if (!this.actasDefault.comptrollerWitness) {
         this.alert('warning', 'Indique el Testigo de la Contraloría', '');
         return;
       }
@@ -2143,6 +2143,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
   }
 
   cleanActa() {
+    this.acordionDetail = false;
     this.actasDefault = null;
     this.actaRecepttionForm.get('cveActa').setValue('');
     this.actaRecepttionForm.get('direccion').setValue('');
